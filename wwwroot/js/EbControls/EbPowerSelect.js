@@ -105,6 +105,7 @@ const EbPowerSelect = function (ctrl, options) {
     $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
 
     this.$curEventTarget = null;
+    this.curRowUnformattedData = null;
     this.IsDatatableInit = false;
     this.IsSearchBoxFocused = false;
 
@@ -784,14 +785,10 @@ const EbPowerSelect = function (ctrl, options) {
     this.DDEnterKeyPress = function (e, datatable, key, cell, originalEvent) {
         let row = datatable.row(cell.index().row);
         let $tr = $(row.nodes());
-        //let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        //let rowindex = this.datatable.Api.page.info().start + $tr.index();
-        //let rowdata = this.datatable.Api.row($tr).data();
-        let rowdata = this.unformattedData[$tr.index()];
-        let vmValue = rowdata[idx];
+        this.curRowUnformattedData = this.unformattedData.filter(obj => obj[this.VMindex] == this.datatable.Api.row($tr).data()[this.VMindex])[0];
+        let vmValue = this.curRowUnformattedData[this.VMindex];
+        this.SelectRow(this.VMindex, vmValue);
         this.$curEventTarget = $tr;
-        this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
     };
 
@@ -865,7 +862,12 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.setDmValues = function (i, name) {
         //let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
-        let cellData = this.unformattedData[this.$curEventTarget.closest("tr").index()][getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];;
+
+        let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
+        let type = obj.Type;
+
+        let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[obj.data];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
+
         if (this.maxLimit === 1)
             this.localDMS[name].shift();
         this.localDMS[name].push(cellData);
@@ -874,12 +876,10 @@ const EbPowerSelect = function (ctrl, options) {
     this.DTrowclick = function (e, dt, type, indexes) {
         if (!this.ComboObj.MultiSelect) {
             this.$curEventTarget = $(e.target);
-            let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-            //let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
-            let rowdata = this.unformattedData[$(e.target).closest("tr").index()];
-            let vmValue = rowdata[idx];
+            this.curRowUnformattedData = this.unformattedData.filter(obj => obj[this.VMindex] == this.datatable.Api.row($(e.target).closest("tr")).data()[this.VMindex])[0];
+            let vmValue = this.curRowUnformattedData[this.VMindex];
             if (!(this.Vobj.valueMembers.contains(vmValue))) {
-                this.SelectRow(idx, vmValue);
+                this.SelectRow(this.VMindex, vmValue);
             }
         }
     }.bind(this);
@@ -887,12 +887,10 @@ const EbPowerSelect = function (ctrl, options) {
     //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
         this.$curEventTarget = $(e.target);
-        let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        //let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
-        let rowdata = this.unformattedData[$(e.target).closest("tr").index()];
-        let vmValue = rowdata[idx];
+        this.curRowUnformattedData = this.unformattedData.filter(obj => obj[this.VMindex] == this.datatable.Api.row($(e.target).closest("tr")).data()[this.VMindex])[0];
+        let vmValue = this.curRowUnformattedData[this.VMindex];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
-            this.SelectRow(idx, vmValue);
+            this.SelectRow(this.VMindex, vmValue);
         }
         else {
             this.delDMs($(e.target));
@@ -1089,7 +1087,7 @@ const EbPowerSelect = function (ctrl, options) {
         if (!this.IsDatatableInit || !this.datatable)
             return;
         this.$DDdiv.find(".eb_finput").val('');
-        this.datatable.Api.columns().search("").draw();
+        this.datatable.Api.columns().search("").draw(false);
     };
 
     this.getMaxLenVal = function () {
@@ -1234,16 +1232,13 @@ const EbPowerSelect = function (ctrl, options) {
     this.checkBxClickEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         let $row = $(e.target).closest('tr');
-        //let datas = $(this.DTSelector).DataTable().row($row).data();
-        let rowindex = this.datatable.Api.page.info().start + $row.index();
-        //let datas = this.datatable.data[rowindex];
-        //let datas = this.datatable.Api.row($row).data();
-        let datas = this.unformattedData[$row.index()];
 
+        this.curRowUnformattedData = this.unformattedData.filter(obj => obj[this.VMindex] == this.datatable.Api.row($row).data()[this.VMindex])[0];
+        let VMval = this.curRowUnformattedData[this.VMindex];
 
-        if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
+        if (!(this.Vobj.valueMembers.contains(VMval))) {
             if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
-                this.Vobj.valueMembers.push(datas[this.VMindex]);
+                this.Vobj.valueMembers.push(VMval);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(e.target).prop('checked', true);
                 this.clearSearchBox();

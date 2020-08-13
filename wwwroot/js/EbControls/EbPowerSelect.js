@@ -872,6 +872,8 @@ const EbPowerSelect = function (ctrl, options) {
     this.DTrowclick = function (e, dt, type, indexes) {
         if (!this.ComboObj.MultiSelect) {
             this.$curEventTargetTr = $(e.target).closest("tr");
+            this.curRowUnformattedData = this.getRowUnformattedData(this.$curEventTargetTr);
+            let vmValue = this.curRowUnformattedData[this.VMindex];
             if (!(this.Vobj.valueMembers.contains(vmValue))) {
                 this.SelectRow(this.$curEventTargetTr);
             }
@@ -1430,14 +1432,22 @@ const EbPowerSelect = function (ctrl, options) {
         }.bind(this));
     };
 
-    this.destroy = function () {
+    this.destroy = function (callbackFn) {
+
+        let t0 = performance.now();
+
         if (this.datatable) {
             this.datatable.Api.rows().invalidate(true);
             this.$DDdiv.remove();
+            this.datatable.$dtLoaderCont.remove();
 
             this.datatable.Api.clear(true).destroy(true);
         }
         this.Vobj.$destroy();
+
+        console.dev_log("PS destroy took :" + (performance.now() - t0) + " milliseconds.");
+        if (callbackFn)
+            callbackFn();
     };
 
     this.Renderselect();

@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Components
                 EbWebForm WebForm_L = WebForm;
                 //*******************************************************************
 
-                foreach(EbControl control in WebForm_L.Controls.FindAll(e => e is EbDataGrid_New))// for old objects
+                foreach(EbControl control in WebForm_L.Controls.FlattenAllEbControls().ToList().FindAll(e => e is EbDataGrid_New))// for old objects
                 {
                     (control as EbDataGrid_New).ProcessDvColumnCollection();
                 }

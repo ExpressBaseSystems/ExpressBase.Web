@@ -142,7 +142,12 @@
 
     loaderDiv.appendChild(iframe);
     iframecont.appendChild(loaderDiv);
-    d.body.appendChild(iframecont);
+    if (d.appIdColl) {
+        d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);
+    }
+    else {
+        d.body.appendChild(iframecont);
+    }
 
     //??????????
     var chatbtn = d.createElement("div");
@@ -175,7 +180,7 @@
     iframe.onload = function (e) {
         console.log("iframe:" + (window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount]));
         iframe.style.visibility = 'visible';
-        //loaderDiv.style.background = 'none';
+        loaderDiv.style.background = 'none';
     };
 
 
@@ -201,41 +206,34 @@
 
     //??????
     chatbtn.onclick = function () {
-        var iframecont = document.getElementById("eb_iframecont" + AppId);
+        var iframe_cont = document.getElementById("eb_iframecont" + AppId);
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
         if (!ebbot_iframe.getAttribute("src")) {
             ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&pgur=${pageurl}`);
             //ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${(themeColor).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}&msg=${(d.botWelcomeMsg || d.botWelcomeMsgColl[d.appIdCount])}`);
         }
-        if (iframecont.style.display !== "flex") {
+        if (iframe_cont.style.display !== "flex") {
             this.style.display = "none";
-            iframecont.style.display = "flex";
+            iframe_cont.style.display = "flex";
         } else {
             this.className = "";
-            iframecont.style.display = "none";
+            iframe_cont.style.display = "none";
         }
     };
 
 
     if (!d.appIdColl) {
-        //chatIcon.setAttribute("width", "100%");
-        //chatIcon.setAttribute("height", "100%");
         d.body.appendChild(chatbtn);
         var iconCont = d.createElement("div");
         iconCont.className = "iconCont eb__-bot___-iconCont";
-        //iconCont.style.width = "30px";
-        //iconCont.style.height = "30px";
         iconCont.appendChild(chatIcon);
         chatbtn.appendChild(iconCont);
         // chatbtn.appendChild(chatIcon);
         // chatbtn.click();//////////////////////////////// for showing chatarea on load
     }
-    else {
-        iframecont.style.minWidth = "inherit";
-        d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);
-        //d.getElementById("closediv" + AppId).style.display = "none";
-        //d.getElementById("maximizediv" + AppId).style.display = "none";
+    else {      
+        //d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);       
         chatbtn.click();
     }
 

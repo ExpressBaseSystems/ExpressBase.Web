@@ -514,7 +514,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			Bot_Obj.User=(JsonConvert.SerializeObject(user));
 			Bot_Obj.BotFormNames=formlist.BotFormsDisp;
 
-			CookieOptions options = new CookieOptions() {  /*SameSite = SameSiteMode.None*/ };
+			CookieOptions options = new CookieOptions() { Secure = true,HttpOnly = true,SameSite = SameSiteMode.None };
 			Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()), options);
 			Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, authResponse.RefreshToken, options);
 

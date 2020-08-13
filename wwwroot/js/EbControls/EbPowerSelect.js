@@ -57,9 +57,10 @@
 };
 
 const EbPowerSelect = function (ctrl, options) {
-    //parameters   
+    //parameters 
     this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;
+    //this.ComboObj.__isDGv2Ctrl = true;// hardcoding
     this.renderer = options.renderer;
     this.ComboObj.initializer = this;
     this.name = ctrl.EbSid_CtxId;
@@ -129,9 +130,9 @@ const EbPowerSelect = function (ctrl, options) {
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             this.$progressBar = $("#" + this.ComboObj.EbSid_CtxId + "_pb");
             this.$DDdiv = $('#' + this.name + 'DDdiv');
-            this.isDGps = this.ComboObj.constructor.name === "DGPowerSelectColumn";
+            this.isDGps = this.ComboObj.constructor.name === "DGPowerSelectColumn" || this.ComboObj.isDGCtrl;
 
-            $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
+            $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit)
             $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
             $('#' + this.name + 'Wraper .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
             $('#' + this.name + 'tbl').keydown(function (e) {
@@ -477,6 +478,10 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.getData = function () {
         this.showLoader();
+        if (this.ComboObj.__isDGv2Ctrl && this.ComboObj.__bkpData) {
+            this.getDataSuccess(this.ComboObj.__bkpData);
+        }
+
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         let params = this.ajaxData();
@@ -497,6 +502,11 @@ const EbPowerSelect = function (ctrl, options) {
         this.unformattedData = result.data;
         this.formattedData = result.formattedData;
 
+        if (this.ComboObj.__isDGv2Ctrl && !this.ComboObj.__bkpData) {
+            this.ComboObj.__bkpData = JSON.parse(JSON.stringify(this.data));
+            this.unformattedData = this.ComboObj.__bkpData.data;
+            this.formattedData = this.ComboObj.__bkpData.formattedData;
+        }
 
         if (this.IsFromSetValues) {// from set value
             if (this.setvaluesColl && this.setvaluesColl.length > 0) {
@@ -786,7 +796,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.initDTpost = function (data) {
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
-        $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
+        $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event
     };
 
     this.dataColumIterFn = function (i, value) {
@@ -1267,7 +1277,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.required_min_Check = function () {
         let reqNotOK = false;
         let minLimitNotOk = false;
-        let contId = this.isDGps ? `#td_${this.ComboObj.EbSid_CtxId}` : `#cont_${this.ComboObj.EbSid_CtxId}`;// to handle special case of DG powerselect 
+        let contId = this.isDGps ? `#td_${this.ComboObj.EbSid_CtxId}` : `#cont_${this.ComboObj.EbSid_CtxId}`;// to handle special case of DG powerselect
         let wraperId = `#${this.ComboObj.EbSid_CtxId}Wraper`;
         let msg = "This field is required";
 
@@ -1408,6 +1418,16 @@ const EbPowerSelect = function (ctrl, options) {
                     this.adjustDDposition();
             }.bind(this), 300, this.name);
         }.bind(this));
+    };
+
+    this.destroy = function () {
+        if (this.datatable) {
+            this.datatable.Api.rows().invalidate(true);
+            this.$DDdiv.remove();
+
+            this.datatable.Api.clear(true).destroy(true);
+        }
+        this.Vobj.$destroy();
     };
 
     this.Renderselect();

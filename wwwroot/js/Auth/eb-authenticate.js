@@ -144,7 +144,7 @@
     };
 
     $(`[validator="submit"]`).on("click", function (e) {
-        if ($("#partitioned").val().length == 0)
+        if ($("#partitioned").val() != null && $("#partitioned").val().length == 0)
             if (!validate())
                 return false;
 

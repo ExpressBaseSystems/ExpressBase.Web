@@ -777,6 +777,8 @@ const EbPowerSelect = function (ctrl, options) {
     }.bind(this);
 
     this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
+        if (this.isDestroyedDT)
+            return;
         let row = datatable.row(cell.index().row);
         let $tr = $(row.nodes());
         $tr.dblclick();
@@ -1138,6 +1140,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.drawCallback = function () {
+        if (this.isDestroyedDT)
+            return;
         if (this.datatable)
             $('#' + this.name + 'tbl').DataTable().columns.adjust();
         if (this.formattedData.length <= this.ComboObj.DropDownItemLimit)
@@ -1434,18 +1438,18 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.destroy = function (callbackFn) {
 
-        let t0 = performance.now();
+        //let t0 = performance.now();
 
         if (this.datatable) {
             this.datatable.Api.rows().invalidate(true);
             this.$DDdiv.remove();
             this.datatable.$dtLoaderCont.remove();
-
+            this.isDestroyedDT = true;
             this.datatable.Api.clear(true).destroy(true);
         }
         this.Vobj.$destroy();
 
-        console.dev_log("PS destroy took :" + (performance.now() - t0) + " milliseconds.");
+        //console.dev_log("PS destroy took :" + (performance.now() - t0) + " milliseconds.");
         if (callbackFn)
             callbackFn();
     };

@@ -1022,6 +1022,8 @@ const EbPowerSelect = function (ctrl, options) {
             this.adjustTag_closeHeight();
             this.$wraper.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
         }.bind(this), 5);
+        //this.scrollIf();
+        this.adjustDDposition();
     };
 
     this.adjustTag_closeHeight = function () {
@@ -1342,6 +1344,20 @@ const EbPowerSelect = function (ctrl, options) {
             }.bind(this));
         }
     };
+
+    //this.scrollIf = function () {
+    //    let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
+    //    let ctrlHeight = $ctrlCont.outerHeight();
+    //    if (this.lastCtrlHeight && this.lastCtrlHeight !== ctrlHeight) {
+    //        let scrollParent = getScrollParent($ctrlCont[0]);
+    //        if (scrollParent) {
+    //            let Hdiff = this.lastCtrlHeight - ctrlHeight;
+    //            $ctrlCont.scrollParent()[0].scrollTop = Hdiff;
+    //        }
+
+    //    }
+    //    this.lastCtrlHeight = ctrlHeight;
+    //};
 
     this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');

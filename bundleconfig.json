@@ -169,28 +169,40 @@
   {
     "outputFileName": "wwwroot/js/Bundles/eb-botpage.bundle.js",
     "inputFiles": [
-      "wwwroot/js/moment.min.js",
-      "wwwroot/js/jquery.datetimepicker.min.js",
-      "wwwroot/js/vue-select.js",
-      "wwwroot/js/vue@2.1.10.min.js",
-      "wwwroot/js/Eb_UtilityFuncions.js",
-      "wwwroot/js/EbControls/EbPowerSelect.js",
+
       "wwwroot/js/FormBuilder/InitFormControls.js",
+      "wwwroot/js/ChatBot/Eb_chatBot.js",
       "wwwroot/js/EbServerEvents/eventsource.min.js",
       "wwwroot/js/EbServerEvents/ss-utils.js",
       "wwwroot/js/EbServerEvents/ServerEvents.js",
       "wwwroot/js/Common/offline.js",
       "wwwroot/js/eb_common.js",
       "wwwroot/js/FormBuilder/bootstrap-confirmation.min.js",
-      "wwwroot/js/ChatBot/Eb_chatBot.js",
-      "wwwroot/js/FormBuilder/EbSurveyRender.js",
       "wwwroot/js/jQuery Mask Plugin v1.14.9.js",
-      "wwwroot/js/FormBuilder/Bootstrap-select.v1.12.2.js",
-      "wwwroot/js/slick.min.js",
-      "wwwroot/js/FormBuilder/locationpicker.jquery.min.js",
       "wwwroot/js/EbControls/EbProgressBar.js",
       "wwwroot/js/EbControls/EbMsgBox.js",
       "wwwroot/js/EbControls/EbPopBox.js",
+
+      "wwwroot/js/FormBuilder/bootstrap-toggle.min.js",
+      "wwwroot/js/FormBuilder/jquery.scrollTo.js",
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-bot_minimal.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/moment.min.js",
+      "wwwroot/js/jquery.datetimepicker.min.js",
+      "wwwroot/js/vue-select.js",
+      "wwwroot/js/vue@2.1.10.min.js",
+      "wwwroot/js/Eb_UtilityFuncions.js",
+      "wwwroot/js/EbControls/EbPowerSelect.js",
+      "wwwroot/js/FormBuilder/EbSurveyRender.js",
+      "wwwroot/js/FormBuilder/Bootstrap-select.v1.12.2.js",
+      "wwwroot/js/slick.min.js",
+      "wwwroot/js/FormBuilder/locationpicker.jquery.min.js",
       "wwwroot/js/FormBuilder/EbCardRender.js",
       "wwwroot/js/jquery.inputmask.bundle.js",
       "wwwroot/js/FormBuilder/MonthPicker.min.js",
@@ -198,8 +210,6 @@
       "wwwroot/js/EbControls/EbSimpleFileUploader.js",
       "wwwroot/js/yearpicker.js",
       "wwwroot/js/splitWindow.js",
-      "wwwroot/js/FormBuilder/bootstrap-toggle.min.js",
-      "wwwroot/js/FormBuilder/jquery.scrollTo.js",
       "wwwroot/js/FormBuilder/MeetingPicker.js"
     ],
     "minify": {

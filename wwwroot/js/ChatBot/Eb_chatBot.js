@@ -1,6 +1,7 @@
 ﻿//import { Array, Object } from "core-js/library/web/timers";
 
 var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl) {
+    console.log("chatbot.js loaded for bot " + _appid);
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
     this.EXPRESSbase_cid = cid;
@@ -1505,12 +1506,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         let respObj = JSON.parse(resp);
         if (respObj.Status === 200) {
             //EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
-            msg = `Your ${this.curForm.DisplayName} form submitted successfully 😊`;
+            msg = `Your ${this.curForm.DisplayName} submitted successfully 😊`;
         }
         else {
             //EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
             this.msgFromBot("Something went wrong ☹️");
-            msg = `Your ${this.curForm.DisplayName} form submission failed`;
+            msg = `Your ${this.curForm.DisplayName} submission failed`;
             console.log(respObj.MessageInt);
         }
         $('.eb-chatBox').empty();

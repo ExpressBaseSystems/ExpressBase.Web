@@ -28,7 +28,7 @@
             $(e.target).addClass("validator_error");
         }
         else {
-            if(ve(e.target.value) || veMob(e.target.value)) { 
+            if (ve(e.target.value) || veMob(e.target.value)) {
                 $("[validator='email']").find(".validator-error").text("");
                 $(e.target).removeClass("validator_error");
             }
@@ -59,9 +59,9 @@
         return re.test(email);
     }
 
-     function veMob(mobile) {
-         var re = /^(\+91-|\+91|0)?\d{10}$/;;
-         return re.test(mobile);
+    function veMob(mobile) {
+        var re = /^(\+91-|\+91|0)?\d{10}$/;;
+        return re.test(mobile);
     }
 
 
@@ -144,8 +144,9 @@
     };
 
     $(`[validator="submit"]`).on("click", function (e) {
-        if (!validate())
-            return false;
+        if ($("#partitioned").val() != null && $("#partitioned").val().length == 0)
+            if (!validate())
+                return false;
 
         $(`[validator="submit"]`).prop("disabled", true);
 
@@ -295,7 +296,7 @@
             if (uname !== "" && (!ve(uname)) && !veMob(uname)) {
                 $("#withotp_container").find(".validator-error").text("Email or Mobile is invalid.");
                 $("#withotp_container input").addClass("validator_error");
-                
+
             }
         }
     });

@@ -246,6 +246,7 @@ body {
     display: flex;
     padding: 10px;
     border-radius: 4px;
+    box-shadow: 0px 0px 1px 0px #0000002e;
 }
 
 .chat-ctrl-cont {

@@ -251,7 +251,8 @@
                 depCtrl.reloadWithParam(curCtrl);
             }
             else if (depCtrl.ObjType === "PowerSelect") {
-                depCtrl.initializer.reloadWithParams(curCtrl);
+                if (!this.FO.isInitiallyPopulating)
+                    depCtrl.initializer.reloadWithParams(curCtrl);
             }
         }.bind(this));
     }.bind(this);
@@ -619,6 +620,6 @@
         //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
         //    EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         //else
-            EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+        EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
     };
 };

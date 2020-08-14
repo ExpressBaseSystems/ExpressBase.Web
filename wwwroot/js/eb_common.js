@@ -1249,3 +1249,27 @@ function EbIsValidURL(str) {
 
 //    return res;
 //}
+var waitForFinalEvent = (function () {
+    var timers = {};
+    return function (callback, ms, uniqueId) {
+        if (!uniqueId) {
+            uniqueId = "Don't call this twice without a uniqueId";
+        }
+        if (timers[uniqueId]) {
+            clearTimeout(timers[uniqueId]);
+        }
+        timers[uniqueId] = setTimeout(callback, ms);
+    };
+})();
+
+//function getScrollParent(node) {
+//    if (node == null) {
+//        return null;
+//    }
+
+//    if (node.scrollHeight > node.clientHeight) {
+//        return node;
+//    } else {
+//        return getScrollParent(node.parentNode);
+//    }
+//}

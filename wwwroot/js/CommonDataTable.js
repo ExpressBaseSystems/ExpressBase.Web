@@ -698,10 +698,11 @@
         serialObj.data = (this.Source === "datagrid") ? null : this.EbObject.Columns.$values.length;
         serialObj.searchable = false;
         serialObj.orderable = false;
-        serialObj.bVisible = true;
+        serialObj.bVisible = this.showSerialColumn;
         serialObj.name = "serial";
         serialObj.title = "#";
         serialObj.Type = 11;
+        serialObj.sWidth = "10px";
         if (this.IsTree) {
             serialObj.bVisible = false;
         }

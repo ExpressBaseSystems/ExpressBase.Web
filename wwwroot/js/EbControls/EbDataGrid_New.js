@@ -71,8 +71,8 @@
         o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
-        if (this.ctrl.LeftFixedColumnCount > 0) o.LeftFixedColumn = this.ctrl.LeftFixedColumnCount;
-        if (this.ctrl.RightFixedColumnCount > 0) o.RightFixedColumn = this.ctrl.RightFixedColumnCount;
+        if (this.ctrl.LFxdColCount > 0) o.LeftFixedColumn = this.ctrl.LFxdColCount;
+        if (this.ctrl.RFxdColCount > 0) o.RightFixedColumn = this.ctrl.RFxdColCount;
         //o.hiddenFieldName = this.vmName;
         o.keyFocusCallbackFn = this.dataTableTdKeyFocus.bind(this);
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  

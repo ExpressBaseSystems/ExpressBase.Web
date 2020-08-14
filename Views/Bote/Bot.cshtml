@@ -61,8 +61,8 @@
 @*BUNDLES*@
 <environment exclude="Development">
     <script type="text/javascript" src="~/js/Bundles/eb-botpage.bundle.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Bundles/eb-bot_minimal.bundle.js" defer asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Bundles/eb-bot_secondary.bundle.js" defer asp-append-version=@bApnd></script>
+    @*<script type="text/javascript" src="~/js/Bundles/eb-bot_minimal.bundle.js" defer asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Bundles/eb-bot_secondary.bundle.js" defer asp-append-version=@bApnd></script>*@
 </environment>
 
 <environment include="Development">
@@ -77,7 +77,7 @@
     <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/Common/offline.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
-
+    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
     @*jith*@
     <script type="text/javascript" src="~/js/FormBuilder/bootstrap-confirmation.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
@@ -95,7 +95,6 @@
 <environment include="Development">
     @*eb-bot_minimal.bundle*@
     <script type="text/javascript" src="~/js/moment.min.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/vue@2.1.10.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
@@ -180,7 +179,6 @@
 </script>
 
 <script>
-    alert();
     var solid = "@ViewBag.tid";
     var appid = "@ViewBag.appid";
     var settings = @Html.Raw(ViewBag.settings);
@@ -205,20 +203,39 @@
             else if (bgtyp === 'bg_grdnt') {
               html.style.setProperty("--eb-bot-bg-color", settings.BotProp.Bg_value);
             } else if (bgtyp === 'bg_img') {
-               html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
+               // html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
+                html.style.setProperty("--eb-bot-bg-color", `url("/botExt/images/original/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
             }
         }
-        
         chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.cid','@ViewBag.ServiceUrl', ServerEventUrl);
+
         //$.get("https://ipinfo.io", function (response) {
         //    chatBotObj.userDtls.ip = response.ip;
         //    chatBotObj.userDtls.browser = getBrowserName();
         //}, "jsonp");
-  
+        if ('@ViewBag.Env' != 'Development') {
+             (function include_Script() {
+                var s = document.createElement('script');
+                s.src = '/js/Bundles/eb-bot_minimal.bundle.js';
+                s.type = 'text/javascript';
+                s.async = false;
+                document.head.appendChild(s);
+                console.log("loaded - eb-bot_minimal.bundle.js");
+
+                var s1 = document.createElement('script');
+                s1.src = '/js/Bundles/eb-bot_secondary.bundle.js';
+                s1.type = 'text/javascript';
+                s1.async = false;
+                document.head.appendChild(s1);
+                console.log("loaded - eb-bot_secondary.bundle.js");
+            })();        
+
+        }
+       
+    });
 
 
 
 
 </script>
-
 

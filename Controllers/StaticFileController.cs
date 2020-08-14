@@ -84,7 +84,40 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("/eb/images/{quality}/{refid}")]
+        [HttpGet("/botExt/images/{quality}/{refid}")]
+		public IActionResult GetBotExtImages(string refid, string quality)
+		{
+			DownloadFileResponse dfs = null;
+
+			ActionResult resp = new EmptyResult();
+
+			try
+			{
+				this.FileClient.Timeout = new TimeSpan(0, 5, 0);
+
+				dfs = this.FileClient.Get<DownloadFileResponse>
+						(new DownloadBotExtImgRequest
+						{
+							ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(refid.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(quality) },
+
+							RefId = refid.Split(CharConstants.DOT)[0],
+							SolnId=ViewBag.SolutionId
+						});
+				if (dfs.StreamWrapper != null)
+				{
+					dfs.StreamWrapper.Memorystream.Position = 0;
+					resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(refid));
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Exception: " + e.Message.ToString());
+			}
+			return resp;
+		}
+
+
+		[HttpGet("/eb/images/{quality}/{refid}")]
         public IActionResult GetInfraImages(string refid, string quality)
         {
             DownloadFileResponse dfs = null;

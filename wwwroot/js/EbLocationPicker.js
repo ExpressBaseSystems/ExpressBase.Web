@@ -96,8 +96,8 @@
         }
         else {
             if ($(LocModId).is(":visible")) {
-                if ($('#loc-search').val() != "") {
-                    this.setParentPath();
+                if ($('#loc-search').val() !== "") {
+                    this.setParentPath($('#loc-search').val());
                 }
             }
         }
@@ -369,19 +369,21 @@
                         y.removeClass("sim-icon-r").addClass("sim-icon-d");
                     }
                 }
-               
+
             }
         }
-    }
+    };
 
-    this.setParentPath = function () {
-        for (i = 0; i < this.Locations.length; i++) {
-            p = this.getParentPath(this.Locations[i].LocId);
-            let k = $(".loc_switchModal_box .locs_bdy li[data-id=" + this.Locations[i].LocId + "]").find('a')[0];
-            $(k).prepend(`<span>${p}</span>`);
+    this.setParentPath = function (val) {
+        let temoloc = this.Locations.filter(qq => qq.LongName.toLowerCase().indexOf(val) >= 0 || qq.ShortName.toLowerCase().indexOf(val) >= 0);
+        if (temoloc.length <= 100) {
+            for (i = 0; i < temoloc.length; i++) {
+                p = this.getParentPath(temoloc[i].LocId);
+                let k = $(".loc_switchModal_box .locs_bdy li[data-id=" + temoloc[i].LocId + "]").find('a')[0];
+                $(k).prepend(`<span>${p}</span>`);
+            }
         }
-
-    }
+    };
 
     this.confirmLocFn = function () {
         if (this.prev_loc != this.CurrentLoc) {

@@ -283,6 +283,11 @@
         let val = $(e.target).val().toLowerCase();
         $(container + " .locs_bdy").empty();
         this.Tempdata = JSON.parse(JSON.stringify(this.data.filter(qq => qq.name.toLowerCase().indexOf(val) >= 0)));
+        this.Tempdata.sort(function (a, b) {
+            var textA = a.name.toUpperCase().trim();
+            var textB = b.name.toUpperCase().trim();
+            return textA.localeCompare(textB);
+        });
         this.drawLocsTree();
         this.setDefault();
     };

@@ -177,6 +177,7 @@
       "wwwroot/js/EbServerEvents/ServerEvents.js",
       "wwwroot/js/Common/offline.js",
       "wwwroot/js/eb_common.js",
+      "wwwroot/js/jquery.datetimepicker.min.js",
       "wwwroot/js/FormBuilder/bootstrap-confirmation.min.js",
       "wwwroot/js/jQuery Mask Plugin v1.14.9.js",
       "wwwroot/js/EbControls/EbProgressBar.js",
@@ -184,7 +185,7 @@
       "wwwroot/js/EbControls/EbPopBox.js",
 
       "wwwroot/js/FormBuilder/bootstrap-toggle.min.js",
-      "wwwroot/js/FormBuilder/jquery.scrollTo.js",
+      "wwwroot/js/FormBuilder/jquery.scrollTo.js"
     ],
     "minify": {
       "enabled": false
@@ -194,7 +195,6 @@
     "outputFileName": "wwwroot/js/Bundles/eb-bot_minimal.bundle.js",
     "inputFiles": [
       "wwwroot/js/moment.min.js",
-      "wwwroot/js/jquery.datetimepicker.min.js",
       "wwwroot/js/vue-select.js",
       "wwwroot/js/vue@2.1.10.min.js",
       "wwwroot/js/Eb_UtilityFuncions.js",

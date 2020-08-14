@@ -249,16 +249,17 @@
         display: inline-flex;
     }
 
-    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {
-        background: transparent;
-        border: none;
+    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {        
         color: gray;
         pointer-events: none;
     }
 
-    [ctype="DataGrid_New"] [mode="edit"] .edit-rowc {
-        background: transparent;
+    [ctype="DataGrid_New"] .edit-rowc, [ctype="DataGrid_New"] .del-rowc, [ctype="DataGrid_New"] .check-rowc, [ctype="DataGrid_New"] .cancel-rowc {
+        background: white;
         border: none;
+    }
+
+    [ctype="DataGrid_New"] [mode="edit"] .edit-rowc {
         color: #7171ff;
     }
         [ctype="DataGrid_New"] [mode="edit"] .edit-rowc:hover {
@@ -266,8 +267,6 @@
         }
 
     [ctype="DataGrid_New"] [mode="edit"] .del-rowc {
-        background: transparent;
-        border: none;
         color: #f55d5d;
     }
         [ctype="DataGrid_New"] [mode="edit"] .del-rowc:hover {
@@ -275,8 +274,6 @@
         }
 
     [ctype="DataGrid_New"] .check-rowc {
-        background: transparent;
-        border: none;
         color: #019a01;
     }
         [ctype="DataGrid_New"] .check-rowc:hover {
@@ -284,8 +281,6 @@
         }
 
     [ctype="DataGrid_New"] .cancel-rowc {
-        background: transparent;
-        border: none;
         color: #f55d5d;
     }
         [ctype="DataGrid_New"] .cancel-rowc:hover {
@@ -295,6 +290,12 @@
     [ctype="DataGrid_New"] table.dataTable{
         margin-top: 0px !important;
     }
+
+    [ctype="DataGrid_New"] .DTFC_LeftHeadWrapper, [ctype="DataGrid_New"] .DTFC_RightHeadWrapper, [ctype="DataGrid_New"] .dataTables_scrollHead {
+        padding-bottom: 0px !important;
+        margin-bottom: 0px !important;
+    }
+    
 
     /*DataGridNew related styles - End*/
 </style>

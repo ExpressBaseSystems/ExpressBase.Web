@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
             {
                 query = @"
                     SELECT
-		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, l.status, l.id   
+		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, (CASE WHEN l.status='success' THEN '' ELSE l.result END) as result, l.status, l.id   
 	                    FROM
 		                    eb_sms_logs l, eb_users u 
 	                    WHERE
@@ -65,7 +65,7 @@ namespace ExpressBase.Web.Controllers
             {
                 query = @"
                     SELECT
-		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, l.status, l.id   
+		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, (CASE WHEN l.status='success' THEN '' ELSE l.result END) as result, l.status, l.id   
 	                    FROM
 		                    eb_sms_logs l, eb_users u 
 	                    WHERE
@@ -81,7 +81,7 @@ namespace ExpressBase.Web.Controllers
             _params.Add(new Param { Name = "from_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Fdate.ToString()});
             _params.Add(new Param { Name = "to_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Tdate.ToString() });
             
-            string[] arrayy = new string[] { "From", "To", "Message", "Executed By", "Executed At", "Status", "id" };
+            string[] arrayy = new string[] { "From", "To", "Message", "Executed By", "Executed At","Response", "Status", "id" };
             DVColumnCollection DVColumnCollection = GetColumnsForSMSLog(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true };
             
@@ -108,10 +108,12 @@ namespace ExpressBase.Web.Controllers
                         _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "Executed At")
                         _col = new DVDateTimeColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.Date, bVisible = true, Format = DateFormat.DateTime };
-                    if (str == "Status")
+                    if (str == "Response")
                         _col = new DVStringColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                    if (str == "Status")
+                        _col = new DVStringColumn { Data = 6, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "id")
-                        _col = new DVNumericColumn { Data = 6, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };                   
+                        _col = new DVNumericColumn { Data = 7, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };                   
                    
                     _col.Name = str;
                     _col.RenderType = _col.Type;
@@ -122,7 +124,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 
                 var str1 = String.Format("T0.status == \"{0}\"", "failure");
-                Columns.Add(new DVButtonColumn { Data = 7, Name = "Action", sTitle = "Action", ButtonText = "Retry", ButtonClassName= "retryBtn", bVisible = true, IsCustomColumn = true, RenderCondition = new AdvancedCondition { Value = new EbScript { Code = str1, Lang = ScriptingLanguage.CSharp } } });
+                Columns.Add(new DVButtonColumn { Data = 8, Name = "Action", sTitle = "Action", ButtonText = "Retry", ButtonClassName= "retryBtn", bVisible = true, IsCustomColumn = true, RenderCondition = new AdvancedCondition { Value = new EbScript { Code = str1, Lang = ScriptingLanguage.CSharp } } });
             }
             catch (Exception e)
             {

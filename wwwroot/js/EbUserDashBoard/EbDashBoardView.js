@@ -18,7 +18,7 @@
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     this.Procs = {};
     this.Rowdata = {};
-    this.loader = $(".dash-loader");
+    this.loader = $("#eb_common_loader");
 
     this.GridStackInit = function () {
         grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
@@ -63,7 +63,7 @@
                 this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "ProgressGauge");
             }
         }.bind(this));
-       
+
     };
 
     this.GridStackInit();
@@ -71,7 +71,7 @@
 
     //Filter Dialogue
     this.getColumns = function () {
-        this.loader.show();
+        this.loader.EbLoader("show");
         $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
     };
 
@@ -80,7 +80,7 @@
         $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
                                     <i class="fa fa-filter" aria-expanded="false"></i>
                                 </button>`);
-        this.loader.hide();
+        this.loader.EbLoader("hide");
         $('.db-user-filter').remove();
         $("#dashbord-user-view").prepend(`
                 <div id='paramdiv-Cont${this.TabNum}' class='db-user-filter'>
@@ -121,10 +121,11 @@
 
     this.toggleFilter = function () {
         $(".db-user-filter").toggle('drop', { direction: 'right' }, 150);
-    }
+    };
+
     this.CloseParamDiv = function () {
         $(".db-user-filter").hide(300);
-    }
+    };
 
     this.placefiltervalues = function () {
         $.each(getFlatControls(this.filterDialog.FormObj), function (i, obj) {
@@ -134,7 +135,7 @@
                 obj.setValue(val);
             }
         }.bind(this));
-    }
+    };
 
 
     this.DashboardDropdown = function () {
@@ -182,6 +183,7 @@
     }
 
     this.init = function () {
+        this.loader.EbLoader("show");
         $(".grid-stack").removeAttr("style");
         if (this.DashBoardList) {
             this.DashboardDropdown();
@@ -190,9 +192,9 @@
             ebcontext.header.setName(this.EbObject.DisplayName);
         }
         else {
-            this.loader.hide();
+            this.loader.EbLoader("hide");
         }
-        $(`[Value=${this.EbObject.RefId}]`).attr("disabled", true);
+        if (this.EbObject.RefId != "") $(`[Value=${this.EbObject.RefId}]`).attr("disabled", true);
         $("title").empty().append(this.EbObject.DisplayName);
         //
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
@@ -206,7 +208,7 @@
             this.getColumns();
         }
         else {
-            this.loader.hide();
+            this.loader.EbLoader("hide");
         }
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
         $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
@@ -227,7 +229,7 @@
             id = e.target.parentElement.parentElement.id;
             href = $(`#${id} .link-target`).attr('href');
         }
-        if (href != undefined ){
+        if (href != undefined) {
             window.open(href, '_blank');
         }
     };
@@ -259,7 +261,7 @@
                 let refid = this.EbObject.Tiles.$values[i].RefId;
                 Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                 if (refid !== "") {
-                    this.loader.show();
+                    this.loader.EbLoader("show");
                     $(`[data-id = ${this.CurrentTile}]`).css("display", "block");
                     $.ajax(
                         {
@@ -267,7 +269,7 @@
                             type: 'POST',
                             data: { refid: refid },
                             error: function (request, error) {
-                                this.loader.hide();
+                                this.loader.EbLoader("hide");
                                 EbPopBox("show", {
                                     Message: "Failed to get data from DataSourse",
                                     ButtonStyle: {
@@ -284,7 +286,7 @@
                         });
                 }
                 else {
-                    this.loader.show();
+                    this.loader.EbLoader("show");
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
                     $(`#${t_id}`).attr("eb-type", "gauge");
@@ -316,7 +318,7 @@
                         else if (eb_type === "SpeedoMeter") {
                             if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
                                 let xx = SpeedoMeterWrapper(obj, { isEdit: false });
-                                this.loader.hide();
+                                this.loader.EbLoader("hide");
                             }
                             this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "speedometer");
                         }
@@ -326,7 +328,7 @@
                             }
                             $(`#${object.EbSid}`).css("max-width", $(`#${object.EbSid}`).height() + 10 + "px");
                             this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "ProgressGauge");
-                        }                          
+                        }
                     }.bind(this));
                     Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                     $.each(currentobj.LabelColl.$values, function (i, obj) {
@@ -343,7 +345,7 @@
                     }.bind(this));
                     if (currentobj.LinksColl) {
                         $.each(currentobj.LinksColl.$values, function (i, obj) {
-                            this.loader.show();
+                            this.loader.EbLoader("show");
                             var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
                             this.makeElement(eb_type, obj);
                             let object = this.Procs[this.currentId];
@@ -356,7 +358,7 @@
                             this.labelstyleApply(this.CurrentTile);
                             LinkStyle(obj, this.CurrentTile, this.TabNum);
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
-                            this.loader.hide();
+                            this.loader.EbLoader("hide");
                             $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
                             //$(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
                         }.bind(this));
@@ -365,22 +367,22 @@
                         this.labelstyleApply(this.CurrentTile);
                     }
                     this.RedrwFnHelper(this.CurrentTile);
-                    this.loader.hide();
+                    this.loader.EbLoader("hide");
                 }
-               
+
             }
             //this.addTilecontext()
-            this.Tilecontext();
+            //this.Tilecontext();
         }
         else {
             //this.GridStackInit
         }
         grid.movable('.grid-stack-item', false);
         grid.resizable('.grid-stack-item', false);
-        this.loader.hide();
-    }
+        this.loader.EbLoader("hide");
+    };
 
- 
+
 
     this.labelstyleApply = function (tileId) {
         $(`[data-id="${tileId}"]`).parent().css("background", "transparent");
@@ -393,7 +395,7 @@
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
-        
+
         if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null) {
             let abc = getObjByval(this.Procs[component].Columns.$values, "name", column);
             if (abc !== undefined) {
@@ -471,21 +473,21 @@
     };
 
     this.ComponentDrop = function (target, o) {
-       
+
     };
 
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
         this.Rowdata[obj.EbSid + "Row"] = null;
         //this.GetFilterValuesForDataSource();
-        this.loader.show();
+        this.loader.EbLoader("show");
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
             data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
             error: function (request, error) {
-                this.loader.hide();
+                this.loader.EbLoader("hide");
                 EbPopBox("show", {
                     Message: "Failed to get data from DataSourse",
                     ButtonStyle: {
@@ -503,10 +505,11 @@
                 //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
-                this.loader.hide();
+                this.loader.EbLoader("hide");
             }.bind(this)
         });
     };
+
     this.DisplayColumns = function (obj) {
         $(`#${obj.EbSid} .eb-ctrl-label`).empty().append(obj.Name);
         $(`#Inner_Cont_${obj.EbSid}`).empty();
@@ -519,7 +522,7 @@
 
 
     this.Ajax4fetchVisualization = function (refid) {
-        this.loader.show();
+        this.loader.EbLoader("show");
         if (refid !== "") {
             $.ajax(
                 {
@@ -527,7 +530,7 @@
                     type: 'POST',
                     data: { refid: refid },
                     error: function (request, error) {
-                        this.loader.hide();
+                        this.loader.EbLoader("hide");
                         EbPopBox("show", {
                             Message: "Failed to get data from DataSourse",
                             ButtonStyle: {
@@ -543,7 +546,7 @@
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
-    }
+    };
 
 
     this.TileOptions = function (e) {
@@ -576,7 +579,7 @@
             let Refid = this.TileCollection[tileid].RefId;
             this.Ajax4fetchVisualization(Refid);
         }
-    }
+    };
 
 
     this.Tilecontext = function () {
@@ -589,7 +592,7 @@
         //        },
         //    }
         //});
-    }
+    };
 
     this.TileRefidChangesuccess = function (id, data) {
         if (this.filtervalues.length === 0 || this.filtervalues === undefined) {
@@ -652,8 +655,8 @@
             $(`[data-id="${id}"]`).parent().removeAttr("style");
             $(`#${id}`).addClass("box-shadow-style");
         }
-        this.loader.hide();
-    }
+        this.loader.EbLoader("hide");
+    };
 
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");
@@ -681,7 +684,7 @@
 
 
     this.GetFilterValues = function () {
-        this.loader.show();
+        this.loader.EbLoader("show");
         this.filtervalues = [];
         //if (this.stickBtn) { this.stickBtn.minimise(); }
 
@@ -701,8 +704,9 @@
             //this.DrawTiles();
             grid.removeAll();
             setTimeout(this.DrawTiles.bind(this), 500);
-            setTimeout(this.loader.show, 1);
+            setTimeout(this.loader.EbLoader("show"), 1);
         }
+        this.CloseParamDiv();
     };
     this.init();
 }

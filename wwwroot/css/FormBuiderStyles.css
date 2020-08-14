@@ -1804,6 +1804,11 @@ input.locinp {
     background-color: #F5F5F5;
 }
 
+[ctype="DataGrid_New"] > .ctrl-cover > .grid-cont > div > .dataTables_wrapper > .DTFC_ScrollWrapper > .dataTables_scroll > div.dataTables_scrollBody::-webkit-scrollbar {
+    width: 17px;
+    height: 17px;
+}
+
 .webform-cont ::-webkit-scrollbar-thumb {
     background-color: #ddd;
 }

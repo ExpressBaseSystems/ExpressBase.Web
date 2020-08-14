@@ -25,7 +25,7 @@ namespace ExpressBase.Web.Controllers
     public class SMSLogController : EbBaseIntCommonController
     {
         public SMSLogController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
-       
+
         public IActionResult SMSLogConsole()
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
@@ -75,16 +75,16 @@ namespace ExpressBase.Web.Controllers
 	                    ORDER BY 
 		                    l.id DESC, status ASC;";
             }
-            
-            DateTime Fdate = DateTime.ParseExact(FromDate,"dd-MM-yyyy", null);
+
+            DateTime Fdate = DateTime.ParseExact(FromDate, "dd-MM-yyyy", null);
             DateTime Tdate = DateTime.ParseExact(ToDate, "dd-MM-yyyy", null);
-            _params.Add(new Param { Name = "from_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Fdate.ToString()});
+            _params.Add(new Param { Name = "from_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Fdate.ToString() });
             _params.Add(new Param { Name = "to_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Tdate.ToString() });
-            
-            string[] arrayy = new string[] { "From", "To", "Message", "Executed By", "Executed At","Response", "Status", "id" };
+
+            string[] arrayy = new string[] { "From", "To", "Message", "Executed By", "Executed At", "Response", "Status", "id" };
             DVColumnCollection DVColumnCollection = GetColumnsForSMSLog(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true };
-            
+
             resp.Visualization = EbSerializers.Json_Serialize(Visualization);
             var x = EbSerializers.Json_Serialize(resp);
             return resp;
@@ -107,14 +107,14 @@ namespace ExpressBase.Web.Controllers
                     if (str == "Executed By")
                         _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "Executed At")
-                        _col = new DVDateTimeColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.Date, bVisible = true, Format = DateFormat.DateTime };
+                        _col = new DVDateTimeColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.Date, bVisible = true, Format = DateFormat.DateTime, ConvretToUsersTimeZone = true };
                     if (str == "Response")
                         _col = new DVStringColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "Status")
                         _col = new DVStringColumn { Data = 6, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "id")
-                        _col = new DVNumericColumn { Data = 7, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };                   
-                   
+                        _col = new DVNumericColumn { Data = 7, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+
                     _col.Name = str;
                     _col.RenderType = _col.Type;
                     _col.ClassName = "tdheight";
@@ -122,9 +122,9 @@ namespace ExpressBase.Web.Controllers
                     _col.Align = Align.Left;
                     Columns.Add(_col);
                 }
-                
+
                 var str1 = String.Format("T0.status == \"{0}\"", "failure");
-                Columns.Add(new DVButtonColumn { Data = 8, Name = "Action", sTitle = "Action", ButtonText = "Retry", ButtonClassName= "retryBtn", bVisible = true, IsCustomColumn = true, RenderCondition = new AdvancedCondition { Value = new EbScript { Code = str1, Lang = ScriptingLanguage.CSharp } } });
+                Columns.Add(new DVButtonColumn { Data = 8, Name = "Action", sTitle = "Action", ButtonText = "Retry", ButtonClassName = "retryBtn", bVisible = true, IsCustomColumn = true, RenderCondition = new AdvancedCondition { Value = new EbScript { Code = str1, Lang = ScriptingLanguage.CSharp } } });
             }
             catch (Exception e)
             {
@@ -139,7 +139,7 @@ namespace ExpressBase.Web.Controllers
             RetrySmsResponse response = null;
             if (Id > 0 && RefId != null && RefId != String.Empty)
                 response = this.ServiceClient.Post(new RetrySmsRequest { SmslogId = Id, RefId = RefId });
-            return response;            
+            return response;
         }
     }
 }

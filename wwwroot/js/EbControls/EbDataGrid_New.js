@@ -12,6 +12,7 @@
     this.mode_s = options.Mode.isView ? "view" : "edit";
     this.addRowCounter = -1;
     this.curRowDataModelCopy = null;
+    this.isFreshCurRow = false;
     this.dtDataRowIdIndex = null;// const
     this.$dtFooterDD = null;
 
@@ -28,6 +29,7 @@
         this.makeHtmlSuitable();//temporary
         this.initBasicDataTable();
         this.defineRowCount();
+        this.initContextMenu();
 
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".addrow-btn", this.addRowBtn_click.bind(this));
         this.$TableCont.on("click", ".edit-rowc", this.editRow_click.bind(this));
@@ -100,7 +102,6 @@
 
     this.dataTableInitCallback = function () {
         this.$dtFooterDD = this.$TableCont.find(".addedbyeb .footerDD");
-
         let width = 0;
         $.each(this.ctrl.Controls.$values, function (i, ctrl) {
             if (!ctrl.IsDisable)
@@ -153,7 +154,82 @@
         this.dtDataRowIdIndex = this.ctrl.Controls.$values.length;
     };
 
-    this.addRowBtn_click = function () {
+    this.initContextMenu = function () {
+        $.contextMenu({
+            selector: `[eb-form="true"][mode="edit"] #tbl_${this.ctrl.EbSid_CtxId} tr[role="row"], [eb-form="true"][mode="new"] #tbl_${this.ctrl.EbSid_CtxId} tr[role="row"]`,
+            autoHide: true,
+            build: function ($trigger, e) {
+                let items = {};
+                let dtTr = this.datatable.Api.row($trigger);
+                let rowid = dtTr.data()[this.dtDataRowIdIndex];
+                if (this.curRowDataModelCopy === null || this.curRowDataModelCopy.RowId !== rowid) {
+                    items["editRow"] = this.getContextMenuItem("editRow");
+                    items["insertRowAbove"] = this.getContextMenuItem("insertRowAbove");
+                    items["insertRowBelow"] = this.getContextMenuItem("insertRowBelow");
+                    items["deleteRow"] = this.getContextMenuItem("deleteRow");
+                }
+                else {
+                    items["confirmRow"] = this.getContextMenuItem("confirmRow");
+                    items["insertRowAbove"] = this.getContextMenuItem("insertRowAbove");
+                    items["insertRowBelow"] = this.getContextMenuItem("insertRowBelow");
+                    if (this.isFreshCurRow)
+                        items["deleteRow"] = this.getContextMenuItem("deleteRow");
+                    else
+                        items["cancelRow"] = this.getContextMenuItem("cancelRow");
+                }
+                return { items: items };
+            }.bind(this)
+        });
+    };
+
+    this.getContextMenuItem = function (name) {
+        if (name === "deleteRow")
+            return {
+                name: "Delete row", icon: "fa-trash",
+                callback: function (key, opt, event) {
+                    this.delRow_click(null, opt.$trigger);
+                }.bind(this)
+            };
+        else if (name === "insertRowAbove")
+            return {
+                name: "Insert row above", icon: "fa-angle-up",
+                callback: function (key, opt, event) {
+                    this.addRowBtn_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else if (name === "insertRowBelow")
+            return {
+                name: "Insert row below", icon: "fa-angle-down",
+                callback: function (key, opt, event) {
+                    this.addRowBtn_click(null, opt.$trigger.index() + 1);
+                }.bind(this)
+            };
+        else if (name === "editRow")
+            return {
+                name: "Edit row", icon: "fa-pencil",
+                callback: function (key, opt, event) {
+                    this.editRow_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else if (name === "confirmRow")
+            return {
+                name: "Confirm row", icon: "fa-check",
+                callback: function (key, opt, event) {
+                    this.checkRow_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else if (name === "cancelRow")
+            return {
+                name: "Cancel editing", icon: "fa-times",
+                callback: function (key, opt, event) {
+                    this.cancelRow_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else
+            return {};
+    };
+
+    this.addRowBtn_click = function (e, indx) {
         if (this.curRowDataModelCopy !== null) {
             let idx = this.getDtTrKeyByRowId(this.datatable.Api.rows().data(), this.curRowDataModelCopy.RowId);
             let curTr = this.datatable.Api.row(idx);
@@ -164,15 +240,18 @@
                 return;
             }
         }
-        this.setupCurTrCtrls(true, null, 0, (this.ctrl.AscendingOrder ? -1 : 0));
+        if (indx === undefined)
+            indx = this.ctrl.AscendingOrder ? -1 : 0;
+        this.setupCurTrCtrls(true, null, 0, indx);
     };
 
     this.getFormVals = function () {
         return getValsFromForm(this.formObject_Full);
     };
 
-    this.editRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
+    this.editRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
         let rowid = dtTr.data()[this.dtDataRowIdIndex];
         if (this.curRowDataModelCopy !== null) {
@@ -190,15 +269,17 @@
         this.setupCurTrCtrls(false, dtTr, parseInt(rowid));
     };
 
-    this.checkRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
+    this.checkRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
         if (this.canFinalizeTrEdit(dtTr))
             this.finalizeTrEdit(dtTr);
     };
 
-    this.delRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
+    this.delRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
         let rowid = parseInt(dtTr.data()[this.dtDataRowIdIndex]);
 
@@ -217,8 +298,9 @@
         dtTr.remove().draw(false);
     };
 
-    this.cancelRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
+    this.cancelRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
         let rowid = dtTr.data()[this.dtDataRowIdIndex];
         let Row = this.getObjByValue(this.dataMODEL, "RowId", rowid);
@@ -312,10 +394,14 @@
             curRow[j] = this.DGColCtrls[j].html;
         }
         curRow[this.dtDataRowIdIndex] = Row.RowId;
-        if (isNew)
+        if (isNew) {
             curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('firstEditing');
-        else
+            this.isFreshCurRow = true;
+        }
+        else {
             curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('editing');
+            this.isFreshCurRow = false;
+        }
         if (isNew) {
             this.datatable.Api.row.add(curRow);
             this.InsertDtTrToIndex(insB4Index, Row);

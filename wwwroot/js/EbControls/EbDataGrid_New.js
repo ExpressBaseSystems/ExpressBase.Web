@@ -71,8 +71,8 @@
         o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
-        //o.LeftFixedColumn = 1;
-        //o.RightFixedColumn = 1;
+        if (this.ctrl.LeftFixedColumnCount > 0) o.LeftFixedColumn = this.ctrl.LeftFixedColumnCount;
+        if (this.ctrl.RightFixedColumnCount > 0) o.RightFixedColumn = this.ctrl.RightFixedColumnCount;
         //o.hiddenFieldName = this.vmName;
         o.keyFocusCallbackFn = this.dataTableTdKeyFocus.bind(this);
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  
@@ -100,6 +100,15 @@
 
     this.dataTableInitCallback = function () {
         this.$dtFooterDD = this.$TableCont.find(".addedbyeb .footerDD");
+
+        let width = 0;
+        $.each(this.ctrl.Controls.$values, function (i, ctrl) {
+            if (!ctrl.IsDisable)
+                width += ctrl.Width;
+        });
+        if (width < 100)
+            width = 100;
+        this.$Table.css("width", width + "%");
     };
 
     this.canUpdateFooter = function () {
@@ -193,9 +202,9 @@
         let dtTr = this.datatable.Api.row($tr);
         let rowid = parseInt(dtTr.data()[this.dtDataRowIdIndex]);
 
-        if (this.curRowDataModelCopy && this.curRowDataModelCopy.RowId === rowid) 
+        if (this.curRowDataModelCopy && this.curRowDataModelCopy.RowId === rowid)
             this.finalizeTrEdit(dtTr);
-        
+
         if (rowid > 0) {
             let Row = this.getObjByValue(this.dataMODEL, "RowId", rowid);
             Row.IsDelete = true;
@@ -309,7 +318,7 @@
             curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('editing');
         if (isNew) {
             this.datatable.Api.row.add(curRow);
-            this.InsertDtTrToIndex(insB4Index, Row); 
+            this.InsertDtTrToIndex(insB4Index, Row);
             this.datatable.Api.draw(false);
 
             let $scrollBody = $(this.datatable.Api.table().node()).parent();
@@ -453,9 +462,11 @@
             getValue: function () { return this.DataVals.Value; },
             setValue: function (p1) { this.DataVals.Value = p1; }
         };
-        
+
         if (DGColCtrlObj.inpCtrl.ObjType === 'PowerSelect') {
-            ObjModelColumn['getColumn'] = function () { console.error('Not implemented'); return {}; };
+            ObjModelColumn['getColumn'] = function (colName) {
+                return this.DGColCtrlObj.inpCtrl.MultiSelect ? this.DataVals[colName] : this.DataVals[colName][0];
+            };
         }
         return ObjModelColumn;
     };
@@ -534,7 +545,7 @@
         this.dataMODEL.push(Row);
     }.bind(this);
 
-    this.ctrl.addRowAtIndex = function (rowObj, index){
+    this.ctrl.addRowAtIndex = function (rowObj, index) {
         let Row = JSON.parse(JSON.stringify(this.rowDataModel_empty));
         Row.RowId = this.addRowCounter--;
         let curRow = {};
@@ -627,7 +638,7 @@ const EbDataGrid_New_Extended = function () {
         if (!inpCtrl.___DoNotUpdateDataVals) {
             if (inpCtrl.DataVals) {
                 inpCtrl.DataVals.Value = inpCtrl.getValueFromDOM();
-                if (inpCtrl.ObjType === "PowerSelect") {                    
+                if (inpCtrl.ObjType === "PowerSelect") {
                     if (!inpCtrl.DataVals.Value || inpCtrl.RenderAsSimpleSelect) {
                         inpCtrl.DataVals.D = {};
                         inpCtrl.DataVals.R = {};

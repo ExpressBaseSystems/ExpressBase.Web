@@ -1523,6 +1523,7 @@ const WebFormRender = function (option) {
                 return dialogText;
             }
         }.bind(this);
+        $('[data-toggle="tooltip"]').tooltip('destroy').tooltip();
 
         console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
     };

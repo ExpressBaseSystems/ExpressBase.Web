@@ -24,7 +24,8 @@
                 delete ctrl.__oldValues;
 
             if (ctrl.ObjType === "PowerSelect" && ctrl.IsDataFromApi) {
-                ctrl.Url = ctrl.Url.substring(0, ctrl.Url.indexOf('?'));
+                if (ctrl.Url.includes('?'))
+                    ctrl.Url = ctrl.Url.substring(0, ctrl.Url.indexOf('?'));
             }
         }
 

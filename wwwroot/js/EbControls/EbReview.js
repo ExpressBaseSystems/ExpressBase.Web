@@ -203,6 +203,7 @@
     //};
 
     this.drawCommentBox = function () {
+        this.$container.find(".rc-msg-box").empty();
         for (let i = 0; i < this.DataMODEL.length; i++) {
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
@@ -223,14 +224,17 @@
                     html = html.replace("@dpstyle@", `style='background-image:${url}'`)
                         .replace("@uname@", userName);
 
-                    if (row.RowId === 0)
-                        this.$curDP = $(html).find(".fs-dp").clone();
+                    if (row.RowId === 0) {
+                        let $curDP = $(html).find(".fs-dp").clone();
+                        this.$container.find(".rc-inp-cont .rc-action-dp-wrap").empty().prepend($curDP);
+                    }
                 }
                 if (column.Name === "action_unique_id") {
                     if (row.RowId === 0) {
 
-                        this.$container.find(".rc-action-dd-wrap").append(stage.DDHtml);
+                        this.$container.find(".rc-action-dd-wrap").empty().append(stage.DDHtml);
                         this.$container.find(`.rc-action-dd-wrap .selectpicker`).selectpicker('val', column.Value);
+                        this.$container.find(`.rc-inp-cont .rc-txtarea`).val('');
                         //this.curDDHtml = stage.DDHtml;
                         //this.curDDval = column.Value;
                     }
@@ -370,7 +374,7 @@
                 return;
 
             this.$container.find(".message[rowid='0']").hide();
-            this.$container.find(".rc-inp-cont").show().find(".rc-action-dp-wrap").prepend(this.$curDP);
+            this.$container.find(".rc-inp-cont").show();
         }
 
         if (!this.CurStageDATA || !this.hasPermission)

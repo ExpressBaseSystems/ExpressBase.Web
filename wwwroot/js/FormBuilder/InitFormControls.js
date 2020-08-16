@@ -944,6 +944,12 @@
     };
 
     this.SysLocation = function (ctrl) {
+        if (!ebcontext.locations.CurrentLocObj)
+            return;
+        if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
+            ctrl.DataVals.Value = ebcontext.locations.CurrentLocObj.LocId;
+            ctrl.DataVals.F = ebcontext.locations.CurrentLocObj.ShortName;
+        }
         if (!(ctrl.IsDisable)) {
             $.each(ebcontext.locations.Locations, function (intex, obj) {
                 $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);

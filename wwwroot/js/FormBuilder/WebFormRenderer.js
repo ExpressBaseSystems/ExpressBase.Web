@@ -1236,20 +1236,28 @@ const WebFormRender = function (option) {
     this.LocationInit = function () {
         if (ebcontext.locations.Listener) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
-                if (this.rowId > 0 && _renderMode !== 4) {
-                    EbDialog("show", {
-                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            this.startNewMode();
-                        }.bind(this)
-                    });
+                if (this.rowId > 0) {
+                    if (_renderMode !== 4) {
+                        EbDialog("show", {
+                            Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                            Buttons: {
+                                "Ok": {
+                                    Background: "green",
+                                    Align: "right",
+                                    FontColor: "white;"
+                                }
+                            },
+                            CallBack: function (name) {
+                                this.startNewMode();
+                            }.bind(this)
+                        });
+                    }
+                }
+                else {
+                    let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
+                    $.each(sysLocCtrls, function (i, ctrl) {
+                        ctrl.setValue(o.LocId);
+                    }.bind(this));
                 }
             }.bind(this);
         }

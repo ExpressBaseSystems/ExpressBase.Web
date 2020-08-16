@@ -751,7 +751,9 @@ eb-disable {
     background: #fff;
     border-top: 1px solid #eee;
     height: 60px;
+    margin: auto;
     box-shadow: 0px -3px 5px 0px #aeaeae29;
+    margin-bottom: 0;
 }
 
 .dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {

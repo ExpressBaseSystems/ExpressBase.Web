@@ -106,7 +106,6 @@
     this.setLocation = function (e) {
         store.clearAll();
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
-        this.showSwitcher();
         ebcontext.menu.reset();
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         if (this.PrevLocation !== this.CurrentLoc) {
@@ -115,8 +114,9 @@
             this.prev_loc_name = this.CurrentLocObj.LongName;
             this.prev_loc = this.CurrentLoc;
         }
-        let s = this.getParentPath(this.CurrentLoc);        
-        $('#current_loc').text(s); s
+        let s = this.getParentPath(this.CurrentLoc);
+        this.showSwitcher();
+        $('#current_loc').text(s);
     };
 
     this.Keypress_selectLoc = function (e) {
@@ -134,7 +134,7 @@
                 else {
                     this.confirmLocFn();
                 }
-                
+
             }
             else if (keycode == '27') {
                 if ($("#confirmLoc").is(":visible")) {
@@ -144,7 +144,7 @@
                     $(LocModId).hide();
                     $(".loc_switchModal_fade").hide();
                 }
-                
+
             }
             else if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
@@ -203,29 +203,29 @@
                     y = y.find("ul:first").find("li:first")
                 }
                 else
-                if (y.next('li').length) {
-                    y = y.next('li');
-                }
-                else {
-                    let c = 0;
-                    while ((c == 0) && (y.closest('ul.show').parent("li").length == 1)) {
-                        if (y.closest('ul.show').parent("li").next("li").length) {
-                            y = y.closest('ul.show').parent("li").next("li");
-                            c = 1;
-                        }
-                        else {
-                            y = y.closest('ul.show').parent("li");
-                        }
-
+                    if (y.next('li').length) {
+                        y = y.next('li');
                     }
-                }
+                    else {
+                        let c = 0;
+                        while ((c == 0) && (y.closest('ul.show').parent("li").length == 1)) {
+                            if (y.closest('ul.show').parent("li").next("li").length) {
+                                y = y.closest('ul.show').parent("li").next("li");
+                                c = 1;
+                            }
+                            else {
+                                y = y.closest('ul.show').parent("li");
+                            }
+
+                        }
+                    }
                 y = y.find("a:first")
                 y.trigger('click');
                 y.focus();
 
             }
 
-           
+
 
         }
 
@@ -233,46 +233,43 @@
 
 
     this.showSwitcher = function (e) {
-  
+
 
         $(LocModId).toggle("fast", function () {
-            if ($(this).is(":visible")) {
-               // $(".html-root").style("overflow", "hidden", "important");
+            if ($(LocModId).is(":visible")) {
+                // $(".html-root").style("overflow", "hidden", "important");
                 $(".loc_switchModal_fade").show();
+
+
+                $("#loc-search").val("");
+                $(".locs_bdy").empty();
+
+                this.CurrentLoc = this.getCurrent();
+                this.PrevLocation = this.CurrentLoc;
+                this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+                this.prev_loc_name = this.CurrentLocObj.LongName;
+                this.prev_loc = this.CurrentLoc;
+                this.Tempdata = this.loc_data;
+                this.drawLocsTree();
+                this.setDefault();
+
+                this.setIcon(this.CurrentLoc);
+                var scrollTo = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
+                scrollTo.trigger('click');
+                var container = $('.locs_bdy');
+                // //$(".locs_bdy").scrollTo(scrollTo);
+                container.animate({
+                    scrollTop: scrollTo.offset().top - container.offset().top +
+                        container.scrollTop() - 100
+                }, 'medium');
+                scrollTo.focus();
             }
             else {
-              //  $(".html-root").style("overflow", "visible", "important");
+                //  $(".html-root").style("overflow", "visible", "important");
                 $(".loc_switchModal_fade").hide();
             }
 
-        });
-
-
-        if ($(LocModId).is(":visible")) {
-           
-            $("#loc-search").val("");
-            $(".locs_bdy").empty();
-
-            this.CurrentLoc = this.getCurrent();
-            this.PrevLocation = this.CurrentLoc;
-            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-            this.prev_loc_name = this.CurrentLocObj.LongName;
-            this.prev_loc = this.CurrentLoc;
-            this.Tempdata = this.loc_data;
-            this.drawLocsTree();
-            this.setDefault();
-
-            this.setIcon(this.CurrentLoc);
-            var scrollTo = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
-            scrollTo.trigger('click');
-            var container = $('.locs_bdy');
-            //$(".locs_bdy").scrollTo(scrollTo);
-            container.animate({
-                scrollTop: scrollTo.offset().top - container.offset().top +
-                    container.scrollTop() - 100
-            },'medium');
-            scrollTo.focus();
-        }
+        }.bind(this));
     };
 
     this.close_LocSwitch = function () {
@@ -332,11 +329,17 @@
             x.push(l);
             while (p > 0) {
                 idx = this.Locations.findIndex(x => x.LocId === p);
-                l = this.Locations[idx].LocId;
-                p = this.Locations[idx].ParentId;
-                n = this.Locations[idx].LongName;
-                t.push(n);
-                x.push(l);
+                if (idx > 0) {
+                    l = this.Locations[idx].LocId;
+                    p = this.Locations[idx].ParentId;
+                    n = this.Locations[idx].LongName;
+                    t.push(n);
+                    x.push(l);
+                }
+                else{
+                    break;
+                }
+
             }
             t.reverse();
             x.reverse();
@@ -413,10 +416,10 @@
             $('#confirmLoc').modal('show');
             $("#loc_confirm").off("click").on("click", this.confirm_LocSwitch.bind(this));
         }
-        else if (this.prev_loc == this.CurrentLoc){
+        else if (this.prev_loc == this.CurrentLoc) {
             this.confirm_LocSwitch();
         }
-        
+
     }.bind(this);
 
     this.confirm_LocSwitch = function () {

@@ -216,7 +216,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 				{
 					settings.CssContent = FetchCss(settings.CssContent);
 				}
-				FileContent = ReplaceCssContent(settings.CssContent);
+				FileContent = ReplaceCssContent(settings.CssContent, args[1]);
 				//byte[] data = System.Convert.FromBase64String(settings.CssContent);
 				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
 
@@ -268,7 +268,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 
 		}
-		public string ReplaceCssContent( Dictionary<string, string> CssObj)
+		public string ReplaceCssContent( Dictionary<string, string> CssObj,string appid)
 		{
 
 			string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
@@ -287,7 +287,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 
 			}
-
+			Cssfile = Cssfile.Replace("----APPID----", appid);
 			return Cssfile;
 		}
 		//[HttpGet("/apitest")]

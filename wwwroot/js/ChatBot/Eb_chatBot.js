@@ -1000,7 +1000,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 }
             }
             else {
-                if ((this.curCtrl.ObjType === "TVcontrol") || (this.curCtrl.ObjType === "Locations") || (this.curCtrl.ObjType === "Video") || (this.curCtrl.ObjType === "Image")) {
+                if ((this.curCtrl.ObjType === "TVcontrol") || (this.curCtrl.ObjType === "Locations") || (this.curCtrl.ObjType === "Video") || (this.curCtrl.ObjType === "Image") || (this.curCtrl.ObjType === "PdfControl")) {
                     $ctrlCont = $(this.wrapIn_chat_ctrl_readonly(controlHTML));
                 }
             }
@@ -1545,7 +1545,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.setStartOver = function () {
-        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="display:none" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };

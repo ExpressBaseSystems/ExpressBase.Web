@@ -94,7 +94,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.clmAdjst = 0;
     this.onDataLoadCallBackFns = [];
 
-    this.scrollableContSelectors = ['.tab-content', '.Dg_body'];
+    this.scrollableContSelectors = options.scrollableContSelectors;
 
     ctrl._DisplayMembers = [];
     ctrl._ValueMembers = [];
@@ -1357,7 +1357,7 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.bindHideDDonScroll = function () {
-        this.lastScrollOffset = 0;
+        //this.lastScrollOffset = 0;
         for (let i = 0; i < this.scrollableContSelectors.length; i++) {
             let contSelc = this.scrollableContSelectors[i];
             let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);

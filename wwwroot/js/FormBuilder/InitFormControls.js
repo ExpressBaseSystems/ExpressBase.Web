@@ -1638,12 +1638,29 @@
         EbPopBox("show", { Message: "Message sent", Title: "Success" });
     };
 
-    ////phonecontrol ends 
-    //this.PdfControl = function (ctrl) {
-    //    let k = ctrl;
-    //    let m = `<iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
-    //    $("#" + ctrl.EbSid).append(m);
-    //}
+    //phonecontrol ends 
+
+    this.PdfControl = function (ctrl) {
+
+        //let m = `<iframe id="iFramePdf" style="width: 40%; height: 40vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
+        //$("#cont_" + ctrl.EbSid).append(m);
+
+        if (this.Renderer.rendererName === "WebForm") {
+
+        }
+        if (ctrl.PdfRefid.$values.length > 0) {
+            $(`#icon_${ctrl.EbSid}`).click(function () {
+                if (confirm(`Download ${ctrl.PdfRefid.$values[0].ObjRefId}.pdf?`)) {
+                    let link = document.createElement('a');
+                    link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
+                    link.href = `/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}`;
+                    link.click();
+                }
+            }.bind(this));
+        }
+       
+       
+    }
 };
 
 

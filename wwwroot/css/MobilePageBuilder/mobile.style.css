@@ -249,11 +249,11 @@
 }
 
 .drop-hover-layout {
-    border-color: #6969d4 !important;
+    border: 2px solid #0046bb !important;
 }
 
 .drop-hover-td {
-    border-color: #6969d4 !important;
+    border: 2px solid #0046bb !important;
 }
 
 .eb_mob_select {
@@ -406,6 +406,7 @@
         justify-content: center;
         align-items: center;
     }
+    
 /*visualization*/
 .eb_mob_vis_container .eb_mob_container_inner {
     /*display: flex;
@@ -567,3 +568,24 @@
 
     }
 /**/
+
+/*Button control*/
+.eb_mob_vis_container [eb-type="EbMobileButton"] {
+    margin: 0;
+    display: flex;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    left: 0;
+    font-size:12px;
+}
+    .eb_mob_vis_container [eb-type="EbMobileButton"] .eb_btnctrlhtml {
+        height: 100%;
+    }
+    .eb_mob_vis_container [eb-type="EbMobileButton"] .eb_btnctrlhtml button {
+        height: 100%;
+    }

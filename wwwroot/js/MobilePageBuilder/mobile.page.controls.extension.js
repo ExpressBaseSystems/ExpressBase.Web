@@ -265,3 +265,18 @@ function PgHelperMobile(g) {
         }
     };
 }
+
+
+function FilterToolBox(ctype, tab) {
+
+    let $div = `#eb_mobpage_toolbox${tab}`;
+
+    if (ctype) {
+        $(`${$div} .eb_mobpage_tbxcategory`).hide();
+        $(`${$div} [tool-types*="${ctype}"]`).show();
+        $(`${$div} [tool-types="*"]`).show();
+    }
+    else {
+        $(`${$div} .eb_mobpage_tbxcategory`).show();
+    }
+}

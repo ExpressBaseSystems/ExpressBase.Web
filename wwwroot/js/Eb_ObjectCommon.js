@@ -688,7 +688,7 @@
     this.SingleSave = function () {
         $('#obj_changelog').text("Single Save");
         this.Commit({}, function (data) {
-            if (this.Current_obj.Status !== "Live") {
+            if (this.Current_obj.Status === "") {
                 $.post("../Eb_Object/ChangeStatus",
                     {
                         _refid: data.refid,

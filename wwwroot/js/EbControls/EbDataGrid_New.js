@@ -71,6 +71,7 @@
         o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
+        o.AllowSorting = false;
         if (this.ctrl.LFxdColCount > 0) o.LeftFixedColumn = this.ctrl.LFxdColCount;
         if (this.ctrl.RFxdColCount > 0) o.RightFixedColumn = this.ctrl.RFxdColCount;
         //o.hiddenFieldName = this.vmName;

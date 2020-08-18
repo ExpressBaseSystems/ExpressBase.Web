@@ -101,6 +101,7 @@
     this.RowHeight = Option.RowHeight || "15";
     this.ObjectLinks = Option.ObjectLinks || [];
     this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
+    this.AllowSorting = typeof Option.AllowSorting !== 'undefined' ? Option.AllowSorting : true;
 
 
     if (this.Source === "EbDataTable") {
@@ -770,7 +771,10 @@
             lengthMenu: "_MENU_ / Page",
         };
         o.columns = this.rowgroupCols.concat(this.extraCol, this.EbObject.Columns.$values);
-        o.order = [];
+        if(this.AllowSorting)
+            o.order = [];
+        else
+            o.ordering = false;
         o.deferRender = true;
         //o.filter = true;
         //o.select = this.AllowSelect;
@@ -2683,7 +2687,7 @@
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
-        this.Api.on('key-focus', function (e, datatable, cell) {
+        this.Api.off('key-focus').on('key-focus', function (e, datatable, cell) {
             datatable.rows().deselect();
             let trindex = cell.index().row;
             datatable.row(trindex).select();

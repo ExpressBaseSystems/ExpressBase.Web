@@ -1,4 +1,5 @@
 ﻿var InitControls = function (option) {
+    this.scrollableContSelectors = ['.tab-content', '.Dg_body'];
 
     if (option) {
         this.Renderer = option;
@@ -311,43 +312,63 @@
         });
 
         $input.selectpicker({
-            dropupAuto: false
-        });
+            //dropupAuto: false,
+            container: "body [eb-root-obj-container]:first",
+            virtualScroll: 500,
+            size: ctrl.DropdownHeight === 0? 'auto' : (ctrl.DropdownHeight / 23),
+            //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
+        }); 
 
 
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
-        $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
-        $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
+        //$DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
+        //$DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
 
-        //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            if (this.Renderer.rendererName !== "Bot") {
-                let $el = $(e.target);
-                if ($el[0].isOutside !== true) {
-                    let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                    let initDDwidth = $drpdwn.width();
-                    let ofsetval = $drpdwn.offset();
-                    let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
-                    let $div_detached = $drpdwn.detach();
-                    let $form_div = $(e.target).closest("[eb-root-obj-container]");
-                    $div_detached.appendTo($form_div).wrap($divclone);
-                    $div_detached.width(initDDwidth);
-                    $el[0].isOutside = true;
-                    $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
-                    $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+            let $el = $(e.target);
 
+            if ($el.attr("is-scrollbind") !== 'true') {
+                for (let i = 0; i < this.scrollableContSelectors.length; i++) {
+                    let contSelc = this.scrollableContSelectors[i];
+                    let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
+                    $ctrlCont.parents(contSelc).scroll(function (event) {
+                        if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
+                            $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
+                    }.bind(this));
                 }
-                //to set position of dropdrown just below selectpicker btn
-                else {
-                    let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                    let ddOfset = ($(e.target)).offsetParent().offset();
-                    let tgHght = ($(e.target)).offsetParent().height();
-                    $outdrpdwn.parent().addClass('open');
-                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
-                    $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"), { offset: ($outdrpdwn.children("[role='listbox']").height() / -2) + 11.5 });
-                }
+                $el.attr("is-scrollbind", 'true');
             }
         }.bind(this));
+
+        ////code review..... to set dropdown on body
+        //$("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+        //    if (this.Renderer.rendererName !== "Bot") {
+        //        let $el = $(e.target);
+        //        if ($el[0].isOutside !== true) {
+        //            let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+        //            let initDDwidth = $drpdwn.width();
+        //            let ofsetval = $drpdwn.offset();
+        //            let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
+        //            let $div_detached = $drpdwn.detach();
+        //            let $form_div = $(e.target).closest("[eb-root-obj-container]");
+        //            $div_detached.appendTo($form_div).wrap($divclone);
+        //            $div_detached.width(initDDwidth);
+        //            $el[0].isOutside = true;
+        //            $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+        //            $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+
+        //        }
+        //        //to set position of dropdrown just below selectpicker btn
+        //        else {
+        //            let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+        //            let ddOfset = ($(e.target)).offsetParent().offset();
+        //            let tgHght = ($(e.target)).offsetParent().height();
+        //            $outdrpdwn.parent().addClass('open');
+        //            $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
+        //            $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"), { offset: ($outdrpdwn.children("[role='listbox']").height() / -2) + 11.5 });
+        //        }
+        //    }
+        //}.bind(this));
         if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
     };
@@ -815,7 +836,9 @@
 
         let EbCombo = new EbPowerSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
-            rendererName: this.Renderer.rendererName
+            rendererName: this.Renderer.rendererName,
+            renderer: this.Renderer,
+            scrollableContSelectors: this.scrollableContSelectors
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
@@ -943,6 +966,12 @@
     };
 
     this.SysLocation = function (ctrl) {
+        if (!ebcontext.locations.CurrentLocObj)
+            return;
+        if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
+            ctrl.DataVals.Value = ebcontext.locations.CurrentLocObj.LocId;
+            ctrl.DataVals.F = ebcontext.locations.CurrentLocObj.ShortName;
+        }
         if (!(ctrl.IsDisable)) {
             $.each(ebcontext.locations.Locations, function (intex, obj) {
                 $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
@@ -1334,7 +1363,13 @@
                 ratedFill: ctrl.RatingColor
             });
             if (ctrl.RemoveBorder == true) {
-                $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').css({ 'border': 'none' });
+                if (this.Renderer.rendererName === "Bot") {
+                    $(`#cont_${ctrl.EbSid}`).css({ 'border': 'none' });
+                }
+                else {
+                    $(`#${ctrl.EbSid}Wraper`).css({ 'border': 'none' });
+                }
+
             }
         }
 
@@ -1603,8 +1638,29 @@
         EbPopBox("show", { Message: "Message sent", Title: "Success" });
     };
 
-    ////phonecontrol ends 
+    //phonecontrol ends 
 
+    this.PdfControl = function (ctrl) {
+
+        //let m = `<iframe id="iFramePdf" style="width: 40%; height: 40vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
+        //$("#cont_" + ctrl.EbSid).append(m);
+
+        if (this.Renderer.rendererName === "WebForm") {
+
+        }
+        if (ctrl.PdfRefid.$values.length > 0) {
+            $(`#icon_${ctrl.EbSid}`).click(function () {
+                if (confirm(`Download ${ctrl.PdfRefid.$values[0].ObjRefId}.pdf?`)) {
+                    let link = document.createElement('a');
+                    link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
+                    link.href = `/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}`;
+                    link.click();
+                }
+            }.bind(this));
+        }
+       
+       
+    }
 };
 
 

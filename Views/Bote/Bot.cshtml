@@ -61,16 +61,13 @@
 @*BUNDLES*@
 <environment exclude="Development">
     <script type="text/javascript" src="~/js/Bundles/eb-botpage.bundle.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Bundles/eb-bot_secondary.bundle.js" defer asp-append-version=@bApnd></script>
+    @*<script type="text/javascript" src="~/js/Bundles/eb-bot_minimal.bundle.js" defer asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Bundles/eb-bot_secondary.bundle.js" defer asp-append-version=@bApnd></script>*@
 </environment>
 
 <environment include="Development">
+    @*/eb-botpage.bundle*@
 
-    <script type="text/javascript" src="~/js/moment.min.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/EbControls/EbPowerSelect.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js" asp-append-version=@bApnd></script>
 
@@ -80,18 +77,33 @@
     <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/Common/offline.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
-
+    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
     @*jith*@
     <script type="text/javascript" src="~/js/FormBuilder/bootstrap-confirmation.min.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/FormBuilder/EbSurveyRender.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
-    <script type="text/javascript" src="~/js/FormBuilder/Bootstrap-select.v1.12.2.js"></script>
-    <script type="text/javascript" src="~/js/slick.min.js"></script>
-    <script type="text/javascript" src="~/js/FormBuilder/locationpicker.jquery.min.js" asp-append-version=@bApnd></script>
+
 
     <script src="~/js/EbControls/EbProgressBar.js" type="text/javascript" asp-append-version=@bApnd></script>
     <script src="~/js/EbControls/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>
     <script src="~/js/EbControls/EbPopBox.js" type="text/javascript" asp-append-version=@bApnd></script>
+
+
+    <script type="text/javascript" src="~/js/FormBuilder/bootstrap-toggle.min.js"></script>
+    <script type="text/javascript" src="~/js/FormBuilder/jquery.scrollTo.js" asp-append-version=@bApnd></script>
+</environment>
+
+<environment include="Development">
+    @*eb-bot_minimal.bundle*@
+    <script type="text/javascript" src="~/js/moment.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/vue@2.1.10.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbControls/EbPowerSelect.js" asp-append-version=@bApnd></script>
+
+    <script type="text/javascript" src="~/js/FormBuilder/EbSurveyRender.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/Bootstrap-select.v1.12.2.js"></script>
+    <script type="text/javascript" src="~/js/slick.min.js"></script>
+    <script type="text/javascript" src="~/js/FormBuilder/locationpicker.jquery.min.js" asp-append-version=@bApnd></script>
 
     <script src="~/js/FormBuilder/EbCardRender.js" type="text/javascript" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>
@@ -100,14 +112,13 @@
     <script type="text/javascript" src="~/js/EbControls/EbSimpleFileUploader.js"></script>
     <script type="text/javascript" src="~/js/yearpicker.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/splitWindow.js"></script>
-    <script type="text/javascript" src="~/js/FormBuilder/bootstrap-toggle.min.js"></script>
-    <script type="text/javascript" src="~/js/FormBuilder/jquery.scrollTo.js" asp-append-version=@bApnd></script>
-    @*nithin*@
+
     <script src="~/js/FormBuilder/MeetingPicker.js"></script>
 
 </environment>
 
 <environment include="Development">
+    @*eb-bot_secondary.bundle*@
     <script type="text/javascript" src="~/js/FormBuilder/vue.js" defer asp-append-version=@bApnd></script>
 
     <script type="text/javascript" src="~/js/EbDataTable.js" defer asp-append-version=@bApnd></script>
@@ -126,35 +137,35 @@
 
     <script src="~/js/EbControls/EbPhoneControl.js" type="text/javascript" defer asp-append-version=@bApnd></script> @*varghese*@
 </environment>
-    <script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places' defer></script>
-    @*<script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>*@
+<script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places' defer></script>
+@*<script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>*@
 
+
+<script>
+    var t1 = performance.now();
+    console.log("bot link loading took " + (t1 - t0) + " milliseconds.");
+</script>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0px;
+        background: var(--eb-bot-bg-color,#ffffff);
+        font-family: var(--bot_fontfamily,Open Sans);
+        font-size: var(--bot_fontsize,14px);
+    }
+</style>
+
+@{
+    EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.BotForm);
 
     <script>
-        var t1 = performance.now();
-        console.log("bot link loading took " + (t1 - t0) + " milliseconds.");
-    </script>
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0px;
-            background: var(--eb-bot-bg-color,#ffffff);
-            font-family: var(--bot_fontfamily,Open Sans);
-            font-size: var(--bot_fontsize,14px);
-        }
-    </style>
-
-    @{
-        EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.BotForm);
-
-        <script>
         @Html.Raw(_toolBox.AllMetas);
         @Html.Raw(_toolBox.EbObjectTypes);
-        </script>
-    }
+    </script>
+}
 
-    <script>
+<script>
     @Html.Raw(ViewBag.ControlOperations);
         window.ebcontext = {
             sid: "@ViewBag.tid",
@@ -165,9 +176,9 @@
             //setup:new Setup(),
             env:'@ViewBag.Env'
         }
-    </script>
+</script>
 
-    <script>
+<script>
     var solid = "@ViewBag.tid";
     var appid = "@ViewBag.appid";
     var settings = @Html.Raw(ViewBag.settings);
@@ -192,20 +203,39 @@
             else if (bgtyp === 'bg_grdnt') {
               html.style.setProperty("--eb-bot-bg-color", settings.BotProp.Bg_value);
             } else if (bgtyp === 'bg_img') {
-               html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
+               // html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
+                html.style.setProperty("--eb-bot-bg-color", `url("/botExt/images/original/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
             }
         }
         chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.cid','@ViewBag.ServiceUrl', ServerEventUrl);
+
         //$.get("https://ipinfo.io", function (response) {
         //    chatBotObj.userDtls.ip = response.ip;
         //    chatBotObj.userDtls.browser = getBrowserName();
         //}, "jsonp");
+        if ('@ViewBag.Env' != 'Development') {
+             (function include_Script() {
+                var s = document.createElement('script');
+                s.src = '/js/Bundles/eb-bot_minimal.bundle.js';
+                s.type = 'text/javascript';
+                s.async = false;
+                document.head.appendChild(s);
+                console.log("loaded - eb-bot_minimal.bundle.js");
 
+                var s1 = document.createElement('script');
+                s1.src = '/js/Bundles/eb-bot_secondary.bundle.js';
+                s1.type = 'text/javascript';
+                s1.async = false;
+                document.head.appendChild(s1);
+                console.log("loaded - eb-bot_secondary.bundle.js");
+            })();        
+
+        }
+       
     });
 
 
 
 
-    </script>
-
+</script>
 

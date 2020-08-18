@@ -199,6 +199,12 @@ var DashBoardWrapper = function (options) {
     };
 
     this.AppendFD = function (result) {
+        $(".form-group #filter-dg").remove();
+        $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+        this.FilterBtn = $("#filter-dg");
+        this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
         $('.param-div-cont').remove();
         this.loader.hide();
         $("#dashbord-view").prepend(`
@@ -213,32 +219,36 @@ var DashBoardWrapper = function (options) {
                 `);
 
         $('#paramdiv' + this.TabNum).append(result);
-        $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
+        $('#close_paramdiv' + this.TabNum).off('click').on('click', this.FilterToggle.bind(this));
         $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
+        this.FilterDiv = $(".param-div-cont");
         if (typeof FilterDialog !== "undefined") {
             $(".param-div-cont").show();
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".param-div-cont"),
-                $extCont: $(".param-div-cont"),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                style: { top: "230px" }
-            });
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: $(".param-div-cont"),
+            //    $extCont: $(".param-div-cont"),
+            //    icon: "fa-filter",
+            //    dir: "left",
+            //    label: "Parameters",
+            //    style: { top: "230px" }
+            //});
             this.filterDialog = FilterDialog;
             $("#btnGo").trigger("click");
         }
         else {
-            $(".param-div-cont").hide();
+            this.FilterDiv.hide();
             this.filterDialog = null;
         }
         this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
 
     };
 
-    this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+    this.FilterToggle = function () {
+        this.FilterDiv.toggle('drop', { direction: 'right' }, 150);
     };
+    //this.CloseParamDiv = function () {
+    //    this.stickBtn.minimise();
+    //};
 
     //Toolbox
     this.AppendToolBox = function () {
@@ -684,7 +694,9 @@ var DashBoardWrapper = function (options) {
         $(`#${abc}`).toggle(100);
 
     };
-
+    this.togglePG = function () {
+        this.PropertyDiv.toggle('drop', { direction: 'right' }, 150);
+    };
     this.init = function () {
         $(".dash-loader").show();
         this.AppendToolBox();
@@ -695,6 +707,11 @@ var DashBoardWrapper = function (options) {
         }
         else
             this.edit = true;
+
+        $(".form-group #ppt-grid").remove();
+        $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
             wc: this.Wc,
@@ -704,11 +721,18 @@ var DashBoardWrapper = function (options) {
         });
         this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
+        this.propGrid.stickBtn.hide();
+        this.PropertyDiv = $("#ppt-dash");
+        $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+        $("#ppt-dash .pull-right.pgpin").remove();
+        $("#ppt-dash .pgHead").append(`<div class="icon-cont  pull-right" id="prop-close"><i class="fa fa-times" aria-hidden="true"></i></div>`);
+        $("#prop-close").off("click").on("click", this.togglePG.bind(this));
+
         commonO.Current_obj = this.EbObject;
-        this.propGrid.ClosePG();
+        this.PropertyDiv.hide();
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
             $('.db-user-filter').remove();
-            if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            if (this.FilterBtn) this.FilterBtn.remove();
             grid.removeAll();
             this.DrawTiles();
         }
@@ -1071,7 +1095,7 @@ var DashBoardWrapper = function (options) {
             }
             else {
                 $('.param-div-cont').remove();
-                if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+                if (this.FilterBtn)this.FilterBtn.remove();
             }
         }
         if (obj.$type.indexOf("EbDataObject") > -1 && pname === "DataSource") {
@@ -1211,22 +1235,22 @@ var DashBoardWrapper = function (options) {
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
-            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
-            let height = $(`#${id}`).height();
-            let opts = {
-                parentDiv: '#' + id + '_UserCtrl',
-                refId: obj.RefId,
-                params: this.filtervalues,
-                height: height
-            }
-            new EbUserCtrlHelper(opts);
-            $(`[data-id="${id}"]`).parent().css("background", "transparent");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).empty();
-            $(`#${id}`).addClass("user-control-tile-opt");
-            $(`#${id} .i-opt-obj`).hide();
-            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+            //$(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
+            //let height = $(`#${id}`).height();
+            //let opts = {
+            //    parentDiv: '#' + id + '_UserCtrl',
+            //    refId: obj.RefId,
+            //    params: this.filtervalues,
+            //    height: height
+            //}
+            ////new EbUserCtrlHelper(opts);
+            //$(`[data-id="${id}"]`).parent().css("background", "transparent");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`#${id} .db-title`).empty();
+            //$(`#${id}`).addClass("user-control-tile-opt");
+            //$(`#${id} .i-opt-obj`).hide();
+            //$(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -1361,14 +1385,14 @@ var DashBoardWrapper = function (options) {
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+        if (this.FilterDiv) { this.FilterDiv.hide(); }
     };
 
 
     this.GetFilterValues = function () {
         this.loader.show();
         this.filtervalues = [];
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+        if (this.FilterDiv) { this.FilterDiv.hide(); }
 
         if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
@@ -1774,6 +1798,7 @@ var EbCommonDataTable = function (Option) {
             this.EbObject = dvGlobal.Current_obj;
             this.getColumnsSuccess();
         }
+        this.FDCont.css("left", "0");
     }.bind(this);
 
     this.GetFD = function () {
@@ -2134,13 +2159,21 @@ var EbCommonDataTable = function (Option) {
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
+        this.Api.off('key-focus').on('key-focus', this.DTKeyFocusCallback.bind(this));
+
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
+
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {
                     a = a.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(a))
+                        a = 0;
                 }
                 if (typeof b === 'string') {
                     b = b.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(b))
+                        b = 0;
                 }
 
                 return a + b;
@@ -2152,9 +2185,13 @@ var EbCommonDataTable = function (Option) {
             var sum = data.reduce(function (a, b) {
                 if (typeof a === 'string') {
                     a = a.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(a))
+                        a = 0;
                 }
                 if (typeof b === 'string') {
                     b = b.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(b))
+                        b = 0;
                 }
 
                 return (a * 1) + (b * 1); // cast values in-case they are strings
@@ -2899,7 +2936,7 @@ var EbCommonDataTable = function (Option) {
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -3362,10 +3399,17 @@ var EbCommonDataTable = function (Option) {
     this.selectCallbackFunc = function (e, dt, type, indexes) {
     };
 
+    this.DTKeyFocusCallback = function (e, datatable, cell, originalEvent) {
+        if (Option.keyFocusCallbackFn)
+            Option.keyFocusCallbackFn(e, datatable, cell, originalEvent);
+    };
+
     this.clickCallbackFunc = function (e) {
     };
 
     this.dblclickCallbackFunc = function (e) {
+        if (Option.fnDblclickCallback)
+            Option.fnDblclickCallback(e);
     };
 
     this.rowclick = function (e, dt, type, indexes) {
@@ -3896,7 +3940,7 @@ var EbCommonDataTable = function (Option) {
 
                 _ls = "<div class='input-group input-group-sm'>" +
                     "<div class='input-group-btn dropup'>" +
-                    "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
+                    "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
                     " <ul class='dropdown-menu'>" +
                     "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + "> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
                     "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
@@ -3913,38 +3957,49 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.summarize2 = function () {
-        var api = this.Api;
-        var tableId = this.tableId;
-        var scrollY = this.EbObject.scrollY;
-        var opScroll;
-        var ftrtxtScroll;
-        $.each(this.eb_agginfo, function (index, agginfo) {
-            if (agginfo.colname) {
-                opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+        let isUpdatable = true;
+        if (Option.fnCanUpdateFooter)
+            isUpdatable = Option.fnCanUpdateFooter();
+        if (isUpdatable) {
+            var api = this.Api;
+            var tableId = this.tableId;
+            var scrollY = this.EbObject.scrollY;
+            var opScroll;
+            var ftrtxtScroll;
+            $.each(this.eb_agginfo, function (index, agginfo) {
+                if (agginfo.colname) {
+                    opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                    ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                    ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                    ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                var col = api.column(agginfo.colname + ':name');
-                var summary_val = 0;
-
-                if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
-                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
-                if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
-                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                    var col = api.column(agginfo.colname + ':name');
+                    var summary_val = 0;
+                    if (opScroll === '∑' || opLF === '∑' || opRF === '∑') {
+                        if (this.Source === "datagrid")
+                            summary_val = col.data().sum().toFixed(agginfo.deci_val);
+                        else
+                            summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+                    }
+                    if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
+                        if (this.Source === "datagrid")
+                            summary_val = col.data().average().toFixed(agginfo.deci_val);
+                        else
+                            summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                    }
+                    if (opScroll !== "")
+                        $(ftrtxtScroll).val(summary_val);
+                    if (opLF !== "")
+                        $(ftrtxtLF).val(summary_val);
+                    if (opRF !== "")
+                        $(ftrtxtRF).val(summary_val);
                 }
-                if (opScroll !== "")
-                    $(ftrtxtScroll).val(summary_val);
-                if (opLF !== "")
-                    $(ftrtxtLF).val(summary_val);
-                if (opRF !== "")
-                    $(ftrtxtRF).val(summary_val);
-            }
-        }.bind(this));
+            }.bind(this));
+        }
     };
 
     this.createFilterRowHeader = function () {
@@ -4207,7 +4262,10 @@ var EbCommonDataTable = function (Option) {
             html: true,
             content: function (e, i) {
                 $(".popover").remove();
-                return atob($(this).attr("data-contents"));
+                //return atob($(this).attr("data-contents"));
+                return decodeURIComponent(atob($(this).attr("data-contents")).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
             },
         });
 
@@ -5501,20 +5559,28 @@ var EbCommonDataTable = function (Option) {
         $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
         var table = $(element).attr('data-table');
         var colum = $(element).attr('data-column');
-        var decip = $(element).attr('data-decip');
+        var decip =parseInt( $(element).attr('data-decip'));
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
-        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; });
+        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; })[0];
         ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
         if ($(ftrtxt).length === 0)
             ftrtxt = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
         if ($(ftrtxt).length === 0)
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
-        if (selValue === '∑')
-            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
-        else if (selValue === 'x̄')
-            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][1] : 0;
+        if (selValue === '∑') {
+            if (this.Source === "datagrid")
+                pageTotal = col.data().sum().toFixed(agginfo.deci_val);
+            else
+                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+        }
+        else if (selValue === 'x̄') {
+            if (this.Source === "datagrid")
+                pageTotal = col.data().average().toFixed(agginfo.deci_val);
+            else
+                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+        }
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();
@@ -7146,6 +7212,7 @@ let DashBoardViewWrapper = function (options) {
     };
 
     this.AppendFD = function (result) {
+        $(".form-group #filter-dg").remove();
         $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
                                     <i class="fa fa-filter" aria-expanded="false"></i>
                                 </button>`);
@@ -7189,7 +7256,7 @@ let DashBoardViewWrapper = function (options) {
     };
 
     this.toggleFilter = function () {
-        $(".db-user-filter").toggle(300);
+        $(".db-user-filter").toggle('drop', { direction: 'right' }, 150);
     }
     this.CloseParamDiv = function () {
         $(".db-user-filter").hide(300);
@@ -7266,6 +7333,7 @@ let DashBoardViewWrapper = function (options) {
         //
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
             $('.db-user-filter').remove();
+            $(".form-group #filter-dg").remove();
             //if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             grid.removeAll();
             this.DrawTiles();
@@ -7694,19 +7762,19 @@ let DashBoardViewWrapper = function (options) {
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
-            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
-            let opts = {
-                parentDiv: '#' + id + '_UserCtrl',
-                refId: obj.RefId
-            }
-            new EbUserCtrlHelper(opts);
-            $(`[data-id="${id}"]`).parent().css("background", "transparent");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).empty();
-            $(`#${id}`).addClass("user-control-tile-opt");
-            $(`#${id} .i-opt-obj`).hide();
-            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+            //$(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
+            //let opts = {
+            //    parentDiv: '#' + id + '_UserCtrl',
+            //    refId: obj.RefId
+            //}
+            ////new EbUserCtrlHelper(opts);
+            //$(`[data-id="${id}"]`).parent().css("background", "transparent");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`#${id} .db-title`).empty();
+            //$(`#${id}`).addClass("user-control-tile-opt");
+            //$(`#${id} .i-opt-obj`).hide();
+            //$(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -11177,6 +11245,19 @@ var mapView = function (option) {
             if (this.propGrid === null) {
                 this.CreatePg();
             }
+            else {
+                $(".form-group #ppt-grid").remove();
+                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
+                $(".stickBtn").hide();
+                this.PropertyDiv = $("#pp_inner");
+                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+                $("#pp_inner .pull-right.pgpin").remove();
+                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+            }
             this.InitParamWindow();
             if (this.Mode === BuilderMode.EDIT)
                 this.call2FD();
@@ -11196,6 +11277,10 @@ var mapView = function (option) {
         };
 
         this.CreatePg = function () {
+            $(".form-group #ppt-grid").remove();
+            $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
             this.propGrid = new Eb_PropertyGrid({
                 id: "pp_inner",
                 wc: "dc",
@@ -11205,8 +11290,17 @@ var mapView = function (option) {
             this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             commonO.Current_obj = this.EbObject;
             this.MapSwitch(this.EbObject, this.CurrentMapType);
+            $(".stickBtn").hide();
+            this.PropertyDiv = $("#pp_inner");
+            $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+            $("#pp_inner .pull-right.pgpin").remove();
+            $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+            $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
         };
-
+        this.togglePG = function () {
+            this.PropertyDiv.toggle('drop', { direction: 'right' }, 150);
+        };
         this.MapSwitch = function (obj, newVal) {
             if (this.CurrentMapType == 0) {
                 this.TempEbObject.Maptype = 0;
@@ -11234,16 +11328,22 @@ var mapView = function (option) {
             this.FDCont.hide();
 
             if (this.login === "dc") {
-                this.stickBtn = new EbStickButton({
-                    $wraper: this.FDCont,
-                    $extCont: this.FDCont,
-                    //$scope: $(subDivId),
-                    icon: "fa-filter",
-                    dir: "left",
-                    label: "Parameters",
-                    //btnTop: 42,
-                    style: { top: "112px" }
-                });
+                $(".form-group #filter-dg").remove();
+                $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+                this.FilterBtn = $("#filter-dg");
+                this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
+                //this.stickBtn = new EbStickButton({
+                //    $wraper: this.FDCont,
+                //    $extCont: this.FDCont,
+                //    //$scope: $(subDivId),
+                //    icon: "fa-filter",
+                //    dir: "left",
+                //    label: "Parameters",
+                //    //btnTop: 42,
+                //    style: { top: "112px" }
+                //});
             }
         };
 
@@ -11319,16 +11419,22 @@ var mapView = function (option) {
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
         if (this.login === "uc") {
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".dv-body"),
-                $extCont: this.FDCont,
-                $scope: $("#" + focusedId),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                //btnTop: 42,
-                style: { position: "absolute", top: "41px" }
-            });
+            $(".form-group #filter-dg").remove();
+            $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+            this.FilterBtn = $("#filter-dg");
+            this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: $(".dv-body"),
+            //    $extCont: this.FDCont,
+            //    $scope: $("#" + focusedId),
+            //    icon: "fa-filter",
+            //    dir: "left",
+            //    label: "Parameters",
+            //    //btnTop: 42,
+            //    style: { position: "absolute", top: "41px" }
+            //});
         }
 
         if (typeof commonO !== "undefined")
@@ -11340,10 +11446,12 @@ var mapView = function (option) {
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {
-                this.stickBtn.hide();
+                //this.stickBtn.hide();
+                this.FilterBtn.hide();
             }
             else {
-                dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                this.FilterBtn.hide();
             }
             $("#btnGo" + this.tabNum).trigger("click");
             $("#eb_common_loader").EbLoader("hide");
@@ -11362,10 +11470,15 @@ var mapView = function (option) {
         }
         $(subDivId).focus();
         this.PcFlag = false;
+        this.FDCont.css("right", "0");
     }.bind(this);
 
+    this.FilterToggle = function () {
+        $(".filterCont").toggle('drop', { direction: 'right' }, 150);
+    };
     this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+        //this.stickBtn.minimise();
+        this.FilterToggle();
     };
 
     this.Getdata = function () {
@@ -11377,11 +11490,16 @@ var mapView = function (option) {
         if (this.login === "uc") {
             this.collapseGraph();
         }
-        this.propGrid.ClosePG();
-        if (this.FD)
-            this.stickBtn.minimise();
-        else
-            this.stickBtn.hide();
+        //this.propGrid.ClosePG();
+        this.PropertyDiv.hide();
+        if (this.FD) {
+            this.FilterToggle();
+            //this.stickBtn.minimise();
+        }
+        else {
+            this.FilterBtn.hide();
+            //this.stickBtn.hide();
+        }
 
         filterChanged = false;
         if (this.MainData !== null && !this.isSecondTime) {

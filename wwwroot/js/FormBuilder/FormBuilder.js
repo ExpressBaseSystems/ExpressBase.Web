@@ -22,6 +22,11 @@
                 delete ctrl.__OSElist;
             if (ctrl.hasOwnProperty("__oldValues"))
                 delete ctrl.__oldValues;
+
+            if (ctrl.ObjType === "PowerSelect" && ctrl.IsDataFromApi) {
+                if (ctrl.Url.includes('?'))
+                    ctrl.Url = ctrl.Url.substring(0, ctrl.Url.indexOf('?'));
+            }
         }
 
         this.PGobj.getvaluesFromPG();

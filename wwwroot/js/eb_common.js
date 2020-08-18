@@ -1109,7 +1109,7 @@ function GetFontCss(obj, jqueryObj) {
         font.push(`font-size:${obj.Size}px ;`);
         font.push(`color:${obj.color} ;`);
         if (obj.FontName = 'Arapey') font.push(`font-family: "" ;`);
-        else  font.push(`font-family:${obj.FontName} ;`);
+        else font.push(`font-family:${obj.FontName} ;`);
         if (font.Underline) { font.push(`text-decoration: underline ;`); }
         if (font.Strikethrough) { font.push(`text-decoration: line-through ;`); }
         if (font.Caps) { font.push(`text-transform: uppercase;`); }
@@ -1121,8 +1121,8 @@ function GetFontCss(obj, jqueryObj) {
             jqueryObj.css(`font-size`, `${obj.Size}px`);
             jqueryObj.css(`color`, `${obj.color}`);
             if (obj.FontName = 'Arapey') jqueryObj.css(`font-family`, ``);
-            else 
-            jqueryObj.css(`font-family`, `${obj.FontName}`);
+            else
+                jqueryObj.css(`font-family`, `${obj.FontName}`);
             if (font.Underline) { jqueryObj.css(`text-decoration`, `underline`); }
             if (font.Strikethrough) { jqueryObj.css(`text-decoration`, `line-through`); }
             if (font.Caps) { jqueryObj.css(`text-transform`, `uppercase`); }
@@ -1249,3 +1249,62 @@ function EbIsValidURL(str) {
 
 //    return res;
 //}
+var waitForFinalEvent = (function () {
+    var timers = {};
+    return function (callback, ms, uniqueId) {
+        if (!uniqueId) {
+            uniqueId = "Don't call this twice without a uniqueId";
+        }
+        if (timers[uniqueId]) {
+            clearTimeout(timers[uniqueId]);
+        }
+        timers[uniqueId] = setTimeout(callback, ms);
+    };
+})();
+
+//function getScrollParent(node) {
+//    if (node == null) {
+//        return null;
+//    }
+
+//    if (node.scrollHeight > node.clientHeight) {
+//        return node;
+//    } else {
+//        return getScrollParent(node.parentNode);
+//    }
+//}
+
+function timeDifference(current, previous) {
+
+    var msPerMinute = 60 * 1000;
+    var msPerHour = msPerMinute * 60;
+    var msPerDay = msPerHour * 24;
+    var msPerMonth = msPerDay * 30;
+    var msPerYear = msPerDay * 365;
+
+    var elapsed = current - previous;
+
+    if (elapsed < msPerMinute) {
+        return Math.round(elapsed / 1000) + ' seconds ago';
+    }
+
+    else if (elapsed < msPerHour) {
+        return Math.round(elapsed / msPerMinute) + ' minutes ago';
+    }
+
+    else if (elapsed < msPerDay) {
+        return Math.round(elapsed / msPerHour) + ' hours ago';
+    }
+
+    else if (elapsed < msPerMonth) {
+        return Math.round(elapsed / msPerDay) + ' days ago';
+    }
+
+    else if (elapsed < msPerYear) {
+        return Math.round(elapsed / msPerMonth) + ' months ago';
+    }
+
+    else {
+        return Math.round(elapsed / msPerYear) + ' years ago';
+    }
+}

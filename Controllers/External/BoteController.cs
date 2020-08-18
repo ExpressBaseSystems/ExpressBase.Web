@@ -131,8 +131,10 @@ namespace ExpressBase.Web.Controllers
 					}
 					
 				}
+				////when pushcontent is updated update in bots.cshtml also as d.
 				PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
+                    window.EXPRESSbase_cid = '{9}';
                     window.EXPRESSbase_APP_ID = {1};
                     d.ebbotName = '{2}' || '< EBbot >';
                     d.ebbotThemeColor = '{3}' || '#055c9b';
@@ -140,7 +142,7 @@ namespace ExpressBase.Web.Controllers
                     d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';					
 					d.ebmod='{6}';
 					d.botsubtext='{7}';
-d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env, settings.Description,(JSON.stringify( settings.BotProp)) );
+d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env, settings.Description,(JSON.stringify( settings.BotProp)),cid );
 
 
 			}
@@ -209,12 +211,12 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 					}
 
 				}
-
-				if (settings.CssContent==null || settings.CssContent.Count <9)
+				//////change count if any css Constant is added or removed
+				if (settings.CssContent==null || settings.CssContent.Count <11)
 				{
 					settings.CssContent = FetchCss(settings.CssContent);
 				}
-				FileContent = ReplaceCssContent(settings.CssContent);
+				FileContent = ReplaceCssContent(settings.CssContent, args[1]);
 				//byte[] data = System.Convert.FromBase64String(settings.CssContent);
 				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
 
@@ -266,7 +268,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 
 		}
-		public string ReplaceCssContent( Dictionary<string, string> CssObj)
+		public string ReplaceCssContent( Dictionary<string, string> CssObj,string appid)
 		{
 
 			string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
@@ -285,7 +287,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 
 			}
-
+			Cssfile = Cssfile.Replace("----APPID----", appid);
 			return Cssfile;
 		}
 		//[HttpGet("/apitest")]
@@ -512,7 +514,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			Bot_Obj.User=(JsonConvert.SerializeObject(user));
 			Bot_Obj.BotFormNames=formlist.BotFormsDisp;
 
-			CookieOptions options = new CookieOptions() {  SameSite = SameSiteMode.None };
+			CookieOptions options = new CookieOptions() { /*Secure = true,HttpOnly = true,SameSite = SameSiteMode.None*/ };
 			Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()), options);
 			Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, authResponse.RefreshToken, options);
 

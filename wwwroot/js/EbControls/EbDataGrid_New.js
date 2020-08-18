@@ -1,22 +1,24 @@
 ﻿const EbDataGrid_New = function (ctrl, options) {
     this.ctrl = ctrl;
-    this.ctrl.currentRow = {};
     this.formObject = options.formObject; //'form' in JsScript
     this.userObject = options.userObject;
     this.formObject_Full = options.formObject_Full; //original object
     this.formRefId = options.formRefId;
     this.formRenderer = options.formRenderer;
     this.initControls = new InitControls(options.formRenderer);
-    this.RowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
+    this.rowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
 
     this.$Table = null;
-    this.DGColCtrls = [];// datagrid column controls - all info
-    this.dataMODEL = null;// array of SingleRow
-    this.objectMODEL = null;// object; key: row id
     this.mode_s = options.Mode.isView ? "view" : "edit";
     this.addRowCounter = -1;
-    this.currentTr = null;// datatable active tr
-    this.CurRowModel = null;
+    this.curRowDataModelCopy = null;
+    this.isFreshCurRow = false;
+    this.dtDataRowIdIndex = null;// const
+    this.$dtFooterDD = null;
+
+    this.DGColCtrls = [];// datagrid column controls - all info
+    this.dataMODEL = [];// array of SingleRow
+    this.objectMODEL = {};// object; key: row id
 
     //dataTable related variables
     this.DVColumns = null; //DVColumnCollection
@@ -26,9 +28,10 @@
         this.initDGColCtrls();
         this.makeHtmlSuitable();//temporary
         this.initBasicDataTable();
+        this.defineRowCount();
+        this.initContextMenu();
 
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".addrow-btn", this.addRowBtn_click.bind(this));
-
         this.$TableCont.on("click", ".edit-rowc", this.editRow_click.bind(this));
         this.$TableCont.on("click", ".check-rowc", this.checkRow_click.bind(this));
         this.$TableCont.on("click", ".del-rowc", this.delRow_click.bind(this));
@@ -54,7 +57,7 @@
         o.containerId = this.TableCont;
         //o.dsid = this.dsid;
         o.tableId = `tbl_${this.ctrl.EbSid_CtxId}`;
-        o.showSerialColumn = true;
+        o.showSerialColumn = this.ctrl.IsShowSerialNumber;
         o.showCheckboxColumn = false;
         o.showFilterRow = false;
         o.scrollHeight = this.ctrl.Height === 0 ? 200 : (this.ctrl.Height - 35);
@@ -63,20 +66,22 @@
         //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         //o.fninitComplete = this.initDTpost.bind(this);
-        o.initCompleteCallback = this.dataTableInitCallback.bind(this),
-            o.dom = "<p>rt";
+        o.initCompleteCallback = this.dataTableInitCallback.bind(this);
+        o.dom = "<p>rt";
         //o.IsPaging = true;
         //o.pageLength = this.ComboObj.DropDownItemLimit;
         o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
-        //o.LeftFixedColumn = 1;
-        //o.RightFixedColumn = 1;
+        o.AllowSorting = false;
+        if (this.ctrl.LFxdColCount > 0) o.LeftFixedColumn = this.ctrl.LFxdColCount;
+        if (this.ctrl.RFxdColCount > 0) o.RightFixedColumn = this.ctrl.RFxdColCount;
         //o.hiddenFieldName = this.vmName;
         o.keyFocusCallbackFn = this.dataTableTdKeyFocus.bind(this);
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  
         //o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         //o.searchCallBack = this.searchCallBack;
+        o.fnCanUpdateFooter = this.canUpdateFooter.bind(this);
         o.data = { data: [] };
         this.datatable = new EbCommonDataTable(o);
     };
@@ -88,13 +93,31 @@
     };
 
     this.dataTableTdDoubleClick = function (e) {
+        if (this.ctrl.IsDisable) {
+            return;
+        }
         if (this.mode_s == 'edit') {
             this.editRow_click(e);
         }
     };
 
     this.dataTableInitCallback = function () {
+        this.$dtFooterDD = this.$TableCont.find(".addedbyeb .footerDD");
+        let width = 0;
+        $.each(this.ctrl.Controls.$values, function (i, ctrl) {
+            if (!ctrl.IsDisable)
+                width += ctrl.Width;
+        });
+        if (width < 100)
+            width = 100;
+        this.$Table.css("width", width + "%");
+    };
 
+    this.canUpdateFooter = function () {
+        if (this.curRowDataModelCopy === null)
+            return true;
+        else
+            return false;
     };
 
     this.initDGColCtrls = function () {
@@ -103,62 +126,169 @@
             let ctrl = this.ctrl.Controls.$values[i];
             let inpCtrl = new EbObjects[ctrl.InputControlType](ctrl.EbSid_CtxId, ctrl);// creates object
             inpCtrl.ObjType = ctrl.InputControlType.substring(2);
+            inpCtrl.isDGCtrl = true;////////////////////////////////
             inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);// attach getValue(), ... methods
-            let ctrlHtml = `<div id='@ebsid@Wraper' style='' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${ctrl.DBareHtml || inpCtrl.BareControlHtml}</div>`
+            let ctrlHtml = `<div id='td_@ebsid@'><div id='@ebsid@Wraper' style='' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${ctrl.DBareHtml || inpCtrl.BareControlHtml}</div></div>`
                 .replace("@isReadonly@", ctrl.IsDisable)
                 .replace("@singleselect@", ctrl.MultiSelect ? "" : `singleselect=${!ctrl.MultiSelect}`)
                 .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
             this.DGColCtrls.push({ colCtrl: ctrl, html: ctrlHtml, inpCtrl: inpCtrl });
+
+            if (inpCtrl.ObjType === 'PowerSelect')
+                inpCtrl.__isDGv2Ctrl = true;// data persist flag
+
+            inpCtrl.enable = function () {
+                //inpCtrl.__IsDisable = false;
+                let $wapper = $(`#${inpCtrl.EbSid_CtxId}Wraper`);
+                $wapper.find('*').prop('disabled', false).css('pointer-events', 'inherit').find('[ui-inp]').css('background-color', '#fff');
+                $wapper.find(`.input-group-addon`).css('background-color', 'inherit');
+                $wapper.css('background-color', 'inherit').attr('eb-readonly', 'false');
+            };
+            inpCtrl.disable = function () {
+                //inpCtrl.__IsDisable = true;
+                let $wapper = $(`#${inpCtrl.EbSid_CtxId}Wraper`);
+                $wapper.find('*').attr('disabled', 'disabled').css('pointer-events', 'none').find('[ui-inp]').css('background-color', '#f3f3f3');
+                $wapper.find(`.input-group-addon`).css('background-color', '#f3f3f3');
+                $wapper.css('background-color', '#eee').attr('eb-readonly', 'true');
+            };
         }
+        this.dtDataRowIdIndex = this.ctrl.Controls.$values.length;
     };
 
-    this.addRowBtn_click = function () {
-        if (this.currentTr !== null) {
-            if (this.canFinalizeTrEdit(this.currentTr))
-                this.finalizeTrEdit(this.currentTr, 'check');
+    this.initContextMenu = function () {
+        $.contextMenu({
+            selector: `[eb-form="true"][mode="edit"] #tbl_${this.ctrl.EbSid_CtxId} tr[role="row"], [eb-form="true"][mode="new"] #tbl_${this.ctrl.EbSid_CtxId} tr[role="row"]`,
+            autoHide: true,
+            build: function ($trigger, e) {
+                let items = {};
+                let dtTr = this.datatable.Api.row($trigger);
+                let rowid = dtTr.data()[this.dtDataRowIdIndex];
+                if (this.curRowDataModelCopy === null || this.curRowDataModelCopy.RowId !== rowid) {
+                    items["editRow"] = this.getContextMenuItem("editRow");
+                    items["insertRowAbove"] = this.getContextMenuItem("insertRowAbove");
+                    items["insertRowBelow"] = this.getContextMenuItem("insertRowBelow");
+                    items["deleteRow"] = this.getContextMenuItem("deleteRow");
+                }
+                else {
+                    items["confirmRow"] = this.getContextMenuItem("confirmRow");
+                    items["insertRowAbove"] = this.getContextMenuItem("insertRowAbove");
+                    items["insertRowBelow"] = this.getContextMenuItem("insertRowBelow");
+                    if (this.isFreshCurRow)
+                        items["deleteRow"] = this.getContextMenuItem("deleteRow");
+                    else
+                        items["cancelRow"] = this.getContextMenuItem("cancelRow");
+                }
+                return { items: items };
+            }.bind(this)
+        });
+    };
+
+    this.getContextMenuItem = function (name) {
+        if (name === "deleteRow")
+            return {
+                name: "Delete row", icon: "fa-trash",
+                callback: function (key, opt, event) {
+                    this.delRow_click(null, opt.$trigger);
+                }.bind(this)
+            };
+        else if (name === "insertRowAbove")
+            return {
+                name: "Insert row above", icon: "fa-angle-up",
+                callback: function (key, opt, event) {
+                    this.addRowBtn_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else if (name === "insertRowBelow")
+            return {
+                name: "Insert row below", icon: "fa-angle-down",
+                callback: function (key, opt, event) {
+                    this.addRowBtn_click(null, opt.$trigger.index() + 1);
+                }.bind(this)
+            };
+        else if (name === "editRow")
+            return {
+                name: "Edit row", icon: "fa-pencil",
+                callback: function (key, opt, event) {
+                    this.editRow_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else if (name === "confirmRow")
+            return {
+                name: "Confirm row", icon: "fa-check",
+                callback: function (key, opt, event) {
+                    this.checkRow_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else if (name === "cancelRow")
+            return {
+                name: "Cancel editing", icon: "fa-times",
+                callback: function (key, opt, event) {
+                    this.cancelRow_click(null, opt.$trigger.index());
+                }.bind(this)
+            };
+        else
+            return {};
+    };
+
+    this.addRowBtn_click = function (e, indx) {
+        if (this.curRowDataModelCopy !== null) {
+            let idx = this.getDtTrKeyByRowId(this.datatable.Api.rows().data(), this.curRowDataModelCopy.RowId);
+            let curTr = this.datatable.Api.row(idx);
+            if (this.canFinalizeTrEdit(curTr))
+                this.finalizeTrEdit(curTr);
             else {
                 console.log('active row found. commit then continue.');
                 return;
             }
         }
-        this.setupCurTrCtrls(true, null, 0);
+        if (indx === undefined)
+            indx = this.ctrl.AscendingOrder ? -1 : 0;
+        this.setupCurTrCtrls(true, null, 0, indx);
     };
 
     this.getFormVals = function () {
         return getValsFromForm(this.formObject_Full);
     };
 
-    this.editRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
+    this.editRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
-        let rowid = dtTr.data()[this.datatable.hiddenIndex];
-        if (this.currentTr !== null) {
-            if (rowid === this.CurRowModel.RowId)
+        let rowid = dtTr.data()[this.dtDataRowIdIndex];
+        if (this.curRowDataModelCopy !== null) {
+            if (rowid === this.curRowDataModelCopy.RowId)
                 return;
-            if (this.canFinalizeTrEdit(this.currentTr))
-                this.finalizeTrEdit(this.currentTr, 'check');
+            let idx = this.getDtTrKeyByRowId(this.datatable.Api.rows().data(), this.curRowDataModelCopy.RowId);
+            let curTr = this.datatable.Api.row(idx);
+            if (this.canFinalizeTrEdit(curTr))
+                this.finalizeTrEdit(curTr);
             else {
                 console.log('active row found. commit then continue.');
                 return;
             }
         }
         this.setupCurTrCtrls(false, dtTr, parseInt(rowid));
-        this.datatable.Api.columns.adjust();
     };
 
-    this.checkRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
+    this.checkRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
         if (this.canFinalizeTrEdit(dtTr))
-            this.finalizeTrEdit(dtTr, 'check');
+            this.finalizeTrEdit(dtTr);
     };
 
-    this.delRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
-        let data_row = this.datatable.Api.row($tr).data();
-        let rowid = parseInt(data_row[this.datatable.hiddenIndex]);
+    this.delRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
+        let dtTr = this.datatable.Api.row($tr);
+        let rowid = parseInt(dtTr.data()[this.dtDataRowIdIndex]);
+
+        if (this.curRowDataModelCopy && this.curRowDataModelCopy.RowId === rowid)
+            this.finalizeTrEdit(dtTr);
+
         if (rowid > 0) {
-            let Row = getObjByval(this.dataMODEL, "RowId", rowid);
+            let Row = this.getObjByValue(this.dataMODEL, "RowId", rowid);
             Row.IsDelete = true;
         }
         else {
@@ -166,37 +296,31 @@
             this.dataMODEL.splice(index, 1);
         }
         delete this.objectMODEL[rowid];
-        this.datatable.Api.row($(e.target).closest("tr")).remove().draw(false);
-
-        if (this.CurRowModel.RowId === rowid) {
-            this.currentTr = null;
-            this.CurRowModel = null;
-        }
+        dtTr.remove().draw(false);
     };
 
-    this.cancelRow_click = function (e) {
-        let $tr = $(e.target).closest('tr');
+    this.cancelRow_click = function (e, $tr) {
+        if (e !== null)
+            $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
-        this.finalizeTrEdit(dtTr, 'cancel');
+        let rowid = dtTr.data()[this.dtDataRowIdIndex];
+        let Row = this.getObjByValue(this.dataMODEL, "RowId", rowid);
+        if (rowid !== this.curRowDataModelCopy.RowId) {
+            console.error('Mismatch in RowId and curRowDataModelCopy.RowId');
+            return;
+        }
+        this.CopyRowToRow(this.curRowDataModelCopy, Row);
+        this.finalizeTrEdit(dtTr);
     };
 
-    this.finalizeTrEdit = function (dtTr, action) {
-        //dtTr => current datatable tr;action => check, cancel;
-        let data_row = dtTr.data();
-        let rowid = data_row[this.datatable.hiddenIndex];
-        let Row = getObjByval(this.dataMODEL, "RowId", parseInt(rowid));
-        if (action === 'check') {
-            if (parseInt(rowid) !== this.CurRowModel.RowId) {
-                console.error('Mismatch in RowId and CurRowModel.RowId');
-                return;
-            }
-            this.CopyRowToRow(this.CurRowModel, Row);
-        }
+    this.finalizeTrEdit = function (dtTr) {
+        //dtTr => current datatable tr;
+        let rowid = dtTr.data()[this.dtDataRowIdIndex];
+        let Row = this.getObjByValue(this.dataMODEL, "RowId", parseInt(rowid));
         let curRow = {};
-        let j = 0;
-        for (; j < this.DGColCtrls.length; j++) {
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
             let _control = this.DGColCtrls[j].colCtrl;
-            let Column = getObjByval(Row.Columns, "Name", _control.Name);
+            let Column = this.getObjByValue(Row.Columns, "Name", _control.Name);
             curRow[j] = this.getTdPlainHtml(Column, _control);
 
             //must destroy all initialized controls
@@ -206,16 +330,21 @@
             else if (_control.ObjType === 'DGSimpleSelectColumn') {
                 $('#' + _control.EbSid_CtxId).selectpicker('destroy');
             }
+            else if (_control.ObjType === 'DGPowerSelectColumn') {
+                let inpCtrl = this.DGColCtrls[j].inpCtrl;
+                inpCtrl.initializer.destroy();
+            }
         }
-        curRow[j++] = Row.RowId;
-        curRow[j] = this.getCogTdHtml('viewing');
+        curRow[this.dtDataRowIdIndex] = Row.RowId;
+        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('viewing');
+        this.curRowDataModelCopy = null;
         dtTr.data(curRow).draw(false);
-        this.currentTr = null;
-        this.CurRowModel = null;
+        this.$dtFooterDD.prop("disabled", false);
+        this.datatable.Api.columns.adjust();
     };
 
     this.canFinalizeTrEdit = function (dtTr) {
-        let rowId = dtTr.data()[this.datatable.hiddenIndex];
+        let rowId = dtTr.data()[this.dtDataRowIdIndex];
         let canFinalize = true;
         $.each(this.objectMODEL[rowId], function (k, ObjModelColumn) {
             let inpCtrl = ObjModelColumn.DGColCtrlObj.inpCtrl;
@@ -230,60 +359,69 @@
 
     this.CopyRowToRow = function (srcRow, destRow) {
         $.each(srcRow.Columns, function (i, obj) {
-            let Column = getObjByval(destRow.Columns, "Name", obj.Name);
+            let Column = this.getObjByValue(destRow.Columns, "Name", obj.Name);
             if (Column) {
                 Column.Value = obj.Value;
                 Column.F = obj.F;
-                Column.D = JSON.parse(JSON.stringify(obj.D));
-                Column.R = JSON.parse(JSON.stringify(obj.R));
+                Column.D = obj.D;
+                Column.R = obj.R;
             }
-        });
+        }.bind(this));
     };
 
-    this.setupCurTrCtrls = function (isNew, dtTr, RowId) {
+    this.setupCurTrCtrls = function (isNew, dtTr, RowId, insB4Index = 0) {
         //dtTr -> datatable tr
-        if (this.currentTr !== null) {
+        if (this.curRowDataModelCopy !== null) {
             console.log('active row found. unable to continue.');
             return;
         }
         let Row;// SingleRow
         if (isNew) {
-            Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
+            Row = JSON.parse(JSON.stringify(this.rowDataModel_empty));
             Row.RowId = this.addRowCounter--;
             this.addToObjectModel(Row);
             this.fixDefaultValExpInDataModel(Row);
         }
         else {
-            Row = getObjByval(this.dataMODEL, "RowId", parseInt(RowId));
+            Row = this.getObjByValue(this.dataMODEL, "RowId", parseInt(RowId));
         }
-        this.CurRowModel = JSON.parse(JSON.stringify(Row));
-        //this.CurRowModel._ActiveRow = Row;///////
+        this.curRowDataModelCopy = JSON.parse(JSON.stringify(Row));
+        //this.curRowDataModelCopy._ActiveRow = Row;///////
 
         let curRow = {};
-        let j = 0;
-        for (; j < this.DGColCtrls.length; j++) {
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
             let inpCtrl = this.DGColCtrls[j].inpCtrl;
-            let Column = getObjByval(this.CurRowModel.Columns, "Name", inpCtrl.Name);
-            inpCtrl.DataVals = Column;
+            inpCtrl.DataVals = this.getObjByValue(Row.Columns, "Name", inpCtrl.Name);
             curRow[j] = this.DGColCtrls[j].html;
         }
-        curRow[j++] = this.CurRowModel.RowId;
-        if (isNew)
-            curRow[j] = this.getCogTdHtml('firstEditing');
-        else
-            curRow[j] = this.getCogTdHtml('editing');
+        curRow[this.dtDataRowIdIndex] = Row.RowId;
         if (isNew) {
-            this.currentTr = this.datatable.Api.row.add(curRow).draw(false);
-            this.dataMODEL.push(Row);
-            let $scrollBody = $(this.datatable.Api.table().node()).parent();
-            $scrollBody.scrollTop($scrollBody.get(0).scrollHeight);
+            curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('firstEditing');
+            this.isFreshCurRow = true;
         }
         else {
-            this.currentTr = dtTr.data(curRow).draw(false);
+            curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('editing');
+            this.isFreshCurRow = false;
+        }
+        if (isNew) {
+            this.datatable.Api.row.add(curRow);
+            this.InsertDtTrToIndex(insB4Index, Row);
+            this.datatable.Api.draw(false);
+
+            let $scrollBody = $(this.datatable.Api.table().node()).parent();
+            if (insB4Index === -1)
+                $scrollBody.scrollTop($scrollBody.get(0).scrollHeight);
+            else if (insB4Index === 0)
+                $scrollBody.scrollTop(0);
+        }
+        else {
+            dtTr.data(curRow).draw(false);
         }
 
+        this.$dtFooterDD.prop("disabled", true);
         let rowFlatCtrls = [];
 
+        //Control initialization
         for (let i = 0; i < this.DGColCtrls.length; i++) {
             let inpCtrl = this.DGColCtrls[i].inpCtrl;
             let opt = {};
@@ -294,22 +432,16 @@
                 opt.userObject = this.ctrl.__userObject;
             }
             this.initControls.init(inpCtrl, opt);
-
-            if (inpCtrl.DataVals.Value !== null) {
-                inpCtrl.___DoNotUpdateDataVals = true;
-                if (ctrl.ObjType === "PowerSelect")
-                    inpCtrl.setDisplayMember(inpCtrl.DataVals.Value);
-                else
-                    inpCtrl.justSetValue(inpCtrl.DataVals.Value);
-                inpCtrl.___DoNotUpdateDataVals = false;
-            }
             rowFlatCtrls.push(inpCtrl);
-        }
-        //this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
 
+            if (inpCtrl.IsDisable)
+                inpCtrl.disable();
+        }
+
+        //OnChange binding
         $.each(rowFlatCtrls, function (k, inpCtrl) {
             try {
-                inpCtrl.bindOnChange(this.DataValsUpdate.bind(this, inpCtrl, this.DGColCtrls[k].colCtrl));// binding to onchange
+                inpCtrl.bindOnChange(this.dgCtrlOnChangeFnAll.bind(this, inpCtrl, this.DGColCtrls[k].colCtrl));// binding to onchange
             } catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
@@ -317,7 +449,19 @@
             }
         }.bind(this));
 
+        //Data population
+        $.each(rowFlatCtrls, function (k, inpCtrl) {
+            if (inpCtrl.DataVals.Value !== null) {
+                inpCtrl.___DoNotUpdateDataVals = true;
+                if (inpCtrl.ObjType === "PowerSelect" && !inpCtrl.RenderAsSimpleSelect)
+                    inpCtrl.setDisplayMember(inpCtrl.DataVals.Value);
+                else
+                    inpCtrl.justSetValue(inpCtrl.DataVals.Value);
+                inpCtrl.___DoNotUpdateDataVals = false;
+            }
+        }.bind(this));
 
+        //Required-Unique-Validator binding
         $.each(rowFlatCtrls, function (k, inpCtrl) {
             inpCtrl.__CheckFlags = { isRequiredOK: true, isUniqueOK: true, isValidationOK: true };
             let $inpCtrl = $(`#${inpCtrl.EbSid_CtxId}`);
@@ -330,6 +474,352 @@
                 $inpCtrl.on("blur", this.isValidationsOK.bind(this, inpCtrl));
             }
         }.bind(this));
+
+        this.datatable.Api.columns.adjust();
+    };
+
+    this.InsertDtTrToIndex = function (index, Row) {
+        let rowCount = this.datatable.Api.data().length - 1;
+        if (rowCount > index && index >= 0) {
+            let insertedRow = this.datatable.Api.row(rowCount).data();
+            let tempRow;
+            let insBeforeRowId = null;
+            for (let i = rowCount; i > index; i--) {
+                tempRow = this.datatable.Api.row(i - 1).data();
+                this.datatable.Api.row(i).data(tempRow);
+                this.datatable.Api.row(i - 1).data(insertedRow);
+                insBeforeRowId = tempRow[this.dtDataRowIdIndex];
+            }
+            let indexInModel = this.dataMODEL.findIndex(e => e.RowId === insBeforeRowId);
+            this.dataMODEL.splice(indexInModel, 0, Row);
+        }
+        else {
+            this.dataMODEL.push(Row);
+        }
+    };
+
+    //public function
+    this.populateDGWithDataModel = function (DgDataModel) {
+        this.dataMODEL = DgDataModel || [];
+        this.objectMODEL = this.getObjectMODEL(this.dataMODEL);
+        this.fixValExpInDataModel(this.objectMODEL);
+
+        this.datatable.Api.clear();// Clear the table of all data
+        if (this.dataMODEL.length > 0) {
+            let dvdata = this.getDataTableData(this.dataMODEL);
+            //this.datatable.Api.rows.add(dvdata).draw(false);
+            this.datatable.Api.draw(false);
+        }
+    };
+
+    this.getObjectMODEL = function (DgDataModel) {
+        let objModel = {};
+        for (let i = 0; i < DgDataModel.length; i++) {
+            let objModelRow = [];
+            let Row = DgDataModel[i];
+            for (let j = 0; j < this.DGColCtrls.length; j++) {
+                let Column = this.getObjByValue(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
+                objModelRow.push(this.getObjModelColumn(Column, this.DGColCtrls[j], Row.RowId));
+            }
+            objModel[Row.RowId] = objModelRow;
+        }
+        return objModel;
+    };
+
+    this.addToObjectModel = function (Row) {
+        let objModelRow = [];
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
+            let Column = this.getObjByValue(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
+            objModelRow.push(this.getObjModelColumn(Column, this.DGColCtrls[j], Row.RowId));
+        }
+        this.objectMODEL[Row.RowId] = objModelRow;
+    };
+
+    //construct object model as required for expression exec
+    this.getObjModelColumn = function (Column, DGColCtrlObj, RowId) {
+        let ObjModelColumn =
+        {
+            DataVals: Column,
+            DGColCtrlObj: DGColCtrlObj,
+            RowId: RowId,
+            __DGB: this,
+
+            disable: function () { return this.DGColCtrlObj.inpCtrl.disable; },
+            enable: function () { return this.DGColCtrlObj.inpCtrl.enable; },
+            getValue: function () { return this.DataVals.Value; },
+            setValue: function (p1) { this.DataVals.Value = p1; }
+        };
+
+        if (DGColCtrlObj.inpCtrl.ObjType === 'PowerSelect') {
+            ObjModelColumn['getColumn'] = function (colName) {
+                return this.DGColCtrlObj.inpCtrl.MultiSelect ? this.DataVals[colName] : this.DataVals[colName][0];
+            };
+        }
+        return ObjModelColumn;
+    };
+
+    this.getDataTableData = function (DgDataModel) {
+        let dvdata = [];
+        for (let i = 0; i < DgDataModel.length; i++) {
+            let Row = DgDataModel[i];
+            let curRow = {};
+            for (let j = 0; j < this.DGColCtrls.length; j++) {
+                let _control = this.DGColCtrls[j].colCtrl;
+                let Column = this.getObjByValue(Row.Columns, "Name", _control.Name);
+                curRow[j] = this.getTdPlainHtml(Column, _control);
+            }
+            curRow[this.dtDataRowIdIndex] = Row.RowId;
+            curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('viewing');
+            dvdata.push(curRow);
+
+            this.datatable.Api.row.add(curRow);//.draw(false);//////////////////
+        }
+        return dvdata;
+    };
+
+    this.setCurRowInGlobals = function (rowId) {
+        if (rowId === undefined) {
+            if (this.curRowDataModelCopy !== null)
+                rowId = this.curRowDataModelCopy.RowId;
+            else
+                return;
+        }
+        if (this.ctrl.currentRow['__rowId'] && this.ctrl.currentRow['__rowId'] === rowId) {
+            return;
+        }
+        this.ctrl.currentRow = {};
+        let objModelRow = this.objectMODEL[rowId];
+        for (let i = 0; i < objModelRow.length; i++) {
+            this.ctrl.currentRow[objModelRow[i].DGColCtrlObj.colCtrl.Name] = objModelRow[i];
+        }
+        this.ctrl.currentRow['__rowId'] = rowId;
+    };
+
+    //-----------script accessible-----------
+
+    this.ctrl.currentRow = {};
+    this.ctrl.RowCount = 0;
+
+    this.defineRowCount = function () {
+        Object.defineProperty(this.ctrl, "RowCount", {
+            get: function () {
+                return this.dataMODEL.length;
+            }.bind(this),
+            set: function (value) {
+                if (value !== this.ctrl.RowCount)
+                    console.error(`Cannot modify read only property: '${this.ctrl.Name}.RowCount'`);
+            }.bind(this)
+        });
+    };
+
+    this.ctrl.addRow = function (rowObj = {}) {
+        let Row = JSON.parse(JSON.stringify(this.rowDataModel_empty));
+        Row.RowId = this.addRowCounter--;
+        let curRow = {};
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
+            let Column = this.getObjByValue(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
+            if (rowObj[Column.Name]) {
+                Column.Value = rowObj[Column.Name];
+            }
+            let colCtrl = this.DGColCtrls[j].colCtrl;
+            curRow[j] = this.getTdPlainHtml(Column, colCtrl);
+        }
+        curRow[this.dtDataRowIdIndex] = Row.RowId;
+        let m = this.mode_s === "edit" ? "editing" : "viewing";
+        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml(m);
+        this.datatable.Api.row().add(curRow);
+        this.addToObjectModel(Row);
+        this.dataMODEL.push(Row);
+    }.bind(this);
+
+    this.ctrl.addRowAtIndex = function (rowObj, index) {
+        let Row = JSON.parse(JSON.stringify(this.rowDataModel_empty));
+        Row.RowId = this.addRowCounter--;
+        let curRow = {};
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
+            let Column = this.getObjByValue(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
+            if (rowObj[Column.Name]) {
+                Column.Value = rowObj[Column.Name];
+            }
+            let colCtrl = this.DGColCtrls[j].colCtrl;
+            curRow[j] = this.getTdPlainHtml(Column, colCtrl);
+        }
+        curRow[this.dtDataRowIdIndex] = Row.RowId;
+        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml("viewing");
+        this.datatable.Api.row.add(curRow);
+        this.addToObjectModel(Row);
+
+        let rowCount = this.datatable.Api.data().length - 1;
+        if (rowCount > index && index >= 0) {
+            let insertedRow = this.datatable.Api.row(rowCount).data();
+            let tempRow;
+            let insBeforeRowId = null;
+            for (let i = rowCount; i > index; i--) {
+                tempRow = this.datatable.Api.row(i - 1).data();
+                this.datatable.Api.row(i).data(tempRow);
+                this.datatable.Api.row(i - 1).data(insertedRow);
+                insBeforeRowId = tempRow[this.dtDataRowIdIndex];
+            }
+            let indexInModel = this.dataMODEL.findIndex(e => e.RowId === insBeforeRowId);
+            this.dataMODEL.splice(indexInModel, 0, Row);
+        }
+        else {
+            this.dataMODEL.push(Row);
+        }
+        this.datatable.Api.draw(false);
+
+    }.bind(this);
+
+    this.ctrl.updateRowByRowId = function (rowId, rowObj) {
+        let Row = this.getObjByValue(this.dataMODEL, "RowId", rowId);
+        let dtRows = this.datatable.Api.rows().data();
+        let dtTrIdx = this.getDtTrKeyByRowId(dtRows, rowId);
+        let dtTrData = dtRows[dtTrIdx];
+        if (!Row || !dtTrData) {
+            console.log(`eb error :    No row with rowId '${rowId}' exist in ${this.ctrl.Name}`);
+            return;
+        }
+        let curRow = {};
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
+            let Column = this.getObjByValue(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
+            if (rowObj[Column.Name]) {
+                Column.Value = rowObj[Column.Name];
+            }
+            let colCtrl = this.DGColCtrls[j].colCtrl;
+            curRow[j] = this.getTdPlainHtml(Column, colCtrl);
+        }
+        curRow[this.dtDataRowIdIndex] = Row.RowId;
+        let m = this.mode_s === "edit" ? "editing" : "viewing";
+        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml(m);
+        this.datatable.Api.row(dtTrIdx).data(curRow).draw(false);
+    }.bind(this);
+
+    //-----------------------------------------
+
+    EbDataGrid_New_Extended.bind(this)();
+    this.init();
+};
+
+//############################################################################################
+
+const EbDataGrid_New_Extended = function () {
+    //public function
+    this.SwitchToEditMode = function () {
+        this.mode_s = "edit";
+        this.datatable.Api.column("settings:name").nodes().each(function (node, index, dt) {
+            this.datatable.Api.cell(node).data(this.getCogTdHtml("viewing"));
+        }.bind(this));
+        //this.$TableCont.find(`.ctrlstd_dg`).attr("mode", "edit");        
+    };
+
+    //public function
+    this.hasActiveRow = function () {
+        if (this.curRowDataModelCopy === null)
+            return false;
+        else
+            return true;
+    };
+
+    this.dgCtrlOnChangeFnAll = function (inpCtrl, colCtrl) {
+        //Update DataVals
+        if (!inpCtrl.___DoNotUpdateDataVals) {
+            if (inpCtrl.DataVals) {
+                inpCtrl.DataVals.Value = inpCtrl.getValueFromDOM();
+                if (inpCtrl.ObjType === "PowerSelect") {
+                    if (!inpCtrl.DataVals.Value || inpCtrl.RenderAsSimpleSelect) {
+                        inpCtrl.DataVals.D = {};
+                        inpCtrl.DataVals.R = {};
+                    }
+                    else {
+                        let R = JSON.parse(JSON.stringify(inpCtrl.initializer.columnVals));
+                        let D = {};
+                        let vms = (inpCtrl.DataVals.Value + '').split(',');
+                        $.each(vms, function (i, vm) {
+                            let vm_i = parseInt(vm);
+                            let eIdx = R[inpCtrl.ValueMember.name].indexOf(vm_i);
+                            let eItm = {};
+                            $.each(inpCtrl.DisplayMembers.$values, function (j, dm) {
+                                eItm[dm.name] = eIdx === -1 ? '' : R[dm.name][eIdx];
+                            });
+                            D[vm_i] = eItm;
+                        });
+                        inpCtrl.DataVals.D = D;
+                        inpCtrl.DataVals.R = R;
+                        //let dmArr = { 1: { account_code: "ASS", account_name: "ASSET"}};//D
+                    }
+                }
+                else {
+                    inpCtrl.DataVals.F = this.getTdPlainHtml(inpCtrl.DataVals, colCtrl);
+                }
+            }
+        }
+        this.setCurRowInGlobals();
+
+        //Update value expression dependents data
+        if (inpCtrl.DependedValExp && inpCtrl.DependedValExp.$values.length > 0) {
+            if (!inpCtrl.___isNotUpdateValExpDepCtrls) {
+                $.each(inpCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                    let depCtrl = this.formObject.__getCtrlByPath(depCtrl_s);
+                    if (depCtrl === "not found")
+                        return true;
+                    if (depCtrl.IsDGCtrl)
+                        depCtrl = depCtrl.DGColCtrlObj.inpCtrl;
+                    if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0 && depCtrl.ValueExpr.Code) {
+                        try {
+                            let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                            let ValueExpr_val = undefined;
+                            ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.formObject, this.userObject)();
+                            if (ValueExpr_val !== undefined)
+                                depCtrl.justSetValue(ValueExpr_val);
+                        }
+                        catch (e) {
+                            console.error("Error in 'Value Expression' of DG ctrl: " + depCtrl.Name + " - " + e.message);
+                            console.log('Code: ' + depCtrl.ValueExpr.Code);
+                        }
+                    }
+                }.bind(this));
+            }
+            inpCtrl.___isNotUpdateValExpDepCtrls = false;
+        }
+
+        //OnChnageFn execution
+        if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== "") {
+            try {
+                let onChngFnStr = atob(inpCtrl.OnChangeFn.Code);
+                new Function("form", "user", `event`, onChngFnStr).bind(inpCtrl.Name, this.formObject, this.userObject)();
+            }
+            catch (e) {
+                console.error("Error in 'OnChangeFn' of DG ctrl: " + inpCtrl.Name + " - " + e.message);
+                console.log('Code: ' + inpCtrl.OnChangeFn.Code);
+            }
+        }
+
+        //Disable expression execution
+        if (inpCtrl.DisableExpDependants && inpCtrl.DisableExpDependants.$values.length > 0) {
+            let depCtrls_SArr = inpCtrl.DisableExpDependants.$values;
+            for (let i = 0; i < depCtrls_SArr.length; i++) {
+                let depCtrl_s = depCtrls_SArr[i];
+                let depCtrl = this.formObject.__getCtrlByPath(depCtrl_s);
+                if (depCtrl === "not found")
+                    continue;
+                if (depCtrl.IsDGCtrl)
+                    depCtrl = depCtrl.DGColCtrlObj.inpCtrl;
+                if (depCtrl.DisableExpr && depCtrl.DisableExpr.Code) {
+                    try {
+                        let disableExpFnStr = atob(depCtrl.DisableExpr.Code);
+                        let disableExpVal = new Function("form", "user", `event`, disableExpFnStr).bind(depCtrl_s, this.formObject, this.userObject)();
+                        if (disableExpVal)
+                            depCtrl.disable();
+                        else
+                            depCtrl.enable();
+                    }
+                    catch (e) {
+                        console.error("Error in 'DisableExpr' of DG ctrl: " + depCtrl.Name + " - " + e.message);
+                        console.log('Code: ' + depCtrl.DisableExpr.Code);
+                    }
+                }
+            }
+        }
     };
 
     this.isValidationsOK = function (inpCtrl) {
@@ -338,21 +828,22 @@
         let isValidationSuccess = true;
         let failedValidator = null;
         inpCtrl.Validators.$values = sortByProp(inpCtrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
-        if (this.currentTr !== null) {
-            let rowId = this.currentTr.data()[this.datatable.hiddenIndex];
+        if (this.curRowDataModelCopy !== null) {
+            let idx = this.getDtTrKeyByRowId(this.datatable.Api.rows().data(), this.curRowDataModelCopy.RowId);
+            let curTr = this.datatable.Api.row(idx);
+            let rowId = curTr.data()[this.dtDataRowIdIndex];
             this.setCurRowInGlobals(rowId);
         }
         $.each(inpCtrl.Validators.$values, function (i, Validator) {
             if (Validator.IsDisabled || !Validator.Script.Code)// continue;
                 return true;
-            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(inpCtrl, this.formObject, this.userObject);
             let valRes = false;
             try {
-                valRes = func();
+                valRes = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(inpCtrl, this.formObject, this.userObject)();
             }
             catch (e) {
-                console.error(`Error in validator: ${e}`);
-                console.log(atob(Validator.Script.Code));
+                console.error("Error in 'Validator' of DG ctrl: " + inpCtrl.Name + " - " + e.message);
+                console.log('Code: ' + Validator.Script.Code);
             }
             if (valRes !== true) {
                 failedValidator = Validator;
@@ -382,7 +873,7 @@
         }
         let exists = false;
         $.each(this.objectMODEL, function (k, objModelRow) {
-            if (parseInt(k) === this.CurRowModel.RowId)
+            if (parseInt(k) === this.curRowDataModelCopy.RowId)
                 return true;
             if (objModelRow[ctrlIndex].getValue() === value) {
                 exists = true;
@@ -424,107 +915,32 @@
         //EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
     };
 
-    this.DataValsUpdate = function (inpCtrl, _control) {
-        if (!inpCtrl.___DoNotUpdateDataVals) {
-            if (inpCtrl.DataVals) {
-                inpCtrl.DataVals.Value = inpCtrl.getValueFromDOM();
-                if (inpCtrl.ObjType === "PowerSelect") {
-                    //inpCtrl.DataVals.D = {};// required values here!
-                    //inpCtrl.DataVals.R = {};
-                }
-                else {
-                    inpCtrl.DataVals.F = this.getTdPlainHtml(inpCtrl.DataVals, _control);
-                }
-            }
-        }
-    };
-
-    //public function
-    this.populateDGWithDataModel = function (DgDataModel) {
-        this.dataMODEL = DgDataModel || [];
-        this.objectMODEL = this.getObjectMODEL(this.dataMODEL);
-        this.fixValExpInDataModel(this.objectMODEL);
-
-        this.datatable.Api.clear();// Clear the table of all data
-        if (this.dataMODEL.length > 0) {
-            let dvdata = this.getDataTableData(this.dataMODEL);
-            this.datatable.Api.rows.add(dvdata).draw(false);
-        }
-    };
-
-    this.getObjectMODEL = function (DgDataModel) {
-        let objModel = {};
-        for (let i = 0; i < DgDataModel.length; i++) {
-            let objModelRow = [];
-            let Row = DgDataModel[i];
-            for (let j = 0; j < this.DGColCtrls.length; j++) {
-                let Column = getObjByval(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
-                objModelRow.push(this.getObjModelColumn(Column, this.DGColCtrls[j]));
-            }
-            objModel[Row.RowId] = objModelRow;
-        }
-        return objModel;
-    };
-
-    this.addToObjectModel = function (Row) {
-        let objModelRow = [];
-        for (let j = 0; j < this.DGColCtrls.length; j++) {
-            let Column = getObjByval(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
-            objModelRow.push(this.getObjModelColumn(Column, this.DGColCtrls[j]));
-        }
-        this.objectMODEL[Row.RowId] = objModelRow;
-    };
-
-    //construct object model as required for expression exec
-    this.getObjModelColumn = function (Column, DGColCtrlObj) {
-        let ObjModelColumn = { DataVals: Column, DGColCtrlObj: DGColCtrlObj };
-        ObjModelColumn['getValue'] = function () { return this.DataVals.Value; };
-        if (DGColCtrlObj.inpCtrl.ObjType === 'PowerSelect') {
-            ObjModelColumn['getColumn'] = function () { console.error('Not implemented'); return {}; };
-        }
-        return ObjModelColumn;
-    };
-
-    this.getDataTableData = function (DgDataModel) {
-        let dvdata = [];
-        for (let i = 0; i < DgDataModel.length; i++) {
-            let Row = DgDataModel[i];
-            let curRow = {};
-            let j = 0;
-            for (; j < this.DGColCtrls.length; j++) {
-                let _control = this.DGColCtrls[j].colCtrl;
-                let Column = getObjByval(Row.Columns, "Name", _control.Name);
-                curRow[j] = this.getTdPlainHtml(Column, _control);
-            }
-            curRow[j++] = Row.RowId;
-            curRow[j] = this.getCogTdHtml('viewing');
-            dvdata.push(curRow);
-        }
-        return dvdata;
-    };
-
     this.fixValExpInDataModel = function (DgObjectModel) {
         $.each(DgObjectModel, function (rowId, ObjModelRow) {
             this.setCurRowInGlobals(rowId);
             for (let i = 0; i < ObjModelRow.length; i++) {
                 let inpCtrl = ObjModelRow[i].DGColCtrlObj.inpCtrl;
                 let ValueExpr_val = null;
-                if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Lang === 0 && inpCtrl.ValueExpr.Code) {
-                    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(ObjModelRow[i], this.formObject, this.userObject);
+                if (inpCtrl.DoNotPersist && inpCtrl.ValueExpr && inpCtrl.ValueExpr.Lang === 0 && inpCtrl.ValueExpr.Code) {
                     try {
-                        ValueExpr_val = fun();
+                        ValueExpr_val = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(ObjModelRow[i], this.formObject, this.userObject)();
                     }
                     catch (e) {
                         console.error(`Error in valueExpression of ${inpCtrl.Name}: ${e}`);
-                        console.log('Code: ' + atob(inpCtrl.ValueExpr.Code));
+                        console.log('Code: ' + inpCtrl.ValueExpr.Code);
                     }
                     //val = EbConvertValue(val, ctrl.ObjType);
+                    if (ValueExpr_val) {
+                        ObjModelRow[i].DataVals.Value = ValueExpr_val;
+                        //if (inpCtrl.ObjType === "Numeric")
+                        //    inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
+                    }
                 }
-                if (inpCtrl.DoNotPersist && ValueExpr_val !== null) {
-                    ObjModelRow[i].DataVals.Value = ValueExpr_val;
-                    //if (inpCtrl.ObjType === "Numeric")
-                    //    inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
-                }
+                //if (inpCtrl.DoNotPersist && ValueExpr_val !== null) {
+                //    ObjModelRow[i].DataVals.Value = ValueExpr_val;
+                //    //if (inpCtrl.ObjType === "Numeric")
+                //    //    inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
+                //}
             }
             //this.onRowPaintFn(["tr"], "check", "e");// --
         }.bind(this));
@@ -537,45 +953,18 @@
             let inpCtrl = ObjModelRow[i].DGColCtrlObj.inpCtrl;
             let DefaultValueExpr_val = null;
             if (inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Lang === 0 && inpCtrl.DefaultValueExpression.Code) {
-                let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(ObjModelRow[i], this.formObject, this.userObject);
                 try {
-                    DefaultValueExpr_val = fun();
+                    DefaultValueExpr_val = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(ObjModelRow[i], this.formObject, this.userObject)();
                 }
                 catch (e) {
                     console.error(`Error in DefaultValueExpression of ${inpCtrl.Name}: ${e}`);
-                    console.log('Code: ' + atob(inpCtrl.ValueExpr.Code));
+                    console.log('Code: ' + inpCtrl.ValueExpr.Code);
+                }
+                if (DefaultValueExpr_val) {
+                    ObjModelRow[i].DataVals.Value = DefaultValueExpr_val;
                 }
             }
-            if (inpCtrl.DoNotPersist && DefaultValueExpr_val !== null) {
-                ObjModelRow[i].DataVals.Value = DefaultValueExpr_val;
-            }
         }
-    };
-
-    this.setCurRowInGlobals = function (rowId) {
-        if (this.ctrl.currentRow['__rowId'] && this.ctrl.currentRow['__rowId'] === rowId) {
-            return;
-        }
-        this.ctrl.currentRow = {};
-        let objModelRow = this.objectMODEL[rowId];
-        for (let i = 0; i < objModelRow.length; i++) {
-            this.ctrl.currentRow[objModelRow[i].DGColCtrlObj.colCtrl.Name] = objModelRow[i];
-        }
-        this.ctrl.currentRow['__rowId'] = rowId;
-    };
-
-
-
-    EbDataGrid_New_Extended.bind(this)();
-
-    this.init();
-};
-
-const EbDataGrid_New_Extended = function () {
-    //public function
-    this.SwitchToEditMode = function () {
-        this.$TableCont.find(`.ctrlstd_dg`).attr("mode", "edit");
-        this.mode_s = "edit";
     };
 
     this.getTdCtrlHtml = function (col) {
@@ -586,7 +975,10 @@ const EbDataGrid_New_Extended = function () {
     };
 
     this.getCogTdHtml = function (rowState) {
-        let html = `<div class='ctrlstd_dg' mode='${this.mode_s}' >`;
+        if (this.ctrl.IsDisable) {
+            return `<div class='ctrlstd_dg' mode='${this.mode_s}'></div>`;
+        }
+        let html = `<div class='ctrlstd_dg' mode='${this.mode_s}'>`;
         if (rowState == 'viewing')
             html += `<button type='button' class='edit-rowc'><span class='fa fa-pencil'></span></button>
                     <button type='button' class='del-rowc'><span class='fa fa-trash'></span></button>`;
@@ -656,7 +1048,7 @@ const EbDataGrid_New_Extended = function () {
             return "";
 
         let valMsArr = Column.Value.toString().split(',');
-        let textspn = "";
+        let textspn = "<div class='tdtxt' coltype='DGPowerSelectColumn' style='display: block;'>";
         let vm0 = parseInt(valMsArr[0]);
         let dispDict0 = Column.D[vm0];
         let dispKeys = Object.keys(dispDict0);
@@ -671,7 +1063,8 @@ const EbDataGrid_New_Extended = function () {
             }
             textspn += "</div>&nbsp;&nbsp;&nbsp;";
         }
-        return textspn.substr(0, textspn.length - 18);
+        textspn = textspn.substr(0, textspn.length - 18) + "</div>";
+        return textspn;
     };
 
     this.getSSDispMembrs = function (Column, _control) {
@@ -735,4 +1128,26 @@ const EbDataGrid_New_Extended = function () {
         $cont.siblings('.req-cont').animate({ opacity: "0" }, 300).remove();
         //},400);
     }
+
+    this.getObjByValue = function (ObjArray, key, val) {
+        if (!(ObjArray && ObjArray.length > 0 && key)) {
+            console.error("ObjArray undefined or length 0 or key undefined");
+            return undefined;
+        }
+        let obj = ObjArray.find(function (obj) { return obj[key] === val; });
+        return obj
+    }
+
+    this.getDtTrKeyByRowId = function (dtRows, rowId) {
+        let k = -1;
+        let keys = Object.keys(dtRows);
+        for (let key in keys) {
+            if (dtRows[key][this.dtDataRowIdIndex] === rowId) {
+                k = key;
+                break;
+            }
+        }
+        return k;
+    };
+
 };

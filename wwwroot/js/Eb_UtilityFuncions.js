@@ -185,6 +185,10 @@ function getObjByval(ObjArray, key, val) {
         console.error("ObjArray undefined");
         return false;
     }
+    if (val === undefined) {
+        console.error("value undefined");
+        return false;
+    }
     try {
         if (ObjArray.length === 0)
             return false;

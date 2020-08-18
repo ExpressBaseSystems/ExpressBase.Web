@@ -186,6 +186,7 @@
                     else if (d.ebmod === 'Staging')
                         jssrc = "https://" + solutionId + ".eb-test.cloud";
                     window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
+                    window.EXPRESSbase_cid = '@ViewBag.SolutionId';
                     window.EXPRESSbase_APP_IDS = [];
                     d.ebbotThemeColorColl = [];
                     d.botWelcomeMsgColl = [];
@@ -257,7 +258,6 @@
               function clickOnDiv(i, appid, e) {
                     $('.btnInnerCont').removeClass('actvbot');
                     //console.error(7);
-                    console.log(354345);
                     $(`#botno${appid}`).addClass('actvbot');
                     var d = document;
                     if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')

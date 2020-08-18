@@ -67,7 +67,8 @@ namespace ExpressBase.Web.Controllers
                 EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
                 if (settings != null)
                 {
-                    if (settings.CssContent == null || settings.CssContent.Count < 9)
+					//////change count if any css Constant is added or removed
+                    if (settings.CssContent == null || settings.CssContent.Count < 11)
                     {
 
                         settings.CssContent = CssContent(settings.CssContent);
@@ -93,7 +94,9 @@ namespace ExpressBase.Web.Controllers
             int i = 0;
             List<string> CssList = new List<string>();
             List<string> NameArr = new List<string>();
-            //if any changes change in bote too
+
+            //////if any changes change in bote too
+			
             foreach (var item in Cssconst)
             {
                 NameArr.Add(item.Key);
@@ -145,6 +148,10 @@ namespace ExpressBase.Web.Controllers
                 return BotConstants.BOT_IMAGE_CONT;
             if (cssConst.Equals("BOT_BUTTON_IMAGE"))
                 return BotConstants.BOT_BUTTON_IMAGE;
+            if (cssConst.Equals("BOT_CLOSE_BUTTON"))
+                return BotConstants.BOT_CLOSE_BUTTON;
+            if (cssConst.Equals("BOT_MAXIMIZE_BUTTON"))
+                return BotConstants.BOT_MAXIMIZE_BUTTON;
             else
                 return "";
         }
@@ -781,42 +788,56 @@ namespace ExpressBase.Web.Controllers
         {
             ApiParams pr = JsonConvert.DeserializeObject<ApiParams>(param);
             ApiResponse resp = null;
-            if (component == null)
-            {
-                var watch = new System.Diagnostics.Stopwatch(); watch.Start();
-                Dictionary<string, object> d = pr.Default.Select(p => new { prop = p.Name, val = p.Value })
-                    .ToDictionary(x => x.prop, x => x.val as object);
 
-                foreach (Param p in pr.Custom)
+            try
+            {
+                if (component == null)
                 {
-                    d.Add(p.Name, p.ValueTo);
+                    List<Param> defaultParams = pr.Default.GroupBy(p => p.Name).Select(g => g.First()).ToList();
+
+                    var watch = new System.Diagnostics.Stopwatch(); watch.Start();
+
+                    Dictionary<string, object> d = defaultParams.Select(p => new { prop = p.Name, val = p.Value })
+                        .ToDictionary(x => x.prop, x => x.val as object);
+
+                    foreach (Param p in pr.Custom)
+                    {
+                        d.Add(p.Name, p.ValueTo);
+                    }
+                    resp = this.ServiceClient.Get(new ApiRequest
+                    {
+                        Name = name,
+                        Version = vers,
+                        Data = d
+                    });
+
+                    watch.Stop();
+                    resp.Name = name;
+                    resp.Version = vers;
+                    resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+                    resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
                 }
-                resp = this.ServiceClient.Get(new ApiRequest
+                else
                 {
-                    Name = name,
-                    Version = vers,
-                    Data = d
-                });
-
-                watch.Stop();
-                resp.Name = name;
-                resp.Version = vers;
-                resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
-                resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
-            }
-            else
-            {
-                resp = this.ServiceClient.Post(new ApiComponetRequest
+                    resp = this.ServiceClient.Post(new ApiComponetRequest
+                    {
+                        Component = EbSerializers.Json_Deserialize(component),
+                        Params = pr.Default
+                    });
+                }
+                if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
                 {
-                    Component = EbSerializers.Json_Deserialize(component),
-                    Params = pr.Default
-                });
+                    resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                }
             }
-            if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
+            catch(Exception ex)
             {
-                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                if(resp == null)
+                {
+                    resp = new ApiResponse();
+                }
+                resp.Message.Description = ex.Message;
             }
-
             return JsonConvert.SerializeObject(resp);
         }
 

@@ -1,4 +1,4 @@
-﻿.eb__-bot___-eb_iframecont {
+﻿.eb__-bot___-eb_iframecont----APPID---- {
     BOT_IFRAME_CSS display: none;
     z-index: 16777270;
     /*right: 0.8%;
@@ -16,14 +16,14 @@
     border-radius: 20px;*/
 }
 
-.eb__-bot___-eb-chat-head {
+.eb__-bot___-eb-chat-head----APPID---- {
     BOT_HEADER_PART
     /*color: white;
     padding: 10px 15px;
     background-color: var( --ebbotThemeColor );*/
 }
 
-.eb__-bot___-headericonCont {
+.eb__-bot___-headericonCont----APPID---- {
     BOT_HEADER_ICON_CONT
     /*width: 35px;
 height: 35px;
@@ -32,7 +32,7 @@ display: flex;
 float: left;*/
 }
 
-.eb__-bot___-headerIcon {
+.eb__-bot___-headerIcon----APPID---- {
     BOT_HEADER_IMAGE
     /*border-radius: 50%;
 height: 100%;
@@ -46,27 +46,27 @@ width: 100%;*/
     color: white;
     padding: 5px 15px;
 }*/
-.eb__-bot___-eb-chat-head .eb__-bot___-bot-head {
+.eb__-bot___-eb-chat-head----APPID---- .eb__-bot___-bot-head----APPID---- {
     BOT_APP_NAME
 }
 
-.eb__-bot___-headersubtext {
+.eb__-bot___-headersubtext----APPID---- {
     BOT_HEADERSUBTEXT
 }
 
-.usecase-bots-cont .eb__-bot___-eb_iframecont {
+.usecase-bots-cont .eb__-bot___-eb_iframecont----APPID---- {
     position: absolute !important;
 }
 
-.loderdiv {
+.eb__-bot___-loderdiv----APPID---- {
     display: flex;
     background-color: #ffffff;
-    /*background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;*/
+    background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
     background-size: 30%;
     flex: 1 1 auto;
 }
 
-.eb__-bot___-eb_iframecont .ebbot_iframe {
+.eb__-bot___-eb_iframecont----APPID---- .ebbot_iframe {
     visibility: hidden;
     width: 100%;
     flex: 1 1 auto;
@@ -80,15 +80,15 @@ width: 100%;*/
     flex: 1 1 auto;
    border-radius:10px;
 }*/
-.eb__-bot___-chatbtn {
+.eb__-bot___-chatbtn----APPID---- {
     BOT_CHAT_BUTTON z-index: 16777271;
 }
 
-.eb__-bot___-iconCont {
+.eb__-bot___-iconCont----APPID---- {
     BOT_IMAGE_CONT
 }
 
-.eb__-bot___-boticon {
+.eb__-bot___-boticon----APPID---- {
     BOT_BUTTON_IMAGE
 }
 
@@ -97,14 +97,14 @@ width: 100%;*/
 }
 
 @media screen and (max-width: 768px) {
-    .eb__-bot___-eb_iframecont {
+    .eb__-bot___-eb_iframecont----APPID---- {
         width: 100%;
         left: 0;
         bottom: 0;
         height: 100%;
     }
 
-    .eb__-bot___-eb_iframecont {
+    .eb__-bot___-eb_iframecont----APPID---- {
         border-radius: 0px;
     }
 }
@@ -114,7 +114,7 @@ width: 100%;*/
 }
 
 @media (max-width: 450px) and (min-width: 20px) {
-    .eb__-bot___-eb_iframecont {
+    .eb__-bot___-eb_iframecont----APPID---- {
         width: 100% !important;
     }
     
@@ -123,7 +123,7 @@ width: 100%;*/
         width: 100% !important;
     }
 
-    .eb__-bot___-chatmaximize {
+    .eb__-bot___-chatmaximize----APPID---- {
         /*display: none !important;*/
     }
 }
@@ -137,7 +137,7 @@ width: 100%;*/
 
 /*-----*/
 
-.eb__-bot___-eb-chat-head .bot-icon {
+.eb__-bot___-eb-chat-head----APPID---- .bot-icon {
     height: 44px;
     width: 44px;
     float: left;
@@ -157,7 +157,7 @@ width: 100%;*/
     display: inline-block;
 }
 
-.eb__-bot___-chatclose {
+.eb__-bot___-chatclose----APPID---- {
     BOT_CLOSE_BUTTON
     /*display: inline-block;
     float: right;
@@ -167,7 +167,7 @@ width: 100%;*/
     cursor: pointer;*/
 }
 
-.eb__-bot___-chatmaximize {
+.eb__-bot___-chatmaximize----APPID---- {
     BOT_MAXIMIZE_BUTTON
     /*margin-left: auto !important;
     display: inline-block;

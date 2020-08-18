@@ -32,6 +32,7 @@ const WebFormRender = function (option) {
 
     this.setFormObject = function () {
         this.flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
+        this.flatControlsWithDG = this.flatControlsWithDG.concat(this.DGsNew);// all DGsNew in the formObject + all controls as flat
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
@@ -589,6 +590,23 @@ const WebFormRender = function (option) {
         else
             return true;
     };
+
+    this.DGsNewB4Save = function () {
+        let hasActiveRows = false;
+        $.each(this.DGNewBuilderObjs, function (k, DGB) {
+            if (DGB.hasActiveRow()) {
+                hasActiveRows = true;
+                return false;
+            }
+        }.bind(this));
+        if (hasActiveRows) {
+            EbDialog("show", { Message: "Please commit or delete uncommited rows" });
+            return false;
+        }
+        else
+            return true;
+    };
+
     this.MeetingB4Save = function () {
         let resp = true;
         $.each($(`.meeting-scheduler-outer .m-validate`), function (i, Obj) {
@@ -629,6 +647,8 @@ const WebFormRender = function (option) {
             if (!this.isAllUniqOK())
                 return;
             if (!this.DGsB4Save())
+                return;
+            if (!this.DGsNewB4Save())
                 return;
             if (!this.MeetingB4Save())
                 return;
@@ -1216,20 +1236,28 @@ const WebFormRender = function (option) {
     this.LocationInit = function () {
         if (ebcontext.locations.Listener) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
-                if (this.rowId > 0 && _renderMode !== 4) {
-                    EbDialog("show", {
-                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            this.startNewMode();
-                        }.bind(this)
-                    });
+                if (this.rowId > 0) {
+                    if (_renderMode !== 4) {
+                        EbDialog("show", {
+                            Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                            Buttons: {
+                                "Ok": {
+                                    Background: "green",
+                                    Align: "right",
+                                    FontColor: "white;"
+                                }
+                            },
+                            CallBack: function (name) {
+                                this.startNewMode();
+                            }.bind(this)
+                        });
+                    }
+                }
+                else {
+                    let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
+                    $.each(sysLocCtrls, function (i, ctrl) {
+                        ctrl.setValue(o.LocId);
+                    }.bind(this));
                 }
             }.bind(this);
         }
@@ -1473,8 +1501,9 @@ const WebFormRender = function (option) {
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         this.setMode();
-
+        this.isInitiallyPopulating = true;
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
+        this.isInitiallyPopulating = false;
 
         if (this.Mode.isNew) {
             this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
@@ -1502,6 +1531,7 @@ const WebFormRender = function (option) {
                 return dialogText;
             }
         }.bind(this);
+        $('[data-toggle="tooltip"]').tooltip('destroy').tooltip();
 
         console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
     };

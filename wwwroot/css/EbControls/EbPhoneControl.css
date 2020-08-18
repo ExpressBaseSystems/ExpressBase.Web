@@ -24,8 +24,30 @@
     margin-bottom: 0 !important;
     padding-right: 36px;
     margin-right: 0;
-    width:100%;
+    width: 100%;
 }
+
+
+    .iti input::-webkit-input-placeholder, .iti input[type=tel]::-webkit-input-placeholder, .iti input[type=text]::-webkit-input-placeholder {
+        /* WebKit, Blink, Edge */
+        color: #79797924;
+    }
+
+    .iti input:-moz-placeholder, .iti input[type=tel]:-moz-placeholder, .iti input[type=text]:-moz-placeholder {
+        /* Mozilla Firefox 4 to 18 */
+        color: #79797924;
+    }
+
+    .iti input::-moz-placeholder, .iti input[type=tel]::-moz-placeholder, .iti input[type=text]::-moz-placeholder {
+        /* Mozilla Firefox 19+ */
+        color: #79797924;
+    }
+
+    .iti input:-ms-input-placeholder, .iti input[type=tel]:-ms-input-placeholder, .iti input[type=text]:-ms-input-placeholder {
+        /* Internet Explorer 10-11 */
+        color: #79797924;
+    }
+
 
 .iti__flag-container {
     position: absolute;
@@ -84,6 +106,7 @@
         max-width: 260px !important;
         white-space: normal;
     }
+
     .iti__country {
         padding: 5px 10px;
         outline: none;

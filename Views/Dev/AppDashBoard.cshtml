@@ -10,15 +10,15 @@
     var solutionid = ViewBag.cide;
     if (ViewBag.Env == "Development")
     {
-        domurl = "http://"+solutionid+".localhost:41500";
+        domurl = "http://" + solutionid + ".localhost:41500";
     }
     if (ViewBag.Env == "Staging")
     {
-        domurl = "https://"+solutionid+".eb-test.cloud";
+        domurl = "https://" + solutionid + ".eb-test.cloud";
     }
     if (ViewBag.Env == "Production")
     {
-        domurl = "https://"+solutionid+".expressbase.com";
+        domurl = "https://" + solutionid + ".expressbase.com";
     }
 }
 
@@ -243,10 +243,16 @@
                                                 <div class="input-group-btn">
                                                     <button id="btnSelectDpClipart" class="btn btn-info" title="Select from Clipart" onclick="$('#AppDB_BotDemoDp').modal('show');">Select</button>
                                                 </div>
-                                            </div>
-
+                                            </div>                                            
                                         </div>
-
+                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
+                                            <div class="form-check mrg10btm">
+                                                <label>
+                                                    <input class="form-check-input" name="Use_Sol_logo" type="checkbox" value="1" id="Use_Sol_logo">
+                                                    Use solution logo in bot header
+                                                </label>
+                                            </div>
+                                        </div>
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label>Theme Colour:</label>
                                             <input type="color" class="form-control botclr " id="bot_tm_color" style=" width: 20%;" value="@bot_tm_color">
@@ -290,7 +296,7 @@
                                                             <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Bot DP Clip Art</h4> </div>
                                                         </div>
                                                     </div>
-                                                    <div class="modal-body" style="height:185px">
+                                                    <div class="modal-body" id="dp_modal" style="height:185px">
                                                         <div class="demodpdiv" style=" background:url('../images/demobotdp1.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp1.png')"></div>
                                                         <div class="demodpdiv" style=" background:url('../images/demobotdp2.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp2.png')"></div>
                                                         <div class="demodpdiv" style=" background:url('../images/demobotdp3.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp3.png')"></div>
@@ -299,6 +305,7 @@
                                                         <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp6.png')"></div>
                                                     </div>
                                                     <div class="modal-footer" style="">
+                                                       @* <button type="button" class="btn btn-default" id="dpBrowse" data-dismiss="modal">Browse</button>*@
                                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                                     </div>
                                                 </div>
@@ -412,7 +419,7 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" id="botCloseBtn_li" data-toggle="tab" href="#BOT_CLOSE_BUTTON" role="tab" aria-controls="botCloseBtn" aria-selected="false">Bot close button</a>
-                                            </li> 
+                                            </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" id="botMax_btn" data-toggle="tab" href="#BOT_MAXIMIZE_BUTTON" role="tab" aria-controls="botMax_btn" aria-selected="false">Bot maximize button</a>
                                             </li>
@@ -450,7 +457,7 @@
                                             </div>
                                             <div class="tab-pane " id="BOT_CLOSE_BUTTON" role="tabpanel" aria-labelledby="">
 
-                                            </div> 
+                                            </div>
                                             <div class="tab-pane " id="BOT_MAXIMIZE_BUTTON" role="tabpanel" aria-labelledby="">
 
                                             </div>
@@ -602,7 +609,7 @@
                                         <div class="" id="internalLoginCont" hidden>
                                             <div class="" id="internalLogin">
                                                 <div class="selauth">
-                                                    <label>Internal user Authentication methods</label>                                                    
+                                                    <label>Internal user Authentication methods</label>
                                                     <div class="radio">
                                                         <label><input type="radio" id="pswrd_based" name="internalAuthType" checked>Password Based</label>
                                                     </div>
@@ -610,7 +617,7 @@
                                                         <label><input type="radio" id="otp_based" name="internalAuthType">OTP based</label>
                                                     </div>
                                                 </div>
-                                                
+
 
                                             </div>
 
@@ -864,6 +871,7 @@
     function clickOnDemoDp(path) {
         $('#AppDB_BotDemoDp').modal('hide');
         $('#bot_dp_url').val(path);
+        $('#bot_dp_url').attr("dpRefid", "");
     }
     </script>
 }

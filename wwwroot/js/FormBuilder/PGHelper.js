@@ -14,8 +14,8 @@
             success: function (Columns) {
                 this.clearDependantProps("Columns");// destination name hard coding
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
-                this.PGobj.refresh();
                 this.PGobj.isBussy = false;
+                this.PGobj.refresh();
                 $.LoadingOverlay('hide');
             }.bind(this)
         });
@@ -32,9 +32,20 @@
             url: opt.url,
             data: { url: opt.apiUrl, headers: opt.headers, parameters: opt.parameters, method: opt.method },
             success: function (Columns) {
-                this.clearDependantProps("Columns");// destination name hard coding
-                this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
-                this.PGobj.refresh();
+                if (Columns === "null") {
+                    this.PGobj.EbAlert.alert({
+                        head: "Something went Wrong .",
+                        body: "Couldn't fetch columns.",
+                        type: "danger",
+                        delay: 5000
+                    });
+                }
+                else {
+                    this.clearDependantProps("Columns");// destination name hard coding
+                    this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
+                    this.PGobj.isBussy = false;
+                    this.PGobj.refresh();
+                }
                 this.PGobj.isBussy = false;
                 $.LoadingOverlay('hide');
             }.bind(this)

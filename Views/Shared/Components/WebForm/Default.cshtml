@@ -46,10 +46,12 @@
 @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>*@@*jith*@
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/yearpicker.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+@*<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-toggle.min.js"></script>
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 <script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
-<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
+@*<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/MonthPicker.min.js"></script>
 <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbPowerSelect.js" asp-append-version=@bApnd></script>
@@ -74,7 +76,8 @@
 <script type="text/javascript" src="~/js/vue@2.1.10.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/bootstrap-select.js " asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/moment.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-locationpicker/0.1.12/locationpicker.jquery.min.js"></script>
 <script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
 
@@ -95,7 +98,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/jquery.rateyo.min.js"></script>
 <script type="text/javascript" src="~/js/FormBuilder/jquery.scrollTo.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/DV/Chart.min.js"></script>
 <script type="text/javascript" src="~/js/DV/Chart.Zoom.min.js"></script>
@@ -261,6 +265,7 @@
         border: none;
         color: #7171ff;
     }
+
         [ctype="DataGrid_New"] [mode="edit"] .edit-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #adadef !important;
         }
@@ -270,6 +275,7 @@
         border: none;
         color: #f55d5d;
     }
+
         [ctype="DataGrid_New"] [mode="edit"] .del-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
         }
@@ -279,6 +285,7 @@
         border: none;
         color: #019a01;
     }
+
         [ctype="DataGrid_New"] .check-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #87c987 !important;
         }
@@ -288,11 +295,12 @@
         border: none;
         color: #f55d5d;
     }
+
         [ctype="DataGrid_New"] .cancel-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
         }
 
-    [ctype="DataGrid_New"] table.dataTable{
+    [ctype="DataGrid_New"] table.dataTable {
         margin-top: 0px !important;
     }
 
@@ -406,13 +414,13 @@
                         </div>
     `);
 
-    header.insertButton(`<div id="webformexcel-selbtn"  style='display: none;' class="btn-select btn">	
-                            <button id="webformexcel" class="savebtn" title="Excel form"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>	
-                            <select class="selectpicker">	
-                              <option data-token="import" data-title="Import" data-icon="fa-upload"> Import</option>	
-                              <option data-token="template-export" data-title="Form template" data-icon="fa-download"> Form template</option>	
-                            </select>	
-                        </div>	
+    header.insertButton(`<div id="webformexcel-selbtn"  style='display: none;' class="btn-select btn">
+                            <button id="webformexcel" class="savebtn" title="Excel form"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
+                            <select class="selectpicker">
+                              <option data-token="import" data-title="Import" data-icon="fa-upload"> Import</option>
+                              <option data-token="template-export" data-title="Form template" data-icon="fa-download"> Form template</option>
+                            </select>
+                        </div>
     `);
 
     //header.insertButton(`<button id="webformprint" class='btn' title='Print' style='display: none;'><i class="fa fa-print" aria-hidden="true"></i></button>`);
@@ -447,7 +455,7 @@
 
 @Html.JsCode(
     @<script>
-        const renderer = new WebFormRender({ // multiple form related changes will come
+         const renderer = new WebFormRender({ // multiple form related changes will come
              formObj: _formObj,
              $formCont: $("#WebForm-cont"),
              headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose" },

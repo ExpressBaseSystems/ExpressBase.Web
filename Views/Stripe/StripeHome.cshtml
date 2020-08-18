@@ -1,130 +1,133 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<head>
-    <title>Stripe Home</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/css/Stripe/cust_invoices.css">
-    <link rel="stylesheet" href="~/css/Stripe/index.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>
-        .div-main {
-            margin-top: 13px;
-        }
+    <head>
+        <title>Stripe Home</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+        <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+        @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
+        <link rel="stylesheet" href="~/css/Bootstrap_JQuery/bootstrap-3.3.7.min.css">
+        @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
+        <link rel="stylesheet" href="~/css/Stripe/cust_invoices.css">
+        <link rel="stylesheet" href="~/css/Stripe/index.css">
+        @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>*@
+        <script src="~/js/Bootstrap_JQuery/jquery-3.2.1.min.js"></script>
+        @*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>*@
+        <script type="text/javascript" src="~/js/CommonJS/bootstrap.min.js"></script>
+        <style>
+            .div-main {
+                margin-top: 13px;
+            }
 
-        .div-body {
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        }
+            .div-body {
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            }
 
-        .div-body-invoices {
-            margin-top: 33px;
-            margin-bottom: 33px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        }
+            .div-body-invoices {
+                margin-top: 33px;
+                margin-bottom: 33px;
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            }
 
-        .div-heading {
-            padding: 20px 0px 30px 0px;
-            height: 40px;
-            text-align-last: center;
-            width: 100%;
-        }
+            .div-heading {
+                padding: 20px 0px 30px 0px;
+                height: 40px;
+                text-align-last: center;
+                width: 100%;
+            }
 
-        .stripe-headings {
-            font-family: Helvetica Neue, Helvetica, sans-serif;
-            text-align-last: center;
-            color: #666ee8;
-            font-weight: 100;
-            font-size: medium;
-        }
+            .stripe-headings {
+                font-family: Helvetica Neue, Helvetica, sans-serif;
+                text-align-last: center;
+                color: #666ee8;
+                font-weight: 100;
+                font-size: medium;
+            }
 
-        .user-det-sub-heading {
-            font-family: Helvetica Neue, Helvetica, sans-serif;
-            text-align: left;
-            color: darkblue;
-        }
+            .user-det-sub-heading {
+                font-family: Helvetica Neue, Helvetica, sans-serif;
+                text-align: left;
+                color: darkblue;
+            }
 
-        .user-det-contents {
-            font-family: Helvetica Neue, Helvetica, sans-serif;
-            text-align: left;
-            color: darkslategray;
-            font-weight: 100;
-            font-size: small;
-        }
+            .user-det-contents {
+                font-family: Helvetica Neue, Helvetica, sans-serif;
+                text-align: left;
+                color: darkslategray;
+                font-weight: 100;
+                font-size: small;
+            }
 
-        .user-det-padding {
-            padding-bottom: 5px;
-        }
+            .user-det-padding {
+                padding-bottom: 5px;
+            }
 
-        .button {
-            display: block;
-            background: #666ee8;
-            color: #fff;
-            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
-            border-radius: 4px;
-            border: 0;
-            font-weight: 700;
-            width: 100%;
-            height: 40px;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            text-align: center;
-            padding: 10px;
-        }
+            .button {
+                display: block;
+                background: #666ee8;
+                color: #fff;
+                box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+                border-radius: 4px;
+                border: 0;
+                font-weight: 700;
+                width: 100%;
+                height: 40px;
+                outline: none;
+                cursor: pointer;
+                transition: all 0.15s ease;
+                text-align: center;
+                padding: 10px;
+            }
 
-        .div-card {
-            background-color: #e5ebf2;
-            margin: 5px 20px 5px 20px;
-            padding: 15px 10px 15px 10px;
-            border-radius: 4px;
-        }
+            .div-card {
+                background-color: #e5ebf2;
+                margin: 5px 20px 5px 20px;
+                padding: 15px 10px 15px 10px;
+                border-radius: 4px;
+            }
 
-        .card-number {
-            font-family: Helvetica Neue, Helvetica, sans-serif;
-            font-weight: 100;
-            color: darkslategrey;
-        }
+            .card-number {
+                font-family: Helvetica Neue, Helvetica, sans-serif;
+                font-weight: 100;
+                color: darkslategrey;
+            }
 
-        .card-exp {
-            font-family: Helvetica Neue, Helvetica, sans-serif;
-            font-weight: 100;
-            font-size: small;
-            color: darkslategrey;
-        }
+            .card-exp {
+                font-family: Helvetica Neue, Helvetica, sans-serif;
+                font-weight: 100;
+                font-size: small;
+                color: darkslategrey;
+            }
 
-        .scrollable {
-            height: 115px;
-            overflow-y: scroll;
-        }
+            .scrollable {
+                height: 115px;
+                overflow-y: scroll;
+            }
 
-        #style-15::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
-            background-color: #F5F5F5;
-            border-radius: 10px;
-        }
+            #style-15::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+                background-color: #F5F5F5;
+                border-radius: 10px;
+            }
 
-        #style-15::-webkit-scrollbar {
-            width: 10px;
-            background-color: #F5F5F5;
-        }
+            #style-15::-webkit-scrollbar {
+                width: 10px;
+                background-color: #F5F5F5;
+            }
 
-        #style-15::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            background-color: #FFF;
-            background-image: -webkit-gradient(linear, 40% 0%, 75% 84%, from(#666ee8), to(#666ee8), color-stop(.6,#8f95eb))
-        }
-
-    </style>
-</head>
+            #style-15::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background-color: #FFF;
+                background-image: -webkit-gradient(linear, 40% 0%, 75% 84%, from(#666ee8), to(#666ee8), color-stop(.6,#8f95eb))
+            }
+        </style>
+    </head>
 <body>
     <div class="div-main container-fluid">
         <div class="row">

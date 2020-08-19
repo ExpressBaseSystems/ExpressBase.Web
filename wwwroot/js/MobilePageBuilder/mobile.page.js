@@ -107,6 +107,7 @@ function EbMobStudio(config) {
                 console.error("undefined container");
         }
         $(`#${o.EbSid}`).on("click", this.ContainerOnClick.bind(this));
+        FilterToolBox(ebtype, this.Conf.TabNum);
         this.EditObj = null;
     };
 
@@ -132,6 +133,7 @@ function EbMobStudio(config) {
             revert: "invalid",
             helper: "clone",
             cursor: "move",
+            zIndex: 1000,
             appendTo: "body",
             drag: function (event, ui) {
                 $(ui.helper).css({
@@ -222,6 +224,7 @@ function EbMobStudio(config) {
             $(`#${o.EbSid}`).off("click").on("click", this.ContainerOnClick.bind(this));
             this.pg.setObject(o, AllMetas[ebtype]);
             o.refresh(this);
+            FilterToolBox(ebtype, this.Conf.TabNum);
         }
     };
 

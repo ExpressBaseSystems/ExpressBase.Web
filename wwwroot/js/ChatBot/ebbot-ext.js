@@ -81,13 +81,13 @@
 
     //division for header part of chat bot ie for heading(d.ebbotName), close btn,maximize window (above iframe)......(2)
     var chatHead = d.createElement("div");
-    chatHead.className = "eb-chat-head eb__-bot___-eb-chat-head";
+    chatHead.className = "eb-chat-head eb__-bot___-eb-chat-head" + AppId;
     chatHead.style.visibility = 'hidden';
     if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderIcon : d.botProp.HeaderIcon) {
         var headericonCont = d.createElement("div");
-        headericonCont.className = "headericonCont eb__-bot___-headericonCont";
+        headericonCont.className = "headericonCont eb__-bot___-headericonCont" + AppId;
         var headerIcon = d.createElement("img");
-        headerIcon.className = "headerIcon eb__-bot___-headerIcon";
+        headerIcon.className = "headerIcon eb__-bot___-headerIcon" + AppId;
         headerIcon.id = "headerIcon" + AppId;
         headerIcon.src = this.eb_get_path(d.ebmod) + dpurl;
         headericonCont.appendChild(headerIcon);
@@ -97,7 +97,7 @@
 
     //creata a div for chatbot heading and append in chathead div ie, division for header part of chat bot
     var botHeadDiv = d.createElement("div");
-    botHeadDiv.className = "bot-head eb__-bot___-bot-head";
+    botHeadDiv.className = "bot-head eb__-bot___-bot-head" + AppId;
     botHeadDiv.innerHTML = (d.ebbotName || d.ebbotNameColl[d.appIdCount]);
     chatHead.appendChild(botHeadDiv);
     //var html = d.getElementsByTagName('html')[0];
@@ -112,7 +112,7 @@
 
     if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderSubtxt : d.botProp.HeaderSubtxt) {
         var headersubtext = d.createElement("div");
-        headersubtext.className = "headersubtext eb__-bot___-headersubtext";
+        headersubtext.className = "headersubtext eb__-bot___-headersubtext" + AppId;
         headersubtext.innerHTML = subtxt;
         botHeadDiv.appendChild(headersubtext);
     }
@@ -122,12 +122,12 @@
     var iframecont = d.createElement("div");
     iframecont.id = "eb_iframecont" + AppId;
     iframecont.setAttribute("appid", AppId);
-    iframecont.className = "eb_iframecont eb__-bot___-eb_iframecont";
+    iframecont.className = "eb_iframecont eb__-bot___-eb_iframecont" + AppId;
 
     //create a iframe and place in iframecont contrainer........(4)
     var iframe = d.createElement("iframe");
     iframe.id = "ebbot_iframe" + AppId;
-    iframe.className = "ebbot_iframe eb__-bot___-ebbot_iframe";
+    iframe.className = "ebbot_iframe eb__-bot___-ebbot_iframe" + AppId;
     iframe.frameBorder = "0";
     iframe.allowFullscreen = true;
     iframe.setAttribute("allow", "geolocation");
@@ -138,7 +138,7 @@
     //iframe placed in loaderd div........(3)
     var loaderDiv = d.createElement("div");
     loaderDiv.id = "loderdiv" + AppId;
-    loaderDiv.className = "loderdiv eb__-bot___-loderdiv";
+    loaderDiv.className = "loderdiv eb__-bot___-loderdiv" + AppId;
 
     loaderDiv.appendChild(iframe);
     iframecont.appendChild(loaderDiv);
@@ -152,23 +152,23 @@
     //??????????
     var chatbtn = d.createElement("div");
     chatbtn.id = "chatbtn" + AppId;
-    chatbtn.className = "chatbtn eb__-bot___-chatbtn";
+    chatbtn.className = "chatbtn eb__-bot___-chatbtn" + AppId;
     //var chatIcon = d.getElementsByClassName('boticon')[0];
     var chatIcon = d.createElement("img");
-    chatIcon.className = "boticon eb__-bot___-boticon";
+    chatIcon.className = "boticon eb__-bot___-boticon" + AppId;
     chatIcon.id = "boticon" + AppId;
     chatIcon.src = this.eb_get_path(d.ebmod) + dpurl;
 
     //creata a maximize btn and append in chathead div ie, division for header part of chat bot
     var maximizeDiv = d.createElement("div");
-    maximizeDiv.className = "chatmaximize eb__-bot___-chatmaximize";
+    maximizeDiv.className = "chatmaximize eb__-bot___-chatmaximize" + AppId;
     maximizeDiv.id = "maximizediv" + AppId;
     maximizeDiv.innerHTML = '&#128470;';
     chatHead.appendChild(maximizeDiv);
 
     //creata a close btn and append in chathead div ie, division for header part of chat bot
     var closeDiv = d.createElement("div");
-    closeDiv.className = "chatclose eb__-bot___-chatclose";
+    closeDiv.className = "chatclose eb__-bot___-chatclose" + AppId;
     closeDiv.id = "closediv" + AppId;
     closeDiv.innerHTML = '&#10006;';
     chatHead.appendChild(closeDiv);
@@ -226,14 +226,14 @@
     if (!d.appIdColl) {
         d.body.appendChild(chatbtn);
         var iconCont = d.createElement("div");
-        iconCont.className = "iconCont eb__-bot___-iconCont";
+        iconCont.className = "iconCont eb__-bot___-iconCont" + AppId;
         iconCont.appendChild(chatIcon);
         chatbtn.appendChild(iconCont);
         // chatbtn.appendChild(chatIcon);
         // chatbtn.click();//////////////////////////////// for showing chatarea on load
     }
     else {      
-        //d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);       
+       // d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);       
         chatbtn.click();
     }
 

@@ -15,9 +15,12 @@
 <script type="text/javascript" src="~/js/location-config.js"></script>
 <script type="text/javascript" src="~/js/CommonDataTable.js"></script>
 <script type="text/javascript" src="~/js/datatables.min.js"></script>
-<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+@*<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-toggle.min.js"></script>
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/jquery.rateyo.min.js"></script>
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-select.min.js"></script>
 
 <script>
     var cm = new EbHeader().setName("Configure Locations");
@@ -41,10 +44,10 @@
                     </a>
                 </li>
                 @*<li class="nav-item ">
-                    <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
-                        <i class="fa fa-list" aria-hidden="true"></i> Locations
-                    </a>
-                </li>*@
+                        <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
+                            <i class="fa fa-list" aria-hidden="true"></i> Locations
+                        </a>
+                    </li>*@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#location_types" role="tab"><i class="fa fa-object-group" aria-hidden="true"></i> Location Types</a>
                 </li>
@@ -55,26 +58,26 @@
 
             <div class="tab-content">
                 @*<div class="tab-pane" id="locations_tab" role="tabpanel">
-                    <div class="row col-md-12">
-                        <div class="col-md-2 pd-0 pull-right ">
-                            <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue eb_btn-sm new_sol_lk pull-right "> <i class="fa fa-plus"></i> New Location</a>
+                        <div class="row col-md-12">
+                            <div class="col-md-2 pd-0 pull-right ">
+                                <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue eb_btn-sm new_sol_lk pull-right "> <i class="fa fa-plus"></i> New Location</a>
+                            </div>
                         </div>
-                    </div>
-                    @foreach (KeyValuePair<int, EbLocation> loc in locations)
-                    {
-                        <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                            <a class="appcontainer_inner loc_tile" locid=@locations[loc.Key].LocId>
-                                <div class="col-md-4 pd-l-0 flex-center locsImage">
-                                    <img src="~/images/your_company_logo.png" />
-                                </div>
-                                <div class="col-md-10 pd-0">
-                                    <h5 class="txtdecor_none ellipsis-text">@locations[loc.Key].LongName</h5>
-                                    <p class="small txtdecor_none">@locations[loc.Key].ShortName</p>
-                                </div>
-                            </a>
-                        </div>
-                    }
-                </div>*@
+                        @foreach (KeyValuePair<int, EbLocation> loc in locations)
+                        {
+                            <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
+                                <a class="appcontainer_inner loc_tile" locid=@locations[loc.Key].LocId>
+                                    <div class="col-md-4 pd-l-0 flex-center locsImage">
+                                        <img src="~/images/your_company_logo.png" />
+                                    </div>
+                                    <div class="col-md-10 pd-0">
+                                        <h5 class="txtdecor_none ellipsis-text">@locations[loc.Key].LongName</h5>
+                                        <p class="small txtdecor_none">@locations[loc.Key].ShortName</p>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>*@
 
                 <div class="tab-pane active" id="locations_hierarchial_tab" role="tabpanel">
                     <div id="loc_tree_container"></div>
@@ -162,47 +165,47 @@
 </div>
 
 @*<div class="modal fade create_loc_mod" id="create_loc_mod" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">New Location</h4>
-            </div>
-            <div class="modal-body new_location_bdy">
-                <div class="form-horizontal" id="locspace">
-                    <input type="hidden" name="LocId" />
-                    <div class="form-group">
-                        <label class="col-sm-3">Name </label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control keyname" placeholder="Enter Name" id="shortname" name="longname" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">New Location</h4>
+                </div>
+                <div class="modal-body new_location_bdy">
+                    <div class="form-horizontal" id="locspace">
+                        <input type="hidden" name="LocId" />
+                        <div class="form-group">
+                            <label class="col-sm-3">Name </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control keyname" placeholder="Enter Name" id="shortname" name="longname" value="">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-3">ShortName </label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control keyname" placeholder="Enter Short Name " id="shortname" name="shortname" value="">
+                        <div class="form-group">
+                            <label class="col-sm-3">ShortName </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control keyname" placeholder="Enter Short Name " id="shortname" name="shortname" value="">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3">Logo</label>
-                        <div class="col-sm-3">
-                            <input type="hidden" value="" name="Logo" />
-                            <button key="Logo" id="Logo_toggle_btn" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
-                        </div>
-                        <div class="col-md-6 logo_img_cont">
-                            <img src="" class="img-responsive pull-right" id="Logo_prev" />
+                        <div class="form-group">
+                            <label class="col-sm-3">Logo</label>
+                            <div class="col-sm-3">
+                                <input type="hidden" value="" name="Logo" />
+                                <button key="Logo" id="Logo_toggle_btn" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                            </div>
+                            <div class="col-md-6 logo_img_cont">
+                                <img src="" class="img-responsive pull-right" id="Logo_prev" />
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button class="ebbtn eb_btnblue pull-right" value="" id="createloc">Add</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="ebbtn eb_btnblue pull-right" value="" id="createloc">Add</button>
-            </div>
-        </div>
 
-    </div>
-</div>*@
+        </div>
+    </div>*@
 
 <div class="modal fade create_loc_mod" id="add_new_key" role="dialog">
     <div class="modal-dialog">
@@ -284,20 +287,20 @@
             </div>
             <div class="modal-body new_location_bdy" id="add_location_bdy">
                 <input type="hidden" name="_LocId" />
-                @if(location_types!=null&&location_types.Count>0)
+                @if (location_types != null && location_types.Count > 0)
                 {
-                <div class="form-group">
-                    <label class="col-sm-3">Type</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" id="loc_type" name="loc_type">
-                            <option value="0" selected>--Select--</option>
-                            @foreach (EbLocationType t in location_types)
-                            {
-                                <option value="@t.Id"> @t.Type</option>
-                            }
-                        </select>
+                    <div class="form-group">
+                        <label class="col-sm-3">Type</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="loc_type" name="loc_type">
+                                <option value="0" selected>--Select--</option>
+                                @foreach (EbLocationType t in location_types)
+                                {
+                                    <option value="@t.Id"> @t.Type</option>
+                                }
+                            </select>
+                        </div>
                     </div>
-                </div>
                 }
                 <input type="hidden" class="form-control keyname" placeholder="Enter Parent ID" id="_parentId" name="_parentId" value="">
                 <div class="form-group">
@@ -316,7 +319,7 @@
                 <div class="form-group">
                     <label class="col-sm-3">Logo</label>
                     <div class="col-sm-3">
-                        <input type="hidden" value="" id="loc_logoId"name="Logo" />
+                        <input type="hidden" value="" id="loc_logoId" name="Logo" />
                         <button key="Logo" id="Logo_toggle_btn" class="btn btn-default disablebtn">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                     </div>
                     <div class="col-md-6 logo_img_cont">
@@ -342,13 +345,14 @@
 
 <style>
 
-    #types-space table thead, #loc_tree_container table thead  {
-    background-color: #055d9c;
-    color: white;
-} 
-    #loc_tree_container td,context-menu-active {
+    #types-space table thead, #loc_tree_container table thead {
+        background-color: #055d9c;
+        color: white;
+    }
+
+    #loc_tree_container td, context-menu-active {
         background-color: unset;
-    } 
+    }
 
     div.dataTables_wrapper .info-search-cont {
         display: flex;
@@ -357,7 +361,7 @@
     }
 
     div.dataTables_wrapper tr.selected {
-       background-color: #0083c5 !important;
+        background-color: #0083c5 !important;
     }
 
     .display-none {
@@ -429,11 +433,12 @@
     #treemodal .pull-right {
         margin-right: 20px;
     }
+
     .treeview .context-menu-item {
-        padding: 0.4em 2em!important;
+        padding: 0.4em 2em !important;
     }
 
-     #loc_tree_container .eb_btn-sm {
+    #loc_tree_container .eb_btn-sm {
         padding: 7px 10px;
         font-size: 12px;
     }

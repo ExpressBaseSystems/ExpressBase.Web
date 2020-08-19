@@ -44,6 +44,8 @@
         this.drawHTMLView();
         this.callOnRowPaintFns();
         this.updateAggCols(false);
+        if (this.DataMODEL[this.DataMODEL.length - 1].RowId < 0)
+            this.newRowCounter = this.DataMODEL[this.DataMODEL.length - 1].RowId; // for clone or import
     }.bind(this);
 
     this.constructObjectModel = function (dataRows) {

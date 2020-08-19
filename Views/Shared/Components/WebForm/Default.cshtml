@@ -249,7 +249,7 @@
         display: inline-flex;
     }
 
-    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {        
+    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {
         color: gray;
         pointer-events: none;
     }
@@ -262,6 +262,7 @@
     [ctype="DataGrid_New"] [mode="edit"] .edit-rowc {
         color: #7171ff;
     }
+
         [ctype="DataGrid_New"] [mode="edit"] .edit-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #adadef !important;
         }
@@ -269,6 +270,7 @@
     [ctype="DataGrid_New"] [mode="edit"] .del-rowc {
         color: #f55d5d;
     }
+
         [ctype="DataGrid_New"] [mode="edit"] .del-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
         }
@@ -276,6 +278,7 @@
     [ctype="DataGrid_New"] .check-rowc {
         color: #019a01;
     }
+
         [ctype="DataGrid_New"] .check-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #87c987 !important;
         }
@@ -283,11 +286,12 @@
     [ctype="DataGrid_New"] .cancel-rowc {
         color: #f55d5d;
     }
+
         [ctype="DataGrid_New"] .cancel-rowc:hover {
             box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
         }
 
-    [ctype="DataGrid_New"] table.dataTable{
+    [ctype="DataGrid_New"] table.dataTable {
         margin-top: 0px !important;
     }
 
@@ -295,7 +299,37 @@
         padding-bottom: 0px !important;
         margin-bottom: 0px !important;
     }
-    
+
+    [ctype="DataGrid_New"] .DTFC_LeftFootWrapper, [ctype="DataGrid_New"] .DTFC_RightFootWrapper, [ctype="DataGrid_New"] .dataTables_scrollFoot {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    [ctype="DataGrid_New"] .DTFC_LeftFootWrapper, [ctype="DataGrid_New"] .DTFC_RightFootWrapper {
+        top: 17px !important;
+    }
+
+    div[ctype="DataGrid_New"] div.dataTables_wrapper tr.odd:hover {
+        background-color: rgb(249, 249, 249) !important;
+    }
+
+    div[ctype="DataGrid_New"] div.dataTables_wrapper tr.even:hover {
+        background-color: white !important;
+    }
+
+    div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody > tr > .selected, div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected:hover {
+        background-color: white !important;
+    }
+
+    div[ctype="DataGrid_New"] td.focus {
+        outline: none !important;
+        box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
+    }
+
+    div[ctype="DataGrid_New"] table.dataTable tbody tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody th.selected, div[ctype="DataGrid_New"] table.dataTable tbody td.selected {
+        color: black !important;
+    }
+
 
     /*DataGridNew related styles - End*/
 </style>
@@ -407,13 +441,13 @@
                         </div>
     `);
 
-    header.insertButton(`<div id="webformexcel-selbtn"  style='display: none;' class="btn-select btn">	
-                            <button id="webformexcel" class="savebtn" title="Excel form"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>	
-                            <select class="selectpicker">	
-                              <option data-token="import" data-title="Import" data-icon="fa-upload"> Import</option>	
-                              <option data-token="template-export" data-title="Form template" data-icon="fa-download"> Form template</option>	
-                            </select>	
-                        </div>	
+    header.insertButton(`<div id="webformexcel-selbtn"  style='display: none;' class="btn-select btn">
+                            <button id="webformexcel" class="savebtn" title="Excel form"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
+                            <select class="selectpicker">
+                              <option data-token="import" data-title="Import" data-icon="fa-upload"> Import</option>
+                              <option data-token="template-export" data-title="Form template" data-icon="fa-download"> Form template</option>
+                            </select>
+                        </div>
     `);
 
     //header.insertButton(`<button id="webformprint" class='btn' title='Print' style='display: none;'><i class="fa fa-print" aria-hidden="true"></i></button>`);
@@ -448,7 +482,7 @@
 
 @Html.JsCode(
     @<script>
-        const renderer = new WebFormRender({ // multiple form related changes will come
+         const renderer = new WebFormRender({ // multiple form related changes will come
              formObj: _formObj,
              $formCont: $("#WebForm-cont"),
              headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose" },

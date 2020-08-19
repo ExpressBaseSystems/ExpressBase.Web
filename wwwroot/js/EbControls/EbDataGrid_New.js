@@ -62,6 +62,7 @@
         o.showFilterRow = false;
         o.scrollHeight = this.ctrl.Height === 0 ? 200 : (this.ctrl.Height - 35);
         o.fnDblclickCallback = this.dataTableTdDoubleClick.bind(this);
+        //o.fnClickTdCallback = this.dataTableTdClick.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
@@ -90,6 +91,15 @@
         if (originalEvent.keyCode === 9) {// if tab key pressed
             $(cell.node()).find('[ui-inp]').focus();
         }
+        let _class = $(originalEvent.target).closest("button").attr("class");
+        if (_class === "edit-rowc")
+            this.editRow_click(originalEvent);
+        else if (_class ==="check-rowc")
+            this.checkRow_click(originalEvent);
+        else if (_class ==="cancel-rowc")
+            this.cancelRow_click(originalEvent);
+        else if (_class ==="del-rowc")
+            this.delRow_click(originalEvent);
     };
 
     this.dataTableTdDoubleClick = function (e) {
@@ -99,6 +109,12 @@
         if (this.mode_s == 'edit') {
             this.editRow_click(e);
         }
+    };
+
+    this.dataTableTdClick = function (e) {        
+        //if (this.mode_s == 'edit') {
+        //    this.editRow_click(e);
+        //}
     };
 
     this.dataTableInitCallback = function () {
@@ -111,6 +127,8 @@
         if (width < 100)
             width = 100;
         this.$Table.css("width", width + "%");
+        $("#" + this.TableCont).find(".dataTables_scrollBody").eq(0).style("height", "calc(" + this.datatable.scrollHeight + "px - 34px)", "important");
+        $(".DTFC_Blocker").css("background-color", "white");
     };
 
     this.canUpdateFooter = function () {

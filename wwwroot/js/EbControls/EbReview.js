@@ -328,7 +328,7 @@
     };
 
     this.disableAllCtrls = function () {
-        $('.selectpicker').selectpicker();
+        this.$table.find('.selectpicker').selectpicker();
         this.$table.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
         this.$table.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
         this.$submit.hide();

@@ -280,6 +280,28 @@ const WebFormRender = function (option) {
 
     };
 
+    this.psDataImportV2 = function (PScontrol) {
+        if (PScontrol.isEmpty())
+            return;
+        this.showLoader();
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/PSImportFormData",
+            data: {
+                _refid: this.formRefId,
+                _rowid: this.rowId,
+                _triggerctrl: PScontrol.Name,
+                _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: `Something Unexpected Occurred when tried to import data`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            success: this.psImportreloadForm.bind(this)
+        });
+
+    };
+
     this.psImportreloadForm = function (_respObjStr) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);

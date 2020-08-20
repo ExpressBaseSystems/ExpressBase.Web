@@ -156,29 +156,106 @@
 
     this.DrawColumnTree = function (result) {
         var ctype;
+        let containers = [];
         $.each(result.columns, function (i, columnCollection) {
             $('#data-table-list').append(" <li><a>Datatable" + ++i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
                 $("#data-table-list ul[id='t" + i + "'").append("<li id = " + obj.columnName + " data-mytbl = 'Table" + i + ".'  class='coloums draggable'>" + obj.columnName + "</li>");
             });
+            containers.push(document.getElementById(`t${i}`));
         });
         $('#data-table-list').killTree();
         $('#data-table-list').treed();
         $('#summernot_container' + tabNum + ' .note-editable').focus();
-        $('.coloums').draggable({
-            cancel: "a.ui-icon",
-            revert: "invalid",
-            helper: "clone",
-            cursor: "move",
-            appendTo: ".note-editable",
-            stack: ".draggable",
-            drag: function (event, ui) {
-                $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "200px" });
-                $(ui.helper).children(".shape-text").remove();
-                $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
-            }
+
+        //$('.coloums').draggable({
+        //    cancel: "a.ui-icon",
+        //    revert: "invalid",
+        //    helper: "clone",
+        //    cursor: "move",
+        //    appendTo: ".note-editable",
+        //    stack: ".draggable",
+        //    drag: function (event, ui) {
+        //        $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "200px" });
+        //        $(ui.helper).children(".shape-text").remove();
+        //        $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
+        //    }
+        //});
+
+        $(".note-editable").attr('id', 'email_body');
+        containers.push(document.getElementById("email_body"));
+        containers.push(document.getElementById(`mail_to${tabNum}`));
+        containers.push(document.getElementById(`cc_to${tabNum}`));
+        containers.push(document.getElementById(`bcc_to${tabNum}`));
+        containers.push(document.getElementById(`sub_to${tabNum}`));
+        this.drake = dragula(containers, {
+            copy: true,
+            accepts: this.acceptfn,
         });
+        this.drake.off("drag").on("drag", this.columnsdrag.bind(this));
+        this.drake.off("shadow").on("shadow", this.columnsshadow.bind(this));
+        this.drake.off("drop").on("drop", this.columnsdrop.bind(this));
     };
+    this.acceptfn = function (el, target, source, sibling) {
+        //note-editable panel-body ui-droppable
+        if (source === target) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+
+    this.columnsdrag = function (el, source) {
+        return true;
+    };
+
+    this.columnsshadow = function (el, container, source) {
+            return true;
+    };
+
+    this.columnsdrop = function (el, target, source, sibling) {
+        this.col = $(el);
+        el.remove();
+        if (target == $(".note-editable")[0]) {
+            $('#summernot_container' + tabNum + '.note-editable').focus();
+            this.dropLoc = target;
+            var id = "DataField" + this.ObjId++;
+            var obj = new EbObjects["DsColumns"](id);
+            this.pasteHtmlAtCaret(obj.$Control.outerHTML());
+            var tbl = $('#' + this.col.text()).data('mytbl');
+            obj.Title = "{{" + tbl + this.col.text() + "}}";
+            this.ObjCollect[id] = obj;
+            this.RefreshControl(obj);
+            if (this.EbObject.DsColumnsCollection.$values !== undefined)
+                this.EbObject.DsColumnsCollection.$values.push(obj);
+            else {
+                this.EbObject.DsColumnsCollection.$values = [];
+                this.EbObject.DsColumnsCollection.$values.push(obj);
+            }
+            //  else
+            //    this.EbObject.DsColumnsCollection.push(obj);
+            this.placeCaretAtEnd(document.getElementById(id));
+            $('#' + id).attr('contenteditable', 'false');
+        }
+        else if (target == $(`#mail_to${tabNum}`)[0]) {
+            var tbl = $('#' + this.col.text()).data('mytbl');
+            let Title = "{{" + tbl + this.col.text() + "}}";
+            $(`#mail_to${tabNum}`).val(Title)
+        } else if (target == $(`#cc_to${tabNum}`)[0]) {
+            var tbl = $('#' + this.col.text()).data('mytbl');
+            let Title = "{{" + tbl + this.col.text() + "}}";
+            $(`#cc_to${tabNum}`).val(Title)
+        } else if (target == $(`#bcc_to${tabNum}`)[0]) {
+            var tbl = $('#' + this.col.text()).data('mytbl');
+            let Title = "{{" + tbl + this.col.text() + "}}";
+            $(`#bcc_to${tabNum}`).val(Title)
+        } else if (target == $(`#sub_to${tabNum}`)[0]) {
+            var tbl = $('#' + this.col.text()).data('mytbl');
+            let Title = "{{" + tbl + this.col.text() + "}}";
+            $(`#sub_to${tabNum}`).val(Title)
+        }
+    }
 
     this.GenerateButtons = function () { };
 
@@ -207,10 +284,12 @@
 
     this.pasteHtmlAtCaret = function (html) {
         var sel, range;
+        $(".note-editable").focus();
         if (window.getSelection) {
             sel = window.getSelection();
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
+                range.commonAncestorContainer = document.getElementsByClassName("note-editable")[0];
                 range.deleteContents();
                 var el = document.createElement("div");
                 el.innerHTML = html;
@@ -232,6 +311,7 @@
             document.selection.createRange().pasteHTML(html);
         }
     };
+
 
     this.DrawDsTree = function () {
         $.fn.extend({

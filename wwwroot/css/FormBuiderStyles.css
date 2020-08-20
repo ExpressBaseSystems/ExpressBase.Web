@@ -781,6 +781,17 @@ eb-disable {
     clip-path: polygon(0 0, 84% 0, 100% 100%, 0% 100%);
 }
 
+.eb-ss-ddup {
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 -6px 12px rgba(0,0,0,.175);
+}
+
+.eb-ss-dd {
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+}
+
 .dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {
     background-color: rgb(249, 249, 249) !important;
 }

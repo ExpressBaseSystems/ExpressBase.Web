@@ -315,9 +315,9 @@
             //dropupAuto: false,
             container: "body [eb-root-obj-container]:first",
             virtualScroll: 500,
-            size: ctrl.DropdownHeight === 0? 'auto' : (ctrl.DropdownHeight / 23),
+            size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
             //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
-        }); 
+        });
 
 
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
@@ -326,6 +326,19 @@
 
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
             let $el = $(e.target);
+            let $DDbScont = $DD.closest(".bs-container");
+            $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+
+            if ($DDbScont.hasClass("dropup")) {
+                $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
+            }
+            else {
+                $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
+            }
+
+            $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
 
             if ($el.attr("is-scrollbind") !== 'true') {
                 for (let i = 0; i < this.scrollableContSelectors.length; i++) {
@@ -1658,8 +1671,8 @@
                 }
             }.bind(this));
         }
-       
-       
+
+
     }
 };
 

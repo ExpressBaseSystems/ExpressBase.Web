@@ -1415,6 +1415,7 @@ const EbPowerSelect = function (ctrl, options) {
             LEFT = 10;
 
 
+
         if (ctrlBottom + DD_height > windowHeight) {
             this.$DDdiv.addClass("dd-ctrl-top");
 
@@ -1425,8 +1426,15 @@ const EbPowerSelect = function (ctrl, options) {
             console.log("cotrolTop :" + cotrolTop);
             this.$DDdiv.css("top", "unset");
             this.$DDdiv.css("bottom", BOTTOM);
+            console.log("dd offset top :" + this.$DDdiv.offset().top);
+
         }
         else {
+            //let Hdiff = $ctrl.offset().bottom - ctrlHeight - formTopOffset;
+            //if (Hdiff >)
+            //    this.$DDdiv.find("dataTables_scrollBody").css("height", this.$DDdiv.height() - )
+
+
             this.$DDdiv.css("bottom", "unset");
             this.$DDdiv.css("top", TOP);
             this.$DDdiv.removeClass("dd-ctrl-top");

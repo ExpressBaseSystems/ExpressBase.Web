@@ -840,10 +840,15 @@
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
+
             try {
+                let url = "../dv/getData"
+                if (this.Source === "Bot") {
+                    url = "../boti/getData"
+                }
                 o.ajax = {
                     //url: this.ssurl + '/ds/data/' + this.dsid,
-                    url: "../dv/getData",
+                    url: url,
                     type: 'POST',
                     timeout: 0,
                     data: this.ajaxData.bind(this),

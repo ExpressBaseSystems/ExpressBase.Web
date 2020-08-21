@@ -5999,18 +5999,7 @@ div[iblock] .selected-tag:empty::before {
 }
 
 /*/****  Datagrid ******/
-div.webform-cont div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
-    background-color: #eee !important;
-}
 
-div.webform-cont div[ctype="DataGrid_New"] td.focus {
-    outline: none !important;
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
-}
-
-div.webform-cont div[ctype="DataGrid_New"] tr.selected {
-    color: black !important;
-}
 
 .tablecontainer {
     width: 100%;
@@ -6108,6 +6097,16 @@ td.resizer {
 
 .dataTables_scroll td {
     border: none !important;
+}
+
+.dataTables_scroll {
+    height: 100% !important;
+}
+.DTFC_ScrollWrapper {
+    height: 100% !important;
+}
+.dataTables_wrapper {
+    height: 100% !important;
 }
 
 .DTFC_LeftWrapper td, .DTFC_RightWrapper td {
@@ -6873,7 +6872,7 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     width: 80px;
 }
 .image-td{
-    display:flex;
+    /*display:flex;*/
 }
 
 .history-image {
@@ -7797,16 +7796,52 @@ eb-disable {
     border-right: solid 1px #eee;
 }
 
+[ctype="Review"] .msg-comment > .span-proc {
+    font-weight: 600 !important;
+    color: #46689b !important;
+    position: relative;
+    letter-spacing: 0.3px;
+    bottom: 0;
+}
+
 [ctype="Review"] .rc-inp-cont {
     width: 100%;
     display: inline-flex;
     text-align: center;
     background: #fff;
-    border-top: 1px solid #eee;
     height: 60px;
     margin: auto;
     box-shadow: 0px -3px 5px 0px #aeaeae29;
     margin-bottom: 0;
+    border-top: solid 1px #ddddde82;
+    position: relative;
+}
+
+[ctype="Review"] .rc-inp-head {
+    position: absolute;
+    color: #3b3b3bd4;
+    top: -26px;
+    font-size: 13.5px;
+    width: 24.6%;
+    padding: 3px;
+    text-align: left;
+    min-width: 280px;
+    background: #ddddde;
+    padding-left: 17px;
+    font-weight: 500;
+    -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    clip-path: polygon(0 0, 84% 0, 100% 100%, 0% 100%);
+}
+
+.eb-ss-ddup {
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 -6px 12px rgba(0,0,0,.175);
+}
+
+.eb-ss-dd {
+    border-top: none;
+    border-radius: 0 0 4px 4px;
 }
 
 .dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {
@@ -8168,6 +8203,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
+.ctrl-cover > .btn-group.bootstrap-select {
+    width: 100% !important;
+}
+
+.ctrl-cover .bootstrap-select {
+    width: 100% !important;
+}
+
+
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
     border-radius: 1px;
     font-size: 13px;
@@ -8177,21 +8221,22 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: none !important;
 }
 
-.ctrl-cover > .btn-group.bootstrap-select {
-    width: 100% !important;
-}
-
-.ctrl-cover .bootstrap-select {
-    width: 100% !important;
-}
-
 [ctype=SimpleSelect] .ctrl-cover .dropdown-toggle,
 /*[ctype=PowerSelect] .ctrl-cover .dropdown-toggle,*/
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle {
     /*padding: 0 0px 0 5px;*/
-    padding: 3px 0px 0 6px;
+    /*padding: 3px 0px 0 6px;*/
+}
+
+.ctrl-cover .dropdown-toggle .filter-option-inner-inner {
+    /*margin-top: 3px;*/
+    margin-top: 1px;
+}
+
+[tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
+    /*padding: 0 0px 0 5px;*/
 }
 
 [tdcoltype=DGCreatedByColumn] .tdtxt {
@@ -8204,10 +8249,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [coltype=DGPowerSelectColumn] {
     padding: 0;
-}
-
-[tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
-    /*padding: 0 0px 0 5px;*/
 }
 
 .ctrl-cover > .input-group > .nullable-check [type="checkbox"] {
@@ -8223,11 +8264,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
-}
-
-.ctrl-cover .dropdown-toggle .filter-option-inner-inner {
-    /*margin-top: 3px;*/
-    margin-top: 1px;
 }
 
 .form-buider-form .Eb-ctrlContainer {

@@ -192,7 +192,7 @@ namespace ExpressBase.Web.Controllers
             ApiConversionRequest request = new ApiConversionRequest();
             request.Url = dvobj.Url;
             request.Headers = dvobj.Headers;
-            request.Parameters = dvobj.Parameters;
+            request.Parameters = dvobj.ParamsList;
             request.Method = dvobj.Method;
             try
             {

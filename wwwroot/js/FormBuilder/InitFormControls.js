@@ -1680,19 +1680,56 @@
     //phonecontrol ends 
 
     this.PdfControl = function (ctrl) {
-
         //let m = `<iframe id="iFramePdf" style="width: 40%; height: 40vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
-        //$("#cont_" + ctrl.EbSid).append(m);
+        //$("#cont_" + ctrl.EbSid).append(m);       
+        if (ctrl.PdfRefid) {
+            if (ctrl.ParamsList) {
+                var paramArray = [];
+                paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+                for (let i = 0; i < paramsList.length; i++) {
+                    let depCtrl_s = paramsList[i];
+                    let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+                    if (!getObjByval(paramArray, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                        let val = '';
+                        let ebDbType = 11;
+                        let name = "";
+                        if (depCtrl_s === "form.eb_loc_id") {
+                            val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                            name = "eb_loc_id";
+                        }
+                        else if (depCtrl_s === "form.eb_currentuser_id") {
+                            val = ebcontext.user.UserId;
+                            name = "eb_currentuser_id";
+                        }
+                        else if (depCtrl_s === "form.id") {
+                            val = this.Renderer.rowId;
+                            name = "id";
+                        }
+                        else {
+                            val = depCtrl.getValue();
+                            name = depCtrl.Name;
+                            ebDbType = depCtrl.EbDbType;
+                        }
 
-        if (this.Renderer.rendererName === "WebForm") {
-
-        }
-        if (ctrl.PdfRefid.$values.length > 0) {
+                        paramArray.push(new fltr_obj(ebDbType, name, val));
+                    }
+                }
+                var paramString = btoa(unescape(encodeURIComponent(JSON.stringify(paramArray))));
+            }
             $(`#icon_${ctrl.EbSid}`).click(function () {
-                if (confirm(`Download ${ctrl.PdfRefid.$values[0].ObjRefId}.pdf?`)) {
+                if (this.Renderer.rendererName === "WebForm") {
+                    if (confirm(`Download ${ctrl.PdfRefid}.pdf?`)) {
+                        let link = document.createElement('a');
+                        link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
+                        link.href = `/ReportRender/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
+                        link.click();
+                    }
+                    
+                }
+                else if (this.Renderer.rendererName === "Bot") {
                     let link = document.createElement('a');
-                    link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
-                    link.href = `/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}`;
+                    link.download = this.Renderer.curForm.DisplayName + "-" + ctrl.Label;
+                    link.href = `/Boti/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
                     link.click();
                 }
             }.bind(this));

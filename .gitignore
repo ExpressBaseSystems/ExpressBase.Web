@@ -259,5 +259,7 @@ paket-files/
 *.ps1
 /Views/Dev/dragula.cshtml
 /StaticFiles
-wwwroot/js/Bundles/eb-botpage.bundle.js
-wwwroot/css/Bundles/eb-botpage.bundle.css
+
+# Ignore all files inside Bundle folder
+/wwwroot/js/Bundles/*
+/wwwroot/css/Bundles/*

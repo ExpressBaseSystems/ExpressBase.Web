@@ -887,7 +887,7 @@
         if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();
         if (this.EbObject.IsDataFromApi)
-            this.ModifyToRequestParams();
+            this.ModifyRequestParams();
         else
             dq.Params = this.filterValues;
 
@@ -907,10 +907,12 @@
         return dq;
     };
 
-    this.ModifyToRequestParams = function () {
-        this.EbObject.Parameters.$values = this.filterValues.map(function (row) {
-            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
-        });
+    this.ModifyRequestParams = function () {
+         let xx = this.EbObject.Parameters.$values.map(function (row) {
+             return { Name: row.Name, Value: row.Value, Type: row.Type };
+         });
+
+        this.EbObject.ParamsList.$values = this.filterValues.concat(xx);
     };
 
     this.getOrderByInfo = function () {

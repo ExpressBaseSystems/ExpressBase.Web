@@ -32,7 +32,7 @@
                         Tools
                     </div>
                     <div class="bdy" id="@("eb_mobpage_toolbox"+ViewBag.tabnum+"_draggable")">
-                        <div class="eb_mobpage_tbxcategory">
+                        <div class="eb_mobpage_tbxcategory" tool-types="*">
                             <div class="eb_mobpage_tbx_head">
                                 Containers
                             </div>
@@ -59,7 +59,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="eb_mobpage_tbxcategory">
+                        <div class="eb_mobpage_tbxcategory" tool-types="EbMobileForm,EbMobileVisualization">
                             <div class="eb_mobpage_tbx_head">
                                 Form Controls / Filter Controls
                             </div>
@@ -116,7 +116,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="eb_mobpage_tbxcategory">
+                        <div class="eb_mobpage_tbxcategory" tool-types="*">
+                            <div class="eb_mobpage_tbx_head">
+                                Common Controls
+                            </div>
+                            <div class="eb_mobpage_tbxbdy">
+                                <div eb-type="EbMobileButton" ctrname="Button" class="toolitems draggable draggable_column">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-dot-circle-o"></i> Button
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eb_mobpage_tbxcategory" tool-types="*">
                             <div class="eb_mobpage_tbx_head">
                                 Layout
                             </div>
@@ -128,7 +140,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="eb_mobpage_tbxcategory">
+                        <div class="eb_mobpage_tbxcategory" tool-types="EbMobileDashBoard">
                             <div class="eb_mobpage_tbx_head">
                                 DashBoard Controls
                             </div>
@@ -163,7 +175,6 @@
                                 <div id="dstree-tab" class="tab-pane h-100 active">
                                     <div class="eb_mobtree_ds">
                                         <ul id="@("ds_parameter_list" + ViewBag.tabnum)" class="tool-box-items">
-                                            
                                         </ul>
                                     </div>
                                 </div>

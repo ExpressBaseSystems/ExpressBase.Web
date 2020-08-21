@@ -221,6 +221,30 @@ namespace ExpressBase.Web.Controllers
         //    return ObjStr;
         //}
 
+        public string PSImportFormData(string _refid, int _rowid, string _triggerctrl, string _formModel)
+        {
+            try
+            {
+                if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
+                    throw new FormException("Refid and TriggerCtrl must be set");
+
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest {
+                    RefId = _refid, RowId = _rowid, Trigger = _triggerctrl });
+                return Resp.FormDataWrap;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
+                {
+                    Message = "Error in loading data...",
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                });
+            }
+        }
+
         public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params)
         {
             try

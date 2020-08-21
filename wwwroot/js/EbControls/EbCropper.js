@@ -70,9 +70,9 @@
     rotate(e) {
         var wdo = $(e.target).closest(".btn").attr("title");
         if (wdo === "rotate_r")
-            this.cropie.croppie('rotate', 90);
+            this.Cropy.croppie('rotate', 90);
         else
-            this.cropie.croppie('rotate', -90);
+            this.Cropy.croppie('rotate', -90);
     };
 
     crop() {

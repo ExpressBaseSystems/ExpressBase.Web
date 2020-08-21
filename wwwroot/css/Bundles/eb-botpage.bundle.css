@@ -7617,7 +7617,11 @@ eb-disable {
 }
 
 .rc-tbl-thead-cont {
-    height: 35px;
+    /*height: 35px;*/
+}
+
+.fs-tblhead {
+    margin-bottom: 0;
 }
 
 .rc-tbl-tbody-cont {
@@ -7646,6 +7650,7 @@ eb-disable {
     height: 47px;
     background-size: cover;
     width: 47px;
+    min-width: 47px;
     border: solid 1px #eee;
     border-radius: 50%;
     background-image: url(../../images/nulldp.png);
@@ -7663,6 +7668,145 @@ eb-disable {
 
 .fs-tbl > tbody > tr > td, .fs-tbl > tbody > tr > td > .fstd-div {
     vertical-align: middle;
+}
+
+
+.fs-grid-cont.rc-cmt {
+    padding: 0;
+    overflow: hidden;
+}
+
+[ctype="Review"] .rc-msg-box {
+    height: 100%;
+    overflow-y: auto;
+    padding-top: 20px;
+}
+
+[ctype="Review"] div.message {
+    display: flex;
+    padding: 0 60px 30px 5px;
+    margin-bottom: 45px;
+}
+
+[ctype="Review"] .message .fs-dp {
+    margin-right: 12px;
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
+[ctype="Review"] div.message .bubble {
+    background: #f0f4f7;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 13px;
+    border-radius: 5px 5px 5px 0px;
+    color: #8495a3;
+    position: relative;
+    float: left;
+    min-width: 15em;
+}
+
+[ctype="Review"] .bubble .corner {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/bubble-corner.png) 0 0 no-repeat;
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    left: -5px;
+    bottom: 0;
+}
+
+[ctype="Review"] .bubble span {
+    color: #bcbcbc;
+    font-size: 11.3px;
+    position: absolute;
+    right: 0;
+    font-weight: 500;
+    bottom: -22px;
+}
+
+    [ctype="Review"] .bubble span.msg-uname {
+        left: 0;
+        color: #555;
+        font-size: 13px;
+    }
+
+[ctype="Review"] .msg-head {
+    color: #5c656e;
+    font-size: 13.8px;
+    margin-bottom: 4px;
+}
+
+[ctype="Review"] .msg-comment {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+[ctype="Review"] .rc-action-dp-wrap {
+    width: 66px;
+    padding: 3px 5px;
+    max-width: 66px;
+}
+
+
+    [ctype="Review"] .rc-action-dp-wrap > .fs-dp {
+        height: 54px;
+        width: 54px;
+        min-width: 54px;
+    }
+
+
+[ctype="Review"] .rc-action-dd-wrap {
+    width: 40%;
+    display: flex;
+    border-right: #eee solid 1px;
+    border-left: #eee solid 1px;
+    max-width: 250px;
+}
+
+    [ctype="Review"] .rc-action-dd-wrap .btn.dropdown-toggle {
+        border: none;
+        background-color: white !important;
+    }
+
+    [ctype="Review"] .rc-action-dd-wrap > .dropdown.bootstrap-select {
+        margin: auto;
+        border: none;
+    }
+
+[ctype="Review"] .rc-send-btn-wrap {
+    width: 30%;
+    display: flex;
+    max-width: 250px;
+    margin: auto;
+    margin-right: 0;
+    padding: 0 10px;
+}
+
+    [ctype="Review"] .rc-send-btn-wrap > .fs-submit-cont {
+        padding: 0;
+        margin: auto;
+    }
+
+[ctype="Review"] .rc-txtarea {
+    resize: none;
+    border: none;
+    padding: 10px;
+    outline: none;
+    width: 100%;
+    font-size: 13px;
+    border-right: solid 1px #eee;
+}
+
+[ctype="Review"] .rc-inp-cont {
+    width: 100%;
+    display: inline-flex;
+    text-align: center;
+    background: #fff;
+    border-top: 1px solid #eee;
+    height: 60px;
+    margin: auto;
+    box-shadow: 0px -3px 5px 0px #aeaeae29;
+    margin-bottom: 0;
 }
 
 .dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {
@@ -8855,6 +8999,11 @@ input.locinp {
     width: 8px;
     height: 8px;
     background-color: #F5F5F5;
+}
+
+[ctype="DataGrid_New"] > .ctrl-cover > .grid-cont > div > .dataTables_wrapper > .DTFC_ScrollWrapper > .dataTables_scroll > div.dataTables_scrollBody::-webkit-scrollbar {
+    width: 17px;
+    height: 17px;
 }
 
 .webform-cont ::-webkit-scrollbar-thumb {

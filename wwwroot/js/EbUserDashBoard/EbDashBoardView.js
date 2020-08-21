@@ -338,9 +338,10 @@
                         let object = this.Procs[this.currentId];
                         let designHtml = this.MakeDashboardLabel(object);
                         $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
-
                         this.labelstyleApply(this.CurrentTile);
-                        EbDataLabelFn(obj);
+                        EbDataLabelFn(obj, this.CurrentTile);
+                        if (obj.Object_Selector)
+                            $(`[data-id="${this.CurrentTile}"] .label-cont`).off("click").on("click", this.DisplayBlockLink.bind(this))
                         this.TileCollection[t_id].LabelColl.$values[i] = object;
                     }.bind(this));
                     if (currentobj.LinksColl) {
@@ -680,6 +681,7 @@
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         //if (this.stickBtn) { this.stickBtn.minimise(); }
+        return this.filtervalues;
     };
 
 
@@ -708,6 +710,46 @@
         }
         this.CloseParamDiv();
     };
+    this.DisplayBlockLink = function (e) {
+        this.linkDV = $(e.target.closest(".label-cont")).attr("ref-id");
+        var splitarray = this.linkDV.split("-");
+        this.filtervalues = this.GetFilterValuesForDataSource();
+        this.tabNum++;
+        let url = "../DV/dv?refid=" + this.linkDV;
+
+        let _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "rowData";
+
+        //input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData))));
+        //_form.appendChild(input);
+
+        let input1 = document.createElement('input');
+        input1.type = 'hidden';
+        input1.name = "filterValues";
+        input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+        _form.appendChild(input1);
+
+        let input2 = document.createElement('input');
+        input2.type = 'hidden';
+        input2.name = "tabNum";
+        input2.value = this.tabNum;
+        _form.appendChild(input2);
+
+        document.body.appendChild(_form);
+
+        //note I am using a post.htm page since I did not want to make double request to the page 
+        //it might have some Page_Load call which might screw things up.
+        //window.open("post.htm", name, windowoption);       
+        _form.submit();
+        document.body.removeChild(_form);
+    }
+
     this.init();
 }
 

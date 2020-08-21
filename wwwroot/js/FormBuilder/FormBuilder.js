@@ -716,13 +716,6 @@
         }
     };
 
-    this.lbltxtbBlur = function (e) {
-        $e = $(event.target);
-        $e.hide();
-        $e.prev(".eb-label-editable").show();
-        $e.siblings(".ebtab-close-btn").show();
-    };
-
     this.lbltxtbKeyUp = function (e) {
 
         let $e = $(event.target);
@@ -832,10 +825,27 @@
     }.bind(this);
 
     this.ctrlLblDblClick = function (e) {
+        let $e = $(event.target);
+        $e.hide();
+        if ($e.parent().attr("data-toggle") === "tab") {
+            $e.closest("li").find(".ebtab-close-btn").hide();
+            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+        }
+        else {
+            $e.parent(".eb-label-editable").siblings(".eb-lbltxtb").val($e.text()).show().select();
+        }
+    };
+
+    this.lbltxtbBlur = function (e) {
         $e = $(event.target);
         $e.hide();
-        $e.siblings(".ebtab-close-btn").hide();
-        $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+
+        if ($e.parent().attr("data-toggle") === "tab") {
+            $e.prev(".eb-label-editable").show();
+            $e.siblings(".ebtab-close-btn").show();
+        }
+        else
+            $e.prev(".eb-label-editable").children("[ui-label]").show();
     };
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {

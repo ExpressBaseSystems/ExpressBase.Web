@@ -8,8 +8,34 @@
     }
 
     this.init = function (control, ctrlOpts) {
+        this.initInfo(control);
         if (this[control.ObjType] !== undefined) {
             return this[control.ObjType](control, ctrlOpts);
+        }
+    };
+
+    this.initInfo = function (ctrl) {
+        let el = document.getElementById(ctrl.EbSid_CtxId + "Lblic");
+        if (ctrl.Info && ctrl.Info.trim() !== "") {
+            el.innerHTML = ('<i class="fa ' + ctrl.InfoIcon + '" aria-hidden="true"></i>');
+            $(el).popover({
+                trigger: 'focus',
+                html: true,
+                container: "body",
+                placement: this.PopoverPlacement,
+                content: decodeURIComponent(escape(window.atob(ctrl.Info)))
+            });
+        }
+        else {
+            el.remove();
+        }
+    };
+
+    this.PopoverPlacement = function (context, source) {
+        if (($(source).offset().left + 700) > document.body.clientWidth)
+            return "left";
+        else {
+            return "right";
         }
     };
 

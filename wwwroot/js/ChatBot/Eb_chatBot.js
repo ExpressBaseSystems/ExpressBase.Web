@@ -202,11 +202,16 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.userDtls.name = username;
         this.postmenuClick(e, username);
         this.msgFromBot(`Welcome ${username}`);
-        if (settings.Authoptions.LoginOpnCount > 1) {
-            this.loginList();
+        if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {
+            this.getBotformList();
         }
         else {
-            this.LoginOpnDirectly();
+            if (settings.Authoptions.LoginOpnCount > 1) {
+                this.loginList();
+            }
+            else {
+                this.LoginOpnDirectly();
+            }
         }
 
     }.bind(this);
@@ -233,8 +238,10 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.authenticateAnon = function (email, phno, name) {
-        this.showTypingAnim();
-
+        
+        setTimeout(function () {
+            this.showTypingAnim();
+        }.bind(this), this.typeDelay);
         $.post("../bote/AuthAndGetformlist",
             {
                 "cid": this.EXPRESSbase_SOLUTION_ID,

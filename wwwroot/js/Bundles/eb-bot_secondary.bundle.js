@@ -15618,10 +15618,11 @@ var EbCommonDataTable = function (Option) {
         serialObj.data = (this.Source === "datagrid") ? null : this.EbObject.Columns.$values.length;
         serialObj.searchable = false;
         serialObj.orderable = false;
-        serialObj.bVisible = true;
+        serialObj.bVisible = this.showSerialColumn;
         serialObj.name = "serial";
         serialObj.title = "#";
         serialObj.Type = 11;
+        serialObj.sWidth = "10px";
         if (this.IsTree) {
             serialObj.bVisible = false;
         }
@@ -17944,7 +17945,7 @@ var EbCommonDataTable = function (Option) {
                     else {
                         return {
                             items: {
-                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                                "Move": { name: "Move Group", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
                     }
@@ -17962,15 +17963,23 @@ var EbCommonDataTable = function (Option) {
                 if (this.ItemFormLink !== null) {
                     return {
                         items: {
-                            "EditItem": { name: "View Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
-                            "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            "EditItem": { name: "View Item", icon: "fa-pencil-square-o", callback: this.FormEditItem.bind(this) },
+                            "Move": { name: "Move Item", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
+                        }
+                    };
+                }
+                else if (this.Source === "locationTree") {
+                    return {
+                        items: {
+                            "EditItem": { name: "Edit", icon: "fa-pencil-square-o", callback: this.OpenLocationModal.bind(this) },
+                            "Move": { name: "Move", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                         }
                     };
                 }
                 else {
                     return {
                         items: {
-                            "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            "Move": { name: "Move Item", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                         }
                     };
                 }
@@ -17986,7 +17995,7 @@ var EbCommonDataTable = function (Option) {
         let rowData = this.unformatedData[index];
 
         $('#add_location_modal').modal("show");
-        if (key === "EditGroup") {
+        if (key === "EditGroup" || key === "EditItem") {
             let longname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "longname")[0].data;
             let shortname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "shortname")[0].data;
             let parent_id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "parent_id")[0].data;

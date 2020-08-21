@@ -170,6 +170,9 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         else if (this.rowData !== null && this.rowData !== "") {
             this.isContextual = true;
         }
+        else if (this.filterValues.length > 0) {
+            this.isContextual = true;
+        }
         else
             this.isTagged = true;
 
@@ -431,8 +434,11 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     this.placefiltervalues = function () {
 
         $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
-            let val = getObjByval(this.filterValues, "Name", obj.Name).Value;
-            obj.setValue(val);
+            let getobjval = getObjByval(this.filterValues, "Name", obj.Name)
+            if (getobjval !== undefined) {
+                let val = getobjval.Value;
+                obj.setValue(val);
+            }
         }.bind(this));
     }
 

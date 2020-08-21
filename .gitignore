@@ -261,3 +261,8 @@ paket-files/
 /StaticFiles
 wwwroot/js/Bundles/eb-botpage.bundle.js
 wwwroot/css/Bundles/eb-botpage.bundle.css
+/Controllers/Vrgs_test.cs
+/Views/vrgs_test/vrgs_testing.cshtml
+/wwwroot/js/vrgs_js_test/floormapbuilder.js
+/wwwroot/js/vrgs_js_test/svg.draw.js
+/wwwroot/css/Vrgs_testcss/vrgs_floorplancss.css

@@ -620,7 +620,7 @@
                     url: "../DS/GetColumnsFromApi",
                     apiUrl: this.PropsObj.Url,
                     headers: this.PropsObj.Headers,
-                    parameters: this.PropsObj.Parameters,
+                    //parameters: this.PropsObj.Parameters,
                     method: this.PropsObj.Method
                 }
                 this.PGHelper.UrlInit(opt);

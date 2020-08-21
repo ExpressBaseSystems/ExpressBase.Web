@@ -253,7 +253,7 @@
         display: inline-flex;
     }
 
-    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {        
+    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {
         color: gray;
         pointer-events: none;
     }
@@ -303,7 +303,37 @@
         padding-bottom: 0px !important;
         margin-bottom: 0px !important;
     }
-    
+
+    [ctype="DataGrid_New"] .DTFC_LeftFootWrapper, [ctype="DataGrid_New"] .DTFC_RightFootWrapper, [ctype="DataGrid_New"] .dataTables_scrollFoot {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    [ctype="DataGrid_New"] .DTFC_LeftFootWrapper, [ctype="DataGrid_New"] .DTFC_RightFootWrapper {
+        top: 17px !important;
+    }
+
+    div[ctype="DataGrid_New"] div.dataTables_wrapper tr.odd:hover {
+        background-color: rgb(249, 249, 249) !important;
+    }
+
+    div[ctype="DataGrid_New"] div.dataTables_wrapper tr.even:hover {
+        background-color: white !important;
+    }
+
+    div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody > tr > .selected, div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected:hover {
+        background-color: white !important;
+    }
+
+    div[ctype="DataGrid_New"] td.focus {
+        outline: none !important;
+        box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
+    }
+
+    div[ctype="DataGrid_New"] table.dataTable tbody tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody th.selected, div[ctype="DataGrid_New"] table.dataTable tbody td.selected {
+        color: black !important;
+    }
+
 
     /*DataGridNew related styles - End*/
 </style>

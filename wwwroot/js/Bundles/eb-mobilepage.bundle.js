@@ -107,6 +107,7 @@ function EbMobStudio(config) {
                 console.error("undefined container");
         }
         $(`#${o.EbSid}`).on("click", this.ContainerOnClick.bind(this));
+        FilterToolBox(ebtype, this.Conf.TabNum);
         this.EditObj = null;
     };
 
@@ -132,6 +133,7 @@ function EbMobStudio(config) {
             revert: "invalid",
             helper: "clone",
             cursor: "move",
+            zIndex: 1000,
             appendTo: "body",
             drag: function (event, ui) {
                 $(ui.helper).css({
@@ -222,6 +224,7 @@ function EbMobStudio(config) {
             $(`#${o.EbSid}`).off("click").on("click", this.ContainerOnClick.bind(this));
             this.pg.setObject(o, AllMetas[ebtype]);
             o.refresh(this);
+            FilterToolBox(ebtype, this.Conf.TabNum);
         }
     };
 
@@ -450,7 +453,7 @@ function MobileControls(root) {
 
     this.initVisualization = function (o) {
 
-        $(".emulator_f").css("display","none");
+        $(".emulator_f").css("display", "none");
 
         let tobj = this.Root.makeElement("EbMobileTableLayout", "TableLayout");
         $(`#${o.EbSid} .eb_mob_container_inner .vis-table-container`).append(tobj.$Control.outerHTML());
@@ -578,6 +581,7 @@ function MobileControls(root) {
             revert: "invalid",
             helper: "clone",
             cursor: "move",
+            zIndex: 1000,
             appendTo: "body",
             drag: function (event, ui) {
                 $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "auto", "padding": "5px", "border-radius": "4" });
@@ -617,6 +621,7 @@ function MobileControls(root) {
             revert: "invalid",
             helper: "clone",
             cursor: "move",
+            zIndex: 1000,
             appendTo: "body",
             drag: function (event, ui) {
                 $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "auto", "padding": "5px", "border-radius": "4" });
@@ -707,12 +712,13 @@ function MobileMenu(option) {
         delete this.Root.Procs[id];
         this.Root.pg.removeFromDD(id);
 
-        if (eb_type === "mob_container") {
+        if (selector.$trigger.hasClass("mob_container")) {
             this.Root.Procs = {};
             $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty();
             $(`#eb_mobtree_body_${this.Root.Conf.TabNum}`).hide();
+            FilterToolBox(null, this.Root.Conf.TabNum);
         }
-        $(selector.$trigger).remove();
+        selector.$trigger.remove();
         if (this.Root.ContainerType === "EbMobileForm")
             this.Root.Controls.refreshColumnTree();
     };
@@ -1072,4 +1078,19 @@ function PgHelperMobile(g) {
             el.hide();
         }
     };
+}
+
+
+function FilterToolBox(ctype, tab) {
+
+    let $div = `#eb_mobpage_toolbox${tab}`;
+
+    if (ctype) {
+        $(`${$div} .eb_mobpage_tbxcategory`).hide();
+        $(`${$div} [tool-types*="${ctype}"]`).show();
+        $(`${$div} [tool-types="*"]`).show();
+    }
+    else {
+        $(`${$div} .eb_mobpage_tbxcategory`).show();
+    }
 }

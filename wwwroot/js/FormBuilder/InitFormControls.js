@@ -8,8 +8,34 @@
     }
 
     this.init = function (control, ctrlOpts) {
+        this.initInfo(control);
         if (this[control.ObjType] !== undefined) {
             return this[control.ObjType](control, ctrlOpts);
+        }
+    };
+
+    this.initInfo = function (ctrl) {
+        let el = document.getElementById(ctrl.EbSid_CtxId + "Lblic");
+        if (ctrl.Info && ctrl.Info.trim() !== "") {
+            el.innerHTML = ('<i class="fa ' + ctrl.InfoIcon + '" aria-hidden="true"></i>');
+            $(el).popover({
+                trigger: 'focus',
+                html: true,
+                container: "body",
+                placement: this.PopoverPlacement,
+                content: decodeURIComponent(escape(window.atob(ctrl.Info)))
+            });
+        }
+        else {
+            el.remove();
+        }
+    };
+
+    this.PopoverPlacement = function (context, source) {
+        if (($(source).offset().left + 700) > document.body.clientWidth)
+            return "left";
+        else {
+            return "right";
         }
     };
 
@@ -315,9 +341,9 @@
             //dropupAuto: false,
             container: "body [eb-root-obj-container]:first",
             virtualScroll: 500,
-            size: ctrl.DropdownHeight === 0? 'auto' : (ctrl.DropdownHeight / 23),
+            size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
             //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
-        }); 
+        });
 
 
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
@@ -326,6 +352,19 @@
 
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
             let $el = $(e.target);
+            let $DDbScont = $DD.closest(".bs-container");
+            $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+
+            if ($DDbScont.hasClass("dropup")) {
+                $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
+            }
+            else {
+                $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
+            }
+
+            $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
 
             if ($el.attr("is-scrollbind") !== 'true') {
                 for (let i = 0; i < this.scrollableContSelectors.length; i++) {
@@ -1641,25 +1680,62 @@
     //phonecontrol ends 
 
     this.PdfControl = function (ctrl) {
-
         //let m = `<iframe id="iFramePdf" style="width: 40%; height: 40vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
-        //$("#cont_" + ctrl.EbSid).append(m);
+        //$("#cont_" + ctrl.EbSid).append(m);       
+        if (ctrl.PdfRefid) {
+            if (ctrl.ParamsList) {
+                var paramArray = [];
+                paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+                for (let i = 0; i < paramsList.length; i++) {
+                    let depCtrl_s = paramsList[i];
+                    let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+                    if (!getObjByval(paramArray, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                        let val = '';
+                        let ebDbType = 11;
+                        let name = "";
+                        if (depCtrl_s === "form.eb_loc_id") {
+                            val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                            name = "eb_loc_id";
+                        }
+                        else if (depCtrl_s === "form.eb_currentuser_id") {
+                            val = ebcontext.user.UserId;
+                            name = "eb_currentuser_id";
+                        }
+                        else if (depCtrl_s === "form.id") {
+                            val = this.Renderer.rowId;
+                            name = "id";
+                        }
+                        else {
+                            val = depCtrl.getValue();
+                            name = depCtrl.Name;
+                            ebDbType = depCtrl.EbDbType;
+                        }
 
-        if (this.Renderer.rendererName === "WebForm") {
-
-        }
-        if (ctrl.PdfRefid.$values.length > 0) {
+                        paramArray.push(new fltr_obj(ebDbType, name, val));
+                    }
+                }
+                var paramString = btoa(unescape(encodeURIComponent(JSON.stringify(paramArray))));
+            }
             $(`#icon_${ctrl.EbSid}`).click(function () {
-                if (confirm(`Download ${ctrl.PdfRefid.$values[0].ObjRefId}.pdf?`)) {
+                if (this.Renderer.rendererName === "WebForm") {
+                    if (confirm(`Download ${ctrl.PdfRefid}.pdf?`)) {
+                        let link = document.createElement('a');
+                        link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
+                        link.href = `/ReportRender/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
+                        link.click();
+                    }
+                    
+                }
+                else if (this.Renderer.rendererName === "Bot") {
                     let link = document.createElement('a');
-                    link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
-                    link.href = `/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}`;
+                    link.download = this.Renderer.curForm.DisplayName + "-" + ctrl.Label;
+                    link.href = `/Boti/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
                     link.click();
                 }
             }.bind(this));
         }
-       
-       
+
+
     }
 };
 

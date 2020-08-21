@@ -744,16 +744,52 @@ eb-disable {
     border-right: solid 1px #eee;
 }
 
+[ctype="Review"] .msg-comment > .span-proc {
+    font-weight: 600 !important;
+    color: #46689b !important;
+    position: relative;
+    letter-spacing: 0.3px;
+    bottom: 0;
+}
+
 [ctype="Review"] .rc-inp-cont {
     width: 100%;
     display: inline-flex;
     text-align: center;
     background: #fff;
-    border-top: 1px solid #eee;
     height: 60px;
     margin: auto;
     box-shadow: 0px -3px 5px 0px #aeaeae29;
     margin-bottom: 0;
+    border-top: solid 1px #ddddde82;
+    position: relative;
+}
+
+[ctype="Review"] .rc-inp-head {
+    position: absolute;
+    color: #3b3b3bd4;
+    top: -26px;
+    font-size: 13.5px;
+    width: 24.6%;
+    padding: 3px;
+    text-align: left;
+    min-width: 280px;
+    background: #ddddde;
+    padding-left: 17px;
+    font-weight: 500;
+    -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    clip-path: polygon(0 0, 84% 0, 100% 100%, 0% 100%);
+}
+
+.eb-ss-ddup {
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 -6px 12px rgba(0,0,0,.175);
+}
+
+.eb-ss-dd {
+    border-top: none;
+    border-radius: 0 0 4px 4px;
 }
 
 .dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {
@@ -1341,6 +1377,41 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [isrendermode=true] .ebtab-add-btn, [isrendermode=true] .eb-fb-icon, [isrendermode=true] .cont-prop-btn {
     display: none !important;
+}
+
+[isrendermode="true"] .eb-ctrl-label > .label-infoCont {
+    display: none;
+    position: absolute;
+    right: -30px;
+    top: 0;
+    width: 19px;
+    background: white;
+    height: 19px;
+    vertical-align: middle;
+    font-size: 18px;
+    text-align: center;
+    color: #356aff;
+    border-radius: 50%;
+    box-shadow: 0 0 3px 0 #356aff;
+    z-index: 10;
+}
+
+[isrendermode="false"] .eb-ctrl-label > .label-infoCont {
+    display: none;
+}
+
+
+[isrendermode="true"] .Eb-ctrlContainer:hover > .eb-ctrl-label > .label-infoCont,
+[isrendermode="true"] .label-infoCont:focus {
+    display: flex !important;
+}
+
+[isrendermode="true"] .eb-ctrl-label > .label-infoCont > .fa {
+    margin: auto;
+}
+
+[isrendermode="true"] .popover.fade {
+    min-width: 700px;
 }
 
 .eb-ctrl-label {

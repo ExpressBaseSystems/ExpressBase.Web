@@ -12,7 +12,7 @@
     this.DashBoardList = options.AllDashBoards || null;
     this.stickBtn;
     this.filtervalues = [];
-    //this.TabNum = options.tabNum;
+    this.TabNum = options.tabNum;
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
@@ -714,7 +714,7 @@
         this.linkDV = $(e.target.closest(".label-cont")).attr("ref-id");
         var splitarray = this.linkDV.split("-");
         this.filtervalues = this.GetFilterValuesForDataSource();
-        this.tabNum++;
+        this.TabNum++;
         let url = "../DV/dv?refid=" + this.linkDV;
 
         let _form = document.createElement("form");
@@ -738,7 +738,7 @@
         let input2 = document.createElement('input');
         input2.type = 'hidden';
         input2.name = "tabNum";
-        input2.value = this.tabNum;
+        input2.value = this.TabNum;
         _form.appendChild(input2);
 
         document.body.appendChild(_form);

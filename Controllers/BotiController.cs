@@ -22,6 +22,7 @@ using System.Net;
 using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Common.Security;
 using ExpressBase.Common.Structures;
+using ExpressBase.Common.Data;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -708,5 +709,40 @@ namespace ExpressBase.Web.Controllers
             }
             return JsonConvert.SerializeObject(Slots);
         }
-    }
+
+
+		private IActionResult Pdf { get; set; }
+		public bool Render(string refid, List<Param> Params)
+		{
+			ReportRenderResponse Res = null;
+			try
+			{
+				ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
+				//User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
+				Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUser = this.LoggedInUser, ReadingUser = this.LoggedInUser, Params = Params });
+				Res.StreamWrapper.Memorystream.Position = 0;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
+			}
+			Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf")
+		   // { FileDownloadName = Res.ReportName }
+		   ;
+			return true;
+		}
+
+		public IActionResult Renderlink(string refid, string _params)
+		{
+			byte[] encodedDataAsBytes = System.Convert.FromBase64String(_params);
+			string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+			List<Param> param = (returnValue == null) ? null : JsonConvert.DeserializeObject<List<Param>>(returnValue);
+			Render(refid, param);
+			// visualizations logic to be implemented
+			if ((Pdf as FileStreamResult).FileStream.Length > 0)
+				return Pdf;
+			else
+				return Redirect("/StatusCode/500");
+		}
+	}
 }

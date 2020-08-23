@@ -1145,6 +1145,20 @@ const WebFormRender = function (option) {
         }
     }.bind(this);
 
+    this.disableformEditbtn = function () {
+        //$("#webformedit").addClass('eb-disablebtn')
+        //    .attr('data-toggle', "tooltip")
+        //    .attr('data-placement', "bottom")
+        //    .attr("tittle", "Can’t edit this form as it is waiting for approval").tooltip();
+
+        $("#webformedit").attr("disabled", true);
+    };
+
+    this.enableformEditbtn = function () {
+        //$("#webformedit").removeClass('eb-disablebtn').attr("tittle", "Edit").tooltip();
+        $("#webformedit").attr("disabled", false);
+    };
+
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
         this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn"]);

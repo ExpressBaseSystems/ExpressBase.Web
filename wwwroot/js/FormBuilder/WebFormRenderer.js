@@ -735,9 +735,12 @@ const WebFormRender = function (option) {
     this.S2EmodeReviewCtrl = function () {
         if (this.ReviewCtrl) {
             this.ReviewCtrl._Builder.switch2editMode();
-            if (!this.ReviewCtrl._Builder.isFormDataEditable)
+            if (!this.ReviewCtrl._Builder.isFormDataEditable) {
+                this.disableformEditbtn();
                 return false;
+            }
         }
+        this.enableformEditbtn();
         return true;
     }.bind(this);
 

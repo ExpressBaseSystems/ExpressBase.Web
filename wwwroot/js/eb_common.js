@@ -1193,7 +1193,7 @@ const formatData4webform = function (_multipleTables) {
 
 
         if (tableName === "eb_approval_lines") {
-            delete multipleTables[tableName];
+            multipleTables[tableName] = [];
             continue;
         }
 

@@ -840,10 +840,15 @@
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
+
             try {
+                let url = "../dv/getData"
+                if (this.Source === "Bot") {
+                    url = "../boti/getData"
+                }
                 o.ajax = {
                     //url: this.ssurl + '/ds/data/' + this.dsid,
-                    url: "../dv/getData",
+                    url: url,
                     type: 'POST',
                     timeout: 0,
                     data: this.ajaxData.bind(this),
@@ -887,7 +892,7 @@
         if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();
         if (this.EbObject.IsDataFromApi)
-            this.ModifyToRequestParams();
+            this.ModifyRequestParams();
         else
             dq.Params = this.filterValues;
 
@@ -907,10 +912,12 @@
         return dq;
     };
 
-    this.ModifyToRequestParams = function () {
-        this.EbObject.Parameters.$values = this.filterValues.map(function (row) {
-            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
-        });
+    this.ModifyRequestParams = function () {
+         let xx = this.EbObject.Parameters.$values.map(function (row) {
+             return { Name: row.Name, Value: row.Value, Type: row.Type };
+         });
+
+        this.EbObject.ParamsList.$values = this.filterValues.concat(xx);
     };
 
     this.getOrderByInfo = function () {

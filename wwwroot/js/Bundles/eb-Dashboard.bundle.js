@@ -1643,6 +1643,7 @@ var EbCommonDataTable = function (Option) {
     this.RowHeight = Option.RowHeight || "15";
     this.ObjectLinks = Option.ObjectLinks || [];
     this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
+    this.AllowSorting = typeof Option.AllowSorting !== 'undefined' ? Option.AllowSorting : true;
 
 
     if (this.Source === "EbDataTable") {
@@ -2162,6 +2163,7 @@ var EbCommonDataTable = function (Option) {
         this.Api.off('key-focus').on('key-focus', this.DTKeyFocusCallback.bind(this));
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
+        //$('#' + this.tableId + ' tbody').off('click').on('click', 'td', this.DTclickTDCallbackFunc.bind(this));
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -2312,7 +2314,10 @@ var EbCommonDataTable = function (Option) {
             lengthMenu: "_MENU_ / Page",
         };
         o.columns = this.rowgroupCols.concat(this.extraCol, this.EbObject.Columns.$values);
-        o.order = [];
+        if (this.AllowSorting)
+            o.order = [];
+        else
+            o.ordering = false;
         o.deferRender = true;
         //o.filter = true;
         //o.select = this.AllowSelect;
@@ -2377,10 +2382,15 @@ var EbCommonDataTable = function (Option) {
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
+
             try {
+                let url = "../dv/getData"
+                if (this.Source === "Bot") {
+                    url = "../boti/getData"
+                }
                 o.ajax = {
                     //url: this.ssurl + '/ds/data/' + this.dsid,
-                    url: "../dv/getData",
+                    url: url,
                     type: 'POST',
                     timeout: 0,
                     data: this.ajaxData.bind(this),
@@ -3401,6 +3411,9 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.DTKeyFocusCallback = function (e, datatable, cell, originalEvent) {
+        datatable.rows().deselect();
+        let trindex = cell.index().row;
+        datatable.row(trindex).select();
         if (Option.keyFocusCallbackFn)
             Option.keyFocusCallbackFn(e, datatable, cell, originalEvent);
     };
@@ -3413,6 +3426,11 @@ var EbCommonDataTable = function (Option) {
             Option.fnDblclickCallback(e);
     };
 
+    this.DTclickTDCallbackFunc = function (e) {
+        if (Option.fnClickTdCallback)
+            Option.fnClickTdCallback(e);
+    };
+
     this.rowclick = function (e, dt, type, indexes) {
         if (Option.rowclick)
             Option.rowclick(e, dt, type, indexes);
@@ -3421,7 +3439,7 @@ var EbCommonDataTable = function (Option) {
     this.mouseenter = function (e, dt, type, indexes) {
         let trindex = $(e.target).closest("tr").index();
         let bgcolor = $(e.target).closest("tr").css("background-color");
-        $(".DTFC_LeftBodyLiner tbody tr").eq(trindex).style("background-color", bgcolor,"important");
+        $(".DTFC_LeftBodyLiner tbody tr").eq(trindex).style("background-color", bgcolor, "important");
         $(".DTFC_RightBodyLiner tbody tr").eq(trindex).style("background-color", bgcolor, "important");
     };
 
@@ -4225,13 +4243,13 @@ var EbCommonDataTable = function (Option) {
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
-        this.Api.on('key-focus', function (e, datatable, cell) {
-            datatable.rows().deselect();
-            let trindex = cell.index().row;
-            datatable.row(trindex).select();
-            //$(".DTFC_LeftBodyLiner tbody tr").eq(trindex).addClass("selected");
-            //$(".DTFC_RightBodyLiner tbody tr").eq(trindex).addClass("selected");
-        });
+        //this.Api.off('key-focus').on('key-focus', function (e, datatable, cell) {
+        //    datatable.rows().deselect();
+        //    let trindex = cell.index().row;
+        //    datatable.row(trindex).select();
+        //    //$(".DTFC_LeftBodyLiner tbody tr").eq(trindex).addClass("selected");
+        //    //$(".DTFC_RightBodyLiner tbody tr").eq(trindex).addClass("selected");
+        //});
 
         //this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
         $("#clearfilterbtn_" + this.tableId).off("click").on("click", this.clearFilter.bind(this));
@@ -5568,7 +5586,7 @@ var EbCommonDataTable = function (Option) {
         $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
         var table = $(element).attr('data-table');
         var colum = $(element).attr('data-column');
-        var decip =parseInt( $(element).attr('data-decip'));
+        var decip = parseInt($(element).attr('data-decip'));
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
         var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; })[0];

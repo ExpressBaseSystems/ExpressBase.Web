@@ -8,8 +8,36 @@
     }
 
     this.init = function (control, ctrlOpts) {
+        this.initInfo(control);
         if (this[control.ObjType] !== undefined) {
             return this[control.ObjType](control, ctrlOpts);
+        }
+    };
+
+    this.initInfo = function (ctrl) {
+        let el = document.getElementById(ctrl.EbSid_CtxId + "Lblic");
+        if (!el)
+            return;
+        if (ctrl.Info && ctrl.Info.trim() !== "") {
+            el.innerHTML = ('<i class="fa ' + ctrl.InfoIcon + '" aria-hidden="true"></i>');
+            $(el).popover({
+                trigger: 'focus',
+                html: true,
+                container: "body",
+                placement: this.PopoverPlacement,
+                content: decodeURIComponent(escape(window.atob(ctrl.Info)))
+            });
+        }
+        else {
+            el.remove();
+        }
+    };
+
+    this.PopoverPlacement = function (context, source) {
+        if (($(source).offset().left + 700) > document.body.clientWidth)
+            return "left";
+        else {
+            return "right";
         }
     };
 
@@ -1698,7 +1726,7 @@
                         link.href = `/ReportRender/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
                         link.click();
                     }
-                    
+
                 }
                 else if (this.Renderer.rendererName === "Bot") {
                     let link = document.createElement('a');
@@ -1710,6 +1738,17 @@
         }
 
 
+    }
+    this.Image = function (ctrl) {
+        if (ctrl.ImageId > 0) {
+            if (this.Renderer.rendererName === "WebForm") {
+                $(`#${ctrl.EbSid}`).attr("src", `../images/${ctrl.ImageId}.jpg`);
+            }
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).attr("src", `../bot/images/${ctrl.ImageId}.jpg`);
+            }
+        }
+       
     }
 };
 

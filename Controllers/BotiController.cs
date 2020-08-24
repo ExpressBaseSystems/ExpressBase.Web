@@ -23,6 +23,10 @@ using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Common.Security;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.Data;
+using System.Globalization;
+using Microsoft.Net.Http.Headers;
+using ExpressBase.Common;
+using ImageQuality = ExpressBase.Common.ImageQuality;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -189,10 +193,10 @@ namespace ExpressBase.Web.Controllers
                         (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
                         (control as EbTVcontrol).BareControlHtml4Bot = (control as EbTVcontrol).GetBareHtml();
                     }
-                    else if (control is EbImage)
-                    {
-                        (control as EbImage).BareControlHtml4Bot = (control as EbImage).GetBareHtml();
-                    } 
+                    //else if (control is EbImage)
+                    //{
+                    //    (control as EbImage).BareControlHtml4Bot = (control as EbImage).GetBareHtml();
+                    //} 
                     else if (control is EbMeetingPicker)
                     {
                         (control as EbMeetingPicker).BareControlHtml4Bot = (control as EbMeetingPicker).GetWrapedCtrlHtml4bot();
@@ -484,18 +488,47 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = "", forWrap = "wrap" });
         }
 
-        public DataSourceDataResponse getData(TableDataRequest request)
+       public DataSourceDataResponse getData(TableDataRequest request)
         {
-            DataSourceDataResponse resultlist1 = null;
             try
             {
-                resultlist1 = this.ServiceClient.Get(request);
+                request.eb_Solution = GetSolutionObject(ViewBag.cid);
+                request.ReplaceEbColumns = true;
+                if (request.DataVizObjString != null)
+                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+                if (request.CurrentRowGroup != null)
+                    (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
+                request.DataVizObjString = null;
+                request.UserInfo = this.LoggedInUser;
+                if (request.TFilters != null)
+                {
+                    foreach (TFilters para in request.TFilters)
+                    {
+
+                        if (para.Type == EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
+                        {
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                        }
+                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                    }
+                }
+                DataSourceDataResponse resultlist1 = null;
+                try
+                {
+                    this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                    resultlist1 = this.ServiceClient.Post(request);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.ToString());
+                }
+                return resultlist1;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: " + e.ToString());
+                Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
             }
-            return resultlist1;
+            return null;
         }
 
         [HttpPost]
@@ -711,6 +744,7 @@ namespace ExpressBase.Web.Controllers
         }
 
 
+		//for pdf report
 		private IActionResult Pdf { get; set; }
 		public bool Render(string refid, List<Param> Params)
 		{
@@ -743,6 +777,39 @@ namespace ExpressBase.Web.Controllers
 				return Pdf;
 			else
 				return Redirect("/StatusCode/500");
+		}
+
+		[HttpGet("bot/images/{filename}")]
+		public IActionResult GetImageById(string filename, string qlty)
+		{
+			DownloadFileResponse dfs = null;
+			HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+			ActionResult resp = new EmptyResult();
+
+			DownloadImageByIdRequest dfq = new DownloadImageByIdRequest();
+
+			try
+			{
+				dfq.ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
+
+				dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
+
+				if (dfs.StreamWrapper != null)
+				{
+					dfs.StreamWrapper.Memorystream.Position = 0;
+					resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+				}
+
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Exception: " + e.Message.ToString());
+			}
+			return resp;
+		}
+		private string GetMime(string fname)
+		{
+			return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
 		}
 	}
 }

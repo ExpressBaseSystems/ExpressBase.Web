@@ -1190,6 +1190,13 @@ const formatData4webform = function (_multipleTables) {
     let tableNames = Object.keys(multipleTables);
     for (let i = 0; i < tableNames.length; i++) {
         let tableName = tableNames[i];
+
+
+        if (tableName === "eb_approval_lines") {
+            multipleTables[tableName] = [];
+            continue;
+        }
+
         let table = multipleTables[tableName];
         for (let j = 0; j < table.length; j++) {
             let row = table[j];

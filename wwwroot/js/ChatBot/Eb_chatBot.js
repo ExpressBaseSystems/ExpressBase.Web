@@ -238,7 +238,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.authenticateAnon = function (email, phno, name) {
-        
+
         setTimeout(function () {
             this.showTypingAnim();
         }.bind(this), this.typeDelay);
@@ -259,25 +259,28 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.msgFromBot(result.errorMsg);
                 }
                 else {
-                    //this.bearerToken = result.bearerToken;
-                    //this.refreshToken = result.refreshToken;
-                    this.formsDict = result.botFormDict;
-                    window.ebcontext.user = JSON.parse(result.user);
-                    //this.formNames = Object.values(this.formsDict);
-                    this.formNames = Object.values(result.botFormNames);
-                    this.formIcons = result.botFormIcons;
-                    $('.eb-chatBox').empty();
-                    this.showDate();
-                    if (Object.keys(this.formsDict).length == 1) {
-                        this.botflg.singleBotApp = true;
-                        this.curRefid = Object.keys(this.formsDict)[0];
-                        this.getForm(this.curRefid);
+                    if (!$.isEmptyObject(result.botFormDict)) {
+                        //this.bearerToken = result.bearerToken;
+                        //this.refreshToken = result.refreshToken;
+                        this.formsDict = result.botFormDict;
+                        window.ebcontext.user = JSON.parse(result.user);
+                        //this.formNames = Object.values(this.formsDict);
+                        this.formNames = Object.values(result.botFormNames);
+                        this.formIcons = result.botFormIcons;
+                        $('.eb-chatBox').empty();
+                        this.showDate();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
+                        // this.ajaxSetup4Future();
+                    } else {
+                        this.msgFromBot("Permission is not set for current user");
                     }
-                    else {
-                        this.AskWhatU();
-                    }
-                    // this.ajaxSetup4Future();
-
                 }
                 /////////////////////////////////////////////////
 
@@ -324,7 +327,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             }
                         }
                         else {
-                            this.msgFromBot("Premission is not set for current user");
+                            this.msgFromBot("Permission is not set for current user");
                         }
                     }
                 }.bind(this)
@@ -687,7 +690,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         }
         else if (ctrl.ObjType === "Rating") {
             let tempCtrl = $("#" + ctrl.EbSid).clone();
-            text = `<div style="display: inline-block;">${tempCtrl[0].outerHTML}</div>` ;
+            text = `<div style="display: inline-block;">${tempCtrl[0].outerHTML}</div>`;
         }
         return text;
     };
@@ -1610,26 +1613,30 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 if (result.status === false) {
                     this.msgFromBot(result.errorMsg);
                 }
-                else {
+                else {                    
                     //this.bearerToken = result.bearerToken;
                     //this.refreshToken = result.refreshToken;
-                    this.formsDict = result.botFormDict;
-                    window.ebcontext.user = JSON.parse(result.user);
-                    //this.formNames = Object.values(this.formsDict);
-                    this.formNames = Object.values(result.botFormNames);
-                    this.formIcons = result.botFormIcons;
-                    $('.eb-chatBox').empty();
-                    this.showDate();
-                    if (Object.keys(this.formsDict).length == 1) {
-                        this.botflg.singleBotApp = true;
-                        this.curRefid = Object.keys(this.formsDict)[0];
-                        this.getForm(this.curRefid);
+                    if (!$.isEmptyObject(result.botFormDict)) {
+                        this.formsDict = result.botFormDict;
+                        window.ebcontext.user = JSON.parse(result.user);
+                        //this.formNames = Object.values(this.formsDict);
+                        this.formNames = Object.values(result.botFormNames);
+                        this.formIcons = result.botFormIcons;
+                        $('.eb-chatBox').empty();
+                        this.showDate();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
-                    else {
-                        this.AskWhatU();
-                    }
-
                     // this.ajaxSetup4Future();
+                    else {
+                        this.msgFromBot("Permission is not set for current user");
+                    }
                 }
 
             }.bind(this));

@@ -29,7 +29,7 @@
             }
             else if (this.editor === 41) {
                 value = $(`#Str64E_txtEdtr${this.PGobj.wraperId}`).val();
-                PropsObj[_CurProp] = btoa(value);
+                PropsObj[_CurProp] = btoa(unescape(encodeURIComponent(value)));
             }
             else if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
                 value = window.editor.getValue();
@@ -255,7 +255,7 @@
     this.initStr64E = function () {
         this.curEditorLabel = "String Editor";
         let PropsObj = this.getPropsObj();
-        let HtmlEbody = '<textarea id="Str64E_txtEdtr' + this.PGobj.wraperId + '" class="str64E-texarea" rows="15" cols="85">' + atob(PropsObj[this.PGobj.CurProp] || "") + '</textarea>';
+        let HtmlEbody = '<textarea id="Str64E_txtEdtr' + this.PGobj.wraperId + '" class="str64E-texarea" rows="15" cols="85">' + decodeURIComponent(escape(window.atob(PropsObj[this.PGobj.CurProp])) || "") + '</textarea>';
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(HtmlEbody);
     };
 

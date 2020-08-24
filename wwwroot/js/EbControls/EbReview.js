@@ -365,6 +365,11 @@
         if (this.CurStageDATA) {
             this.hasPermission = getObjByval(this.CurStageDATA.Columns, "Name", "has_permission").Value === "T";//false;//
             this.isFormDataEditable = getObjByval(this.CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
+            if (!this.isFormDataEditable)
+                this.formRenderer.disableformEditbtn();
+            else
+                this.formRenderer.enableformEditbtn();
+
         }
 
 

@@ -1379,6 +1379,41 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none !important;
 }
 
+[isrendermode="true"] .eb-ctrl-label > .label-infoCont {
+    display: none;
+    position: absolute;
+    right: -30px;
+    top: 0;
+    width: 19px;
+    background: white;
+    height: 19px;
+    vertical-align: middle;
+    font-size: 18px;
+    text-align: center;
+    color: #356aff;
+    border-radius: 50%;
+    box-shadow: 0 0 3px 0 #356aff;
+    z-index: 10;
+}
+
+[isrendermode="false"] .eb-ctrl-label > .label-infoCont {
+    display: none;
+}
+
+
+[isrendermode="true"] .Eb-ctrlContainer:hover > .eb-ctrl-label > .label-infoCont,
+[isrendermode="true"] .label-infoCont:focus {
+    display: flex !important;
+}
+
+[isrendermode="true"] .eb-ctrl-label > .label-infoCont > .fa {
+    margin: auto;
+}
+
+[isrendermode="true"] .popover.fade {
+    min-width: 700px;
+}
+
 .eb-ctrl-label {
     position: relative;
     font-size: 11.5px;

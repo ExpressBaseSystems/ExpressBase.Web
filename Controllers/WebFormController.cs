@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
         public IActionResult Index(string refId, string _params, int _mode, int _locId)
-        {
+       {
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.renderMode = 1;
             ViewBag.rowId = 0;
@@ -221,15 +221,20 @@ namespace ExpressBase.Web.Controllers
         //    return ObjStr;
         //}
 
+        //ps form-api
         public string PSImportFormData(string _refid, int _rowid, string _triggerctrl, string _formModel)
         {
             try
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest {
-                    RefId = _refid, RowId = _rowid, Trigger = _triggerctrl });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest 
+                {
+                    RefId = _refid,
+                    Trigger = _triggerctrl,
+                    WebFormData = _formModel,
+                    Type = ImportDataType.PowerSelect
+                });
                 return Resp.FormDataWrap;
             }
             catch (Exception ex)
@@ -245,6 +250,7 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        //dg dr-api
         public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params)
         {
             try

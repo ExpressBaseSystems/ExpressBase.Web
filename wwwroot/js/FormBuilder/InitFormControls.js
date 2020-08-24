@@ -1711,6 +1711,17 @@
 
 
     }
+    this.Image = function (ctrl) {
+        if (ctrl.ImageId > 0) {
+            if (this.Renderer.rendererName === "WebForm") {
+                $(`#${ctrl.EbSid}`).attr("src", `../images/${ctrl.ImageId}.jpg`);
+            }
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).attr("src", `../bot/images/${ctrl.ImageId}.jpg`);
+            }
+        }
+       
+    }
 };
 
 

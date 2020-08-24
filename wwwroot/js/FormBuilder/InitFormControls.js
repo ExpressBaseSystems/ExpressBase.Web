@@ -16,6 +16,8 @@
 
     this.initInfo = function (ctrl) {
         let el = document.getElementById(ctrl.EbSid_CtxId + "Lblic");
+        if (!el)
+            return;
         if (ctrl.Info && ctrl.Info.trim() !== "") {
             el.innerHTML = ('<i class="fa ' + ctrl.InfoIcon + '" aria-hidden="true"></i>');
             $(el).popover({
@@ -1724,7 +1726,7 @@
                         link.href = `/ReportRender/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
                         link.click();
                     }
-                    
+
                 }
                 else if (this.Renderer.rendererName === "Bot") {
                     let link = document.createElement('a');

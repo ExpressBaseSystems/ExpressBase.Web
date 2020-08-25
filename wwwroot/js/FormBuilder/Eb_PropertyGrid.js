@@ -211,6 +211,32 @@
 
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
+        else if (type === 42) {  //  If file upload editor
+            valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+                + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+
+            this.ImgSlctrs[name] = new FUPFormControl({
+                Type: "image/jpeg,image/png,image/jpg,application/pdf",
+                ShowGallery: false,
+                TenantId: this.Cid,
+                SolutionId: this.Cid,
+                Container: "mb_" + this.wraperId,
+                Multiple:false,
+                ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.cloud',
+                EnableTag: false,
+                EnableCrop: false,
+                DisableUpload: false
+            });
+
+            this.ImgSlctrs[name].uploadSuccess = function (fileid) {
+                this.PropsObj[name] = fileid;
+                $("#" + elemId).val(fileid);
+            }.bind(this);
+
+            this.ImgSlctrs[name].windowClose = function () {
+                this.CXVE.CXE_OKclicked();
+            }.bind(this);
+        }
         else if (type === 17) {  //  If imageUploader
             valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
@@ -824,6 +850,9 @@
         //if (this.PropsObj.RenderMe)
         //    RefreshControl(this.PropsObj);///////////////////////////////////////////////////////////////////////
         $("#" + this.wraperId + " .pgCX-Editor-Btn").on("click", this.CXVE.pgCXE_BtnClicked.bind(this.CXVE));
+        $("#" + this.wraperId + " span.cxv-inp").on("click", function () {
+            $(this).siblings('.pgCX-Editor-Btn').trigger("click");
+        });
         $("#" + this.wraperId + " .pgRow:contains(Name)").find("input").on("change", this.nameChangedFn);
         $("#" + this.wraperId + " .pgGroupCell").on("click", this.togglePropGroup);
         $("#" + this.wraperId + " .pgRow").on("focus", this.rowFocus);

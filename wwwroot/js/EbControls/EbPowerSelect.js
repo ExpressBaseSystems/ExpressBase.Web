@@ -458,22 +458,22 @@ const EbPowerSelect = function (ctrl, options) {
         this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
     };
 
-    this.attachParams2Url = function () {
-        let url = new URL(this.ComboObj.Url);
+    //this.attachParams2Url = function () {
+    //    let url = new URL(this.ComboObj.Url);
 
-        //this.ComboObj.para
-        for (let i = 0; i < this.ComboObj.ParamsList.$values.length; i++) {
-            let ctrl = this.ComboObj.ParamsList.$values[i];
-            url.searchParams.append(ctrl.Name, getObjByval(this.renderer.flatControls, "Name", ctrl.Name).getValue());
-        }
-        this.URLwithParams = url.toString();
-    };
+    //    //this.ComboObj.para
+    //    for (let i = 0; i < this.ComboObj.ParamsList.$values.length; i++) {
+    //        let ctrl = this.ComboObj.ParamsList.$values[i];
+    //        url.searchParams.append(ctrl.Name, getObjByval(this.renderer.flatControls, "Name", ctrl.Name).getValue());
+    //    }
+    //    this.URLwithParams = url.toString();
+    //};
 
     this.reloadWithParams = function () {
         this.clearValues();
         this.fromReloadWithParams = true;
-        if (this.ComboObj.IsDataFromApi)
-            this.attachParams2Url();
+        //if (this.ComboObj.IsDataFromApi)
+        //    this.attachParams2Url();
         this.getData();
     };
 
@@ -571,9 +571,25 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.ModifyToRequestParams = function () {
-        this.EbObject.Parameters.$values = this.filterValues.map(function (row) {
-            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
-        });
+        //this.EbObject.Parameters.$values = this.filterValues.map(function (row) {
+        //    return { ParamName: row.Name, Value: row.Value, Type: row.Type }
+        //});
+        //----------------
+        $.each(this.ComboObj.ParamsList.$values, function (i, param) {            
+            let isStaticParam = false;
+            if (this.ComboObj.ImportApiParams) {
+                let sp_obj = this.ComboObj.ImportApiParams.$values.find(function (obj) { return obj.IsStaticParam === true && obj.Name === param.Name; });
+                if (sp_obj)
+                    isStaticParam = true;
+            }
+            if (!isStaticParam) {
+                let filterobj = this.filterValues.find(function (obj) { return obj.Name === param.Name; });
+                if (filterobj) {
+                    param.Value = filterobj.Value;
+                }
+            }            
+        }.bind(this));
+        this.EbObject.ParamsList = this.ComboObj.ParamsList;
     };
 
     this.ajaxData = function () {
@@ -582,9 +598,9 @@ const EbPowerSelect = function (ctrl, options) {
         this.AddUserAndLcation();
 
         if (this.ComboObj.IsDataFromApi) {
-            //this.ModifyToRequestParams();
+            this.ModifyToRequestParams();
             this.EbObject.IsDataFromApi = true;
-            this.EbObject.Url = this.URLwithParams || this.ComboObj.Url;
+            this.EbObject.Url = this.ComboObj.Url;
             this.EbObject.Method = this.ComboObj.Method;
             this.EbObject.Headers = this.ComboObj.Headers;
         }

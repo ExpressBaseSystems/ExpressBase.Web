@@ -212,7 +212,7 @@
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 42) {  //  If file upload editor
-            valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+            valueHTML = '<span class="cxv-inp" style="vertical-align: sub;">(Document)</span>'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
 
             this.ImgSlctrs[name] = new FUPFormControl({
@@ -230,7 +230,6 @@
 
             this.ImgSlctrs[name].uploadSuccess = function (fileid) {
                 this.PropsObj[name] = fileid;
-                $("#" + elemId).val(fileid);
             }.bind(this);
 
             this.ImgSlctrs[name].windowClose = function () {

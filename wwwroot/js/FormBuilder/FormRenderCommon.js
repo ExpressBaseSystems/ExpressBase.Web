@@ -78,7 +78,7 @@
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
 
-        if (Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId)
+        if (Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId || (Obj.IsImportFromApi && Obj.ImportApiUrl))
             this.bindValueUpdateFns_OnChange(Obj);
 
         if (Obj.DrDependents.$values.length > 0)
@@ -130,7 +130,7 @@
     this.bindValueUpdateFns_OnChange = function (control) {//2nd onchange Fn bind
         try {
             let FnString =
-                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? `
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId || (control.IsImportFromApi && control.ImportApiUrl)) ? `
                 if(!this.___isNotUpdateValExpDepCtrls){
                     form.updateDependentControls(${control.__path}, form);
                 }
@@ -146,7 +146,7 @@
 
     this.bindDrUpdateFns_OnChange = function (control) {//2.5nd onchange Fn bind
         let FnString =
-            ((control.DrDependents && control.DrDependents.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? `
+            ((control.DrDependents && control.DrDependents.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId || (control.IsImportFromApi && control.ImportApiUrl)) ? `
                     form.updateDependentCtrlWithDr(${control.__path}, form);` : "");
         let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
         control.bindOnChange(onChangeFn);
@@ -378,7 +378,7 @@
             if (curCtrl.DependedDG) {
                 this.importDGRelatedUpdates(curCtrl);
             }
-            if (curCtrl.DataImportId && this.FO.Mode.isNew) {
+            if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
                 this.PSImportRelatedUpdates(curCtrl);
             }
         }.bind(this);

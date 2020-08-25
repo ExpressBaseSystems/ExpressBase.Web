@@ -229,7 +229,7 @@
             });
 
             this.ImgSlctrs[name].uploadSuccess = function (fileid) {
-                this.PropsObj[name] = fileid;
+                this.PropsObj[name] = fileid + "";
             }.bind(this);
 
             this.ImgSlctrs[name].windowClose = function () {

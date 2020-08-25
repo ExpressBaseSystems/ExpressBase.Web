@@ -243,7 +243,8 @@
     }.bind(this);
 
     this.UpdateDrDepCtrls = function (curCtrl) {
-        $.each(curCtrl.DrDependents.$values, function (i, depCtrl_s) {
+        for (let i = 0; i < curCtrl.DrDependents.$values.length; i++) {
+            let depCtrl_s = curCtrl.DrDependents.$values[i];
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
             if (depCtrl === "not found")
                 return;
@@ -251,10 +252,13 @@
                 depCtrl.reloadWithParam(curCtrl);
             }
             else if (depCtrl.ObjType === "PowerSelect") {
-                if (!this.FO.isInitiallyPopulating)
+                if (!depCtrl.__isInitiallyPopulating) {
                     depCtrl.initializer.reloadWithParams(curCtrl);
+                }
+                else
+                    depCtrl.__isInitiallyPopulating = false;
             }
-        }.bind(this));
+        }
     }.bind(this);
 
     this.UpdateValExpDepCtrls = function (curCtrl) {

@@ -1,4 +1,9 @@
 ﻿/*CRChng - 'check new DG row for every row' related change*/
+
+html {
+    overflow: hidden !important;
+}
+
 body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
     --txtarea-bg: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
@@ -1380,24 +1385,26 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 [isrendermode="true"] .eb-ctrl-label > .label-infoCont {
-    display: none;
+    display: flex;
     position: absolute;
     right: -30px;
     top: 0;
-    width: 19px;
+    width: 18px;
     background: white;
-    height: 19px;
+    height: 18px;
     vertical-align: middle;
-    font-size: 18px;
+    font-size: 16.35px;
     text-align: center;
-    color: #356aff;
+    color: #767676ad;
     border-radius: 50%;
-    box-shadow: 0 0 3px 0 #356aff;
+    box-shadow: 0 0 3px 0 #767676ad;
     z-index: 10;
 }
 
 [isrendermode="false"] .eb-ctrl-label > .label-infoCont {
-    display: none;
+    display: none !important;
+    color: #356aff;
+    box-shadow: 0 0 3px 0 #356aff;
 }
 
 

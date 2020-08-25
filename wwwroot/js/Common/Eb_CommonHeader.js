@@ -48,9 +48,8 @@
             }.bind(this));
 
 
-            $(`#${obj.EbSid}infoCont .hclose`).on("click", function () {
-                this.$infoModal.hide();
-            }.bind(this));
+            $(`#${obj.EbSid}infoCont .hclose`).on("click",this.objhelpHide);
+            $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick",this.objhelpHide);
 
 
             $(`#${obj.EbSid}infoCont .hnewt`).on("click", function () {
@@ -75,6 +74,10 @@
             //});
         }
     };
+
+    this.objhelpHide = function () {
+        this.$infoModal.hide();
+    }.bind(this)
 
     this.infoModalStop = function () {
         this.$infoModal.attr("dragging", "true");

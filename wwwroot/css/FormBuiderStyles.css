@@ -2710,3 +2710,12 @@ input.locinp {
     .phnContextBtn i {
         display: inline-block;
     }
+
+/*ebpdf control*/
+  .pdfwrapper-cont i {
+        font-size: 33px;
+        position: absolute;
+        bottom: 10px;
+        cursor: pointer;
+        left: 50px;
+    }

@@ -67,9 +67,9 @@
             this.Gallery = this.appendGallery();
             // this.GalleryFS = this.appendFSHtml();//full screen preview init html
             //ebfileviewer start
-            $("#ebfileviewdiv").remove();
-            $("body").append("<div id='ebfileviewdiv'></div>");
-            this.ebFilezview = $("#ebfileviewdiv").ebFileViewer(this.Options.Files);
+            $(`#${this.Options.Container}_view`).remove();
+            $("body").append(`<div id='${this.Options.Container}_view'></div>`); 
+            this[`${this.Options.Container}_cont`] = $(`#${this.Options.Container}_view`).ebFileViewer(this.Options.Files);
             //ebfileviewer end
             this.pullFile();
             $(".prevImgrout,.nextImgrout").off("click").on("click", this.fscreenN_P.bind(this));
@@ -92,11 +92,11 @@
 
     fscreenN_P(ev) {
         let action = $(ev.target).closest("button").attr("action");
-        if (action === "next" && this.CurrentFimg.next('.trggrFprev').length > 0) {
-            this.galleryFullScreen({ target: this.CurrentFimg.next('.trggrFprev') });
+        if (action === "next" && this.CurrentFimg.next(`.${this.Options.Container}_preview`).length > 0) {
+            this.galleryFullScreen({ target: this.CurrentFimg.next(`.${this.Options.Container}_preview`) });
         }
-        else if (action === "prev" && this.CurrentFimg.prev('.trggrFprev').length > 0) {
-            this.galleryFullScreen({ target: this.CurrentFimg.prev('.trggrFprev') });
+        else if (action === "prev" && this.CurrentFimg.prev(`.${this.Options.Container}_preview`).length > 0) {
+            this.galleryFullScreen({ target: this.CurrentFimg.prev(`.${this.Options.Container}_preview`) });
         }
     }
 
@@ -219,7 +219,7 @@
         }
 
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
-        $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
+        $(`.${this.Options.Container}_preview`).off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
         $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
         $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
         $(".FUP_TagLi").off("click").on("click", this.sortByTagFn.bind(this));
@@ -295,7 +295,7 @@
         else if (o.FileCategory === 1) {
             src = `/images/small/${o.FileRefId}.jpg`;
         }
-        return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
+        return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                 <div class="eb_uplGal_thumbO_img">
                     ${this.getThumbType(o, src)}
                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
@@ -324,14 +324,14 @@
         if (ev.ctrlKey)
             return this.thumbSelection(ev);
 
-        let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
+        let fileref = $(ev.target).closest(`.${this.Options.Container}_preview`).attr("filref");
 
         //ebfileviewer 
-        this.ebFilezview.showimage(fileref);
+        this[`${this.Options.Container}_cont`].showimage(fileref);
 
 
         //this.GalleryFS.show();//show full screen 
-        //let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
+        //let o = JSON.parse($(ev.target).closest(`.${this.Options.Container}_preview`).data("meta"));
         //let urls = "", urll = "";
 
         //if (o.FileCategory === 0) {
@@ -355,7 +355,7 @@
         //}
         //this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Fname").text(o.FileName);
         //this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Tags").html(this.getTagsHtml(o));
-        //this.CurrentFimg = $(ev.target).closest(".trggrFprev");
+        //this.CurrentFimg = $(ev.target).closest(`.${this.Options.Container}_preview`);
     }
 
     getTagsHtml(o) {
@@ -901,7 +901,7 @@
 
     customMenuCompleted(name, refids) {
         if (name === "Delete") {
-            this.ebFilezview.deleteimage(refids);
+            this[`${this.Options.Container}_cont`].deleteimage(refids);
         }
 
     }

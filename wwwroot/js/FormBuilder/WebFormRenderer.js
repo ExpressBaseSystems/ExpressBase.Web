@@ -258,7 +258,8 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.psDataImport = function (PScontrol) {
+    //psDataImport
+    this.psDataImportV1 = function (PScontrol) {
         if (PScontrol.isEmpty())
             return;
         this.showLoader();
@@ -280,10 +281,13 @@ const WebFormRender = function (option) {
 
     };
 
-    this.psDataImportV2 = function (PScontrol) {
+    //psDataImportV2
+    this.psDataImport = function (PScontrol) {
         if (PScontrol.isEmpty())
             return;
         this.showLoader();
+        let fd = JSON.parse(JSON.stringify(this.formData));
+        fd.MultipleTables = this.formateDS(fd.MultipleTables);
         $.ajax({
             type: "POST",
             url: "/WebForm/PSImportFormData",
@@ -291,7 +295,7 @@ const WebFormRender = function (option) {
                 _refid: this.formRefId,
                 _rowid: this.rowId,
                 _triggerctrl: PScontrol.Name,
-                _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
+                _formModel: JSON.stringify(fd)
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();

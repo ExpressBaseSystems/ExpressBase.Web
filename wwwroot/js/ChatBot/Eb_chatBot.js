@@ -1613,7 +1613,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 if (result.status === false) {
                     this.msgFromBot(result.errorMsg);
                 }
-                else {                    
+                else {
                     //this.bearerToken = result.bearerToken;
                     //this.refreshToken = result.refreshToken;
                     if (!$.isEmptyObject(result.botFormDict)) {
@@ -1900,23 +1900,27 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.msgFromBot(result.errorMsg);
                     }
                     else {
+                        if (!$.isEmptyObject(result.botFormDict)) {
+                            //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
+                            // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
+                            this.formsDict = result.botFormDict;
+                            window.ebcontext.user = JSON.parse(result.user);
+                            //this.formNames = Object.values(this.formsDict);
+                            this.formNames = Object.values(result.botFormNames);
+                            this.formIcons = result.botFormIcons;
+                            $('.eb-chatBox').empty();
+                            this.showDate();
+                            if (Object.keys(this.formsDict).length == 1) {
+                                this.botflg.singleBotApp = true;
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
+                            }
+                            else {
+                                this.AskWhatU();
+                            }
 
-                        //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
-                        // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
-                        this.formsDict = result.botFormDict;
-                        window.ebcontext.user = JSON.parse(result.user);
-                        //this.formNames = Object.values(this.formsDict);
-                        this.formNames = Object.values(result.botFormNames);
-                        this.formIcons = result.botFormIcons;
-                        $('.eb-chatBox').empty();
-                        this.showDate();
-                        if (Object.keys(this.formsDict).length == 1) {
-                            this.botflg.singleBotApp = true;
-                            this.curRefid = Object.keys(this.formsDict)[0];
-                            this.getForm(this.curRefid);
-                        }
-                        else {
-                            this.AskWhatU();
+                        } else {
+                            this.msgFromBot("Permission is not set for current user");
                         }
                     }
 
@@ -1932,22 +1936,27 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 },
                 function (result) {
                     if (result.status) {
-                        //this.bearerToken = result.bearerToken;
-                        //this.refreshToken = result.refreshToken;
-                        this.formsDict = result.botFormDict;
-                        window.ebcontext.user = JSON.parse(result.user);
-                        //this.formNames = Object.values(this.formsDict);
-                        this.formNames = Object.values(result.botFormNames);
-                        this.formIcons = result.botFormIcons;
-                        $('.eb-chatBox').empty();
-                        this.showDate();
-                        if (Object.keys(this.formsDict).length == 1) {
-                            this.botflg.singleBotApp = true;
-                            this.curRefid = Object.keys(this.formsDict)[0];
-                            this.getForm(this.curRefid);
+                        if (!$.isEmptyObject(result.botFormDict)) {
+                            //this.bearerToken = result.bearerToken;
+                            //this.refreshToken = result.refreshToken;
+                            this.formsDict = result.botFormDict;
+                            window.ebcontext.user = JSON.parse(result.user);
+                            //this.formNames = Object.values(this.formsDict);
+                            this.formNames = Object.values(result.botFormNames);
+                            this.formIcons = result.botFormIcons;
+                            $('.eb-chatBox').empty();
+                            this.showDate();
+                            if (Object.keys(this.formsDict).length == 1) {
+                                this.botflg.singleBotApp = true;
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
+                            }
+                            else {
+                                this.AskWhatU();
+                            }
                         }
                         else {
-                            this.AskWhatU();
+                            this.msgFromBot("Permission is not set for current user");
                         }
                     }
                     else {
@@ -1956,7 +1965,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.msgFromBot(result.errorMsg);
 
                     }
-
                 }.bind(this)
             );
         }
@@ -1964,103 +1972,103 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
 
-    this.otpResendFn = function () {
-        this.resendOTP = true;
-        $.post("../bote/ResendOtp",
-            { otptype: this.botflg.otptype },
-            function (auth) {
-                if (auth.authStatus) {
-                    $("[for=otpvalidate]").remove();
-                    $("[lbl_for=otpvalidate]").remove();
-                    this.msgFromBot("OTP has been sent again");
-                    this.twoFactorAuthLogin(auth)
-                }
-                else {
-                    this.msgFromBot(auth.errorMessage);
-                }
-            }.bind(this));
-    }.bind(this);
+this.otpResendFn = function () {
+    this.resendOTP = true;
+    $.post("../bote/ResendOtp",
+        { otptype: this.botflg.otptype },
+        function (auth) {
+            if (auth.authStatus) {
+                $("[for=otpvalidate]").remove();
+                $("[lbl_for=otpvalidate]").remove();
+                this.msgFromBot("OTP has been sent again");
+                this.twoFactorAuthLogin(auth)
+            }
+            else {
+                this.msgFromBot(auth.errorMessage);
+            }
+        }.bind(this));
+}.bind(this);
 
 
-    this.validateEmail = function (email) {
-        //  var re = /\S+@\S+\.\S+/;
-        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        return emailReg.test(email);
-    }
+this.validateEmail = function (email) {
+    //  var re = /\S+@\S+\.\S+/;
+    let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return emailReg.test(email);
+}
 
-    this.validateMobile = function (mobile) {
-        // var phoneReg = /^(\+91-|\+91|0)?\d{10}$/;
-        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
-        return phoneReg.test(mobile);
-    }
+this.validateMobile = function (mobile) {
+    // var phoneReg = /^(\+91-|\+91|0)?\d{10}$/;
+    let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+    return phoneReg.test(mobile);
+}
 
-    this.otpLoginFn = function (e) {
-        $(e.target).closest('button').attr('disabled', true);
-        this.showTypingAnim();
-        let uname = $("#otp_login_id").val();
-        //let emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        let is_email = this.validateEmail(uname);
-        //let phoneRegex = /^(\+91-|\+91|0)?\d{10}$/;
-        let is_mobile = this.validateMobile(uname);
-        if (is_email || is_mobile) {
-            $.ajax({
-                url: "../bote/SendSignInOtp",
-                type: "POST",
-                data: {
-                    "uname": uname,
-                    "is_email": is_email,
-                    "is_mobile": is_mobile
-                },
-                success: function (result) {
-                    this.hideTypingAnim();
-
-                    if (result.authStatus) {
-                        $("[for=otpUserLogin]").remove();
-                        $("[lbl_for=otpUserLogin]").remove();
-                        this.botflg.otptype = "signinotp";
-                        this.botflg.uname_otp = uname;
-                        this.twoFactorAuthLogin(result)
-                    }
-                    else if (result.authStatus === false) {
-                        this.msgFromBot(result.errorMessage);
-                    }
-
-                }.bind(this)
-            });
-        }
-
-    }.bind(this);
-
-    this.passwordLoginFn = function (e) {
-        $(e.target).closest('button').attr('disabled', true);
-        this.showTypingAnim();
+this.otpLoginFn = function (e) {
+    $(e.target).closest('button').attr('disabled', true);
+    this.showTypingAnim();
+    let uname = $("#otp_login_id").val();
+    //let emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    let is_email = this.validateEmail(uname);
+    //let phoneRegex = /^(\+91-|\+91|0)?\d{10}$/;
+    let is_mobile = this.validateMobile(uname);
+    if (is_email || is_mobile) {
         $.ajax({
-            url: "../bote/PasswordAuthAndGetformlist",
+            url: "../bote/SendSignInOtp",
             type: "POST",
             data: {
-                "uname": $("#username_id").val().trim(),
-                "pass": $("#password_id").val().trim(),
-                "cid": this.EXPRESSbase_SOLUTION_ID,
-                "appid": this.EXPRESSbase_APP_ID,
-                "wc": "bc",
-                "user_ip": this.userDtls.ip,
-                "user_browser": this.userDtls.browser,
-                "otptype": this.botflg.otptype
+                "uname": uname,
+                "is_email": is_email,
+                "is_mobile": is_mobile
             },
             success: function (result) {
                 this.hideTypingAnim();
-                if (result.status === false) {
-                    this.msgFromBot(result.errorMsg);
+
+                if (result.authStatus) {
+                    $("[for=otpUserLogin]").remove();
+                    $("[lbl_for=otpUserLogin]").remove();
+                    this.botflg.otptype = "signinotp";
+                    this.botflg.uname_otp = uname;
+                    this.twoFactorAuthLogin(result)
+                }
+                else if (result.authStatus === false) {
+                    this.msgFromBot(result.errorMessage);
+                }
+
+            }.bind(this)
+        });
+    }
+
+}.bind(this);
+
+this.passwordLoginFn = function (e) {
+    $(e.target).closest('button').attr('disabled', true);
+    this.showTypingAnim();
+    $.ajax({
+        url: "../bote/PasswordAuthAndGetformlist",
+        type: "POST",
+        data: {
+            "uname": $("#username_id").val().trim(),
+            "pass": $("#password_id").val().trim(),
+            "cid": this.EXPRESSbase_SOLUTION_ID,
+            "appid": this.EXPRESSbase_APP_ID,
+            "wc": "bc",
+            "user_ip": this.userDtls.ip,
+            "user_browser": this.userDtls.browser,
+            "otptype": this.botflg.otptype
+        },
+        success: function (result) {
+            this.hideTypingAnim();
+            if (result.status === false) {
+                this.msgFromBot(result.errorMsg);
+            }
+            else {
+                if (result.is2Factor) {
+                    $("[for=pswdbasedLogin]").remove();
+                    $("[lbl_for=pswdbasedLogin]").remove();
+                    this.botflg.otptype = "2faotp";
+                    this.twoFactorAuthLogin(result);
                 }
                 else {
-                    if (result.is2Factor) {
-                        $("[for=pswdbasedLogin]").remove();
-                        $("[lbl_for=pswdbasedLogin]").remove();
-                        this.botflg.otptype = "2faotp";
-                        this.twoFactorAuthLogin(result);
-                    }
-                    else {
-
+                    if (!$.isEmptyObject(result.botFormDict)) {
                         //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
                         // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
                         this.formsDict = result.botFormDict;
@@ -2079,428 +2087,432 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             this.AskWhatU();
                         }
                     }
-
-                }
-
-            }.bind(this)
-        });
-    }.bind(this);
-
-
-    this.AnonymousLoginOptions = function () {
-        this.hideTypingAnim();
-
-        //ASK FOR USER NAME
-        if (settings.Authoptions.UserName) {
-            this.userNameFn();
-        }
-        //use seperate function for else part to replace collectContacts
-        else {
-            if (settings.Authoptions.LoginOpnCount > 1) {
-                this.loginList();
-            }
-            else {
-                this.LoginOpnDirectly();
-            }
-
-        }
-        // this.isAlreadylogined = false;
-
-    }.bind(this);
-
-    this.loginList = function () {
-        this.Query(`Please select a login method`, [`Guest login`, `Login with facebook`], "loginOptions");
-
-        //// this.isAlreadylogined = false;
-        //let btnhtml = `<div class="loginOptnCont">
-        //                <div class="lgnBtnCont" >
-        //                    <button class="ebbtn loginOptnBtn" name="loginOptions" optn="guestlogin" ><i class="fa fa-user" style="padding-right:10px"></i>Guest login</button>
-        //                </div>`;
-
-        //if (settings.Authoptions.Fblogin) {
-        //    this.FB.getLoginStatus(function (response) {
-        //        if (response.status === 'connected') {
-        //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
-        //        } else {
-        //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
-        //        }
-        //    });
-
-        //}
-
-        //btnhtml += "</div>";
-        //this.msgFromBot($(btnhtml));
-    }.bind(this);
-
-    this.loginSelectedOpn = function (e) {
-        this.postmenuClick(e)
-        if (this.CurFormIdx === 0)
-            this.AnonymousUserLogin();
-        else {
-            this.login2FB();
-
-        }
-
-        //let optnTxt = $(e.target).closest('button').text();
-        //this.postmenuClick(e, optnTxt);
-        //let optn = $(e.target).closest('button').attr('optn');
-        //if (optn === 'guestlogin') {
-        //    this.AnonymousUserLogin();
-        //}
-        //else if (optn === 'btnFacebook') {
-        //    this.login2FB();
-        //}
-    }.bind(this);
-
-    this.AnonymousUserLogin = function () {
-        this.hideTypingAnim();
-        this.isAlreadylogined = false;
-        if (settings.Authoptions.EmailAuth) {
-            this.botQueue.push(this.emailauthFn);
-        }
-        if (settings.Authoptions.PhoneAuth) {
-            this.botQueue.push(this.phoneauthFn);
-        }
-        if (this.botQueue.length > 0)
-            (this.botQueue.shift())();
-
-    }.bind(this);
-
-    this.LoginOpnDirectly = function () {
-        this.hideTypingAnim();
-        // this.isAlreadylogined = false;
-
-        if (settings.Authoptions.EmailAuth || settings.Authoptions.PhoneAuth) {
-            this.AnonymousUserLogin()
-        }
-
-        else if (settings.Authoptions.Fblogin) {
-            if (this.FB != null) {
-                this.FB.getLoginStatus(function (response) {
-                    if (response.status === 'connected') {
-                        this.FBLogined();
-                    } else {
-                        this.FBNotLogined();
-                    }
-                }.bind(this));
-            }
-            else {
-                this.FBLogined();
-            }
-
-        }
-
-    }.bind(this);
-
-
-    this.botStartoverfn = function () {
-
-        if (this.botflg.loadFormlist === false) {
-            this.botflg.startover = false;
-            this.ClearFormVariables();
-            this.botflg.otptype = "";//clear flags
-            this.botflg.uname_otp = "";
-            this.$renderAtBottom.empty();
-            this.curCtrl = null;
-            this.$renderAtBottom.hide();
-            $('.eb-chatBox').empty();
-            this.showDate();
-            this.botUserLogin();
-        }
-
-    }.bind(this);
-
-    this.botUserLogin = function () {
-        this.msgFromBot(this.welcomeMessage);
-
-        if (!settings.UserType_Internal) {
-            if (settings.Authoptions.Fblogin) {
-                // This is called with the results from from FB.getLoginStatus().
-
-                window.fbAsyncInit = function () {
-                    console.log("bot" + settings.Authoptions.FbAppVer);
-                    FB.init({
-                        appId: settings.Authoptions.FbAppID,
-                        //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
-                        cookie: true,  // enable cookies to allow the server to access
-                        // the session
-                        xfbml: true,  // parse social plugins on this page
-                        version: settings.Authoptions.FbAppVer
-                        //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
-                    });
-
-                    FB.getLoginStatus(function (response) {
-                        statusChangeCallback(response);
-                    });
-
-                };
-
-                // Load the SDK asynchronously
-                (function (d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0];
-                    if (d.getElementById(id)) return;
-                    js = d.createElement(s); js.id = id;
-                    js.src = "//connect.facebook.net/en_US/sdk.js";
-                    fjs.parentNode.insertBefore(js, fjs);
-                }(document, 'script', 'facebook-jssdk'));
-
-
-                function statusChangeCallback(response) {
-                    console.log('statusChangeCallback');
-                    this.FB = FB;
-                    //if (response.status === 'connected') {
-                    //    this.FBLogined();
-                    //} else {
-                    //    this.FBNotLogined();
-                    //}
-                }
-
-                // This function is called when someone finishes with the Login
-                function checkLoginState() {
-                    FB.getLoginStatus(function (response) {
-                        statusChangeCallback(response);
-                    });
-                };
-            }
-        }
-        if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {
-            this.getBotformList();
-        }
-        else {
-            if (settings.UserType_Internal) {
-                if (settings.Authoptions.OTP_based) {
-                    this.OTP_BasedLogin();
-                } else if (settings.Authoptions.Password_based) {
-                    this.Password_basedLogin();
-                }
-            } else {
-                this.AnonymousLoginOptions();
-            }
-        }
-
-    }.bind(this);
-
-
-
-    this.initConnectionCheck = function () {
-        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
-        setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////
-    };
-
-    this.connectionPing = function () {
-        Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
-        if (Offline.state === 'up')
-            Offline.check();
-        console.log(Offline.state);
-    };
-
-    //==========================================
-
-
-
-    this.showTblViz = function (e) {
-        var $tableCont = $('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>');
-        this.$chatBox.append($tableCont);
-        this.showTypingAnim();
-        //$(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
-        //    processing: true,
-        //    serverSide: false,
-        //    dom: 'rt',
-        //    columns: this.curTblViz.BotCols,
-        //    data: this.curTblViz.BotData,
-        //    initComplete: function () {
-        //        this.hideTypingAnim();
-        //        this.AskWhatU();
-        //        $tableCont.show(100);
-        //    }.bind(this)
-        //dom: "rt",
-        //ajax: {
-        //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
-        //    type: 'POST',
-        //    timeout: 180000,
-        //    data: function (dq) {
-        //        delete dq.columns; delete dq.order; delete dq.search;
-        //        dq.RefId = this.curTblViz.DataSourceRefId;
-        //        return dq;
-        //    }.bind(this),
-        //    dataSrc: function (dd) {
-        //        return dd.data;
-        //    },
-        //    beforeSend: function (xhr) {
-        //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-        //    }.bind(this),
-        //    crossDomain: true
-        //}
-        //});
-
-        var o = new Object();
-        o.containerId = this.curTblViz.name + "Container";
-        o.dsid = this.curTblViz.dataSourceRefId;
-        o.tableId = this.curTblViz.name + "tbl";
-        o.showSerialColumn = true;
-        o.showCheckboxColumn = false;
-        o.showFilterRow = false;
-        o.IsPaging = false;
-        o.rendererName = 'Bot';
-        //o.scrollHeight = this.scrollHeight + "px";
-        //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
-        //o.fnKeyUpCallback = this.xxx.bind(this);
-        //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
-        //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
-        //o.fninitComplete = this.initDTpost.bind(this);
-        //o.hiddenFieldName = this.vmName;
-        //o.showFilterRow = true;
-        //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
-        o.columns = this.curTblViz.columns;//////////////////////////////////////////////////////
-        this.datatable = new EbBasicDataTable(o);
-
-        this.hideTypingAnim();
-        this.AskWhatU();
-    }.bind(this);
-
-    this.showChartViz = function (e) {
-        this.showTypingAnim();
-        $.ajax({
-            type: 'POST',
-            url: '../boti/getData',
-            data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
-            //beforeSend: function (xhr) {
-            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            //}.bind(this),
-            success: this.getDataSuccess.bind(this),
-            error: function () { }
-        });
-    }.bind(this);
-
-    this.getDataSuccess = function (result) {
-        this.Gdata = result.data;
-        $canvasDiv = $('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>');
-        $canvasDiv.find("canvas").attr("id", $canvasDiv.find("canvas").attr("id") + ++this.ChartCounter);
-        this.$chatBox.append($canvasDiv);
-        this.drawGeneralGraph();
-        this.hideTypingAnim();
-        this.AskWhatU();
-    };
-
-    this.drawGeneralGraph = function () {
-        this.getBarData();
-        this.gdata = {
-            labels: this.XLabel,
-            datasets: this.dataset
-        };
-        this.animateOPtions = this.curChartViz.ShowValue ? new animateObj(0) : false;
-        this.goptions = {
-            scales: {
-                yAxes: [{
-                    scaleLabel: {
-                        display: (this.type !== "pie") ? true : false,
-                        labelString: (this.curChartViz.YaxisTitle !== "") ? this.curChartViz.YaxisTitle : "YLabel",
-                        fontColor: (this.curChartViz.YaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisTitleColor : "#000000"
-                    },
-                    stacked: false,
-                    gridLines: {
-                        display: (this.curChartViz.Type !== "pie") ? true : false
-                    },
-                    ticks: {
-                        fontSize: 10,
-                        fontColor: (this.curChartViz.YaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisLabelColor : "#000000"
-                    }
-                }],
-                xAxes: [{
-                    scaleLabel: {
-                        display: (this.type !== "pie") ? true : false,
-                        labelString: (this.curChartViz.XaxisTitle !== "") ? this.curChartViz.XaxisTitle : "XLabel",
-                        fontColor: (this.curChartViz.XaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisTitleColor : "#000000"
-                    },
-                    gridLines: {
-                        display: this.type !== "pie" ? true : false
-                    },
-                    ticks: {
-                        fontSize: 10,
-                        fontColor: (this.curChartViz.XaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisLabelColor : "#000000"
-                    }
-                }]
-            },
-            zoom: {
-                // Boolean to enable zooming
-                enabled: true,
-
-                // Zooming directions. Remove the appropriate direction to disable 
-                // Eg. 'y' would only allow zooming in the y direction
-                mode: 'x'
-            },
-            pan: {
-                enabled: true,
-                mode: 'x'
-            },
-            legend: {
-                //onClick: this.legendClick.bind(this)
-            },
-
-            tooltips: {
-                enabled: this.curChartViz.ShowTooltip
-            },
-            animation: this.animateOPtions
-
-        };
-        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Xaxis.$values.length > 0)
-            this.drawGraph();
-
-    };
-
-    this.getBarData = function () {
-        this.Xindx = [];
-        this.Yindx = [];
-        this.dataset = [];
-        this.XLabel = [];
-        this.YLabel = [];
-        var xdx = [], ydx = [];
-        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Yaxis.$values.length > 0) {
-
-            $.each(this.curChartViz.Xaxis.$values, function (i, obj) {
-                xdx.push(obj.data);
-            });
-
-            $.each(this.curChartViz.Yaxis.$values, function (i, obj) {
-                ydx.push(obj.data);
-            });
-
-            $.each(this.Gdata, this.getBarDataLabel.bind(this, xdx));
-
-            for (k = 0; k < ydx.length; k++) {
-                this.YLabel = [];
-                for (j = 0; j < this.Gdata.length; j++)
-                    this.YLabel.push(this.Gdata[j][ydx[k]]);
-                if (this.curChartViz.Type !== "googlemap") {
-                    if (this.curChartViz.Type !== "pie") {
-                        this.piedataFlag = false;
-                        this.dataset.push(new datasetObj(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
-                    }
                     else {
-                        this.dataset.push(new datasetObj4Pie(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
-                        this.piedataFlag = true;
+                        this.msgFromBot("Permission is not set for current user");
                     }
+                }
+
+            }
+
+        }.bind(this)
+    });
+}.bind(this);
+
+
+this.AnonymousLoginOptions = function () {
+    this.hideTypingAnim();
+
+    //ASK FOR USER NAME
+    if (settings.Authoptions.UserName) {
+        this.userNameFn();
+    }
+    //use seperate function for else part to replace collectContacts
+    else {
+        if (settings.Authoptions.LoginOpnCount > 1) {
+            this.loginList();
+        }
+        else {
+            this.LoginOpnDirectly();
+        }
+
+    }
+    // this.isAlreadylogined = false;
+
+}.bind(this);
+
+this.loginList = function () {
+    this.Query(`Please select a login method`, [`Guest login`, `Login with facebook`], "loginOptions");
+
+    //// this.isAlreadylogined = false;
+    //let btnhtml = `<div class="loginOptnCont">
+    //                <div class="lgnBtnCont" >
+    //                    <button class="ebbtn loginOptnBtn" name="loginOptions" optn="guestlogin" ><i class="fa fa-user" style="padding-right:10px"></i>Guest login</button>
+    //                </div>`;
+
+    //if (settings.Authoptions.Fblogin) {
+    //    this.FB.getLoginStatus(function (response) {
+    //        if (response.status === 'connected') {
+    //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
+    //        } else {
+    //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
+    //        }
+    //    });
+
+    //}
+
+    //btnhtml += "</div>";
+    //this.msgFromBot($(btnhtml));
+}.bind(this);
+
+this.loginSelectedOpn = function (e) {
+    this.postmenuClick(e)
+    if (this.CurFormIdx === 0)
+        this.AnonymousUserLogin();
+    else {
+        this.login2FB();
+
+    }
+
+    //let optnTxt = $(e.target).closest('button').text();
+    //this.postmenuClick(e, optnTxt);
+    //let optn = $(e.target).closest('button').attr('optn');
+    //if (optn === 'guestlogin') {
+    //    this.AnonymousUserLogin();
+    //}
+    //else if (optn === 'btnFacebook') {
+    //    this.login2FB();
+    //}
+}.bind(this);
+
+this.AnonymousUserLogin = function () {
+    this.hideTypingAnim();
+    this.isAlreadylogined = false;
+    if (settings.Authoptions.EmailAuth) {
+        this.botQueue.push(this.emailauthFn);
+    }
+    if (settings.Authoptions.PhoneAuth) {
+        this.botQueue.push(this.phoneauthFn);
+    }
+    if (this.botQueue.length > 0)
+        (this.botQueue.shift())();
+
+}.bind(this);
+
+this.LoginOpnDirectly = function () {
+    this.hideTypingAnim();
+    // this.isAlreadylogined = false;
+
+    if (settings.Authoptions.EmailAuth || settings.Authoptions.PhoneAuth) {
+        this.AnonymousUserLogin()
+    }
+
+    else if (settings.Authoptions.Fblogin) {
+        if (this.FB != null) {
+            this.FB.getLoginStatus(function (response) {
+                if (response.status === 'connected') {
+                    this.FBLogined();
+                } else {
+                    this.FBNotLogined();
+                }
+            }.bind(this));
+        }
+        else {
+            this.FBLogined();
+        }
+
+    }
+
+}.bind(this);
+
+
+this.botStartoverfn = function () {
+
+    if (this.botflg.loadFormlist === false) {
+        this.botflg.startover = false;
+        this.ClearFormVariables();
+        this.botflg.otptype = "";//clear flags
+        this.botflg.uname_otp = "";
+        this.$renderAtBottom.empty();
+        this.curCtrl = null;
+        this.$renderAtBottom.hide();
+        $('.eb-chatBox').empty();
+        this.showDate();
+        this.botUserLogin();
+    }
+
+}.bind(this);
+
+this.botUserLogin = function () {
+    this.msgFromBot(this.welcomeMessage);
+
+    if (!settings.UserType_Internal) {
+        if (settings.Authoptions.Fblogin) {
+            // This is called with the results from from FB.getLoginStatus().
+
+            window.fbAsyncInit = function () {
+                console.log("bot" + settings.Authoptions.FbAppVer);
+                FB.init({
+                    appId: settings.Authoptions.FbAppID,
+                    //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
+                    cookie: true,  // enable cookies to allow the server to access
+                    // the session
+                    xfbml: true,  // parse social plugins on this page
+                    version: settings.Authoptions.FbAppVer
+                    //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
+                });
+
+                FB.getLoginStatus(function (response) {
+                    statusChangeCallback(response);
+                });
+
+            };
+
+            // Load the SDK asynchronously
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+
+
+            function statusChangeCallback(response) {
+                console.log('statusChangeCallback');
+                this.FB = FB;
+                //if (response.status === 'connected') {
+                //    this.FBLogined();
+                //} else {
+                //    this.FBNotLogined();
+                //}
+            }
+
+            // This function is called when someone finishes with the Login
+            function checkLoginState() {
+                FB.getLoginStatus(function (response) {
+                    statusChangeCallback(response);
+                });
+            };
+        }
+    }
+    if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {
+        this.getBotformList();
+    }
+    else {
+        if (settings.UserType_Internal) {
+            if (settings.Authoptions.OTP_based) {
+                this.OTP_BasedLogin();
+            } else if (settings.Authoptions.Password_based) {
+                this.Password_basedLogin();
+            }
+        } else {
+            this.AnonymousLoginOptions();
+        }
+    }
+
+}.bind(this);
+
+
+
+this.initConnectionCheck = function () {
+    Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
+    setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////
+};
+
+this.connectionPing = function () {
+    Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
+    if (Offline.state === 'up')
+        Offline.check();
+    console.log(Offline.state);
+};
+
+//==========================================
+
+
+
+this.showTblViz = function (e) {
+    var $tableCont = $('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>');
+    this.$chatBox.append($tableCont);
+    this.showTypingAnim();
+    //$(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
+    //    processing: true,
+    //    serverSide: false,
+    //    dom: 'rt',
+    //    columns: this.curTblViz.BotCols,
+    //    data: this.curTblViz.BotData,
+    //    initComplete: function () {
+    //        this.hideTypingAnim();
+    //        this.AskWhatU();
+    //        $tableCont.show(100);
+    //    }.bind(this)
+    //dom: "rt",
+    //ajax: {
+    //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
+    //    type: 'POST',
+    //    timeout: 180000,
+    //    data: function (dq) {
+    //        delete dq.columns; delete dq.order; delete dq.search;
+    //        dq.RefId = this.curTblViz.DataSourceRefId;
+    //        return dq;
+    //    }.bind(this),
+    //    dataSrc: function (dd) {
+    //        return dd.data;
+    //    },
+    //    beforeSend: function (xhr) {
+    //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+    //    }.bind(this),
+    //    crossDomain: true
+    //}
+    //});
+
+    var o = new Object();
+    o.containerId = this.curTblViz.name + "Container";
+    o.dsid = this.curTblViz.dataSourceRefId;
+    o.tableId = this.curTblViz.name + "tbl";
+    o.showSerialColumn = true;
+    o.showCheckboxColumn = false;
+    o.showFilterRow = false;
+    o.IsPaging = false;
+    o.rendererName = 'Bot';
+    //o.scrollHeight = this.scrollHeight + "px";
+    //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
+    //o.fnKeyUpCallback = this.xxx.bind(this);
+    //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
+    //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
+    //o.fninitComplete = this.initDTpost.bind(this);
+    //o.hiddenFieldName = this.vmName;
+    //o.showFilterRow = true;
+    //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
+    o.columns = this.curTblViz.columns;//////////////////////////////////////////////////////
+    this.datatable = new EbBasicDataTable(o);
+
+    this.hideTypingAnim();
+    this.AskWhatU();
+}.bind(this);
+
+this.showChartViz = function (e) {
+    this.showTypingAnim();
+    $.ajax({
+        type: 'POST',
+        url: '../boti/getData',
+        data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
+        //beforeSend: function (xhr) {
+        //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+        //}.bind(this),
+        success: this.getDataSuccess.bind(this),
+        error: function () { }
+    });
+}.bind(this);
+
+this.getDataSuccess = function (result) {
+    this.Gdata = result.data;
+    $canvasDiv = $('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>');
+    $canvasDiv.find("canvas").attr("id", $canvasDiv.find("canvas").attr("id") + ++this.ChartCounter);
+    this.$chatBox.append($canvasDiv);
+    this.drawGeneralGraph();
+    this.hideTypingAnim();
+    this.AskWhatU();
+};
+
+this.drawGeneralGraph = function () {
+    this.getBarData();
+    this.gdata = {
+        labels: this.XLabel,
+        datasets: this.dataset
+    };
+    this.animateOPtions = this.curChartViz.ShowValue ? new animateObj(0) : false;
+    this.goptions = {
+        scales: {
+            yAxes: [{
+                scaleLabel: {
+                    display: (this.type !== "pie") ? true : false,
+                    labelString: (this.curChartViz.YaxisTitle !== "") ? this.curChartViz.YaxisTitle : "YLabel",
+                    fontColor: (this.curChartViz.YaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisTitleColor : "#000000"
+                },
+                stacked: false,
+                gridLines: {
+                    display: (this.curChartViz.Type !== "pie") ? true : false
+                },
+                ticks: {
+                    fontSize: 10,
+                    fontColor: (this.curChartViz.YaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisLabelColor : "#000000"
+                }
+            }],
+            xAxes: [{
+                scaleLabel: {
+                    display: (this.type !== "pie") ? true : false,
+                    labelString: (this.curChartViz.XaxisTitle !== "") ? this.curChartViz.XaxisTitle : "XLabel",
+                    fontColor: (this.curChartViz.XaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisTitleColor : "#000000"
+                },
+                gridLines: {
+                    display: this.type !== "pie" ? true : false
+                },
+                ticks: {
+                    fontSize: 10,
+                    fontColor: (this.curChartViz.XaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisLabelColor : "#000000"
+                }
+            }]
+        },
+        zoom: {
+            // Boolean to enable zooming
+            enabled: true,
+
+            // Zooming directions. Remove the appropriate direction to disable 
+            // Eg. 'y' would only allow zooming in the y direction
+            mode: 'x'
+        },
+        pan: {
+            enabled: true,
+            mode: 'x'
+        },
+        legend: {
+            //onClick: this.legendClick.bind(this)
+        },
+
+        tooltips: {
+            enabled: this.curChartViz.ShowTooltip
+        },
+        animation: this.animateOPtions
+
+    };
+    if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Xaxis.$values.length > 0)
+        this.drawGraph();
+
+};
+
+this.getBarData = function () {
+    this.Xindx = [];
+    this.Yindx = [];
+    this.dataset = [];
+    this.XLabel = [];
+    this.YLabel = [];
+    var xdx = [], ydx = [];
+    if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Yaxis.$values.length > 0) {
+
+        $.each(this.curChartViz.Xaxis.$values, function (i, obj) {
+            xdx.push(obj.data);
+        });
+
+        $.each(this.curChartViz.Yaxis.$values, function (i, obj) {
+            ydx.push(obj.data);
+        });
+
+        $.each(this.Gdata, this.getBarDataLabel.bind(this, xdx));
+
+        for (k = 0; k < ydx.length; k++) {
+            this.YLabel = [];
+            for (j = 0; j < this.Gdata.length; j++)
+                this.YLabel.push(this.Gdata[j][ydx[k]]);
+            if (this.curChartViz.Type !== "googlemap") {
+                if (this.curChartViz.Type !== "pie") {
+                    this.piedataFlag = false;
+                    this.dataset.push(new datasetObj(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
+                }
+                else {
+                    this.dataset.push(new datasetObj4Pie(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
+                    this.piedataFlag = true;
                 }
             }
         }
-    };
+    }
+};
 
-    this.getBarDataLabel = function (xdx, i, value) {
-        for (k = 0; k < xdx.length; k++)
-            this.XLabel.push(value[xdx[k]]);
-    };
+this.getBarDataLabel = function (xdx, i, value) {
+    for (k = 0; k < xdx.length; k++)
+        this.XLabel.push(value[xdx[k]]);
+};
 
-    this.drawGraph = function () {
-        var canvas = document.getElementById(this.curChartViz.EbSid + this.ChartCounter);//change ebsid to name
-        this.chartApi = new Chart(canvas, {
-            type: this.curChartViz.Type,
-            data: this.gdata,
-            options: this.goptions,
-        });
-    };
+this.drawGraph = function () {
+    var canvas = document.getElementById(this.curChartViz.EbSid + this.ChartCounter);//change ebsid to name
+    this.chartApi = new Chart(canvas, {
+        type: this.curChartViz.Type,
+        data: this.gdata,
+        options: this.goptions,
+    });
+};
 
-    //==========================================
-    this.init();
+//==========================================
+this.init();
 };
 
 var datasetObj = function (label, data, backgroundColor, borderColor, fill) {

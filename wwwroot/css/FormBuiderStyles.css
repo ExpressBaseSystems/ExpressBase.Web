@@ -2711,6 +2711,15 @@ input.locinp {
         display: inline-block;
     }
 
+/*ebpdf control*/
+  .pdfwrapper-cont i {
+        font-size: 33px;
+        position: absolute;
+        bottom: 10px;
+        cursor: pointer;
+        left: 50px;
+    }
+
 .obj-hlp-iframe {
     width: 100%;
     height: 100%;

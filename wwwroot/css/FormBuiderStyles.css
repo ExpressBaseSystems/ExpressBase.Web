@@ -1399,18 +1399,19 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 50%;
     box-shadow: 0 0 3px 0 #767676ad;
     z-index: 10;
+    transition-duration: 0.05s;
+    transition-delay: 0.3s;
 }
 
 [isrendermode="false"] .eb-ctrl-label > .label-infoCont {
     display: none !important;
-    color: #356aff;
-    box-shadow: 0 0 3px 0 #356aff;
 }
 
 
 [isrendermode="true"] .Eb-ctrlContainer:hover > .eb-ctrl-label > .label-infoCont,
 [isrendermode="true"] .label-infoCont:focus {
-    display: flex !important;
+    color: #356aff;
+    box-shadow: 0 0 3px 0 #356aff;
 }
 
 [isrendermode="true"] .eb-ctrl-label > .label-infoCont > .fa {

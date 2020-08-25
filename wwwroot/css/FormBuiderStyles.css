@@ -2710,3 +2710,95 @@ input.locinp {
     .phnContextBtn i {
         display: inline-block;
     }
+
+/*ebpdf control*/
+  .pdfwrapper-cont i {
+        font-size: 33px;
+        position: absolute;
+        bottom: 10px;
+        cursor: pointer;
+        left: 50px;
+    }
+
+.obj-hlp-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.eb-popup-cont {
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    z-index: 10;
+    top: 37px;
+    left: 450px;
+    width: 60%;
+    height: 80%;
+    display: none;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4), 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+.eb-popup-head .icon-cont {
+    padding: 3px;
+    font-size: 16px;
+    display: flex;
+    margin-left: 5px;
+    min-width: 22px;
+    border-radius: 1px;
+    text-align: center;
+    transition-duration: 0.2s;
+    cursor:pointer;
+}
+
+    .eb-popup-head .icon-cont:hover {
+        background-color: #3333331f;
+    }
+
+    .eb-popup-head .icon-cont .fa {
+        margin: auto;
+    }
+
+.eb-popup-head {
+    border-radius: 4px 4px 0 0;
+    padding: 15px 20px;
+    background: #fafafa;
+    border-bottom: 1px solid #eee;
+    cursor:move;
+}
+
+.eb-popup-body {
+    height: calc(100% - 51px);
+}
+
+.hhandpad-r, .hhandpad-l {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    bottom: 0;
+}
+
+.hhandpad-r {
+    right: 0;
+    clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+}
+
+.hhandpad-l {
+    left: 0;
+    clip-path: polygon(0 100%, 0 0, 100% 100%);
+}
+
+/*.eb-popup-cont .ui-resizable-sw {
+    cursor: sw-resize;
+    width: 9px;
+    height: 9px;
+    left: 0;
+    background-color: #f1f1f1;
+    bottom: 0;
+    clip-path: polygon(0 100%, 0 0, 100% 100%);
+}*/
+
+.eb-popup-cont .ui-icon-gripsmall-diagonal-se {
+    background-position: -64px -224px;
+    background-color: #f1f1f1;
+}

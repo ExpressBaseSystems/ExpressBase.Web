@@ -4,6 +4,14 @@ html {
     overflow: hidden !important;
 }
 
+:focus {
+    outline: 1px solid #0075FF;
+}
+
+.ctrl-cover .dropdown-toggle[data-toggle="dropdown"]:focus {
+    outline: 1px solid #0075FF !important;
+}
+
 body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
     --txtarea-bg: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);

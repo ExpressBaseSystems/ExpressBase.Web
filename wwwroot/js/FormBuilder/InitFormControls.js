@@ -1002,6 +1002,10 @@
 
     this.iFrameOpen = function (ctrl) {//////////////////
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
+        if (ctrl.OpenInNewTab) {
+            window.open(url, '_blank');
+            return;
+        }
         $("#iFrameForm").attr("src", url);
         $("#iFrameFormModal").modal("show");
     };

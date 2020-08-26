@@ -172,9 +172,9 @@
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
         //this.CurProplabel = this.CurMeta.alias || this.PGobj.CurProp;
-        if (!(this.editor === 17 || this.editor === 14 || this.editor === 21))
+        if (!(this.editor === 17 || this.editor === 42 || this.editor === 14 || this.editor === 21))
             $(this.modalBg_Slctr).show(450, this.pgCXEshowCallback.bind(this));
-        if (this.editor === 17)
+        if (this.editor === 17 || this.editor === 42)
             this.PGobj.ImgSlctrs[this.PGobj.CurProp].toggleM();
 
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
@@ -1494,22 +1494,22 @@
             + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
 
             + '<div class="modal-header">'
-            + '<button type="button" class="close">&times;</button>'
-            + '<h4 class="modal-title"> </h4>'
+                + '<button type="button" class="close">&times;</button>'
+                + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
             + '<div class="modal-body"> </div>'
-            + '<div class="modal-footer">'
-            + '<div class="modal-footer-body">'
-            + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn">OK</button>'
+                + '<div class="modal-footer">'
+                + '<div class="modal-footer-body">'
+                + '</div>'
+                + '<button type="button" name="CXE_OK" class="btn">OK</button>'
             + '</div>'
 
             + '</div>'
             + '</div>';
         $(this.PGobj.$wraper).append(CXVE_html);
 
-        $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
+        $(this.PGobj.$wraper).append('<div style="display:none" id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
         $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="mls_' + this.PGobj.wraperId + '"> </div>');
     };
     this.Init();

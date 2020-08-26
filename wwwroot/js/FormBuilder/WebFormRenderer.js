@@ -148,7 +148,8 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.initNCs = function () {
-        $.each(this.flatControls, function (k, Obj) {
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let Obj = this.flatControls[i]
             let opt = {};
             if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
@@ -169,7 +170,7 @@ const WebFormRender = function (option) {
                 opt.renderMode = _renderMode;
             }
             this.initControls.init(Obj, opt);
-        }.bind(this));
+        }
     };
 
     this.SetWatchers = function () {
@@ -258,7 +259,8 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.psDataImport = function (PScontrol) {
+    //psDataImport
+    this.psDataImportV1 = function (PScontrol) {
         if (PScontrol.isEmpty())
             return;
         this.showLoader();
@@ -280,10 +282,13 @@ const WebFormRender = function (option) {
 
     };
 
-    this.psDataImportV2 = function (PScontrol) {
+    //psDataImportV2
+    this.psDataImport = function (PScontrol) {
         if (PScontrol.isEmpty())
             return;
         this.showLoader();
+        let fd = JSON.parse(JSON.stringify(this.formData));
+        fd.MultipleTables = this.formateDS(fd.MultipleTables);
         $.ajax({
             type: "POST",
             url: "/WebForm/PSImportFormData",
@@ -291,7 +296,7 @@ const WebFormRender = function (option) {
                 _refid: this.formRefId,
                 _rowid: this.rowId,
                 _triggerctrl: PScontrol.Name,
-                _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
+                _formModel: JSON.stringify(fd)
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
@@ -337,8 +342,10 @@ const WebFormRender = function (option) {
 
             ctrl.___DoNotUpdateDataVals = true;
 
-            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
+            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
+                ctrl.__isInitiallyPopulating = true;// need detail comment
                 ctrl.setDisplayMember(val);
+            }
             else
                 ctrl.justSetValue(val);
 

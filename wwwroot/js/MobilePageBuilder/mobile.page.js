@@ -30,6 +30,8 @@ function EbMobStudio(config) {
     this.Mode = this.EditObj === null ? "new" : "edit";
     this.ContainerType = null;
 
+    this.DSColumnsJSON = null;
+
     this.GenerateButtons = function () { };
 
     this.pg = new Eb_PropertyGrid({
@@ -59,6 +61,7 @@ function EbMobStudio(config) {
         var curObject = this.Procs[curControl.attr("id")];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas[type]);
+        curObject.pgSetObject(this);
         this.pg.__extension.hideBlackListed(curObject);
     };
 
@@ -171,6 +174,7 @@ function EbMobStudio(config) {
         let type = div.attr("eb-type");
         let o = this.Procs[div.attr("id")];
         this.pg.setObject(o, AllMetas[type]);
+        o.pgSetObject(this);
         o.refresh(this);
     };
 
@@ -318,6 +322,8 @@ function EbMobStudio(config) {
                 vis.DataColumns.$values = window.dataColToMobileCol(result.columns[0]);
             }
 
+            this.DSColumnsJSON = result.columns || [];
+
             this.Controls.drawDsColTree(result.columns);
             $(".branch").click();
             if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
@@ -374,7 +380,7 @@ function EbMobStudio(config) {
         }
 
         if ("propertyChanged" in obj)
-            obj.propertyChanged(pname);
+            obj.propertyChanged(pname, this);
 
         //set tree col if form
         if (this.ContainerType === "EbMobileForm" && (pname === "Name" || pname === "TableName"))

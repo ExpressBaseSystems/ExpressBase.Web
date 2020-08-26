@@ -1,4 +1,17 @@
 ﻿/*CRChng - 'check new DG row for every row' related change*/
+
+html {
+    overflow: hidden !important;
+}
+
+:focus {
+    outline: 1px solid #0075FF;
+}
+
+.ctrl-cover .dropdown-toggle[data-toggle="dropdown"]:focus {
+    outline: 1px solid #0075FF !important;
+}
+
 body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
     --txtarea-bg: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
@@ -1380,30 +1393,33 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 [isrendermode="true"] .eb-ctrl-label > .label-infoCont {
-    display: none;
+    display: flex;
     position: absolute;
     right: -30px;
     top: 0;
-    width: 19px;
+    width: 18px;
     background: white;
-    height: 19px;
+    height: 18px;
     vertical-align: middle;
-    font-size: 18px;
+    font-size: 16.35px;
     text-align: center;
-    color: #356aff;
+    color: #767676ad;
     border-radius: 50%;
-    box-shadow: 0 0 3px 0 #356aff;
+    box-shadow: 0 0 3px 0 #767676ad;
     z-index: 10;
+    transition-duration: 0.05s;
+    transition-delay: 0.3s;
 }
 
 [isrendermode="false"] .eb-ctrl-label > .label-infoCont {
-    display: none;
+    display: none !important;
 }
 
 
 [isrendermode="true"] .Eb-ctrlContainer:hover > .eb-ctrl-label > .label-infoCont,
 [isrendermode="true"] .label-infoCont:focus {
-    display: flex !important;
+    color: #356aff;
+    box-shadow: 0 0 3px 0 #356aff;
 }
 
 [isrendermode="true"] .eb-ctrl-label > .label-infoCont > .fa {
@@ -2719,3 +2735,86 @@ input.locinp {
         cursor: pointer;
         left: 50px;
     }
+
+.obj-hlp-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.eb-popup-cont {
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    z-index: 10;
+    top: 37px;
+    left: 450px;
+    width: 60%;
+    height: 80%;
+    display: none;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4), 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+.eb-popup-head .icon-cont {
+    padding: 3px;
+    font-size: 16px;
+    display: flex;
+    margin-left: 5px;
+    min-width: 22px;
+    border-radius: 1px;
+    text-align: center;
+    transition-duration: 0.2s;
+    cursor:pointer;
+}
+
+    .eb-popup-head .icon-cont:hover {
+        background-color: #3333331f;
+    }
+
+    .eb-popup-head .icon-cont .fa {
+        margin: auto;
+    }
+
+.eb-popup-head {
+    border-radius: 4px 4px 0 0;
+    padding: 15px 20px;
+    background: #fafafa;
+    border-bottom: 1px solid #eee;
+    cursor:move;
+}
+
+.eb-popup-body {
+    height: calc(100% - 51px);
+}
+
+.hhandpad-r, .hhandpad-l {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    bottom: 0;
+}
+
+.hhandpad-r {
+    right: 0;
+    clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+}
+
+.hhandpad-l {
+    left: 0;
+    clip-path: polygon(0 100%, 0 0, 100% 100%);
+}
+
+/*.eb-popup-cont .ui-resizable-sw {
+    cursor: sw-resize;
+    width: 9px;
+    height: 9px;
+    left: 0;
+    background-color: #f1f1f1;
+    bottom: 0;
+    clip-path: polygon(0 100%, 0 0, 100% 100%);
+}*/
+
+.eb-popup-cont .ui-icon-gripsmall-diagonal-se {
+    background-position: -64px -224px;
+    background-color: #f1f1f1;
+}

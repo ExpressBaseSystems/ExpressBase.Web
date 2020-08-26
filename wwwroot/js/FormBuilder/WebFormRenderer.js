@@ -67,7 +67,7 @@ const WebFormRender = function (option) {
             this.DGBuilderObjs[DG.EbSid_CtxId].MultipleTables = this.DataMODEL | [];
             if (!window.__IsDGctxMenuSet)
                 $.contextMenu({
-                    selector: '[eb-form="true"][mode="edit"] .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .dgtr:not([is-editing="true"]) > td',
+                    selector: '[eb-form="true"][mode="edit"] .Dg_body .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .Dg_body .dgtr:not([is-editing="true"]) > td',
                     autoHide: true,
                     build: this.ctxBuildFn.bind(this)
                 });
@@ -148,7 +148,8 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.initNCs = function () {
-        $.each(this.flatControls, function (k, Obj) {
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let Obj = this.flatControls[i]
             let opt = {};
             if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
@@ -169,7 +170,7 @@ const WebFormRender = function (option) {
                 opt.renderMode = _renderMode;
             }
             this.initControls.init(Obj, opt);
-        }.bind(this));
+        }
     };
 
     this.SetWatchers = function () {
@@ -341,8 +342,10 @@ const WebFormRender = function (option) {
 
             ctrl.___DoNotUpdateDataVals = true;
 
-            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
+            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
+                ctrl.__isInitiallyPopulating = true;// need detail comment
                 ctrl.setDisplayMember(val);
+            }
             else
                 ctrl.justSetValue(val);
 

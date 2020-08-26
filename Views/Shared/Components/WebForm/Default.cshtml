@@ -476,6 +476,8 @@
     let _renderMode = @ViewBag.renderMode;
     let _formHTML = `@Html.Raw(ViewBag.WebFormHtml)`;
 
+    header.addRootObjectHelp(_formObj);
+
     //to store refids of uploaded files via all fileuploader ctrls
     let uploadedFileRefList = {}; // multiple form related changes will come
     let DynamicTabPane = function () { console.log('Not Implemented'); }; // multiple form related changes will come

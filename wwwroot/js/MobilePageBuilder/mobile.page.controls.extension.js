@@ -34,7 +34,8 @@
             setObject: function () { return null; },
             propertyChanged: function (propname) { },
             blackListProps: [],
-            refresh: function () { }
+            refresh: function () { },
+            pgSetObject: function (root) { }
         };
 
         $.extend(o, common, window.expandable[constructor] || {});
@@ -224,12 +225,14 @@
             refresh: function (root) {
                 if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
                     root.pg.ShowProperty('FormMode');
+                    root.pg.ShowProperty('FormId');
                     root.pg.ShowProperty('LinkFormParameters');
                     root.pg.ShowProperty('ContextToControlMap');
                     root.pg.ShowProperty('ShowNewButton');
                 }
                 else {
                     root.pg.HideProperty('FormMode');
+                    root.pg.HideProperty('FormId');
                     root.pg.HideProperty('LinkFormParameters');
                     root.pg.HideProperty('ContextToControlMap');
                     root.pg.HideProperty('ShowNewButton');
@@ -245,6 +248,75 @@
                     }
                 }
             }
+        },
+        "EbMobileDataColumn": {
+            trigger: function (root) {
+                this.propertyChanged("HorrizontalAlign");
+            },
+            propertyChanged: function (propname) {
+                if (propname === "HorrizontalAlign") {
+                    window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
+                }
+            }
+        },
+        "EbMobileButton": {
+            __FormIdCopy: null,
+            trigger: function (root) {
+                this.propertyChanged("HorrizontalAlign");
+                this.propertyChanged("LinkRefId", root);
+
+                this.__FormIdCopy = this.FormId;
+            },
+            propertyChanged: function (propname, root) {
+                if (propname === "HorrizontalAlign") {
+                    window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
+                }
+                else if (propname === "LinkRefId") {
+                    this.setC2ControlMap(root);
+                }
+            },
+            setC2ControlMap: function (root) {
+
+                if (!this.LinkRefId)
+                    return;
+
+                window.resolveLinkType(this.LinkRefId, function (json) {
+
+                    let controlInfo = JSON.parse(json);
+                    let ds_cols = root.DSColumnsJSON || [];
+
+                    if (ds_cols.length >= 1) {
+                        this.DataColumns.$values = window.dataColToMobileCol(ds_cols[0]);
+                    }
+
+                    this.FormControlMetas.$values = controlInfo.ControlMetas.$values;
+                    this.LinkTypeForm = controlInfo.IsForm;
+                    this.refresh(root);
+
+                }.bind(this));
+            },
+            pgSetObject: function (root) {
+                if (this.DataColumns == null || this.DataColumns.$values.length <= 0) {
+                    let ds_cols = root.DSColumnsJSON || [];
+                    if (ds_cols.length >= 1) {
+                        this.DataColumns.$values = window.dataColToMobileCol(ds_cols[0]);
+                    }
+                }
+                this.FormId = this.__FormIdCopy;
+                this.refresh(root);
+            },
+            refresh: function (root) {
+                if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
+                    root.pg.ShowProperty('FormMode');
+                    root.pg.ShowProperty('FormId');
+                    root.pg.ShowProperty('LinkFormParameters');
+                }
+                else {
+                    root.pg.HideProperty('FormMode');
+                    root.pg.HideProperty('FormId');
+                    root.pg.HideProperty('LinkFormParameters');
+                }
+            },
         }
     };
 })(jQuery);
@@ -266,7 +338,6 @@ function PgHelperMobile(g) {
     };
 }
 
-
 function FilterToolBox(ctype, tab) {
 
     let $div = `#eb_mobpage_toolbox${tab}`;
@@ -278,5 +349,43 @@ function FilterToolBox(ctype, tab) {
     }
     else {
         $(`${$div} .eb_mobpage_tbxcategory`).show();
+    }
+}
+
+function alignHorrizontally($div, align) {
+    if (align === 0) {
+        $div.css("justify-content", "flex-start");
+        $div.find("*").css("width", "auto");
+    }
+    else if (align === 1) {
+        $div.css("justify-content", "center");
+        $div.find("*").css("width", "auto");
+    }
+    else if (align === 2) {
+        $div.css("justify-content", "flex-end");
+        $div.find("*").css("width", "auto");
+    }
+    else {
+        $div.css("justify-content", "flex-start");
+        $div.find("*").css("width", "100%");
+    }
+}
+
+function resolveLinkType(linkref, callback) {
+    if (linkref) {
+        $.ajax({
+            url: "../Dev/GetMobileFormControls",
+            type: "GET",
+            cache: false,
+            data: { refid: linkref },
+            beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
+            success: function (result) {
+                $("#eb_common_loader").EbLoader("hide");
+                callback(result);
+            }.bind(this),
+            error: function () {
+                $("#eb_common_loader").EbLoader("hide");
+            }
+        });
     }
 }

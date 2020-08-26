@@ -160,7 +160,8 @@ const EbPowerSelect = function (ctrl, options) {
             if (this.ComboObj.IsInsertable) {
                 this.ComboObj.__AddButtonInit({
                     EbSid_CtxId: this.ComboObj.EbSid_CtxId + "_addbtn",
-                    FormRefId: this.ComboObj.FormRefId
+                    FormRefId: this.ComboObj.FormRefId,
+                    OpenInNewTab: this.ComboObj.OpenInNewTab
                 });
             }
 

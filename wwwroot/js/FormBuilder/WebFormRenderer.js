@@ -67,7 +67,7 @@ const WebFormRender = function (option) {
             this.DGBuilderObjs[DG.EbSid_CtxId].MultipleTables = this.DataMODEL | [];
             if (!window.__IsDGctxMenuSet)
                 $.contextMenu({
-                    selector: '[eb-form="true"][mode="edit"] .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .dgtr:not([is-editing="true"]) > td',
+                    selector: '[eb-form="true"][mode="edit"] .Dg_body .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .Dg_body .dgtr:not([is-editing="true"]) > td',
                     autoHide: true,
                     build: this.ctxBuildFn.bind(this)
                 });

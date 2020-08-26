@@ -391,14 +391,12 @@
         else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
             let spn = '';
             if (cellObj.Value == null) {
-                spn = `<img class='sysctrl_usrimg' src='/images/nulldp.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
+                spn = `<img class='sysctrl_usrimg' src='/images/nulldp.png' alt='' onerror="this.onerror=null; this.src='/images/nulldp.png';">`;
             }
             else {
-                spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
-                spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
+                spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value}.png' alt='' onerror="this.onerror=null; this.src='/images/nulldp.png';">`;
+                spn += `<span class='sysctrl_usrname'>${cellObj.F}</span>`;
             }
-
-            // dspMmbr = cellObj.Value.split('$$')[1];
             dspMmbr = spn;
         }
         else if (col.ObjType === "DGUserSelectColumn") {
@@ -810,7 +808,7 @@
             let val = ctrl.getDisplayMemberFromDOM() || ctrl.getValue();
             let usid = ctrl.getValue();
             $td.find(".tdtxt span").empty();
-            $td.find(".tdtxt span").append(`<img class='sysctrl_usrimg' src='/images/dp/${usid}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
+            $td.find(".tdtxt span").append(`<img class='sysctrl_usrimg' src='/images/dp/${usid}.png' alt='' onerror="this.onerror=null; this.src='/images/nulldp.png';">`);
             $td.find(".tdtxt span").append(`<span class='sysctrl_usrname'>${val}</span>`);
 
         }
@@ -818,7 +816,7 @@
             let val = ctrl.getDisplayMemberFromDOM() || ctrl.getValue();
             if (val != null) {
                 $td.find(".tdtxt span").empty();
-                $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
+                $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror="this.onerror=null; this.src='/images/nulldp.png';">`);
                 $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
             }
 

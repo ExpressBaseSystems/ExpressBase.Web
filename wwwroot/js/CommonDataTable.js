@@ -842,9 +842,9 @@
             }
 
             try {
-                let url = "../dv/getData"
+                let url = "../dv/getData";
                 if (this.Source === "Bot") {
-                    url = "../boti/getData"
+                    url = "../boti/getData";
                 }
                 o.ajax = {
                     //url: this.ssurl + '/ds/data/' + this.dsid,
@@ -901,8 +901,8 @@
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        if (dq.length === -1)
-            dq.length = this.RowCount;
+        //if (dq.length === -1)
+        //    dq.length = this.RowCount;
         this.RemoveColumnRef();
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)

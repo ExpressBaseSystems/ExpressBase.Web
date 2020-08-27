@@ -123,25 +123,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
         $("#parent-div0").before(this.FDCont);
         this.FDCont.hide();
-
-        if (this.login === "dc") {
-            $(".form-group #filter-dg").remove();
-            $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
-                                    <i class="fa fa-filter" aria-expanded="false"></i>
-                                </button>`);
-            this.FilterBtn = $("#filter-dg");
-            this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
-            //this.stickBtn = new EbStickButton({
-            //    $wraper: this.FDCont,
-            //    $extCont: this.FDCont,
-            //    //$scope: $(subDivId),
-            //    icon: "fa-filter",
-            //    dir: "left",
-            //    label: "Parameters",
-            //    //btnTop: 42,
-            //    style: { top: "112px" }
-            //});
-        }
     };
 
     this.call2FD = function () {
@@ -191,24 +172,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.init.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
-        if (this.login === "uc") {
-            $(".form-group #filter-dg").remove();
-            $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
-                                    <i class="fa fa-filter" aria-expanded="false"></i>
-                                </button>`);
-            this.FilterBtn = $("#filter-dg");
-            this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
-            //this.stickBtn = new EbStickButton({
-            //    $wraper: $(".dv-body"),
-            //    $extCont: this.FDCont,
-            //    $scope: $("#" + focusedId),
-            //    icon: "fa-filter",
-            //    dir: "left",
-            //    label: "Parameters",
-            //    //btnTop: 42,
-            //    style: { position: "absolute", top: "41px" }
-            //});
-        }
 
         if (typeof commonO !== "undefined")
             this.EbObject = commonO.Current_obj;
@@ -217,19 +180,16 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
         if ($("#" + this.ContextId).children("#filterBox").length === 0) {
             this.FD = false;
-            this.FDCont.hide();
-            if (this.login === "dc") {
-                this.FilterBtn.hide();
-                //this.stickBtn.hide();
-            }
-            else {
-                //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
-                this.FilterBtn.hide();
-            }
+            $(".filterCont").hide();
             $("#btnGo" + this.tabNum).trigger("click");
             $("#eb_common_loader").EbLoader("hide");
         }
         else {
+            $(".ppcont").hide();
+            this.filterid = "filter" + this.tableId;
+            this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+            $("#obj_icons").append(this.$filter);
+            this.$filter.click(this.CloseParamDiv.bind(this));
             this.FD = true;
             if (this.isPipped || this.isContextual) {
                 this.placefiltervalues();
@@ -237,7 +197,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             }
             else {
                 this.FDCont.show();
-                this.FDCont.css("visibility", "visible");
+                this.CreatePgButton();
             }
             $("#eb_common_loader").EbLoader("hide");
         }
@@ -246,39 +206,17 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.FDCont.css("right", "0");
     }.bind(this);
 
-    this.FilterToggle = function () {
-        $(".filterCont").toggle('drop', { direction: 'right' }, 150);
-    };
-
     this.start = function () {
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
-            if (this.login === "dc") {
-                $(".form-group #ppt-grid").remove();
-                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
-                                    <i class="fa fa-cog" aria-expanded="false"></i>
-                                </button>`);
-                this.propGrid = new Eb_PropertyGrid({
-                    id: "pp_inner",
-                    wc: "dc",
-                    cid: this.cid,
-                    $extCont: $(".ppcont"),
-                    style: { top: "80px" }
-                });
-
-                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-                $(".stickBtn").hide();
-                this.PropertyDiv = $("#pp_inner");
-                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
-                $("#pp_inner .pull-right.pgpin").remove();
-                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
-                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
-                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
-                //$("#pp_inner .remove-pg").off("click").on("click", this.togglePG.bind(this));
-
-            }
-            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+            this.propGrid = new Eb_PropertyGrid({
+                id: "pp_inner",
+                wc: "dc",
+                cid: this.cid,
+                $extCont: $(".ppcont"),
+                style: { top: "80px" }
+            });
             this.startRelated();
         }
         else {
@@ -286,35 +224,42 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization", prevfocusedId);
             else
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
-            if (this.login === "dc" && this.propGrid === null) {
-                $(".form-group #ppt-grid").remove();
-                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
-                                    <i class="fa fa-cog" aria-expanded="false"></i>
-                                </button>`);
+            if (this.login === "dc") {
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
-                    $extCont: $(".ppcont")
+                    $extCont: $(".ppcont"),
+                    style: { top: "80px" }
                 });
-                $(".stickBtn").hide();
-                this.PropertyDiv = $("#pp_inner");
-                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
-                $("#pp_inner .pull-right.pgpin").remove();
-                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
-                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
-                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
-                //$("#pp_inner remove-pg").off("click").on("click", this.togglePG.bind(this));
             }
-            this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             this.startRelated();
             this.call2FD();
         }
+        $("#obj_icons").empty();
+        this.CreatePgButton();
+        this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
     };
-    this.togglePG = function () {
-        //$(".filterCont.fd").hide();
-        this.PropertyDiv.toggle('drop', { direction: 'right' }, 150);
+
+    this.CreatePgButton = function () {
+        $("#obj_icons").append(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
+        $(".stickBtn").hide();
+        this.PropertyDiv = $("#pp_inner");
+        $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+        $("#pp_inner").find(".pgpin").remove();
+        $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right pgpin" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+        $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+    };
+
+    this.togglePG = function (e) {
+        $(".ppcont").toggle();
+        if ($(".ppcont").is(":visible"))
+            $(".filterCont").hide();
+        e.stopPropagation();
     };
 
     this.tmpPropertyChanged = function (obj, Pname) {
@@ -335,20 +280,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     }.bind(this);
 
     this.init = function () {
-        if (this.propGrid != null) {
-            $(".form-group #ppt-grid").remove();
-            $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
-                                    <i class="fa fa-cog" aria-expanded="false"></i>
-                                </button>`);
-            $(".stickBtn").hide();
-            this.PropertyDiv = $("#pp_inner");
-            $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
-            $("#pp_inner .pull-right.pgpin").remove();
-            $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
-                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
-            $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
-        }
-        this.EbObject = this.EbObject;
         if (this.EbObject.Type !== "")
             this.type = this.EbObject.Type;
         //$.event.props.push('dataTransfer');
@@ -359,15 +290,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             if (this.login === "uc") {
                 this.collapseGraph();
             }
-            //this.propGrid.ClosePG();
-            if (this.PropertyDiv)
-                this.PropertyDiv.hide();
-            if (this.FD)
-                // this.stickBtn.minimise();
-                this.FilterToggle();
-            else
-                // this.stickBtn.hide();
-                this.FilterBtn.hide();
+            $(".ppcont").hide();
+            $(".filterCont").hide();
 
             filterChanged = false;
             if (this.MainData !== null) {
@@ -409,8 +333,9 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.CloseParamDiv = function () {
-        //this.stickBtn.minimise();
-        this.FilterToggle();
+        this.FDCont.toggle();
+        if (this.FDCont.is(":visible"))
+            $(".ppcont").hide();
     };
 
     this.validateFD = function () {
@@ -476,12 +401,17 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.GenerateButtons = function () {
+        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         $("#objname").text(this.EbObject.DisplayName);
         $("#obj_icons").empty();
-        //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tableId).click(this.init.bind(this));
-        //if (this.login === "dc") {
+        if (this.FD) {
+            this.filterid = "filter" + this.tableId;
+            this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+            $("#obj_icons").append(this.$filter);
+            this.$filter.click(this.CloseParamDiv.bind(this));
+        }
         $("#obj_icons").append(`<div style='display: inline;'>
             <div class='dropdown' id='graphDropdown_tab${ this.tableId}' style='display: inline-block;padding-top: 1px;'>
             <button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>
@@ -534,6 +464,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             </button>`);
         //}
 
+        this.CreatePgButton();
         if (this.EbObject !== null && this.EbObject.Type !== "") {
             if (this.EbObject.Type !== "line")
                 $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons[this.EbObject.Type]}'></i>&nbsp;<span class = 'caret'></span>`);

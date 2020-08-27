@@ -16,7 +16,7 @@
 
 .sub-windows {
     /*height: calc(100vh - 100px) !important;*/
-    padding: 0px 30px;
+    padding: 0px 2px;
     user-select: none !important;
     position: relative;
     height: inherit;

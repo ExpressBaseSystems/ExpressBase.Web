@@ -260,8 +260,11 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
+                        console.log(1231);
                         //this.bearerToken = result.bearerToken;
                         //this.refreshToken = result.refreshToken;
+                        document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
+                        document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                         this.formsDict = result.botFormDict;
                         window.ebcontext.user = JSON.parse(result.user);
                         //this.formNames = Object.values(this.formsDict);
@@ -1616,6 +1619,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 else {
                     //this.bearerToken = result.bearerToken;
                     //this.refreshToken = result.refreshToken;
+                    document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
+                    document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                     if (!$.isEmptyObject(result.botFormDict)) {
                         this.formsDict = result.botFormDict;
                         window.ebcontext.user = JSON.parse(result.user);
@@ -1903,6 +1908,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         if (!$.isEmptyObject(result.botFormDict)) {
                             //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
                             // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
+                            document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
+                            document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                             this.formsDict = result.botFormDict;
                             window.ebcontext.user = JSON.parse(result.user);
                             //this.formNames = Object.values(this.formsDict);
@@ -1939,6 +1946,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         if (!$.isEmptyObject(result.botFormDict)) {
                             //this.bearerToken = result.bearerToken;
                             //this.refreshToken = result.refreshToken;
+                            document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
+                            document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                             this.formsDict = result.botFormDict;
                             window.ebcontext.user = JSON.parse(result.user);
                             //this.formNames = Object.values(this.formsDict);
@@ -2069,8 +2078,8 @@ this.passwordLoginFn = function (e) {
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
-                        //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
-                        // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
+                        document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
+                        document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                         this.formsDict = result.botFormDict;
                         window.ebcontext.user = JSON.parse(result.user);
                         //this.formNames = Object.values(this.formsDict);

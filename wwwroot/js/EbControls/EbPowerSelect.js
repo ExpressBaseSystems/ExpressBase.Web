@@ -160,7 +160,8 @@ const EbPowerSelect = function (ctrl, options) {
             if (this.ComboObj.IsInsertable) {
                 this.ComboObj.__AddButtonInit({
                     EbSid_CtxId: this.ComboObj.EbSid_CtxId + "_addbtn",
-                    FormRefId: this.ComboObj.FormRefId
+                    FormRefId: this.ComboObj.FormRefId,
+                    OpenInNewTab: this.ComboObj.OpenInNewTab
                 });
             }
 
@@ -575,7 +576,7 @@ const EbPowerSelect = function (ctrl, options) {
         //    return { ParamName: row.Name, Value: row.Value, Type: row.Type }
         //});
         //----------------
-        $.each(this.ComboObj.ParamsList.$values, function (i, param) {            
+        $.each(this.ComboObj.ParamsList.$values, function (i, param) {
             let isStaticParam = false;
             if (this.ComboObj.ImportApiParams) {
                 let sp_obj = this.ComboObj.ImportApiParams.$values.find(function (obj) { return obj.IsStaticParam === true && obj.Name === param.Name; });
@@ -587,7 +588,7 @@ const EbPowerSelect = function (ctrl, options) {
                 if (filterobj) {
                     param.Value = filterobj.Value;
                 }
-            }            
+            }
         }.bind(this));
         this.EbObject.ParamsList = this.ComboObj.ParamsList;
     };
@@ -649,20 +650,19 @@ const EbPowerSelect = function (ctrl, options) {
             VMs.push(vm);
             this.addColVals(vm);
 
-            let RowDataARR = this.formattedData.filter(obj => obj[VMidx] === vm);
-            if (RowDataARR.length === 0) {
+            let unFormattedRowIdx = this.unformattedData.indexOf(this.unformattedData.filter(obj => obj[VMidx] === vm)[0]);
+
+            if (unFormattedRowIdx < 0) {
                 console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
                 return;
             }
-            let RowData = RowDataARR[0];
 
             for (let j = 0; j < this.dmNames.length; j++) {
                 let dmName = this.dmNames[j];
                 if (!DMs[dmName])
                     DMs[dmName] = []; // dg edit mode call
                 let DMidx = this.getColumnIdx(this.ComboObj.Columns.$values, dmName);
-                DMvalue = RowData[DMidx];
-                DMs[dmName].push(DMvalue);
+                DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
             }
         }
     };

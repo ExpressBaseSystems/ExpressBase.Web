@@ -225,12 +225,14 @@
             refresh: function (root) {
                 if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
                     root.pg.ShowProperty('FormMode');
+                    root.pg.ShowProperty('FormId');
                     root.pg.ShowProperty('LinkFormParameters');
                     root.pg.ShowProperty('ContextToControlMap');
                     root.pg.ShowProperty('ShowNewButton');
                 }
                 else {
                     root.pg.HideProperty('FormMode');
+                    root.pg.HideProperty('FormId');
                     root.pg.HideProperty('LinkFormParameters');
                     root.pg.HideProperty('ContextToControlMap');
                     root.pg.HideProperty('ShowNewButton');
@@ -258,9 +260,12 @@
             }
         },
         "EbMobileButton": {
+            __FormIdCopy: null,
             trigger: function (root) {
                 this.propertyChanged("HorrizontalAlign");
                 this.propertyChanged("LinkRefId", root);
+
+                this.__FormIdCopy = this.FormId;
             },
             propertyChanged: function (propname, root) {
                 if (propname === "HorrizontalAlign") {
@@ -292,20 +297,23 @@
             },
             pgSetObject: function (root) {
                 if (this.DataColumns == null || this.DataColumns.$values.length <= 0) {
-                    let ds_cols = root.DSColumnsJSON;
+                    let ds_cols = root.DSColumnsJSON || [];
                     if (ds_cols.length >= 1) {
                         this.DataColumns.$values = window.dataColToMobileCol(ds_cols[0]);
                     }
                 }
+                this.FormId = this.__FormIdCopy;
                 this.refresh(root);
             },
             refresh: function (root) {
                 if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
                     root.pg.ShowProperty('FormMode');
+                    root.pg.ShowProperty('FormId');
                     root.pg.ShowProperty('LinkFormParameters');
                 }
                 else {
                     root.pg.HideProperty('FormMode');
+                    root.pg.HideProperty('FormId');
                     root.pg.HideProperty('LinkFormParameters');
                 }
             },

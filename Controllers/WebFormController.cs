@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
         public IActionResult Index(string refId, string _params, int _mode, int _locId)
-       {
+        {
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.renderMode = 1;
             ViewBag.rowId = 0;
@@ -228,7 +228,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest 
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
                 {
                     RefId = _refid,
                     Trigger = _triggerctrl,
@@ -257,7 +257,14 @@ namespace ExpressBase.Web.Controllers
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, RowId = _rowid, Trigger = _triggerctrl, Params = _params });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
+                {
+                    RefId = _refid,
+                    RowId = _rowid,
+                    Trigger = _triggerctrl,
+                    Params = _params,
+                    Type = ImportDataType.DataGrid
+                });
                 return Resp.FormDataWrap;
             }
             catch (Exception ex)

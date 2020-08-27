@@ -1280,7 +1280,19 @@ const WebFormRender = function (option) {
     this.LocationInit = function () {
         if (ebcontext.locations.Listener) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
-                if (this.rowId > 0) {
+                let isLocEditable = this.rowId <= 0;
+                let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
+                $.each(sysLocCtrls, function (i, ctrl) {
+                    let oldLocId = ctrl.getValue();
+                    if (oldLocId !== o.LocId) {
+                        if (!ctrl.IsDisable) 
+                            isLocEditable = true;
+                        if (isLocEditable)
+                            ctrl.setValue(o.LocId);
+                    }
+                }.bind(this));
+
+                if (!isLocEditable) {
                     if (_renderMode !== 4) {
                         EbDialog("show", {
                             Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
@@ -1296,12 +1308,6 @@ const WebFormRender = function (option) {
                             }.bind(this)
                         });
                     }
-                }
-                else {
-                    let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
-                    $.each(sysLocCtrls, function (i, ctrl) {
-                        ctrl.setValue(o.LocId);
-                    }.bind(this));
                 }
             }.bind(this);
         }

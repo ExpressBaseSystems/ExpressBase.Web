@@ -1300,7 +1300,9 @@ const WebFormRender = function (option) {
                 else {
                     let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
                     $.each(sysLocCtrls, function (i, ctrl) {
-                        ctrl.setValue(o.LocId);
+                        let oldLocId = ctrl.getValue();
+                        if (oldLocId !== o.LocId) 
+                           ctrl.setValue(o.LocId);
                     }.bind(this));
                 }
             }.bind(this);

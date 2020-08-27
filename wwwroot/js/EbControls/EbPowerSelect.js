@@ -650,12 +650,14 @@ const EbPowerSelect = function (ctrl, options) {
             VMs.push(vm);
             this.addColVals(vm);
 
-            let unFormattedRowIdx = this.unformattedData.indexOf(this.unformattedData.filter(obj => obj[VMidx] === vm)[0]);
+            let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
 
-            if (unFormattedRowIdx < 0) {
+            if (unformattedDataARR.length === 0) {
                 console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
                 return;
             }
+
+            let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
 
             for (let j = 0; j < this.dmNames.length; j++) {
                 let dmName = this.dmNames[j];
@@ -670,15 +672,14 @@ const EbPowerSelect = function (ctrl, options) {
     this.addColVals = function (val = this.lastAddedOrDeletedVal) {
         let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
-        let RowDataARR = this.formattedData.filter(obj => obj[VMidx] === val);
         let RowUnformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === val);
 
-        if (RowDataARR.length === 0) {
+        if (RowUnformattedDataARR.length === 0) {
             console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
             return;
         }
-        let RowData = RowDataARR[0];
         let RowUnformattedData = RowUnformattedDataARR[0];
+        let unFormattedRowIdx = this.unformattedData.indexOf(RowUnformattedData);
 
 
         for (let j = 0; j < this.ColNames.length; j++) {
@@ -691,7 +692,7 @@ const EbPowerSelect = function (ctrl, options) {
 
             let cellData;
             if (type === 5 || type === 11)
-                cellData = RowData[ColIdx];// unformatted data for date or integer
+                cellData = this.formattedData[unFormattedRowIdx][ColIdx];// unformatted data for date or integer
             else
                 cellData = RowUnformattedData[ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
             if (type === 11 && cellData === null)///////////

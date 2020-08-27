@@ -338,80 +338,86 @@
         $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
             $(e.target).closest(".dropdown.bootstrap-select").attr("id", ctrl.EbSid_CtxId + "_dd"); // id added for test frame work
         });
+        if (this.Renderer.rendererName == "Bot") {
+            $input.selectpicker({
+                dropupAuto: false,               
+            });
+        }
+        else {
+            $input.selectpicker({
+                //dropupAuto: false,
+                container: "body [eb-root-obj-container]:first",
+                virtualScroll: 500,
+                size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
+                //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
+            });
 
-        $input.selectpicker({
-            //dropupAuto: false,
-            container: "body [eb-root-obj-container]:first",
-            virtualScroll: 500,
-            size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
-            //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
-        });
 
+            let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+            //$DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
+            //$DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
 
-        let $DD = $input.siblings(".dropdown-menu[role='combobox']");
-        //$DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
-        //$DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
+            $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+                let $el = $(e.target);
+                let $DDbScont = $DD.closest(".bs-container");
+                $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
 
-        $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            let $el = $(e.target);
-            let $DDbScont = $DD.closest(".bs-container");
-            $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
-
-            if ($DDbScont.hasClass("dropup")) {
-                $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
-                $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
-            }
-            else {
-                $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
-                $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
-            }
-
-            $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
-
-            if ($el.attr("is-scrollbind") !== 'true') {
-                for (let i = 0; i < this.scrollableContSelectors.length; i++) {
-                    let contSelc = this.scrollableContSelectors[i];
-                    let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
-                    $ctrlCont.parents(contSelc).scroll(function (event) {
-                        if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
-                            $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
-                    }.bind(this));
+                if ($DDbScont.hasClass("dropup")) {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
                 }
-                $el.attr("is-scrollbind", 'true');
-            }
-        }.bind(this));
+                else {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
+                }
 
-        ////code review..... to set dropdown on body
-        //$("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-        //    if (this.Renderer.rendererName !== "Bot") {
-        //        let $el = $(e.target);
-        //        if ($el[0].isOutside !== true) {
-        //            let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-        //            let initDDwidth = $drpdwn.width();
-        //            let ofsetval = $drpdwn.offset();
-        //            let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
-        //            let $div_detached = $drpdwn.detach();
-        //            let $form_div = $(e.target).closest("[eb-root-obj-container]");
-        //            $div_detached.appendTo($form_div).wrap($divclone);
-        //            $div_detached.width(initDDwidth);
-        //            $el[0].isOutside = true;
-        //            $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
-        //            $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+                $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
 
-        //        }
-        //        //to set position of dropdrown just below selectpicker btn
-        //        else {
-        //            let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-        //            let ddOfset = ($(e.target)).offsetParent().offset();
-        //            let tgHght = ($(e.target)).offsetParent().height();
-        //            $outdrpdwn.parent().addClass('open');
-        //            $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
-        //            $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"), { offset: ($outdrpdwn.children("[role='listbox']").height() / -2) + 11.5 });
-        //        }
-        //    }
-        //}.bind(this));
-        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
-            ctrl.setValue(ctrl.DataVals.Value);
+                if ($el.attr("is-scrollbind") !== 'true') {
+                    for (let i = 0; i < this.scrollableContSelectors.length; i++) {
+                        let contSelc = this.scrollableContSelectors[i];
+                        let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
+                        $ctrlCont.parents(contSelc).scroll(function (event) {
+                            if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
+                                $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
+                        }.bind(this));
+                    }
+                    $el.attr("is-scrollbind", 'true');
+                }
+            }.bind(this));
+            ////code review..... to set dropdown on body
+            //$("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+            //    if (this.Renderer.rendererName !== "Bot") {
+            //        let $el = $(e.target);
+            //        if ($el[0].isOutside !== true) {
+            //            let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+            //            let initDDwidth = $drpdwn.width();
+            //            let ofsetval = $drpdwn.offset();
+            //            let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
+            //            let $div_detached = $drpdwn.detach();
+            //            let $form_div = $(e.target).closest("[eb-root-obj-container]");
+            //            $div_detached.appendTo($form_div).wrap($divclone);
+            //            $div_detached.width(initDDwidth);
+            //            $el[0].isOutside = true;
+            //            $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+            //            $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+
+            //        }
+            //        //to set position of dropdrown just below selectpicker btn
+            //        else {
+            //            let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+            //            let ddOfset = ($(e.target)).offsetParent().offset();
+            //            let tgHght = ($(e.target)).offsetParent().height();
+            //            $outdrpdwn.parent().addClass('open');
+            //            $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
+            //            $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"), { offset: ($outdrpdwn.children("[role='listbox']").height() / -2) + 11.5 });
+            //        }
+            //    }
+            //}.bind(this));
+            if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+                ctrl.setValue(ctrl.DataVals.Value);
+
+        }
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -1752,7 +1758,7 @@
                 $(`#${ctrl.EbSid}`).attr("src", `../bot/images/${ctrl.ImageId}.jpg`);
             }
         }
-       
+
     }
 };
 

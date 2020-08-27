@@ -583,8 +583,8 @@ var DvContainerObj = function (settings) {
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
         $("#Relateddiv").hide();
-        //$(".ppcont").hide();
-       // $(".filterCont").hide();
+        $(".ppcont").hide();
+        $(".filterCont").hide();
         if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) 
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
 
@@ -601,7 +601,7 @@ var DvContainerObj = function (settings) {
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
                 this.PGobj.setObject(this.currentObj, AllMetas["EbTableVisualization"]);
-                if (this.dvcol[focusedId].isSecondTime)
+                if (this.dvcol[focusedId].isSecondTime) 
                     this.dvcol[focusedId].GenerateButtons();
                 $("#Common_obj_icons").hide();
                 $("#obj_icons").show();
@@ -611,7 +611,6 @@ var DvContainerObj = function (settings) {
                 }
             }
             $(".dv-body2").removeClass("dv-pdf");
-            //this.dvcol[focusedId].Api.draw();
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
             if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {

@@ -1021,15 +1021,6 @@ const EbPowerSelect = function (ctrl, options) {
         this.$inp.attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
         //this.getSelectedRow();
 
-        if (VMs.length === 0)
-            this.$searchBoxes.css("min-width", "100%");
-        else
-            this.$searchBoxes.css("min-width", "inherit");
-
-        if (this.maxLimit === VMs.length)
-            this.$searchBoxes.hide();
-        else
-            this.$searchBoxes.show();
         //setTimeout(function () {// to adjust search-block
         //    let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
         //    $(".search-block .input-group").css("height", maxHeight + "px");
@@ -1062,7 +1053,20 @@ const EbPowerSelect = function (ctrl, options) {
         }.bind(this), 5);
         //this.scrollIf();
         this.adjustDDposition();
+        this.adjust$searchBoxAppearance(VMs);
     };
+
+    this.adjust$searchBoxAppearance = function myfunction(VMs) {
+        if (VMs.length === 0)
+            this.$searchBoxes.css("min-width", "100%");
+        else
+            this.$searchBoxes.css("min-width", "inherit");
+
+        if (this.maxLimit === VMs.length)
+            this.$searchBoxes.hide();
+        else
+            this.$searchBoxes.show();
+    }
 
     this.adjustTag_closeHeight = function () {
         if (this.ComboObj.Padding && this.$wraper.find(".selected-tag").length > 0) {

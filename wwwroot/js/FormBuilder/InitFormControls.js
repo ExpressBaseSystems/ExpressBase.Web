@@ -1160,9 +1160,21 @@
 
     this.checkEmail = function (ctrl) {
         if (EbvalidateEmail(event.target.value))
-            ctrl.removeInvalidStyle();
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).removeClass("emailCtrl_invalid");
+            }
+            else {
+                ctrl.removeInvalidStyle();
+            }
+          
         else
-            ctrl.addInvalidStyle("Invalid email");
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).addClass("emailCtrl_invalid");
+            }
+            else {
+                ctrl.addInvalidStyle("Invalid email");
+            }
+           
     }
 
     this.initNumeric = function (ctrl, $input) {
@@ -1487,6 +1499,7 @@
     };
 
     this.Phone = function (ctrl, ctrlOpts) {
+        $(`#${ctrl.EbSid}`).attr("oninput", `this.value = this.value.replace(/[^0-9]/g, '');`);
         $('.phnContextBtn').hide();
         if (this.Renderer.mode === 'View Mode') {
             if (this.Renderer.rendererName === "WebForm") {
@@ -1536,7 +1549,7 @@
             iti.setNumber(p1);
         };
 
-
+        $(`#${ctrl.EbSid}`).attr("maxlength","18");
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {

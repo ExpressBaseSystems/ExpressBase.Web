@@ -62,6 +62,7 @@
         o.showFilterRow = false;
         o.scrollHeight = this.ctrl.Height === 0 ? 200 : (this.ctrl.Height - 35);
         o.fnDblclickCallback = this.dataTableTdDoubleClick.bind(this);
+        //o.fnClickTdCallback = this.dataTableTdClick.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
@@ -73,6 +74,7 @@
         o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
+        o.AllowSorting = false;
         if (this.ctrl.LFxdColCount > 0) o.LeftFixedColumn = this.ctrl.LFxdColCount;
         if (this.ctrl.RFxdColCount > 0) o.RightFixedColumn = this.ctrl.RFxdColCount;
         //o.hiddenFieldName = this.vmName;
@@ -89,6 +91,15 @@
         if (originalEvent.keyCode === 9) {// if tab key pressed
             $(cell.node()).find('[ui-inp]').focus();
         }
+        let _class = $(originalEvent.target).closest("button").attr("class");
+        if (_class === "edit-rowc")
+            this.editRow_click(originalEvent);
+        else if (_class ==="check-rowc")
+            this.checkRow_click(originalEvent);
+        else if (_class ==="cancel-rowc")
+            this.cancelRow_click(originalEvent);
+        else if (_class ==="del-rowc")
+            this.delRow_click(originalEvent);
     };
 
     this.dataTableTdDoubleClick = function (e) {
@@ -98,6 +109,12 @@
         if (this.mode_s == 'edit') {
             this.editRow_click(e);
         }
+    };
+
+    this.dataTableTdClick = function (e) {        
+        //if (this.mode_s == 'edit') {
+        //    this.editRow_click(e);
+        //}
     };
 
     this.dataTableInitCallback = function () {
@@ -110,6 +127,8 @@
         if (width < 100)
             width = 100;
         this.$Table.css("width", width + "%");
+        $("#" + this.TableCont).find(".dataTables_scrollBody").eq(0).style("height", "calc(" + this.datatable.scrollHeight + "px - 34px)", "important");
+        $(".DTFC_Blocker").css("background-color", "white");
     };
 
     this.canUpdateFooter = function () {
@@ -131,7 +150,7 @@
                 .replace("@isReadonly@", ctrl.IsDisable)
                 .replace("@singleselect@", ctrl.MultiSelect ? "" : `singleselect=${!ctrl.MultiSelect}`)
                 .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
-            this.DGColCtrls.push({ colCtrl: ctrl, html: ctrlHtml, inpCtrl: inpCtrl });
+            this.DGColCtrls.push({ colCtrl: ctrl, html: ctrlHtml, inpCtrl: inpCtrl, index: i });
 
             if (inpCtrl.ObjType === 'PowerSelect')
                 inpCtrl.__isDGv2Ctrl = true;// data persist flag
@@ -273,8 +292,11 @@
         if (e !== null)
             $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
-        if (this.canFinalizeTrEdit(dtTr))
+        if (this.canFinalizeTrEdit(dtTr)) {
             this.finalizeTrEdit(dtTr);
+            this.setCurRowInGlobals(dtTr.data()[this.dtDataRowIdIndex]);
+            this.execOnRowPaintFn("check", e);
+        }
     };
 
     this.delRow_click = function (e, $tr) {
@@ -285,6 +307,9 @@
 
         if (this.curRowDataModelCopy && this.curRowDataModelCopy.RowId === rowid)
             this.finalizeTrEdit(dtTr);
+
+        this.setCurRowInGlobals(rowid);
+        this.execOnRowPaintFn("delete", e);
 
         if (rowid > 0) {
             let Row = this.getObjByValue(this.dataMODEL, "RowId", rowid);
@@ -478,6 +503,7 @@
     };
 
     this.InsertDtTrToIndex = function (index, Row) {
+        let t0 = performance.now();
         let rowCount = this.datatable.Api.data().length - 1;
         if (rowCount > index && index >= 0) {
             let insertedRow = this.datatable.Api.row(rowCount).data();
@@ -495,20 +521,28 @@
         else {
             this.dataMODEL.push(Row);
         }
+        console.log("DGv2 InsertDtTrToIndex: " + (performance.now() - t0) + " milliseconds.");
     };
 
     //public function
     this.populateDGWithDataModel = function (DgDataModel) {
+        let t0 = performance.now();
         this.dataMODEL = DgDataModel || [];
         this.objectMODEL = this.getObjectMODEL(this.dataMODEL);
         this.fixValExpInDataModel(this.objectMODEL);
 
+        $.each(this.objectMODEL, function (rowId, inpCtrls) {
+            this.setCurRowInGlobals(rowId);
+            this.execOnRowPaintFn("check", "e");
+        }.bind(this));
+
         this.datatable.Api.clear();// Clear the table of all data
         if (this.dataMODEL.length > 0) {
             let dvdata = this.getDataTableData(this.dataMODEL);
-            //this.datatable.Api.rows.add(dvdata).draw(false);
-            this.datatable.Api.draw(false);
+            this.datatable.Api.rows.add(dvdata).draw();
+            //this.datatable.Api.draw(false);
         }
+        console.log("DGv2 populateDGWithDataModel: " + (performance.now() - t0) + " milliseconds.");
     };
 
     this.getObjectMODEL = function (DgDataModel) {
@@ -546,12 +580,24 @@
             disable: function () { return this.DGColCtrlObj.inpCtrl.disable; },
             enable: function () { return this.DGColCtrlObj.inpCtrl.enable; },
             getValue: function () { return this.DataVals.Value; },
-            setValue: function (p1) { this.DataVals.Value = p1; }
+            setValue: function (p1) {
+                if (this.__DGB.curRowDataModelCopy !== null && this.__DGB.curRowDataModelCopy.RowId === this.RowId) {
+                    this.DGColCtrlObj.inpCtrl.setValue(p1);
+                }
+                else {
+                    this.DataVals.Value = p1;
+                    let indexes = this.__DGB.datatable.Api.rows().eq(0).filter(function (rowIdx) {
+                        return this.__DGB.datatable.Api.cell(rowIdx, this.__DGB.dtDataRowIdIndex + 2).data() === this.RowId ? true : false;
+                    }.bind(this));
+
+                    this.__DGB.datatable.Api.cell(indexes[0], this.DGColCtrlObj.index + 2).data(this.__DGB.getTdPlainHtml(this.DataVals, this.DGColCtrlObj.colCtrl));                    
+                }                
+            }
         };
 
         if (DGColCtrlObj.inpCtrl.ObjType === 'PowerSelect') {
             ObjModelColumn['getColumn'] = function (colName) {
-                return this.DGColCtrlObj.inpCtrl.MultiSelect ? this.DataVals[colName] : this.DataVals[colName][0];
+                return this.DGColCtrlObj.inpCtrl.MultiSelect ? this.DataVals.R[colName] : this.DataVals.R[colName][0];
             };
         }
         return ObjModelColumn;
@@ -570,8 +616,7 @@
             curRow[this.dtDataRowIdIndex] = Row.RowId;
             curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('viewing');
             dvdata.push(curRow);
-
-            this.datatable.Api.row.add(curRow);//.draw(false);//////////////////
+            //this.datatable.Api.row.add(curRow);//.draw(false);//////////////////
         }
         return dvdata;
     };
@@ -594,15 +639,22 @@
         this.ctrl.currentRow['__rowId'] = rowId;
     };
 
+    this.execOnRowPaintFn = function (action, event) {
+        if ((this.ctrl.OnRowPaint && this.ctrl.OnRowPaint.Code && this.ctrl.OnRowPaint.Code.trim() !== '')) {
+            let FnString = atob(this.ctrl.OnRowPaint.Code);
+            //DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event };
+            new Function("form", "user", "action", `event`, FnString).bind(this.ctrl.currentRow, this.formObject, this.userObject, action, event)();
+        }
+    };
+
     //-----------script accessible-----------
 
     this.ctrl.currentRow = {};
-    this.ctrl.RowCount = 0;
 
     this.defineRowCount = function () {
         Object.defineProperty(this.ctrl, "RowCount", {
             get: function () {
-                return this.dataMODEL.length;
+                return Object.keys(this.objectMODEL).length;
             }.bind(this),
             set: function (value) {
                 if (value !== this.ctrl.RowCount)
@@ -611,27 +663,49 @@
         });
     };
 
-    this.ctrl.addRow = function (rowObj = {}) {
-        let Row = JSON.parse(JSON.stringify(this.rowDataModel_empty));
-        Row.RowId = this.addRowCounter--;
-        let curRow = {};
-        for (let j = 0; j < this.DGColCtrls.length; j++) {
-            let Column = this.getObjByValue(Row.Columns, "Name", this.DGColCtrls[j].colCtrl.Name);
-            if (rowObj[Column.Name]) {
-                Column.Value = rowObj[Column.Name];
-            }
-            let colCtrl = this.DGColCtrls[j].colCtrl;
-            curRow[j] = this.getTdPlainHtml(Column, colCtrl);
+    this.ctrl.sum = function (colName) {
+        if (!colName)
+            return 0;
+        let colCtrl, j = 0;
+        for (; j < this.DGColCtrls.length; j++) {
+            colCtrl = this.DGColCtrls[j].colCtrl;
+            if (colCtrl.Name === colName && colCtrl.ObjType === 'DGNumericColumn')
+                break;
         }
-        curRow[this.dtDataRowIdIndex] = Row.RowId;
-        let m = this.mode_s === "edit" ? "editing" : "viewing";
-        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml(m);
-        this.datatable.Api.row().add(curRow);
-        this.addToObjectModel(Row);
-        this.dataMODEL.push(Row);
+        if (j >= this.DGColCtrls.length)
+            return 0;
+
+        let sum = 0.0, Column;
+        for (let i = 0; i < this.dataMODEL.length; i++) {
+            if (!this.dataMODEL[i].IsDelete) {
+                Column = this.getObjByValue(this.dataMODEL[i].Columns, "Name", colName);
+                sum += parseFloat(Column.Value) || 0;
+            }
+        }
+        return sum;
+    }.bind(this);
+
+    this.ctrl.getRowByIndex = function (idx) {
+        let dvdata = this.datatable.Api.data();
+        if (typeof (idx) !== "number" || idx > dvdata.length || idx < 0)
+            return null;
+        let RowId = dvdata[idx][this.dtDataRowIdIndex];
+        let objRowModel = this.objectMODEL[RowId];
+        let row = {};
+        for (let i = 0; i < objRowModel.length; i++) {
+            row[objRowModel[i].DataVals.Name] = objRowModel[i];
+        }
+        return row;
+    }.bind(this);
+
+    this.ctrl.addRow = function (rowObj = {}) {
+        let indx = this.ctrl.AscendingOrder ? -1 : 0;
+        this.ctrl.addRowAtIndex(rowObj, indx);
     }.bind(this);
 
     this.ctrl.addRowAtIndex = function (rowObj, index) {
+        if (typeof (rowObj) !== 'object')
+            return;
         let Row = JSON.parse(JSON.stringify(this.rowDataModel_empty));
         Row.RowId = this.addRowCounter--;
         let curRow = {};
@@ -649,7 +723,7 @@
         this.addToObjectModel(Row);
 
         let rowCount = this.datatable.Api.data().length - 1;
-        if (rowCount > index && index >= 0) {
+        if (typeof(index) === 'number' && rowCount > index && index >= 0) {
             let insertedRow = this.datatable.Api.row(rowCount).data();
             let tempRow;
             let insBeforeRowId = null;
@@ -666,7 +740,6 @@
             this.dataMODEL.push(Row);
         }
         this.datatable.Api.draw(false);
-
     }.bind(this);
 
     this.ctrl.updateRowByRowId = function (rowId, rowObj) {
@@ -688,8 +761,7 @@
             curRow[j] = this.getTdPlainHtml(Column, colCtrl);
         }
         curRow[this.dtDataRowIdIndex] = Row.RowId;
-        let m = this.mode_s === "edit" ? "editing" : "viewing";
-        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml(m);
+        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml("viewing");
         this.datatable.Api.row(dtTrIdx).data(curRow).draw(false);
     }.bind(this);
 
@@ -704,11 +776,19 @@
 const EbDataGrid_New_Extended = function () {
     //public function
     this.SwitchToEditMode = function () {
+        let t0 = performance.now();
+
         this.mode_s = "edit";
-        this.datatable.Api.column("settings:name").nodes().each(function (node, index, dt) {
-            this.datatable.Api.cell(node).data(this.getCogTdHtml("viewing"));
-        }.bind(this));
-        //this.$TableCont.find(`.ctrlstd_dg`).attr("mode", "edit");        
+        //this.datatable.Api.column("settings:name").nodes().each(function (node, index, dt) {
+        //    this.datatable.Api.cell(node).data(this.getCogTdHtml("viewing"));
+        //}.bind(this));
+        let dvdata = this.datatable.Api.data();
+        for (let i = 0; i < dvdata.length; i++) {
+            dvdata[i][this.dtDataRowIdIndex + 1] = this.getCogTdHtml("viewing");
+        }
+        this.$TableCont.find(`.ctrlstd_dg`).attr("mode", "edit");  
+        
+        console.log("DGv2 SwitchToEditMode: " + (performance.now() - t0) + " milliseconds.");
     };
 
     //public function
@@ -768,8 +848,16 @@ const EbDataGrid_New_Extended = function () {
                             let valExpFnStr = atob(depCtrl.ValueExpr.Code);
                             let ValueExpr_val = undefined;
                             ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.formObject, this.userObject)();
-                            if (ValueExpr_val !== undefined)
+                            if (ValueExpr_val !== undefined) {
+                                if (depCtrl.ObjType === 'Numeric') {
+                                    let val_i = parseFloat(ValueExpr_val);
+                                    if (isNaNOrEmpty(val_i))
+                                        ValueExpr_val = 0;
+                                    else
+                                        ValueExpr_val = val_i;
+                                }
                                 depCtrl.justSetValue(ValueExpr_val);
+                            }                                
                         }
                         catch (e) {
                             console.error("Error in 'Value Expression' of DG ctrl: " + depCtrl.Name + " - " + e.message);
@@ -930,7 +1018,15 @@ const EbDataGrid_New_Extended = function () {
                     }
                     //val = EbConvertValue(val, ctrl.ObjType);
                     if (ValueExpr_val) {
+                        if (inpCtrl.ObjType === 'Numeric') {
+                            let val_i = parseFloat(ValueExpr_val);
+                            if (isNaNOrEmpty(val_i))
+                                ValueExpr_val = 0;
+                            else
+                                ValueExpr_val = val_i;
+                        }
                         ObjModelRow[i].DataVals.Value = ValueExpr_val;
+
                         //if (inpCtrl.ObjType === "Numeric")
                         //    inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
                     }
@@ -960,6 +1056,13 @@ const EbDataGrid_New_Extended = function () {
                     console.log('Code: ' + inpCtrl.ValueExpr.Code);
                 }
                 if (DefaultValueExpr_val) {
+                    if (inpCtrl.ObjType === 'Numeric') {
+                        let val_i = parseFloat(DefaultValueExpr_val);
+                        if (isNaNOrEmpty(val_i))
+                            DefaultValueExpr_val = 0;
+                        else
+                            DefaultValueExpr_val = val_i;
+                    }
                     ObjModelRow[i].DataVals.Value = DefaultValueExpr_val;
                 }
             }

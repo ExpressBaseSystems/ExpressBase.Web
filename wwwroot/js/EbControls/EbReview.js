@@ -217,16 +217,20 @@
                 let column = row.Columns[j];
                 if (column.Name === "eb_created_by") {
                     let userId = column.Value.split("$$")[0];
-                    let userName = column.Value.split("$$")[1] || "-------";
+                    let userName = row.RowId === 0 ? "" : column.Value.split("$$")[1];
                     let url = `url(../images/dp/${userId}.png), url(../images/nulldp.png)`;
+
                     if (!userId)
                         url = `url(../images/proimg.jpg)`;
+
                     html = html.replace("@dpstyle@", `style='background-image:${url}'`)
                         .replace("@uname@", userName);
 
                     if (row.RowId === 0) {
                         let $curDP = $(html).find(".fs-dp").clone();
+                        html = html.replace(url, `url(../images/proimg.jpg)`)
                         this.$container.find(".rc-inp-cont .rc-action-dp-wrap").empty().prepend($curDP);
+                        this.$container.find(".rc-inp-cont .rc-inp-head").empty().text(stage.Name);
                     }
                 }
                 if (column.Name === "action_unique_id") {
@@ -235,13 +239,12 @@
                         this.$container.find(".rc-action-dd-wrap").empty().append(stage.DDHtml);
                         this.$container.find(`.rc-action-dd-wrap .selectpicker`).selectpicker('val', column.Value);
                         this.$container.find(`.rc-inp-cont .rc-txtarea`).val('');
+                        html = html.replace("@action@", ``);
                         //this.curDDHtml = stage.DDHtml;
                         //this.curDDval = column.Value;
                     }
-
-
-                    html = html.replace("@action@", getObjByval(stage.StageActions.$values, "EbSid", column.Value).Name);
-                    column.Value
+                    else
+                        html = html.replace("@action@", `(${getObjByval(stage.StageActions.$values, "EbSid", column.Value).Name})`);
                 }
                 else if (column.Name === "eb_created_at") {
                     let dateString = column.Value,
@@ -251,17 +254,23 @@
                         date;
 
                     date = new Date(dateParts[0], parseInt(dateParts[1], 10) - 1, dateParts[2], timeParts[0], timeParts[1], timeParts[2]);
-                    html = html.replace("@timeTitle@", column.Value || "").replace("@time@", column.Value ? timeDifference(Date.now(), date.getTime()) : "--/--/----");
+
+                    if (row.RowId === 0)
+                        html = html.replace("@timeTitle@", "").replace("@time@", '<i class="fa fa-clock-o" aria-hidden="true" style="font-size: 14px;"></i>');
+                    else
+                        html = html.replace("@timeTitle@", column.Value).replace("@time@", timeDifference(Date.now(), date.getTime()));
                 }
                 else if (column.Name === "comments") {
-                    html = html.replace("@comment@", column.Value || '');
+                    if (row.RowId === 0)
+                        html = html.replace("@comment@", "<span class='span-proc'>Stage in Processing...<span>");
+                    else
+                        html = html.replace("@comment@", column.Value || '');
                 }
             }
             this.$container.find(".rc-msg-box").prepend(html);
         }
 
         if (!this.hasPermission) {
-            this.$container.find(".message[rowid='0'] .msg-comment").html("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Stage in Processing...<b>");
             this.$submit.hide();
         }
 
@@ -328,7 +337,7 @@
     };
 
     this.disableAllCtrls = function () {
-        $('.selectpicker').selectpicker();
+        this.$table.find('.selectpicker').selectpicker();
         this.$table.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
         this.$table.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
         this.$submit.hide();
@@ -356,6 +365,11 @@
         if (this.CurStageDATA) {
             this.hasPermission = getObjByval(this.CurStageDATA.Columns, "Name", "has_permission").Value === "T";//false;//
             this.isFormDataEditable = getObjByval(this.CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
+            if (!this.isFormDataEditable)
+                this.formRenderer.disableformEditbtn();
+            else
+                this.formRenderer.enableformEditbtn();
+
         }
 
 
@@ -373,7 +387,7 @@
             if (!this.CurStageDATA || !this.hasPermission)
                 return;
 
-            this.$container.find(".message[rowid='0']").hide();
+            //this.$container.find(".message[rowid='0']").hide();
             this.$container.find(".rc-inp-cont").show();
         }
 

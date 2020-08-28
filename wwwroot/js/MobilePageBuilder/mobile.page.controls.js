@@ -18,7 +18,7 @@
 
     this.initVisualization = function (o) {
 
-        $(".emulator_f").css("display","none");
+        $(".emulator_f").css("display", "none");
 
         let tobj = this.Root.makeElement("EbMobileTableLayout", "TableLayout");
         $(`#${o.EbSid} .eb_mob_container_inner .vis-table-container`).append(tobj.$Control.outerHTML());
@@ -76,14 +76,15 @@
                 obj.ColumnIndex = dragged.attr("index");
                 obj.TableIndex = dragged.attr("tableIndex");
                 $(event.target).append(obj.$Control.outerHTML());
-                obj.blackListProps = ["TextFormat", "Font", "Required", "RowSpan", "ColumnSpan"];//for pghelper extension
                 this.Root.refreshControl(obj);
+                $("#" + obj.EbSid).off("focus");
             }.bind(this)
         });
     };
 
     this.setLinkFormControls = function (o) {
-        this.getLinkFormControls(o, function (json) {
+
+        window.resolveLinkType(o.LinkRefId, function (json) {
 
             var controlInfo = JSON.parse(json);
 
@@ -93,25 +94,7 @@
             o.refresh(this.Root);
             this.drawFormControls(this.FilterControls);
         }.bind(this));
-    };
 
-    this.getLinkFormControls = function (vis, callback) {
-        if (vis.LinkRefId) {
-            $.ajax({
-                url: "../Dev/GetMobileFormControls",
-                type: "GET",
-                cache: false,
-                data: { refid: vis.LinkRefId },
-                beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
-                success: function (result) {
-                    $("#eb_common_loader").EbLoader("hide");
-                    callback(result);
-                }.bind(this),
-                error: function () {
-                    $("#eb_common_loader").EbLoader("hide");
-                }
-            });
-        }
     };
 
     this.setSortColumns = function (vis) {
@@ -121,7 +104,7 @@
             $.extend(obj, filters[i]);
             $(`#${vis.EbSid} .vis-sort-container`).append(obj.$Control.outerHTML());
             this.Root.refreshControl(obj);
-            obj.blackListProps = Array.from(["TextFormat", "Font", "RowSpan", "ColumnSpan"]);//for pghelper extension
+            $("#" + obj.EbSid).off("focus");
         }
     };
 
@@ -146,6 +129,7 @@
             revert: "invalid",
             helper: "clone",
             cursor: "move",
+            zIndex: 1000,
             appendTo: "body",
             drag: function (event, ui) {
                 $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "auto", "padding": "5px", "border-radius": "4" });
@@ -185,6 +169,7 @@
             revert: "invalid",
             helper: "clone",
             cursor: "move",
+            zIndex: 1000,
             appendTo: "body",
             drag: function (event, ui) {
                 $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "auto", "padding": "5px", "border-radius": "4" });
@@ -225,7 +210,7 @@
         this.makeTreeNodeDraggable();
     };
 
-    var nonPersistControls = ["EbMobileTableLayout", "EbMobileDataGrid", "EbMobileFileUpload"];
+    var nonPersistControls = ["EbMobileTableLayout", "EbMobileDataGrid", "EbMobileFileUpload","EbMobileButton"];
 
     this.loopControlContainer = function (html, propName, i, o) {
         let jsobj = this.Root.Procs[o.id];
@@ -275,12 +260,13 @@ function MobileMenu(option) {
         delete this.Root.Procs[id];
         this.Root.pg.removeFromDD(id);
 
-        if (eb_type === "mob_container") {
+        if (selector.$trigger.hasClass("mob_container")) {
             this.Root.Procs = {};
             $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty();
             $(`#eb_mobtree_body_${this.Root.Conf.TabNum}`).hide();
+            FilterToolBox(null, this.Root.Conf.TabNum);
         }
-        $(selector.$trigger).remove();
+        selector.$trigger.remove();
         if (this.Root.ContainerType === "EbMobileForm")
             this.Root.Controls.refreshColumnTree();
     };

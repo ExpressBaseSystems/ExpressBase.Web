@@ -8,14 +8,18 @@
 }
 <link href="~/css/LeadManagement.css" rel="stylesheet" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />*@
+<link rel="stylesheet" href="~/css/LayoutCommon/croppie-2.6.2.min.css" />
 <link href="~/css/Docs.css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
+@*<link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />*@
 <link href="~/css/DV/MonthPicker.min.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/croppie-2.6.2.min.js"></script>
+@*<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/MonthPicker.min.js"></script>
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/moment.min.js"></script>
 
 <script type="text/javascript" src="~/js/DV/bootstrap-tagsinput.js"></script>
 
@@ -987,7 +991,7 @@
     var imgup = new EbFileUpload({
         Type: "image",
         PreviewWraper: "#divAllImg1",
-        Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],
+        Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"],
         FilesUrl: "/FilesOf/@ViewBag.AccId",
         //Context:"",
         Toggle: "#btnUploadImg",
@@ -995,7 +999,7 @@
         SolutionId: "@ViewBag.SolnId",
         Container: "uploadtest",
         Multiple: true,
-        ServerEventUrl: 'https://se.eb-test.xyz',
+        ServerEventUrl: 'https://se.eb-test.cloud',
         EnableTag: true,
         EnableCrop: true,
         MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes

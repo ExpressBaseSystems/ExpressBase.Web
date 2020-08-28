@@ -161,6 +161,11 @@ var EbMenu = function (option) {
                     $('li[trigger="security"]').off("click").on("click", this.showSecurity.bind(this));
                     $("li[trigger='favourites']").off("click").on("click", this.showfavourites.bind(this));
                     $("li[trigger='favourites'] .Obj_link ").click();
+
+                    setTimeout(function () {
+                        if ($(".Eb_quick_menu #ebm-objsearch").val().trim() !== "")
+                            $(".Eb_quick_menu #ebm-objsearch").trigger("keyup");
+                    }.bind(this), 800)
                 }
             }.bind(this));
         }

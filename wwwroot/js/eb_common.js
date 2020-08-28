@@ -1190,6 +1190,13 @@ const formatData4webform = function (_multipleTables) {
     let tableNames = Object.keys(multipleTables);
     for (let i = 0; i < tableNames.length; i++) {
         let tableName = tableNames[i];
+
+
+        if (tableName === "eb_approval_lines") {
+            multipleTables[tableName] = [];
+            continue;
+        }
+
         let table = multipleTables[tableName];
         for (let j = 0; j < table.length; j++) {
             let row = table[j];
@@ -1197,7 +1204,7 @@ const formatData4webform = function (_multipleTables) {
             for (let k = 0; k < columns.length; k++) {
                 let singleColumn = columns[k];
                 delete singleColumn["D"];
-                //delete singleColumn["F"];//provUser
+                delete singleColumn["F"];//provUser test
                 delete singleColumn["R"];
                 delete singleColumn["ValueExpr_val"];
                 delete singleColumn["DisplayMember"];

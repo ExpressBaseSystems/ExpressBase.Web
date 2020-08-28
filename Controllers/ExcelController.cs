@@ -53,11 +53,13 @@ namespace ExpressBase.Web.Controllers
                     var hasHeader = true;
                     EbDataTable tbl = new EbDataTable();
                     int colIndex = 0;
+                    List<ColumnsInfo> _colInfo = new List<ColumnsInfo>();
                     foreach (var firstRowCells in worksheet.Cells[1, 1, 1, worksheet.Dimension.End.Column])
                     {
                         string s = firstRowCells.Comment.Text;
                         //ExcelColumns colInfo = (ExcelColumns)JsonConvert.DeserializeObject(s, typeof(ExcelColumns));
                         ColumnsInfo colInfo = (ColumnsInfo)JsonConvert.DeserializeObject(s, typeof(ColumnsInfo));
+                        _colInfo.Add(colInfo);
                         EbDataColumn dc = new EbDataColumn { ColumnName = colInfo.Name, Type = colInfo.DbType, ColumnIndex = colIndex, TableName = colInfo.TableName };
                         tbl.Columns.Add(dc);
                         colIndex++;
@@ -66,32 +68,45 @@ namespace ExpressBase.Web.Controllers
                     for (int rowNum = startRow; rowNum <= worksheet.Dimension.End.Row; rowNum++)
                     {
                         var row = worksheet.Cells[rowNum, 1, rowNum, worksheet.Dimension.End.Column];
-                        EbDataRow rr = tbl.NewDataRow2();
-                        int colIndex1 = 0;
-                        foreach (var cell in row)
+                        if(row != null || row.ToString() != string.Empty)
                         {
-                            if (tbl.Columns[colIndex1].Type == EbDbTypes.DateTime)
+                            EbDataRow rr = tbl.NewDataRow2();
+                            int colIndex1 = 0;
+                            foreach (var cell in row)
                             {
-                                //string s = cell.Value.ToString();
-                                //long dateNum = long.Parse(s);
-                                DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.Value));
-                                rr[cell.Start.Column - 1] = dt.ToString("yyyy-MM-dd HH:mm:ss");
-                            }
-                            else if(tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
-                            {
-                                if (cell.Value.ToString() == "Yes")
-                                    cell.Value = 'T';
+
+                                if (tbl.Columns[colIndex1].Type == EbDbTypes.DateTime)
+                                {
+                                    //string s = cell.Value.ToString();
+                                    //long dateNum = long.Parse(s);
+                                    DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.Value));
+                                    rr[cell.Start.Column - 1] = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                }
+                                else if (tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
+                                {
+                                    if (cell.Value.ToString() == "Yes")
+                                        cell.Value = "true";
+                                    else
+                                        cell.Value = "false";
+                                    rr[cell.Start.Column - 1] = cell.Value.ToString();
+                                }
+                                else if (tbl.Columns[colIndex1].Type == EbDbTypes.BooleanOriginal)
+                                {
+                                    if (cell.Value.ToString() == "Yes")
+                                        cell.Value = true;
+                                    else
+                                        cell.Value = false;
+                                    rr[cell.Start.Column - 1] = cell.Value.ToString();
+                                }
+                                //_colInfo.
                                 else
-                                    cell.Value = "F";
-                                rr[cell.Start.Column - 1] = cell.Value.ToString();
+                                    rr[cell.Start.Column - 1] = cell.Text;
+
+                                colIndex1++;
                             }
-                            else
-                                rr[cell.Start.Column - 1] = cell.Text;
 
-                            colIndex1++;
+                            tbl.Rows.Add(rr);
                         }
-
-                        tbl.Rows.Add(rr);
                         //colIndex1++;
                     }
 

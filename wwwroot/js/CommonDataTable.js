@@ -122,19 +122,7 @@
             this.ContextId = "filterWindow_" + this.tableId;
             this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
             $("#parent-div0").before(this.FDCont);
-            this.FDCont.hide();
-
-            if (this.login === "dc") {
-                this.stickBtn = new EbStickButton({
-                    $wraper: this.FDCont,
-                    $extCont: this.FDCont,
-                    //$scope: $(subDivId),
-                    icon: "fa-filter",
-                    dir: "left",
-                    label: "Parameters",
-                    style: { top: "78px" }
-                });
-            }
+            $(".filterCont").hide();
         };
     }
 
@@ -181,18 +169,6 @@
             var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter;
             $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter).empty();
             this.filterHtml = text;
-            if (this.login === "uc") {
-                this.stickBtn = new EbStickButton({
-                    $wraper: this.FDCont,
-                    $extCont: this.FDCont,
-                    $scope: $("#" + focusedId),
-                    icon: "fa-filter",
-                    dir: "left",
-                    label: "Parameters",
-                    //btnTop: 42,
-                    style: { top: "42px" }
-                });
-            }
             $("#obj_icons").empty();
             this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
             $("#obj_icons").append(this.$submit);
@@ -201,7 +177,7 @@
             this.FDCont = $("#filterWindow_" + this.tableId);
             $("#filterWindow_" + this.tableId).empty();
             $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId + "'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
-            $("#filterWindow_" + this.tableId).children().find('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
+            
             $("#filterWindow_" + this.tableId).children().find("#close_paramdiv_" + this.tableId).off('click').on('click', this.CloseParamDiv.bind(this));
 
             $("#filterWindow_" + this.tableId).append(text);
@@ -223,17 +199,16 @@
 
             if ($("#" + this.ContextId).children("#filterBox").length === 0) {
                 this.FD = false;
-                this.FDCont.hide();
-                if (this.login === "dc") {
-                    this.stickBtn.hide();
-                }
-                else {
-                    dvcontainerObj.dvcol[focusedId].stickBtn.hide();
-                }
+                $(".filterCont").hide();
                 $("#eb_common_loader").EbLoader("hide");
                 this.$submit.trigger("click");
             }
             else {
+                $(".ppcont").hide();
+                this.filterid = "filter" + this.tableId;
+                this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+                $("#obj_icons").append(this.$filter);
+                this.$filter.click(this.CloseParamDiv.bind(this));
                 this.FD = true;
                 if (this.isPipped || this.isContextual) {
                     this.placefiltervalues();
@@ -242,13 +217,17 @@
                 }
                 else {
                     this.FDCont.show();
-                    this.FDCont.css("visibility", "visible");
                 }
                 $("#eb_common_loader").EbLoader("hide");
             }
             $(subDivId).focus();
 
             this.PcFlag = false;
+
+            if (this.propGrid !== null) {
+                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+                this.CreatePgButton();
+            }
         }
         else {
             if (this.MainData !== null)
@@ -257,7 +236,7 @@
             this.EbObject = dvGlobal.Current_obj;
             this.getColumnsSuccess();
         }
-        this.FDCont.css("left", "0");
+        this.FDCont.css("right", "0");
     }.bind(this);
 
     this.GetFD = function () {
@@ -281,47 +260,14 @@
     };
 
     this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+        this.FDCont.toggle();
+        if (this.FDCont.is(":visible"))
+            $(".ppcont").hide();
     };
 
     this.tmpPropertyChanged = function (obj, Pname, newval, oldval) {
         //this.isSecondTime = true;
-        if (Pname === "DataSourceRefId") {
-            if (obj[Pname] !== null) {
-                this.PcFlag = true;
-                this.stickBtn.hide();
-                this.filterValues = [];
-                this.isContextual = false;
-                this.isPipped = false;
-                this.rowData = null;
-
-                this.orderColl = [];
-                this.check4Customcolumn();
-                this.EbObject.OrderBy.$values = [];
-                this.MainData = null;
-                if (this.isCustomColumnExist) {
-                    EbDialog("show", {
-                        Message: "Retain Custom Columns?",
-                        Buttons: {
-                            "Yes": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            },
-                            "No": {
-                                Background: "red",
-                                Align: "left",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: this.dialogboxAction.bind(this)
-                    });
-                }
-                else
-                    this.call2FD();
-            }
-        }
-        else if (Pname === "Name") {
+        if (Pname === "Name") {
             $("#objname").text(obj.DisplayName);
             console.log(obj);
         }
@@ -371,17 +317,6 @@
                 this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
         }
 
-        if (this.login === "dc") {
-            this.propGrid = new Eb_PropertyGrid({
-                id: "pp_inner",
-                wc: "dc",
-                cid: this.cid,
-                $extCont: $(".ppcont"),
-                style: { top: "76px" }
-            }, this.PGobj);
-
-            this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-        }
         $("#objname").text(this.EbObject.DisplayName);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
@@ -479,16 +414,12 @@
     };
 
     this.Do4EbdataTable = function () {
+        $("#objname").text(this.EbObject.DisplayName);
         if (this.isSecondTime)
             this.MainData = null;
-        this.propGrid.ClosePG();
+        $(".ppcont").hide();
+        $(".filterCont").hide();
         if (this.FilterDialog) {
-            if (this.FD)
-                this.stickBtn.minimise();
-            else
-                this.stickBtn.hide();
-            $("#objname").text(this.EbObject.DisplayName);
-
             this.validateFD = this.FilterDialog.IsFDValidationOK;
             if (this.isContextual) {
                 if (this.isSecondTime) {
@@ -2721,7 +2652,7 @@
         $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
+        //$("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $(".columnMarker" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".columnimage").one("load", function () {
             $(".columnimage").off("click").on("click", this.ViewImage.bind(this));
@@ -2826,7 +2757,6 @@
         this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#obj_icons").append(this.$submit);
         this.$submit.click(this.getColumnsSuccess.bind(this));
-
         if (this.EbObject.FormLinks.$values.length > 0) {
             this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
                 index === self.findIndex((t) => (
@@ -2841,18 +2771,22 @@
 
         if (this.Source === "EbDataTable") {
             if ($("#" + this.tableId).children().length > 0) {
+                if (this.FD) {
+                    this.filterid = "filter" + this.tableId;
+                    this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+                    $("#obj_icons").append(this.$filter);
+                    this.$filter.click(this.CloseParamDiv.bind(this));
+                }
                 if (this.login === "uc") {
                     $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
                     $.each(this.permission, function (i, obj) {
                         if (obj === "Excel")
                             $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
                     }.bind(this));
-                }
-
-                if (this.login === "uc") {
                     dvcontainerObj.modifyNavigation();
                 }
             }
+            this.CreatePgButton();
             this.excelbtn = $("#btnExcel" + this.tableId);
         }
         else {
@@ -2868,6 +2802,19 @@
         }
         $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
         this.Contexmenu4SmsColumn();
+    };
+
+    this.CreatePgButton = function () {
+        $("#obj_icons").append(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
+        $(".stickBtn").hide();
+        this.PropertyDiv = $("#pp_inner");
+        $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+        $("#pp_inner").find(".pgpin").remove();
+        $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right pgpin" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+        $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
     };
 
     this.Contexmenu4SmsColumn = function () {
@@ -4032,12 +3979,11 @@
         //this.Api.ajax.reload();
     };
 
-    this.toggleFilterdialog = function () {
-        $("#" + this.ContextId).toggle();
-    };
-
-    this.togglePPGrid = function () {
+    this.togglePG = function (e) {
         $(".ppcont").toggle();
+        if ($(".ppcont").is(":visible"))
+            $(".filterCont").hide();
+        e.stopPropagation();
     };
 
     this.fselect_func = function (e) {

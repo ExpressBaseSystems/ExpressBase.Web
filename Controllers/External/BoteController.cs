@@ -537,7 +537,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			User _u = GetUserObject(authid);
 			if (_u != null)
 			{
-				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = authid });
+				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateTokenRequest { Token = token, UserAuthId = authid });
 				authresp.AuthStatus = response.AuthStatus;
 				authresp.ErrorMessage = response.ErrorMessage;
 				Bot_Obj.Status = authresp.AuthStatus;
@@ -630,7 +630,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			Authenticate2FAResponse resp = this.ServiceClient.Post<Authenticate2FAResponse>(new SendSignInOtpRequest
 			{
 				UName = uname,
-				SignInOtpType = (is_email) ? SignInOtpType.Email : SignInOtpType.Sms,
+				SignInOtpType = (is_email) ? OtpType.Email : OtpType.Sms,
 				SolutionId = tenantid,
 				WhichConsole= TokenConstants.BC
 			});

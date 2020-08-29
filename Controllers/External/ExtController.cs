@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using ExpressBase.Security;
+using ExpressBase.Common.Security;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -32,7 +33,9 @@ namespace ExpressBase.Web.Controllers
     public class ExtController : EbBaseExtController
     {
         public const string RequestEmail = "reqEmail";
-        //public const string Email = "email";
+
+        MyAuthenticateResponse myAuthResponse = null;
+
         public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_client, _redis, _cxtacc, _mqc, _auth) { }
 
         //[HttpPost]
@@ -783,6 +786,7 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
+                string tenantid = ViewBag.cid;
                 if (req["otptype"] == "signinotp")
                 {
                     EbAuthResponse validateResp = ValidateOtp(req["otp"]);
@@ -799,11 +803,10 @@ namespace ExpressBase.Web.Controllers
                 {
                     UserName = req["uname"];
                     Password = (req["pass"] + req["uname"]).ToMD5Hash();
+                    // Password = (req["pass"].ToString().ToMD5Hash() + "3" + tenantid).ToMD5Hash();
                 }
 
                 Console.WriteLine("captcha ok " + req["uname"]);
-                string tenantid = ViewBag.cid;
-                MyAuthenticateResponse myAuthResponse = null;
                 try
                 {
                     Authenticate AuthenticateReq = new Authenticate
@@ -872,7 +875,14 @@ namespace ExpressBase.Web.Controllers
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
                     }
-
+                    else if (myAuthResponse.User.IsForcePWReset) //Force Password Reset
+                    {
+                        authresp.AuthStatus = true;
+                        myAuthResponse.User.BearerToken = myAuthResponse.BearerToken;
+                        myAuthResponse.User.RefreshToken = myAuthResponse.RefreshToken;
+                        RouteToResetPage(myAuthResponse.User, Response);
+                        authresp.RedirectUrl = RoutingConstants.RESET_PASSWORD_PAGE;
+                    }
                     else//2fa NOT enabled
                     {
                         Console.WriteLine("AuthStatus true, not 2fa " + req["uname"]);
@@ -900,17 +910,34 @@ namespace ExpressBase.Web.Controllers
             return authresp;
         }
 
+        public void RouteToResetPage(User _u, HttpResponse Response)
+        {
+            Console.WriteLine("AuthStatus true, redirecting to reset password " + _u.AuthId);
+            User u = GetUserObject(_u.AuthId);
+            u.BearerToken = _u.BearerToken;
+            u.RefreshToken = _u.RefreshToken;
+            this.Redis.Set<IUserAuth>(_u.AuthId, u);
+            string RPWToken = EbTokenGenerator.GenerateToken(_u.AuthId);
+            CookieOptions options = new CookieOptions();
+            Response.Cookies.Append(RoutingConstants.RPWToken, RPWToken, options);
+            Response.Cookies.Append(TokenConstants.USERAUTHID, _u.AuthId, options);
+            Response.Cookies.Append("UserDisplayName", _u.FullName, options);
+        }
+
         public EbAuthResponse ValidateOtp(string otp)
         {
             EbAuthResponse authresp = new EbAuthResponse();
             string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
             string authid = Request.Cookies[TokenConstants.USERAUTHID];
-            User _u = GetUserObject(authid);
+            IFormCollection req = this.HttpContext.Request.Form;
+            User _u = GetUserObject(authid);            
             if (_u != null)
             {
-                //this.ServiceClient.BearerToken = _u.BearerToken;
-                //this.ServiceClient.RefreshToken = _u.RefreshToken;
-                Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = authid });
+                Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateTokenRequest
+                {
+                    Token = token,
+                    UserAuthId = authid
+                });
                 authresp.AuthStatus = response.AuthStatus;
                 authresp.ErrorMessage = response.ErrorMessage;
 
@@ -918,10 +945,14 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (otp == _u.Otp)
                     {
-                        IFormCollection req = this.HttpContext.Request.Form;
                         if (req["otptype"] == "signinotp")
                         {
                             authresp.AuthStatus = true;
+                        }
+                        else if (_u.IsForcePWReset)
+                        {
+                            RouteToResetPage(_u, Response);
+                            authresp.RedirectUrl = RoutingConstants.RESET_PASSWORD_PAGE;
                         }
                         else
                         {
@@ -975,7 +1006,7 @@ namespace ExpressBase.Web.Controllers
             Authenticate2FAResponse resp = this.ServiceClient.Post<Authenticate2FAResponse>(new SendSignInOtpRequest
             {
                 UName = uname,
-                SignInOtpType = (is_email) ? SignInOtpType.Email : SignInOtpType.Sms,
+                SignInOtpType = (is_email) ? OtpType.Email : OtpType.Sms,
                 SolutionId = tenantid
             });
             authresp.AuthStatus = resp.AuthStatus;
@@ -1025,7 +1056,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.cid = cid;
         }
 
-        private string RouteToDashboard(string whichconsole)
+        public string RouteToDashboard(string whichconsole)
         {
             string url = string.Empty;
             if (ViewBag.cid == CoreConstants.EXPRESSBASE)

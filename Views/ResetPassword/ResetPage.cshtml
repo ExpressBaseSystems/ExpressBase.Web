@@ -1,0 +1,177 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
+}
+<section class="eb_login">
+    <div class="container">
+        <div class="row h-100" style="display: flex; justify-content: center; align-items: center;">
+            <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12 resetpw_container">
+                <div class="loader_top" id="loader_profile"></div>
+                <div class="resetpw-htmlbox">
+                    <div class="login-sec-image text-center">
+                        <img src=@logo class="T_logo Eb_Image" />
+                    </div>
+                    <h1 class="text-center">Reset your password</h1><br>
+                    <div>
+                        <label>Current Password</label>
+                        <div class="form-group pass_show">
+                            <input type="password" class="form-control ebtext-lg" id="currentpwd" placeholder="Current Password">
+                        </div>
+
+                        <label>New Password</label>
+                        <div class="form-group">
+                            <div class="pass_show">
+                                <input type="password" class="form-control ebtext-lg" id="newpwd" placeholder="New Password">
+                            </div>
+                            <div class="validator-error-newpwd validator"></div>
+                        </div>
+                        <label>Confirm Password</label>
+                        <div class="form-group pass_show">
+                            <input type="password" class="form-control ebtext-lg" id="confirmpwd" placeholder="Confirm Password">
+                        </div>
+                        <div class="validator-error-confirmpwd validator"></div>
+                        <div class="text-center">
+                            <button type="submit" id="resetpwbtn" class="btn btn-primary" disabled>Reset password</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $(document).ready(function () {
+        $('#currentpwd, #newpwd, #confirmpwd').bind('cut copy paste', function (e) {
+            e.preventDefault(); //disable cut,copy,paste
+        });
+    });
+
+    $(document).ready(function () {
+        $('.pass_show').append('<span class="ptxt" value="Show"><i class="fa fa-eye"></i></span>');
+    });
+
+    $(document).on('click', '.pass_show .ptxt', function () {
+        $(this).prev().attr('type', function (index, attr) { return attr == 'password' ? 'text' : 'password'; });
+        $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+
+    });
+
+    $(".resetpw-htmlbox input[type='password']").focusout(function () {
+        var validate = 1;
+        $(".validator-error-newpwd").empty();
+        $(".validator-error-confirmpwd").empty();
+        if ($("#currentpwd").val().length < 1) {
+            validate = 0;
+        }
+        if ($("#newpwd").val().length < 1) {
+            validate = 0;
+        }
+        else if ($("#newpwd").val().length < 8) {
+            validate = 0;
+            $(".validator-error-newpwd").text("The password must be at least 8 characters.");
+        }
+        else if ($("#newpwd").val() === $("#currentpwd").val())
+        { validate = 0;
+            $(".validator-error-newpwd").text("Cannot use current password");
+        }
+        else if ($("#confirmpwd").val().length < 1) {
+            validate = 0;
+        }
+        else if ($("#newpwd").val() !== $("#confirmpwd").val()) {
+            validate = 0;
+            $(".validator-error-confirmpwd").text("The passwords do not match.");
+        }
+        if (validate === 1) {
+            $("#resetpwbtn").attr('disabled', false);
+        }
+        else {
+            $("#resetpwbtn").attr('disabled', true);
+        }
+    });
+    $("#resetpwbtn").on('click', function () {
+          $("#loader_profile").EbLoader("show");
+        let o = {
+            CurrentPassword: $("#currentpwd").val(),
+            NewPassword: $("#newpwd").val(),
+        };
+        $.post("ResetPassword/Reset",
+            { PwDetails: o },
+            function (auth) {
+                $("#loader_profile").EbLoader("hide");
+                if (auth.authStatus) {
+                    location.replace(auth.redirectUrl);
+                }
+                else {
+                    EbMessage("show", { Background: "red", Message: auth.errorMessage });
+                }
+            }
+        );
+    });
+</script>
+
+<style>
+
+    .resetpw_container h1 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+        font-weight: 400;
+        margin-top: 10px;
+    }
+
+    .resetpw_container .resetpw-htmlbox {
+        border: 1px solid #d3edff;
+        padding: 7%;
+        border-radius: 6px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        /*margin-top: 10%;*/
+        /* background: linear-gradient(to right,#eef9fe,#edf7ff); */
+    }
+
+    .resetpw_container {
+        max-width: 450px;
+        background-color: white;
+        margin: 0 auto;
+        border-radius: 4px;
+        overflow: hidden;
+        font-weight: 300;
+        position: relative;
+        padding: 0;
+    }
+
+    .pass_show {
+        position: relative
+    }
+
+        .pass_show .ptxt {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            z-index: 1;
+            color: #508bf9;
+            margin-top: -10px;
+            cursor: pointer;
+            transition: .3s ease all;
+        }
+
+            .pass_show .ptxt:hover {
+                color: #333333;
+            }
+
+    .validator {
+        color: red;
+    }
+
+    .pass_show:before {
+        font-family: FontAwesome;
+        content: "\f084";
+        position: absolute;
+        margin-left: 15px;
+        margin-top: 10px;
+        color: #508bf9;
+    }
+
+   .ebtext-lg {
+    height: 37px;
+    padding-left: 40px;
+}
+</style>

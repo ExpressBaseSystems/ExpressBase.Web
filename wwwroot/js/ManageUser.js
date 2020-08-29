@@ -11,7 +11,7 @@
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
     this.LocCntr = {
-        curItems: locCons || {}, options: { added: [], deleted: []}
+        curItems: locCons || {}, options: { added: [], deleted: [] }
     };
     this.r2rList = r2rList;
     this.statusList = userstatusList;
@@ -36,6 +36,7 @@
     this.txtLandPhone = $("#txtLandPhone");
     this.txtExtension = $("#txtExtension");
     this.selUserType = $("#selusertype");
+    this.ForceResetPassword = $("#forceresetpw");
 
     this.chkboxHide = $("#chkboxHide");
     //CHANGE PWD
@@ -55,7 +56,7 @@
     this.pwdResetNewConfirm = $("#pwdResetNewConfirm");
     this.lblPwdResetMsg = $("#lblPwdResetMsg");
     this.btnResetPwd = $("#btnResetPwd");
-    
+
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
     this.FB = null;
@@ -82,7 +83,7 @@
             $("#btnDeleteUser").on('click', this.clickbtnDeleteUser.bind(this));
             $('.nav-tabs a[href="#settings"]').tab('show');
         }
-        this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);       
+        this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
         this.btnCreateUser = $("#btnCreateUser");
 
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
@@ -144,7 +145,7 @@
             local: $.map(ebcontext.locations.Locations, function (loc) { return { id: loc.LocId, name: loc.ShortName + ' - ' + loc.LongName }; })
         });
         _locArr.initialize();
-                
+
         this.txtLocations.tagsinput({
             typeaheadjs: [
                 {
@@ -342,6 +343,10 @@
         this.txtLandPhone.val(this.userinfo["landline"]);
         this.txtExtension.val(this.userinfo["phextension"]);
         this.selUserType.val(this.userinfo["eb_user_types_id"]);
+        if (this.userinfo["forcepwreset"] === "T")
+            this.ForceResetPassword.prop('checked', true);
+        else
+            this.ForceResetPassword.prop('checked', false);
         var st = "#divGender input:radio[value='" + this.userinfo["sex"] + "']";
         $(st).attr("checked", "checked");
         $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
@@ -724,6 +729,8 @@
         dict["preference"] = JSON.stringify($.extend(this.Preference, { Locale: this.selectLocale.val(), TimeZone: this.selectTimeZone.val() }));
         dict["loc_add"] = this.LocCntr.options.added.join();
         dict["loc_delete"] = this.LocCntr.options.deleted.join();
+        dict["forceresetpw"] = this.ForceResetPassword.prop("checked");
+
 
         $.ajax({
             type: "POST",
@@ -837,7 +844,7 @@
             $(e.target).closest('span').next().show();
         });
     };
-    
+
     this.init();
 };
 
@@ -887,8 +894,8 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
         //-----------------------------------------------
 
         //------------------INIT CONSTRAINTS TILE------------------
-               
-        var metadata3 = ['Id','Title','Description','_simpleClose'];
+
+        var metadata3 = ['Id', 'Title', 'Description', '_simpleClose'];
         if (this.ipAddTile === null) {
             let options = { longTitle: "IP Address Whitelist", tileDivHeight: "auto" };
             this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", this.ipconsList, null, metadata3, null, null, null, options);

@@ -7,11 +7,11 @@
 
     string DpUrl = "/images/proimg.jpg";
 
-    if(ViewBag.wc != "tc")
+    if (ViewBag.wc != "tc")
     {
         DpUrl = "/images/dp/" + ViewBag.UId + ".png";
     }
-    
+
     string ml = "0px";
 }
 <script>
@@ -129,6 +129,10 @@
                                         }
                                     }
                                     <li class="drp_item"><a href="../Security/MyProfile"><i class="fa fa-cog" aria-hidden="true"></i>Account Settings</a></li>
+                                    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+                                    {
+                                        <li class="drp_item"><a href="../ResetPassword/ResetLink"><i class="fa fa-key" aria-hidden="true"></i>Reset Password</a></li>
+                                    }
                                     <li class="drp_item"><a onclick="return Leave();" href="@Url.Action("Logout", "Tenantuser")"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                                 </ul>
                             </div>

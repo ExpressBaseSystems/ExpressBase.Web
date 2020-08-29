@@ -1,8 +1,9 @@
 ﻿
 //DataLabel Style Function
 
-function EbDataLabelFn(Label) {
-
+function EbDataLabelFn(Label, tileId) {
+    if (Label.Object_Selector != "" && tileId != null)
+        $(`[data-id="${tileId}"] .label-cont`).attr("ref-id", Label.Object_Selector);
     if (Label.ChangeTextPositon) {
         if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
             $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
@@ -38,13 +39,10 @@ function EbDataLabelFn(Label) {
         GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
     }
 
-
     //Dynamic label style
     if (Label.DynamicLabelFont !== null) {
         GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
     }
-
-
     $(`#${Label.EbSid}_Data_pane`).css("border-radius", Label.LabelBorderRadius);
     $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
     $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);

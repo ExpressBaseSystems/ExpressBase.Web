@@ -235,13 +235,15 @@ class DvBuilder {
         var fltr_collection = [];
         if (this.filterDialog)
             fltr_collection = getValsForViz(this.filterDialog.FormObj);
-        this.ModifyToRequestParams(fltr_collection);
+        this.ModifyRequestParams(fltr_collection);
     };
 
-    ModifyToRequestParams(fltr_collection) {//need to modified 
-        this.EbObject.Parameters.$values = fltr_collection.map(function (row) {
-            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
+    ModifyRequestParams(fltr_collection) {//need to modified 
+        let xx = this.EbObject.Parameters.$values.map(function (row) {
+            return { Name: row.Name, Value: row.Value, Type: row.Type };
         });
+
+        this.EbObject.ParamsList.$values = fltr_collection.concat(xx);
     };
 
 

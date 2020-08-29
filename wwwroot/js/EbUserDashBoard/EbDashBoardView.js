@@ -12,9 +12,9 @@
     this.DashBoardList = options.AllDashBoards || null;
     this.stickBtn;
     this.filtervalues = [];
-    //this.TabNum = options.tabNum;
+    this.TabNum = options.tabNum;
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
-    this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
+    this.FilterVal = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     this.Procs = {};
     this.Rowdata = {};
@@ -93,6 +93,7 @@
                     </div>
                 `);
         $('#paramdiv' + this.TabNum).append(result);
+        this.FilterObj = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
         $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
         $("#btnGo").empty().append("Apply");
@@ -109,7 +110,9 @@
             //});
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
-            $("#btnGo").trigger("click");
+            if (!this.FilterObj.FormObj.AutoRun)
+                $("#btnGo").trigger("click");
+
             this.CloseParamDiv();
             $("#filter-dg").off("click").on("click", this.toggleFilter.bind(this));
         }
@@ -168,7 +171,6 @@
     }
 
     this.DashBoardSwitch = function (e) {
-
         $('.Btn4SwitchDB').removeAttr("disabled");
         let refid = e.target.getAttribute("value");
         $(`[Value=${refid}]`).attr("disabled", true);
@@ -338,9 +340,10 @@
                         let object = this.Procs[this.currentId];
                         let designHtml = this.MakeDashboardLabel(object);
                         $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
-
                         this.labelstyleApply(this.CurrentTile);
-                        EbDataLabelFn(obj);
+                        EbDataLabelFn(obj, this.CurrentTile);
+                        if (obj.Object_Selector)
+                            $(`[data-id="${this.CurrentTile}"] .label-cont`).off("click").on("click", this.DisplayBlockLink.bind(this))
                         this.TileCollection[t_id].LabelColl.$values[i] = object;
                     }.bind(this));
                     if (currentobj.LinksColl) {
@@ -554,25 +557,25 @@
         this.CurrentTile = tileid;
         var id = e.target.getAttribute("link");
         if (id === "ext-link") {
-            let TileRefid = this.TileCollection[tileid].RefId;
-            //window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
-            let url = "../DV/dv?refid=" + TileRefid;
+            //let TileRefid = this.TileCollection[tileid].RefId;
+            this.linkDV = this.TileCollection[tileid].RefId;
+            let url = "../DV/dv?refid=" + this.linkDV;
+            this.DvExternalLinkTrigger();
+            //let _form = document.createElement("form");
+            //_form.setAttribute("method", "post");
+            //_form.setAttribute("action", url);
+            //_form.setAttribute("target", "_blank");
 
-            let _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
+            //let input1 = document.createElement('input');
+            //input1.type = 'hidden';
+            //input1.name = "filterValues";
+            //input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            //_form.appendChild(input1);
 
-            let input1 = document.createElement('input');
-            input1.type = 'hidden';
-            input1.name = "filterValues";
-            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
-            _form.appendChild(input1);
+            //document.body.appendChild(_form);
 
-            document.body.appendChild(_form);
-
-            _form.submit();
-            document.body.removeChild(_form);
+            //_form.submit();
+            //document.body.removeChild(_form);
         }
         if (id === "restart-tile") {
             $(`[data-id="${this.CurrentTile}"]`).empty();
@@ -595,7 +598,11 @@
     };
 
     this.TileRefidChangesuccess = function (id, data) {
-        if (this.filtervalues.length === 0 || this.filtervalues === undefined) {
+        if (this.FilterVal.length > 0) {
+            this.filterValues = this.FilterVal;
+            this.placefiltervalues();
+        }
+        else if (this.filtervalues.length === 0 || this.filtervalues === undefined) {
             this.GetFilterValuesForDataSource();
         }
         let obj = JSON.parse(data);
@@ -680,6 +687,7 @@
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         //if (this.stickBtn) { this.stickBtn.minimise(); }
+        return this.filtervalues;
     };
 
 
@@ -687,8 +695,9 @@
         this.loader.EbLoader("show");
         this.filtervalues = [];
         //if (this.stickBtn) { this.stickBtn.minimise(); }
-
-        if (this.filterDialog)
+        if (this.FilterVal.length > 0)
+            this.filtervalues = this.FilterVal;
+        else if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
 
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
@@ -708,6 +717,152 @@
         }
         this.CloseParamDiv();
     };
+
+    this.DisplayBlockLink = function (e) {
+        this.linkDV = $(e.target.closest(".label-cont")).attr("ref-id");
+        if (this.FilterVal.length > 0) {
+            this.filtervalues = this.FilterVal;
+        }
+        else
+            this.filtervalues = this.GetFilterValuesForDataSource();
+        var splitarray = this.linkDV.split("-");
+        if (splitarray[2] === "3") {
+            var url = "../ReportRender/BeforeRender?refid=" + this.linkDV;
+            var copycelldata = cData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
+            if ($(`#RptModal${copycelldata}`).length !== 0)
+                $(`#RptModal${copycelldata}`).remove();
+            $("body").append(`<div class="modal fade RptModal" id="RptModal${copycelldata}" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>                              
+                        </div>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}'></iframe>
+            </div>
+                    </div>
+                </div>
+            </div>
+            `);
+            $(`#RptModal${copycelldata}`).modal();
+            $(`#reportIframe${copycelldata}`).css("height", "80vh");
+            //else {
+            //    $(`#RptModal${copycelldata}`).modal();
+            //    $.LoadingOverlay("hide");
+            //}
+        }
+        else if (splitarray[2] === "0") {
+            let url = "../webform/index?refid=" + this.linkDV;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            _form.appendChild(input);
+
+            //input = document.createElement('input');
+            //input.type = 'hidden';
+            //input.name = "_mode";
+            //input.value = this.dvformMode;
+            //_form.appendChild(input);
+
+            //input = document.createElement('input');
+            //input.type = 'hidden';
+            //input.name = "_locId";
+            //input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+            //_form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
+        else if (splitarray[2] === "22") {
+            this.tabNum++;
+            let url = "../DashBoard/DashBoardView?refid=" + this.linkDV;
+
+            let _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
+
+            let input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = "filterValues";
+            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            _form.appendChild(input1);
+
+            let input2 = document.createElement('input');
+            input2.type = 'hidden';
+            input2.name = "tabNum";
+            input2.value = this.tabNum;
+            _form.appendChild(input2);
+
+            document.body.appendChild(_form);
+
+            //note I am using a post.htm page since I did not want to make double request to the page 
+            //it might have some Page_Load call which might screw things up.
+            //window.open("post.htm", name, windowoption);       
+            _form.submit();
+            document.body.removeChild(_form);
+        }
+
+        else {
+            this.DvExternalLinkTrigger();
+        } 
+    }
+
+    this.placefiltervalues = function () {
+        $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+            let getobjval = getObjByval(this.filtervalues, "Name", obj.Name)
+            if (getobjval !== undefined) {
+                let val = getobjval.Value;
+                obj.setValue(val);
+            }
+        }.bind(this));
+    }
+
+    this.DvExternalLinkTrigger = function () {
+        var splitarray = this.linkDV.split("-");
+        //this.filtervalues = this.GetFilterValuesForDataSource();
+        this.TabNum++;
+        let url = "../DV/dv?refid=" + this.linkDV;
+
+        let _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "rowData";
+
+        //input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData))));
+        //_form.appendChild(input);
+
+        let input1 = document.createElement('input');
+        input1.type = 'hidden';
+        input1.name = "filterValues";
+        input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+        _form.appendChild(input1);
+
+        let input2 = document.createElement('input');
+        input2.type = 'hidden';
+        input2.name = "tabNum";
+        input2.value = this.TabNum;
+        _form.appendChild(input2);
+
+        document.body.appendChild(_form);
+
+        //note I am using a post.htm page since I did not want to make double request to the page 
+        //it might have some Page_Load call which might screw things up.
+        //window.open("post.htm", name, windowoption);       
+        _form.submit();
+        document.body.removeChild(_form);
+    }
+
     this.init();
 }
 

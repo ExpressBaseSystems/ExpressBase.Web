@@ -221,15 +221,20 @@ namespace ExpressBase.Web.Controllers
         //    return ObjStr;
         //}
 
+        //ps form-api
         public string PSImportFormData(string _refid, int _rowid, string _triggerctrl, string _formModel)
         {
             try
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest {
-                    RefId = _refid, RowId = _rowid, Trigger = _triggerctrl });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
+                {
+                    RefId = _refid,
+                    Trigger = _triggerctrl,
+                    WebFormData = _formModel,
+                    Type = ImportDataType.PowerSelect
+                });
                 return Resp.FormDataWrap;
             }
             catch (Exception ex)
@@ -245,13 +250,21 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        //dg dr-api
         public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params)
         {
             try
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, RowId = _rowid, Trigger = _triggerctrl, Params = _params });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
+                {
+                    RefId = _refid,
+                    RowId = _rowid,
+                    Trigger = _triggerctrl,
+                    Params = _params,
+                    Type = ImportDataType.DataGrid
+                });
                 return Resp.FormDataWrap;
             }
             catch (Exception ex)

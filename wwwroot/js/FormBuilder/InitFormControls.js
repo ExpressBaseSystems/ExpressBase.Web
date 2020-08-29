@@ -8,8 +8,36 @@
     }
 
     this.init = function (control, ctrlOpts) {
+        this.initInfo(control);
         if (this[control.ObjType] !== undefined) {
             return this[control.ObjType](control, ctrlOpts);
+        }
+    };
+
+    this.initInfo = function (ctrl) {
+        let el = document.getElementById(ctrl.EbSid_CtxId + "Lblic");
+        if (!el)
+            return;
+        if (ctrl.Info && ctrl.Info.trim() !== "") {
+            el.innerHTML = ('<i class="fa ' + ctrl.InfoIcon + '" aria-hidden="true"></i>');
+            $(el).popover({
+                trigger: 'focus',
+                html: true,
+                container: "body",
+                placement: this.PopoverPlacement,
+                content: decodeURIComponent(escape(window.atob(ctrl.Info)))
+            });
+        }
+        else {
+            el.remove();
+        }
+    };
+
+    this.PopoverPlacement = function (context, source) {
+        if (($(source).offset().left + 700) > document.body.clientWidth)
+            return "left";
+        else {
+            return "right";
         }
     };
 
@@ -310,67 +338,86 @@
         $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
             $(e.target).closest(".dropdown.bootstrap-select").attr("id", ctrl.EbSid_CtxId + "_dd"); // id added for test frame work
         });
+        if (this.Renderer.rendererName == "Bot") {
+            $input.selectpicker({
+                dropupAuto: false,               
+            });
+        }
+        else {
+            $input.selectpicker({
+                //dropupAuto: false,
+                container: "body [eb-root-obj-container]:first",
+                virtualScroll: 500,
+                size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
+                //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
+            });
 
-        $input.selectpicker({
-            //dropupAuto: false,
-            container: "body [eb-root-obj-container]:first",
-            virtualScroll: 500,
-            size: ctrl.DropdownHeight === 0? 'auto' : (ctrl.DropdownHeight / 23),
-            //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
-        }); 
 
+            let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+            //$DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
+            //$DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
 
-        let $DD = $input.siblings(".dropdown-menu[role='combobox']");
-        //$DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
-        //$DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
+            $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+                let $el = $(e.target);
+                let $DDbScont = $DD.closest(".bs-container");
+                $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
 
-        $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            let $el = $(e.target);
-
-            if ($el.attr("is-scrollbind") !== 'true') {
-                for (let i = 0; i < this.scrollableContSelectors.length; i++) {
-                    let contSelc = this.scrollableContSelectors[i];
-                    let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
-                    $ctrlCont.parents(contSelc).scroll(function (event) {
-                        if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
-                            $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
-                    }.bind(this));
+                if ($DDbScont.hasClass("dropup")) {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
                 }
-                $el.attr("is-scrollbind", 'true');
-            }
-        }.bind(this));
+                else {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
+                }
 
-        ////code review..... to set dropdown on body
-        //$("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-        //    if (this.Renderer.rendererName !== "Bot") {
-        //        let $el = $(e.target);
-        //        if ($el[0].isOutside !== true) {
-        //            let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-        //            let initDDwidth = $drpdwn.width();
-        //            let ofsetval = $drpdwn.offset();
-        //            let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
-        //            let $div_detached = $drpdwn.detach();
-        //            let $form_div = $(e.target).closest("[eb-root-obj-container]");
-        //            $div_detached.appendTo($form_div).wrap($divclone);
-        //            $div_detached.width(initDDwidth);
-        //            $el[0].isOutside = true;
-        //            $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
-        //            $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+                $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
 
-        //        }
-        //        //to set position of dropdrown just below selectpicker btn
-        //        else {
-        //            let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-        //            let ddOfset = ($(e.target)).offsetParent().offset();
-        //            let tgHght = ($(e.target)).offsetParent().height();
-        //            $outdrpdwn.parent().addClass('open');
-        //            $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
-        //            $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"), { offset: ($outdrpdwn.children("[role='listbox']").height() / -2) + 11.5 });
-        //        }
-        //    }
-        //}.bind(this));
-        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
-            ctrl.setValue(ctrl.DataVals.Value);
+                if ($el.attr("is-scrollbind") !== 'true') {
+                    for (let i = 0; i < this.scrollableContSelectors.length; i++) {
+                        let contSelc = this.scrollableContSelectors[i];
+                        let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
+                        $ctrlCont.parents(contSelc).scroll(function (event) {
+                            if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
+                                $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
+                        }.bind(this));
+                    }
+                    $el.attr("is-scrollbind", 'true');
+                }
+            }.bind(this));
+            ////code review..... to set dropdown on body
+            //$("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+            //    if (this.Renderer.rendererName !== "Bot") {
+            //        let $el = $(e.target);
+            //        if ($el[0].isOutside !== true) {
+            //            let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+            //            let initDDwidth = $drpdwn.width();
+            //            let ofsetval = $drpdwn.offset();
+            //            let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
+            //            let $div_detached = $drpdwn.detach();
+            //            let $form_div = $(e.target).closest("[eb-root-obj-container]");
+            //            $div_detached.appendTo($form_div).wrap($divclone);
+            //            $div_detached.width(initDDwidth);
+            //            $el[0].isOutside = true;
+            //            $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+            //            $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+
+            //        }
+            //        //to set position of dropdrown just below selectpicker btn
+            //        else {
+            //            let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+            //            let ddOfset = ($(e.target)).offsetParent().offset();
+            //            let tgHght = ($(e.target)).offsetParent().height();
+            //            $outdrpdwn.parent().addClass('open');
+            //            $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
+            //            $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"), { offset: ($outdrpdwn.children("[role='listbox']").height() / -2) + 11.5 });
+            //        }
+            //    }
+            //}.bind(this));
+            if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+                ctrl.setValue(ctrl.DataVals.Value);
+
+        }
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -961,6 +1008,10 @@
 
     this.iFrameOpen = function (ctrl) {//////////////////
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
+        if (ctrl.OpenInNewTab) {
+            window.open(url, '_blank');
+            return;
+        }
         $("#iFrameForm").attr("src", url);
         $("#iFrameFormModal").modal("show");
     };
@@ -977,6 +1028,19 @@
                 $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
+
+            $("#" + ctrl.EbSid_CtxId).on('change', function (e) {
+                let newLocId = ctrl.getValueFromDOM();    
+                if (newLocId === 0)
+                    return;
+                let newLocObj = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
+                let oldLocObj = ebcontext.locations.CurrentLocObj;
+
+                if (newLocObj.LocId !== oldLocObj.LocId) {
+                    EbMessage("show", { Message: `Switching from ${oldLocObj.LongName} to ${newLocObj.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+                    ebcontext.locations.SwitchLocation(newLocObj.LocId);
+                }                
+            });
         }
     };
 
@@ -1109,9 +1173,21 @@
 
     this.checkEmail = function (ctrl) {
         if (EbvalidateEmail(event.target.value))
-            ctrl.removeInvalidStyle();
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).removeClass("emailCtrl_invalid");
+            }
+            else {
+                ctrl.removeInvalidStyle();
+            }
+          
         else
-            ctrl.addInvalidStyle("Invalid email");
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).addClass("emailCtrl_invalid");
+            }
+            else {
+                ctrl.addInvalidStyle("Invalid email");
+            }
+           
     }
 
     this.initNumeric = function (ctrl, $input) {
@@ -1436,6 +1512,7 @@
     };
 
     this.Phone = function (ctrl, ctrlOpts) {
+        $(`#${ctrl.EbSid}`).attr("oninput", `this.value = this.value.replace(/[^0-9]/g, '');`);
         $('.phnContextBtn').hide();
         if (this.Renderer.mode === 'View Mode') {
             if (this.Renderer.rendererName === "WebForm") {
@@ -1485,7 +1562,7 @@
             iti.setNumber(p1);
         };
 
-
+        $(`#${ctrl.EbSid}`).attr("maxlength","18");
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {
@@ -1641,25 +1718,73 @@
     //phonecontrol ends 
 
     this.PdfControl = function (ctrl) {
-
         //let m = `<iframe id="iFramePdf" style="width: 40%; height: 40vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
-        //$("#cont_" + ctrl.EbSid).append(m);
+        //$("#cont_" + ctrl.EbSid).append(m);       
+        if (ctrl.PdfRefid) {
+            if (ctrl.ParamsList) {
+                var paramArray = [];
+                paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+                for (let i = 0; i < paramsList.length; i++) {
+                    let depCtrl_s = paramsList[i];
+                    let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+                    if (!getObjByval(paramArray, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                        let val = '';
+                        let ebDbType = 11;
+                        let name = "";
+                        if (depCtrl_s === "form.eb_loc_id") {
+                            val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                            name = "eb_loc_id";
+                        }
+                        else if (depCtrl_s === "form.eb_currentuser_id") {
+                            val = ebcontext.user.UserId;
+                            name = "eb_currentuser_id";
+                        }
+                        else if (depCtrl_s === "form.id") {
+                            val = this.Renderer.rowId;
+                            name = "id";
+                        }
+                        else {
+                            val = depCtrl.getValue();
+                            name = depCtrl.Name;
+                            ebDbType = depCtrl.EbDbType;
+                        }
 
-        if (this.Renderer.rendererName === "WebForm") {
-
-        }
-        if (ctrl.PdfRefid.$values.length > 0) {
+                        paramArray.push(new fltr_obj(ebDbType, name, val));
+                    }
+                }
+                var paramString = btoa(unescape(encodeURIComponent(JSON.stringify(paramArray))));
+            }
             $(`#icon_${ctrl.EbSid}`).click(function () {
-                if (confirm(`Download ${ctrl.PdfRefid.$values[0].ObjRefId}.pdf?`)) {
+                if (this.Renderer.rendererName === "WebForm") {
+                    if (confirm(`Download ${ctrl.PdfRefid}.pdf?`)) {
+                        let link = document.createElement('a');
+                        link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
+                        link.href = `/ReportRender/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
+                        link.click();
+                    }
+
+                }
+                else if (this.Renderer.rendererName === "Bot") {
                     let link = document.createElement('a');
-                    link.download = this.Renderer.FormObj.DisplayName + "-" + ctrl.Label;
-                    link.href = `/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}`;
+                    link.download = this.Renderer.curForm.DisplayName + "-" + ctrl.Label;
+                    link.href = `/Boti/Renderlink?refId=${ctrl.PdfRefid}&_params=${paramString}`;
                     link.click();
                 }
             }.bind(this));
         }
-       
-       
+
+
+    }
+    this.Image = function (ctrl) {
+        if (ctrl.ImageId > 0) {
+            if (this.Renderer.rendererName === "WebForm") {
+                $(`#${ctrl.EbSid}`).attr("src", `../images/${ctrl.ImageId}.jpg`);
+            }
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).attr("src", `../bot/images/${ctrl.ImageId}.jpg`);
+            }
+        }
+
     }
 };
 

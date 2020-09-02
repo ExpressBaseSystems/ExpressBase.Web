@@ -377,6 +377,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
         $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
+        this.isFromClearValues = true;
     }.bind(this);
 
     this.initComplete4SetVal = function (callBFn, StrValues) {/////////????????????
@@ -471,10 +472,14 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.reloadWithParams = function () {
+        this.setvaluesColl = [... this.Vobj.valueMembers];
         this.clearValues();
         this.fromReloadWithParams = true;
         //if (this.ComboObj.IsDataFromApi)
         //    this.attachParams2Url();
+
+        this.IsFromReloadWithParams = true;
+        this.ComboObj.___DoNotImport = true;
         this.getData();
     };
 
@@ -519,12 +524,13 @@ const EbPowerSelect = function (ctrl, options) {
             this.formattedData = this.ComboObj.__bkpData.formattedData;
         }
 
-        if (this.IsFromSetValues) {// from set value
+        if (this.IsFromSetValues || this.IsFromReloadWithParams) {// from set value
             if (this.setvaluesColl && this.setvaluesColl.length > 0) {
                 this.setValues2PSFromData(this.setvaluesColl);
                 this.filterArray.clear();
             }
             this.IsFromSetValues = false;
+            this.IsFromReloadWithParams = false;
         }
         else {// not from setValue (search,...)
             if (!this.isDMSearchEmpty() && this.ComboObj.IsPreload === false && this.unformattedData.length === 1) {
@@ -639,17 +645,14 @@ const EbPowerSelect = function (ctrl, options) {
         let VMs = this.Vobj.valueMembers || [];
         let DMs = this.Vobj.displayMembers || [];
 
-        if (setvaluesColl.length > 0)// clear if already values there
+        if (VMs.length > 0)// clear if already values there
             this.clearValues();
-        
+
         let valMsArr = setvaluesColl;
         let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
         for (let i = 0; i < valMsArr.length; i++) {
             let vm = valMsArr[i].trim();
-            VMs.push(vm);
-            this.addColVals(vm);
-
             let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
 
             if (unformattedDataARR.length === 0) {
@@ -657,6 +660,8 @@ const EbPowerSelect = function (ctrl, options) {
                 return;
             }
 
+            VMs.push(vm);
+            this.addColVals(vm);
             let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
 
             for (let j = 0; j < this.dmNames.length; j++) {
@@ -991,11 +996,13 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setLastmodfiedVal = function () {
-        if (JSON.stringify(this.Vobj.valueMembers) === JSON.stringify(this.Values)) {
+        if (JSON.stringify(this.Vobj.valueMembers) === JSON.stringify(this.Values) || this.isFromClearValues) {
             this.Changed = false;
         }
         else
             this.Changed = true;
+
+        this.isFromClearValues = false;
 
         if (this.Vobj.valueMembers.length > this.Values.length) {
             this.lastAddedOrDeletedVal = this.Vobj.valueMembers.filter(x => !this.Values.includes(x))[0];

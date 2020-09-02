@@ -166,7 +166,24 @@
     }
 
     .locs_bdy ul.sim-tree a span {
-        display: block;
+        display: flex;
+        display: flow-root;
         font-size: 11px;
-        width: fit-content;
     }
+        .locs_bdy ul.sim-tree  .parent_path {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden !important;
+            text-overflow: ellipsis;
+            float: left;
+            width: 60%;
+        }
+        .locs_bdy ul.sim-tree .loc_typ {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden !important;
+            text-overflow: ellipsis;
+            float: right;
+            padding-left:10%;
+            width: 30%;
+        }

@@ -129,6 +129,10 @@
         $("#LocInfoCr_name").text(t);
     };
 
+    this.setLocation_type = function (t) {
+        $("#LocInfoCr_type").text(t);
+    };
+
     this.updateNCount = function (count) {
         _nCounter.text(count);
         if (count > 0)

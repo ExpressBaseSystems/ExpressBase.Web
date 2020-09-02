@@ -576,7 +576,7 @@ const EbPowerSelect = function (ctrl, options) {
         //    return { ParamName: row.Name, Value: row.Value, Type: row.Type }
         //});
         //----------------
-        $.each(this.ComboObj.ParamsList.$values, function (i, param) {            
+        $.each(this.ComboObj.ParamsList.$values, function (i, param) {
             let isStaticParam = false;
             if (this.ComboObj.ImportApiParams) {
                 let sp_obj = this.ComboObj.ImportApiParams.$values.find(function (obj) { return obj.IsStaticParam === true && obj.Name === param.Name; });
@@ -588,7 +588,7 @@ const EbPowerSelect = function (ctrl, options) {
                 if (filterobj) {
                     param.Value = filterobj.Value;
                 }
-            }            
+            }
         }.bind(this));
         this.EbObject.ParamsList = this.ComboObj.ParamsList;
     };
@@ -650,20 +650,21 @@ const EbPowerSelect = function (ctrl, options) {
             VMs.push(vm);
             this.addColVals(vm);
 
-            let RowDataARR = this.formattedData.filter(obj => obj[VMidx] === vm);
-            if (RowDataARR.length === 0) {
+            let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
+
+            if (unformattedDataARR.length === 0) {
                 console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
                 return;
             }
-            let RowData = RowDataARR[0];
+
+            let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
 
             for (let j = 0; j < this.dmNames.length; j++) {
                 let dmName = this.dmNames[j];
                 if (!DMs[dmName])
                     DMs[dmName] = []; // dg edit mode call
                 let DMidx = this.getColumnIdx(this.ComboObj.Columns.$values, dmName);
-                DMvalue = RowData[DMidx];
-                DMs[dmName].push(DMvalue);
+                DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
             }
         }
     };
@@ -671,15 +672,14 @@ const EbPowerSelect = function (ctrl, options) {
     this.addColVals = function (val = this.lastAddedOrDeletedVal) {
         let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
-        let RowDataARR = this.formattedData.filter(obj => obj[VMidx] === val);
         let RowUnformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === val);
 
-        if (RowDataARR.length === 0) {
+        if (RowUnformattedDataARR.length === 0) {
             console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
             return;
         }
-        let RowData = RowDataARR[0];
         let RowUnformattedData = RowUnformattedDataARR[0];
+        let unFormattedRowIdx = this.unformattedData.indexOf(RowUnformattedData);
 
 
         for (let j = 0; j < this.ColNames.length; j++) {
@@ -692,7 +692,7 @@ const EbPowerSelect = function (ctrl, options) {
 
             let cellData;
             if (type === 5 || type === 11)
-                cellData = RowData[ColIdx];// unformatted data for date or integer
+                cellData = this.formattedData[unFormattedRowIdx][ColIdx];// unformatted data for date or integer
             else
                 cellData = RowUnformattedData[ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
             if (type === 11 && cellData === null)///////////
@@ -1021,15 +1021,6 @@ const EbPowerSelect = function (ctrl, options) {
         this.$inp.attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
         //this.getSelectedRow();
 
-        if (VMs.length === 0)
-            this.$searchBoxes.css("min-width", "100%");
-        else
-            this.$searchBoxes.css("min-width", "inherit");
-
-        if (this.maxLimit === VMs.length)
-            this.$searchBoxes.hide();
-        else
-            this.$searchBoxes.show();
         //setTimeout(function () {// to adjust search-block
         //    let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
         //    $(".search-block .input-group").css("height", maxHeight + "px");
@@ -1062,7 +1053,20 @@ const EbPowerSelect = function (ctrl, options) {
         }.bind(this), 5);
         //this.scrollIf();
         this.adjustDDposition();
+        this.adjust$searchBoxAppearance(VMs);
     };
+
+    this.adjust$searchBoxAppearance = function myfunction(VMs) {
+        if (VMs.length === 0)
+            this.$searchBoxes.css("min-width", "100%");
+        else
+            this.$searchBoxes.css("min-width", "inherit");
+
+        if (this.maxLimit === VMs.length)
+            this.$searchBoxes.hide();
+        else
+            this.$searchBoxes.show();
+    }
 
     this.adjustTag_closeHeight = function () {
         if (this.ComboObj.Padding && this.$wraper.find(".selected-tag").length > 0) {

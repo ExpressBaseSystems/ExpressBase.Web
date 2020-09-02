@@ -167,7 +167,8 @@
     }
 
     .locs_bdy ul.sim-tree a span {
-        display: block;
+        display: flex;
+        display: flow-root;
         font-size: 11px;
         width: fit-content;
     }

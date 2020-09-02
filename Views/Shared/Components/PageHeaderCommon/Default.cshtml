@@ -7,11 +7,11 @@
 
     string DpUrl = "/images/proimg.jpg";
 
-    if(ViewBag.wc != "tc")
+    if (ViewBag.wc != "tc")
     {
         DpUrl = "/images/dp/" + ViewBag.UId + ".png";
     }
-    
+
     string ml = "0px";
 }
 <script>
@@ -54,8 +54,13 @@
                 if (ViewBag.wc == "uc")
                 {
                     <div class="LocInfCr" id="switch_loc">
-                        <div class="Locname" id="LocInfoCr_name"></div>
-                        <span style="margin-left:10px;" class="fa fa-caret-down"></span>
+                        <div>
+                            <div class="Loc_type" id="LocInfoCr_type"></div>
+                        </div>
+                        <div>
+                            <span class="Locname" id="LocInfoCr_name"></span>
+                            <span style="margin-left:10px;" class="fa fa-caret-down"></span>
+                        </div>
                     </div>
                 }
             }
@@ -129,6 +134,10 @@
                                         }
                                     }
                                     <li class="drp_item"><a href="../Security/MyProfile"><i class="fa fa-cog" aria-hidden="true"></i>Account Settings</a></li>
+                                    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+                                    {
+                                        <li class="drp_item"><a href="../ResetPassword/ResetLink"><i class="fa fa-key" aria-hidden="true"></i>Reset Password</a></li>
+                                    }
                                     <li class="drp_item"><a onclick="return Leave();" href="@Url.Action("Logout", "Tenantuser")"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                                 </ul>
                             </div>

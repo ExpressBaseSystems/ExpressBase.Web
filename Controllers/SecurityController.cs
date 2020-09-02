@@ -324,7 +324,8 @@ namespace ExpressBase.Web.Controllers
                 Preference = Dict["preference"],
                 UserType = Convert.ToInt32(Dict["eb_user_types_id"]),
                 LocationAdd = Dict["loc_add"],
-                LocationDelete = Dict["loc_delete"]
+                LocationDelete = Dict["loc_delete"],
+                ForceResetPassword = (Dict["forceresetpw"] == "true") ? "T" : "F"
             });
             return res.id;
         }

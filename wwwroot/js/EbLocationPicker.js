@@ -34,6 +34,8 @@
         this.prev_loc_name = this.CurrentLocObj.LongName;
         this.prev_loc = this.CurrentLoc;
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+        this.EbHeader.setLocation_type(this.CurrentLocObj.TypeName);
+
         this.ModifyLocationObject();
         this.findParent_loc();
         this.drawLocsTree();
@@ -116,6 +118,7 @@
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
         ebcontext.menu.reset();
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+        this.EbHeader.setLocation_type(this.CurrentLocObj.TypeName);
         if (this.PrevLocation !== this.CurrentLoc) {
             this.Listener.ChangeLocation(this.CurrentLocObj);
             this.PrevLocation = this.CurrentLoc;
@@ -315,6 +318,7 @@
                     $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a`).eq(0).trigger("click");
                 }
                 this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+                this.EbHeader.setLocation_type(this.CurrentLocObj.TypeName);
                 store.clearAll();
                 store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
                 ebcontext.menu.reset();
@@ -401,7 +405,7 @@
             for (i = 0; i < temoloc.length; i++) {
                 p = this.getParentPath(temoloc[i].LocId);
                 let k = $(".loc_switchModal_box .locs_bdy li[data-id=" + temoloc[i].LocId + "]").find('a')[0];
-                $(k).prepend(`<span>${p}</span>`);
+                $(k).prepend(`<span><span class="parent_path">${p}</span><span class="loc_typ">${temoloc[i].TypeName}</span></span>`);
             }
         }
     };

@@ -8,7 +8,6 @@
     EbMapConCollection Maps = ViewBag.Maps;
     double Latitude = ViewBag.Latitude;
     double Longitude = ViewBag.Longitude;
-    string Place = ViewBag.Place;
 
     MapVendors vendor = ViewBag.MapType;
     EbMaps CurrentMap = Maps.GetMapByType(vendor);
@@ -96,7 +95,7 @@
         {
             <div class="location-wraper">
                 <div class="loc-head">
-                    <input class="form-control" placeholder="Search Place" id="plc-input" value="@Place" type="text" />
+                    <input class="form-control" placeholder="Search Place" id="plc-input" type="text" />
                 </div>
                 <div class="map-container" id="map-container">
 
@@ -106,10 +105,6 @@
             <script>
                 var map;
                 function initMap() {
-
-                    if ('@Place') {
-                        setSearch('@Place');
-                    }
 
                     map = new google.maps.Map(document.getElementById('map-container'), {
                         center: window.Geocordinates,

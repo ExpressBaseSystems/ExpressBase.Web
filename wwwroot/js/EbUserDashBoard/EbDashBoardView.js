@@ -449,7 +449,9 @@
         this.dropedCtrlInit(this.Procs[this.currentId].$Control, ebtype, this.currentId);
     };
     this.MakeDashboardLabel = function (obj) {
-        let a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        let a;
+        if (obj.LabelStyle == 0) {
+            a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
         <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
         <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
         <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
@@ -457,6 +459,20 @@
         <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
         <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
         </div></div>`;
+        }
+        else if (obj.LabelStyle == 1) {
+            a = `<div class="label2-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div class="card-icon-label2" id="${obj.EbSid}_icon"><i class=""></i></div>
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane-label2" >
+        <div class="lbl db-static-label2" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-desc-label2"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label2" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label2-footer" id="${obj.EbSid}_footer"><div class="footer-inner-label2"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div></div>`;
+        }
+        else if (obj.LabelStyle == 1) {
+
+        }
         return a;
     };
 

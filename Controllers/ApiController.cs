@@ -900,7 +900,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/map")]
-        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place)
+        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude)
         {
             try
             {
@@ -926,7 +926,6 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Maps = MapCollection;
                     ViewBag.Latitude = latitude;
                     ViewBag.Longitude = longitude;
-                    ViewBag.Place = place;
 
                     MapVendors MapType;
                     if (type == null)
@@ -937,7 +936,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.MapType = MapType;
                 }
                 else
-                    return new EmptyResult();
+                    return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -1048,7 +1047,6 @@ namespace ExpressBase.Web.Controllers
 
                 return BadRequest("An error occurred while sending push notification: " + pushDeliveryResult.FormattedErrorMessages);
             }
-
             return Unauthorized();
         }
     }

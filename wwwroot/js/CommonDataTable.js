@@ -260,7 +260,7 @@
     };
 
     this.CloseParamDiv = function () {
-        this.FDCont.toggle();
+        this.FDCont.toggle('drop', { direction: 'right' }, 150);
         if (this.FDCont.is(":visible"))
             $(".ppcont").hide();
     };
@@ -3988,7 +3988,7 @@
     };
 
     this.togglePG = function (e) {
-        $(".ppcont").toggle();
+        $(".ppcont").toggle('drop', { direction: 'right' }, 150);
         if ($(".ppcont").is(":visible"))
             $(".filterCont").hide();
         e.stopPropagation();

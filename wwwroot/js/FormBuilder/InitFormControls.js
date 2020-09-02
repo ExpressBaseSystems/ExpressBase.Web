@@ -474,7 +474,8 @@
             check: true,
             //linkParent: true,
             onClick: this.ClickLocationSelector.bind(this, ctrl),
-            //onChange: this.ChangeLocationSelector.bind(this)
+            //onChange: this.ChangeStyle.bind(this),
+            //done: this.ChangeStyle.bind(this),
         });
 
         $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.LocationSelectorCheckboxChanged.bind(this, ctrl));
@@ -510,6 +511,17 @@
         ctrl.DataVals.Value = ctrl.getValueFromDOM();
     };
 
+    this.ChangeStyle = function () {
+        $.each($(".sim-tree-checkbox").parent(), function (obj, i) {
+            if ($(i).children().hasClass("checked")) {
+                $(".sim-tree-checkbox").parent().css("background-color", "blue");
+            }
+            else {
+                $(".sim-tree-checkbox").parent().css("background-color", "none");
+            }
+        });     
+    };
+
     this.LocationSelectorCheckboxChanged = function (ctrl) {
         if ($(event.target).prop("checked")) {
             $('#' + ctrl.EbSid_CtxId).hide();
@@ -534,6 +546,8 @@
     };
 
     this.ClickLocationSelector = function (ctrl, item, x, y) {
+        $(".sim-tree-checkbox").parent().removeClass("filterDgLoc");
+        $(".checked").parent().addClass("filterDgLoc");
         if (this.DDTreeApi) {
             if (item.length === this.DDTreeApi.data.length)
                 $("#" + ctrl.EbSid_CtxId + "_text").text(`All Selected (${item.length})`);

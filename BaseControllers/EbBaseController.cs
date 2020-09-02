@@ -310,7 +310,7 @@ namespace ExpressBase.Web.BaseControllers
                         user = this.Redis.Get<User>(userAuthId);
                         if (user == null)
                         {
-                            this.ServiceClient.Post(new UpdateUserObjectRequest() { SolnId = parts[0], UserId = Convert.ToInt32(parts[1]), UserAuthId = userAuthId });
+                            this.ServiceClient.Post(new UpdateUserObjectRequest() { SolnId = parts[0], UserId = Convert.ToInt32(parts[1]), UserAuthId = userAuthId,WC = parts[2] });
                             user = this.Redis.Get<User>(userAuthId);
                         }
                     }

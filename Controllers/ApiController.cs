@@ -358,7 +358,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("/api/auth_sso")]
-        public ApiAuthResponse ApiLoginBySSO(string username, SignInOtpType type)
+        public ApiAuthResponse ApiLoginBySSO(string username, OtpType type)
         {
             ApiAuthResponse response = new ApiAuthResponse();
 
@@ -407,7 +407,7 @@ namespace ExpressBase.Web.Controllers
                 Authenticate2FAResponse validateResp = null;
                 try
                 {
-                    validateResp = this.ServiceClient.Post(new ValidateOtpRequest
+                    validateResp = this.ServiceClient.Post(new ValidateTokenRequest
                     {
                         Token = token,
                         UserAuthId = authid

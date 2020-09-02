@@ -13,6 +13,7 @@
     this.EbHeader = new EbHeader();
     this.loc_parents = {};
     this.loc_parent_id = {};
+    this.loc_count = this.Locations.length;
     this.Listener = {
         ChangeLocation: function (LocObject) {
 
@@ -20,9 +21,10 @@
     };
 
     this.Init = function () {
-        if (this.Locations.length>20) {
+        if (this.loc_count>20) {
             $(".locs_bdy").css('min-height', '70vh');
         }
+        $("#loc_tot_count").text(this.loc_count+" location");
         this.CurrentLoc = this.getCurrent();
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
@@ -89,6 +91,7 @@
         }
         else {
             $(EmptyLocs).show();
+            $("#loc_tot_count").text("0 of " + this.loc_count + " location");
         }
     };
 
@@ -156,6 +159,15 @@
                     $(".loc_switchModal_fade").hide();
                 }
 
+            }
+            else if (keycode == '8') {
+                var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
+                if (y.closest("ul.show").length) {
+                    y = y.closest("ul.show:first"); 
+                    let k = y.closest("li");
+                    k.find("a:first").trigger('click');
+                    k.find('.sim-tree-spread:first').trigger('click');
+                }
             }
             else if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
@@ -301,6 +313,9 @@
             var textB = b.name.toUpperCase().trim();
             return textA.localeCompare(textB);
         });
+        if ($("#loc-search").val() == "") {
+            $("#loc_tot_count").text(this.loc_count + " location");
+        }
         this.drawLocsTree();
         this.setDefault();
     };
@@ -408,6 +423,7 @@
                 $(k).prepend(`<span><span class="parent_path">${p}</span><span class="loc_typ">${temoloc[i].TypeName}</span></span>`);
             }
         }
+        $("#loc_tot_count").text(temoloc.length +" of "+this.loc_count + " location");
     };
 
     this.confirmLocFn = function () {

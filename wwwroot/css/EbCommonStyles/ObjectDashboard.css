@@ -667,9 +667,10 @@ input:checked + .proslider:before {
 .LocInfCr {
     float: left;
     height: 33px;
-    /*display: flex;*/
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    /*align-items: center;*/
     padding: 0 10px;
     font-family: Montserrat;
     font-weight: 500;

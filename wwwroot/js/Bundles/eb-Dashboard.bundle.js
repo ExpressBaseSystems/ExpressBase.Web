@@ -1664,19 +1664,7 @@ var EbCommonDataTable = function (Option) {
             this.ContextId = "filterWindow_" + this.tableId;
             this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
             $("#parent-div0").before(this.FDCont);
-            this.FDCont.hide();
-
-            if (this.login === "dc") {
-                this.stickBtn = new EbStickButton({
-                    $wraper: this.FDCont,
-                    $extCont: this.FDCont,
-                    //$scope: $(subDivId),
-                    icon: "fa-filter",
-                    dir: "left",
-                    label: "Parameters",
-                    style: { top: "78px" }
-                });
-            }
+            $(".filterCont").hide();
         };
     }
 
@@ -1723,18 +1711,6 @@ var EbCommonDataTable = function (Option) {
             var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter;
             $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter).empty();
             this.filterHtml = text;
-            if (this.login === "uc") {
-                this.stickBtn = new EbStickButton({
-                    $wraper: this.FDCont,
-                    $extCont: this.FDCont,
-                    $scope: $("#" + focusedId),
-                    icon: "fa-filter",
-                    dir: "left",
-                    label: "Parameters",
-                    //btnTop: 42,
-                    style: { top: "42px" }
-                });
-            }
             $("#obj_icons").empty();
             this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
             $("#obj_icons").append(this.$submit);
@@ -1743,7 +1719,7 @@ var EbCommonDataTable = function (Option) {
             this.FDCont = $("#filterWindow_" + this.tableId);
             $("#filterWindow_" + this.tableId).empty();
             $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId + "'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
-            $("#filterWindow_" + this.tableId).children().find('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
+
             $("#filterWindow_" + this.tableId).children().find("#close_paramdiv_" + this.tableId).off('click').on('click', this.CloseParamDiv.bind(this));
 
             $("#filterWindow_" + this.tableId).append(text);
@@ -1765,17 +1741,16 @@ var EbCommonDataTable = function (Option) {
 
             if ($("#" + this.ContextId).children("#filterBox").length === 0) {
                 this.FD = false;
-                this.FDCont.hide();
-                if (this.login === "dc") {
-                    this.stickBtn.hide();
-                }
-                else {
-                    dvcontainerObj.dvcol[focusedId].stickBtn.hide();
-                }
+                $(".filterCont").hide();
                 $("#eb_common_loader").EbLoader("hide");
                 this.$submit.trigger("click");
             }
             else {
+                $(".ppcont").hide();
+                this.filterid = "filter" + this.tableId;
+                this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+                $("#obj_icons").append(this.$filter);
+                this.$filter.click(this.CloseParamDiv.bind(this));
                 this.FD = true;
                 if (this.isPipped || this.isContextual) {
                     this.placefiltervalues();
@@ -1784,13 +1759,17 @@ var EbCommonDataTable = function (Option) {
                 }
                 else {
                     this.FDCont.show();
-                    this.FDCont.css("visibility", "visible");
                 }
                 $("#eb_common_loader").EbLoader("hide");
             }
             $(subDivId).focus();
 
             this.PcFlag = false;
+
+            if (this.propGrid !== null) {
+                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+                this.CreatePgButton();
+            }
         }
         else {
             if (this.MainData !== null)
@@ -1799,7 +1778,7 @@ var EbCommonDataTable = function (Option) {
             this.EbObject = dvGlobal.Current_obj;
             this.getColumnsSuccess();
         }
-        this.FDCont.css("left", "0");
+        this.FDCont.css("right", "0");
     }.bind(this);
 
     this.GetFD = function () {
@@ -1823,47 +1802,14 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+        this.FDCont.toggle('drop', { direction: 'right' }, 150);
+        if (this.FDCont.is(":visible"))
+            $(".ppcont").hide();
     };
 
     this.tmpPropertyChanged = function (obj, Pname, newval, oldval) {
         //this.isSecondTime = true;
-        if (Pname === "DataSourceRefId") {
-            if (obj[Pname] !== null) {
-                this.PcFlag = true;
-                this.stickBtn.hide();
-                this.filterValues = [];
-                this.isContextual = false;
-                this.isPipped = false;
-                this.rowData = null;
-
-                this.orderColl = [];
-                this.check4Customcolumn();
-                this.EbObject.OrderBy.$values = [];
-                this.MainData = null;
-                if (this.isCustomColumnExist) {
-                    EbDialog("show", {
-                        Message: "Retain Custom Columns?",
-                        Buttons: {
-                            "Yes": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            },
-                            "No": {
-                                Background: "red",
-                                Align: "left",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: this.dialogboxAction.bind(this)
-                    });
-                }
-                else
-                    this.call2FD();
-            }
-        }
-        else if (Pname === "Name") {
+        if (Pname === "Name") {
             $("#objname").text(obj.DisplayName);
             console.log(obj);
         }
@@ -1913,17 +1859,6 @@ var EbCommonDataTable = function (Option) {
                 this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
         }
 
-        if (this.login === "dc") {
-            this.propGrid = new Eb_PropertyGrid({
-                id: "pp_inner",
-                wc: "dc",
-                cid: this.cid,
-                $extCont: $(".ppcont"),
-                style: { top: "76px" }
-            }, this.PGobj);
-
-            this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-        }
         $("#objname").text(this.EbObject.DisplayName);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
@@ -2021,16 +1956,12 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.Do4EbdataTable = function () {
+        $("#objname").text(this.EbObject.DisplayName);
         if (this.isSecondTime)
             this.MainData = null;
-        this.propGrid.ClosePG();
+        $(".ppcont").hide();
+        $(".filterCont").hide();
         if (this.FilterDialog) {
-            if (this.FD)
-                this.stickBtn.minimise();
-            else
-                this.stickBtn.hide();
-            $("#objname").text(this.EbObject.DisplayName);
-
             this.validateFD = this.FilterDialog.IsFDValidationOK;
             if (this.isContextual) {
                 if (this.isSecondTime) {
@@ -2384,9 +2315,9 @@ var EbCommonDataTable = function (Option) {
             }
 
             try {
-                let url = "../dv/getData"
+                let url = "../dv/getData";
                 if (this.Source === "Bot") {
-                    url = "../boti/getData"
+                    url = "../boti/getData";
                 }
                 o.ajax = {
                     //url: this.ssurl + '/ds/data/' + this.dsid,
@@ -2434,7 +2365,7 @@ var EbCommonDataTable = function (Option) {
         if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();
         if (this.EbObject.IsDataFromApi)
-            this.ModifyToRequestParams();
+            this.ModifyRequestParams();
         else
             dq.Params = this.filterValues;
 
@@ -2443,8 +2374,8 @@ var EbCommonDataTable = function (Option) {
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        if (dq.length === -1)
-            dq.length = this.RowCount;
+        //if (dq.length === -1)
+        //    dq.length = this.RowCount;
         this.RemoveColumnRef();
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
@@ -2454,10 +2385,12 @@ var EbCommonDataTable = function (Option) {
         return dq;
     };
 
-    this.ModifyToRequestParams = function () {
-        this.EbObject.Parameters.$values = this.filterValues.map(function (row) {
-            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
+    this.ModifyRequestParams = function () {
+        let xx = this.EbObject.Parameters.$values.map(function (row) {
+            return { Name: row.Name, Value: row.Value, Type: row.Type };
         });
+
+        this.EbObject.ParamsList.$values = this.filterValues.concat(xx);
     };
 
     this.getOrderByInfo = function () {
@@ -2554,6 +2487,14 @@ var EbCommonDataTable = function (Option) {
                 }
             }
         }
+    };
+
+    getFilterForLinkfromColumn = function () {
+        this.linkfromcolumn = false;
+        this.dvformMode = 1; let filters = [];
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { obj.name === this.linkDVColumn; }.bind(this))[0];
+        filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
+        return filters;
     };
 
     this.getfilterFromRowdata = function () {
@@ -2947,7 +2888,7 @@ var EbCommonDataTable = function (Option) {
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable" && this.Source !== "datagrid") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -4236,7 +4177,7 @@ var EbCommonDataTable = function (Option) {
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTableFromColumn.bind(this));
+        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -4261,7 +4202,7 @@ var EbCommonDataTable = function (Option) {
         $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
-        $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
+        //$("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $(".columnMarker" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".columnimage").one("load", function () {
             $(".columnimage").off("click").on("click", this.ViewImage.bind(this));
@@ -4366,7 +4307,6 @@ var EbCommonDataTable = function (Option) {
         this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#obj_icons").append(this.$submit);
         this.$submit.click(this.getColumnsSuccess.bind(this));
-
         if (this.EbObject.FormLinks.$values.length > 0) {
             this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
                 index === self.findIndex((t) => (
@@ -4381,18 +4321,22 @@ var EbCommonDataTable = function (Option) {
 
         if (this.Source === "EbDataTable") {
             if ($("#" + this.tableId).children().length > 0) {
+                if (this.FD) {
+                    this.filterid = "filter" + this.tableId;
+                    this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+                    $("#obj_icons").append(this.$filter);
+                    this.$filter.click(this.CloseParamDiv.bind(this));
+                }
                 if (this.login === "uc") {
                     $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
                     $.each(this.permission, function (i, obj) {
                         if (obj === "Excel")
                             $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
                     }.bind(this));
-                }
-
-                if (this.login === "uc") {
                     dvcontainerObj.modifyNavigation();
                 }
             }
+            this.CreatePgButton();
             this.excelbtn = $("#btnExcel" + this.tableId);
         }
         else {
@@ -4408,6 +4352,19 @@ var EbCommonDataTable = function (Option) {
         }
         $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
         this.Contexmenu4SmsColumn();
+    };
+
+    this.CreatePgButton = function () {
+        $("#obj_icons").append(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
+        $(".stickBtn").hide();
+        this.PropertyDiv = $("#pp_inner");
+        $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+        $("#pp_inner").find(".pgpin").remove();
+        $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right pgpin" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+        $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
     };
 
     this.Contexmenu4SmsColumn = function () {
@@ -5572,12 +5529,11 @@ var EbCommonDataTable = function (Option) {
         //this.Api.ajax.reload();
     };
 
-    this.toggleFilterdialog = function () {
-        $("#" + this.ContextId).toggle();
-    };
-
-    this.togglePPGrid = function () {
-        $(".ppcont").toggle();
+    this.togglePG = function (e) {
+        $(".ppcont").toggle('drop', { direction: 'right' }, 150);
+        if ($(".ppcont").is(":visible"))
+            $(".filterCont").hide();
+        e.stopPropagation();
     };
 
     this.fselect_func = function (e) {
@@ -5688,6 +5644,11 @@ var EbCommonDataTable = function (Option) {
             this.popup = true;
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
+        else if ($(e.target).closest("a").attr("data-linkfromcolumn") !== undefined) {
+            cData = $(e.target).text();
+            this.linkfromcolumn = true;
+            colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        }
         else {
             cData = $(e.target).text();
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
@@ -5704,6 +5665,8 @@ var EbCommonDataTable = function (Option) {
         this.filterValuesforForm = [];
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
             this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
+        else if (this.linkfromcolumn)
+            this.filterValuesforForm = getFilterForLinkfromColumn();
         else
             this.filterValuesforForm = this.getfilterFromRowdata();
 
@@ -7175,9 +7138,9 @@ let DashBoardViewWrapper = function (options) {
     this.DashBoardList = options.AllDashBoards || null;
     this.stickBtn;
     this.filtervalues = [];
-    //this.TabNum = options.tabNum;
+    this.TabNum = options.tabNum;
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
-    this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
+    this.FilterVal = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     this.Procs = {};
     this.Rowdata = {};
@@ -7256,6 +7219,7 @@ let DashBoardViewWrapper = function (options) {
                     </div>
                 `);
         $('#paramdiv' + this.TabNum).append(result);
+        this.FilterObj = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
         $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
         $("#btnGo").empty().append("Apply");
@@ -7272,7 +7236,9 @@ let DashBoardViewWrapper = function (options) {
             //});
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
-            $("#btnGo").trigger("click");
+            if (!this.FilterObj.FormObj.AutoRun)
+                $("#btnGo").trigger("click");
+
             this.CloseParamDiv();
             $("#filter-dg").off("click").on("click", this.toggleFilter.bind(this));
         }
@@ -7331,7 +7297,6 @@ let DashBoardViewWrapper = function (options) {
     }
 
     this.DashBoardSwitch = function (e) {
-
         $('.Btn4SwitchDB').removeAttr("disabled");
         let refid = e.target.getAttribute("value");
         $(`[Value=${refid}]`).attr("disabled", true);
@@ -7501,9 +7466,10 @@ let DashBoardViewWrapper = function (options) {
                         let object = this.Procs[this.currentId];
                         let designHtml = this.MakeDashboardLabel(object);
                         $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
-
                         this.labelstyleApply(this.CurrentTile);
-                        EbDataLabelFn(obj);
+                        EbDataLabelFn(obj, this.CurrentTile);
+                        if (obj.Object_Selector)
+                            $(`[data-id="${this.CurrentTile}"] .label-cont`).off("click").on("click", this.DisplayBlockLink.bind(this))
                         this.TileCollection[t_id].LabelColl.$values[i] = object;
                     }.bind(this));
                     if (currentobj.LinksColl) {
@@ -7609,7 +7575,9 @@ let DashBoardViewWrapper = function (options) {
         this.dropedCtrlInit(this.Procs[this.currentId].$Control, ebtype, this.currentId);
     };
     this.MakeDashboardLabel = function (obj) {
-        let a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        let a;
+        if (obj.LabelStyle == 0) {
+            a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
         <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
         <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
         <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
@@ -7617,6 +7585,20 @@ let DashBoardViewWrapper = function (options) {
         <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
         <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
         </div></div>`;
+        }
+        else if (obj.LabelStyle == 1) {
+            a = `<div class="label2-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div class="card-icon-label2" id="${obj.EbSid}_icon"><i class=""></i></div>
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane-label2" >
+        <div class="lbl db-static-label2" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-desc-label2"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label2" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label2-footer" id="${obj.EbSid}_footer"><div class="footer-inner-label2"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div></div>`;
+        }
+        else if (obj.LabelStyle == 1) {
+
+        }
         return a;
     };
 
@@ -7717,25 +7699,25 @@ let DashBoardViewWrapper = function (options) {
         this.CurrentTile = tileid;
         var id = e.target.getAttribute("link");
         if (id === "ext-link") {
-            let TileRefid = this.TileCollection[tileid].RefId;
-            //window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
-            let url = "../DV/dv?refid=" + TileRefid;
+            //let TileRefid = this.TileCollection[tileid].RefId;
+            this.linkDV = this.TileCollection[tileid].RefId;
+            let url = "../DV/dv?refid=" + this.linkDV;
+            this.DvExternalLinkTrigger();
+            //let _form = document.createElement("form");
+            //_form.setAttribute("method", "post");
+            //_form.setAttribute("action", url);
+            //_form.setAttribute("target", "_blank");
 
-            let _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
+            //let input1 = document.createElement('input');
+            //input1.type = 'hidden';
+            //input1.name = "filterValues";
+            //input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            //_form.appendChild(input1);
 
-            let input1 = document.createElement('input');
-            input1.type = 'hidden';
-            input1.name = "filterValues";
-            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
-            _form.appendChild(input1);
+            //document.body.appendChild(_form);
 
-            document.body.appendChild(_form);
-
-            _form.submit();
-            document.body.removeChild(_form);
+            //_form.submit();
+            //document.body.removeChild(_form);
         }
         if (id === "restart-tile") {
             $(`[data-id="${this.CurrentTile}"]`).empty();
@@ -7758,7 +7740,11 @@ let DashBoardViewWrapper = function (options) {
     };
 
     this.TileRefidChangesuccess = function (id, data) {
-        if (this.filtervalues.length === 0 || this.filtervalues === undefined) {
+        if (this.FilterVal.length > 0) {
+            this.filterValues = this.FilterVal;
+            this.placefiltervalues();
+        }
+        else if (this.filtervalues.length === 0 || this.filtervalues === undefined) {
             this.GetFilterValuesForDataSource();
         }
         let obj = JSON.parse(data);
@@ -7843,6 +7829,7 @@ let DashBoardViewWrapper = function (options) {
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         //if (this.stickBtn) { this.stickBtn.minimise(); }
+        return this.filtervalues;
     };
 
 
@@ -7850,8 +7837,9 @@ let DashBoardViewWrapper = function (options) {
         this.loader.EbLoader("show");
         this.filtervalues = [];
         //if (this.stickBtn) { this.stickBtn.minimise(); }
-
-        if (this.filterDialog)
+        if (this.FilterVal.length > 0)
+            this.filtervalues = this.FilterVal;
+        else if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
 
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
@@ -7871,6 +7859,152 @@ let DashBoardViewWrapper = function (options) {
         }
         this.CloseParamDiv();
     };
+
+    this.DisplayBlockLink = function (e) {
+        this.linkDV = $(e.target.closest(".label-cont")).attr("ref-id");
+        if (this.FilterVal.length > 0) {
+            this.filtervalues = this.FilterVal;
+        }
+        else
+            this.filtervalues = this.GetFilterValuesForDataSource();
+        var splitarray = this.linkDV.split("-");
+        if (splitarray[2] === "3") {
+            var url = "../ReportRender/BeforeRender?refid=" + this.linkDV;
+            var copycelldata = cData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
+            if ($(`#RptModal${copycelldata}`).length !== 0)
+                $(`#RptModal${copycelldata}`).remove();
+            $("body").append(`<div class="modal fade RptModal" id="RptModal${copycelldata}" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>                              
+                        </div>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}'></iframe>
+            </div>
+                    </div>
+                </div>
+            </div>
+            `);
+            $(`#RptModal${copycelldata}`).modal();
+            $(`#reportIframe${copycelldata}`).css("height", "80vh");
+            //else {
+            //    $(`#RptModal${copycelldata}`).modal();
+            //    $.LoadingOverlay("hide");
+            //}
+        }
+        else if (splitarray[2] === "0") {
+            let url = "../webform/index?refid=" + this.linkDV;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            _form.appendChild(input);
+
+            //input = document.createElement('input');
+            //input.type = 'hidden';
+            //input.name = "_mode";
+            //input.value = this.dvformMode;
+            //_form.appendChild(input);
+
+            //input = document.createElement('input');
+            //input.type = 'hidden';
+            //input.name = "_locId";
+            //input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+            //_form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
+        else if (splitarray[2] === "22") {
+            this.tabNum++;
+            let url = "../DashBoard/DashBoardView?refid=" + this.linkDV;
+
+            let _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
+
+            let input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = "filterValues";
+            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            _form.appendChild(input1);
+
+            let input2 = document.createElement('input');
+            input2.type = 'hidden';
+            input2.name = "tabNum";
+            input2.value = this.tabNum;
+            _form.appendChild(input2);
+
+            document.body.appendChild(_form);
+
+            //note I am using a post.htm page since I did not want to make double request to the page 
+            //it might have some Page_Load call which might screw things up.
+            //window.open("post.htm", name, windowoption);       
+            _form.submit();
+            document.body.removeChild(_form);
+        }
+
+        else {
+            this.DvExternalLinkTrigger();
+        } 
+    }
+
+    this.placefiltervalues = function () {
+        $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+            let getobjval = getObjByval(this.filtervalues, "Name", obj.Name)
+            if (getobjval !== undefined) {
+                let val = getobjval.Value;
+                obj.setValue(val);
+            }
+        }.bind(this));
+    }
+
+    this.DvExternalLinkTrigger = function () {
+        var splitarray = this.linkDV.split("-");
+        //this.filtervalues = this.GetFilterValuesForDataSource();
+        this.TabNum++;
+        let url = "../DV/dv?refid=" + this.linkDV;
+
+        let _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "rowData";
+
+        //input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData))));
+        //_form.appendChild(input);
+
+        let input1 = document.createElement('input');
+        input1.type = 'hidden';
+        input1.name = "filterValues";
+        input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+        _form.appendChild(input1);
+
+        let input2 = document.createElement('input');
+        input2.type = 'hidden';
+        input2.name = "tabNum";
+        input2.value = this.TabNum;
+        _form.appendChild(input2);
+
+        document.body.appendChild(_form);
+
+        //note I am using a post.htm page since I did not want to make double request to the page 
+        //it might have some Page_Load call which might screw things up.
+        //window.open("post.htm", name, windowoption);       
+        _form.submit();
+        document.body.removeChild(_form);
+    }
+
     this.init();
 }
 
@@ -9413,8 +9547,9 @@ var EbBasicChart = function (Option) {
 
 //DataLabel Style Function
 
-function EbDataLabelFn(Label) {
-
+function EbDataLabelFn(Label, tileId) {
+    if (Label.Object_Selector != "" && tileId != null)
+        $(`[data-id="${tileId}"] .label-cont`).attr("ref-id", Label.Object_Selector);
     if (Label.ChangeTextPositon) {
         if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
             $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
@@ -9450,13 +9585,10 @@ function EbDataLabelFn(Label) {
         GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
     }
 
-
     //Dynamic label style
     if (Label.DynamicLabelFont !== null) {
         GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
     }
-
-
     $(`#${Label.EbSid}_Data_pane`).css("border-radius", Label.LabelBorderRadius);
     $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
     $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);

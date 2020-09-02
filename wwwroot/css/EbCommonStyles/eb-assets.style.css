@@ -802,6 +802,9 @@
 .loc_switchModal_box .locs_foot {
     padding: 7px 20px 7px 10px
 }
+.loc_switchModal_box .locs_foot .loc_count{
+   padding:2px 5px;
+}
     .loc_switchModal_box .locs_foot button {
         letter-spacing: 0.1em;
         font-weight: 500;

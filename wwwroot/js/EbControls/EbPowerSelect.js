@@ -641,7 +641,7 @@ const EbPowerSelect = function (ctrl, options) {
 
         if (setvaluesColl.length > 0)// clear if already values there
             this.clearValues();
-
+        
         let valMsArr = setvaluesColl;
         let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
@@ -991,6 +991,12 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setLastmodfiedVal = function () {
+        if (JSON.stringify(this.Vobj.valueMembers) === JSON.stringify(this.Values)) {
+            this.Changed = false;
+        }
+        else
+            this.Changed = true;
+
         if (this.Vobj.valueMembers.length > this.Values.length) {
             this.lastAddedOrDeletedVal = this.Vobj.valueMembers.filter(x => !this.Values.includes(x))[0];
             this.curAction = "add";
@@ -1030,14 +1036,13 @@ const EbPowerSelect = function (ctrl, options) {
         if (this.datatable === null) {
             if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
                 this.reSetColumnvals_();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
 
         }
-        else {
+        else
             this.reSetColumnvals_();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
-        }
 
+        if (this.Changed)
+            this.$inp.val(this.Vobj.valueMembers).trigger("change");
 
         this.required_min_Check();
 

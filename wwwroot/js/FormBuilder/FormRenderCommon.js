@@ -55,8 +55,10 @@
         for (let i = 0; i < defaultValsExecOrderArr.length; i++) {
             let ctrlPath = defaultValsExecOrderArr[i];
             let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
+            ctrl.__fromDefaultValsExec_Import = this.FO.__fromImport;
             this.setDefaultValue(ctrl);
         }
+        this.FO.__fromImport = false;
     };
 
     this.execValueExpNC = function (DoNotPersistExecOrder) {
@@ -252,13 +254,16 @@
                 depCtrl.reloadWithParam(curCtrl);
             }
             else if (depCtrl.ObjType === "PowerSelect") {
-                if (!depCtrl.__isInitiallyPopulating) {
+                if (!curCtrl.__isInitiallyPopulating && !curCtrl.__fromDefaultValsExec_Import) {
                     depCtrl.initializer.reloadWithParams(curCtrl);
                 }
-                else
-                    depCtrl.__isInitiallyPopulating = false;
+                else {
+                    curCtrl.__isInitiallyPopulating = false;
+                }
             }
         }
+        if (curCtrl.__fromDefaultValsExec_Import)
+            curCtrl.__fromDefaultValsExec_Import = false;
     }.bind(this);
 
     this.UpdateValExpDepCtrls = function (curCtrl) {

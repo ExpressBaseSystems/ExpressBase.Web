@@ -944,6 +944,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid rgba(34,36,38,.15);
     display: flex;
     flex-flow: column;
+    position: relative;
 }
 
 .dgtbl .ctrl-cover {
@@ -2823,3 +2824,26 @@ input.locinp {
     background-position: -64px -224px;
     background-color: #f1f1f1;
 }
+
+.ebctrl-msg-cont {
+    display: flex;
+    position: absolute;
+    font-size: 21px;
+    left: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+    .ebctrl-msg-cont .ebctrl-msg-span {
+        display: flex;
+        margin: auto -5px auto 10px;
+    }
+
+    .ebctrl-msg-cont .text-danger {
+        display: flex;
+        color: #a94442;
+    }
+
+    .ebctrl-msg-cont .text-warning {
+        color: #feb205;
+    }

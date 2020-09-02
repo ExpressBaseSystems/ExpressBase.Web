@@ -25,7 +25,7 @@
 
 <div id='filterBox' isrendermode="true" class="filter-box" eb-root-obj-container>
     @Html.Raw(ViewBag.HtmlBody)
-    <button class="filter-run" id="btnGo"><i class="fa fa-play" aria-hidden="true"></i></button>
+    <button class="filter-run" id="btnGo">Apply</button>
 </div>
 
 <style>
@@ -45,6 +45,9 @@
         padding: 4px 12px;
         float: right;
         border-radius: 2px;
+        width: 100%;
+        height: 3rem;
+        margin-top: 10px;
     }
 
         .filter-box .filter-run:hover {

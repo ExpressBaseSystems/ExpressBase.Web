@@ -8,25 +8,25 @@
             <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12 resetpw_container">
                 <div class="loader_top" id="loader_profile"></div>
                 <div class="resetpw-htmlbox">
-                    <div class="login-sec-image text-center">
+                    @*<div class="login-sec-image text-center">
                         <img src=@logo class="T_logo Eb_Image" />
-                    </div>
+                    </div>*@
                     <h1 class="text-center">Reset your password</h1><br>
                     <div>
                         <label>Current Password</label>
-                        <div class="form-group pass_show">
+                        <div class="form-group pass_show pass_key">
                             <input type="password" class="form-control ebtext-lg" id="currentpwd" placeholder="Current Password">
                         </div>
 
                         <label>New Password</label>
                         <div class="form-group">
-                            <div class="pass_show">
+                            <div class="pass_key">
                                 <input type="password" class="form-control ebtext-lg" id="newpwd" placeholder="New Password">
                             </div>
                             <div class="validator-error-newpwd validator"></div>
                         </div>
                         <label>Confirm Password</label>
-                        <div class="form-group pass_show">
+                        <div class="form-group pass_show pass_key">
                             <input type="password" class="form-control ebtext-lg" id="confirmpwd" placeholder="Confirm Password">
                         </div>
                         <div class="validator-error-confirmpwd validator"></div>
@@ -161,7 +161,7 @@
         color: red;
     }
 
-    .pass_show:before {
+    .pass_key:before {
         font-family: FontAwesome;
         content: "\f084";
         position: absolute;

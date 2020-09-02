@@ -177,7 +177,7 @@
             this.FDCont = $("#filterWindow_" + this.tableId);
             $("#filterWindow_" + this.tableId).empty();
             $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId + "'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
-            
+
             $("#filterWindow_" + this.tableId).children().find("#close_paramdiv_" + this.tableId).off('click').on('click', this.CloseParamDiv.bind(this));
 
             $("#filterWindow_" + this.tableId).append(text);
@@ -260,7 +260,7 @@
     };
 
     this.CloseParamDiv = function () {
-        this.FDCont.toggle();
+        this.FDCont.toggle('drop', { direction: 'right' }, 150);
         if (this.FDCont.is(":visible"))
             $(".ppcont").hide();
     };
@@ -844,9 +844,9 @@
     };
 
     this.ModifyRequestParams = function () {
-         let xx = this.EbObject.Parameters.$values.map(function (row) {
-             return { Name: row.Name, Value: row.Value, Type: row.Type };
-         });
+        let xx = this.EbObject.Parameters.$values.map(function (row) {
+            return { Name: row.Name, Value: row.Value, Type: row.Type };
+        });
 
         this.EbObject.ParamsList.$values = this.filterValues.concat(xx);
     };
@@ -945,6 +945,14 @@
                 }
             }
         }
+    };
+
+    getFilterForLinkfromColumn = function () {
+        this.linkfromcolumn = false;
+        this.dvformMode = 1; let filters = [];
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { obj.name === this.linkDVColumn; }.bind(this))[0];
+        filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
+        return filters;
     };
 
     this.getfilterFromRowdata = function () {
@@ -1338,7 +1346,7 @@
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable" && this.Source !== "datagrid") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -2627,7 +2635,7 @@
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTableFromColumn.bind(this));
+        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -3980,7 +3988,7 @@
     };
 
     this.togglePG = function (e) {
-        $(".ppcont").toggle();
+        $(".ppcont").toggle('drop', { direction: 'right' }, 150);
         if ($(".ppcont").is(":visible"))
             $(".filterCont").hide();
         e.stopPropagation();
@@ -4094,6 +4102,11 @@
             this.popup = true;
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
+        else if ($(e.target).closest("a").attr("data-linkfromcolumn") !== undefined) {
+            cData = $(e.target).text();
+            this.linkfromcolumn = true;
+            colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        }
         else {
             cData = $(e.target).text();
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
@@ -4110,6 +4123,8 @@
         this.filterValuesforForm = [];
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
             this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
+        else if (this.linkfromcolumn)
+            this.filterValuesforForm = getFilterForLinkfromColumn();
         else
             this.filterValuesforForm = this.getfilterFromRowdata();
 

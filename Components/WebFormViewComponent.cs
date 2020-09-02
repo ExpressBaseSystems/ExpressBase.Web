@@ -39,10 +39,10 @@ namespace ExpressBase.Web.Components
             //WebForm.SetContextId("ctx_" + timeStampInt);
             
             WebForm.IsRenderMode = true;//this property must set before AfterRedisGet //userctrl using this prop
-            WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             WebForm.RefId = refid;
             WebForm.UserObj = ViewBag.__User;
             WebForm.SolutionObj = ViewBag.__Solution;
+            WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             ViewBag.FormPermissions = JsonConvert.SerializeObject(WebForm.GetLocBasedPermissions());
 
             if (WebForm != null)

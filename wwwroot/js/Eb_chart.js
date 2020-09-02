@@ -333,7 +333,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.CloseParamDiv = function () {
-        this.FDCont.toggle();
+        this.FDCont.toggle('drop', { direction: 'right' }, 150);
         if (this.FDCont.is(":visible"))
             $(".ppcont").hide();
     };

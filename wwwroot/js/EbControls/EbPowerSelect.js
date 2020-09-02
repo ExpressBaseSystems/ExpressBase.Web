@@ -594,7 +594,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.ajaxData = function () {
-        this.EbObject = new EbObjects["EbTableVisualization"]("Container");
+        this.EbObject = new EbTableVisualization("Container");// used by all ebobejcts
         this.filterValues = this.getFilterValuesFn();
         this.AddUserAndLcation();
 

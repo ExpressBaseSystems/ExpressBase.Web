@@ -13,6 +13,7 @@
     this.EbHeader = new EbHeader();
     this.loc_parents = {};
     this.loc_parent_id = {};
+    this.loc_count = this.Locations.length;
     this.Listener = {
         ChangeLocation: function (LocObject) {
 
@@ -20,12 +21,23 @@
     };
 
     this.Init = function () {
+        if (this.loc_count>20) {
+            $(".locs_bdy").css('min-height', '70vh');
+        }
+        $("#loc_tot_count").text(this.loc_count+" location");
         this.CurrentLoc = this.getCurrent();
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+        if (typeof this.CurrentLocObj === 'undefined' || this.CurrentLocObj === null) {
+            this.CurrentLocObj = this.Locations[0];
+            this.CurrentLoc = this.CurrentLocObj.LocId;
+            this.PrevLocation = this.CurrentLoc;
+        }
         this.prev_loc_name = this.CurrentLocObj.LongName;
         this.prev_loc = this.CurrentLoc;
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+        this.EbHeader.setLocation_type(this.CurrentLocObj.TypeName);
+
         this.ModifyLocationObject();
         this.findParent_loc();
         this.drawLocsTree();
@@ -79,6 +91,7 @@
         }
         else {
             $(EmptyLocs).show();
+            $("#loc_tot_count").text("0 of " + this.loc_count + " location");
         }
     };
 
@@ -108,6 +121,7 @@
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
         ebcontext.menu.reset();
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+        this.EbHeader.setLocation_type(this.CurrentLocObj.TypeName);
         if (this.PrevLocation !== this.CurrentLoc) {
             this.Listener.ChangeLocation(this.CurrentLocObj);
             this.PrevLocation = this.CurrentLoc;
@@ -146,10 +160,19 @@
                 }
 
             }
+            else if (keycode == '8') {
+                var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
+                if (y.closest("ul.show").length) {
+                    y = y.closest("ul.show:first"); 
+                    let k = y.closest("li");
+                    k.find("a:first").trigger('click');
+                    k.find('.sim-tree-spread:first').trigger('click');
+                }
+            }
             else if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
                 if (y.find("ul.show").length) {
-                    y = y.find("ul.show");
+                    y = y.find("ul.show:first"); 
                     while (y.hasClass("show")) {
                         let k = y.closest("li");
                         k.find("a:first").trigger('click');
@@ -247,6 +270,11 @@
                 this.CurrentLoc = this.getCurrent();
                 this.PrevLocation = this.CurrentLoc;
                 this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+                if (typeof this.CurrentLocObj === 'undefined' || this.CurrentLocObj === null) {
+                    this.CurrentLocObj = this.Locations[0];
+                    this.CurrentLoc = this.CurrentLocObj.LocId;
+                    this.PrevLocation = this.CurrentLoc;
+                }
                 this.prev_loc_name = this.CurrentLocObj.LongName;
                 this.prev_loc = this.CurrentLoc;
                 this.Tempdata = this.loc_data;
@@ -285,6 +313,9 @@
             var textB = b.name.toUpperCase().trim();
             return textA.localeCompare(textB);
         });
+        if ($("#loc-search").val() == "") {
+            $("#loc_tot_count").text(this.loc_count + " location");
+        }
         this.drawLocsTree();
         this.setDefault();
     };
@@ -302,6 +333,7 @@
                     $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a`).eq(0).trigger("click");
                 }
                 this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+                this.EbHeader.setLocation_type(this.CurrentLocObj.TypeName);
                 store.clearAll();
                 store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
                 ebcontext.menu.reset();
@@ -388,9 +420,10 @@
             for (i = 0; i < temoloc.length; i++) {
                 p = this.getParentPath(temoloc[i].LocId);
                 let k = $(".loc_switchModal_box .locs_bdy li[data-id=" + temoloc[i].LocId + "]").find('a')[0];
-                $(k).prepend(`<span>${p}</span>`);
+                $(k).prepend(`<span><span class="parent_path">${p}</span><span class="loc_typ">${temoloc[i].TypeName}</span></span>`);
             }
         }
+        $("#loc_tot_count").text(temoloc.length +" of "+this.loc_count + " location");
     };
 
     this.confirmLocFn = function () {

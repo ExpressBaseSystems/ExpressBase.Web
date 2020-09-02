@@ -152,13 +152,14 @@
     border: 1px solid #e1e1e2;
     letter-spacing: 0.03em;
     background-color: #f5f5f5bd;
-    cursor:pointer;
+    cursor: pointer;
     /*box-shadow: -1px 2px 4px 1px #b5b5b547;*/
 }
 
     .locs_bdy ul.sim-tree a:focus {
-        outline:none;
+        outline: none;
     }
+
     .locs_bdy ul.sim-tree a:hover {
         border-radius: 4px;
         background: #3586cc;
@@ -170,3 +171,67 @@
         font-size: 11px;
         width: fit-content;
     }
+
+div[ctype="LocationSelector"]
+.Eb-ctrlContainer .sim-tree {
+    /*padding: 0px 0px;*/
+}
+
+div[ctype="LocationSelector"] .sim-tree {
+    /*padding: 0px 0px;*/
+}
+
+    div[ctype="LocationSelector"] .sim-tree .parentNode {
+        padding: 4px 0px;
+    }
+
+        div[ctype="LocationSelector"] .sim-tree .parentNode a {
+            margin-top: 2px;
+            border: solid 1px #c5c5c5;
+            border-radius: 3px;
+            width: 90%;
+            background: #f3f3f3;
+            padding: 0px 15px;
+            padding-top: 1px;
+            height: 26px;
+        }
+
+    div[ctype="LocationSelector"] .sim-tree .childNode {
+        padding: 4px 0px;
+    }
+
+        div[ctype="LocationSelector"] .sim-tree .childNode a {
+            margin-top: 2px;
+            border: solid 1px #c5c5c5;
+            border-radius: 3px;
+            width: 90%;
+            background: #f3f3f3;
+            padding: 0px 15px;
+            padding-top: 1px;
+            height: 26px;
+        }
+
+    div[ctype="LocationSelector"] .sim-tree .sim-tree-checkbox {
+        border-radius: 11px;
+        height: 15px;
+        width: 15px;
+        margin-top: -4px;
+        /*display: none;*/
+    }
+        div[ctype="LocationSelector"] .sim-tree .sim-tree-checkbox.sim-tree-semi, .sim-tree .sim-tree-checkbox.checked {
+            border: none;
+            background-color: #247;
+        }
+
+    div[ctype="LocationSelector"] .sim-tree .sim-tree-spread.sim-icon-d {
+        padding: 0px 6px;
+    }
+
+    div[ctype="LocationSelector"] .sim-tree .sim-tree-spread.sim-icon-r {
+        padding: 0px 6px;
+    }
+
+.filterDgLoc {
+    background: #528ff0bf !important;
+    color: white !important;
+}

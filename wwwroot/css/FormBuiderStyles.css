@@ -2727,14 +2727,19 @@ input.locinp {
         display: inline-block;
     }
 
+/*ebEmail control*/
+.emailCtrl_invalid {
+    background: #ffb2b24f;
+}
+
 /*ebpdf control*/
-  .pdfwrapper-cont i {
-        font-size: 33px;
-        position: absolute;
-        bottom: 10px;
-        cursor: pointer;
-        left: 50px;
-    }
+.pdfwrapper-cont i {
+    font-size: 33px;
+    position: absolute;
+    bottom: 10px;
+    cursor: pointer;
+    left: 50px;
+}
 
 .obj-hlp-iframe {
     width: 100%;

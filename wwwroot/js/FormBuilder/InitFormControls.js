@@ -1028,6 +1028,19 @@
                 $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
+
+            $("#" + ctrl.EbSid_CtxId).on('change', function (e) {
+                let newLocId = ctrl.getValueFromDOM();    
+                if (newLocId === 0)
+                    return;
+                let newLocObj = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
+                let oldLocObj = ebcontext.locations.CurrentLocObj;
+
+                if (newLocObj.LocId !== oldLocObj.LocId) {
+                    EbMessage("show", { Message: `Switching from ${oldLocObj.LongName} to ${newLocObj.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+                    ebcontext.locations.SwitchLocation(newLocObj.LocId);
+                }                
+            });
         }
     };
 
@@ -1160,9 +1173,21 @@
 
     this.checkEmail = function (ctrl) {
         if (EbvalidateEmail(event.target.value))
-            ctrl.removeInvalidStyle();
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).removeClass("emailCtrl_invalid");
+            }
+            else {
+                ctrl.removeInvalidStyle();
+            }
+          
         else
-            ctrl.addInvalidStyle("Invalid email");
+            if (this.Renderer.rendererName === "Bot") {
+                $(`#${ctrl.EbSid}`).addClass("emailCtrl_invalid");
+            }
+            else {
+                ctrl.addInvalidStyle("Invalid email");
+            }
+           
     }
 
     this.initNumeric = function (ctrl, $input) {
@@ -1487,6 +1512,7 @@
     };
 
     this.Phone = function (ctrl, ctrlOpts) {
+        $(`#${ctrl.EbSid}`).attr("oninput", `this.value = this.value.replace(/[^0-9]/g, '');`);
         $('.phnContextBtn').hide();
         if (this.Renderer.mode === 'View Mode') {
             if (this.Renderer.rendererName === "WebForm") {
@@ -1536,7 +1562,7 @@
             iti.setNumber(p1);
         };
 
-
+        $(`#${ctrl.EbSid}`).attr("maxlength","18");
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {

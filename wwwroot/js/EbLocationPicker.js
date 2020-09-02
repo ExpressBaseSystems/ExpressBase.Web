@@ -20,9 +20,17 @@
     };
 
     this.Init = function () {
+        if (this.Locations.length>20) {
+            $(".locs_bdy").css('min-height', '70vh');
+        }
         this.CurrentLoc = this.getCurrent();
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+        if (typeof this.CurrentLocObj === 'undefined' || this.CurrentLocObj === null) {
+            this.CurrentLocObj = this.Locations[0];
+            this.CurrentLoc = this.CurrentLocObj.LocId;
+            this.PrevLocation = this.CurrentLoc;
+        }
         this.prev_loc_name = this.CurrentLocObj.LongName;
         this.prev_loc = this.CurrentLoc;
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
@@ -149,7 +157,7 @@
             else if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
                 if (y.find("ul.show").length) {
-                    y = y.find("ul.show");
+                    y = y.find("ul.show:first"); 
                     while (y.hasClass("show")) {
                         let k = y.closest("li");
                         k.find("a:first").trigger('click');
@@ -247,6 +255,11 @@
                 this.CurrentLoc = this.getCurrent();
                 this.PrevLocation = this.CurrentLoc;
                 this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+                if (typeof this.CurrentLocObj === 'undefined' || this.CurrentLocObj === null) {
+                    this.CurrentLocObj = this.Locations[0];
+                    this.CurrentLoc = this.CurrentLocObj.LocId;
+                    this.PrevLocation = this.CurrentLoc;
+                }
                 this.prev_loc_name = this.CurrentLocObj.LongName;
                 this.prev_loc = this.CurrentLoc;
                 this.Tempdata = this.loc_data;

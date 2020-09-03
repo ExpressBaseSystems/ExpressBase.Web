@@ -1742,6 +1742,13 @@ input.locinp {
     outline: none !important;
     border-bottom: solid 1px #6bac6b !important;
 }
+
+.loc-content {
+    color: rgba(0, 0, 0, .40);
+    line-height: 1.5;
+    padding-bottom: 10px;
+}
+
 /*location related styles also used in bot======================== end*/
 
 /*.locinp-cont .locinp {
@@ -1784,15 +1791,13 @@ input.locinp {
     float: left;
     font-weight: bold;
     width: 100%;
+    padding-bottom: 5px;
 }
 
 .picker-box .loc-label {
     width: calc(100% - 67px);
 }
 
-.loc-content {
-    color: rgba(0, 0, 0, .40);
-}
 
 /*copied from css, for card img fieldset temp*/
 .pr_img_cont {

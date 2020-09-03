@@ -1287,8 +1287,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
-[isrendermode=true][eb-form="true"][mode="edit"] [ctype="ExportButton"] {
+[isrendermode=true][eb-form="true"] [ctype="ExportButton"] {
     display: none;
+}
+
+
+[isrendermode=true][eb-form="true"][mode="view"] [ctype="ExportButton"] {
+    display: block;
 }
 
 [eb-form="true"] [ctype="ExportButton"] .ctrl-cover {
@@ -2781,7 +2786,7 @@ input.locinp {
     border-radius: 1px;
     text-align: center;
     transition-duration: 0.2s;
-    cursor:pointer;
+    cursor: pointer;
 }
 
     .eb-popup-head .icon-cont:hover {
@@ -2797,7 +2802,7 @@ input.locinp {
     padding: 15px 20px;
     background: #fafafa;
     border-bottom: 1px solid #eee;
-    cursor:move;
+    cursor: move;
 }
 
 .eb-popup-body {

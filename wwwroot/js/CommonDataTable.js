@@ -2766,7 +2766,7 @@
         this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         if (this.Source === "WebForm") {
             $("#buttondiv_" + this.tableId).empty();
-            this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></button>");
+            this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
             $("#buttondiv_" + this.tableId).append(this.$submit);
         }
         else {

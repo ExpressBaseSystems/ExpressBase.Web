@@ -2711,6 +2711,17 @@ input.locinp {
     pointer-events: none;
 }
 
+.tv-control-cont .table.dataTable {
+    margin-top: 0 !important;
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+}
+
+.tv-control-cont div.dataTables_scrollFoot > div > table {
+    border-bottom: 0;
+}
+
 /*ebphone control*/
 .phnctrl {
     padding-left: 80px !important;

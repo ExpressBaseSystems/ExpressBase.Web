@@ -16,7 +16,7 @@
 
 <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="~/css/DV/slick-theme.css" />
+<link rel="stylesheet" type="text/css" href="~/css/slick-theme.css" />
 @*BUNDLES*@
 <environment exclude="Development">
     <link rel="stylesheet" href="~/css/Bundles/eb-botpage.bundle.css" asp-append-version=@bApnd />
@@ -62,7 +62,7 @@
 <environment exclude="Development">
     <script type="text/javascript" src="~/js/Bundles/eb-botpage.bundle.js" asp-append-version=@bApnd></script>
     @*<script type="text/javascript" src="~/js/Bundles/eb-bot_minimal.bundle.js" defer asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Bundles/eb-bot_secondary.bundle.js" defer asp-append-version=@bApnd></script>*@
+        <script type="text/javascript" src="~/js/Bundles/eb-bot_secondary.bundle.js" defer asp-append-version=@bApnd></script>*@
 </environment>
 
 <environment include="Development">
@@ -228,10 +228,10 @@
                 s1.async = false;
                 document.head.appendChild(s1);
                 console.log("loaded - eb-bot_secondary.bundle.js");
-            })();        
+            })();
 
         }
-       
+
     });
 
 

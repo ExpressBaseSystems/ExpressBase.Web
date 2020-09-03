@@ -2730,6 +2730,7 @@ input.locinp {
 
 .tv-control-cont div.dataTables_scrollFoot > div > table {
     border-bottom: 0;
+    border-top: solid 1px #dddddd !important;
 }
 
 /*ebphone control*/

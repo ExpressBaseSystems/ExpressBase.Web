@@ -46,11 +46,13 @@
                 <h3 style="font-weight:400;">@appdata.Title</h3>
                 <p>@appdata.ShortDesc</p>
                 <div class="eb-im2sln-tags">
-                    @{
-                        string[] tgs = appdata.Tags.Split(",");
-                        foreach (string t in tgs)
+                    @{ if (appdata.Tags != null)
                         {
-                            <div class="tgs">@t</div>
+                            string[] tgs = appdata.Tags.Split(",");
+                            foreach (string t in tgs)
+                            {
+                                <div class="tgs">@t</div>
+                            }
                         }
                     }
                 </div>
@@ -67,7 +69,7 @@
                         </select>
                     </div>
                     @{
-                        if (appdata.IsFree == "T")
+                        if (appdata.IsFree == "T" || appdata.IsFree == null)
                         {
                             <div class="eb-im2sln-footer">
                                 <button class="ebbtn eb_btnblue pull-right" id="import_btn">Import</button>

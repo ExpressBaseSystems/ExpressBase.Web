@@ -1287,8 +1287,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
-[isrendermode=true][eb-form="true"][mode="edit"] [ctype="ExportButton"] {
+[isrendermode=true][eb-form="true"] [ctype="ExportButton"] {
     display: none;
+}
+
+
+[isrendermode=true][eb-form="true"][mode="view"] [ctype="ExportButton"] {
+    display: block;
 }
 
 [eb-form="true"] [ctype="ExportButton"] .ctrl-cover {
@@ -2716,6 +2721,17 @@ input.locinp {
     pointer-events: none;
 }
 
+.tv-control-cont .table.dataTable {
+    margin-top: 0 !important;
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+}
+
+.tv-control-cont div.dataTables_scrollFoot > div > table {
+    border-bottom: 0;
+}
+
 /*ebphone control*/
 .phnctrl {
     padding-left: 80px !important;
@@ -2775,7 +2791,7 @@ input.locinp {
     border-radius: 1px;
     text-align: center;
     transition-duration: 0.2s;
-    cursor:pointer;
+    cursor: pointer;
 }
 
     .eb-popup-head .icon-cont:hover {
@@ -2791,7 +2807,7 @@ input.locinp {
     padding: 15px 20px;
     background: #fafafa;
     border-bottom: 1px solid #eee;
-    cursor:move;
+    cursor: move;
 }
 
 .eb-popup-body {

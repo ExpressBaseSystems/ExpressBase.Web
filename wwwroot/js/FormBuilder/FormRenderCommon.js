@@ -55,7 +55,7 @@
         for (let i = 0; i < defaultValsExecOrderArr.length; i++) {
             let ctrlPath = defaultValsExecOrderArr[i];
             let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
-            ctrl.__fromDefaultValsExec_Import = this.FO.__fromImport;
+            ctrl.___DoNotUpdateDrDepCtrls = this.FO.__fromImport;
             this.setDefaultValue(ctrl);
         }
         this.FO.__fromImport = false;
@@ -149,7 +149,10 @@
     this.bindDrUpdateFns_OnChange = function (control) {//2.5nd onchange Fn bind
         let FnString =
             ((control.DrDependents && control.DrDependents.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId || (control.IsImportFromApi && control.ImportApiUrl)) ? `
-                    form.updateDependentCtrlWithDr(${control.__path}, form);` : "");
+                if(!this.___DoNotUpdateDrDepCtrls){
+                    form.updateDependentCtrlWithDr(${control.__path}, form);
+                }
+                this.___DoNotUpdateDrDepCtrls = false;` : "");
         let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
         control.bindOnChange(onChangeFn);
     };
@@ -254,7 +257,7 @@
                 depCtrl.reloadWithParam(curCtrl);
             }
             else if (depCtrl.ObjType === "PowerSelect") {
-                if (!curCtrl.__isInitiallyPopulating && !curCtrl.__fromDefaultValsExec_Import) {
+                if (!curCtrl.__isInitiallyPopulating) {
                     depCtrl.initializer.reloadWithParams(curCtrl);
                 }
                 else {
@@ -262,8 +265,6 @@
                 }
             }
         }
-        if (curCtrl.__fromDefaultValsExec_Import)
-            curCtrl.__fromDefaultValsExec_Import = false;
     }.bind(this);
 
     this.UpdateValExpDepCtrls = function (curCtrl) {
@@ -388,7 +389,9 @@
                 this.importDGRelatedUpdates(curCtrl);
             }
             if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
-                this.PSImportRelatedUpdates(curCtrl);
+                if (!curCtrl.___DoNotImport)
+                    this.PSImportRelatedUpdates(curCtrl);
+                curCtrl.___DoNotImport = false;
             }
         }.bind(this);
     };

@@ -55,8 +55,10 @@
         for (let i = 0; i < defaultValsExecOrderArr.length; i++) {
             let ctrlPath = defaultValsExecOrderArr[i];
             let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
+            ctrl.___DoNotUpdateDrDepCtrls = this.FO.__fromImport;
             this.setDefaultValue(ctrl);
         }
+        this.FO.__fromImport = false;
     };
 
     this.execValueExpNC = function (DoNotPersistExecOrder) {
@@ -147,7 +149,10 @@
     this.bindDrUpdateFns_OnChange = function (control) {//2.5nd onchange Fn bind
         let FnString =
             ((control.DrDependents && control.DrDependents.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId || (control.IsImportFromApi && control.ImportApiUrl)) ? `
-                    form.updateDependentCtrlWithDr(${control.__path}, form);` : "");
+                if(!this.___DoNotUpdateDrDepCtrls){
+                    form.updateDependentCtrlWithDr(${control.__path}, form);
+                }
+                this.___DoNotUpdateDrDepCtrls = false;` : "");
         let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
         control.bindOnChange(onChangeFn);
     };
@@ -252,11 +257,12 @@
                 depCtrl.reloadWithParam(curCtrl);
             }
             else if (depCtrl.ObjType === "PowerSelect") {
-                if (!depCtrl.__isInitiallyPopulating) {
+                if (!curCtrl.__isInitiallyPopulating) {
                     depCtrl.initializer.reloadWithParams(curCtrl);
                 }
-                else
-                    depCtrl.__isInitiallyPopulating = false;
+                else {
+                    curCtrl.__isInitiallyPopulating = false;
+                }
             }
         }
     }.bind(this);
@@ -383,7 +389,9 @@
                 this.importDGRelatedUpdates(curCtrl);
             }
             if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
-                this.PSImportRelatedUpdates(curCtrl);
+                if (!curCtrl.___DoNotImport)
+                    this.PSImportRelatedUpdates(curCtrl);
+                curCtrl.___DoNotImport = false;
             }
         }.bind(this);
     };

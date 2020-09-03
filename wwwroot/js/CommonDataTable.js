@@ -177,7 +177,7 @@
             this.FDCont = $("#filterWindow_" + this.tableId);
             $("#filterWindow_" + this.tableId).empty();
             $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId + "'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
-            
+
             $("#filterWindow_" + this.tableId).children().find("#close_paramdiv_" + this.tableId).off('click').on('click', this.CloseParamDiv.bind(this));
 
             $("#filterWindow_" + this.tableId).append(text);
@@ -260,7 +260,7 @@
     };
 
     this.CloseParamDiv = function () {
-        this.FDCont.toggle();
+        this.FDCont.toggle('drop', { direction: 'right' }, 150);
         if (this.FDCont.is(":visible"))
             $(".ppcont").hide();
     };
@@ -357,10 +357,14 @@
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = 0;
             this.EbObject.RowHeight = this.RowHeight;
+            this.MainData = null;
         }
         else if (this.Source === "datagrid") {
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = this.RightFixedColumn;
+        }
+        else if (this.Source === "WebForm") {
+            this.MainData = null;
         }
         this.getNotvisibleColumns();
         this.initCompleteflag = false;
@@ -844,9 +848,9 @@
     };
 
     this.ModifyRequestParams = function () {
-         let xx = this.EbObject.Parameters.$values.map(function (row) {
-             return { Name: row.Name, Value: row.Value, Type: row.Type };
-         });
+        let xx = this.EbObject.Parameters.$values.map(function (row) {
+            return { Name: row.Name, Value: row.Value, Type: row.Type };
+        });
 
         this.EbObject.ParamsList.$values = this.filterValues.concat(xx);
     };
@@ -945,6 +949,14 @@
                 }
             }
         }
+    };
+
+    getFilterForLinkfromColumn = function () {
+        this.linkfromcolumn = false;
+        this.dvformMode = 1; let filters = [];
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { obj.name === this.linkDVColumn; }.bind(this))[0];
+        filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
+        return filters;
     };
 
     this.getfilterFromRowdata = function () {
@@ -1287,7 +1299,7 @@
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        if (this.Source === "EbDataTable" || this.Source === "locationTree")
+        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm")
             this.GenerateButtons();
 
         else if (this.Source === "Calendar") {
@@ -1338,7 +1350,7 @@
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable" && this.Source !== "datagrid") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -2627,7 +2639,7 @@
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTableFromColumn.bind(this));
+        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -2750,26 +2762,33 @@
     };
 
     this.GenerateButtons = function () {
-        $("#objname").text(this.EbObject.DisplayName);
-        $(".toolicons").show();
-        $("#obj_icons").empty();
         this.submitId = "btnGo" + this.tableId;
         this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#obj_icons").append(this.$submit);
-        this.$submit.click(this.getColumnsSuccess.bind(this));
-        if (this.EbObject.FormLinks.$values.length > 0) {
-            this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
-                index === self.findIndex((t) => (
-                    t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
-                ))
-            );
-            this.CreateNewFormLinks();
+        if (this.Source === "WebForm") {
+            $("#buttondiv_" + this.tableId).empty();
+            this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
+            $("#buttondiv_" + this.tableId).append(this.$submit);
         }
+        else {
+            $(".toolicons").show();
+            $("#obj_icons").empty();
+            $("#obj_icons").append(this.$submit);
+        }
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
-        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
-            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
-
+        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1) 
+            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+        
         if (this.Source === "EbDataTable") {
+            if (this.EbObject.FormLinks.$values.length > 0) {
+                this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                    ))
+                );
+                this.CreateNewFormLinks();
+            }
+            $("#objname").text(this.EbObject.DisplayName);
             if ($("#" + this.tableId).children().length > 0) {
                 if (this.FD) {
                     this.filterid = "filter" + this.tableId;
@@ -2796,7 +2815,6 @@
         if (this.IsTree) {
             this.CreateContexmenu4Tree();
         }
-
         if (this.isSecondTime) {
             this.addFilterEventListeners();
         }
@@ -3980,7 +3998,7 @@
     };
 
     this.togglePG = function (e) {
-        $(".ppcont").toggle();
+        $(".ppcont").toggle('drop', { direction: 'right' }, 150);
         if ($(".ppcont").is(":visible"))
             $(".filterCont").hide();
         e.stopPropagation();
@@ -4094,6 +4112,11 @@
             this.popup = true;
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
+        else if ($(e.target).closest("a").attr("data-linkfromcolumn") !== undefined) {
+            cData = $(e.target).text();
+            this.linkfromcolumn = true;
+            colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        }
         else {
             cData = $(e.target).text();
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
@@ -4110,6 +4133,8 @@
         this.filterValuesforForm = [];
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
             this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
+        else if (this.linkfromcolumn)
+            this.filterValuesforForm = getFilterForLinkfromColumn();
         else
             this.filterValuesforForm = this.getfilterFromRowdata();
 

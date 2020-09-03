@@ -668,8 +668,9 @@ input:checked + .proslider:before {
     float: left;
     height: 33px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    /*align-items: center;*/
     padding: 0 10px;
     font-family: Montserrat;
     font-weight: 500;
@@ -680,10 +681,16 @@ input:checked + .proslider:before {
         background: #3487da;
         color: white;
     }
-
-/*medial queries for mobile*/
-@media (min-width: 20px) and (max-width: 450px) {
-}
+    .LocInfCr .Loc_type {
+        float: left;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 11px;
+    }
+    /*medial queries for mobile*/
+    @media (min-width: 20px) and (max-width: 450px) {
+    }
 
 /*medial queries for tablets*/
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {

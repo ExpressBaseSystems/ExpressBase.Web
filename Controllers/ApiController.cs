@@ -110,7 +110,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("/api/{_name}/{_version}/{format?}")]
-        public object Api(string _name, string _version, [FromForm]Dictionary<string, string> form, string format = "json")
+        public object Api(string _name, string _version, [FromForm] Dictionary<string, string> form, string format = "json")
         {
             var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
@@ -801,7 +801,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("/api/push_data")]
-        public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
+        public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm] Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;
 
@@ -900,7 +900,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/map")]
-        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place)
+        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude)
         {
             try
             {
@@ -926,7 +926,6 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.Maps = MapCollection;
                     ViewBag.Latitude = latitude;
                     ViewBag.Longitude = longitude;
-                    ViewBag.Place = place;
 
                     MapVendors MapType;
                     if (type == null)
@@ -937,7 +936,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.MapType = MapType;
                 }
                 else
-                    return new EmptyResult();
+                    return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -987,12 +986,38 @@ namespace ExpressBase.Web.Controllers
             return new GetMyActionInfoResponse();
         }
 
+        [HttpPost("api/init_device")]
+        public EbDeviceRegistration InitializeDevice(string registration)
+        {
+            EbDeviceRegistration response = null;
+            try
+            {
+                if (Authenticated)
+                {
+                    var req = JsonConvert.DeserializeObject<EbDeviceRegistrationRequest>(registration);
+
+                    if(req != null)
+                    {
+                        response = this.ServiceClient.Post(req);
+                    }
+                }
+                else
+                    response = new EbDeviceRegistration { StatusCode = HttpStatusCode.Unauthorized };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT init_device API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return response;
+        }
+
         [HttpGet("api/notifications/register")]
         public async Task<IActionResult> CreatePushRegistrationId()
         {
             if (Authenticated)
             {
-                var registrationId = await _nfClient.CreateRegistrationId();
+                string registrationId = await _nfClient.CreateRegistrationId();
                 return Ok(registrationId);
             }
 
@@ -1048,7 +1073,6 @@ namespace ExpressBase.Web.Controllers
 
                 return BadRequest("An error occurred while sending push notification: " + pushDeliveryResult.FormattedErrorMessages);
             }
-
             return Unauthorized();
         }
     }

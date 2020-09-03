@@ -59,7 +59,7 @@ class Setup {
             Channels: ["file-upload"]
         });
 
-        this.se.onNotification = function(msg) {
+        this.se.onNotification = function (msg) {
             console.log("new notification");
             this.notified(msg);
         }.bind(this);
@@ -106,6 +106,7 @@ class Setup {
             for (let i = 0; i < nf.length; i++) {
                 this.nf_container.append(`
                 <li class="nf-tile" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
+                    <i class="fa fa-times notification-close" style="float: right;"></i>
                     <div class="notification-inner">
                         <h5>${nf[i].title || plc}</h5>
                         <span class='pending_date status-time' title='${nf[i].createdDate}'>${nf[i].duration}</span>
@@ -118,6 +119,7 @@ class Setup {
         }
         $("#nf-window #nf-notification-count").text(`(${nf.length})`);
         this.notification_count = nf.length;
+        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
     }
 
     drawActions(pa) {
@@ -178,10 +180,10 @@ class Setup {
 
     userNotification() {
         this.ss = new EbServerEvents({ ServerEventUrl: this.option.se_url, Channels: ["file-upload"] });
-        this.ss.onLogOut = function(msg) {
+        this.ss.onLogOut = function (msg) {
 
         }.bind(this);
-        this.ss.onNotification = function(msg) {
+        this.ss.onNotification = function (msg) {
             var len = parseInt($('#notification-count').attr("count"));
             var html = "";
             var x = JSON.parse(msg);
@@ -221,7 +223,7 @@ class Setup {
         }.bind(this);
     }
 
-    UpdateNotification = function(e) {
+    UpdateNotification = function (e) {
         let notification_id = $(e.target).closest("div").attr("notification-id");
         let link_url = $(e.target).closest("div").attr("link-url");
         $.ajax({
@@ -247,36 +249,28 @@ class Setup {
         $('#notification-count').attr("count", x);
     }
 
-    CloseNotification = function(e) {
-        let notification_id = $(e.target).siblings('div').attr("notification-id");
+    CloseNotification = function (e) {
+        let notification_id = $(e.target).closest('li').attr("notification-id");
         $.ajax({
             type: "POST",
-            url: "../NotificationTest/GetNotificationFromDB",
+            url: "../Notifications/GetNotificationFromDB",
             data: { notification_id: notification_id }
         });
         $(e.target).closest("li").detach();
-        var x = parseInt($('#notification-count').attr("count")) - 1;
-        if (x === 0) {
-            $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
-            $('#notification-count').empty();
-            var html = `<p class="no_notification">No Notifications</p>`;
-            $('.new_notifications').append(html);
+        this.notification_count = this.notification_count - 1;
+        $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+        if (this.notification_count === 0) {
+            this.nf_container.html(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
         }
-        else {
-            $('#notification-count').attr("style", "");
-            $('#notification-count').html(x);
-            $('.no_notification').detach();
-        }
-        $('#notification-count').attr("count", x);
-        $('#notificationDropDown').addClass("open");
         e.stopPropagation();
     }
 
-    MeetingRequestView = function(e) {
+    MeetingRequestView = function (e) {
         let id = $(e).closest("a").attr("data-id");
         //alert(id);
-        $.post("../EbMeeting/GetSlotDetails", { id: id }, function(data) {
-            let Resp = JSON.parse(data);     
+        $.post("../EbMeeting/GetSlotDetails", { id: id }, function (data) {
+            let Resp = JSON.parse(data);
             let object = {
                 Title: "Meeting Request",
                 ButtonText: "OK",

@@ -1091,6 +1091,7 @@ function EBPSSetDisplayMember(p1, p2) {
     }
 
     $("#" + this.EbSid_CtxId).val(p1);
+    this.initializer.V_watchVMembers(VMs);
 }
 
 function copyObj(destObj, srcObj) {

@@ -76,16 +76,15 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/auth_sso",
-                type: "POST",
+                url: "/api/get_actions",
+                type: "GET",
                 cache: false,
-                data: {
-                    username: "9747063404",
-                    type: 1
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("bToken", getTok());
+                    xhr.setRequestHeader("rToken", getrToken());
                 }
             }).done(function (data) {
-                tok = data.twoFAToken;
-                auth = data.userAuthId;
+
             });
         }
 

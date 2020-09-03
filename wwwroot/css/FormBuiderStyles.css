@@ -8,7 +8,8 @@ html {
     outline: 1px solid #0075FF;
 }
 
-.ctrl-cover .dropdown-toggle[data-toggle="dropdown"]:focus {
+.ctrl-cover .dropdown-toggle[data-toggle="dropdown"]:focus,
+.ctrl-cover .btn:focus {
     outline: 1px solid #0075FF !important;
 }
 
@@ -944,6 +945,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid rgba(34,36,38,.15);
     display: flex;
     flex-flow: column;
+    position: relative;
 }
 
 .dgtbl .ctrl-cover {
@@ -1286,8 +1288,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
-[isrendermode=true][eb-form="true"][mode="edit"] [ctype="ExportButton"] {
+[isrendermode=true][eb-form="true"] [ctype="ExportButton"] {
     display: none;
+}
+
+
+[isrendermode=true][eb-form="true"][mode="view"] [ctype="ExportButton"] {
+    display: block;
 }
 
 [eb-form="true"] [ctype="ExportButton"] .ctrl-cover {
@@ -1741,6 +1748,13 @@ input.locinp {
     outline: none !important;
     border-bottom: solid 1px #6bac6b !important;
 }
+
+.loc-content {
+    color: rgba(0, 0, 0, .40);
+    line-height: 1.5;
+    padding-bottom: 10px;
+}
+
 /*location related styles also used in bot======================== end*/
 
 /*.locinp-cont .locinp {
@@ -1783,15 +1797,13 @@ input.locinp {
     float: left;
     font-weight: bold;
     width: 100%;
+    padding-bottom: 5px;
 }
 
 .picker-box .loc-label {
     width: calc(100% - 67px);
 }
 
-.loc-content {
-    color: rgba(0, 0, 0, .40);
-}
 
 /*copied from css, for card img fieldset temp*/
 .pr_img_cont {
@@ -2710,10 +2722,49 @@ input.locinp {
     pointer-events: none;
 }
 
-/*ebphone control*/
-.phnctrl {
-    padding-left: 80px !important;
+.tv-control-cont .table.dataTable {
+    margin-top: 0 !important;
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
 }
+
+.tv-control-cont div.dataTables_scrollFoot > div > table {
+    border-bottom: 0;
+    border-top: solid 1px #dddddd !important;
+}
+
+.tv-control-cont .refresh-cont {
+    position: absolute;
+    z-index: 1;
+    right: 0px;
+    top: -22px;
+    background: white;
+}
+    .tv-control-cont .refresh-cont > .btn {
+        background-color: #ffffff;
+        display: inline-flex;
+        border-radius: 0;
+        height: 21px;
+        width: 21px;
+        padding: 0;
+        font-size: 15px;
+        font-weight: bold;
+        box-shadow: 0 0 1px 0 #2e2e2e;
+        color: #145af8;
+    }
+
+        .tv-control-cont .refresh-cont > .btn:hover {
+            box-shadow: 0 0 1px 1px #145af8;
+        }
+        .tv-control-cont .refresh-cont > .btn > .fa {
+            margin:auto;
+        }
+
+        /*ebphone control*/
+        .phnctrl {
+            padding-left: 80px !important;
+        }
 
 .phnContextBtn {
     border: 0;
@@ -2769,7 +2820,7 @@ input.locinp {
     border-radius: 1px;
     text-align: center;
     transition-duration: 0.2s;
-    cursor:pointer;
+    cursor: pointer;
 }
 
     .eb-popup-head .icon-cont:hover {
@@ -2785,7 +2836,7 @@ input.locinp {
     padding: 15px 20px;
     background: #fafafa;
     border-bottom: 1px solid #eee;
-    cursor:move;
+    cursor: move;
 }
 
 .eb-popup-body {
@@ -2823,3 +2874,26 @@ input.locinp {
     background-position: -64px -224px;
     background-color: #f1f1f1;
 }
+
+.ebctrl-msg-cont {
+    display: flex;
+    position: absolute;
+    font-size: 21px;
+    left: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+    .ebctrl-msg-cont .ebctrl-msg-span {
+        display: flex;
+        margin: auto -5px auto 10px;
+    }
+
+    .ebctrl-msg-cont .text-danger {
+        display: flex;
+        color: #a94442;
+    }
+
+    .ebctrl-msg-cont .text-warning {
+        color: #feb205;
+    }

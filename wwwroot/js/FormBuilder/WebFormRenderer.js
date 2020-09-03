@@ -306,11 +306,12 @@ const WebFormRender = function (option) {
         });
 
     };
-
+     
     this.psImportreloadForm = function (_respObjStr) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         if (_respObj.Status === 200) {
+            this.__fromImport = true;
             this.callFORCE_RELOAD(0, _respObj.FormData, "New Mode");
         }
         else
@@ -1461,7 +1462,7 @@ const WebFormRender = function (option) {
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             if (typeof this[key] !== typeof function () { }) {
-                if (key !== "emptyFormDataModel_copy")// persist
+                if (!(key == "emptyFormDataModel_copy" || key =="__fromImport"))// persist
                     delete this[key];
             }
         }

@@ -428,6 +428,50 @@ namespace ExpressBase.Web.Controllers
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
         }
 
+        public string SaveFormDraft(string RefId, int DraftId, string Json, int CurrentLoc)
+        {
+            try
+            {
+                Console.WriteLine("SaveDraft request received.");
+                SaveFormDraftResponse Resp = ServiceClient.Post<SaveFormDraftResponse>(
+                    new SaveFormDraftRequest
+                    {
+                        RefId = RefId,
+                        DraftId = DraftId,
+                        Data = Json,
+                        LocId = CurrentLoc
+                    });
+                Console.WriteLine("Returing from SaveDraft...");
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
+                return JsonConvert.SerializeObject(new SaveFormDraftResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
+        }
+
+        public string DiscardFormDraft(string RefId, int DraftId)
+        {
+            try
+            {
+                Console.WriteLine("DiscardFormDraft request received.");
+                DiscardFormDraftResponse Resp = ServiceClient.Post<DiscardFormDraftResponse>(
+                    new DiscardFormDraftRequest
+                    {
+                        RefId = RefId,
+                        DraftId = DraftId
+                    });
+                Console.WriteLine("Returing from DiscardFormDraft...");
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
+                return JsonConvert.SerializeObject(new DiscardFormDraftResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
+        }
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try
@@ -646,6 +690,5 @@ namespace ExpressBase.Web.Controllers
             }
             return Redirect("/StatusCode/404");
         }
-
     }
 }

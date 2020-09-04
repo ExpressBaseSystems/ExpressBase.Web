@@ -71,8 +71,8 @@ var EbBasicChart = function (Option) {
     this.init = function () {
         this.EbObject = this.EbObject;
         this.type = this.EbObject.Type;
-        if (Option.filtervalues.length != 0)
-            this.filterValues = Option.filtervalues;
+        if (Option.filterValues.length != 0)
+            this.filterValues = Option.filterValues;
         else
             this.filterValues = this.getFilterValues();
         

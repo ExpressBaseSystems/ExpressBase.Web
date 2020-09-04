@@ -29,7 +29,6 @@ namespace ExpressBase.Web.Controllers
             if (!HasPemissionToSecurity())
                 return Redirect("/StatusCode/401");
 
-            IServiceClient client = this.ServiceClient;
             type = type.ToLower();
             ViewBag.ListType = type;
             if (type == "users")
@@ -37,9 +36,9 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.DisableNewUser = "false";
                 GetUsersResponse1 fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
                 ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
-                Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
-                if (_solu.PlanUserCount <= _solu.NumberOfUsers)
-                    ViewBag.DisableNewUser = "true";
+                //Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
+                //if (_solu.PlanUserCount <= _solu.NumberOfUsers)
+                //    ViewBag.DisableNewUser = "true";
             }
             else if (type == "roles")
             {
@@ -293,12 +292,12 @@ namespace ExpressBase.Web.Controllers
                 }
             }
 
-            if (userid <= 0 && ViewBag.Env == "Production")
-            {
-                Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
-                if (_solu.PlanUserCount <= _solu.NumberOfUsers)
-                    return -1;
-            }
+            //if (userid <= 0 && ViewBag.Env == "Production")
+            //{
+            //    Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
+            //    if (_solu.PlanUserCount <= _solu.NumberOfUsers)
+            //        return -1;
+            //}
 
             SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest
             {

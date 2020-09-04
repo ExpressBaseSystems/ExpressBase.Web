@@ -580,6 +580,42 @@
         let o = new Object();
         o.tableId = "chart" + ctrl.EbSid_CtxId;
         o.dvObject = JSON.parse(ctrl.ChartVisualizationJson);
+        o.Source = this.Renderer.rendererName;
+        ////code review ...code duplicate with TV
+        if (!ctrl.__filterValues)
+            ctrl.__filterValues = [];
+        if (ctrl.ParamsList) {
+            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+            for (let i = 0; i < paramsList.length; i++) {
+                let depCtrl_s = paramsList[i];
+                let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+                if (!getObjByval(ctrl.__filterValues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                    let val = '';
+                    let ebDbType = 11;
+                    let name = "";
+                    if (depCtrl_s === "form.eb_loc_id") {
+                        val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                        name = "eb_loc_id";
+                    }
+                    else if (depCtrl_s === "form.eb_currentuser_id") {
+                        val = ebcontext.user.UserId;
+                        name = "eb_currentuser_id";
+                    }
+                    else if (depCtrl_s === "form.id") {
+                        val = this.Renderer.rowId;
+                        name = "id";
+                    }
+                    else {
+                        val = depCtrl.getValue();
+                        name = depCtrl.Name;
+                        ebDbType = depCtrl.EbDbType;
+                    }
+
+                    ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
+                }
+            }
+            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+        }
         this.chartApi = new EbBasicChart(o);
     };
 

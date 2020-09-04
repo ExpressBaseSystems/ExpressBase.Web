@@ -400,7 +400,9 @@ namespace ExpressBase.Web.Controllers
             }
             if (Obj is EbChartVisualization)
             {
-                return EbSerializers.Json_Serialize(Obj);
+				EbChartVisualization Cobj = (Obj as EbChartVisualization);
+				Cobj.AfterRedisGet(this.Redis, this.ServiceClient);
+				//return EbSerializers.Json_Serialize(Obj);
             }
             //else if (Obj is EbChartVisualization)
             //{

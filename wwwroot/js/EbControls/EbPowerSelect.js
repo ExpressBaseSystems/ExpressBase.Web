@@ -369,7 +369,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     };
 
-    this.clearValues = function () {
+    this.clearValues = function (triggerChange) {
         $.each(this.Vobj.valueMembers, function (i, val) {
             if (val.trim() !== "")// prevent Jq selector error
                 $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
@@ -377,7 +377,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
         $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
-        this.isFromClearValues = true;
+        this.isFromClearValues = triggerChange ? false : true;
     }.bind(this);
 
     this.initComplete4SetVal = function (callBFn, StrValues) {/////////????????????
@@ -472,14 +472,13 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.reloadWithParams = function () {
-        this.setvaluesColl = [... this.Vobj.valueMembers];
-        this.clearValues();
+        this.oldValsFromReloadWithParams = [... this.Vobj.valueMembers];
+        this.clearValues(true);
         this.fromReloadWithParams = true;
         //if (this.ComboObj.IsDataFromApi)
         //    this.attachParams2Url();
 
-        this.IsFromReloadWithParams = true;
-        this.ComboObj.___DoNotImport = true;
+        this.IsFromReloadWithParams2setOldval = true;
         this.getData();
     };
 
@@ -524,13 +523,12 @@ const EbPowerSelect = function (ctrl, options) {
             this.formattedData = this.ComboObj.__bkpData.formattedData;
         }
 
-        if (this.IsFromSetValues || this.IsFromReloadWithParams) {// from set value
+        if (this.IsFromSetValues) {// from set value
             if (this.setvaluesColl && this.setvaluesColl.length > 0) {
                 this.setValues2PSFromData(this.setvaluesColl);
                 this.filterArray.clear();
             }
             this.IsFromSetValues = false;
-            this.IsFromReloadWithParams = false;
         }
         else {// not from setValue (search,...)
             if (!this.isDMSearchEmpty() && this.ComboObj.IsPreload === false && this.unformattedData.length === 1) {
@@ -549,6 +547,10 @@ const EbPowerSelect = function (ctrl, options) {
                 this.datatable.Api.clear();
                 this.datatable.Api.rows.add(this.formattedData); // Add new data
                 this.datatable.Api.columns.adjust().draw();
+                if (this.IsFromReloadWithParams2setOldval) {
+                    this.setValues2PSFromData(this.oldValsFromReloadWithParams);
+                }
+                this.IsFromReloadWithParams2setOldval = false;
             }
             this.focus1stRow();
         }
@@ -642,35 +644,47 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setValues2PSFromData = function (setvaluesColl) {
-        let VMs = this.Vobj.valueMembers || [];
-        let DMs = this.Vobj.displayMembers || [];
+        if (!setvaluesColl || setvaluesColl.length === 0)
+            return;
 
-        if (VMs.length > 0)// clear if already values there
-            this.clearValues();
+        if (this.IsFromReloadWithParams2setOldval)
+            this.ComboObj.___DoNotImport = true;
+        try {
+            let VMs = this.Vobj.valueMembers || [];
+            let DMs = this.Vobj.displayMembers || [];
 
-        let valMsArr = setvaluesColl;
-        let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
+            if (VMs.length > 0)// clear if already values there
+                this.clearValues();
 
-        for (let i = 0; i < valMsArr.length; i++) {
-            let vm = valMsArr[i].trim();
-            let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
+            let valMsArr = setvaluesColl;
+            let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
-            if (unformattedDataARR.length === 0) {
-                console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
-                return;
+            for (let i = 0; i < valMsArr.length; i++) {
+                let vm = valMsArr[i].trim();
+                let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
+
+                if (unformattedDataARR.length === 0) {
+                    console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
+                    if (this.IsFromReloadWithParams2setOldval)
+                        this.ComboObj.___DoNotImport = false;
+                    return;
+                }
+
+                VMs.push(vm);
+                this.addColVals(vm);
+                let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
+
+                for (let j = 0; j < this.dmNames.length; j++) {
+                    let dmName = this.dmNames[j];
+                    if (!DMs[dmName])
+                        DMs[dmName] = []; // dg edit mode call
+                    let DMidx = this.getColumnIdx(this.ComboObj.Columns.$values, dmName);
+                    DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
+                }
             }
-
-            VMs.push(vm);
-            this.addColVals(vm);
-            let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
-
-            for (let j = 0; j < this.dmNames.length; j++) {
-                let dmName = this.dmNames[j];
-                if (!DMs[dmName])
-                    DMs[dmName] = []; // dg edit mode call
-                let DMidx = this.getColumnIdx(this.ComboObj.Columns.$values, dmName);
-                DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
-            }
+        }
+        catch (e) {
+            console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
         }
     };
 

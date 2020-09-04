@@ -281,7 +281,7 @@ function DGremoveInvalidStyle() {
 
 
 function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
-    let shadowColor = "#ee0000b8";
+    let shadowColor = "rgb(255 0 0)";
     if (type === "warning")
         shadowColor = "rgb(236, 151, 31)";
     if ($(`${contSel} .req-cont`).length !== 0)
@@ -289,7 +289,7 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
     let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
-    $ctrlCont.css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
+    $ctrlCont.css("border", `1px solid ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
     $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
 
@@ -299,6 +299,53 @@ function EbMakeValid(contSel, _ctrlCont) {
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
+
+
+//function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+//    let borderColor = "rgb(242 5 0)";
+//    if (type === "warning")
+//        borderColor = "rgb(236, 151, 31)";
+
+//    if ($(`${contSel} .req-cont`).length !== 0)
+//        return;
+
+//    let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
+//    if ($ctrlCont.children(".ebctrl-msg-cont").length !== 1)
+//        $ctrlCont.append(`<div class="ebctrl-msg-cont"></div>`);
+
+//    if ($ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).length === 1)
+//        $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).remove();
+
+//    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
+
+
+//    $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
+//        trigger: 'hover',
+//        html: true,
+//        container: "body",
+//        placement: function (context, source) {
+//            if (($(source).offset().left + 700) > document.body.clientWidth)
+//                return "left";
+//            else {
+//                return "right";
+//            }
+//        },
+//        content: msg
+//    });
+
+
+
+
+//    $ctrlCont.css("border", `1px solid ${borderColor}`).siblings("[name=ctrlsend]").css('disabled', true);
+//    $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).show(100);
+//}
+
+//function EbMakeValid(contSel, _ctrlCont) {
+//    //setTimeout(function () {
+//    $(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+//    $(`${contSel} .ebctrl-msg-cont:first`).empty();
+//    //},400);
+//}
 
 
 function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
@@ -1067,7 +1114,9 @@ function EBPSSetDisplayMember(p1, p2) {
 
     for (let i = 0; i < valMsArr.length; i++) {
         let vm = valMsArr[i];
-        VMs.push(vm);
+        setTimeout(function () {
+            VMs.push(vm);
+        });
         for (let j = 0; j < this.initializer.dmNames.length; j++) {
             let dmName = this.initializer.dmNames[j];
             if (!DMs[dmName])
@@ -1091,7 +1140,7 @@ function EBPSSetDisplayMember(p1, p2) {
     }
 
     $("#" + this.EbSid_CtxId).val(p1);
-    this.initializer.V_watchVMembers(VMs);
+    //this.initializer.V_watchVMembers(VMs);
 }
 
 function copyObj(destObj, srcObj) {

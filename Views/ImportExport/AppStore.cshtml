@@ -110,17 +110,16 @@
                                             </a>
                                             <p>@desc</p>
                                             <div class="apTileInner-bdy-footer">
-                                                @*<a class="install-btn" href="../ImportExport/Import?Id=@(_appList[i].Id)">
-                                                        <i class="fa fa-download" aria-hidden="true"></i> Install
-                                                    </a>*@
-                                                <a class="share-btn pull-right" href="../ImportExport/ShareToPublic?id=@(_appList[i].Id)">
+                                                <a class="install-btn" href="../Import/ImportToSln?appid=@(_appList[i].Id)">
+                                                    <i class="fa fa-download" aria-hidden="true"></i> Install
+                                                </a>
+                                                <a class="share-btn " style="margin-right: 3%" href="../ImportExport/ShareToPublic?id=@(_appList[i].Id)">
                                                     <i class="fa fa-share-alt" aria-hidden="true"></i> Share to Public
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
                                 }
-
                             }
                         }
                     </div>

@@ -33,6 +33,8 @@ namespace ExpressBase.Web.Controllers
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.renderMode = 1;
             ViewBag.rowId = 0;
+            ViewBag.draftId = 0;
+            ViewBag.formData_draft = 0;
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;
@@ -71,6 +73,23 @@ namespace ExpressBase.Web.Controllers
                         int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
                         GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;
+                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+                    }
+                    catch (Exception ex)
+                    {
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                        Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
+                    }
+                }
+                else if ((int)WebFormModes.Draft_mode == _mode)
+                {
+                    try
+                    {
+                        int DraftId = Convert.ToInt32(ob.Find(e => e.Name == "id")?.ValueTo ?? 0);
+                        GetFormDraftResponse Resp = ServiceClient.Post<GetFormDraftResponse>(new GetFormDraftRequest { RefId = refId, DraftId = DraftId });
+                        ViewBag.formData = Resp.DataWrapper;
+                        ViewBag.formData_draft = Resp.FormDatajson;
+                        ViewBag.draftId = DraftId;
                         ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)

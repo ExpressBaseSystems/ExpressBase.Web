@@ -397,7 +397,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (string.IsNullOrEmpty(_refid))
                 {
-                    UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
+                    UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.DisplayName });
                     if (uniqnameresp.IsUnique)
                     {
                         EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
@@ -485,7 +485,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (string.IsNullOrEmpty(_refid))
                 {
-                    UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
+                    UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.DisplayName });
                     if (uniqnameresp.IsUnique)
                     {
                         EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest

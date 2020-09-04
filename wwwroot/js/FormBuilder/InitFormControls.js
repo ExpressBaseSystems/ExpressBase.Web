@@ -340,7 +340,7 @@
         });
         if (this.Renderer.rendererName == "Bot") {
             $input.selectpicker({
-                dropupAuto: false,               
+                dropupAuto: false,
             });
         }
         else {
@@ -519,7 +519,7 @@
             else {
                 $(".sim-tree-checkbox").parent().css("background-color", "none");
             }
-        });     
+        });
     };
 
     this.LocationSelectorCheckboxChanged = function (ctrl) {
@@ -676,6 +676,15 @@
             ctrl.initializer.filterValues = ctrl.__filterValues;
             ctrl.initializer.Api.ajax.reload();
         };
+
+        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
+            if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
+                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted) {
+                    ctrl.initializer.Api.columns.adjust();
+                    ctrl.initializer.__ColAdjusted = true;
+                }
+            }
+        });
     };
 
     this.CalendarControl = function (ctrl) {
@@ -1080,7 +1089,7 @@
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
 
             $("#" + ctrl.EbSid_CtxId).on('change', function (e) {
-                let newLocId = ctrl.getValueFromDOM();    
+                let newLocId = ctrl.getValueFromDOM();
                 if (newLocId === 0)
                     return;
                 let newLocObj = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
@@ -1089,7 +1098,7 @@
                 if (newLocObj.LocId !== oldLocObj.LocId) {
                     EbMessage("show", { Message: `Switching from ${oldLocObj.LongName} to ${newLocObj.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
                     ebcontext.locations.SwitchLocation(newLocObj.LocId);
-                }                
+                }
             });
         }
     };
@@ -1229,7 +1238,7 @@
             else {
                 ctrl.removeInvalidStyle();
             }
-          
+
         else
             if (this.Renderer.rendererName === "Bot") {
                 $(`#${ctrl.EbSid}`).addClass("emailCtrl_invalid");
@@ -1237,7 +1246,7 @@
             else {
                 ctrl.addInvalidStyle("Invalid email");
             }
-           
+
     }
 
     this.initNumeric = function (ctrl, $input) {
@@ -1612,7 +1621,7 @@
             iti.setNumber(p1);
         };
 
-        $(`#${ctrl.EbSid}`).attr("maxlength","18");
+        $(`#${ctrl.EbSid}`).attr("maxlength", "18");
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {

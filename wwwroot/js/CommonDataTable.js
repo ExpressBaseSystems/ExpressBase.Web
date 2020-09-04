@@ -357,10 +357,14 @@
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = 0;
             this.EbObject.RowHeight = this.RowHeight;
+            this.MainData = null;
         }
         else if (this.Source === "datagrid") {
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = this.RightFixedColumn;
+        }
+        else if (this.Source === "WebForm") {
+            this.MainData = null;
         }
         this.getNotvisibleColumns();
         this.initCompleteflag = false;
@@ -1295,7 +1299,7 @@
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        if (this.Source === "EbDataTable" || this.Source === "locationTree")
+        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm")
             this.GenerateButtons();
 
         else if (this.Source === "Calendar") {
@@ -2758,26 +2762,33 @@
     };
 
     this.GenerateButtons = function () {
-        $("#objname").text(this.EbObject.DisplayName);
-        $(".toolicons").show();
-        $("#obj_icons").empty();
         this.submitId = "btnGo" + this.tableId;
         this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#obj_icons").append(this.$submit);
-        this.$submit.click(this.getColumnsSuccess.bind(this));
-        if (this.EbObject.FormLinks.$values.length > 0) {
-            this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
-                index === self.findIndex((t) => (
-                    t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
-                ))
-            );
-            this.CreateNewFormLinks();
+        if (this.Source === "WebForm") {
+            $("#buttondiv_" + this.tableId).empty();
+            this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
+            $("#buttondiv_" + this.tableId).append(this.$submit);
         }
+        else {
+            $(".toolicons").show();
+            $("#obj_icons").empty();
+            $("#obj_icons").append(this.$submit);
+        }
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
-        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
-            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
-
+        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1) 
+            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+        
         if (this.Source === "EbDataTable") {
+            if (this.EbObject.FormLinks.$values.length > 0) {
+                this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                    ))
+                );
+                this.CreateNewFormLinks();
+            }
+            $("#objname").text(this.EbObject.DisplayName);
             if ($("#" + this.tableId).children().length > 0) {
                 if (this.FD) {
                     this.filterid = "filter" + this.tableId;
@@ -2804,7 +2815,6 @@
         if (this.IsTree) {
             this.CreateContexmenu4Tree();
         }
-
         if (this.isSecondTime) {
             this.addFilterEventListeners();
         }

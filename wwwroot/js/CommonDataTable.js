@@ -2708,7 +2708,7 @@
 
         $('.btn-approval_popover').on('shown.bs.popover', function (e) {
             $(".stage_actions").selectpicker();
-            let $td = $(e.target).parents().closest("td");
+            let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
         }.bind(this));
 

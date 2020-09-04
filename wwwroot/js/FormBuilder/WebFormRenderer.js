@@ -532,6 +532,20 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.callFORCE_RELOAD = function (rowId, formData, mode_s) {
+        if (_renderMode === 1) {
+            let stateObj = { id: rowId };
+            if (rowId > 0) {
+                let _url = `Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_mode=${this.isPartial === 'True' ? 11 : 1}&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+                //if (this.rowId > 0)
+                window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
+                //else
+                //    window.history.pushState(stateObj, this.FormObj.DisplayName, _url);
+            }
+            else {
+                let _url = `Index?refid=${this.formRefId}&_mode=${this.isPartial === 'True' ? 12 : 2}&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+                window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
+            }
+        }
         let forceRelaodOptions = {
             rowId: rowId,
             formData: formData,
@@ -987,7 +1001,8 @@ const WebFormRender = function (option) {
                             }.bind(this)
                         });
                     }
-                }.bind(this);            });
+                }.bind(this)
+            });
     };
 
     this.cancelForm = function () {

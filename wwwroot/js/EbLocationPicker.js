@@ -163,7 +163,7 @@
             else if (keycode == '8') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
                 if (y.closest("ul.show").length) {
-                    y = y.closest("ul.show:first"); 
+                    y = y.closest("ul.show"); 
                     let k = y.closest("li");
                     k.find("a:first").trigger('click');
                     k.find('.sim-tree-spread:first').trigger('click');

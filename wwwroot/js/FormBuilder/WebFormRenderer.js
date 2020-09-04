@@ -1498,7 +1498,7 @@ const WebFormRender = function (option) {
         this.$formCont.append(this.formHTML);
 
         ebcontext.renderContext = "WebForm";
-        this.FormObj = option.formObj;
+        this.FormObj = JSON.parse(JSON.stringify(option.formObj));
         this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
         this.$saveBtn = $('#' + option.headerBtns['Save']);
         this.$deleteBtn = $('#' + option.headerBtns['Delete']);

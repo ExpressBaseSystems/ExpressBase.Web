@@ -335,7 +335,7 @@ namespace ExpressBase.Web.Controllers
             return Resp.Json;
         }
 
-        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
+        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId)
         {
             try
             {
@@ -353,7 +353,8 @@ namespace ExpressBase.Web.Controllers
                         RefId = RefId,
                         FormData = Values,
                         RowId = RowId,
-                        CurrentLoc = CurrentLoc
+                        CurrentLoc = CurrentLoc,
+                        DraftId = DraftId
                     });
                 Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
                 return JsonConvert.SerializeObject(Resp);

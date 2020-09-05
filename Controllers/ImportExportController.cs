@@ -122,9 +122,15 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("AppStore");
         }
 
-        public IActionResult Export(string refids, int appid)
-        {
-            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest { Refids = refids, AppId = appid });
+        public IActionResult Export(ExportPackageCollection App)
+        { 
+            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest
+            {
+                AppCollection = App.appColl,
+                PackageName = App.packName,
+                PackageDescription = App.packDesc,
+                PackageIcon = App.packIcon
+            });
             return RedirectToAction("AppStore");
         }
 

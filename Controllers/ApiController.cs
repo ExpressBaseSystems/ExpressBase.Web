@@ -839,9 +839,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_data")] //refid = datasourcerefid
-        public GetMobileVisDataResponse GetMobileVisData(string refid, string param, string sort_order, int limit, int offset, bool is_powerselect)
+        public MobileVisDataResponse GetMobileVisData(string refid, string param, string sort_order, int limit, int offset, bool is_powerselect)
         {
-            GetMobileVisDataResponse resp = null;
+            MobileVisDataResponse resp = null;
             try
             {
                 if (Authenticated)
@@ -863,7 +863,7 @@ namespace ExpressBase.Web.Controllers
                     resp = this.ServiceClient.Get(request);
                 }
                 else
-                    resp = new GetMobileVisDataResponse { Message = ViewBag.Message };
+                    resp = new MobileVisDataResponse { Message = ViewBag.Message };
             }
             catch (Exception ex)
             {
@@ -874,9 +874,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("api/get_data")] //refid = datasourcerefid
-        public GetMobileVisDataResponse GetMobileVisualizationData(MobileVisDataRequest request)
+        public MobileVisDataResponse GetMobileVisualizationData(MobileVisDataRequest request)
         {
-            GetMobileVisDataResponse resp = new GetMobileVisDataResponse();
+            MobileVisDataResponse resp = new MobileVisDataResponse();
             string message = ViewBag.Message;
             try
             {
@@ -911,14 +911,14 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_formdata")] //refid = mobileform
-        public GetMobileFormDataResponse GetMobileFormData(string refid, int row_id, int loc_id)
+        public MobileFormDataResponse GetMobileFormData(string refid, int row_id, int loc_id)
         {
-            GetMobileFormDataResponse resp = null;
+            MobileFormDataResponse resp = null;
             try
             {
                 if (Authenticated)
                 {
-                    resp = this.ServiceClient.Get(new GetMobileFormDataRequest
+                    resp = this.ServiceClient.Get(new MobileFormDataRequest
                     {
                         MobilePageRefId = refid,
                         RowId = row_id,
@@ -926,7 +926,7 @@ namespace ExpressBase.Web.Controllers
                     });
                 }
                 else
-                    resp = new GetMobileFormDataResponse { Message = ViewBag.Message };
+                    resp = new MobileFormDataResponse { Message = ViewBag.Message };
             }
             catch (Exception ex)
             {

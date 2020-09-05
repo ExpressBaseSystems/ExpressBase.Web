@@ -1576,6 +1576,7 @@ const WebFormRender = function (option) {
         option.formData = newOptions.formData;
         option.mode = newOptions.modeS;
         option.rowId = newOptions.rowId;
+        option.draftId = 0;
     }.bind(this);
 
     this.FORCE_RELOAD = function (newOptions) {

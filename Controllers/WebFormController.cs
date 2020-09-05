@@ -191,6 +191,9 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Drafts()
         {
+            if (ViewBag.wc != TokenConstants.UC)
+                return Redirect("/StatusCode/404");
+
             string query = @"
             SELECT 
 	            FD.id, 
@@ -236,8 +239,8 @@ namespace ExpressBase.Web.Controllers
             //(Visualization as EbTableVisualization).OrderBy = new List<DVBaseColumn> { Visualization.Columns.Get("eb_lastmodified_at") };
 
             ViewBag.TableViewObj = EbSerializers.Json_Serialize(Visualization);
-            Type[] typeArray = typeof(EbWebForm).GetTypeInfo().Assembly.GetTypes();
-            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.WebForm, typeof(EbObject));
+            Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbObject));
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;

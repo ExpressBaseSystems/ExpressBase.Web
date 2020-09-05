@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
+<link href="~/css/EbCommonStyles/eb-assets.style.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/css/DV/bootstrap-toggle.min.css">
+<link rel="stylesheet" href="~/css/DV/jquery.rateyo.min.css">
+<link rel="stylesheet" href="~/css/Eb_datatable.css">
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />
+
+<script type="text/javascript" src="~/js/CommonDataTable.js"></script>
+<script type="text/javascript" src="~/js/datatables.min.js"></script>
+<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="~/js/LayoutCommon/jquery.rateyo.min.js"></script>
+<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-select.min.js"></script>
+
+<div id="apps_tree_container" style="margin-top:40px;height: calc(100vh - 149px);"></div>
+
+<script>
+     @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+    let dvobj = @Html.Raw(ViewBag.Visualization);
+    $("#apps_tree_container").empty();
+    $("#apps_tree_container").append(`<div id="content_tbl" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+    var o = new Object();
+    o.tableId = "tbl";
+    o.showCheckboxColumn = true;
+    o.showFilterRow = false;
+    o.IsPaging = false;
+    o.dvObject = dvobj;
+    o.Source = "AppsToObjectTable";
+    o.CheckboxClickCallback = CheckboxClickHandler;
+    o.initCompleteCallback = AddExportButton;
+    let datatable = new EbCommonDataTable(o);
+    let dict = {};
+    let appcolindex = dvobj.Columns.$values.filter(col => col.name == "app_Id")[0].data;
+    let objIdcolindex = dvobj.Columns.$values.filter(col => col.name == "obj_id")[0].data;
+
+    function CheckboxClickHandler(e, rowdata) {
+        let key = rowdata[appcolindex];
+        let value = rowdata[objIdcolindex];
+        if (e.currentTarget.checked) {
+            if (Object.keys(dict).contains(key))
+                dict[key].push(value);
+            else
+                dict[key] = [value];
+        }
+        else {
+            const index = dict[key].indexOf(value);
+            if (index > -1) {
+                dict[key].splice(index, 1);
+                if (dict[key].length === 0)
+                    delete dict[key];
+            }
+        }
+    }
+
+    function AddExportButton() {
+         $("#tbl_filter").append(`<button class="ebbtn eb_btn-sm eb_btnplain" style="margin-right:10px" id="ExportBtn">Export</button>`);
+        $('#ExportBtn').off("click").on('click', Export);
+    }
+
+    function Export() {
+        if (Object.keys(dict).length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "../ImportExport/ExportOSE",
+                data: dict,
+                success: function () { }
+            });
+        }
+        else
+            alert("No selection.....");
+    }
+</script>
+<style>
+    .dataTables_scrollBody{
+        height:100%;
+    }
+</style>

@@ -759,7 +759,7 @@
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
-                if (this.IsTree || this.EbObject.IsDataFromApi) {
+                if (this.IsTree || this.EbObject.IsDataFromApi || this.Source === "AppsToObjectTable") {
                     o.dom = "<'col-md-12 noPadding display-none'><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
@@ -844,6 +844,7 @@
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;
         dq.TableId = this.tableId;
+        dq.showCheckboxColumn = this.showCheckboxColumn;
         return dq;
     };
 
@@ -1320,7 +1321,7 @@
 
                 this.createFilterRowHeader();
             }
-            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi)
+            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi || this.Source === "AppsToObjectTable")
                 this.createFilterforTree();
             //if (this.EbObject.AllowLocalSearch)
             //    this.createFilterforTree();
@@ -1350,7 +1351,7 @@
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm" && this.Source !== "AppsToObjectTable") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -4081,6 +4082,9 @@
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
         }
+        let rowdata = this.unformatedData[idx];
+        if (Option.CheckboxClickCallback)
+            Option.CheckboxClickCallback(e, rowdata);
     };
 
     this.showOrHideAggrControl = function (e) {

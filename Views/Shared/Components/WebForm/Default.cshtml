@@ -38,6 +38,7 @@
 <link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/fonts/icofont/icofont.min.css">
 
 
 
@@ -463,10 +464,17 @@
 
     header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
 
+    //header.insertButton(`<button id="webformsavedraft" class="btn" title="Save as draft"><i class="icofont-ui-clip-board"></i></button>`);
+    //header.insertButton(`<button id="webformdeletedraft" class="btn" title="Delete draft"><i class="icofont-bin"></i></i></button>`);
+
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _rowId = @Html.Raw(ViewBag.rowId);
+    let _draftId= @Html.Raw(ViewBag.draftId);
     let _formDataWraper =  @Html.Raw(ViewBag.formData);
+
+    let _formData = (_draftId > 0) ? @Html.Raw(ViewBag.formData_draft) : _formDataWraper.FormData;
+
     let _userObject =  @Html.Raw(ViewBag.userObject);
     let _mode = "@Html.Raw(ViewBag.Mode)";
     let _cid = "@ViewBag.Cid";
@@ -495,7 +503,8 @@
              formRefId: _formRefId,
              mode: _mode,
              rowId: _rowId,
-             formData: _formDataWraper.FormData,
+             draftId: _draftId,
+             formData: _formData,
              userObject: _userObject,
              cid: _cid,
              env: _env,

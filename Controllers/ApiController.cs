@@ -839,14 +839,14 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_data")] //refid = datasourcerefid
-        public GetMobileVisDataResponse GetMobileVisData(string refid, string param, string sort_order, int limit, int offset, bool is_powerselect)
+        public MobileVisDataResponse GetMobileVisData(string refid, string param, string sort_order, int limit, int offset, bool is_powerselect)
         {
-            GetMobileVisDataResponse resp = null;
+            MobileVisDataResponse resp = null;
             try
             {
                 if (Authenticated)
                 {
-                    GetMobileVisDataRequest request = new GetMobileVisDataRequest()
+                    MobileVisDataRequest request = new MobileVisDataRequest()
                     {
                         DataSourceRefId = refid,
                         Limit = limit,
@@ -863,7 +863,7 @@ namespace ExpressBase.Web.Controllers
                     resp = this.ServiceClient.Get(request);
                 }
                 else
-                    resp = new GetMobileVisDataResponse { Message = ViewBag.Message };
+                    resp = new MobileVisDataResponse { Message = ViewBag.Message };
             }
             catch (Exception ex)
             {
@@ -873,15 +873,52 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("api/get_formdata")] //refid = mobileform
-        public GetMobileFormDataResponse GetMobileFormData(string refid, int row_id, int loc_id)
+        [HttpPost("api/get_data")] //refid = datasourcerefid
+        public MobileVisDataResponse GetMobileVisualizationData(MobileVisDataRequest request)
         {
-            GetMobileFormDataResponse resp = null;
+            MobileVisDataResponse resp = new MobileVisDataResponse();
+            string message = ViewBag.Message;
             try
             {
                 if (Authenticated)
                 {
-                    resp = this.ServiceClient.Get(new GetMobileFormDataRequest
+                    if(request == null)
+                    {
+                        resp.Message = "Request empty";
+                        return resp;
+                    }
+
+                    if (!string.IsNullOrEmpty(request.DataSourceRefId))
+                    {
+                        var response = this.ServiceClient.Get(request);
+                        resp.Data = response?.Data;
+                        resp.Message = "Success";
+                    }
+                    else
+                        resp.Message = "data source refid must be set";
+                }
+                else
+                    resp.Message = message;
+            }
+            catch (Exception ex)
+            {
+                resp.Message = ex.Message;
+
+                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return resp;
+        }
+
+        [HttpGet("api/get_formdata")] //refid = mobileform
+        public MobileFormDataResponse GetMobileFormData(string refid, int row_id, int loc_id)
+        {
+            MobileFormDataResponse resp = null;
+            try
+            {
+                if (Authenticated)
+                {
+                    resp = this.ServiceClient.Get(new MobileFormDataRequest
                     {
                         MobilePageRefId = refid,
                         RowId = row_id,
@@ -889,7 +926,7 @@ namespace ExpressBase.Web.Controllers
                     });
                 }
                 else
-                    resp = new GetMobileFormDataResponse { Message = ViewBag.Message };
+                    resp = new MobileFormDataResponse { Message = ViewBag.Message };
             }
             catch (Exception ex)
             {

@@ -525,7 +525,9 @@ var DashBoardWrapper = function (options) {
         this.dropedCtrlInit(this.Procs[this.currentId].$Control, ebtype, this.currentId);
     };
     this.MakeDashboardLabel = function (obj) {
-        let a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        let a;
+        if (obj.LabelStyle == 0) {
+            a = `<div class="display-block label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
         <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
         <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
         <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
@@ -533,6 +535,38 @@ var DashBoardWrapper = function (options) {
         <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
         <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
         </div></div>`;
+        }
+        else if (obj.LabelStyle == 1) {
+            a = `<div class="display-block label2-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div><div class='lb2-data'>
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div></div></div>`;
+        }
+        else if (obj.LabelStyle == 2) {
+            a = `<div class="display-block label3-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class='lb3-data'>
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div><div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
+        </div></div>`;
+        }
+        else if (obj.LabelStyle == 3) {
+            a = `<div class="display-block label4-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div><div class='lb4-data'>
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div></div></div>`;
+        }
         return a;
     };
     this.MakeLinks = function (obj) {
@@ -963,7 +997,7 @@ var DashBoardWrapper = function (options) {
     //focus Ebobjects
     this.TileSelectorJs = function (e) {
         let procId;
-
+        this.CurrentTile = $(event.target).closest(".tile_dt_cont").attr("data-id");
         if ($(event.target).closest(".guage").attr("id")) {
             this.JqObj = $(event.target).closest(".guage");
             procId = this.JqObj.attr("id");
@@ -976,9 +1010,9 @@ var DashBoardWrapper = function (options) {
             metaId = this.JqObj.attr("eb-type");
             if (metaId && procId) { this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]); }
         }
-        else if ($(event.target).closest(".label-cont").attr("id")) {
-            procId = $(event.target).closest(".label-cont").attr("id")
-            metaId = $(event.target).closest(".label-cont").attr("eb-type");
+        else if ($(event.target).closest(".display-block").attr("id")) {
+            procId = $(event.target).closest(".display-block").attr("id")
+            metaId = $(event.target).closest(".display-block").attr("eb-type");
             if (metaId && procId) { this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]); }
         }
         else if ($(event.target).closest(".grid-stack-item-content").attr("id")) {
@@ -1030,6 +1064,8 @@ var DashBoardWrapper = function (options) {
             let xx = EbGaugeWrapper(this.Procs[obj.EbSid], { isEdit: true });
         }
         if (obj.$type.split(".")[2].split(",")[0] === "EbDataLabel") {
+            let designHtml = this.MakeDashboardLabel(obj);
+            $(`[data-id="${this.CurrentTile}"]`).empty().append(designHtml);
             EbDataLabelFn(obj);
         }
         if (obj.$type.split(".")[2].split(",")[0] === "Tiles") {

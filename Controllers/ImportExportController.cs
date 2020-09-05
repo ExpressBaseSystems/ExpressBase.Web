@@ -156,11 +156,11 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public IActionResult ExportOSE(string ids, int AppId)
+        public IActionResult ExportOSE(Dictionary<int, List<string>> dict)
         {
-            EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
-            ViewBag.objlist = resultlist.Data;
-            ViewBag.appid = AppId;
+            //EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
+            //ViewBag.objlist = resultlist.Data;
+            //ViewBag.appid = AppId;
             return View();
         }
 

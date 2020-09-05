@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
+    @await Component.InvokeAsync("PageHeaderCommon")
+}
+
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+
+<script src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+
+<style> </style>
+
+<div class="container-fluid" style = "margin-top: 50px; margin-left: 5%; margin-right: 5%; ">
+    <div id="draft-list">
+        <div id="content_tb1" class = "wrapper-cont"><table id="tbl_drafts" class="table display table-bordered compact"></table></div>
+    </div>
+</div>
+
+<script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+    @Html.Raw(ViewBag.ControlOperations);
+    let TableViewObj =  @Html.Raw(ViewBag.TableViewObj);
+
+    document.title = "Drafts";
+    let header = new EbHeader();
+    header.setName("Drafts");
+
+    $(document).ready(function () {
+        var o = new Object();
+        o.tableId = "tbl_drafts";
+        o.showCheckboxColumn = false;
+        o.showFilterRow = true;
+        o.IsPaging = true;
+        o.dvObject = TableViewObj;
+        o.Source = "sqljob";
+        //o.initCompleteCallback = this.initComplete.bind(this);
+        var data = new EbCommonDataTable(o);
+        $("#layout_div .loader-fb").empty().removeClass("loader-fb");
+    });
+</script>

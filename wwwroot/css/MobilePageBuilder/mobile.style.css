@@ -417,10 +417,10 @@
         margin-bottom: 15px;
     }
 
-    .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container {
+    .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container, .eb_mob_vis_container .vis-search-container {
         overflow-y: auto;
         padding: 0 10px;
-        height:100%;
+        height: 100%;
     }
 
     .eb_mob_vis_container .eb_mob_container_inner .filter_sort-tab {
@@ -439,12 +439,12 @@
         flex: 1;
     }
 
-    .eb_mob_vis_container .eb_mob_container_inner .vis-sort-container {
+    .eb_mob_vis_container .eb_mob_container_inner .vis-sort-container, .eb_mob_vis_container .vis-search-container {
         height: 100%;
         padding: 10px;
     }
 
-        .eb_mob_vis_container .eb_mob_container_inner .vis-sort-container .data_column {
+        .eb_mob_vis_container .eb_mob_container_inner .vis-sort-container .data_column, .eb_mob_vis_container .vis-search-container .data_column {
             background: #888888;
             color: white;
             padding: 5px;

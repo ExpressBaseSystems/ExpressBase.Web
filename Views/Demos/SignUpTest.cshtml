@@ -73,12 +73,23 @@
         var tok = null;
         var auth = null;
         var otp = null;
+        //{ Name: "email", Type: "16", Value: "amalkdevs1355@gmail.com" }, { Name: "emirates", Type: "16", Value: "Fujairah" }
+        var datao = {
+            DataSourceRefId: "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3569-2662-3569",
+            Params: [],
+            SortOrder: [{ Name: "eb_created_at", Order: 0 }],
+            SearchColumns: [],
+            Limit: 5,
+            Offset: 3,
+            IsPowerSelect: false
+        };
+
 
         function testAjax() {
             $.ajax({
-                url: "/api/get_actions",
-                type: "GET",
-                cache: false,
+                url: "/api/get_data",
+                type: "POST",
+                data: datao,
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());

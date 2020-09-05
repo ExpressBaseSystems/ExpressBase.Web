@@ -846,7 +846,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (Authenticated)
                 {
-                    GetMobileVisDataRequest request = new GetMobileVisDataRequest()
+                    MobileVisDataRequest request = new MobileVisDataRequest()
                     {
                         DataSourceRefId = refid,
                         Limit = limit,
@@ -867,6 +867,43 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return resp;
+        }
+
+        [HttpPost("api/get_data")] //refid = datasourcerefid
+        public GetMobileVisDataResponse GetMobileVisualizationData(MobileVisDataRequest request)
+        {
+            GetMobileVisDataResponse resp = new GetMobileVisDataResponse();
+            string message = ViewBag.Message;
+            try
+            {
+                if (Authenticated)
+                {
+                    if(request == null)
+                    {
+                        resp.Message = "Request empty";
+                        return resp;
+                    }
+
+                    if (!string.IsNullOrEmpty(request.DataSourceRefId))
+                    {
+                        var response = this.ServiceClient.Get(request);
+                        resp.Data = response?.Data;
+                        resp.Message = "Success";
+                    }
+                    else
+                        resp.Message = "data source refid must be set";
+                }
+                else
+                    resp.Message = message;
+            }
+            catch (Exception ex)
+            {
+                resp.Message = ex.Message;
+
                 Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }

@@ -122,9 +122,15 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("AppStore");
         }
 
-        public IActionResult Export(string refids, int appid)
-        {
-            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest { Refids = refids, AppId = appid });
+        public IActionResult Export(ExportPackageCollection App)
+        { 
+            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest
+            {
+                AppCollection = App.appColl,
+                PackageName = App.packName,
+                PackageDescription = App.packDesc,
+                PackageIcon = App.packIcon
+            });
             return RedirectToAction("AppStore");
         }
 
@@ -150,11 +156,11 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public IActionResult ExportOSE(string ids, int AppId)
+        public IActionResult ExportOSE(Dictionary<int, List<string>> dict)
         {
-            EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
-            ViewBag.objlist = resultlist.Data;
-            ViewBag.appid = AppId;
+            //EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
+            //ViewBag.objlist = resultlist.Data;
+            //ViewBag.appid = AppId;
             return View();
         }
 

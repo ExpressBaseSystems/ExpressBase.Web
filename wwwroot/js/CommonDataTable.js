@@ -759,7 +759,7 @@
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
-                if (this.IsTree || this.EbObject.IsDataFromApi) {
+                if (this.IsTree || this.EbObject.IsDataFromApi || this.Source === "AppsToObjectTable") {
                     o.dom = "<'col-md-12 noPadding display-none'><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
@@ -844,6 +844,7 @@
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;
         dq.TableId = this.tableId;
+        dq.showCheckboxColumn = this.showCheckboxColumn;
         return dq;
     };
 
@@ -951,10 +952,10 @@
         }
     };
 
-    getFilterForLinkfromColumn = function () {
+    this.getFilterForLinkfromColumn = function () {
         this.linkfromcolumn = false;
         this.dvformMode = 1; let filters = [];
-        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { obj.name === this.linkDVColumn; }.bind(this))[0];
+        var temp = this.EbObject.Columns.$values.filter(obj => obj.name === this.linkDVColumn)[0];
         filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
         return filters;
     };
@@ -1320,7 +1321,7 @@
 
                 this.createFilterRowHeader();
             }
-            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi)
+            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi || this.Source === "AppsToObjectTable")
                 this.createFilterforTree();
             //if (this.EbObject.AllowLocalSearch)
             //    this.createFilterforTree();
@@ -1350,7 +1351,7 @@
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm" && this.Source !== "AppsToObjectTable") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -4081,6 +4082,9 @@
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
         }
+        let rowdata = this.unformatedData[idx];
+        if (Option.CheckboxClickCallback)
+            Option.CheckboxClickCallback(e, rowdata);
     };
 
     this.showOrHideAggrControl = function (e) {
@@ -4134,7 +4138,7 @@
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
             this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
         else if (this.linkfromcolumn)
-            this.filterValuesforForm = getFilterForLinkfromColumn();
+            this.filterValuesforForm = this.getFilterForLinkfromColumn();
         else
             this.filterValuesforForm = this.getfilterFromRowdata();
 

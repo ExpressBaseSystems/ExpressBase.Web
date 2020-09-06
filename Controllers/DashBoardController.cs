@@ -24,12 +24,14 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public string DashBoardGetObj(string refid)
         {
+            string s = string.Empty;
             EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
             {
                 RefId = refid
             });
-
-            return EbSerializers.Json_Serialize(EbSerializers.Json_Deserialize(Resp.Data[0].Json));
+            if (Resp.Data.Count > 0)
+                s = EbSerializers.Json_Serialize(EbSerializers.Json_Deserialize(Resp.Data[0].Json));
+            return s;
         }
         public IActionResult DashBoardView(string refid, string rowData, string filterValues, int tabNum)
         {

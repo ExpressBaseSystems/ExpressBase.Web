@@ -158,9 +158,10 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult ExportOSE(Dictionary<int, List<string>> dict)
         {
-            //EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
-            //ViewBag.objlist = resultlist.Data;
-            //ViewBag.appid = AppId;
+            String ids = String.Join(", ", dict.Select(x => x.Value));
+            EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
+            ViewBag.objlist = resultlist.Data;
+            ViewBag.dict = dict;
             return View();
         }
 

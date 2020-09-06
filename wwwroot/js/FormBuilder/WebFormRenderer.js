@@ -514,6 +514,7 @@ const WebFormRender = function (option) {
             console.error(respObj.MessageInt);
         }
         this.draftId = respObj.DraftId;
+        this.AdjustDraftBtnsVisibility();
     }.bind(this);
 
     this.renderInAfterSaveMode = function (respObj) {
@@ -1271,6 +1272,14 @@ const WebFormRender = function (option) {
         $("#webformedit").attr("disabled", false);
     };
 
+    this.AdjustDraftBtnsVisibility = function () {
+        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew) {
+            this.headerObj.showElement(["webformsavedraft"]);
+            if (this.draftId > 0)
+                this.headerObj.showElement(["webformdeletedraft"]);
+        }
+    };
+
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
         this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn"]);
@@ -1284,6 +1293,7 @@ const WebFormRender = function (option) {
             }
             this.headerObj.showElement(["webformclose"]);
         }
+        this.AdjustDraftBtnsVisibility();
 
         this.mode = reqstMode;//
 
@@ -1660,7 +1670,8 @@ const WebFormRender = function (option) {
         this.isInitiallyPopulating = false;
 
         if (this.Mode.isNew) {
-            this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
+            if (this.draftId === 0) // not new mode in draft
+                this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
         }

@@ -340,15 +340,17 @@ const WebFormRender = function (option) {
                 continue;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+            if (ctrl.DrDependents && ctrl.DrDependents.$values.length > 0)
+                ctrl.__isInitiallyPopulating = true;// need detail comment
 
             ctrl.___DoNotUpdateDataVals = true;
 
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                ctrl.__isInitiallyPopulating = true;// need detail comment
                 ctrl.setDisplayMember(val);
             }
-            else
+            else {
                 ctrl.justSetValue(val);
+            }
 
             ctrl.___DoNotUpdateDataVals = false;
         }

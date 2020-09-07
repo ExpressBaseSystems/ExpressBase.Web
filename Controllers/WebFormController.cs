@@ -205,7 +205,8 @@ namespace ExpressBase.Web.Controllers
             FROM eb_form_drafts FD
             LEFT JOIN eb_objects_ver EOV ON FD.form_ref_id = EOV.refid
             LEFT JOIN eb_objects EO ON EOV.eb_objects_id = EO.id
-            WHERE COALESCE(FD.eb_del,'F') = 'F' AND COALESCE(FD.is_submitted,'F') = 'F' AND FD.eb_created_by = @eb_created_by; ";
+            WHERE COALESCE(FD.eb_del,'F') = 'F' AND COALESCE(FD.is_submitted,'F') = 'F' AND FD.eb_created_by = @eb_created_by
+            ; ";//ORDER BY FD.eb_lastmodified_at DESC
 
             List<Param> _params = new List<Param>
             {
@@ -215,9 +216,9 @@ namespace ExpressBase.Web.Controllers
             DVColumnCollection DVColumnCollection = new DVColumnCollection()
             {
                 new DVNumericColumn { Data = 0, Name = "id", sTitle = "Id", Type = EbDbTypes.Int32, bVisible = false },
-                new DVStringColumn { Data = 1, Name = "title", sTitle = "Subject", Type = EbDbTypes.String, bVisible = true, RenderAs = StringRenderType.LinkFromColumn, RefidColumn = new DVBaseColumn(), IdColumn = new DVBaseColumn() },
+                new DVStringColumn { Data = 1, Name = "title", sTitle = "Subject", Type = EbDbTypes.String, bVisible = false},
                 new DVStringColumn { Data = 2, Name = "form_ref_id", sTitle = "Ref id", Type = EbDbTypes.String, bVisible = false },
-                new DVStringColumn { Data = 3, Name = "display_name", sTitle = "Form name", Type = EbDbTypes.String, bVisible = true },
+                new DVStringColumn { Data = 3, Name = "display_name", sTitle = "Form name", Type = EbDbTypes.String, bVisible = true, RenderAs = StringRenderType.LinkFromColumn, RefidColumn = new DVBaseColumn(), IdColumn = new DVBaseColumn()  },
                 new DVDateTimeColumn { Data = 4, Name = "eb_created_at", sTitle = "Created at", Type = EbDbTypes.Date, bVisible = true,Format = DateFormat.DateTime, ConvretToUsersTimeZone = true },
                 new DVDateTimeColumn { Data = 5, Name = "eb_lastmodified_at", sTitle = "Last modified at", Type = EbDbTypes.Date, bVisible = true, Format = DateFormat.DateTime, ConvretToUsersTimeZone = true }
             };
@@ -229,6 +230,11 @@ namespace ExpressBase.Web.Controllers
                 _col.ClassName = "tdheight";
                 _col.Font = null;
                 _col.Align = Align.Left;
+                if(_col.Name == "display_name")
+                {
+                    _col.RefidColumn = DVColumnCollection.Get("form_ref_id");
+                    _col.IdColumn = DVColumnCollection.Get("id");
+                }
             }
 
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true };

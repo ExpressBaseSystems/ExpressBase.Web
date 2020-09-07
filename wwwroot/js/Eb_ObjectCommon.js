@@ -688,7 +688,7 @@
     this.SingleSave = function () {
         $('#obj_changelog').text("Single Save");
         this.Commit({}, function (data) {
-           // if (this.Current_obj.Status === "") {
+            if (this.Current_obj.Status !== "Offline") {
                 $.post("../Eb_Object/ChangeStatus",
                     {
                         _refid: data.refid,
@@ -698,7 +698,7 @@
                         this.Current_obj.Status = "Live";
                     }.bind(this));
                 $('#offline').show();
-            //}
+            }
         }.bind(this));
     }.bind(this);
 

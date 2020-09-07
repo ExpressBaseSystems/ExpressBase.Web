@@ -679,10 +679,20 @@
     };
 
     this.clickbtnCreateUser = function () {
-        if (this.txtName.val() === "" || this.txtEmail.val() === "")
-            this.isInfoValidEmail = false;
-        if (!this.isInfoValidEmail || !this.isInfoValidEmail2) {
-            EbMessage("show", { Message: 'Validation Failed. Check all Fields', AutoHide: true, Background: '#bf1e1e' });
+        if (this.txtName.val() === "") {
+            EbMessage("show", { Message: 'Please enter a valid full name.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+        if (this.txtEmail.val() === "") {
+            EbMessage("show", { Message: 'Please enter a valid email.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+        if (!this.isInfoValidEmail) {
+            EbMessage("show", { Message: 'Email is not valid or already exists.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+        if (!this.isInfoValidEmail2) {
+            EbMessage("show", { Message: 'Alternate email is not valid.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         if (this.pwdPassword.val() !== this.pwdPasswordCon.val() && this.whichMode === 1 && this.itemId < 2) {

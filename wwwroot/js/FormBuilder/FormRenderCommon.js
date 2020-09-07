@@ -149,10 +149,7 @@
     this.bindDrUpdateFns_OnChange = function (control) {//2.5nd onchange Fn bind
         let FnString =
             ((control.DrDependents && control.DrDependents.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId || (control.IsImportFromApi && control.ImportApiUrl)) ? `
-                if(!this.___DoNotUpdateDrDepCtrls){
-                    form.updateDependentCtrlWithDr(${control.__path}, form);
-                }
-                this.___DoNotUpdateDrDepCtrls = false;` : "");
+                    form.updateDependentCtrlWithDr(${control.__path}, form);` : "");
         let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
         control.bindOnChange(onChangeFn);
     };
@@ -257,11 +254,12 @@
                 depCtrl.reloadWithParam(curCtrl);
             }
             else if (depCtrl.ObjType === "PowerSelect") {
-                if (!curCtrl.__isInitiallyPopulating) {
+                if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
                     depCtrl.initializer.reloadWithParams(curCtrl);
                 }
                 else {
                     curCtrl.__isInitiallyPopulating = false;
+                    curCtrl.___DoNotUpdateDrDepCtrls = false;
                 }
             }
         }
@@ -373,8 +371,10 @@
                     depCtrl.__IsDisableByExp = true;
                 }
                 else {
-                    depCtrl.enable();
-                    depCtrl.__IsDisableByExp = false;;
+                    if (!this.FO.Mode.isView) {
+                        depCtrl.enable();
+                        depCtrl.__IsDisableByExp = false;
+                    }
                 }
             }
         }

@@ -516,8 +516,8 @@ table.dataTable tbody td.dt-body-right {
 .sub-pdf {
     height: calc(100vh - 60px) !important;
 }
-.wrapper-cont{
-    /*width: 100%;*/
+.wrapper-cont, .wrapper-cont_inner {
+    height: 100%;
 }
 .no-spin::-webkit-inner-spin-button {
     -webkit-appearance: none;

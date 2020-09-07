@@ -312,6 +312,12 @@ function EbMobStudio(config) {
             let data_col = this.Procs[obj.id];
             this.EbObject.Container.SortColumns.$values.push(data_col);
         }.bind(this));
+
+        this.EbObject.Container.SearchColumns.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-search-container .data_column").each(function (j, obj) {
+            let data_col = this.Procs[obj.id];
+            this.EbObject.Container.SearchColumns.$values.push(data_col);
+        }.bind(this));
     };
 
     this.getColums4ListView = function (obj) {
@@ -321,7 +327,6 @@ function EbMobStudio(config) {
             if (result.columns && result.columns.length > 0) {
                 vis.DataColumns.$values = window.dataColToMobileCol(result.columns[0]);
             }
-
             this.DSColumnsJSON = result.columns || [];
 
             this.Controls.drawDsColTree(result.columns);

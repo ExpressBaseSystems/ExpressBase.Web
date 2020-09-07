@@ -295,7 +295,7 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
 
 function EbMakeValid(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+    $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }

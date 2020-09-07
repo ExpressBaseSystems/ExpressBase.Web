@@ -1065,10 +1065,10 @@ const EbPowerSelect = function (ctrl, options) {
         else
             this.reSetColumnvals_();
 
-        if (this.Changed)
+        if (this.Changed) {
             this.$inp.val(this.Vobj.valueMembers).trigger("change");
-
-        this.required_min_Check();
+            this.required_min_Check();
+        }
 
         this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 

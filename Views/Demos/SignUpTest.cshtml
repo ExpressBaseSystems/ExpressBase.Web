@@ -73,12 +73,31 @@
         var tok = null;
         var auth = null;
         var otp = null;
+        //{ Name: "email", Type: "16", Value: "amalkdevs1355@gmail.com" }, { Name: "emirates", Type: "16", Value: "Fujairah" }
+        var datao = {
+            DataSourceRefId: "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3569-2662-3569",
+            Params: [{ Name: "eb_loc_id", Type: "11", Value: "1" }],
+            SortOrder: [{ Name: "eb_created_at", Order: 0 }],
+            SearchColumns: [{ Name: "emirates", Type: "16", Value: "Fujairah" }],
+            Limit: 30,
+            Offset: 0,
+            IsPowerSelect: false
+        };
+
 
         function testAjax() {
             $.ajax({
-                url: "/api/get_actions",
-                type: "GET",
-                cache: false,
+                url: "/api/get_data",
+                type: "POST",
+                data: {
+                    refid: datao.DataSourceRefId,
+                    limit: datao.Limit,
+                    offset: datao.Offset,
+                    param: JSON.stringify(datao.Params),
+                    sort_order: JSON.stringify(datao.SortOrder),
+                    search: JSON.stringify(datao.SearchColumns),
+                    is_powerselect: datao.IsPowerSelect
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());

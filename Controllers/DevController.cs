@@ -20,6 +20,7 @@ using ExpressBase.Objects.Helpers;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Application;
+using ExpressBase.Objects.Objects.DVRelated;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -83,6 +84,88 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Title = _objects.AppInfo.Name;
             ViewBag.ObjectsCount = _objects.ObjectsCount;
             return View();
+        }
+
+        public IActionResult GetTree()
+        {
+            Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
+            ViewBag.Meta = _jsResult.AllMetas;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+            ViewBag.Visualization = GetAppsTree();
+
+            return View();
+        }
+
+        public string GetAppsTree()
+        {
+            string typestring = @"(1,'WebForm'),(2,'DataReader'),(3,'Report'),(4,'DataWriter'),(5,'SqlFunction'),(7,'JavascriptFunction'),(12,'FilterDialog'),(13,'MobilePage'),
+            (14,'UserControl'),(15,'EmailBuilder'),(16,'TableVisualization'),(17,'ChartVisualization'),(18,'BotForm'),(19,'SmsBuilder'),(20,'Api'),(21,'MapView'),(22,'DashBoard'),
+            (23,'KanBan'),(24,'CalendarView'),(25,'CsharpFunction'),(26,'SqlJob')";//(1, 'foo'), (2, 'bar'), (3, 'fooBar')
+            string subquery = string.Format("(SELECT * FROM (values {0}) AS EOT(type_id, type_name)) AS EOT", typestring);
+            string query = string.Format(@"SELECT 
+	 EO.id, EOT.type_name, EO.obj_name,EO.display_name,EO.obj_desc, EO2A.obj_id, EO2A.app_Id,app.applicationname
+FROM
+	 eb_objects_ver EOV,eb_objects EO, 
+	 {0},
+	 eb_objects2application EO2A,
+	 eb_applications app
+WHERE 
+	EO.id = EO2A.obj_id AND
+	app.id = EO2A.app_id AND
+	EO.id = EOV.eb_objects_id AND
+    EO.obj_type = EOT.type_id AND
+    COALESCE(EO.eb_del, 'F') = 'F' AND
+    COALESCE(EO2A.eb_del, 'F') = 'F';", subquery);
+;
+            string[] arrayy = new string[] { "id", "type_name", "obj_name", "display_name", "obj_desc",  "obj_id", "app_Id", "applicationname" };
+            DVColumnCollection DVColumnCollection = GetColumnsForAppsTree(arrayy);
+            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = DVColumnCollection, AutoGen = false, IsPaging = false };
+            List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("applicationname"), Visualization.Columns.Get("type_name") };
+            (Visualization as EbTableVisualization).RowGroupCollection.Add(new MultipleLevelRowGroup { RowGrouping = RowGroupingColumns, Name = "multilevel" });
+            (Visualization as EbTableVisualization).CurrentRowGroup = (Visualization as EbTableVisualization).RowGroupCollection[0];
+            return EbSerializers.Json_Serialize(Visualization);
+        }
+
+        public DVColumnCollection GetColumnsForAppsTree(string[] strArray)
+        {
+            var Columns = new DVColumnCollection();
+            try
+            {
+                foreach (string str in strArray)
+                {
+                    DVBaseColumn _col = null;
+                    if (str == "id")
+                        _col = new DVNumericColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+                    if (str == "type_name")
+                        _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                    if (str == "obj_name")
+                        _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                    if (str == "display_name")
+                        _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                    if (str == "obj_desc")
+                        _col = new DVStringColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                    if (str == "obj_id")
+                        _col = new DVNumericColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+                    if (str == "app_Id")
+                        _col = new DVNumericColumn { Data = 6, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+                    if (str == "applicationname")
+                        _col = new DVStringColumn{Data = 7,Name = str,sTitle = "App Name",Type = EbDbTypes.String,bVisible = true};
+                    _col.Name = str;
+                    _col.RenderType = _col.Type;
+                    _col.ClassName = "tdheight";
+                    _col.Font = null;
+                    _col.Align = Align.Left;
+                    Columns.Add(_col);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("no coloms" + e.StackTrace);
+            }
+
+            return Columns;
         }
 
         public Dictionary<string, string> CssContent(Dictionary<string, string> btCss)

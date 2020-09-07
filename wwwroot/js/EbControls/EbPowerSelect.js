@@ -540,6 +540,7 @@ const EbPowerSelect = function (ctrl, options) {
                 this.V_hideDD();
                 return;
             }
+
             if (this.datatable === null) {
                 this.initDataTable();
             }
@@ -547,11 +548,13 @@ const EbPowerSelect = function (ctrl, options) {
                 this.datatable.Api.clear();
                 this.datatable.Api.rows.add(this.formattedData); // Add new data
                 this.datatable.Api.columns.adjust().draw();
-                if (this.IsFromReloadWithParams2setOldval) {
-                    this.setValues2PSFromData(this.oldValsFromReloadWithParams);
-                }
-                this.IsFromReloadWithParams2setOldval = false;
             }
+
+            if (this.IsFromReloadWithParams2setOldval) {
+                this.setValues2PSFromData(this.oldValsFromReloadWithParams);
+            }
+            this.IsFromReloadWithParams2setOldval = false;
+
             this.focus1stRow();
         }
         this.hideLoader();

@@ -16,7 +16,6 @@ function EbDataLabelFn(Label, tileId) {
         if (Label.DynamicLabelPositon.Left !== 0 && Label.DynamicLabelPositon.Top !== 0) {
             $(`#${Label.EbSid}_dynamic`).css({ "left": `${Label.DynamicLabelPositon.Left}%`, "top": `${Label.DynamicLabelPositon.Top}%`, "position": "absolute" });
         }
-
     }
     else {
         $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
@@ -43,9 +42,29 @@ function EbDataLabelFn(Label, tileId) {
     if (Label.DynamicLabelFont !== null) {
         GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
     }
-    $(`#${Label.EbSid}_Data_pane`).css("border-radius", Label.LabelBorderRadius);
-    $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
-    $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+    if (Label.LabelStyle == 0) {
+        $(`#${Label.EbSid}_Data_pane`).css("border-radius", Label.LabelBorderRadius);
+        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+    }
+    else if (Label.LabelStyle == 1) {
+        $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
+        $(`#${Label.EbSid}_icon`).css("border-radius", `${Label.LabelBorderRadius}px 0px 0px ${Label.LabelBorderRadius}px`);
+        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+    }
+    else if (Label.LabelStyle == 2) {
+        $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
+        $(`#${Label.EbSid}_icon`).css("border-radius", `0px ${Label.LabelBorderRadius}px  ${Label.LabelBorderRadius}px  0px`);
+        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+    }
+    else if (Label.LabelStyle == 3) {
+        $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
+        //$(`#${Label.EbSid}_icon`).css("border-radius", `0px ${Label.LabelBorderRadius}px  ${Label.LabelBorderRadius}px  0px`);
+        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+    }
     if (!Label.IsGradient) {
         $(`#${Label.EbSid}_Data_pane`).css("background", Label.LabelBackColor);
     }
@@ -59,8 +78,10 @@ function EbDataLabelFn(Label, tileId) {
 
     //Label Icon
     if (Label.RenderIcon) {
-        $(`#${Label.EbSid}_Data_pane`).css("padding-left", "14vh");
-        $(`#${Label.EbSid}`).css("padding-top", "2vh");
+        if (Label.LabelStyle == 0) {
+            $(`#${Label.EbSid}_Data_pane`).css("padding-left", "14vh");
+            $(`#${Label.EbSid}`).css("padding-top", "2vh");
+        }
         $(`#${Label.EbSid}_icon`).css('display', 'block');
     }
     else {
@@ -74,9 +95,17 @@ function EbDataLabelFn(Label, tileId) {
 
     let Icondirection = GradientDirection(Label.IconDirection);
     let bg = "linear-gradient(" + Icondirection + "," + Label.IconGradientColor1 + "," + Label.IconGradientColor2 + ")";
-    $(`#${Label.EbSid}_icon`).css('background-image', bg);
+    if (Label.LabelStyle != 3)
+        $(`#${Label.EbSid}_icon`).css('background-image', bg);
     $(`#${Label.EbSid}_icon i`).css("color", Label.IconColor);
-    $(`#${Label.EbSid}_icon i`).removeAttr("class").addClass(`fa ${Label.Icon}`);
+    if (Label.IconText == "") {
+        $(`#${Label.EbSid}_icon i`).empty().removeAttr("class").addClass(`fa ${Label.Icon}`);
+        $(`#${Label.EbSid}_icon`).css("padding", "2.4rem 2rem");
+    }
+    else {
+        $(`#${Label.EbSid}_icon i`).empty().append(Label.IconText).removeAttr("class").addClass(`lbl-icon-text`);
+        $(`#${Label.EbSid}_icon`).css("padding", "1.5rem 2rem");
+    }
 
     $(`#${Label.EbSid}_footer label`).css("color", Label.FooterTextColor);
     $(`#${Label.EbSid}_footer i`).removeAttr("class").addClass(`fa ${Label.FooterIcon}`);
@@ -176,7 +205,7 @@ function LinkStyle(Obj, tile, TabNum) {
     }
     if (Obj.FontStyle) {
         GetFontCss(Obj.FontStyle, $(`#${Obj.EbSid}_link`));
-    }  
+    }
     $(`#${Obj.EbSid} i`).removeAttr("class").addClass(`fa ${Obj.Icon}`);
 }
 

@@ -306,7 +306,7 @@ const WebFormRender = function (option) {
         });
 
     };
-     
+
     this.psImportreloadForm = function (_respObjStr) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
@@ -340,15 +340,17 @@ const WebFormRender = function (option) {
                 continue;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+            if (ctrl.DrDependents && ctrl.DrDependents.$values.length > 0)
+                ctrl.__isInitiallyPopulating = true;// need detail comment
 
             ctrl.___DoNotUpdateDataVals = true;
 
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                ctrl.__isInitiallyPopulating = true;// need detail comment
                 ctrl.setDisplayMember(val);
             }
-            else
+            else {
                 ctrl.justSetValue(val);
+            }
 
             ctrl.___DoNotUpdateDataVals = false;
         }
@@ -498,6 +500,25 @@ const WebFormRender = function (option) {
         }
     }.bind(this);
 
+    this.saveDraftSuccess = function (_respObj) {
+        this.hideLoader();
+        let respObj = JSON.parse(_respObj);
+        ebcontext._formSaveResponse = respObj;
+
+        if (respObj.Status === 200) {
+            EbMessage("show", { Message: "Form saved as draft", AutoHide: false, Background: '#00aa00' });
+        }
+        else if (respObj.Status === 403) {
+            EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+        }
+        else {
+            EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000' });
+            console.error(respObj.MessageInt);
+        }
+        this.draftId = respObj.DraftId;
+        this.AdjustDraftBtnsVisibility();
+    }.bind(this);
+
     this.renderInAfterSaveMode = function (respObj) {
         let mode_s = this.curAfterSavemodeS.charAt(0).toUpperCase() + this.curAfterSavemodeS.slice(1) + " Mode"
         if (mode_s === "Edit Mode" || mode_s === "View Mode") {
@@ -514,6 +535,20 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.callFORCE_RELOAD = function (rowId, formData, mode_s) {
+        if (_renderMode === 1) {
+            let stateObj = { id: rowId };
+            if (rowId > 0) {
+                let _url = `Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_mode=${this.isPartial === 'True' ? 11 : 1}&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+                //if (this.rowId > 0)
+                window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
+                //else
+                //    window.history.pushState(stateObj, this.FormObj.DisplayName, _url);
+            }
+            else {
+                let _url = `Index?refid=${this.formRefId}&_mode=${this.isPartial === 'True' ? 12 : 2}&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+                window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
+            }
+        }
         let forceRelaodOptions = {
             rowId: rowId,
             formData: formData,
@@ -686,6 +721,26 @@ const WebFormRender = function (option) {
         }.bind(this), 4);
     };
 
+    this.saveAsDraft = function () {
+        this.showLoader();
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/SaveFormDraft",
+            data: {
+                RefId: this.formRefId,
+                DraftId: this.draftId,
+                Json: JSON.stringify(this.formData),
+                CurrentLoc: currentLoc
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            success: this.saveDraftSuccess.bind(this)
+        });
+    }.bind(this);
+
     this.saveForm_call = function () {
         this.showLoader();
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
@@ -697,6 +752,7 @@ const WebFormRender = function (option) {
                 ValObj: this.getFormValuesObjWithTypeColl(),
                 RefId: this.formRefId,
                 RowId: this.rowId,
+                DraftId: this.draftId,
                 CurrentLoc: currentLoc
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -876,6 +932,56 @@ const WebFormRender = function (option) {
                             type: "POST",
                             url: "/WebForm/DeleteWebformData",
                             data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                                this.hideLoader();
+                            }.bind(this),
+                            success: function (result) {
+                                this.hideLoader();
+                                if (result > 0) {
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    setTimeout(function () { window.close(); }, 3000);
+                                }
+                                else if (result === -1) {
+                                    EbMessage("show", { Message: 'Delete operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
+                                }
+                                else if (result === -2) {
+                                    EbMessage("show", { Message: 'Access denied to delete this entry.', AutoHide: true, Background: '#aa0000' });
+                                }
+                                else {
+                                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
+    };
+
+    this.deleteDraft = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        EbDialog("show",
+            {
+                Message: "Are you sure to delete this data entry?",
+                Buttons: {
+                    "Yes": {
+                        Background: "green",
+                        Align: "left",
+                        FontColor: "white;"
+                    },
+                    "No": {
+                        Background: "violet",
+                        Align: "right",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        this.showLoader();
+                        $.ajax({
+                            type: "POST",
+                            url: "/WebForm/DiscardFormDraft",
+                            data: { RefId: this.formRefId, DraftId: this.draftId },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                                 this.hideLoader();
@@ -1168,6 +1274,14 @@ const WebFormRender = function (option) {
         $("#webformedit").attr("disabled", false);
     };
 
+    this.AdjustDraftBtnsVisibility = function () {
+        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew) {
+            this.headerObj.showElement(["webformsavedraft"]);
+            if (this.draftId > 0)
+                this.headerObj.showElement(["webformdeletedraft"]);
+        }
+    };
+
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
         this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn"]);
@@ -1181,6 +1295,7 @@ const WebFormRender = function (option) {
             }
             this.headerObj.showElement(["webformclose"]);
         }
+        this.AdjustDraftBtnsVisibility();
 
         this.mode = reqstMode;//
 
@@ -1192,7 +1307,7 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone"], currentLoc, reqstMode));
         }
         else if (reqstMode === "Preview Mode") {
             this.mode = "New Mode";////////////
@@ -1243,10 +1358,10 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
-                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
+                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('ExcelImport') > -1 && mode === 'New Mode')
                     r.push(btns[i]);
-                if (mode === 'View Mode')
-                    r.push('webformclone');
+                else if (btns[i] === "webformclone" && this.formPermissions[loc].indexOf('Clone') > -1 && mode === 'View Mode')
+                    r.push(btns[i]);
             }
         }
         return r;
@@ -1302,8 +1417,8 @@ const WebFormRender = function (option) {
                     let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
                     $.each(sysLocCtrls, function (i, ctrl) {
                         let oldLocId = ctrl.getValue();
-                        if (oldLocId !== o.LocId) 
-                           ctrl.setValue(o.LocId);
+                        if (oldLocId !== o.LocId)
+                            ctrl.setValue(o.LocId);
                     }.bind(this));
                 }
             }.bind(this);
@@ -1340,9 +1455,12 @@ const WebFormRender = function (option) {
         }
     };
 
+
     this.bindEventFns = function () {
         $("[eb-form=true]").off("submit").on("submit", function () { event.preventDefault(); });
         $("#webformsave-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.saveSelectChange);
+        $("#webformsavedraft").off("click").on("click", this.saveAsDraft);
+        $("#webformdeletedraft").off("click").on("click", this.deleteDraft);
         $("#webformsave-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
 
         $("#webformexcel-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.excelExportImport.bind(this));
@@ -1462,7 +1580,7 @@ const WebFormRender = function (option) {
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             if (typeof this[key] !== typeof function () { }) {
-                if (!(key == "emptyFormDataModel_copy" || key =="__fromImport"))// persist
+                if (!(key == "emptyFormDataModel_copy" || key == "__fromImport"))// persist
                     delete this[key];
             }
         }
@@ -1470,6 +1588,7 @@ const WebFormRender = function (option) {
         option.formData = newOptions.formData;
         option.mode = newOptions.modeS;
         option.rowId = newOptions.rowId;
+        option.draftId = 0;
     }.bind(this);
 
     this.FORCE_RELOAD = function (newOptions) {
@@ -1479,7 +1598,7 @@ const WebFormRender = function (option) {
         window.__IsDGctxMenuSet = undefined;
         $(".xdsoft_datetimepicker.xdsoft_noselect.xdsoft_").remove();
         let tvCtrls = getFlatObjOfType(this.FormObj, "TVcontrol");
-        $.each(tvCtrls, function (a, b) { b.__filterValues = [];});
+        $.each(tvCtrls, function (a, b) { b.__filterValues = []; });
 
         this.resetBuilderVariables(newOptions);
         this.init(option);
@@ -1511,6 +1630,7 @@ const WebFormRender = function (option) {
         this.initControls = new InitControls(this);
         this.formRefId = option.formRefId || "";
         this.rowId = option.rowId;
+        this.draftId = option.draftId;
         this.mode = option.mode;
         this.userObject = option.userObject;
         this.isPartial = option.isPartial;//value is true if form is rendering in iframe
@@ -1553,7 +1673,8 @@ const WebFormRender = function (option) {
         this.isInitiallyPopulating = false;
 
         if (this.Mode.isNew) {
-            this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
+            if (this.draftId === 0) // not new mode in draft
+                this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
         }

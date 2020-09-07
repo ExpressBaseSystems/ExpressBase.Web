@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
@@ -33,6 +34,8 @@ namespace ExpressBase.Web.Controllers
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.renderMode = 1;
             ViewBag.rowId = 0;
+            ViewBag.draftId = 0;
+            ViewBag.formData_draft = 0;
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;
@@ -79,6 +82,23 @@ namespace ExpressBase.Web.Controllers
                         Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
                     }
                 }
+                else if ((int)WebFormModes.Draft_mode == _mode)
+                {
+                    try
+                    {
+                        int DraftId = Convert.ToInt32(ob.Find(e => e.Name == "id")?.ValueTo ?? 0);
+                        GetFormDraftResponse Resp = ServiceClient.Post<GetFormDraftResponse>(new GetFormDraftRequest { RefId = refId, DraftId = DraftId });
+                        ViewBag.formData = Resp.DataWrapper;
+                        ViewBag.formData_draft = Resp.FormDatajson;
+                        ViewBag.draftId = DraftId;
+                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+                    }
+                    catch (Exception ex)
+                    {
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                        Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
+                    }
+                }
             }
             else
             {
@@ -111,6 +131,8 @@ namespace ExpressBase.Web.Controllers
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.renderMode = renderMode;
             ViewBag.rowId = 0;
+            ViewBag.draftId = 0;
+            ViewBag.formData_draft = 0;
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;
@@ -165,6 +187,71 @@ namespace ExpressBase.Web.Controllers
             ViewBag.__User = this.LoggedInUser;
 
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
+        }
+
+        public IActionResult Drafts()
+        {
+            if (ViewBag.wc != TokenConstants.UC)
+                return Redirect("/StatusCode/404");
+
+            string query = @"
+            SELECT 
+	            FD.id, 
+	            FD.title, 
+	            FD.form_ref_id, 
+	            COALESCE(EO.display_name, '') display_name, 
+	            FD.eb_created_at, 
+	            FD.eb_lastmodified_at 
+            FROM eb_form_drafts FD
+            LEFT JOIN eb_objects_ver EOV ON FD.form_ref_id = EOV.refid
+            LEFT JOIN eb_objects EO ON EOV.eb_objects_id = EO.id
+            WHERE COALESCE(FD.eb_del,'F') = 'F' AND COALESCE(FD.is_submitted,'F') = 'F' AND FD.eb_created_by = @eb_created_by; ";
+
+            List<Param> _params = new List<Param>
+            {
+                new Param { Name = "eb_created_by", Type = ((int)EbDbTypes.Int32).ToString(), Value = Convert.ToString(this.LoggedInUser.UserId) }
+            };
+
+            DVColumnCollection DVColumnCollection = new DVColumnCollection()
+            {
+                new DVNumericColumn { Data = 0, Name = "id", sTitle = "Id", Type = EbDbTypes.Int32, bVisible = false },
+                new DVStringColumn { Data = 1, Name = "title", sTitle = "Subject", Type = EbDbTypes.String, bVisible = false},
+                new DVStringColumn { Data = 2, Name = "form_ref_id", sTitle = "Ref id", Type = EbDbTypes.String, bVisible = false },
+                new DVStringColumn { Data = 3, Name = "display_name", sTitle = "Form name", Type = EbDbTypes.String, bVisible = true, RenderAs = StringRenderType.LinkFromColumn, RefidColumn = new DVBaseColumn(), IdColumn = new DVBaseColumn()  },
+                new DVDateTimeColumn { Data = 4, Name = "eb_created_at", sTitle = "Created at", Type = EbDbTypes.Date, bVisible = true,Format = DateFormat.DateTime, ConvretToUsersTimeZone = true },
+                new DVDateTimeColumn { Data = 5, Name = "eb_lastmodified_at", sTitle = "Last modified at", Type = EbDbTypes.Date, bVisible = true, Format = DateFormat.DateTime, ConvretToUsersTimeZone = true }
+            };
+            //new DVBooleanColumn{ Data = 3, Name = "is_submitted", sTitle = "Is submitted", Type = EbDbTypes.Boolean, bVisible = true, TrueValue = "T", FalseValue = "F", RenderAs = BooleanRenderType.Icon},
+
+            foreach (DVBaseColumn _col in DVColumnCollection)
+            {
+                _col.RenderType = _col.Type;
+                _col.ClassName = "tdheight";
+                _col.Font = null;
+                _col.Align = Align.Left;
+                if(_col.Name == "display_name")
+                {
+                    _col.RefidColumn = DVColumnCollection.Get("form_ref_id");
+                    _col.IdColumn = DVColumnCollection.Get("id");
+                }
+            }
+
+            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true };
+            //List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("eb_lastmodified_at") };
+            //(Visualization as EbTableVisualization).RowGroupCollection.Add(new SingleLevelRowGroup { RowGrouping = RowGroupingColumns, Name = "singlelevel" });
+            //(Visualization as EbTableVisualization).CurrentRowGroup = (Visualization as EbTableVisualization).RowGroupCollection[0];
+
+            //(Visualization as EbTableVisualization).OrderBy = new List<DVBaseColumn> { Visualization.Columns.Get("eb_lastmodified_at") };
+
+            ViewBag.TableViewObj = EbSerializers.Json_Serialize(Visualization);
+            Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbObject));
+            ViewBag.Meta = _jsResult.AllMetas;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.FilterDialog);
+
+            return View();
         }
 
         // to get Table- // refid form refid, rowid - form table entry id, currentloc - location id
@@ -314,7 +401,7 @@ namespace ExpressBase.Web.Controllers
             return Resp.Json;
         }
 
-        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
+        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId)
         {
             try
             {
@@ -332,7 +419,8 @@ namespace ExpressBase.Web.Controllers
                         RefId = RefId,
                         FormData = Values,
                         RowId = RowId,
-                        CurrentLoc = CurrentLoc
+                        CurrentLoc = CurrentLoc,
+                        DraftId = DraftId
                     });
                 Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
                 return JsonConvert.SerializeObject(Resp);
@@ -426,6 +514,51 @@ namespace ExpressBase.Web.Controllers
             string s = JsonConvert.SerializeObject(p);
             s = s.ToBase64();
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
+        }
+
+        public string SaveFormDraft(string RefId, int DraftId, string Json, int CurrentLoc, string Title)
+        {
+            try
+            {
+                Console.WriteLine("SaveDraft request received.");
+                SaveFormDraftResponse Resp = ServiceClient.Post<SaveFormDraftResponse>(
+                    new SaveFormDraftRequest
+                    {
+                        RefId = RefId,
+                        DraftId = DraftId,
+                        Data = Json,
+                        LocId = CurrentLoc,
+                        Title = Title
+                    });
+                Console.WriteLine("Returing from SaveDraft...");
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
+                return JsonConvert.SerializeObject(new SaveFormDraftResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
+        }
+
+        public string DiscardFormDraft(string RefId, int DraftId)
+        {
+            try
+            {
+                Console.WriteLine("DiscardFormDraft request received.");
+                DiscardFormDraftResponse Resp = ServiceClient.Post<DiscardFormDraftResponse>(
+                    new DiscardFormDraftRequest
+                    {
+                        RefId = RefId,
+                        DraftId = DraftId
+                    });
+                Console.WriteLine("Returing from DiscardFormDraft...");
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
+                return JsonConvert.SerializeObject(new DiscardFormDraftResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
         }
 
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
@@ -646,6 +779,5 @@ namespace ExpressBase.Web.Controllers
             }
             return Redirect("/StatusCode/404");
         }
-
     }
 }

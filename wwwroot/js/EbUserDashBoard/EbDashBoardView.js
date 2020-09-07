@@ -451,7 +451,7 @@
     this.MakeDashboardLabel = function (obj) {
         let a;
         if (obj.LabelStyle == 0) {
-            a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+            a = `<div class="display-block label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
         <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
         <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
         <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
@@ -461,17 +461,35 @@
         </div></div>`;
         }
         else if (obj.LabelStyle == 1) {
-            a = `<div class="label2-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
-        <div class="card-icon-label2" id="${obj.EbSid}_icon"><i class=""></i></div>
-        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane-label2" >
-        <div class="lbl db-static-label2" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
-        <div class=" lbl db-desc-label2"  id="${obj.EbSid}_description"></div>
-        <div class="lbl db-dynamic-label2" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
-        <div class="label2-footer" id="${obj.EbSid}_footer"><div class="footer-inner-label2"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+            a = `<div class="display-block label2-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div><div class='lb2-data'>
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div></div></div>`;
+        }
+        else if (obj.LabelStyle == 2) {
+            a = `<div class="display-block label3-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class='lb3-data'>
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div><div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
         </div></div>`;
         }
-        else if (obj.LabelStyle == 1) {
-
+        else if (obj.LabelStyle == 3) {
+            a = `<div class="display-block label4-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div><div class='lb4-data'>
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div></div></div>`;
         }
         return a;
     };

@@ -320,6 +320,7 @@
         $("#objname").text(this.EbObject.DisplayName);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
+        $("title").text(this.EbObject.DisplayName);
         if (this.EbObject.DataSourceRefId) {
             this.call2FD();
             this.EbObject.IsPaging = this.IsPaging;

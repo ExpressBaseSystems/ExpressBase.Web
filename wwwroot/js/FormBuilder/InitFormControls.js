@@ -287,7 +287,8 @@
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none').css('color', '#999');
         }
-        else if (ctrl.ShowDateAs_ !== 2)
+
+        else if (ctrl.ShowDateAs_ !== 2 && this.rendererName !== "WebForm")
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();

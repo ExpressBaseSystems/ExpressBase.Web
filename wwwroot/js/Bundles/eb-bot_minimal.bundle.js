@@ -1829,7 +1829,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     };
 
-    this.clearValues = function () {
+    this.clearValues = function (triggerChange) {
         $.each(this.Vobj.valueMembers, function (i, val) {
             if (val.trim() !== "")// prevent Jq selector error
                 $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
@@ -1837,6 +1837,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
         $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
+        this.isFromClearValues = triggerChange ? false : true;
     }.bind(this);
 
     this.initComplete4SetVal = function (callBFn, StrValues) {/////////????????????
@@ -1931,10 +1932,13 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.reloadWithParams = function () {
-        this.clearValues();
+        this.oldValsFromReloadWithParams = [... this.Vobj.valueMembers];
+        this.clearValues(true);
         this.fromReloadWithParams = true;
         //if (this.ComboObj.IsDataFromApi)
         //    this.attachParams2Url();
+
+        this.IsFromReloadWithParams2setOldval = true;
         this.getData();
     };
 
@@ -1996,6 +2000,7 @@ const EbPowerSelect = function (ctrl, options) {
                 this.V_hideDD();
                 return;
             }
+
             if (this.datatable === null) {
                 this.initDataTable();
             }
@@ -2004,6 +2009,12 @@ const EbPowerSelect = function (ctrl, options) {
                 this.datatable.Api.rows.add(this.formattedData); // Add new data
                 this.datatable.Api.columns.adjust().draw();
             }
+
+            if (this.IsFromReloadWithParams2setOldval) {
+                this.setValues2PSFromData(this.oldValsFromReloadWithParams);
+            }
+            this.IsFromReloadWithParams2setOldval = false;
+
             this.focus1stRow();
         }
         this.hideLoader();
@@ -2096,36 +2107,47 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setValues2PSFromData = function (setvaluesColl) {
-        let VMs = this.Vobj.valueMembers || [];
-        let DMs = this.Vobj.displayMembers || [];
+        if (!setvaluesColl || setvaluesColl.length === 0)
+            return;
 
-        if (setvaluesColl.length > 0)// clear if already values there
-            this.clearValues();
+        if (this.IsFromReloadWithParams2setOldval)
+            this.ComboObj.___DoNotImport = true;
+        try {
+            let VMs = this.Vobj.valueMembers || [];
+            let DMs = this.Vobj.displayMembers || [];
 
-        let valMsArr = setvaluesColl;
-        let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
+            if (VMs.length > 0)// clear if already values there
+                this.clearValues();
 
-        for (let i = 0; i < valMsArr.length; i++) {
-            let vm = valMsArr[i].trim();
-            VMs.push(vm);
-            this.addColVals(vm);
+            let valMsArr = setvaluesColl;
+            let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
-            let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
+            for (let i = 0; i < valMsArr.length; i++) {
+                let vm = valMsArr[i].trim();
+                let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
 
-            if (unformattedDataARR.length === 0) {
-                console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
-                return;
+                if (unformattedDataARR.length === 0) {
+                    console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
+                    if (this.IsFromReloadWithParams2setOldval)
+                        this.ComboObj.___DoNotImport = false;
+                    return;
+                }
+
+                VMs.push(vm);
+                this.addColVals(vm);
+                let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
+
+                for (let j = 0; j < this.dmNames.length; j++) {
+                    let dmName = this.dmNames[j];
+                    if (!DMs[dmName])
+                        DMs[dmName] = []; // dg edit mode call
+                    let DMidx = this.getColumnIdx(this.ComboObj.Columns.$values, dmName);
+                    DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
+                }
             }
-
-            let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
-
-            for (let j = 0; j < this.dmNames.length; j++) {
-                let dmName = this.dmNames[j];
-                if (!DMs[dmName])
-                    DMs[dmName] = []; // dg edit mode call
-                let DMidx = this.getColumnIdx(this.ComboObj.Columns.$values, dmName);
-                DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
-            }
+        }
+        catch (e) {
+            console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
         }
     };
 
@@ -2451,6 +2473,14 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setLastmodfiedVal = function () {
+        if (JSON.stringify(this.Vobj.valueMembers) === JSON.stringify(this.Values) || this.isFromClearValues) {
+            this.Changed = false;
+        }
+        else
+            this.Changed = true;
+
+        this.isFromClearValues = false;
+
         if (this.Vobj.valueMembers.length > this.Values.length) {
             this.lastAddedOrDeletedVal = this.Vobj.valueMembers.filter(x => !this.Values.includes(x))[0];
             this.curAction = "add";
@@ -2490,14 +2520,13 @@ const EbPowerSelect = function (ctrl, options) {
         if (this.datatable === null) {
             if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
                 this.reSetColumnvals_();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
 
         }
-        else {
+        else
             this.reSetColumnvals_();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
-        }
 
+        if (this.Changed)
+            this.$inp.val(this.Vobj.valueMembers).trigger("change");
 
         this.required_min_Check();
 

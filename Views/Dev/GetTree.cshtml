@@ -63,12 +63,22 @@
 
     function Export() {
         if (Object.keys(dict).length > 0) {
-            $.ajax({
-                type: "POST",
-                url: "../ImportExport/ExportOSE",
-                data: dict,
-                success: function () { }
-            });
+
+            var formData = new FormData();
+            formData.append("dict", dict);
+            var request = new XMLHttpRequest();
+            request.open("POST", "../ImportExport/ExportOSE");
+            request.send(formData);
+            //var form = document.createElement("form");
+            //form.style.display = "none";
+            //form.setAttribute("method", "post");
+            //form.setAttribute("action", "../ImportExport/ExportOSE");
+            //var dict1 = document.createElement("input");
+            //dict1.setAttribute("name", "dict1");
+            //dict1.setAttribute("value", JSON.stringify(dict));
+            //form.appendChild(dict1);
+            //document.body.appendChild(form);
+            //form.submit();
         }
         else
             alert("No selection.....");

@@ -15277,10 +15277,14 @@ var EbCommonDataTable = function (Option) {
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = 0;
             this.EbObject.RowHeight = this.RowHeight;
+            this.MainData = null;
         }
         else if (this.Source === "datagrid") {
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = this.RightFixedColumn;
+        }
+        else if (this.Source === "WebForm") {
+            this.MainData = null;
         }
         this.getNotvisibleColumns();
         this.initCompleteflag = false;
@@ -15675,7 +15679,7 @@ var EbCommonDataTable = function (Option) {
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
-                if (this.IsTree || this.EbObject.IsDataFromApi) {
+                if (this.IsTree || this.EbObject.IsDataFromApi || this.Source === "AppsToObjectTable") {
                     o.dom = "<'col-md-12 noPadding display-none'><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
@@ -15760,6 +15764,7 @@ var EbCommonDataTable = function (Option) {
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;
         dq.TableId = this.tableId;
+        dq.showCheckboxColumn = this.showCheckboxColumn;
         return dq;
     };
 
@@ -15867,10 +15872,10 @@ var EbCommonDataTable = function (Option) {
         }
     };
 
-    getFilterForLinkfromColumn = function () {
+    this.getFilterForLinkfromColumn = function () {
         this.linkfromcolumn = false;
         this.dvformMode = 1; let filters = [];
-        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { obj.name === this.linkDVColumn; }.bind(this))[0];
+        var temp = this.EbObject.Columns.$values.filter(obj => obj.name === this.linkDVColumn)[0];
         filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
         return filters;
     };
@@ -16215,7 +16220,7 @@ var EbCommonDataTable = function (Option) {
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        if (this.Source === "EbDataTable" || this.Source === "locationTree")
+        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm")
             this.GenerateButtons();
 
         else if (this.Source === "Calendar") {
@@ -16236,7 +16241,7 @@ var EbCommonDataTable = function (Option) {
 
                 this.createFilterRowHeader();
             }
-            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi)
+            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi || this.Source === "AppsToObjectTable")
                 this.createFilterforTree();
             //if (this.EbObject.AllowLocalSearch)
             //    this.createFilterforTree();
@@ -16266,7 +16271,7 @@ var EbCommonDataTable = function (Option) {
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm" && this.Source !== "AppsToObjectTable") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -17622,9 +17627,9 @@ var EbCommonDataTable = function (Option) {
             //$('.btn-approval_popover').not(this).popover("hide");
         });
 
-        $('.btn-approval_popover').on('shown.bs.popover', function (e) {
+        $('.btn-approval_popover').off('shown.bs.popover').on('shown.bs.popover', function (e) {
             $(".stage_actions").selectpicker();
-            let $td = $(e.target).parents().closest("td");
+            let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
         }.bind(this));
 
@@ -17678,26 +17683,33 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.GenerateButtons = function () {
-        $("#objname").text(this.EbObject.DisplayName);
-        $(".toolicons").show();
-        $("#obj_icons").empty();
         this.submitId = "btnGo" + this.tableId;
         this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#obj_icons").append(this.$submit);
-        this.$submit.click(this.getColumnsSuccess.bind(this));
-        if (this.EbObject.FormLinks.$values.length > 0) {
-            this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
-                index === self.findIndex((t) => (
-                    t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
-                ))
-            );
-            this.CreateNewFormLinks();
+        if (this.Source === "WebForm") {
+            $("#buttondiv_" + this.tableId).empty();
+            this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
+            $("#buttondiv_" + this.tableId).append(this.$submit);
         }
+        else {
+            $(".toolicons").show();
+            $("#obj_icons").empty();
+            $("#obj_icons").append(this.$submit);
+        }
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
-        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
-            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
-
+        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1) 
+            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+        
         if (this.Source === "EbDataTable") {
+            if (this.EbObject.FormLinks.$values.length > 0) {
+                this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                    ))
+                );
+                this.CreateNewFormLinks();
+            }
+            $("#objname").text(this.EbObject.DisplayName);
             if ($("#" + this.tableId).children().length > 0) {
                 if (this.FD) {
                     this.filterid = "filter" + this.tableId;
@@ -17724,7 +17736,6 @@ var EbCommonDataTable = function (Option) {
         if (this.IsTree) {
             this.CreateContexmenu4Tree();
         }
-
         if (this.isSecondTime) {
             this.addFilterEventListeners();
         }
@@ -18991,6 +19002,9 @@ var EbCommonDataTable = function (Option) {
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
         }
+        let rowdata = this.unformatedData[idx];
+        if (Option.CheckboxClickCallback)
+            Option.CheckboxClickCallback(e, rowdata);
     };
 
     this.showOrHideAggrControl = function (e) {
@@ -19044,7 +19058,7 @@ var EbCommonDataTable = function (Option) {
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
             this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
         else if (this.linkfromcolumn)
-            this.filterValuesforForm = getFilterForLinkfromColumn();
+            this.filterValuesforForm = this.getFilterForLinkfromColumn();
         else
             this.filterValuesforForm = this.getfilterFromRowdata();
 
@@ -29660,8 +29674,8 @@ var EbBasicChart = function (Option) {
     this.init = function () {
         this.EbObject = this.EbObject;
         this.type = this.EbObject.Type;
-        if (Option.filtervalues.length != 0)
-            this.filterValues = Option.filtervalues;
+        if (Option.filterValues.length != 0)
+            this.filterValues = Option.filterValues;
         else
             this.filterValues = this.getFilterValues();
         

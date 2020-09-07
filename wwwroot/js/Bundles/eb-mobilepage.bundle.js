@@ -312,6 +312,12 @@ function EbMobStudio(config) {
             let data_col = this.Procs[obj.id];
             this.EbObject.Container.SortColumns.$values.push(data_col);
         }.bind(this));
+
+        this.EbObject.Container.SearchColumns.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-search-container .data_column").each(function (j, obj) {
+            let data_col = this.Procs[obj.id];
+            this.EbObject.Container.SearchColumns.$values.push(data_col);
+        }.bind(this));
     };
 
     this.getColums4ListView = function (obj) {
@@ -321,7 +327,6 @@ function EbMobStudio(config) {
             if (result.columns && result.columns.length > 0) {
                 vis.DataColumns.$values = window.dataColToMobileCol(result.columns[0]);
             }
-
             this.DSColumnsJSON = result.columns || [];
 
             this.Controls.drawDsColTree(result.columns);
@@ -476,6 +481,7 @@ function MobileControls(root) {
             this.Root.setCtrls($(`#${o.EbSid} .eb_mob_container_inner .vis-filter-container`), filterControls);
             this.Root.getColums4ListView(o);
             this.setSortColumns(o);
+            this.setSearchColumns(o);
             this.setLinkFormControls(o);
             o.propertyChanged("ShowNewButton");
         }
@@ -505,23 +511,25 @@ function MobileControls(root) {
             }.bind(this)
         });
 
-        $(`#${container.EbSid} .vis-sort-container`).droppable({
+        $(`#${container.EbSid} .vis-sort-container, #${container.EbSid} .vis-search-container`).droppable({
             accept: ".draggable_column",
             hoverClass: "drop-hover-td",
-            drop: function (event, ui) {
-                let dragged = $(ui.draggable);
-                let ctrlname = dragged.attr("ctrname");
-                let obj = this.Root.makeElement("EbMobileDataColumn", ctrlname);
-                obj.Type = dragged.attr("DbType");
-                obj.ColumnName = dragged.attr("ColName");
-                obj.ColumnIndex = dragged.attr("index");
-                obj.TableIndex = dragged.attr("tableIndex");
-                $(event.target).append(obj.$Control.outerHTML());
-                this.Root.refreshControl(obj);
-                $("#" + obj.EbSid).off("focus");
-            }.bind(this)
+            drop: this.sortAndSearchDrop.bind(this)
         });
     };
+
+    this.sortAndSearchDrop = function (event, ui) {
+        let dragged = $(ui.draggable);
+        let ctrlname = dragged.attr("ctrname");
+        let obj = this.Root.makeElement("EbMobileDataColumn", ctrlname);
+        obj.Type = dragged.attr("DbType");
+        obj.ColumnName = dragged.attr("ColName");
+        obj.ColumnIndex = dragged.attr("index");
+        obj.TableIndex = dragged.attr("tableIndex");
+        $(event.target).append(obj.$Control.outerHTML());
+        this.Root.refreshControl(obj);
+        $("#" + obj.EbSid).off("focus");
+    }
 
     this.setLinkFormControls = function (o) {
 
@@ -544,6 +552,17 @@ function MobileControls(root) {
             let obj = this.Root.makeElement("EbMobileDataColumn", "DataColumn");
             $.extend(obj, filters[i]);
             $(`#${vis.EbSid} .vis-sort-container`).append(obj.$Control.outerHTML());
+            this.Root.refreshControl(obj);
+            $("#" + obj.EbSid).off("focus");
+        }
+    };
+
+    this.setSearchColumns = function (vis) {
+        let searches = vis.SearchColumns.$values;
+        for (let i = 0; i < searches.length; i++) {
+            let obj = this.Root.makeElement("EbMobileDataColumn", "DataColumn");
+            $.extend(obj, searches[i]);
+            $(`#${vis.EbSid} .vis-search-container`).append(obj.$Control.outerHTML());
             this.Root.refreshControl(obj);
             $("#" + obj.EbSid).off("focus");
         }
@@ -651,7 +670,7 @@ function MobileControls(root) {
         this.makeTreeNodeDraggable();
     };
 
-    var nonPersistControls = ["EbMobileTableLayout", "EbMobileDataGrid", "EbMobileFileUpload","EbMobileButton"];
+    var nonPersistControls = ["EbMobileTableLayout", "EbMobileDataGrid", "EbMobileFileUpload", "EbMobileButton"];
 
     this.loopControlContainer = function (html, propName, i, o) {
         let jsobj = this.Root.Procs[o.id];

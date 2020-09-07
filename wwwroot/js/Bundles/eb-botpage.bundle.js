@@ -23,7 +23,7 @@ var InitControls = function (option) {
             $(el).popover({
                 trigger: 'focus',
                 html: true,
-                container: "body",
+                container: "body [eb-root-obj-container]:first",
                 placement: this.PopoverPlacement,
                 content: decodeURIComponent(escape(window.atob(ctrl.Info)))
             });
@@ -340,7 +340,7 @@ var InitControls = function (option) {
         });
         if (this.Renderer.rendererName == "Bot") {
             $input.selectpicker({
-                dropupAuto: false,               
+                dropupAuto: false,
             });
         }
         else {
@@ -519,7 +519,7 @@ var InitControls = function (option) {
             else {
                 $(".sim-tree-checkbox").parent().css("background-color", "none");
             }
-        });     
+        });
     };
 
     this.LocationSelectorCheckboxChanged = function (ctrl) {
@@ -580,6 +580,42 @@ var InitControls = function (option) {
         let o = new Object();
         o.tableId = "chart" + ctrl.EbSid_CtxId;
         o.dvObject = JSON.parse(ctrl.ChartVisualizationJson);
+        o.Source = this.Renderer.rendererName;
+        ////code review ...code duplicate with TV
+        if (!ctrl.__filtervalues)
+            ctrl.__filtervalues = [];
+        if (ctrl.ParamsList) {
+            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+            for (let i = 0; i < paramsList.length; i++) {
+                let depCtrl_s = paramsList[i];
+                let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+                if (!getObjByval(ctrl.__filtervalues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                    let val = '';
+                    let ebDbType = 11;
+                    let name = "";
+                    if (depCtrl_s === "form.eb_loc_id") {
+                        val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                        name = "eb_loc_id";
+                    }
+                    else if (depCtrl_s === "form.eb_currentuser_id") {
+                        val = ebcontext.user.UserId;
+                        name = "eb_currentuser_id";
+                    }
+                    else if (depCtrl_s === "form.id") {
+                        val = this.Renderer.rowId;
+                        name = "id";
+                    }
+                    else {
+                        val = depCtrl.getValue();
+                        name = depCtrl.Name;
+                        ebDbType = depCtrl.EbDbType;
+                    }
+
+                    ctrl.__filtervalues.push(new fltr_obj(ebDbType, name, val));
+                }
+            }
+            o.filtervalues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filtervalues))));
+        }
         this.chartApi = new EbBasicChart(o);
     };
 
@@ -640,6 +676,15 @@ var InitControls = function (option) {
             ctrl.initializer.filterValues = ctrl.__filterValues;
             ctrl.initializer.Api.ajax.reload();
         };
+
+        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
+            if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
+                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted) {
+                    ctrl.initializer.Api.columns.adjust();
+                    ctrl.initializer.__ColAdjusted = true;
+                }
+            }
+        });
     };
 
     this.CalendarControl = function (ctrl) {
@@ -861,7 +906,7 @@ var InitControls = function (option) {
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7`;
+            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7&_locId=${ebcontext.locations.CurrentLoc}`;
             window.open(url, '_blank');
         }.bind(this);
     };
@@ -1044,7 +1089,7 @@ var InitControls = function (option) {
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
 
             $("#" + ctrl.EbSid_CtxId).on('change', function (e) {
-                let newLocId = ctrl.getValueFromDOM();    
+                let newLocId = ctrl.getValueFromDOM();
                 if (newLocId === 0)
                     return;
                 let newLocObj = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
@@ -1053,7 +1098,7 @@ var InitControls = function (option) {
                 if (newLocObj.LocId !== oldLocObj.LocId) {
                     EbMessage("show", { Message: `Switching from ${oldLocObj.LongName} to ${newLocObj.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
                     ebcontext.locations.SwitchLocation(newLocObj.LocId);
-                }                
+                }
             });
         }
     };
@@ -1193,7 +1238,7 @@ var InitControls = function (option) {
             else {
                 ctrl.removeInvalidStyle();
             }
-          
+
         else
             if (this.Renderer.rendererName === "Bot") {
                 $(`#${ctrl.EbSid}`).addClass("emailCtrl_invalid");
@@ -1201,7 +1246,7 @@ var InitControls = function (option) {
             else {
                 ctrl.addInvalidStyle("Invalid email");
             }
-           
+
     }
 
     this.initNumeric = function (ctrl, $input) {
@@ -1576,7 +1621,7 @@ var InitControls = function (option) {
             iti.setNumber(p1);
         };
 
-        $(`#${ctrl.EbSid}`).attr("maxlength","18");
+        $(`#${ctrl.EbSid}`).attr("maxlength", "18");
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {
@@ -2838,7 +2883,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 }
             }
             else {
-                if ((this.curCtrl.ObjType === "TVcontrol") || (this.curCtrl.ObjType === "Locations") || (this.curCtrl.ObjType === "Video") || (this.curCtrl.ObjType === "Image") || (this.curCtrl.ObjType === "PdfControl")) {
+                if ((this.curCtrl.ObjType === "TVcontrol") || (this.curCtrl.ObjType === "Locations") || (this.curCtrl.ObjType === "Video") || (this.curCtrl.ObjType === "Image") || (this.curCtrl.ObjType === "PdfControl") || (this.curCtrl.ObjType === "ChartControl")) {
                     $ctrlCont = $(this.wrapIn_chat_ctrl_readonly(controlHTML));
                 }
             }
@@ -5371,7 +5416,7 @@ function DGremoveInvalidStyle() {
 
 
 function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
-    let shadowColor = "#ee0000b8";
+    let shadowColor = "rgb(255 0 0)";
     if (type === "warning")
         shadowColor = "rgb(236, 151, 31)";
     if ($(`${contSel} .req-cont`).length !== 0)
@@ -5379,16 +5424,63 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
     let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
-    $ctrlCont.css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
+    $ctrlCont.css("border", `1px solid ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
     $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
 
 function EbMakeValid(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+    $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
+
+
+//function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+//    let borderColor = "rgb(242 5 0)";
+//    if (type === "warning")
+//        borderColor = "rgb(236, 151, 31)";
+
+//    if ($(`${contSel} .req-cont`).length !== 0)
+//        return;
+
+//    let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
+//    if ($ctrlCont.children(".ebctrl-msg-cont").length !== 1)
+//        $ctrlCont.append(`<div class="ebctrl-msg-cont"></div>`);
+
+//    if ($ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).length === 1)
+//        $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).remove();
+
+//    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
+
+
+//    $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
+//        trigger: 'hover',
+//        html: true,
+//        container: "body",
+//        placement: function (context, source) {
+//            if (($(source).offset().left + 700) > document.body.clientWidth)
+//                return "left";
+//            else {
+//                return "right";
+//            }
+//        },
+//        content: msg
+//    });
+
+
+
+
+//    $ctrlCont.css("border", `1px solid ${borderColor}`).siblings("[name=ctrlsend]").css('disabled', true);
+//    $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).show(100);
+//}
+
+//function EbMakeValid(contSel, _ctrlCont) {
+//    //setTimeout(function () {
+//    $(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+//    $(`${contSel} .ebctrl-msg-cont:first`).empty();
+//    //},400);
+//}
 
 
 function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
@@ -5929,23 +6021,6 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
-        //        let FnString = `
-        //let __this = form.__getCtrlByPath(this.__path);
-        //if (__this.DataVals !== undefined) {
-        //    let v = __this.getValueFromDOM();
-        //    let d = __this.getDisplayMemberFromDOM();
-        //    if (__this.ObjType === 'Numeric')
-        //        v = parseFloat(v);
-        //debugger;
-        //    if (__this.__isEditing) {
-        //        __this.curRowDataVals.Value = v;
-        //        __this.curRowDataVals.D = d;
-        //    }
-        //    else {
-        //        __this.DataVals.Value = v;
-        //        __this.DataVals.D = d;
-        //    }
-        //}`;
         let OnChangeFn = function (form, user, event) {
             //let __this = form.__getCtrlByPath(this.__path);
             let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)
@@ -6157,7 +6232,9 @@ function EBPSSetDisplayMember(p1, p2) {
 
     for (let i = 0; i < valMsArr.length; i++) {
         let vm = valMsArr[i];
-        VMs.push(vm);
+        setTimeout(function () {
+            VMs.push(vm);
+        });
         for (let j = 0; j < this.initializer.dmNames.length; j++) {
             let dmName = this.initializer.dmNames[j];
             if (!DMs[dmName])
@@ -6181,6 +6258,7 @@ function EBPSSetDisplayMember(p1, p2) {
     }
 
     $("#" + this.EbSid_CtxId).val(p1);
+    //this.initializer.V_watchVMembers(VMs);
 }
 
 function copyObj(destObj, srcObj) {

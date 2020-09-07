@@ -483,6 +483,10 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getData = function () {
+        if (Offline.state !== 'up') {
+            this.V_hideDD();
+            return;
+        }
         this.showLoader();
         if (this.ComboObj.__isDGv2Ctrl && this.ComboObj.__bkpData) {
             this.getDataSuccess(this.ComboObj.__bkpData);

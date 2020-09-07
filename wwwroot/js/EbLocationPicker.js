@@ -66,7 +66,7 @@
 
     this.ModifyLocationObject = function () {
         for (let i = 0; i < this.Locations.length; i++) {
-            this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: this.Locations[i].LongName + `  (${this.Locations[i].ShortName})` });
+            this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: (this.Locations[i].LongName === this.Locations[i].ShortName) ? (this.Locations[i].LongName):(this.Locations[i].LongName + `  (${this.Locations[i].ShortName})`) });
         }
         this.Tempdata = JSON.parse(JSON.stringify(this.data));
         this.Tempdata.sort(function (a, b) {

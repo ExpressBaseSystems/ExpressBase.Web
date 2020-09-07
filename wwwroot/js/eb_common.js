@@ -886,23 +886,6 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
-        //        let FnString = `
-        //let __this = form.__getCtrlByPath(this.__path);
-        //if (__this.DataVals !== undefined) {
-        //    let v = __this.getValueFromDOM();
-        //    let d = __this.getDisplayMemberFromDOM();
-        //    if (__this.ObjType === 'Numeric')
-        //        v = parseFloat(v);
-        //debugger;
-        //    if (__this.__isEditing) {
-        //        __this.curRowDataVals.Value = v;
-        //        __this.curRowDataVals.D = d;
-        //    }
-        //    else {
-        //        __this.DataVals.Value = v;
-        //        __this.DataVals.D = d;
-        //    }
-        //}`;
         let OnChangeFn = function (form, user, event) {
             //let __this = form.__getCtrlByPath(this.__path);
             let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)

@@ -23,7 +23,7 @@
             $(el).popover({
                 trigger: 'focus',
                 html: true,
-                container: "body",
+                container: "body [eb-root-obj-container]:first",
                 placement: this.PopoverPlacement,
                 content: decodeURIComponent(escape(window.atob(ctrl.Info)))
             });
@@ -582,14 +582,14 @@
         o.dvObject = JSON.parse(ctrl.ChartVisualizationJson);
         o.Source = this.Renderer.rendererName;
         ////code review ...code duplicate with TV
-        if (!ctrl.__filterValues)
-            ctrl.__filterValues = [];
+        if (!ctrl.__filtervalues)
+            ctrl.__filtervalues = [];
         if (ctrl.ParamsList) {
             paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
             for (let i = 0; i < paramsList.length; i++) {
                 let depCtrl_s = paramsList[i];
                 let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
-                if (!getObjByval(ctrl.__filterValues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                if (!getObjByval(ctrl.__filtervalues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
                     let val = '';
                     let ebDbType = 11;
                     let name = "";
@@ -611,10 +611,10 @@
                         ebDbType = depCtrl.EbDbType;
                     }
 
-                    ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
+                    ctrl.__filtervalues.push(new fltr_obj(ebDbType, name, val));
                 }
             }
-            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+            o.filtervalues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filtervalues))));
         }
         this.chartApi = new EbBasicChart(o);
     };
@@ -906,7 +906,7 @@
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7`;
+            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7&_locId=${ebcontext.locations.CurrentLoc}`;
             window.open(url, '_blank');
         }.bind(this);
     };

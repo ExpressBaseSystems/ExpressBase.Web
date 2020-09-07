@@ -1307,7 +1307,7 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone"], currentLoc, reqstMode));
         }
         else if (reqstMode === "Preview Mode") {
             this.mode = "New Mode";////////////
@@ -1358,10 +1358,10 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
-                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
+                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('ExcelImport') > -1 && mode === 'New Mode')
                     r.push(btns[i]);
-                if (mode === 'View Mode')
-                    r.push('webformclone');
+                else if (btns[i] === "webformclone" && this.formPermissions[loc].indexOf('Clone') > -1 && mode === 'View Mode')
+                    r.push(btns[i]);
             }
         }
         return r;

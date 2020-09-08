@@ -85,7 +85,6 @@ const EbPowerSelect = function (ctrl, options) {
 
     //local variables
     this.container = this.name + "Container";
-    this.$wraper = $('#' + this.name + 'Wraper');
     this.DTSelector = '#' + this.name + 'tbl';
     this.DT_tbodySelector = "#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody';
     this.NoOfFields = this.dmNames.length;
@@ -122,8 +121,8 @@ const EbPowerSelect = function (ctrl, options) {
     //init() for event binding....
     this.init = function () {
         try {
-            $('#' + this.name + 'Wraper [class=open-indicator]').hide();
-            this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]');
+            $('#' + this.name + 'Container [class=open-indicator]').hide();
+            this.$searchBoxes = $('#' + this.name + 'Container [type=search]');
             this.lastFocusedDMsearchBox = $(this.$searchBoxes[0]);
             this.$searchBoxes.on("click", function () { $(this).focus(); });
             this.$searchBoxes.keyup(this.searchboxKeyup);
@@ -133,17 +132,17 @@ const EbPowerSelect = function (ctrl, options) {
             this.isDGps = this.ComboObj.constructor.name === "DGPowerSelectColumn" || this.ComboObj.isDGCtrl;
 
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit)
-            $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
-            $('#' + this.name + 'Wraper .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
+            $('#' + this.name + 'Container .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
+            $('#' + this.name + 'Container .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
             $('#' + this.name + 'tbl').keydown(function (e) {
                 if (e.which === 27) {
                     this.lastFocusedDMsearchBox.focus();
                     this.Vobj.hideDD();
                 }
             }.bind(this));//hide DD on esc when focused in DD
-            $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+            $('#' + this.name + 'Container').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-            $('#' + this.name + 'Wraper' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
+            $('#' + this.name + 'Container' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
             this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 600)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
@@ -166,11 +165,11 @@ const EbPowerSelect = function (ctrl, options) {
             }
 
             //set id for searchBox
-            $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
+            $('#' + this.name + 'Container  [type=search]').each(this.srchBoxIdSetter.bind(this));
 
 
             if (!this.ComboObj.MultiSelect)
-                $('#' + this.name + 'Wraper').attr("singleselect", "true");
+                $('#' + this.name + 'Container').attr("singleselect", "true");
 
             this.$searchBoxes.attr("autocomplete", "off");
 
@@ -430,7 +429,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.srchBoxIdSetter = function (i) {
-        $('#' + this.name + 'Wraper  [type=search]:eq(' + i + ')').attr('id', this.dmNames[i]);
+        $('#' + this.name + 'Container  [type=search]:eq(' + i + ')').attr('id', this.dmNames[i]);
     };
 
     //enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
@@ -1058,7 +1057,7 @@ const EbPowerSelect = function (ctrl, options) {
         //setTimeout(function () {// to adjust search-block
         //    let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
         //    $(".search-block .input-group").css("height", maxHeight + "px");
-        //    $('#' + this.name + 'Wraper [type=search]').val("");
+        //    $('#' + this.name + 'Container [type=search]').val("");
         //}.bind(this), 10);
 
         if (this.datatable === null) {
@@ -1082,7 +1081,7 @@ const EbPowerSelect = function (ctrl, options) {
         //console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
         setTimeout(function () {
             this.adjustTag_closeHeight();
-            this.$wraper.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
+            this.container.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
         }.bind(this), 5);
         //this.scrollIf();
         this.adjustDDposition();
@@ -1102,15 +1101,15 @@ const EbPowerSelect = function (ctrl, options) {
     }
 
     this.adjustTag_closeHeight = function () {
-        if (this.ComboObj.Padding && this.$wraper.find(".selected-tag").length > 0) {
+        if (this.ComboObj.Padding && this.container.find(".selected-tag").length > 0) {
             if (this.ComboObj.Padding.Top >= 7) {
-                this.$wraper.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 5)}px`);
-                this.$wraper.find(".v-select input[type=search]").css("padding-top", `${(this.ComboObj.Padding.Top - 2)}px`);
-                this.$wraper.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 3.5)}px`);
+                this.container.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 5)}px`);
+                this.container.find(".v-select input[type=search]").css("padding-top", `${(this.ComboObj.Padding.Top - 2)}px`);
+                this.container.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 3.5)}px`);
             }
             if (this.ComboObj.Padding.Bottom >= 7) {
-                this.$wraper.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 5)}px`);
-                this.$wraper.find(".v-select input[type=search]").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 2)}px`);
+                this.container.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 5)}px`);
+                this.container.find(".v-select input[type=search]").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 2)}px`);
             }
         }
     };

@@ -1433,9 +1433,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     margin: auto;
 }
 
-[isrendermode="true"] .popover.fade {
+/*[isrendermode="true"] .popover.fade {
     min-width: 700px;
-}
+}*/
 
 .eb-ctrl-label {
     position: relative;

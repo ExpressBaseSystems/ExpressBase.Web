@@ -1606,6 +1606,18 @@ const WebFormRender = function (option) {
         console.dev_log("WebFormRender : FORCE_RELOAD took " + (performance.now() - t0) + " milliseconds.");
     };
 
+    this.initConnectionCheck = function () {
+        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
+        setInterval(this.connectionPing, 5000);///////////////////////////////////////////////////////////////
+    };
+
+    this.connectionPing = function () {
+        Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
+        if (Offline.state === 'up')
+            Offline.check();
+        console.log(Offline.state);
+    };
+
     this.init = function () {
         let t0 = performance.now();
 
@@ -1702,6 +1714,8 @@ const WebFormRender = function (option) {
         $('[data-toggle="tooltip"]').tooltip('destroy').tooltip();
 
         console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
+
+        this.initConnectionCheck();
     };
 
     this.init(option);

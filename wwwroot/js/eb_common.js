@@ -886,23 +886,6 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
-        //        let FnString = `
-        //let __this = form.__getCtrlByPath(this.__path);
-        //if (__this.DataVals !== undefined) {
-        //    let v = __this.getValueFromDOM();
-        //    let d = __this.getDisplayMemberFromDOM();
-        //    if (__this.ObjType === 'Numeric')
-        //        v = parseFloat(v);
-        //debugger;
-        //    if (__this.__isEditing) {
-        //        __this.curRowDataVals.Value = v;
-        //        __this.curRowDataVals.D = d;
-        //    }
-        //    else {
-        //        __this.DataVals.Value = v;
-        //        __this.DataVals.D = d;
-        //    }
-        //}`;
         let OnChangeFn = function (form, user, event) {
             //let __this = form.__getCtrlByPath(this.__path);
             let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)
@@ -936,7 +919,7 @@ function dgEBOnChangeBind() {
 
 }
 
-function justSetDate_EB(p1, p2) {
+function SetDisplayMemberDate_EB(p1, p2) {
     if (this.IsNullable && p1 !== null)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
     if (p1 !== null && p1 !== undefined) {
@@ -948,17 +931,9 @@ function justSetDate_EB(p1, p2) {
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
         else if (this.EbDateType === 17) //Time
             $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
-        $('#' + this.EbSid_CtxId).trigger('change');
     }
     else
         $('#' + this.EbSid_CtxId).val('');
-}
-
-function setDate_EB(p1, p2) {
-    justSetDate_EB.bind(this)(p1, p2);
-    if (p1 !== null && p1 !== undefined) {
-        $('#' + this.EbSid_CtxId).trigger('change');
-    }
 }
 
 function removePropsOfType(Obj, type = "function") {

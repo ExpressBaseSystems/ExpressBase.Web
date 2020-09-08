@@ -3361,6 +3361,10 @@ pd-10 {
     margin-right: 5px;
 }
 
+    .toolicons .btn[role='save-draft'], .toolicons .btn[role='delete-draft'] {
+        display: none;
+    }
+
     .toolicons .btn:hover {
         background-color: #e4e4e4;
         border-radius: 0;

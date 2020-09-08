@@ -118,6 +118,7 @@ class DvBuilder {
                 }
             }
         }
+        $("title").text(this.EbObject.DisplayName);
         this.propGrid.PropertyChanged = this.PropertyChanged.bind(this);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         commonO.saveOrCommitSuccess = this.rendertable.bind(this);
@@ -155,6 +156,8 @@ class DvBuilder {
         }
         else if (pname === "FilterDialogRefId")
             this.GetFD();
+        else if (pname === "DisplayName")
+            $("title").text(this.EbObject.DisplayName);
     }
 
     GenerateRunbutton() {

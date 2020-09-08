@@ -98,9 +98,9 @@ function EbDataLabelFn(Label, tileId) {
     if (Label.LabelStyle != 3)
         $(`#${Label.EbSid}_icon`).css('background-image', bg);
     $(`#${Label.EbSid}_icon i`).css("color", Label.IconColor);
-    if (Label.IconText == "") {
+    if (Label.IconText == "" || Label.IconText == null || Label.IconText == undefined) {
         $(`#${Label.EbSid}_icon i`).empty().removeAttr("class").addClass(`fa ${Label.Icon}`);
-        $(`#${Label.EbSid}_icon`).css("padding", "2.4rem 2rem");
+        $(`#${Label.EbSid}_icon`).css("padding", "1.5rem 2rem");
     }
     else {
         $(`#${Label.EbSid}_icon i`).empty().append(Label.IconText).removeAttr("class").addClass(`lbl-icon-text`);

@@ -58,7 +58,7 @@
 
 const EbPowerSelect = function (ctrl, options) {
     //parameters 
-    this.getFilterValuesFn = options.getFilterValuesFn;
+    this.getFilterValuesFn = options.getFilterValuesFn || function () { return []; };
     this.ComboObj = ctrl;
     //this.ComboObj.__isDGv2Ctrl = true;// hardcoding
     this.renderer = options.renderer;
@@ -85,6 +85,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     //local variables
     this.container = this.name + "Container";
+    this.$container = $('#' + this.name + "Container");
     this.DTSelector = '#' + this.name + 'tbl';
     this.DT_tbodySelector = "#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody';
     this.NoOfFields = this.dmNames.length;
@@ -641,7 +642,12 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.AddUserAndLcation = function () {
-        this.filterValues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        if (this.renderer.rendererName === 'Bot') // no store available in bot
+            var defaultLocId = 1;
+        else
+            var defaultLocId = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+
+        this.filterValues.push(new fltr_obj(11, "eb_loc_id", defaultLocId));
         this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     };
 
@@ -1081,7 +1087,7 @@ const EbPowerSelect = function (ctrl, options) {
         //console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
         setTimeout(function () {
             this.adjustTag_closeHeight();
-            this.container.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
+            this.$container.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
         }.bind(this), 5);
         //this.scrollIf();
         this.adjustDDposition();
@@ -1101,15 +1107,15 @@ const EbPowerSelect = function (ctrl, options) {
     }
 
     this.adjustTag_closeHeight = function () {
-        if (this.ComboObj.Padding && this.container.find(".selected-tag").length > 0) {
+        if (this.ComboObj.Padding && this.$container.find(".selected-tag").length > 0) {
             if (this.ComboObj.Padding.Top >= 7) {
-                this.container.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 5)}px`);
-                this.container.find(".v-select input[type=search]").css("padding-top", `${(this.ComboObj.Padding.Top - 2)}px`);
-                this.container.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 3.5)}px`);
+                this.$container.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 5)}px`);
+                this.$container.find(".v-select input[type=search]").css("padding-top", `${(this.ComboObj.Padding.Top - 2)}px`);
+                this.$container.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 3.5)}px`);
             }
             if (this.ComboObj.Padding.Bottom >= 7) {
-                this.container.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 5)}px`);
-                this.container.find(".v-select input[type=search]").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 2)}px`);
+                this.$container.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 5)}px`);
+                this.$container.find(".v-select input[type=search]").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 2)}px`);
             }
         }
     };

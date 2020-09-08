@@ -2737,10 +2737,15 @@ input.locinp {
 .tv-control-cont .refresh-cont {
     position: absolute;
     z-index: 1;
-    right: 0px;
-    top: -22px;
+    right: 1px;
+    top: 1px;
     background: white;
+    opacity: 0.5;
 }
+
+    .tv-control-cont .refresh-cont:hover {
+        opacity: 1;
+    }
 
     .tv-control-cont .refresh-cont > .btn {
         background-color: #ffffff;

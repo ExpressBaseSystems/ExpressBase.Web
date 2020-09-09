@@ -138,7 +138,7 @@ namespace ExpressBase.Web.Controllers
             IFormCollection form = this.HttpContext.Request.Form;
             Eb_Solution slno = GetSolutionObject(form["isid"]);
 
-            if (slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
+            if (slno !=null && slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
             {
                 if (this.Redis.ContainsKey(string.Format(CoreConstants.SOLUTION_ID_MAP, form["newesid"])) && (form["newesid"] != form["oldesid"]))
                 {

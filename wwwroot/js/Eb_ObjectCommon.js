@@ -819,8 +819,8 @@
                             function (result) {
                                 $("#eb_common_loader").EbLoader("hide");
                                 if (result.status) {
-                                    EbMessage("show", { Message: "Clone completed.", Background: this.GreenColor });
-                                    window.location.replace("../Eb_Object/Index?objid=" + result.objId + "&objtype=" + result.objectType);
+                                    EbMessage("show", { Message: "Clone completed.", Background: this.GreenColor }); 
+                                    window.open("../Eb_Object/Index?objid=" + result.objId + "&objtype=" + result.objectType, "_blank"); 
                                 }
                                 else
                                     EbMessage("show", { Message: "failed. Please retry", Background: this.RedColor });

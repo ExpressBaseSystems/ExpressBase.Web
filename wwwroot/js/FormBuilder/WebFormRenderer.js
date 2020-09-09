@@ -312,7 +312,7 @@ const WebFormRender = function (option) {
         let _respObj = JSON.parse(_respObjStr);
         if (_respObj.Status === 200) {
             this.__fromImport = true;
-            this.callFORCE_RELOAD(0, _respObj.FormData, "New Mode");
+            this.callFORCE_RELOAD(0, _respObj.FormData, "Export Mode");
         }
         else
             console.error(_respObj.MessageInt);
@@ -516,6 +516,7 @@ const WebFormRender = function (option) {
             console.error(respObj.MessageInt);
         }
         this.draftId = respObj.DraftId;
+        this.headerObj.setFormMode(`<span mode="New Mode" class="fmode"> Draft </span>`);
         this.AdjustDraftBtnsVisibility();
     }.bind(this);
 
@@ -780,8 +781,9 @@ const WebFormRender = function (option) {
         this.Mode.isView = true;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        this.setHeader("View Mode");
-        this.BeforeModeSwitch("View Mode");
+        this.mode = "View Mode";
+        this.setHeader(this.mode);
+        this.BeforeModeSwitch(this.mode);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
 
         if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
@@ -851,8 +853,9 @@ const WebFormRender = function (option) {
 
         this.S2EmodeDGCtrls();// switch to Edit mode  - all DG controls
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
-        this.BeforeModeSwitch("Edit Mode");
-        this.setHeader("Edit Mode");
+        this.mode = "Edit Mode";
+        this.BeforeModeSwitch(this.mode);
+        this.setHeader(this.mode);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.enableControlsInEditMode();
         this.setUniqCtrlsInitialVals();
@@ -1297,20 +1300,15 @@ const WebFormRender = function (option) {
         }
         this.AdjustDraftBtnsVisibility();
 
-        this.mode = reqstMode;//
-
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
-        if (reqstMode === "Edit Mode") {
+        if (this.Mode.isEdit) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn"], currentLoc, reqstMode));
         }
-        else if (reqstMode === "New Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, reqstMode));
+        else if (this.Mode.isNew) {
+            this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, "New Mode"));
         }
-        else if (reqstMode === "View Mode") {
+        else if (this.Mode.isView) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone"], currentLoc, reqstMode));
-        }
-        else if (reqstMode === "Preview Mode") {
-            this.mode = "New Mode";////////////
         }
 
         let title_val = '';
@@ -1323,9 +1321,20 @@ const WebFormRender = function (option) {
         }
         catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
+
+        let modeText = this.mode;
+
+        if (reqstMode === "Preview Mode" || reqstMode === "Export Mode" || reqstMode === "Prefill Mode") {
+            modeText = "New Mode";
+        }
+        else if (reqstMode === "Draft Mode" && this.draftId > 0) {
+            modeText = "Draft";
+        }
+
         if (_renderMode !== 3 && _renderMode !== 5)
-            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-        $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);
+            this.headerObj.setFormMode(`<span mode="${reqstMode}" class="fmode">${modeText}</span>`);
+
+        $('title').text(this.FormObj.DisplayName + title_val + `(${modeText})`);
 
         if (this.isPartial === "True") {
             this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);
@@ -1569,7 +1578,7 @@ const WebFormRender = function (option) {
 
         if (this.mode === "View Mode")
             this.Mode.isView = true;
-        else if (this.mode === "New Mode")
+        else if (this.mode === "New Mode" || this.mode === "Export Mode" || this.mode === "Draft Mode" || this.mode === "Prefill Mode" || this.mode === "Preview Mode")
             this.Mode.isNew = true;
         else if (this.mode === "Edit Mode")
             this.Mode.isEdit = true;
@@ -1650,14 +1659,16 @@ const WebFormRender = function (option) {
         this.formPermissions = option.formPermissions;
 
         this.formData = option.formData;
-        if (this.mode === "New Mode")
+        if (this.mode === "New Mode" || this.mode === "Prefill Mode")
             this.emptyFormDataModel_copy = JSON.parse(JSON.stringify(this.formData));// takes a copy (if switched to new mode)
         this.DataMODEL = this.formData.MultipleTables;
         this.FormDataExtdObj = { val: this.formData.ExtendedTables }; // next iteration
 
         this.DisableDeleteData = this.formData.DisableDelete;
         this.DisableCancelData = this.formData.DisableCancel;
-        this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
+        this.Mode = {};
+        this.setMode();
+        //this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
         this.FlatContControls = getInnerFlatContControls(this.FormObj);
         this.MasterTable = this.FormObj.TableName;
@@ -1679,7 +1690,6 @@ const WebFormRender = function (option) {
         this.initPrintMenu();
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
-        this.setMode();
         this.isInitiallyPopulating = true;
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
         this.isInitiallyPopulating = false;

@@ -179,7 +179,13 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (control is EbSimpleSelect)
                     {
-                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+						Param parameter = new Param();
+						parameter.Name = "eb_currentuser_id";
+						parameter.Value = this.LoggedInUser.UserId.ToString();
+						parameter.Type = "11";
+						List<Param> ParamsList=new List<Param>();
+						ParamsList.Add(parameter);
+						   (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient,ParamsList);
                         (control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
 
                     }

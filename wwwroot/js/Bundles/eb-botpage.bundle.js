@@ -23,7 +23,7 @@ var InitControls = function (option) {
             $(el).popover({
                 trigger: 'focus',
                 html: true,
-                container: "body",
+                container: "body [eb-root-obj-container]:first",
                 placement: this.PopoverPlacement,
                 content: decodeURIComponent(escape(window.atob(ctrl.Info)))
             });
@@ -582,14 +582,14 @@ var InitControls = function (option) {
         o.dvObject = JSON.parse(ctrl.ChartVisualizationJson);
         o.Source = this.Renderer.rendererName;
         ////code review ...code duplicate with TV
-        if (!ctrl.__filterValues)
-            ctrl.__filterValues = [];
+        if (!ctrl.__filtervalues)
+            ctrl.__filtervalues = [];
         if (ctrl.ParamsList) {
             paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
             for (let i = 0; i < paramsList.length; i++) {
                 let depCtrl_s = paramsList[i];
                 let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
-                if (!getObjByval(ctrl.__filterValues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                if (!getObjByval(ctrl.__filtervalues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
                     let val = '';
                     let ebDbType = 11;
                     let name = "";
@@ -611,10 +611,10 @@ var InitControls = function (option) {
                         ebDbType = depCtrl.EbDbType;
                     }
 
-                    ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
+                    ctrl.__filtervalues.push(new fltr_obj(ebDbType, name, val));
                 }
             }
-            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+            o.filtervalues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filtervalues))));
         }
         this.chartApi = new EbBasicChart(o);
     };
@@ -906,7 +906,7 @@ var InitControls = function (option) {
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7`;
+            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7&_locId=${ebcontext.locations.CurrentLoc}`;
             window.open(url, '_blank');
         }.bind(this);
     };
@@ -6021,23 +6021,6 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
-        //        let FnString = `
-        //let __this = form.__getCtrlByPath(this.__path);
-        //if (__this.DataVals !== undefined) {
-        //    let v = __this.getValueFromDOM();
-        //    let d = __this.getDisplayMemberFromDOM();
-        //    if (__this.ObjType === 'Numeric')
-        //        v = parseFloat(v);
-        //debugger;
-        //    if (__this.__isEditing) {
-        //        __this.curRowDataVals.Value = v;
-        //        __this.curRowDataVals.D = d;
-        //    }
-        //    else {
-        //        __this.DataVals.Value = v;
-        //        __this.DataVals.D = d;
-        //    }
-        //}`;
         let OnChangeFn = function (form, user, event) {
             //let __this = form.__getCtrlByPath(this.__path);
             let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)

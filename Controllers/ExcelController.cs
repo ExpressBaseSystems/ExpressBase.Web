@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
                     for (int rowNum = startRow; rowNum <= worksheet.Dimension.End.Row; rowNum++)
                     {
                         var row = worksheet.Cells[rowNum, 1, rowNum, worksheet.Dimension.End.Column];
-                        if (row != null || row.ToString() != string.Empty)
+                        if(row != null || row.ToString() != string.Empty)
                         {
                             EbDataRow rr = tbl.NewDataRow2();
                             int colIndex1 = 0;

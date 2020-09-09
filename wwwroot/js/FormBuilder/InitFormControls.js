@@ -287,7 +287,7 @@
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none').css('color', '#999');
         }
-        else if (ctrl.ShowDateAs_ !== 2)
+        else if (ctrl.ShowDateAs_ !== 2 && this.rendererName !== "WebForm")
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
@@ -1813,7 +1813,7 @@
                 }
                 var paramString = btoa(unescape(encodeURIComponent(JSON.stringify(paramArray))));
             }
-            $(`#icon_${ctrl.EbSid}`).click(function () {
+            $(`#img_${ctrl.EbSid}, #spn_${ctrl.EbSid} `).click(function () {
                 if (this.Renderer.rendererName === "WebForm") {
                     if (confirm(`Download ${ctrl.PdfRefid}.pdf?`)) {
                         let link = document.createElement('a');

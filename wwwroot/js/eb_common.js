@@ -919,7 +919,7 @@ function dgEBOnChangeBind() {
 
 }
 
-function justSetDate_EB(p1, p2) {
+function SetDisplayMemberDate_EB(p1, p2) {
     if (this.IsNullable && p1 !== null)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
     if (p1 !== null && p1 !== undefined) {
@@ -931,17 +931,9 @@ function justSetDate_EB(p1, p2) {
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
         else if (this.EbDateType === 17) //Time
             $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
-        $('#' + this.EbSid_CtxId).trigger('change');
     }
     else
         $('#' + this.EbSid_CtxId).val('');
-}
-
-function setDate_EB(p1, p2) {
-    justSetDate_EB.bind(this)(p1, p2);
-    if (p1 !== null && p1 !== undefined) {
-        $('#' + this.EbSid_CtxId).trigger('change');
-    }
 }
 
 function removePropsOfType(Obj, type = "function") {

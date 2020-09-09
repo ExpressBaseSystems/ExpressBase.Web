@@ -1714,7 +1714,7 @@ var EbCommonDataTable = function (Option) {
             $.ajax({
                 type: "POST",
                 url: "../DV/dvCommon",
-                data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + this.TenantId + this.UserId), submitId: this.submitId },
+                data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: ebcontext.locations.CurrentLoc, submitId: this.submitId },
                 success: this.ajaxSucc
             });
         }
@@ -1898,6 +1898,7 @@ var EbCommonDataTable = function (Option) {
         $("#objname").text(this.EbObject.DisplayName);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
+        $("title").text(this.EbObject.DisplayName);
         if (this.EbObject.DataSourceRefId) {
             this.call2FD();
             this.EbObject.IsPaging = this.IsPaging;
@@ -2481,7 +2482,7 @@ var EbCommonDataTable = function (Option) {
             if (this.Source === "Bot")
                 fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp for bot
             else
-                fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1));
         }
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
@@ -2532,7 +2533,10 @@ var EbCommonDataTable = function (Option) {
 
     this.getFilterForLinkfromColumn = function () {
         this.linkfromcolumn = false;
-        this.dvformMode = 1; let filters = [];
+        this.dvformMode = 1;
+        if (this.Source === "Draft")
+            this.dvformMode = 8;
+        let filters = [];
         var temp = this.EbObject.Columns.$values.filter(obj => obj.name === this.linkDVColumn)[0];
         filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
         return filters;
@@ -3050,7 +3054,7 @@ var EbCommonDataTable = function (Option) {
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+            input.value = ebcontext.locations.CurrentLoc;
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -4725,7 +4729,7 @@ var EbCommonDataTable = function (Option) {
                 input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = "_locId";
-                input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+                input.value = ebcontext.locations.CurrentLoc;
                 _form.appendChild(input);
 
                 document.body.appendChild(_form);
@@ -4735,7 +4739,7 @@ var EbCommonDataTable = function (Option) {
             else {
 
                 $("#iFrameFormPopupModal").modal("show");
-                let url = `../webform/index?refid=${MapObj.ObjRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_mode=1${MapObj.FormMode}&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+                let url = `../webform/index?refid=${MapObj.ObjRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_mode=1${MapObj.FormMode}&_locId=${ebcontext.locations.CurrentLoc}`;
                 $("#iFrameFormPopup").attr("src", url);
             }
         }
@@ -4769,7 +4773,7 @@ var EbCommonDataTable = function (Option) {
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../webform/index?refid=${obj.Refid}&_mode=2&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${obj.Refid}&_mode=2&_locId=${ebcontext.locations.CurrentLoc}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -4781,7 +4785,7 @@ var EbCommonDataTable = function (Option) {
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -4806,7 +4810,7 @@ var EbCommonDataTable = function (Option) {
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+            input.value = ebcontext.locations.CurrentLoc;
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -4821,7 +4825,7 @@ var EbCommonDataTable = function (Option) {
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=12&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -4846,7 +4850,7 @@ var EbCommonDataTable = function (Option) {
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+            input.value = ebcontext.locations.CurrentLoc;
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -4861,7 +4865,7 @@ var EbCommonDataTable = function (Option) {
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=11&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -4886,7 +4890,7 @@ var EbCommonDataTable = function (Option) {
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+            input.value = ebcontext.locations.CurrentLoc;
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -4901,7 +4905,7 @@ var EbCommonDataTable = function (Option) {
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=11&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -4926,7 +4930,7 @@ var EbCommonDataTable = function (Option) {
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+            input.value = ebcontext.locations.CurrentLoc;
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -5752,7 +5756,7 @@ var EbCommonDataTable = function (Option) {
         else if (this.popup) {
             this.popup = false;
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_mode=1${this.dvformMode}&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -5809,7 +5813,7 @@ var EbCommonDataTable = function (Option) {
         $.ajax({
             type: "POST",
             url: "../dv/PostWebformData",
-            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId) },
+            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: ebcontext.locations.CurrentLoc },
             success: this.cccccc.bind(this, $td),
             error: function (xhr, error) {
                 console.log(xhr); console.log(error);
@@ -8936,8 +8940,8 @@ var EbBasicChart = function (Option) {
     this.init = function () {
         this.EbObject = this.EbObject;
         this.type = this.EbObject.Type;
-        if (Option.filterValues.length != 0)
-            this.filterValues = Option.filterValues;
+        if (Option.filtervalues.length != 0)
+            this.filterValues = Option.filtervalues;
         else
             this.filterValues = this.getFilterValues();
         

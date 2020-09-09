@@ -1813,7 +1813,7 @@
                 }
                 var paramString = btoa(unescape(encodeURIComponent(JSON.stringify(paramArray))));
             }
-            $(`#icon_${ctrl.EbSid}`).click(function () {
+            $(`#img_${ctrl.EbSid}, #spn_${ctrl.EbSid} `).click(function () {
                 if (this.Renderer.rendererName === "WebForm") {
                     if (confirm(`Download ${ctrl.PdfRefid}.pdf?`)) {
                         let link = document.createElement('a');

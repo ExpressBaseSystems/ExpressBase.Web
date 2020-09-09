@@ -2790,7 +2790,19 @@ input.locinp {
 }
 
 /*ebpdf control*/
+.pdfwrapper-cont .dwnld_txt {
+    font-weight: 500;
+    position: absolute;
+    bottom: 13px;
+    cursor: pointer;
+    left: 21px;
+    line-height:1.5;
+}
+.pdfwrapper-cont img {
+    cursor: pointer;
+}
 .pdfwrapper-cont i {
+    display: none;
     font-size: 33px;
     position: absolute;
     bottom: 10px;

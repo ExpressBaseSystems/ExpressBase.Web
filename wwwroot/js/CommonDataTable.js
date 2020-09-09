@@ -1455,33 +1455,7 @@
             //}
         }
         else if (splitarray[2] === "0") {
-            let url = "../webform/index?refid=" + this.linkDV;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = this.dvformMode;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = ebcontext.locations.CurrentLoc;
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            this.WebFormlink(this.linkDV, btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), this.dvformMode);
         }
         else if (splitarray[2] === "22") {
             this.tabNum++;
@@ -1557,6 +1531,42 @@
             _form.submit();
             document.body.removeChild(_form);
         }
+    };
+
+    this.WebFormlink = function (_refid, _filter, _mode) {
+        let url = "../webform/index";
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "get");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "refId";
+        input.value = _refid;
+        _form.appendChild(input);
+
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_params";
+        input.value = _filter;
+        _form.appendChild(input);
+
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_mode";
+        input.value = _mode;
+        _form.appendChild(input);
+
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_locId";
+        input.value = ebcontext.locations.CurrentLoc;
+        _form.appendChild(input);
+
+        document.body.appendChild(_form);
+        _form.submit();
+        document.body.removeChild(_form);
     };
 
     this.arrangeFooterWidth = function () {
@@ -3130,38 +3140,12 @@
         }
         if (MapObj.ObjRefId.split("-")[2] === "0") {
             if (parseInt(EbEnums.LinkTypeEnum.Popout) === MapObj.LinkType) {
-                let url = "../webform/index?refid=" + MapObj.ObjRefId;
-                var _form = document.createElement("form");
-                _form.setAttribute("method", "post");
-                _form.setAttribute("action", url);
-                _form.setAttribute("target", "_blank");
-
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = "_params";
-                input.value = btoa(unescape(encodeURIComponent(JSON.stringify(filter))));
-                _form.appendChild(input);
-
-                input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = "_mode";
-                input.value = MapObj.FormMode;
-                _form.appendChild(input);
-
-                input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = "_locId";
-                input.value = ebcontext.locations.CurrentLoc;
-                _form.appendChild(input);
-
-                document.body.appendChild(_form);
-                _form.submit();
-                document.body.removeChild(_form);
+                this.WebFormlink(MapObj.ObjRefId, btoa(unescape(encodeURIComponent(JSON.stringify(filter)))), MapObj.FormMode);
             }
             else {
 
                 $("#iFrameFormPopupModal").modal("show");
-                let url = `../webform/index?refid=${MapObj.ObjRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_mode=1${MapObj.FormMode}&_locId=${ebcontext.locations.CurrentLoc}`;
+                let url = `../webform/index?refId=${MapObj.ObjRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_mode=1${MapObj.FormMode}&_locId=${ebcontext.locations.CurrentLoc}`;
                 $("#iFrameFormPopup").attr("src", url);
             }
         }
@@ -3195,7 +3179,7 @@
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../webform/index?refid=${obj.Refid}&_mode=2&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../webform/index?refId=${obj.Refid}&_mode=2&_locId=${ebcontext.locations.CurrentLoc}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -3207,37 +3191,11 @@
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../webform/index?refId=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
-            var _form = document.createElement("form");
-            let url = "../webform/index?refid=" + this.GroupFormLink;
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = filterparams;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = "2";
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = ebcontext.locations.CurrentLoc;
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            this.WebFormlink(this.GroupFormLink, filterparams,"2");
         }
     };
 
@@ -3247,37 +3205,11 @@
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=12&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../webform/index?refId=${this.ItemFormLink}&_params=${filterparams}&_mode=12&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = "../webform/index?refid=" + this.ItemFormLink;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = filterparams;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = "2";
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = ebcontext.locations.CurrentLoc;
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            this.WebFormlink(this.ItemFormLink, filterparams, "2");
         }
     };
 
@@ -3287,37 +3219,11 @@
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=11&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../webform/index?refId=${this.GroupFormLink}&_params=${filterparams}&_mode=11&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = "../webform/index?refid=" + this.GroupFormLink;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = filterparams;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = "1";
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = ebcontext.locations.CurrentLoc;
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            this.WebFormlink(this.GroupFormLink, filterparams, "1");
         }
     };
 
@@ -3327,37 +3233,11 @@
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=11&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../webform/index?refId=${this.ItemFormLink}&_params=${filterparams}&_mode=11&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = "../webform/index?refid=" + this.ItemFormLink;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = filterparams;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = "1";
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = ebcontext.locations.CurrentLoc;
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            this.WebFormlink(this.ItemFormLink, filterparams, "1");
         }
     };
 
@@ -4178,7 +4058,7 @@
         else if (this.popup) {
             this.popup = false;
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_mode=1${this.dvformMode}&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../webform/index?refId=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_mode=1${this.dvformMode}&_locId=${ebcontext.locations.CurrentLoc}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {

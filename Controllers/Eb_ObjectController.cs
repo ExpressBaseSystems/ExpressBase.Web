@@ -152,7 +152,7 @@ namespace ExpressBase.Web.Controllers
                 else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization) || type.Equals(EbObjectTypes.MapView))
                 {
                     Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
-                    _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject),typeof(EbObject));
+                    _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject), typeof(EbObject));
                     if (_object != null)
                     {
                         //---------------------temp fix to copy old prop value (string) to new prop value (EbScript)-------------------------------
@@ -167,7 +167,7 @@ namespace ExpressBase.Web.Controllers
                             }
                         }
                         //-----------------------------------------------------------------------------------------------------------------------
-                        if(!(_object as EbDataVisualization).IsDataFromApi)
+                        if (!(_object as EbDataVisualization).IsDataFromApi)
                             _object.AfterRedisGet(Redis, ServiceClient);
                         ViewBag.dsObj = _object;
                     }
@@ -881,10 +881,22 @@ namespace ExpressBase.Web.Controllers
 
         public bool DeleteObject(int objid)
         {
-            DeleteObjectResponse res = ServiceClient.Post(new DeleteEbObjectRequest { ObjId = objid });
+            DeleteEbObjectResponse res = ServiceClient.Post(new DeleteEbObjectRequest { ObjId = objid });
             if (res.RowsDeleted > 0)
                 return true;
             return false;
+        }
+
+
+        public CloneEbObjectResponse CloneObject(string refid, string apps)
+        {
+            CloneEbObjectResponse res = ServiceClient.Post(new CloneEbObjectRequest { RefId = refid, Apps = (apps == null) ? "" : apps });
+            if (res.ClonedRefid != string.Empty && res.Status)
+            {
+                res.ObjId = Convert.ToInt32(res.ClonedRefid.Split("-")[3]);
+                res.ObjectType = Convert.ToInt32(res.ClonedRefid.Split("-")[2]);
+            }
+            return res;
         }
 
         public bool ChangeAccess(int objid, int status)

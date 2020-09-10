@@ -39,7 +39,7 @@
             $("#logNow").attr("disabled", true);
             $("#otplogin").attr("disabled", true);
             $("#browser-compatibility").show();
-            $("#txt-id").append(`<p>You are currently csing <b style="font-weight: 500;">${this.browserName}</b></p> <p>Our platform is best viewed in the following Browsers:</p>`);
+            $("#txt-id").append(`<p>You are currently using <b style="font-weight: 500;">${this.browserName}</b></p> <p>Our platform is best viewed in the following Browsers:</p>`);
 
         }
     };

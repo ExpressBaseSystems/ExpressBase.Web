@@ -789,8 +789,7 @@
 
     this.getCtrlByTd = function ($td) {
         let rowid = $td.closest("tr").attr("rowid");
-        let ctrlTdIdx = $td.attr("ctrltdidx");
-        return this.objectMODEL[rowid][ctrlTdIdx];
+        return this.objectMODEL[rowid].filter(function (obj) { return obj.Name === $td.attr("colname") })[0];
     };
 
     this.ctrlToSpan_td = function ($td, flag) {

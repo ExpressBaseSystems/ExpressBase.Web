@@ -143,7 +143,7 @@ namespace ExpressBase.Web.Controllers
                     if (str == "type_name")
                         _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "obj_name")
-                        _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                        _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = false };
                     if (str == "display_name")
                         _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "obj_desc")

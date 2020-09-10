@@ -179,18 +179,24 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (control is EbSimpleSelect)
                     {
-                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+						Param parameter = new Param();
+						parameter.Name = "eb_currentuser_id";
+						parameter.Value = this.LoggedInUser.UserId.ToString();
+						parameter.Type = "11";
+						List<Param> ParamsList=new List<Param>();
+						ParamsList.Add(parameter);
+						   (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient,ParamsList);
                         (control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
 
                     }
                     else if (control is EbChartControl)
                     {
-                        (control as EbChartControl).InitFromDataBase(this.ServiceClient);
+                        (control as EbChartControl).InitFromDataBase(this.ServiceClient, this.Redis);
                         (control as EbChartControl).BareControlHtml4Bot = (control as EbChartControl).GetBareHtml();
                     }
                     else if (control is EbTVcontrol )
                     {
-                        (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
+                        (control as EbTVcontrol).InitFromDataBase(this.ServiceClient, this.Redis);
                         (control as EbTVcontrol).BareControlHtml4Bot = (control as EbTVcontrol).GetBareHtml();
                     }
                     //else if (control is EbImage)
@@ -762,9 +768,8 @@ namespace ExpressBase.Web.Controllers
 			{
 				Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
 			}
-			Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf")
+			Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf");
 		   // { FileDownloadName = Res.ReportName }
-		   ;
 			return true;
 		}
 

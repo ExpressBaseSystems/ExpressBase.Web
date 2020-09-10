@@ -1,19 +1,25 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Web.Controllers;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
-    Dictionary<string, List<EbObjectWrapper>> ObjList = ViewBag.objlist;
+    Dictionary<int, ObjectVersionsDictionary> AppObjMap = ViewBag.AppObjMap;
+    Dictionary<int, string> appNameCollection = ViewBag.appNameCollection;
 }
 @section StyleSheet{
     <style>
         .list_cont {
             display: flex;
             flex-direction: column;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: white;
         }
 
         .eb-exprt-container {
             display: flex;
             flex-direction: column;
             width: 60%;
+            margin-bottom: 20px;
         }
 
         .objContainer_f_app {
@@ -32,6 +38,14 @@
         .page-header input, .input-group {
             width: 50%;
         }
+
+        .app-name {
+            height: 25px;
+            background-color: #75a8f5;
+            padding: 3px;
+            margin-bottom: 10px;
+            color: white;
+        }
     </style>
 }
 @section JavaScript{
@@ -42,21 +56,21 @@
     @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>*@
     <script type="text/javascript" src="~/js/LayoutCommon/bootstrap-iconpicker.min.js"></script>
 }
-<div class="container list_cont w-100 h-100">
+<div class="container-fluid list_cont">
     <div class="page-header eb-exprt-container">
-        <h3 class="heading">Export Objects</h3>
+        <h4>Export Objects</h4>
         <div class="">
             <div class="form-group ">
-                <label>Package Name</label>
-                <input type="text" class="form-control" id="packname" placeholder="Package Name" style="height:45px" />
+                Package Name
+                <input type="text" class="form-control" id="packname" placeholder="Package Name" style="height:40px" />
             </div>
             <div class="form-group ">
-                <label>package Description</label>
-                <input type="text" class="form-control" id="packdesc" placeholder="package Description" style="height:45px" />
+                package Description
+                <input type="text" class="form-control" id="packdesc" placeholder="package Description" style="height:40px" />
             </div>
             <div class="form-group appicon_box">
-                <label>Icon</label>
-                <div class="input-group iconpicker-container" style="height:45px">
+                Icon
+                <div class="input-group iconpicker-container" style="height:40px">
                     <input type="text" class="form-control" name="packIcon" value="fa-home" style="height:100%" />
                     <span class="input-group-btn" style="height:100%">
                         <button class="btn btn-default appicon_btn" style="height:100%" id="packIcon"></button>
@@ -68,16 +82,24 @@
     </div>
     <div class="eb-exprt-container">
         <div class="eb-exprt-body">
-            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in ObjList)
+            @foreach (KeyValuePair<int, ObjectVersionsDictionary> app in AppObjMap)
             {
-                <div class="objContainer_f_app">
-                    <span class="col-md-10 pd-0 objkey"> @obj.Key</span>
-                    <select class="selectpicker show-tick version_dd col-md-2" style="border:none;">
-                        @foreach (EbObjectWrapper ver in obj.Value)
-                        {
-                            <option value="@ver.RefId">@ver.VersionNumber</option>
-                        }
-                    </select>
+                <div class="app_container col-md-12">
+                    <div class="app-name">
+                        <span class="col-md-12 appkey" value="@app.Key"> @appNameCollection[app.Key]</span>
+                    </div>
+                    @foreach (KeyValuePair<int, List<EbObjectWrapper>> obj in app.Value)
+                    {
+                        <div class="objContainer_f_app">
+                            <span class="col-md-10 pd-0 objkey"> @obj.Value[0].DisplayName</span>
+                            <select class="selectpicker show-tick version_dd col-md-2" style="border:none;">
+                                @foreach (EbObjectWrapper ver in obj.Value)
+                                {
+                                    <option value="@ver.RefId">@ver.VersionNumber</option>
+                                }
+                            </select>
+                        </div>
+                    }
                 </div>
             }
         </div>
@@ -102,17 +124,21 @@
         });
 
         $('#commit_export').on('click', function () {
-            var refids = [];
-            $('.list_cont').find('.selectpicker').each(function (i, o) {
-                refids.push($(this).find("option:selected").val());
+            let appdict = {};
+            $('.list_cont').find('.app_container').each(function (j, obj)
+            {
+                var refids = [];
+                $(this).find('.selectpicker').each(function (i, o)
+                {
+                    refids.push($(this).find("option:selected").val());
+                });
+                appdict[parseInt($(obj).children(".app-name").children(".appkey").attr("value"))] = refids;
             });
-            var dict = {@ViewBag.appid: refids.toString() };
-
             let App = {
                 packName:$('#packname').val(),
                 packDesc:$('#packdesc').val(),
                 packIcon:$("input[name='packIcon']").val(),
-                appColl:dict
+                appColl: appdict
                 };
             let po = {
                 Message: "Exporting objects...",

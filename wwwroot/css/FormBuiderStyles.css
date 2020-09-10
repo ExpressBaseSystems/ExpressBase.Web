@@ -1433,9 +1433,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     margin: auto;
 }
 
-[isrendermode="true"] .popover.fade {
+/*[isrendermode="true"] .popover.fade {
     min-width: 700px;
-}
+}*/
 
 .eb-ctrl-label {
     position: relative;
@@ -2737,10 +2737,15 @@ input.locinp {
 .tv-control-cont .refresh-cont {
     position: absolute;
     z-index: 1;
-    right: 0px;
-    top: -22px;
+    right: 1px;
+    top: 1px;
     background: white;
+    opacity: 0.5;
 }
+
+    .tv-control-cont .refresh-cont:hover {
+        opacity: 1;
+    }
 
     .tv-control-cont .refresh-cont > .btn {
         background-color: #ffffff;
@@ -2785,7 +2790,20 @@ input.locinp {
 }
 
 /*ebpdf control*/
+.pdfwrapper-cont .dwnld_txt {
+    font-family: Roboto;
+    font-weight: 500;
+    position: absolute;
+    bottom: 13px;
+    cursor: pointer;
+    left: 21px;
+    line-height: 1.5;
+}
+.pdfwrapper-cont img {
+    cursor: pointer;
+}
 .pdfwrapper-cont i {
+    display: none;
     font-size: 33px;
     position: absolute;
     bottom: 10px;

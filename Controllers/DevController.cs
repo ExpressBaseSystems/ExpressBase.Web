@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
                 EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
                 if (settings != null)
                 {
-					//////change count if any css Constant is added or removed
+                    //////change count if any css Constant is added or removed
                     if (settings.CssContent == null || settings.CssContent.Count < 11)
                     {
 
@@ -86,7 +86,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult GetTree()
+        public IActionResult ExportPackage()
         {
             Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
@@ -95,31 +95,33 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
             ViewBag.Visualization = GetAppsTree();
 
-            return View();
+            return View("GetTree");
         }
 
         public string GetAppsTree()
         {
-            string typestring = @"(1,'WebForm'),(2,'DataReader'),(3,'Report'),(4,'DataWriter'),(5,'SqlFunction'),(7,'JavascriptFunction'),(12,'FilterDialog'),(13,'MobilePage'),
+            string typestring = @"(0,'WebForm'),(2,'DataReader'),(3,'Report'),(4,'DataWriter'),(5,'SqlFunction'),(7,'JavascriptFunction'),(12,'FilterDialog'),(13,'MobilePage'),
             (14,'UserControl'),(15,'EmailBuilder'),(16,'TableVisualization'),(17,'ChartVisualization'),(18,'BotForm'),(19,'SmsBuilder'),(20,'Api'),(21,'MapView'),(22,'DashBoard'),
             (23,'KanBan'),(24,'CalendarView'),(25,'CsharpFunction'),(26,'SqlJob')";//(1, 'foo'), (2, 'bar'), (3, 'fooBar')
+
             string subquery = string.Format("(SELECT * FROM (values {0}) AS EOT(type_id, type_name)) AS EOT", typestring);
             string query = string.Format(@"SELECT 
-	 EO.id, EOT.type_name, EO.obj_name,EO.display_name,EO.obj_desc, EO2A.obj_id, EO2A.app_Id,app.applicationname
-FROM
-	 eb_objects_ver EOV,eb_objects EO, 
-	 {0},
-	 eb_objects2application EO2A,
-	 eb_applications app
-WHERE 
-	EO.id = EO2A.obj_id AND
-	app.id = EO2A.app_id AND
-	EO.id = EOV.eb_objects_id AND
-    EO.obj_type = EOT.type_id AND
-    COALESCE(EO.eb_del, 'F') = 'F' AND
-    COALESCE(EO2A.eb_del, 'F') = 'F';", subquery);
-;
-            string[] arrayy = new string[] { "id", "type_name", "obj_name", "display_name", "obj_desc",  "obj_id", "app_Id", "applicationname" };
+	                             EO.id, EOT.type_name, EO.obj_name,EO.display_name,EO.obj_desc, EO2A.obj_id, EO2A.app_Id,app.applicationname
+                            FROM
+	                             eb_objects_ver EOV,eb_objects EO, 
+	                             {0},
+	                             eb_objects2application EO2A,
+	                             eb_applications app
+                            WHERE 
+	                            EO.id = EO2A.obj_id AND
+	                            app.id = EO2A.app_id AND
+	                            EO.id = EOV.eb_objects_id AND
+                                EO.obj_type = EOT.type_id AND
+                                COALESCE(EO.eb_del, 'F') = 'F' AND
+                                COALESCE(EOV.working_mode, 'F') <> 'T' AND
+                                COALESCE(EO2A.eb_del, 'F') = 'F';", subquery);
+                                        ;
+            string[] arrayy = new string[] { "id", "type_name", "obj_name", "display_name", "obj_desc", "obj_id", "app_Id", "applicationname" };
             DVColumnCollection DVColumnCollection = GetColumnsForAppsTree(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = DVColumnCollection, AutoGen = false, IsPaging = false };
             List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("applicationname"), Visualization.Columns.Get("type_name") };
@@ -141,7 +143,7 @@ WHERE
                     if (str == "type_name")
                         _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "obj_name")
-                        _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                        _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = false };
                     if (str == "display_name")
                         _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "obj_desc")
@@ -151,7 +153,7 @@ WHERE
                     if (str == "app_Id")
                         _col = new DVNumericColumn { Data = 6, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
                     if (str == "applicationname")
-                        _col = new DVStringColumn{Data = 7,Name = str,sTitle = "App Name",Type = EbDbTypes.String,bVisible = true};
+                        _col = new DVStringColumn { Data = 7, Name = str, sTitle = "App Name", Type = EbDbTypes.String, bVisible = true };
                     _col.Name = str;
                     _col.RenderType = _col.Type;
                     _col.ClassName = "tdheight";
@@ -179,7 +181,7 @@ WHERE
             List<string> NameArr = new List<string>();
 
             //////if any changes change in bote too
-			
+
             foreach (var item in Cssconst)
             {
                 NameArr.Add(item.Key);
@@ -913,9 +915,9 @@ WHERE
                     resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                if(resp == null)
+                if (resp == null)
                 {
                     resp = new ApiResponse();
                 }

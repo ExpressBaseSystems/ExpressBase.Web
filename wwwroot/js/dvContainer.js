@@ -308,13 +308,19 @@ var DvContainerObj = function (settings) {
                 //$("#" + focusedId).css("width", window.outerWidth);
             }
             else if (this.dvRefid.split("-")[2] === "0") {
-                let url = "../webform/index?refid=" + this.dvRefid;
+                let url = "../webform/index?";
                 var _form = document.createElement("form");
-                _form.setAttribute("method", "post");
+                _form.setAttribute("method", "get");
                 _form.setAttribute("action", url);
                 _form.setAttribute("target", "_blank");
 
                 var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "refId";
+                input.value = this.dvRefid;
+                _form.appendChild(input);
+
+                input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = "_params";
                 input.value = filterforform;

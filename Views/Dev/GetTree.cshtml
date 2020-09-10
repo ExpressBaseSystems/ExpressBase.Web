@@ -34,8 +34,10 @@
     o.initCompleteCallback = AddExportButton;
     let datatable = new EbCommonDataTable(o);
     let dict = {};
+    let Appdict = {};
     let appcolindex = dvobj.Columns.$values.filter(col => col.name == "app_Id")[0].data;
     let objIdcolindex = dvobj.Columns.$values.filter(col => col.name == "obj_id")[0].data;
+    let appNamecolindex = dvobj.Columns.$values.filter(col => col.name == "applicationname")[0].data;
 
     function CheckboxClickHandler(e, rowdata) {
         let key = rowdata[appcolindex];
@@ -43,8 +45,10 @@
         if (e.currentTarget.checked) {
             if (Object.keys(dict).contains(key))
                 dict[key].push(value);
-            else
+            else {
                 dict[key] = [value];
+                Appdict[key] = rowdata[appNamecolindex];
+            }
         }
         else {
             const index = dict[key].indexOf(value);
@@ -62,23 +66,24 @@
     }
 
     function Export() {
-        if (Object.keys(dict).length > 0) {
+        if (Object.keys(dict).length > 0) { 
+            var form = document.createElement("form");
+            form.style.display = "none";
+            form.setAttribute("method", "post");
+            form.setAttribute("action", "../ImportExport/ExportOSE");
 
-            var formData = new FormData();
-            formData.append("dict", dict);
-            var request = new XMLHttpRequest();
-            request.open("POST", "../ImportExport/ExportOSE");
-            request.send(formData);
-            //var form = document.createElement("form");
-            //form.style.display = "none";
-            //form.setAttribute("method", "post");
-            //form.setAttribute("action", "../ImportExport/ExportOSE");
-            //var dict1 = document.createElement("input");
-            //dict1.setAttribute("name", "dict1");
-            //dict1.setAttribute("value", JSON.stringify(dict));
-            //form.appendChild(dict1);
-            //document.body.appendChild(form);
-            //form.submit();
+            var objdict = document.createElement("input");
+            objdict.setAttribute("name", "_objdict");
+            objdict.setAttribute("value", JSON.stringify(dict));
+            form.appendChild(objdict);
+            
+            var _appdict = document.createElement("input");
+            _appdict.setAttribute("name", "Appdict");
+            _appdict.setAttribute("value", JSON.stringify(Appdict));
+            form.appendChild(_appdict);
+
+            document.body.appendChild(form);
+            form.submit();
         }
         else
             alert("No selection.....");

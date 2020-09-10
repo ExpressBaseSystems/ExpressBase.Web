@@ -382,8 +382,12 @@
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) { //calls in onchange
-            if (event && event.type === "blur") // to manage unnecessorily change triggering while blur from date pluggin
-                return;
+            if (event && event.type === "blur" && curCtrl.ObjType === "Date") { // to manage unnecessorily change triggering while blur from date pluggin
+                if (curCtrl.getValue() !== curCtrl.__lastval)
+                    curCtrl.__lastval = curCtrl.getValue();
+                else
+                    return;
+            }
             if (curCtrl.DependedValExp && curCtrl.DependedValExp.$values.length !== 0) {
                 this.UpdateValExpDepCtrls(curCtrl);
             }
@@ -400,7 +404,7 @@
 
     this.setUpdateDependentCtrlWithDrFn = function () {
         this.FO.formObject.updateDependentCtrlWithDr = function (curCtrl) { //calls in onchange
-            if (event && event.type === "blur") // to manage unnecessorily change triggering while blur from date pluggin
+            if (event && event.type === "blur" && curCtrl.ObjType === "Date") // to manage unnecessorily change triggering while blur from date pluggin
                 return;
             if (curCtrl.DrDependents && curCtrl.DrDependents.$values.length !== 0) {
                 this.UpdateDrDepCtrls(curCtrl);
@@ -410,7 +414,7 @@
 
     this.setUpdateDependentControlsBehaviorFns = function () {
         this.FO.formObject.updateDependentControlsBehavior = function (curCtrl) { //calls in onchange
-            if (event && event.type === "blur") // to manage unnecessorily change triggering while blur from date pluggin
+            if (event && event.type === "blur" && curCtrl.ObjType === "Date") // to manage unnecessorily change triggering while blur from date pluggin
                 return;
             if (curCtrl.HiddenExpDependants && curCtrl.HiddenExpDependants.$values.length !== 0) {
                 this.UpdateHideExpDepCtrls(curCtrl);

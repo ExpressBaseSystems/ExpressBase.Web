@@ -18,6 +18,7 @@ using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 
@@ -123,7 +124,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         public IActionResult Export(ExportPackageCollection App)
-        { 
+        {
             ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest
             {
                 AppCollection = App.appColl,
@@ -156,12 +157,32 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public IActionResult ExportOSE(Dictionary<int, List<string>> dict)
+        public IActionResult ExportOSE(string _objdict, string Appdict)
         {
-            String ids = String.Join(", ", dict.Select(x => String.Join(", ", x.Value)));
+            Dictionary<int, List<string>> appIdObjIdCollection = JsonConvert.DeserializeObject<Dictionary<int, List<string>>>(_objdict);
+            Dictionary<int, string> appNameCollection = JsonConvert.DeserializeObject<Dictionary<int, string>>(Appdict);
+            String ids = String.Join(", ", appIdObjIdCollection.Select(x => String.Join(", ", x.Value)));
+
             EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
-            ViewBag.objlist = resultlist.Data;
-            ViewBag.dict = dict;
+
+            Dictionary<int, ObjectVersionsDictionary> AppObjMap = new Dictionary<int, ObjectVersionsDictionary>();
+            ObjectVersionsDictionary objdict = null;
+            foreach (var app in appIdObjIdCollection)
+            {
+
+                if (!AppObjMap.ContainsKey(app.Key))
+                {
+                    objdict = new ObjectVersionsDictionary();
+                    AppObjMap.Add(app.Key, objdict);
+                }
+                foreach (var objid in app.Value)
+                {
+                    if (resultlist.Data.ContainsKey(objid))
+                        objdict.Add(Convert.ToInt32(objid), resultlist.Data[objid]);
+                }
+            }
+            ViewBag.AppObjMap = AppObjMap;
+            ViewBag.appNameCollection = appNameCollection;
             return View();
         }
 
@@ -180,4 +201,5 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
     }
+    public class ObjectVersionsDictionary : Dictionary<int, List<EbObjectWrapper>> { }
 }

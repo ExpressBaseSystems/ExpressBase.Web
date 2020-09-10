@@ -39,6 +39,7 @@
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/fonts/icofont/icofont.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/Common/offline-theme-dark.css" asp-append-version=@bApnd />
 
 
 
@@ -106,6 +107,7 @@
 <script type="text/javascript" src="~/js/DV/Chart.Zoom.min.js"></script>
 
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/Common/offline.js" asp-append-version=@bApnd></script>
 
 @*nithin*@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
@@ -176,7 +178,7 @@
         background-color: #9bf052;
     }
 
-        .fmode[mode="New Mode"] {
+        .fmode[mode="New Mode"], .fmode[mode="New Mode"] {
             background-color: #00d036;
         }
 
@@ -186,6 +188,10 @@
 
         .fmode[mode="View Mode"] {
             background-color: #222222;
+        }
+
+        .fmode[mode="Draft Mode"] {
+            background-color: #8f0202;
         }
 
     /*#divAuditTrail tbody {

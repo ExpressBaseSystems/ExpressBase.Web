@@ -5,12 +5,24 @@
     string styleClass = ViewBag.WhichConsole == "dc" ? "login_tabcontent-dc" : "login_tabcontent-uc";
 }
 @section JavaScript{
-    <script>
-        $('title').text("@console"+" Login");
-    </script>
+    <script src="~/js/BrowserDetails.js"></script>
 }
+
 <section class="eb_login">
-    <div class="container">
+    <div class="container" id="browser-compatibility" hidden style="padding-top:14rem">
+        <div class="br-img"><img src="~/images/gifs/undraw_Notify.svg" /></div>
+        <div class="br-txt">
+            <p style="font-size: 2rem;text-align: center;" id="txt-id">
+            </p>
+        </div>
+        <div class="br-ic" style="margin-left: 39rem;display: flex;">
+            <div><img src="~/images/gifs/chrome.png" style="height: 3rem;width: 3rem;" /> 
+            <a href="https://www.google.com/chrome/" target="_blank" style="font-size: 17px; margin-left: 10px;">Google Chrome</a></div>
+            <div><img src="~/images/gifs/microsoft-edge-new-2020-seeklogo.com-2.svg" style="height: 3rem;width: 3rem;" /> 
+            <a href="https://www.microsoft.com/en-us/edge" target="_blank" style="font-size: 17px; margin-left: 10px;">Microsoft Edge</a></div>
+        </div>
+    </div>
+    <div class="container" id="lgn-usr" hidden>
         <div class="row h-100" style="display: flex;justify-content: center;align-items: center;">
             <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12 login_container_usr">
                 <div class="loader_top" id="loader_profile"></div>
@@ -66,6 +78,8 @@
                                 <button validator="submit" id="logNow" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
                                     Sign In
                                 </button>
+                                <div id="Br-compatibility" class="br-comp" style="padding-top: 10px;">
+                                </div>
                                 @if (ViewBag.HasSignupForm)
                                 {
                                     <a href="../Ext/UsrSignUp" id="Signupform" class="pull-right Signupform " style="margin-top:10px; ">
@@ -88,6 +102,8 @@
                                     <button id="otplogin" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
                                         Send OTP
                                     </button>
+                                    <div id="Br-compatibility-otp" class="br-comp" style="padding-top: 10px;">
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -122,69 +138,89 @@
                             <input type="hidden" id="otptype" />
                         </div>
                     </div>
-                    }
-                    <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
-                        <span>Powered by </span><img style="height:25px;" src="images/EB_Logo.png" />
-                    </div>
+                }
+                <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
+                    <span>Powered by </span><img style="height:25px;" src="images/EB_Logo.png" />
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    @section JsCode{
-        <script src="~/js/Auth/eb-authenticate.js" type="text/javascript" asp-append-version="true"></script>
-        <script>
-            $(document).ready(function () {
-                $('.Eb_Image').Lazy();
-            });
+@section JsCode{
+    <script src="~/js/Auth/eb-authenticate.js" type="text/javascript" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            $('.Eb_Image').Lazy();
+        });
 
-            function isNumber(evt) {
-                evt = (evt) ? evt : window.event;
-                var charCode = (evt.which) ? evt.which : evt.keyCode;
-                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                    return false;
-                }
-                return true;
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
             }
-        </script>
+            return true;
+        }
+    </script>
+    <script>
+        SolutionDashBoard();
+    </script>
+}
+<style>
+    .Signupform:hover {
+        font-weight: 500;
+        color: #337ab7;
+        text-decoration: underline;
     }
-    <style>
-        .Signupform:hover {
-            font-weight: 500;
-            color: #337ab7;
-            text-decoration: underline;
+
+    #partitioned {
+        padding-left: 15px;
+        letter-spacing: 42px;
+        border: 0;
+        background-image: linear-gradient(to left, #0371f9cc 70%, rgba(255, 255, 255, 0) 0%);
+        background-position: bottom;
+        background-size: 50px 1px;
+        background-repeat: repeat-x;
+        background-position-x: 35px;
+        width: 330px;
+        min-width: 330px;
+    }
+
+    #divOuter {
+        width: 305px;
+        overflow: hidden;
+        margin-bottom: 40px;
+        margin-left: 33px;
+    }
+
+    #divInner {
+        left: 0;
+        position: sticky;
+    }
+
+    #partitioned {
+        outline: none;
+    }
+
+    #resend {
+        outline: none;
+    }
+
+    #browser-compatibility {
+    }
+
+        #browser-compatibility .br-img img {
+            height: 27rem;
+            align-items: center;
+            width: 100%;
         }
 
-        #partitioned {
-            padding-left: 15px;
-            letter-spacing: 42px;
-            border: 0;
-            background-image: linear-gradient(to left, #0371f9cc 70%, rgba(255, 255, 255, 0) 0%);
-            background-position: bottom;
-            background-size: 50px 1px;
-            background-repeat: repeat-x;
-            background-position-x: 35px;
-            width: 330px;
-            min-width: 330px;
+        #browser-compatibility .br-txt {
+            padding-top: 3rem;
         }
 
-        #divOuter {
-            width: 305px;
-            overflow: hidden;
-            margin-bottom: 40px;
-            margin-left: 33px;
+        #browser-compatibility .br-ic div {
+               margin-right: 3rem;
         }
-
-        #divInner {
-            left: 0;
-            position: sticky;
-        }
-
-        #partitioned {
-            outline: none;
-        }
-
-        #resend {
-            outline: none;
-        }
-    </style>
+</style>

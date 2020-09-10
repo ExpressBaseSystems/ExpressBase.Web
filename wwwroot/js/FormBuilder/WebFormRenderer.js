@@ -312,7 +312,10 @@ const WebFormRender = function (option) {
         let _respObj = JSON.parse(_respObjStr);
         if (_respObj.Status === 200) {
             this.__fromImport = true;
-            this.callFORCE_RELOAD(0, _respObj.FormData, "Export Mode");
+            let mode_s = "Export Mode";
+            if (this.draftId > 0)
+                mode_s = "Draft Mode"
+            this.callFORCE_RELOAD(0, _respObj.FormData, mode_s);
         }
         else
             console.error(_respObj.MessageInt);
@@ -516,7 +519,8 @@ const WebFormRender = function (option) {
             console.error(respObj.MessageInt);
         }
         this.draftId = respObj.DraftId;
-        this.headerObj.setFormMode(`<span mode="New Mode" class="fmode"> Draft </span>`);
+        option.draftId = this.draftId;
+        this.headerObj.setFormMode(`<span mode="Draft Mode" class="fmode">Draft</span>`);
         this.AdjustDraftBtnsVisibility();
     }.bind(this);
 
@@ -1597,7 +1601,8 @@ const WebFormRender = function (option) {
         option.formData = newOptions.formData;
         option.mode = newOptions.modeS;
         option.rowId = newOptions.rowId;
-        option.draftId = 0;
+        if (!this.__fromImport && option.draftId > 0)
+            option.draftId = 0;
     }.bind(this);
 
     this.FORCE_RELOAD = function (newOptions) {

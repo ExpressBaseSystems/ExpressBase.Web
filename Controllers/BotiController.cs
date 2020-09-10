@@ -191,12 +191,12 @@ namespace ExpressBase.Web.Controllers
                     }
                     else if (control is EbChartControl)
                     {
-                        (control as EbChartControl).InitFromDataBase(this.ServiceClient);
+                        (control as EbChartControl).InitFromDataBase(this.ServiceClient, this.Redis);
                         (control as EbChartControl).BareControlHtml4Bot = (control as EbChartControl).GetBareHtml();
                     }
                     else if (control is EbTVcontrol )
                     {
-                        (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
+                        (control as EbTVcontrol).InitFromDataBase(this.ServiceClient, this.Redis);
                         (control as EbTVcontrol).BareControlHtml4Bot = (control as EbTVcontrol).GetBareHtml();
                     }
                     //else if (control is EbImage)

@@ -67,11 +67,11 @@ namespace ExpressBase.Web.Components
                     }
                     if (control is EbChartControl)
                     {
-                        (control as EbChartControl).InitFromDataBase(this.ServiceClient);
+                        (control as EbChartControl).InitFromDataBase(this.ServiceClient, this.Redis);
                     }
                     else if (control is EbTVcontrol)
                     {
-                        (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
+                        (control as EbTVcontrol).InitFromDataBase(this.ServiceClient, this.Redis);
                     }
                     else if (control is IEbPowerSelect && (control as IEbPowerSelect).RenderAsSimpleSelect)
                     {

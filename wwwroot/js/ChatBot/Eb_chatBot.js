@@ -53,7 +53,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.botflg = {};
     this.botflg.loadFormlist = false;
     this.botflg.singleBotApp = false;
-    this.botflg.startover = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
     this.formObject = {};// for passing to user defined functions
@@ -1253,6 +1252,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.msgFromBot = function (msg, callbackFn, ctrlname) {
         this.hideTypingAnim();
+        $("#eb_botStartover").hide();
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
@@ -1316,6 +1316,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 if (callbackFn && typeof callbackFn === typeof function () { })
                     callbackFn();
                 this.scrollToBottom();
+                $("#eb_botStartover").show();
             }.bind(this), this.typeDelay);
             this.ready = false;
         }
@@ -1558,7 +1559,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.setStartOver = function () {
-        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="display:none" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };
@@ -2217,7 +2218,6 @@ this.LoginOpnDirectly = function () {
 this.botStartoverfn = function () {
 
     if (this.botflg.loadFormlist === false) {
-        this.botflg.startover = false;
         this.ClearFormVariables();
         this.botflg.otptype = "";//clear flags
         this.botflg.uname_otp = "";
@@ -2233,7 +2233,7 @@ this.botStartoverfn = function () {
 
 this.botUserLogin = function () {
     this.msgFromBot(this.welcomeMessage);
-
+    $('#eb_botStartover').hide();
     if (!settings.UserType_Internal) {
         if (settings.Authoptions.Fblogin) {
             // This is called with the results from from FB.getLoginStatus().

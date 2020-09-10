@@ -768,9 +768,8 @@ namespace ExpressBase.Web.Controllers
 			{
 				Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
 			}
-			Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf")
+			Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf");
 		   // { FileDownloadName = Res.ReportName }
-		   ;
 			return true;
 		}
 

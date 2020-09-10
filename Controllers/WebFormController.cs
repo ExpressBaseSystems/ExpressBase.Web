@@ -52,13 +52,13 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
                     }
                 }
-                else if ((int)WebFormDVModes.New_Mode == _mode)
+                else if ((int)WebFormDVModes.New_Mode == _mode)// prefill mode
                 {
                     try
                     {
                         GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)
                     {
@@ -66,7 +66,7 @@ namespace ExpressBase.Web.Controllers
                         Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
                     }
                 }
-                else if ((int)WebFormModes.Export_mode == _mode)
+                else if ((int)WebFormModes.Export_Mode == _mode)
                 {
                     try
                     {
@@ -74,7 +74,7 @@ namespace ExpressBase.Web.Controllers
                         int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
                         GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+                        ViewBag.Mode = WebFormModes.Export_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)
                     {
@@ -82,7 +82,7 @@ namespace ExpressBase.Web.Controllers
                         Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
                     }
                 }
-                else if ((int)WebFormModes.Draft_mode == _mode)
+                else if ((int)WebFormModes.Draft_Mode == _mode)
                 {
                     try
                     {
@@ -91,7 +91,7 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.formData = Resp.DataWrapper;
                         ViewBag.formData_draft = Resp.FormDatajson;
                         ViewBag.draftId = DraftId;
-                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+                        ViewBag.Mode = WebFormModes.Draft_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)
                     {

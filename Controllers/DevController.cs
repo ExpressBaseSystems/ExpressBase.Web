@@ -100,7 +100,7 @@ namespace ExpressBase.Web.Controllers
 
         public string GetAppsTree()
         {
-            string typestring = @"(1,'WebForm'),(2,'DataReader'),(3,'Report'),(4,'DataWriter'),(5,'SqlFunction'),(7,'JavascriptFunction'),(12,'FilterDialog'),(13,'MobilePage'),
+            string typestring = @"(0,'WebForm'),(2,'DataReader'),(3,'Report'),(4,'DataWriter'),(5,'SqlFunction'),(7,'JavascriptFunction'),(12,'FilterDialog'),(13,'MobilePage'),
             (14,'UserControl'),(15,'EmailBuilder'),(16,'TableVisualization'),(17,'ChartVisualization'),(18,'BotForm'),(19,'SmsBuilder'),(20,'Api'),(21,'MapView'),(22,'DashBoard'),
             (23,'KanBan'),(24,'CalendarView'),(25,'CsharpFunction'),(26,'SqlJob')";//(1, 'foo'), (2, 'bar'), (3, 'fooBar')
 

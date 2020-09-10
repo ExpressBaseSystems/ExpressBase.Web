@@ -109,6 +109,11 @@
         _objName.append(`${html}`);
     };
 
+    this.setFormMode = function (html) {
+        _objName.find("span").remove();
+        _objName.append(`${html}`);
+    };
+
     this.hideElement = function (collectionofIds) {
         collectionofIds.forEach(function (item, i) {
             _btnContainer.find("#" + item).hide();

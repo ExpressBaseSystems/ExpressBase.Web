@@ -419,7 +419,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.getForm = function (RefId) {
         this.showTypingAnim();
-        if (!this.formsList[RefId]) {
+        //if (!this.formsList[RefId]) {
             $.ajax({
                 type: "POST",
                 //url: "../Boti/GetCurForm",
@@ -429,12 +429,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 success: this.getFormSuccess.bind(this, RefId)
 
             });
-        }
-        else {
-            this.hideTypingAnim();
-            this.curForm = this.formsList[RefId];
-            this.setFormControls();
-        }
+        //}
+        //else {
+        //    this.hideTypingAnim();
+        //    this.curForm = this.formsList[RefId];
+        //    this.setFormControls();
+        //}
     };
 
     this.txtboxKeyup = function (e) {

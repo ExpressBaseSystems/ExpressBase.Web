@@ -161,7 +161,7 @@ namespace ExpressBase.Web.BaseControllers
 
             WhichConsole = _hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
 
-            Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole)
+            Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole);
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ReCaptchaKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_KEY);
             base.OnActionExecuting(context);

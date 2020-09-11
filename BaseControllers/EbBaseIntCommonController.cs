@@ -137,6 +137,7 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     if (ane.ParamName == RoutingConstants.BEARER_TOKEN || ane.ParamName == RoutingConstants.REFRESH_TOKEN)
                     {
+                        Console.WriteLine("Exception: " + ane.ToString());
                         context.Result = new RedirectResult("/");
                         return;
                     }

@@ -194,9 +194,8 @@ namespace ExpressBase.Web.BaseControllers
 
                                 if (rSub.EndsWith(TokenConstants.TC))
                                     isvalid = true;
-                                else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                                else if (WhichConsole == RoutingConstants.DC)
                                 {
-
                                     if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
                                         isvalid = true;
                                 }

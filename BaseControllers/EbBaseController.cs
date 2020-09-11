@@ -31,6 +31,14 @@ namespace ExpressBase.Web.BaseControllers
 
         public CustomUserSession Session { get; set; }
 
+        public string Host { get; set; }
+
+        public string ExtSolutionId { get; set; }
+
+        public string IntSolutionId { get; set; }
+
+        public string WhichConsole { get; set; }
+
         protected User LoggedInUser { get; set; }
 
         public IHttpContextAccessor httpContextAccessor { get; set; }

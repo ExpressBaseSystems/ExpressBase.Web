@@ -462,23 +462,39 @@
     this.AllRequired_valid_Check = function () {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
+        let notOk1stCtrl = null;
         $.each(this.FO.flatControlsWithDG, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
             if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
                 required_valid_flag = false;
-                if (!$notOk1stCtrl)
+                if (!$notOk1stCtrl) {
                     $notOk1stCtrl = $ctrl;
+                    this.activateTabHierarchy(ctrl);
+                    notOk1stCtrl = ctrl;
+                }
             }
         }.bind(this));
 
         if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
-            $notOk1stCtrl.select();
-            $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+            setTimeout(function () {
+                $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                setTimeout(function () {
+                    $notOk1stCtrl.select();
+                }, 400);
+            }, (notOk1stCtrl.__noOfParentPanes || 0) * 400);
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
 
         return required_valid_flag;
     }.bind(this);
+
+    this.activateTabHierarchy = function (ctrl) {
+        let TabPaneParents = getParentsOfType('TabPane', ctrl, this.FO.FormObj)
+        ctrl.__noOfParentPanes = TabPaneParents.length;
+        for (let i = TabPaneParents.length - 1; i >= 0; i--) {
+            $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`).tab('show');
+        }
+    };
 
     this.checkUnique4All_save = function (controls, isSaveAfter) {/////////////// move
         let isFromCtrl = !isSaveAfter;

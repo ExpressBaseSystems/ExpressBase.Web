@@ -502,6 +502,44 @@ function RecurGetControlsUnderTable(src_obj, dest_coll, tableName) {
     });
 }
 
+function RecurSetParentsEbSid_CtxId(container, ctrl, flagObj) {
+    if (flagObj.done)
+        return;
+    for (var i = 0; i < container.Controls.$values.length; i++) {
+        let obj = container.Controls.$values[i];
+        obj.parentEbSid = container.EbSid_CtxId;
+        if (obj.IsContainer) {
+            RecurSetParentsEbSid_CtxId(obj, ctrl, flagObj);
+        }
+        else {
+            if (obj.EbSid_CtxId === ctrl.EbSid_CtxId) {
+                flagObj.done = true;
+                return false;
+            }
+        }
+
+    }
+}
+
+function RecurGetParentsOfType(parents, ctrlType, ctrl, flatCtrls) {
+    if (!ctrl.parentEbSid)
+        return;
+    let parentObj = getObjByval(flatCtrls, "EbSid_CtxId", ctrl.parentEbSid)
+    if (parentObj.ObjType === ctrlType) {
+        parents.push(parentObj);
+    }
+    RecurGetParentsOfType(parents, ctrlType, parentObj, flatCtrls);
+}
+
+function getParentsOfType(ctrlType, ctrl, container) {
+    let parents = [];
+    let flagObj = { done: false };
+    RecurSetParentsEbSid_CtxId(container, ctrl, flagObj);
+    let flatCtrls = getAllctrlsFrom(container);
+    RecurGetParentsOfType(parents, ctrlType, ctrl, flatCtrls);
+    return parents;
+}
+
 //function getTableNames(container, dest_coll) {
 //    let tableNames = [];
 //    if (container.TableName)

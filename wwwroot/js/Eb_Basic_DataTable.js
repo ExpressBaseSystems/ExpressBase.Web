@@ -33,7 +33,7 @@ var EbBasicDataTable = function (Option) {
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
     this.MainData = Option.data || null;
-    this.headerDisplay = typeof Option.headerDisplay !== 'undefined' ? Option.headerDisplay : true;
+    this.showHeader = typeof Option.showHeader !== 'undefined' ? Option.showHeader : true;
     this.getFilterValues = Option.getFilterValuesFn || function () { };
     this.source = Option.source || "";
     this.IsQuery = Option.IsQuery;
@@ -548,9 +548,8 @@ var EbBasicDataTable = function (Option) {
                 Option.fns4PSonLoad[0]();
         }, 1);
 
-        //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
-        if (!this.headerDisplay) {
-            $(".Eb-ctrlContainer .dataTables_scrollHead").addClass("headhide");
+        if (!this.showHeader) {
+            $("#"+this.contId).find(".dataTables_scrollHead").addClass("headhide");
         }
         if (this.data.length > 7 && this.Aggregateflag) {
             $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");

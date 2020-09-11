@@ -35,8 +35,9 @@ namespace ExpressBase.Web.BaseControllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            
             string[] hostParts = host.Split(CharConstants.DOT);
-            string solutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
+            string solutionId = (host.EndsWith(RoutingConstants.LIVEHOSTADDRESS) || host.EndsWith(RoutingConstants.STAGEHOSTADDRESS) || host.Contains(RoutingConstants.LOCALHOST)) ? hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty).Replace(CharConstants.DASH, CharConstants.DOT) : host ;
 
             try
             {

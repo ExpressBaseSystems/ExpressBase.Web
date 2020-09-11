@@ -769,7 +769,7 @@ const EbPowerSelect = function (ctrl, options) {
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         //o.columnSearch = this.filterArray;
-        o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
+        o.showHeader = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
         o.nextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';

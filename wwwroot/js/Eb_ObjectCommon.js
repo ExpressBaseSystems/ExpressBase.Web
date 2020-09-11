@@ -39,6 +39,7 @@
         $('#make_public').off('click').on('click', this.MakePublic.bind(this));
         $('#make_private').off('click').on('click', this.MakePrivate.bind(this));
         $('#copy_url').off('click').on('click', this.OpenUrlContainer.bind(this));
+        $('#clone').off('click').on('click', this.Clone.bind(this));
 
         if (this.Current_obj !== null)
             if (this.Current_obj.VersionNumber !== "")
@@ -792,6 +793,41 @@
 
     this.OpenUrlContainer = function () {
         $('#url-container').show();
+    };
+
+    this.Clone = function () {
+        EbDialog("show",
+            {
+                Message: 'Are you sure you want to clone ' + this.Current_obj.DisplayName + ' to a new object  ?',
+                Buttons: {
+                    "Yes": {
+                        Background: this.GreenColor,
+                        Align: "left",
+                        FontColor: "white;"
+                    },
+                    "No": {
+                        Background: this.RedColor,
+                        Align: "right",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (res) {
+                    if (res === "Yes") {
+                        $("#eb_common_loader").EbLoader("show");
+                        $.post("../Eb_Object/CloneObject",
+                            { refid: this.ver_Refid,  apps : $("#apps").val() },
+                            function (result) {
+                                $("#eb_common_loader").EbLoader("hide");
+                                if (result.status) {
+                                    EbMessage("show", { Message: "Clone completed.", Background: this.GreenColor }); 
+                                    window.open("../Eb_Object/Index?objid=" + result.objId + "&objtype=" + result.objectType, "_blank"); 
+                                }
+                                else
+                                    EbMessage("show", { Message: "failed. Please retry", Background: this.RedColor });
+                            }.bind(this));
+                    }
+                }.bind(this)
+            });
     };
 
     this.init();

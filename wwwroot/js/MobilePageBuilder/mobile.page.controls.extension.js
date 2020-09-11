@@ -221,6 +221,21 @@
                 }
             }
         },
+        "EbMobileForm": {
+            propertyChanged: function (propname, root) {
+                if (propname === "BeforeRenderDSRefid") {
+                    root.dataSourceColumn(this.BeforeRenderDSRefid, function (result) {
+                        try {
+                            this.BeforeRenderDSParams.$values = result.paramsList || [];
+                        }
+                        catch (err) {
+                            console.error("get datasource colum error in EbMobileForm propchange");
+                            console.log(JSON.stringify(result));
+                        }
+                    }.bind(this));
+                }
+            }
+        },
         "EbMobileVisualization": {
             refresh: function (root) {
                 if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {

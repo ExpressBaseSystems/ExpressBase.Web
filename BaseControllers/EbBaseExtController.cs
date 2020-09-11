@@ -34,16 +34,10 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            Host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-
-            string[] _hostParts = Host.Split(CharConstants.DOT);
-            ExtSolutionId = (Host.EndsWith(RoutingConstants.LIVEHOSTADDRESS) || Host.EndsWith(RoutingConstants.STAGEHOSTADDRESS) || Host.Contains(RoutingConstants.LOCALHOST)) ? _hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty).Replace(CharConstants.DASH, CharConstants.DOT) : Host;
-            IntSolutionId = this.GetIsolutionId(ExtSolutionId);
-
-            WhichConsole = _hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
-
             try
             {
+                base.OnActionExecuting(context);
+
                 var controller = context.Controller as Controller;
                 controller.ViewBag.SolutionId = IntSolutionId;
                 controller.ViewBag.cid = IntSolutionId;
@@ -58,7 +52,7 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     controller.ViewBag.Root = "https://eb-test.cloud";
                 }
-                base.OnActionExecuting(context);
+
             }
             catch (System.ArgumentNullException ane)
             {

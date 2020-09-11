@@ -65,10 +65,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            string host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            string[] hostParts = host.Split(CharConstants.DOT);
-
-            //string path = context.HttpContext.Request.Path.Value.ToLower();
+            base.OnActionExecuting(context);
 
             string sBToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
@@ -77,7 +74,7 @@ namespace ExpressBase.Web.BaseControllers
             {
                 context.Result = new RedirectResult("/");
             }
-            else if (!IsTokensValid(sRToken, sBToken, hostParts[0]))
+            else if (!IsTokensValid(sRToken, sBToken, ExtSolutionId))
                 context.Result = new RedirectResult("/");
             else
             {
@@ -113,7 +110,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.UId = Convert.ToInt32(bToken.Payload[TokenConstants.UID]);
                     controller.ViewBag.UAuthId = context.HttpContext.Request.Cookies[TokenConstants.USERAUTHID];
                     controller.ViewBag.cid = bToken.Payload[TokenConstants.CID];
-                    controller.ViewBag.cide = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
+                    controller.ViewBag.cide = ExtSolutionId.Replace(RoutingConstants.DASHDEV, string.Empty);
                     controller.ViewBag.wc = bToken.Payload[TokenConstants.WC];
                     controller.ViewBag.email = bToken.Payload[TokenConstants.EMAIL];
 
@@ -145,8 +142,6 @@ namespace ExpressBase.Web.BaseControllers
                     }
                 }
             }
-
-            base.OnActionExecuting(context);
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)

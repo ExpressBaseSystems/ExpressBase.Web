@@ -329,8 +329,6 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn()
         {
-            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            string[] hostParts = host.Split(CharConstants.DOT);
             if (isAvailSolution())
             {
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
@@ -338,10 +336,10 @@ namespace ExpressBase.Web.Controllers
                 bool IsInternal = false;
                 if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
                 {
-                    if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    if (IsTokensValid(sRToken, sBToken, ExtSolutionId))
                     {
                         IsInternal = true;
-                        if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                        if (WhichConsole == RoutingConstants.DC)
                             return Redirect(RoutingConstants.MYAPPLICATIONS);
                         else
                             return RedirectToAction("UserDashboard", "TenantUser");
@@ -350,7 +348,7 @@ namespace ExpressBase.Web.Controllers
                 if (!IsInternal)
                 {
                     ViewBag.HasSignupForm = false;
-                    if (!hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                    if (!(WhichConsole == RoutingConstants.DC))
                     {
                         Eb_Solution solutionObj = GetSolutionObject(ViewBag.SolutionId);
                         if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
@@ -729,12 +727,9 @@ namespace ExpressBase.Web.Controllers
             EbAuthResponse authresp = new EbAuthResponse();
             this.EventLogWriteEntry();
 
-            HostString host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split(CharConstants.DOT);
             IFormCollection req = this.HttpContext.Request.Form;
             string UserName;
             string Password;
-            this.DecideConsole(hostParts[0], out string whichconsole);
 
             string redirect_url = Common.Extensions.StringExtensions.FromBase64(req["continue_with"].ToString() ?? string.Empty);
             string token = req["g-recaptcha-response"];
@@ -786,7 +781,6 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                string tenantid = ViewBag.cid;
                 if (req["otptype"] == "signinotp")
                 {
                     EbAuthResponse validateResp = ValidateOtp(req["otp"]);
@@ -809,14 +803,15 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("captcha ok " + req["uname"]);
                 try
                 {
+                    Console.WriteLine("SolutionId: " + IntSolutionId + "\nConsole: " + WhichConsole);
                     Authenticate AuthenticateReq = new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = UserName,
                         Password = Password,
                         Meta = new Dictionary<string, string> {
-                            { RoutingConstants.WC, whichconsole },
-                            { TokenConstants.CID, tenantid },
+                            { RoutingConstants.WC, WhichConsole },
+                            { TokenConstants.CID, IntSolutionId },
                             { TokenConstants.IP, this.RequestSourceIp},
                             { RoutingConstants.USER_AGENT, this.UserAgent}
                         },
@@ -897,7 +892,7 @@ namespace ExpressBase.Web.Controllers
                             Response.Cookies.Append("UserName", req["uname"], options);
 
                         if (string.IsNullOrEmpty(redirect_url))
-                            authresp.RedirectUrl = this.RouteToDashboard(whichconsole);
+                            authresp.RedirectUrl = this.RouteToDashboard(WhichConsole);
                         else
                             authresp.RedirectUrl = redirect_url;
                     }

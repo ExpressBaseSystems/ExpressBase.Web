@@ -34,17 +34,15 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            
-            string[] hostParts = host.Split(CharConstants.DOT);
-            string solutionId = (host.EndsWith(RoutingConstants.LIVEHOSTADDRESS) || host.EndsWith(RoutingConstants.STAGEHOSTADDRESS) || host.Contains(RoutingConstants.LOCALHOST)) ? hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty).Replace(CharConstants.DASH, CharConstants.DOT) : host ;
-
             try
             {
+                base.OnActionExecuting(context);
+
                 var controller = context.Controller as Controller;
-                controller.ViewBag.SolutionId = this.GetIsolutionId(solutionId);
-                controller.ViewBag.SolutionIdExt = solutionId;
-                controller.ViewBag.WhichConsole = hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
+                controller.ViewBag.SolutionId = IntSolutionId;
+                controller.ViewBag.cid = IntSolutionId;
+                controller.ViewBag.SolutionIdExt = ExtSolutionId;
+                controller.ViewBag.WhichConsole = WhichConsole;
                 controller.ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
                 if (controller.ViewBag.Env == "Production")
                 {
@@ -54,7 +52,7 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     controller.ViewBag.Root = "https://eb-test.cloud";
                 }
-                base.OnActionExecuting(context);
+
             }
             catch (System.ArgumentNullException ane)
             {

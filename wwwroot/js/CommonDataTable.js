@@ -541,11 +541,16 @@
             }
         }.bind(this));
 
-        jQuery.fn.dataTable.ext.errMode = 'alert';
+        jQuery.fn.dataTable.ext.errMode = 'throw';
 
         this.table_jQO.on('error.dt', function (settings, techNote, message) {
             console.log('An error has been reported by DataTables: ', message);
         });
+
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+            console.log("ajax erpttt......" + message);
+            EbPopBox("show", { Message: message, Title: "Error" });
+        };
 
         if (this.Source === "datagrid")
             this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
@@ -595,33 +600,6 @@
 
             return sum / data.length;
         });
-
-        jQuery.extend(jQuery.fn.dataTableExt.oSort, {
-            "date-uk-pre": function (a) {
-                if (a == null || a == "") {
-                    return 0;
-                }
-                var ukDatea = a.split('/');
-                return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
-            },
-
-            "date-uk-asc": function (a, b) {
-                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
-            },
-
-            "date-uk-desc": function (a, b) {
-                return ((a < b) ? 1 : ((a > b) ? -1 : 0));
-            }
-        });
-
-        //this.table_jQO.on('length.dt', function (e, settings, len) {
-        //    console.log('New page length: ' + len);
-        //});
-
-        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-            console.log("ajax erpttt......" + message);
-            EbPopBox("show", { Message: message, Title: "Error" });
-        };
 
         //$('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
         //$('#' + this.tableId + ' tbody').off('mouseenter').on('mouseenter mouseleave', 'tr', this.mouseenter.bind(this));
@@ -786,12 +764,13 @@
                     //url: this.ssurl + '/ds/data/' + this.dsid,
                     url: url,
                     type: 'POST',
-                    timeout: 0,
+                    timeout: 180000,
                     data: this.ajaxData.bind(this),
                     dataSrc: this.receiveAjaxData.bind(this),
                     beforeSend: function () {
                     },
-                    error: function (req, status, xhr) {
+                    error : function () {
+                        EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
                     }
                 };
             }
@@ -2791,9 +2770,9 @@
         }
         this.$submit.click(this.getColumnsSuccess.bind(this));
 
-        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1) 
+        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
             $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
-        
+
         if (this.Source === "EbDataTable") {
             if (this.EbObject.FormLinks.$values.length > 0) {
                 this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
@@ -3195,7 +3174,7 @@
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
-            this.WebFormlink(this.GroupFormLink, filterparams,"2");
+            this.WebFormlink(this.GroupFormLink, filterparams, "2");
         }
     };
 

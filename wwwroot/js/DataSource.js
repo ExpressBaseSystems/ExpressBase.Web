@@ -448,7 +448,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Load_Table_Columns = function (result) {
         if (result !== null) {
             if (result.message !== null) {
-                EbMessage("show", { Message: result.message, Background: this.RedColor, AutoHide: false, Delay: 8000 });
+                //EbMessage("show", { Message: result.message, Background: this.RedColor, AutoHide: false, Delay: 8000 });
+                EbPopBox("show", { Message: result.message, Title: "Error" });
             }
             else {
                 var colscollection = JSON.parse(result.data);

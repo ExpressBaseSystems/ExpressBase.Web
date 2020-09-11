@@ -222,7 +222,6 @@
       "wwwroot/js/FormBuilder/vue.js",
       "wwwroot/js/EbDataTable.js",
       "wwwroot/js/Eb_Basic_DataTable.js",
-      "wwwroot/js/datatables.min.js",
       "wwwroot/js/CommonDataTable.js",
       "wwwroot/js/Chart.js",
       "wwwroot/js/Eb_Basic_chart.js",

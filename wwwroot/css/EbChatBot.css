@@ -1207,6 +1207,9 @@ border-radius: 4px;
 
 .flxdirctn_col {
     flex-direction: column;
+    display: flex;
+    padding: 10px;
+    box-shadow: 0px 0px 1px 0px #0000002e;
 }
 
 .renderAtBtm {

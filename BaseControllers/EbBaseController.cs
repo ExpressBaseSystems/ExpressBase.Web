@@ -31,6 +31,14 @@ namespace ExpressBase.Web.BaseControllers
 
         public CustomUserSession Session { get; set; }
 
+        public string Host { get; set; }
+
+        public string ExtSolutionId { get; set; }
+
+        public string IntSolutionId { get; set; }
+
+        public string WhichConsole { get; set; }
+
         protected User LoggedInUser { get; set; }
 
         public IHttpContextAccessor httpContextAccessor { get; set; }
@@ -145,6 +153,14 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            Host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+
+            string[] _hostParts = Host.Split(CharConstants.DOT);
+            ExtSolutionId = (Host.EndsWith(RoutingConstants.LIVEHOSTADDRESS) || Host.EndsWith(RoutingConstants.STAGEHOSTADDRESS) || Host.Contains(RoutingConstants.LOCALHOST)) ? _hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty).Replace(CharConstants.DASH, CharConstants.DOT) : Host;
+            IntSolutionId = this.GetIsolutionId(ExtSolutionId);
+
+            WhichConsole = _hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
+
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ReCaptchaKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_KEY);
             base.OnActionExecuting(context);

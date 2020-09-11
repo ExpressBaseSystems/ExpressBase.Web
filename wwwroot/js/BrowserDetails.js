@@ -15,7 +15,7 @@
             this.browserName = 'Safari';
         }
         else if (navigator.userAgent.indexOf("Firefox") != -1) {
-            return 'Firefox';
+            this.browserName =  'Firefox';
         }
         else if ((navigator.userAgent.indexOf("MSIE") != -1) || (!!document.documentMode == true)) //IF IE > 10
         {

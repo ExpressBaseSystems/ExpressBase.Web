@@ -43,6 +43,7 @@ namespace ExpressBase.Web.BaseControllers
                 controller.ViewBag.cid = IntSolutionId;
                 controller.ViewBag.SolutionIdExt = ExtSolutionId;
                 controller.ViewBag.WhichConsole = WhichConsole;
+				controller.ViewBag.HostValue = context.HttpContext.Request.Host.Value;
                 controller.ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
                 if (controller.ViewBag.Env == "Production")
                 {

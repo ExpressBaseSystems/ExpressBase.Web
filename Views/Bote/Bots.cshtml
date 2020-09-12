@@ -180,13 +180,19 @@
                     var BotList = @BotDtls ;
                     var solutionId = '@ViewBag.SolutionIdExt';
                     /**/
-                    var jssrc = "https://"+solutionId+".localhost:41502";
-                    if (d.ebmod === 'Production')
-                        jssrc = "https://"+solutionId+".expressbase.com";
-                    else if (d.ebmod === 'Staging')
-                        jssrc = "https://" + solutionId + ".eb-test.cloud";
-                    window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
+                    //var jssrc = "https://"+solutionId+".localhost:41502";
+                    //if (d.ebmod === 'Production')
+                    //    jssrc = "https://"+solutionId+".expressbase.com";
+                    //else if (d.ebmod === 'Staging')
+                    //    jssrc = "https://" + solutionId + ".eb-test.cloud";
+                    window.hostValue = '@ViewBag.HostValue';
+                    var jssrc = "https://" + window.hostValue;
+                    console.log("jssrc=" + jssrc);
+                   // window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
+                    window.EXPRESSbase_SOLUTION_ID ='@ViewBag.SolutionIdExt';
+                    console.log("EXPRESSbase_SOLUTION_ID=" + window.EXPRESSbase_SOLUTION_ID);
                     window.EXPRESSbase_cid = '@ViewBag.SolutionId';
+                    console.log("EXPRESSbase_cid=" +  window.EXPRESSbase_cid);
                     window.EXPRESSbase_APP_IDS = [];
                     d.ebbotThemeColorColl = [];
                     d.botWelcomeMsgColl = [];

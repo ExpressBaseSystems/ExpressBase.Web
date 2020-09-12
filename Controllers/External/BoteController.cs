@@ -45,7 +45,8 @@ namespace ExpressBase.Web.Controllers
 			byte[] Pge = Convert.FromBase64String(pgur);
 			string ExtUrl = System.Text.Encoding.UTF8.GetString(Pge);
 			//EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
-			string cid = this.GetIsolutionId(tid);
+			//string cid = this.GetIsolutionId(tid);
+			string cid = IntSolutionId;
 			EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid));
 			if (settings == null)
 			{
@@ -100,7 +101,8 @@ namespace ExpressBase.Web.Controllers
 			string[] args = id.Split("-");
 			string PushContent = "";
 			string solid = args[0];
-			string cid = this.GetIsolutionId(solid);
+			//string cid = this.GetIsolutionId(solid);
+			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			if (mode.Equals("s"))//if single bot
 			{
@@ -181,7 +183,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 		{
 			string[] args = id.Split("-");
 			string solid = args[0];
-			string cid = this.GetIsolutionId(solid);
+			//string cid = this.GetIsolutionId(solid);
+			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			string FileContent = "";
 			{

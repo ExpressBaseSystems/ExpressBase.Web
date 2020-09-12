@@ -548,9 +548,13 @@
         });
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-            console.log("ajax erpttt......" + message);
-            EbPopBox("show", { Message: message, Title: "Error" });
-        };
+            console.log("Table View Error......" + message);
+            if (this.Source === "WebForm" || this.Source === "Bot") 
+                $("#" + settings.sTableId + "_processing").text("Something went wrong..");
+            else
+                EbPopBox("show", { Message: "Table View Error Occured....", Title: "Error" });
+            $("#eb_common_loader").EbLoader("hide");
+        }.bind(this);
 
         if (this.Source === "datagrid")
             this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
@@ -769,9 +773,13 @@
                     dataSrc: this.receiveAjaxData.bind(this),
                     beforeSend: function () {
                     },
-                    error : function () {
-                        EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
-                    }
+                    error: function () {
+                        if (this.Source === "WebForm" || this.Source === "Bot")
+                            $("#" + this.tableId + "_processing").text("Timeout Expired..");
+                        else
+                            EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
+                        $("#eb_common_loader").EbLoader("hide");
+                    }.bind(this)
                 };
             }
             catch (Error) {
@@ -1117,7 +1125,11 @@
     this.receiveAjaxData = function (dd) {
         if (dd.responseStatus) {
             if (dd.responseStatus.message !== null) {
-                EbPopBox("show", { Message: dd.responseStatus.message, Title: "Error" });
+                console.log("Table View PreProcessing Error " + dd.responseStatus.message);
+                if (this.Source === "WebForm" || this.Source === "Bot")
+                    $("#" + this.tableId + "_processing").text("Something went wrong..");
+                else
+                    EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
             }
         }
         this.isRun = true;

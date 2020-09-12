@@ -161,6 +161,7 @@ namespace ExpressBase.Web.BaseControllers
 
             WhichConsole = _hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
 
+            Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole);
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ReCaptchaKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_KEY);
             base.OnActionExecuting(context);
@@ -194,9 +195,8 @@ namespace ExpressBase.Web.BaseControllers
 
                                 if (rSub.EndsWith(TokenConstants.TC))
                                     isvalid = true;
-                                else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                                else if (WhichConsole == RoutingConstants.DC)
                                 {
-
                                     if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
                                         isvalid = true;
                                 }

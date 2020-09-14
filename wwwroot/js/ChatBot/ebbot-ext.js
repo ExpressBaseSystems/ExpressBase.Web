@@ -7,12 +7,13 @@
     //PUSHED_JS_STATEMENTS
 
     this.eb_get_path = function (ebmod) {
-        if (ebmod === 'Production')
-            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".expressbase.com/";
-        else if (ebmod === 'Staging')
-            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.cloud/";
-        else
-            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41502/";
+        //if (ebmod === 'Production')
+        //    return "https://" + window.EXPRESSbase_SOLUTION_ID + ".expressbase.com/";
+        //else if (ebmod === 'Staging')
+        //    return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.cloud/";
+        //else
+        //    return "https://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41502/";
+        return "https://" + window.hostValue+"/";
     };
     //appIdColl??
     var pageurl = btoa(window.location.href);

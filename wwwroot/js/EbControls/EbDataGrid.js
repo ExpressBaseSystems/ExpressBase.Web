@@ -752,7 +752,7 @@
     };
 
     this.removeInvalidStyle = function (ctrl) {
-        EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
+        EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, ctrl);
     };
 
     this.getFormVals = function () {

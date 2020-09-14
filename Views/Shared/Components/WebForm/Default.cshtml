@@ -472,6 +472,7 @@
 
     header.insertButton(`<button id="webformsavedraft" role="save-draft" class="btn" title="Save as draft"><i class="icofont-ui-clip-board"></i></button>`);
     header.insertButton(`<button id="webformdeletedraft" role="delete-draft" class="btn" title="Delete draft"><i class="icofont-bin"></i></i></button>`);
+    header.insertButton(`<button id="webforminvalidmsgs" onclick='renderer.FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>`);
 
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
     let _formObj = @Html.Raw(ViewBag.WebFormObj);

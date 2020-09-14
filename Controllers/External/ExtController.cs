@@ -372,15 +372,13 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
             ViewBag.GoogleSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GOOGLE_CLIENT_ID);
-            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            string[] hostParts = host.Split(CharConstants.DOT);
-
+            
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
             if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
             {
-                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                if (IsTokensValid(sRToken, sBToken, ExtSolutionId))
                     return Redirect(RoutingConstants.MYSOLUTIONS);
             }
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);

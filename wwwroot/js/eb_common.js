@@ -276,7 +276,7 @@ function DGaddInvalidStyle(msg, type) {
 }
 
 function DGremoveInvalidStyle() {
-    EbMakeValid(this, `#td_${this.EbSid_CtxId}`, `.ctrl-cover`, this);
+    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, this);
 }
 
 

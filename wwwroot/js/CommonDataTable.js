@@ -549,7 +549,7 @@
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
             console.log("Table View Error......" + message);
-            if (this.Source === "WebForm" || this.Source === "Bot") 
+            if (this.Source === "WebForm" || this.Source === "Bot" || this.Source === "DashBoard") 
                 $("#" + settings.sTableId + "_processing").text("Something went wrong..");
             else
                 EbPopBox("show", { Message: "Table View Error Occured....", Title: "Error" });
@@ -774,7 +774,7 @@
                     beforeSend: function () {
                     },
                     error: function () {
-                        if (this.Source === "WebForm" || this.Source === "Bot")
+                        if (this.Source === "WebForm" || this.Source === "Bot" || this.Source === "DashBoard")
                             $("#" + this.tableId + "_processing").text("Timeout Expired..");
                         else
                             EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
@@ -1126,7 +1126,7 @@
         if (dd.responseStatus) {
             if (dd.responseStatus.message !== null) {
                 console.log("Table View PreProcessing Error " + dd.responseStatus.message);
-                if (this.Source === "WebForm" || this.Source === "Bot")
+                if (this.Source === "WebForm" || this.Source === "Bot" || this.Source === "DashBoard")
                     $("#" + this.tableId + "_processing").text("Something went wrong..");
                 else
                     EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });

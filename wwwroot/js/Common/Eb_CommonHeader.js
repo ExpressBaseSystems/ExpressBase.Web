@@ -5,13 +5,37 @@
     var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
     this.addRootObjectHelp = function (obj) {
-        if (obj.Info && obj.Info.trim() !== "") {
+        let AvailableDocs = { isPdf: (obj.Info && (!!obj.Info.trim())), isVideo: (obj.InfoVideoURL && (!!obj.InfoVideoURL.trim())) };
+
+        if (AvailableDocs.isPdf || AvailableDocs.isVideo) {
             let html = `<button id="${obj.EbSid_CtxId}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
             this.insertButton(html);
 
-            $(`<div class="icon-cont  pull-right pgcorner"><i class="fa fa-angle-double-right"></i></div>`)
+            let docbtn = `
+              <li class="nav-item">
+                <a class="nav-link @active@" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
+                <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
+                </a>
+              </li>`;
 
-            $("body").append(`
+            let vidbtn = `
+              <li class="nav-item">
+                <a class="nav-link @active@" id="${obj.EbSid_CtxId}-vidtab" data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
+                    <i class="icofont-ui-video-play"></i> Video
+                </a>
+              </li>`;
+
+            let docContent = `
+              <div class="tab-pane fade @activein@"  id="${obj.EbSid_CtxId}doc" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-doctab">
+                <iframe id='${obj.EbSid_CtxId}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
+              </div>`;
+
+            let vidContent = `
+              <div class="tab-pane fade @activein@" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
+                <iframe src="${obj.InfoVideoURL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>`;
+
+            let HelpHtml = `
             <div id='${obj.EbSid_CtxId}infoCont' class='eb-popup-cont'>
                 <div class='eb-popup-head'>
                     <span>Help</span>
@@ -23,33 +47,36 @@
                     </div>
                 </div>
                 <div class='eb-popup-body'>
-
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
-    <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
-        <i class="icofont-ui-video-play"></i> Video
-    </a>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade active in"  id="${obj.EbSid_CtxId}doc" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-doctab">
-    <iframe id='${obj.EbSid_CtxId}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
-  </div>
-  <div class="tab-pane fade" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
-    <iframe src="${obj.InfoVideoURL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
-</div>
-
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      @pdfBtn@
+                      @vidbtn@
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        @pdfContent@
+                        @vidContent@
+                    </div>
                 </div>
                 <div class='hhandpad-r'></div>
                 <div class='hhandpad-l'></div>
             </div>
-            `);
+            `;
+
+            if (AvailableDocs.isPdf) {
+                HelpHtml = HelpHtml.replace('@pdfBtn@', docbtn).replace('@pdfContent@', docContent)
+            }
+            else {
+                HelpHtml = HelpHtml.replace('@pdfBtn@', '').replace('@pdfContent@', '')
+            }
+            if (AvailableDocs.isVideo) {
+                HelpHtml = HelpHtml.replace('@vidbtn@', vidbtn).replace('@vidContent@', vidContent)
+            }
+            else {
+                HelpHtml = HelpHtml.replace('@vidbtn@', '').replace('@vidContent@', '')
+            }
+
+            HelpHtml = HelpHtml.replace('@activein@', 'active in').replace('@activein@', '').replace('@active@', '').replace('@active@', '');
+
+            $("body").append(HelpHtml);
 
             this.$infoModal = $(`#${obj.EbSid_CtxId}infoCont`);
 
@@ -77,23 +104,6 @@
                 let extURL = ($(`#${obj.EbSid}infoCont .tab-pane.active`).attr('is-video') === "true") ? obj.InfoVideoURL : `/files/${obj.Info}.pdf`
                 window.open(extURL, '_blank');
             }.bind(this));
-
-            //new jBox('Modal', {
-            //    attach: `#${obj.EbSid}HelperBtn`,
-            //    width: 'auto',
-            //    Height: 'auto',
-            //    title: 'Help',
-            //    overlay: false,
-            //    content: `<iframe class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>`,
-            //    draggable: 'title',
-            //    repositionOnOpen: false,
-            //    repositionOnContent: false
-            //});
-
-            //$(".jBox-wrapper").resizable({
-            //    aspectRatio: true,
-            //    alsoResize: '.jBox-content'
-            //});
         }
     };
 

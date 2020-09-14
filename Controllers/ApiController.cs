@@ -48,7 +48,7 @@ namespace ExpressBase.Web.Controllers
                 Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
 
-                if (ViewBag.IsValid)
+                if (this.Authenticated)
                 {
                     resp = this.ServiceClient.Get(new ApiRequest
                     {
@@ -128,7 +128,7 @@ namespace ExpressBase.Web.Controllers
                     .ToDictionary(k => k, v => form[v] as object);
                 }
 
-                if (ViewBag.IsValid)
+                if (this.Authenticated)
                 {
                     resp = this.ServiceClient.Get(new ApiRequest
                     {
@@ -191,9 +191,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/api/{api_name}/{ver}/metadata")]
         public IActionResult ApiMetaData(string api_name, string ver)
         {
-            if (ViewBag.IsValidSol)
+            if (this.IsValidSolution)
             {
-                ApiMetaResponse resp = this.ServiceClient.Get(new ApiMetaRequest { Name = api_name, Version = ver, SolutionId = this.SolutionId });
+                ApiMetaResponse resp = this.ServiceClient.Get(new ApiMetaRequest { Name = api_name, Version = ver, SolutionId = this.IntSolutionId });
                 ViewBag.Meta = resp;
             }
             else
@@ -205,9 +205,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/api/metadata")]
         public IActionResult ApiAllMeta()
         {
-            if (ViewBag.IsValidSol)
+            if (this.IsValidSolution)
             {
-                ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SolutionId });
+                ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.IntSolutionId });
                 ViewBag.Allmeta = resp.AllMetas;
             }
             else
@@ -229,7 +229,7 @@ namespace ExpressBase.Web.Controllers
                     Password = (password + username).ToMD5Hash(),
                     Meta = new Dictionary<string, string> {
                         { RoutingConstants.WC, RoutingConstants.UC },
-                        { TokenConstants.CID, this.SolutionId },
+                        { TokenConstants.CID, this.IntSolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
                         { RoutingConstants.USER_AGENT, this.UserAgent}
                     },
@@ -269,7 +269,7 @@ namespace ExpressBase.Web.Controllers
                     Password = password,
                     Meta = new Dictionary<string, string> {
                         { RoutingConstants.WC, RoutingConstants.MC },
-                        { TokenConstants.CID, this.SolutionId },
+                        { TokenConstants.CID, this.IntSolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
                         { RoutingConstants.USER_AGENT, this.UserAgent}
                     },
@@ -291,7 +291,7 @@ namespace ExpressBase.Web.Controllers
 
                     try
                     {
-                        Eb_Solution s_obj = GetSolutionObject(this.SolutionId);
+                        Eb_Solution s_obj = GetSolutionObject(this.IntSolutionId);
 
                         if (s_obj != null && s_obj.Is2faEnabled)
                         {
@@ -372,7 +372,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         UName = username,
                         SignInOtpType = type,
-                        SolutionId = this.SolutionId,
+                        SolutionId = this.IntSolutionId,
                         WhichConsole = TokenConstants.MC
                     });
 
@@ -465,7 +465,7 @@ namespace ExpressBase.Web.Controllers
                     response = this.ServiceClient.Post(new ResendOTPSignInRequest
                     {
                         Token = token,
-                        SolnId = this.SolutionId,
+                        SolnId = this.IntSolutionId,
                         UserAuthId = user.AuthId
                     });
                 }
@@ -653,7 +653,7 @@ namespace ExpressBase.Web.Controllers
         {
             ApiFileResponse response = new ApiFileResponse();
 
-            if (ViewBag.IsValid)
+            if (this.Authenticated)
             {
                 try
                 {
@@ -734,12 +734,12 @@ namespace ExpressBase.Web.Controllers
             ValidateSidResponse resp = new ValidateSidResponse();
             try
             {
-                resp.IsValid = ViewBag.IsValidSol;
+                resp.IsValid = this.IsValidSolution;
                 if (resp.IsValid)
                 {
                     DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
                     {
-                        SolnId = this.SolutionId,
+                        SolnId = this.IntSolutionId,
                     });
                     resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
                 }
@@ -765,7 +765,7 @@ namespace ExpressBase.Web.Controllers
 
                 try
                 {
-                    Eb_Solution s_obj = GetSolutionObject(this.SolutionId);
+                    Eb_Solution s_obj = GetSolutionObject(this.IntSolutionId);
 
                     if (s_obj == null) throw new Exception("Solution object null");
 
@@ -952,9 +952,6 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                string host = HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-                string[] hostParts = host.Split(CharConstants.DOT);
-
                 //to use internally also check token in cookie
                 if (bToken == null && rToken == null)
                 {
@@ -962,13 +959,13 @@ namespace ExpressBase.Web.Controllers
                     rToken = HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
                 }
 
-                if (ViewBag.IsValidSol && IsTokensValid(rToken, bToken, hostParts[0]))
+                if (this.IsValidSolution && IsTokensValid(rToken, bToken, this.ExtSolutionId))
                 {
                     this.ServiceClient.BearerToken = bToken;
                     this.ServiceClient.RefreshToken = rToken;
                     this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, rToken);
 
-                    EbConnectionFactory connection = new EbConnectionFactory(this.SolutionId, this.Redis);
+                    EbConnectionFactory connection = new EbConnectionFactory(this.IntSolutionId, this.Redis);
                     EbMapConCollection MapCollection = connection.MapConnection;
 
                     ViewBag.Maps = MapCollection;

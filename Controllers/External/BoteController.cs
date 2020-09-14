@@ -192,7 +192,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
 				if (settings == null)
 				{
-
+					Console.WriteLine(" ________________bot settings is null in redis");
 					RedisBotSettingsResponse stgres = this.ServiceClient.Post<RedisBotSettingsResponse>(new RedisBotSettingsRequest
 					{
 						AppId = Int32.Parse(args[1]),
@@ -201,10 +201,12 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 					});
 					if (stgres.ResStatus == 1)
 					{
+						Console.WriteLine(" ___________________bot settings has been updated in redis");
 						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
 					}
 					else
 					{
+						Console.WriteLine(" ___________________bot settings has failed to updated in redis  ...row count is 0");
 						settings = new EbBotSettings()
 						{
 							Name = "- Application Name -",
@@ -225,13 +227,15 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
 
 			}
-			
+
 			//FileContent = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
 			//FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
+			Console.WriteLine(" ___________________bot settings file replace");
 			return File(FileContent.ToUtf8Bytes(), "text/css");
 		}
 		public Dictionary<string, string> FetchCss(Dictionary<string, string> btCss)
 		{//public Dictionary<string, Dictionary<string, string>> CssContent()
+			Console.WriteLine(" ___________________bot settings css fetch call");
 			var CssDict = new Dictionary<string, string>();
 			var Cssconst = new Dictionary<string, string>();
 			Cssconst = new EbBotSettings().CssContent;

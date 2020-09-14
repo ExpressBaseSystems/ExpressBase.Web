@@ -181,12 +181,15 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 		public FileContentResult Css(string id, string mode)
 		{
+			Console.WriteLine(" ___________________bot settings css method called");
 			string[] args = id.Split("-");
 			string solid = args[0];
 			//string cid = this.GetIsolutionId(solid);
 			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			string FileContent = "";
+			Console.WriteLine(" ___________________bot settings solid from id= " + args[0]);
+			Console.WriteLine(" ___________________bot settings appid= " + args[1]);
 			{
 				int appid = Convert.ToInt32(args[1]);
 				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));

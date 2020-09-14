@@ -1730,6 +1730,14 @@ const WebFormRender = function (option) {
 
         console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
 
+
+
+        this.EbAlert = new EbAlert({
+            id: this.FormObj.EbSid_CtxId + "_formAlertBox",
+            class:'webform-alert-box',
+            top: 60,
+            right: 24
+        });
         this.initConnectionCheck();
     };
 

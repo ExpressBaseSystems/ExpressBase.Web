@@ -433,7 +433,7 @@
     max-width: 100%;
 }
 
-[eb-form="true"][mode="view"] .searchable [type="search"] {
+[eb-form="true"][mode="view"] .searchable [type="search"], .input-group [disabled="disabled"] .searchable [type="search"] {
     background-color: rgb(243, 243, 243) !important;
 }
 

@@ -465,17 +465,19 @@
         let notOk1stCtrl = null;
         $.each(this.FO.flatControlsWithDG, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
-            this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
+            if (this.FO.EbAlert)
+                this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
             if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
                 required_valid_flag = false;
                 this.addInvalidStyle2TabPanes(ctrl);
-
-                this.FO.EbAlert.alert({
-                    id: ctrl.EbSid_CtxId + "-al",
-                    head: "required",
-                    body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>" + ctrl.Label + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
-                    type: "danger"
-                });
+                if (this.FO.EbAlert) {
+                    this.FO.EbAlert.alert({
+                        id: ctrl.EbSid_CtxId + "-al",
+                        head: "required",
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>" + ctrl.Label + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                        type: "danger"
+                    });
+                }
 
                 if (!$notOk1stCtrl) {
                     $notOk1stCtrl = $ctrl;
@@ -488,10 +490,12 @@
             this.GoToCtrl(notOk1stCtrl);
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
-        if (!required_valid_flag)
-            this.FO.headerObj.showElement(["webforminvalidmsgs"]);
-        else
-            this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
+        if (this.FO.headerObj && this.FO.EbAlert) {
+            if (!required_valid_flag)
+                this.FO.headerObj.showElement(["webforminvalidmsgs"]);
+            else
+                this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
+        }
 
         return required_valid_flag;
     }.bind(this);

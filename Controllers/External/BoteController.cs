@@ -98,9 +98,12 @@ namespace ExpressBase.Web.Controllers
 
 		public FileContentResult Js(string id, string mode)
 		{
+			Console.WriteLine(" ___________________bot settings JS method called id= " + id);
 			string[] args = id.Split("-");
 			string PushContent = "";
 			string solid = args[0];
+			Console.WriteLine(" ___________________bot settings JS method solid= " + solid);
+			Console.WriteLine(" ___________________bot settings JS method appid= " + args[1]);
 			//string cid = this.GetIsolutionId(solid);
 			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
@@ -181,30 +184,36 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 		public FileContentResult Css(string id, string mode)
 		{
-			string[] args = id.Split("-");
-			string solid = args[0];
+			Console.WriteLine(" ___________________bot settings css method called id= " + id);
+			//string[] args = id.Split("-");
+			int appid = Convert.ToInt32(id.Split("-").Last());
+			//string solid = args[0];
 			//string cid = this.GetIsolutionId(solid);
 			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			string FileContent = "";
+			Console.WriteLine(" ___________________bot settings solid from id= " + cid);
+			Console.WriteLine(" ___________________bot settings appid= " + appid);
 			{
-				int appid = Convert.ToInt32(args[1]);
-				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+				//int appid = Convert.ToInt32(args[1]);
+				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid.ToString()));
 				if (settings == null)
 				{
-
+					Console.WriteLine(" ________________bot settings is null in redis");
 					RedisBotSettingsResponse stgres = this.ServiceClient.Post<RedisBotSettingsResponse>(new RedisBotSettingsRequest
 					{
-						AppId = Int32.Parse(args[1]),
+						AppId = appid,
 						AppType = 3,
 						SolnId = cid
 					});
 					if (stgres.ResStatus == 1)
 					{
-						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+						Console.WriteLine(" ___________________bot settings has been updated in redis");
+						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid.ToString()));
 					}
 					else
 					{
+						Console.WriteLine(" ___________________bot settings has failed to updated in redis  ...row count is 0");
 						settings = new EbBotSettings()
 						{
 							Name = "- Application Name -",
@@ -216,18 +225,19 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 				}
 				//////change count if any css Constant is added or removed
-				if (settings.CssContent==null || settings.CssContent.Count <11)
+				if (settings.CssContent == null || settings.CssContent.Count < 11)
 				{
 					settings.CssContent = FetchCss(settings.CssContent);
 				}
-				FileContent = ReplaceCssContent(settings.CssContent, args[1]);
+				FileContent = ReplaceCssContent(settings.CssContent, appid.ToString());
 				//byte[] data = System.Convert.FromBase64String(settings.CssContent);
 				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
 
 			}
-			
+
 			//FileContent = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
 			//FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
+			Console.WriteLine(" ___________________bot settings file replace");
 			return File(FileContent.ToUtf8Bytes(), "text/css");
 		}
 		public Dictionary<string, string> FetchCss(Dictionary<string, string> btCss)

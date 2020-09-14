@@ -45,7 +45,8 @@ namespace ExpressBase.Web.Controllers
 			byte[] Pge = Convert.FromBase64String(pgur);
 			string ExtUrl = System.Text.Encoding.UTF8.GetString(Pge);
 			//EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
-			string cid = this.GetIsolutionId(tid);
+			//string cid = this.GetIsolutionId(tid);
+			string cid = IntSolutionId;
 			EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid));
 			if (settings == null)
 			{
@@ -97,10 +98,14 @@ namespace ExpressBase.Web.Controllers
 
 		public FileContentResult Js(string id, string mode)
 		{
+			Console.WriteLine(" ___________________bot settings JS method called id= " + id);
 			string[] args = id.Split("-");
 			string PushContent = "";
 			string solid = args[0];
-			string cid = this.GetIsolutionId(solid);
+			Console.WriteLine(" ___________________bot settings JS method solid= " + solid);
+			Console.WriteLine(" ___________________bot settings JS method appid= " + args[1]);
+			//string cid = this.GetIsolutionId(solid);
+			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			if (mode.Equals("s"))//if single bot
 			{
@@ -135,6 +140,7 @@ namespace ExpressBase.Web.Controllers
 				PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
                     window.EXPRESSbase_cid = '{9}';
+                    window.hostValue = '{10}';
                     window.EXPRESSbase_APP_ID = {1};
                     d.ebbotName = '{2}' || '< EBbot >';
                     d.ebbotThemeColor = '{3}' || '#055c9b';
@@ -142,7 +148,7 @@ namespace ExpressBase.Web.Controllers
                     d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';					
 					d.ebmod='{6}';
 					d.botsubtext='{7}';
-d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env, settings.Description,(JSON.stringify( settings.BotProp)),cid );
+d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env, settings.Description,(JSON.stringify( settings.BotProp)),cid,ViewBag.HostValue);
 
 
 			}
@@ -178,29 +184,36 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 		public FileContentResult Css(string id, string mode)
 		{
-			string[] args = id.Split("-");
-			string solid = args[0];
-			string cid = this.GetIsolutionId(solid);
+			Console.WriteLine(" ___________________bot settings css method called id= " + id);
+			//string[] args = id.Split("-");
+			int appid = Convert.ToInt32(id.Split("-").Last());
+			//string solid = args[0];
+			//string cid = this.GetIsolutionId(solid);
+			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			string FileContent = "";
+			Console.WriteLine(" ___________________bot settings solid from id= " + cid);
+			Console.WriteLine(" ___________________bot settings appid= " + appid);
 			{
-				int appid = Convert.ToInt32(args[1]);
-				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+				//int appid = Convert.ToInt32(args[1]);
+				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid.ToString()));
 				if (settings == null)
 				{
-
+					Console.WriteLine(" ________________bot settings is null in redis");
 					RedisBotSettingsResponse stgres = this.ServiceClient.Post<RedisBotSettingsResponse>(new RedisBotSettingsRequest
 					{
-						AppId = Int32.Parse(args[1]),
+						AppId = appid,
 						AppType = 3,
 						SolnId = cid
 					});
 					if (stgres.ResStatus == 1)
 					{
-						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+						Console.WriteLine(" ___________________bot settings has been updated in redis");
+						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid.ToString()));
 					}
 					else
 					{
+						Console.WriteLine(" ___________________bot settings has failed to updated in redis  ...row count is 0");
 						settings = new EbBotSettings()
 						{
 							Name = "- Application Name -",
@@ -212,18 +225,19 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 				}
 				//////change count if any css Constant is added or removed
-				if (settings.CssContent==null || settings.CssContent.Count <11)
+				if (settings.CssContent == null || settings.CssContent.Count < 11)
 				{
 					settings.CssContent = FetchCss(settings.CssContent);
 				}
-				FileContent = ReplaceCssContent(settings.CssContent, args[1]);
+				FileContent = ReplaceCssContent(settings.CssContent, appid.ToString());
 				//byte[] data = System.Convert.FromBase64String(settings.CssContent);
 				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
 
 			}
-			
+
 			//FileContent = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
 			//FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
+			Console.WriteLine(" ___________________bot settings file replace");
 			return File(FileContent.ToUtf8Bytes(), "text/css");
 		}
 		public Dictionary<string, string> FetchCss(Dictionary<string, string> btCss)
@@ -335,7 +349,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			HttpClient client = new HttpClient();
 			string result = await client.GetStringAsync("http://ip-api.com/json/" + this.RequestSourceIp);
 			IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			cid = this.GetIsolutionId(cid);
+			//cid = this.GetIsolutionId(cid);
+			cid = IntSolutionId;
 			Dictionary<string, string> _Meta;
 			_Meta = new Dictionary<string, string> {
 					{ TokenConstants.WC, wc },
@@ -394,7 +409,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			string Password;
 			//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
 			//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			cid = this.GetIsolutionId(cid);		
+			//cid = this.GetIsolutionId(cid);		
+			cid = IntSolutionId;
 			MyAuthenticateResponse authResponse = null;
 			List<object> returnlist = new List<object>();
 			BotAuth_andFormList Bot_Obj = new BotAuth_andFormList();

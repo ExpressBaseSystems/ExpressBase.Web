@@ -1,5 +1,7 @@
 ﻿var EbAlert = function (settings) {
     this.id = settings.id;
+    this.class = settings.class || '';
+    this.onClose = settings.onClose;
     this.top = settings.top;
     this.left = settings.left;
     this.right = settings.right;
@@ -46,11 +48,14 @@
         else if (this.possition === "bottom-left") {
             this.bottom = 0; this.right = 0;
         }
-        var $alertBox = $('<div id="' + this.id + '" style="top:' + this.top + 'px; bottom:' + this.bottom + 'px; left:' + this.left + 'px; right:' + this.right + 'px;" class="ebalert-cont eb-alertbox"></div >');
+        var $alertBox = $('<div id="' + this.id + '" style="top:' + this.top + 'px; bottom:' + this.bottom + 'px; left:' + this.left + 'px; right:' + this.right + 'px;" class="ebalert-cont eb-alertbox ' + this.class + '"></div >');
         $('body').append($alertBox);
         if (typeof this.width === "number")
             this.width += "px";
         $alertBox.css("width", this.width);
+
+        if (this.onClose)
+            $alertBox.on('click', this.onClose);
     };
     this.Init();
 };

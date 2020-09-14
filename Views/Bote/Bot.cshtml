@@ -59,7 +59,7 @@
 
 
 @*BUNDLES*@
-<environment exclude="Development">
+<environment exclude  ="Development">
     <script type="text/javascript" src="~/js/Bundles/eb-botpage.bundle.js" asp-append-version=@bApnd></script>
     @*<script type="text/javascript" src="~/js/Bundles/eb-bot_minimal.bundle.js" defer asp-append-version=@bApnd></script>
         <script type="text/javascript" src="~/js/Bundles/eb-bot_secondary.bundle.js" defer asp-append-version=@bApnd></script>*@
@@ -121,9 +121,9 @@
     @*eb-bot_secondary.bundle*@
     <script type="text/javascript" src="~/js/FormBuilder/vue.js" defer asp-append-version=@bApnd></script>
 
+    <script type="text/javascript" src="~/js/datatables.min.js" defer asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/EbDataTable.js" defer asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/Eb_Basic_DataTable.js" defer asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/datatables.min.js" defer asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/CommonDataTable.js" defer asp-append-version=@bApnd></script>
 
 
@@ -223,10 +223,17 @@
                 console.log("loaded - eb-bot_minimal.bundle.js");
 
                 var s1 = document.createElement('script');
-                s1.src = '/js/Bundles/eb-bot_secondary.bundle.js';
+                s1.src = '/js/datatables.min.js';
                 s1.type = 'text/javascript';
                 s1.async = false;
                 document.head.appendChild(s1);
+                console.log("loaded - datatables.min.js");
+
+                var s2 = document.createElement('script');
+                s2.src = '/js/Bundles/eb-bot_secondary.bundle.js';
+                s2.type = 'text/javascript';
+                s2.async = false;
+                document.head.appendChild(s2);
                 console.log("loaded - eb-bot_secondary.bundle.js");
             })();
 

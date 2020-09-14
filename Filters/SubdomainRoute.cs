@@ -41,37 +41,21 @@ namespace ExpressBase.Web.Filters
         }
 
         public new async Task RouteAsync(RouteContext context)
-        {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
+        { 
             var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            var path = context.HttpContext.Request.Path;
             string[] hostParts = host.Split(CharConstants.DOT);
 
-            //object _subDomain = null;
-            //if (Enum.TryParse(typeof(SubDomains), hostParts[0], out _subDomain))
-            //{
-            //    context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EB_PRODUCTS;
-            //    context.RouteData.Values[RoutingConstants.ACTION] = ((SubDomains)_subDomain).ToString();
-            //}
-
-            /*else*/
-            if (path.Value.Equals(CharConstants.BACKSLASH.ToString())) // '/'
+            if (context.HttpContext.Request.Path.Value.Equals(CharConstants.BACKSLASH.ToString()))
             {
-                if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
-                    this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));
-
-                else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
-                    this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));
-
-                else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
-                    this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_2));
-
+                if (hostParts[0] == RoutingConstants.MYACCOUNT)
+                {
+                    context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER;
+                    context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.TENANTSIGNIN;
+                }
                 else
                 {
                     context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER;
-                    context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.INDEX;
+                    context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.USERSIGNIN2UC;
                 }
             }
 

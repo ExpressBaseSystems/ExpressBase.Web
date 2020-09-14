@@ -181,7 +181,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 		public FileContentResult Css(string id, string mode)
 		{
-			Console.WriteLine(" ___________________bot settings css method called");
+			Console.WriteLine(" ___________________bot settings css method called id= " +id);
 			string[] args = id.Split("-");
 			string solid = args[0];
 			//string cid = this.GetIsolutionId(solid);

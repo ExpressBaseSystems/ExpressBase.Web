@@ -16,10 +16,6 @@ namespace ExpressBase.Web.BaseControllers
 {
     public class EbBaseIntApiController : EbBaseIntController
     {
-        protected string ESolutionId { set; get; }
-
-        protected string SolutionId { set; get; }
-
         protected bool Authenticated { set; get; }
 
         protected bool IsValidSolution { set; get; }
@@ -36,8 +32,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            string host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            string[] hostParts = host.Split(CharConstants.DOT);
+            base.OnActionExecuting(context);
 
             string sBToken = context.HttpContext.Request.Headers[RoutingConstants.BEARER_TOKEN];
             string sRToken = context.HttpContext.Request.Headers[RoutingConstants.REFRESH_TOKEN];
@@ -50,13 +45,9 @@ namespace ExpressBase.Web.BaseControllers
                 sAPIKey = authHeader.Substring("APIKEY ".Length).Trim();
             }
 
-            this.ESolutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
-
-            this.SolutionId = this.GetIsolutionId(this.ESolutionId);
-
             Controller controller = (Controller)context.Controller;
 
-            if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, this.SolutionId)) == 0)
+            if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, this.IntSolutionId)) == 0)
             {
                 controller.ViewBag.IsValidSol = false;
                 IsValidSolution = false;
@@ -73,7 +64,7 @@ namespace ExpressBase.Web.BaseControllers
                 Authenticated = false;
                 controller.ViewBag.Message = "Authentication token not present in request header";
             }
-            else if (!IsTokensValid(sRToken, sBToken, hostParts[0]) && string.IsNullOrEmpty(sAPIKey))
+            else if (!IsTokensValid(sRToken, sBToken, this.ExtSolutionId) && string.IsNullOrEmpty(sAPIKey))
             {
                 controller.ViewBag.IsValid = false;
                 Authenticated = false;
@@ -107,7 +98,7 @@ namespace ExpressBase.Web.BaseControllers
                         this.FileClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
                     }
                 }
-                catch (System.ArgumentNullException ane)
+                catch (ArgumentNullException ane)
                 {
                     if (ane.ParamName == RoutingConstants.BEARER_TOKEN || ane.ParamName == RoutingConstants.REFRESH_TOKEN)
                     {
@@ -116,7 +107,6 @@ namespace ExpressBase.Web.BaseControllers
                     }
                 }
             }
-            base.OnActionExecuting(context);
         }
 
         public List<string> GetAccessIds(int lid)

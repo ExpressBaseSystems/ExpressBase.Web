@@ -53,7 +53,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.botflg = {};
     this.botflg.loadFormlist = false;
     this.botflg.singleBotApp = false;
-    this.botflg.startover = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
     this.formObject = {};// for passing to user defined functions
@@ -420,7 +419,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.getForm = function (RefId) {
         this.showTypingAnim();
-        if (!this.formsList[RefId]) {
+        //if (!this.formsList[RefId]) {
             $.ajax({
                 type: "POST",
                 //url: "../Boti/GetCurForm",
@@ -430,12 +429,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 success: this.getFormSuccess.bind(this, RefId)
 
             });
-        }
-        else {
-            this.hideTypingAnim();
-            this.curForm = this.formsList[RefId];
-            this.setFormControls();
-        }
+        //}
+        //else {
+        //    this.hideTypingAnim();
+        //    this.curForm = this.formsList[RefId];
+        //    this.setFormControls();
+        //}
     };
 
     this.txtboxKeyup = function (e) {
@@ -536,7 +535,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.makeReqFm = function (control) {
         var $ctrl = $("#" + control.Name);
         if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "")
-            EbMakeInvalid(`[for=${control.Name}]`, '.ctrl-wraper');
+            EbMakeInvalid(control, `[for=${control.Name}]`, '.ctrl-wraper');
     };
 
     this.removeReqFm = function (control) {
@@ -656,7 +655,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.checkRequired = function () {
         if (this.curCtrl.Required && !this.curVal) {
-            EbMakeInvalid(`[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
+            EbMakeInvalid(this.curCtrl,`[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
             return false;
         }
         else {
@@ -1253,6 +1252,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.msgFromBot = function (msg, callbackFn, ctrlname) {
         this.hideTypingAnim();
+        $("#eb_botStartover").hide();
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
@@ -1298,7 +1298,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
                     if (this.curCtrl && this.curCtrl.IsFullViewContol) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
-                        $msg.find(".msg-wraper-bot").css("margin-left", "12px");
+                        if ((this.curCtrl.ObjType != "TVcontrol")) {
+                            $msg.find(".msg-wraper-bot").css("margin-left", "12px");
+                        }
                     }
 
                     if (this.curCtrl && ($msg.find(".ctrl-wraper").length === 1)) {
@@ -1316,6 +1318,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 if (callbackFn && typeof callbackFn === typeof function () { })
                     callbackFn();
                 this.scrollToBottom();
+                $("#eb_botStartover").show();
             }.bind(this), this.typeDelay);
             this.ready = false;
         }
@@ -1351,6 +1354,11 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             else {
                 let btnhtml = this.proceedBtnHtml('mrg_tp_10');
                 //remove from getcontrols itself
+                if ((this.curCtrl.ObjType === "TVcontrol")) {
+                    $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').removeClass("ctrl-cont-bot");
+                    $('#' + this.curCtrl.EbSid).closest('.msg-wraper-bot').removeClass("msg-wraper-bot");
+                    $('#' + this.curCtrl.EbSid).closest('.msg-cont-bot').removeClass("msg-cont-bot");
+                }
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').find('.ctrl-wraper').addClass('w-100');
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').addClass('flxdirctn_col');
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').append(btnhtml);
@@ -1558,7 +1566,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.setStartOver = function () {
-        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="display:none" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };
@@ -2217,7 +2225,6 @@ this.LoginOpnDirectly = function () {
 this.botStartoverfn = function () {
 
     if (this.botflg.loadFormlist === false) {
-        this.botflg.startover = false;
         this.ClearFormVariables();
         this.botflg.otptype = "";//clear flags
         this.botflg.uname_otp = "";
@@ -2233,7 +2240,7 @@ this.botStartoverfn = function () {
 
 this.botUserLogin = function () {
     this.msgFromBot(this.welcomeMessage);
-
+    $('#eb_botStartover').hide();
     if (!settings.UserType_Internal) {
         if (settings.Authoptions.Fblogin) {
             // This is called with the results from from FB.getLoginStatus().

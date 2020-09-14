@@ -31,6 +31,14 @@ namespace ExpressBase.Web.BaseControllers
 
         public CustomUserSession Session { get; set; }
 
+        public string Host { get; set; }
+
+        public string ExtSolutionId { get; set; }
+
+        public string IntSolutionId { get; set; }
+
+        public string WhichConsole { get; set; }
+
         protected User LoggedInUser { get; set; }
 
         public IHttpContextAccessor httpContextAccessor { get; set; }
@@ -145,6 +153,13 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            Host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+
+            ExtSolutionId = Host.Replace(RoutingConstants.DASHDEV, string.Empty);
+            IntSolutionId = this.GetIsolutionId(ExtSolutionId);
+            WhichConsole = Host.EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : (IntSolutionId == CoreConstants.EXPRESSBASE)? RoutingConstants.TC : RoutingConstants.UC;
+
+            Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole);
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ReCaptchaKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_KEY);
             base.OnActionExecuting(context);
@@ -178,9 +193,8 @@ namespace ExpressBase.Web.BaseControllers
 
                                 if (rSub.EndsWith(TokenConstants.TC))
                                     isvalid = true;
-                                else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                                else if (WhichConsole == RoutingConstants.DC)
                                 {
-
                                     if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
                                         isvalid = true;
                                 }

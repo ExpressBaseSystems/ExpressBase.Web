@@ -296,10 +296,10 @@ const EbPowerSelect = function (ctrl, options) {
         }
         else {
             this.V_showDD();
+            $filterInp.val($e.val());
             if (this.ComboObj.IsPreload) {
-                $filterInp.val($e.val());
                 this.Vobj.DDstate = true;
-                EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+                EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, this.ComboObj);
                 if (this.ComboObj.MinSearchLength > searchVal.length)
                     return;
 
@@ -769,7 +769,7 @@ const EbPowerSelect = function (ctrl, options) {
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         //o.columnSearch = this.filterArray;
-        o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
+        o.showHeader = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
         o.nextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
@@ -1196,7 +1196,7 @@ const EbPowerSelect = function (ctrl, options) {
         if (!this.IsDatatableInit)
             this.DDopenInitDT();
         else {
-            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, this.ComboObj);
         }
 
         this.V_updateCk();
@@ -1369,10 +1369,10 @@ const EbPowerSelect = function (ctrl, options) {
 
         if (reqNotOK || minLimitNotOk) {
             //if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
-            EbMakeInvalid(contId, wraperId, msg);
+            EbMakeInvalid(this.ComboObj,contId, wraperId, msg);
         }
         else {
-            EbMakeValid(contId, wraperId);
+            EbMakeValid(contId, wraperId, this.ComboObj);
         }
     }.bind(this);
 

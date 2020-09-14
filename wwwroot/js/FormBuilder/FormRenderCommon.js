@@ -462,25 +462,102 @@
     this.AllRequired_valid_Check = function () {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
+        let notOk1stCtrl = null;
         $.each(this.FO.flatControlsWithDG, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
+            this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
             if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
                 required_valid_flag = false;
-                if (!$notOk1stCtrl)
+                this.addInvalidStyle2TabPanes(ctrl);
+
+                this.FO.EbAlert.alert({
+                    id: ctrl.EbSid_CtxId + "-al",
+                    head: "required",
+                    body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>" + ctrl.Label + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                    type: "danger"
+                });
+
+                if (!$notOk1stCtrl) {
                     $notOk1stCtrl = $ctrl;
+                    notOk1stCtrl = ctrl;
+                }
             }
         }.bind(this));
 
         if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
-            $notOk1stCtrl.select();
-            $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+            this.GoToCtrl(notOk1stCtrl);
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
+        if (!required_valid_flag)
+            this.FO.headerObj.showElement(["webforminvalidmsgs"]);
+        else
+            this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
 
         return required_valid_flag;
     }.bind(this);
 
-    this.checkUnique4All_save = function (controls, isSaveAfter) {/////////////// move
+    this.invalidBoxOnClose = function () {
+        if ($(event.target).closest('.ebalert-cont').children('.alert').length === 1)
+            $(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).hide();
+    }.bind(this);
+
+    this.GoToCtrl = function (ctrl) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        this.activateTabHierarchy(ctrl);
+        setTimeout(function () {
+            $ctrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            setTimeout(function () {
+                $ctrl.select();
+            }, 400);
+        }.bind(this), (ctrl.__noOfParentPanes || 0) * 400);
+    };
+
+    this.toggleInvalidMSGs = function () {
+        if ($(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).css('display') === 'none')
+            this.AllRequired_valid_Check();
+        $(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).toggle();
+    };
+
+    this.goToCtrlwithEbSid = function () {
+        let ebSid_CtxId = $(event.target).closest("div").attr("cltrof");
+        let flatCtrls = getAllctrlsFrom(this.FO.FormObj);
+        let ctrl = getObjByval(flatCtrls, "EbSid_CtxId", ebSid_CtxId)
+        this.GoToCtrl(ctrl);
+    };
+
+    this.activateTabHierarchy = function (ctrl) {
+        let TabPaneParents = getParentsOfType('TabPane', ctrl, this.FO.FormObj);
+        ctrl.__noOfParentPanes = TabPaneParents.length;
+        for (let i = TabPaneParents.length - 1; i >= 0; i--) {
+            $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`).tab('show');
+        }
+    };
+
+    this.addInvalidStyle2TabPanes = function (ctrl) {
+        let TabPaneParents = getParentsOfType('TabPane', ctrl, this.FO.FormObj);
+        for (let i = TabPaneParents.length - 1; i >= 0; i--) {
+            let $el = $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']>.eb-tab-warn-icon-cont`);
+            let attrval = 'invalid-by-' + ctrl.EbSid_CtxId;
+            $el.addClass(attrval);
+            let ebinvalCtrls = $el.attr('ebinval-ctrls') || '';
+            ebinvalCtrls = ebinvalCtrls.replaceAll(' ' + attrval, '') + ' ' + attrval;
+            $el.attr('ebinval-ctrls', ebinvalCtrls);
+            let ctrls = $el[0].className.replace('eb-tab-warn-icon-cont ', '').split(' ');
+            let content = 'issues in : ';
+            ctrls.every(function (ctrlName) {
+                content += ctrlName.replace('invalid-by-', '') + ',';
+            })
+
+            $el.attr("data-content", content.replace(/,\s*$/, ""));
+            $el.popover({
+                trigger: 'hover',
+                html: true,
+                container: "body [eb-root-obj-container]:first"
+            });
+        }
+    };
+
+    this.checkUnique4All_save = function (controls, isSaveAfter) {/////////////// move  
         let isFromCtrl = !isSaveAfter;
         if (isFromCtrl)
             var $ctrl_ = $("#" + controls[0].EbSid_CtxId);
@@ -604,7 +681,7 @@
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
             let valRes = func();
             if (valRes === false) {
-                //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
+                //EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
                 this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
                 if (!Validator.IsWarningOnly) {
                     formValidationflag = false;
@@ -618,7 +695,7 @@
     };
 
     this.removeInvalidStyle = function (ctrl) {
-        EbMakeValid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
+        EbMakeValid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, ctrl);
     };
 
     // checks a control value is emptyString
@@ -640,8 +717,8 @@
 
     this.addInvalidStyle = function (ctrl, msg, type) {
         //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
-        //    EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
+        //    EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         //else
-        EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+        EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
     };
 };

@@ -589,34 +589,18 @@ var mapView = function (option) {
         this.getData4GoogleMap();
         this.Ebobject = Ebobject;
         let selector = id;
-        //var mymap = L.map(selector).setView([51.505, -0.09], 13);
-        //L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        //    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        //    maxZoom: 18,
-        //    id: 'mapbox/streets-v11',
-        //    tileSize: 512,
-        //    zoomOffset: -1,
-        //    accessToken: 'pk.eyJ1Ijoibml0aGludmFzdWRldmFuIiwiYSI6ImNrODZ4cmJ5MDAyam4zaXFzNzI1cXp6N2UifQ.qvc5HjqC79yEAR2nhgbYJA'
-        //}).addTo(mymap);
-        //var marker = L.marker([51.5, -0.09]).addTo(mymap);
-
 
         let google = window.google;
         if (this.Lat.length > 0) {
             var mid = Math.floor(this.Lat.length / 2);
             var mymap = L.map(selector).setView([this.Lat[mid], this.Long[mid]], 13);
-            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
                 maxZoom: 18,
                 id: 'mapbox/streets-v11',
                 tileSize: 512,
                 zoomOffset: -1,
-                accessToken: 'pk.eyJ1Ijoibml0aGludmFzdWRldmFuIiwiYSI6ImNrODZ4cmJ5MDAyam4zaXFzNzI1cXp6N2UifQ.qvc5HjqC79yEAR2nhgbYJA'
             }).addTo(mymap);
-            //var marker, i;
-            //for (i = 0; i < this.Lat.length; i++) {
-            //    var marker = L.marker([this.Lat[i], this.Long[i]]).addTo(mymap);
-            //}
 
             var markerArray = [];
             var marker, i;

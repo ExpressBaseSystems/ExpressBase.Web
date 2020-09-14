@@ -1736,7 +1736,8 @@ const WebFormRender = function (option) {
             id: this.FormObj.EbSid_CtxId + "_formAlertBox",
             class:'webform-alert-box',
             top: 60,
-            right: 24
+            right: 24,
+            onClose: this.FRC.invalidBoxOnClose
         });
         this.initConnectionCheck();
     };

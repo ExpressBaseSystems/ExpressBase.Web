@@ -496,6 +496,11 @@
         return required_valid_flag;
     }.bind(this);
 
+    this.invalidBoxOnClose = function () {
+        if ($(event.target).closest('.ebalert-cont').children('.alert').length === 1)
+            $(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).hide();
+    }.bind(this);
+
     this.GoToCtrl = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         this.activateTabHierarchy(ctrl);
@@ -714,6 +719,6 @@
         //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
         //    EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         //else
-        EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+        EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
     };
 };

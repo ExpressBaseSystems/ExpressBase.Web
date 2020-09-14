@@ -6,13 +6,13 @@
 
     this.addRootObjectHelp = function (obj) {
         if (obj.Info && obj.Info.trim() !== "") {
-            let html = `<button id="${obj.EbSid}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
+            let html = `<button id="${obj.EbSid_CtxId}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
             this.insertButton(html);
 
             $(`<div class="icon-cont  pull-right pgcorner"><i class="fa fa-angle-double-right"></i></div>`)
 
             $("body").append(`
-            <div id='${obj.EbSid}infoCont' class='eb-popup-cont'>
+            <div id='${obj.EbSid_CtxId}infoCont' class='eb-popup-cont'>
                 <div class='eb-popup-head'>
                     <span>Help</span>
                     <div class="icon-cont  pull-right hclose">
@@ -23,14 +23,35 @@
                     </div>
                 </div>
                 <div class='eb-popup-body'>
-                    <iframe id='${obj.EbSid}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
+    <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
+        <i class="icofont-ui-video-play"></i> Video
+    </a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade active in"  id="${obj.EbSid_CtxId}doc" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-doctab">
+    <iframe id='${obj.EbSid_CtxId}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
+  </div>
+  <div class="tab-pane fade" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
+    <iframe src="${obj.InfoVideoURL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+
                 </div>
                 <div class='hhandpad-r'></div>
                 <div class='hhandpad-l'></div>
             </div>
             `);
 
-            this.$infoModal = $(`#${obj.EbSid}infoCont`);
+            this.$infoModal = $(`#${obj.EbSid_CtxId}infoCont`);
 
             this.$infoModal.draggable({
                 handle: ".eb-popup-head",
@@ -48,12 +69,13 @@
             }.bind(this));
 
 
-            $(`#${obj.EbSid}infoCont .hclose`).on("click",this.objhelpHide);
-            $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick",this.objhelpHide);
+            $(`#${obj.EbSid}infoCont .hclose`).on("click", this.objhelpHide);
+            $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick", this.objhelpHide);
 
 
             $(`#${obj.EbSid}infoCont .hnewt`).on("click", function () {
-                window.open(`/files/${obj.Info}.pdf`, '_blank');
+                let extURL = ($(`#${obj.EbSid}infoCont .tab-pane.active`).attr('is-video') === "true") ? obj.InfoVideoURL : `/files/${obj.Info}.pdf`
+                window.open(extURL, '_blank');
             }.bind(this));
 
             //new jBox('Modal', {

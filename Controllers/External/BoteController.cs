@@ -349,7 +349,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			HttpClient client = new HttpClient();
 			string result = await client.GetStringAsync("http://ip-api.com/json/" + this.RequestSourceIp);
 			IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			cid = this.GetIsolutionId(cid);
+			//cid = this.GetIsolutionId(cid);
+			cid = IntSolutionId;
 			Dictionary<string, string> _Meta;
 			_Meta = new Dictionary<string, string> {
 					{ TokenConstants.WC, wc },
@@ -408,7 +409,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			string Password;
 			//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
 			//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			cid = this.GetIsolutionId(cid);		
+			//cid = this.GetIsolutionId(cid);		
+			cid = IntSolutionId;
 			MyAuthenticateResponse authResponse = null;
 			List<object> returnlist = new List<object>();
 			BotAuth_andFormList Bot_Obj = new BotAuth_andFormList();

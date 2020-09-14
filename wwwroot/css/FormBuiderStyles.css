@@ -1590,9 +1590,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .webform-alert-box > .alert {
-    border-radius: 0;
+    border-radius: 3px;
     border: 0;
-    background-color: #ff0000;
+    background-color: #f64646;
     color: white;
     font-size: 14.1px;
     letter-spacing: 0.55px;
@@ -2874,7 +2874,7 @@ input.locinp {
 
 .obj-hlp-iframe {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 42px);
     border: none;
 }
 
@@ -2922,6 +2922,10 @@ input.locinp {
 .eb-popup-body {
     height: calc(100% - 51px);
 }
+
+    .eb-popup-body .tab-content, .eb-popup-body .tab-pane {
+        height: 100%;
+    }
 
 .hhandpad-r, .hhandpad-l {
     position: absolute;

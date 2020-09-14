@@ -840,6 +840,11 @@ eb-disable {
     font-weight: bold;
 }
 
+.toolicons .btn[role='invalid-msgs'] {
+   color:red;
+   display:none;
+}
+
 [coltype='DGNumericColumn'] {
     text-align: right;
 }
@@ -1583,6 +1588,45 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .alert {
     margin-bottom: 7px !important;
 }
+
+.webform-alert-box > .alert {
+    border-radius: 0;
+    border: 0;
+    background-color: #ff0000;
+    color: white;
+    font-size: 14.1px;
+    letter-spacing: 0.55px;
+}
+
+.webform-alert-box .close {
+    color: white !important;
+    opacity: 0.9;
+    top: -4.5px;
+    font-weight: 100;
+}
+
+
+    .webform-alert-box .close:hover, .webform-alert-box .close:focus {
+        color: #fff !important;
+        opacity: 1 !important;
+    }
+
+.eb-alert-item {
+    display: inline-flex;
+    padding: 0 5px;
+    outline: none;
+}
+
+.webform-alert-box .eb-alert-item:hover {
+    background-color: #fc5a5a;
+}
+
+.webform-alert-box .fa {
+    margin: auto;
+    transform: rotate(180deg);
+    margin-left: 6px;
+}
+
 /*ChatFormBuilder*/
 .dev-chat-cont {
     height: 90%;
@@ -2763,14 +2807,15 @@ input.locinp {
         .tv-control-cont .refresh-cont > .btn:hover {
             box-shadow: 0 0 1px 1px #145af8;
         }
+
         .tv-control-cont .refresh-cont > .btn > .fa {
-            margin:auto;
+            margin: auto;
         }
 
-        /*ebphone control*/
-        .phnctrl {
-            padding-left: 80px !important;
-        }
+/*ebphone control*/
+.phnctrl {
+    padding-left: 80px !important;
+}
 
 .phnContextBtn {
     border: 0;
@@ -2799,9 +2844,11 @@ input.locinp {
     left: 21px;
     line-height: 1.5;
 }
+
 .pdfwrapper-cont img {
     cursor: pointer;
 }
+
 .pdfwrapper-cont i {
     display: none;
     font-size: 33px;
@@ -2809,6 +2856,20 @@ input.locinp {
     bottom: 10px;
     cursor: pointer;
     left: 50px;
+}
+
+.eb-tab-warn-icon-cont {
+    display: inline-flex;
+    color: red;
+    font-size: 11PX;
+    transition-duration: 0.2s;
+    position: absolute;
+    top: 13.3px;
+    right: 2px;
+}
+
+[class='eb-tab-warn-icon-cont'] {
+    display: none;
 }
 
 .obj-hlp-iframe {

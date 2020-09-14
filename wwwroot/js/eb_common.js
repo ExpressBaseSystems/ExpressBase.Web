@@ -262,25 +262,25 @@ function getEbObjectTypes() {
 
 function EbAddInvalidStyle(msg, type) {
     if (this.ObjType === "PowerSelect" && !this.RenderAsSimpleSelect)
-        EbMakeInvalid(`#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
+        EbMakeInvalid(this, `#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
     else
-        EbMakeInvalid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+        EbMakeInvalid(this, `#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
 }
 
 function EbRemoveInvalidStyle() {
-    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`);
+    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, this);
 }
 
 function DGaddInvalidStyle(msg, type) {
-    EbMakeInvalid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+    EbMakeInvalid(this, `#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
 }
 
 function DGremoveInvalidStyle() {
-    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`);
+    EbMakeValid(this, `#td_${this.EbSid_CtxId}`, `.ctrl-cover`, this);
 }
 
 
-function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+function EbMakeInvalid(ctrl, contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     let shadowColor = "rgb(255 0 0)";
     if (type === "warning")
         shadowColor = "rgb(236, 151, 31)";
@@ -291,13 +291,18 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
     $ctrlCont.css("border", `1px solid ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
     $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
+
+    if (ctrl)
+        $(`[ebinval-ctrls*=' invalid-by-${'ctrl.EbSid_CtxId}'}']`).addClass(`invalid-by-${ctrl.EbSid_CtxId}`);
 }
 
-function EbMakeValid(contSel, _ctrlCont) {
+function EbMakeValid(contSel, _ctrlCont, ctrl) {
     //setTimeout(function () {
     $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
+    if (ctrl)
+        $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
 }
 
 

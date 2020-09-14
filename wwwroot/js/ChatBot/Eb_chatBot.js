@@ -535,7 +535,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.makeReqFm = function (control) {
         var $ctrl = $("#" + control.Name);
         if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "")
-            EbMakeInvalid(`[for=${control.Name}]`, '.ctrl-wraper');
+            EbMakeInvalid(control, `[for=${control.Name}]`, '.ctrl-wraper');
     };
 
     this.removeReqFm = function (control) {
@@ -655,7 +655,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.checkRequired = function () {
         if (this.curCtrl.Required && !this.curVal) {
-            EbMakeInvalid(`[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
+            EbMakeInvalid(this.curCtrl,`[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
             return false;
         }
         else {

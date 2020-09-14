@@ -1372,7 +1372,7 @@ const EbPowerSelect = function (ctrl, options) {
             EbMakeInvalid(this.ComboObj,contId, wraperId, msg);
         }
         else {
-            EbMakeValid(this.ComboObj,contId, wraperId, this.ComboObj);
+            EbMakeValid(contId, wraperId, this.ComboObj);
         }
     }.bind(this);
 

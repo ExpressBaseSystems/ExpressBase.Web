@@ -12,8 +12,9 @@
         else if (ebmod === 'Staging')
             return "https://" + window.EXPRESSbase_cid + ".eb-test.cloud/";
         else
-            return "http://" + window.EXPRESSbase_cid + ".localhost:41500/";
+            return "https://" + window.EXPRESSbase_cid + ".localhost:41502/";
     };
+   
     //appIdColl??
     var pageurl = btoa(window.location.href);
     var AppId;

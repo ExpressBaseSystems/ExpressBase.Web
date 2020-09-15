@@ -494,9 +494,6 @@ const WebFormRender = function (option) {
 
             this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         }
-        else if (respObj.Status === 403) {
-            EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
-        }
         else {
             EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000' });
             console.error(respObj.MessageInt);
@@ -753,7 +750,6 @@ const WebFormRender = function (option) {
             type: "POST",
             url: "/WebForm/InsertWebformData",
             data: {
-                TableName: this.FormObj.TableName,
                 ValObj: this.getFormValuesObjWithTypeColl(),
                 RefId: this.formRefId,
                 RowId: this.rowId,

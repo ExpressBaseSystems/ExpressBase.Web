@@ -510,10 +510,14 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getDataSuccess = function (result) {
-        if (result === undefined) {
+        if (result === undefined || result.data === null) {
             this.hideLoader();
             this.V_hideDD();
-            console.warn("PS: getData4PowerSelect ajax call returned undefined");
+            if (result === undefined)
+                console.warn("PS: getData4PowerSelect ajax call returned undefined");
+            else if (result.data === null) {
+                console.warn("PS: " + result.error);
+            }
             return;
         }
         this.data = result;
@@ -1369,7 +1373,7 @@ const EbPowerSelect = function (ctrl, options) {
 
         if (reqNotOK || minLimitNotOk) {
             //if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
-            EbMakeInvalid(this.ComboObj,contId, wraperId, msg);
+            EbMakeInvalid(this.ComboObj, contId, wraperId, msg);
         }
         else {
             EbMakeValid(contId, wraperId, this.ComboObj);

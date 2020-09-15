@@ -474,7 +474,8 @@
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
                         head: "required",
-                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>" + ctrl.Label + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
+                                    + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
                 }

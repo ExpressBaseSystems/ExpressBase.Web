@@ -7,14 +7,14 @@
     //PUSHED_JS_STATEMENTS
 
     this.eb_get_path = function (ebmod) {
-        //if (ebmod === 'Production')
-        //    return "https://" + window.EXPRESSbase_SOLUTION_ID + ".expressbase.com/";
-        //else if (ebmod === 'Staging')
-        //    return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.cloud/";
-        //else
-        //    return "https://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41502/";
-        return "https://" + window.hostValue+"/";
+        if (ebmod === 'Production')
+            return "https://" + window.EXPRESSbase_cid + ".expressbase.com/";
+        else if (ebmod === 'Staging')
+            return "https://" + window.EXPRESSbase_cid + ".eb-test.cloud/";
+        else
+            return "https://" + window.EXPRESSbase_cid + ".localhost:41502/";
     };
+   
     //appIdColl??
     var pageurl = btoa(window.location.href);
     var AppId;
@@ -64,7 +64,7 @@
     var ss = d.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
-    ss.href = this.eb_get_path(d.ebmod) + `Bote/Css?id=${window.EXPRESSbase_SOLUTION_ID}-${AppId}&mode=s"`;
+    ss.href = this.eb_get_path(d.ebmod) + `Bote/Css?id=${AppId}&mode=s"`;
     d.getElementsByTagName("head")[0].appendChild(ss);
 
 
@@ -211,7 +211,7 @@
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
         if (!ebbot_iframe.getAttribute("src")) {
-            ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&pgur=${pageurl}`);
+            ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&pgur=${pageurl}`);
             //ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${(themeColor).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}&msg=${(d.botWelcomeMsg || d.botWelcomeMsgColl[d.appIdCount])}`);
         }
         if (iframe_cont.style.display !== "flex") {

@@ -178,15 +178,18 @@
                     /**/
                     /**/
                     var BotList = @BotDtls ;
-                    var solutionId = '@ViewBag.SolutionIdExt';
-                    /**/
-                    //var jssrc = "https://"+solutionId+".localhost:41502";
-                    //if (d.ebmod === 'Production')
-                    //    jssrc = "https://"+solutionId+".expressbase.com";
-                    //else if (d.ebmod === 'Staging')
-                    //    jssrc = "https://" + solutionId + ".eb-test.cloud";
+                    //var solutionId = '@ViewBag.SolutionIdExt';
+                    var solutionId = '@ViewBag.SolutionId';
                     window.hostValue = '@ViewBag.HostValue';
-                    var jssrc = "https://" + window.hostValue;
+                     console.log("host=" + window.hostValue);
+                    //var jssrc = "https://" + window.hostValue;
+                    /**/
+                    var jssrc = "https://"+solutionId+".localhost:41502";
+                    if (d.ebmod === 'Production')
+                        jssrc = "https://"+solutionId+".expressbase.com";
+                    else if (d.ebmod === 'Staging')
+                        jssrc = "https://" + solutionId + ".eb-test.cloud";
+                    
                     console.log("jssrc=" + jssrc);
                    // window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
                     window.EXPRESSbase_SOLUTION_ID ='@ViewBag.SolutionIdExt';
@@ -230,11 +233,12 @@
                         d = document;
                         d.createBotFns.push(function () {
                             s = d.createElement("script");
-                            s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_SOLUTION_ID + "-" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
+                            s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
                             s.async = 1;
                             d.getElementsByTagName("head")[0].appendChild(s);
                         });
                     }
+                    //s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_SOLUTION_ID + "-" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
                     if ('@ViewBag.singlebot' != false) {
                          $.each(d.createBotFns, function (i, fun) {
                          $(".botBtnsCont").append(`<div class="btnOutCont col col-md-6 col-lg-6 col-sm-12 col-xs-12">

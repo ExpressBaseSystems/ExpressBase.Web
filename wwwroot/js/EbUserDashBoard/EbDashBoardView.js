@@ -212,6 +212,8 @@
         else {
             this.loader.EbLoader("hide");
         }
+        let header = new EbHeader();
+        header.addRootObjectHelp(this.EbObject);
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
         $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
         $(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));

@@ -652,6 +652,10 @@
                         val = this.Renderer.rowId;
                         name = "id";
                     }
+                    else if (this.Renderer.FormObj && depCtrl_s == `form.${this.Renderer.FormObj.TableName}_id`) {// in bot FormObj=undefined
+                        val = this.Renderer.rowId;
+                        name = this.Renderer.FormObj.TableName + "_id";
+                    }
                     else {
                         val = depCtrl.getValue();
                         name = depCtrl.Name;
@@ -772,7 +776,7 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        if (!ctrl.DefaultApikey)
+        if (!ctrl.DefaultApikey && this.Renderer.rendererName === 'WebForm')// WebForm - restricted other renderers for testing purpose.
             this.initOSM(ctrl);
         else {
             ebcontext.userLoc = { lat: 0, long: 0 };
@@ -873,14 +877,20 @@
         //    });
         //});
 
-        if (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0) {
+        if ((typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0) && !this.Renderer.__fromImport) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 $("#" + ctrl.EbSid_CtxId + "lat").val(position.coords.latitude);
                 $("#" + ctrl.EbSid_CtxId + "long").val(position.coords.longitude);
-                map.setView({ lat: position.coords.latitude, lng: position.coords.longitude });
                 marker.setLatLng([position.coords.latitude, position.coords.longitude]);
+                map.setView({ lat: position.coords.latitude, lng: position.coords.longitude });
             }.bind(this));
         }
+
+        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
+            if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
+                map.invalidateSize();
+            }
+        });
     };
 
     this.OSM_Call_OnChangeFns = function (ctrl) {

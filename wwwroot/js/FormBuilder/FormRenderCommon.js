@@ -548,16 +548,22 @@
             $el.attr('ebinval-ctrls', ebinvalCtrls);
             let ctrls = $el[0].className.replace('eb-tab-warn-icon-cont ', '').split(' ');
             let content = 'issues in : ';
-            ctrls.every(function (ctrlName) {
-                content += ctrlName.replace('invalid-by-', '') + ',';
-            })
 
-            $el.attr("data-content", content.replace(/,\s*$/, ""));
-            $el.popover({
-                trigger: 'hover',
-                html: true,
-                container: "body [eb-root-obj-container]:first"
-            });
+            ctrls.every(function (inval_ebSid_CtxId) {
+                let ebSid_CtxId = inval_ebSid_CtxId.replace('invalid-by-', '');
+                let flatCtrls = getAllctrlsFrom(this.FO.FormObj);
+                content += getObjByval(flatCtrls, "EbSid_CtxId", ebSid_CtxId).Label + ', ';
+            }.bind(this))
+
+            $el.attr("data-content", content.replace(/, \s*$/, ""));
+            if ($el.attr('set-hover') !== 'true') {
+                $el.popover({
+                    trigger: 'hover',
+                    html: true,
+                    container: "body [eb-root-obj-container]:first"
+                });
+                $el.attr('set-hover', 'true');
+            }
         }
     };
 

@@ -243,7 +243,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         }.bind(this), this.typeDelay);
         $.post("../bote/AuthAndGetformlist",
             {
-                "cid": this.EXPRESSbase_SOLUTION_ID,
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": null,
                 "wc": "bc",
@@ -305,7 +304,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 type: "POST",
                 url: "../Boti/GetBotformlist",
                 data: {
-                    cid: this.EXPRESSbase_SOLUTION_ID, appid: this.EXPRESSbase_APP_ID
+                     appid: this.EXPRESSbase_APP_ID
                 },
                 success: function (result) {
                     this.botflg.loadFormlist = false;
@@ -1605,12 +1604,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $('[name="ctrledit"]').hide(200);
     };
 
+    //login with fb
     this.authenticate = function () {
         this.showTypingAnim();
 
         $.post("../bote/AuthAndGetformlist",
             {
-                "cid": this.EXPRESSbase_SOLUTION_ID,
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": this.FBResponse.id,
                 "wc": "bc",
@@ -1899,7 +1898,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 type: "POST",
                 data: {
                     "uname": this.botflg.uname_otp,
-                    "cid": this.EXPRESSbase_SOLUTION_ID,
                     "appid": this.EXPRESSbase_APP_ID,
                     "wc": "bc",
                     "user_ip": this.userDtls.ip,
@@ -2065,7 +2063,6 @@ this.passwordLoginFn = function (e) {
         data: {
             "uname": $("#username_id").val().trim(),
             "pass": $("#password_id").val().trim(),
-            "cid": this.EXPRESSbase_SOLUTION_ID,
             "appid": this.EXPRESSbase_APP_ID,
             "wc": "bc",
             "user_ip": this.userDtls.ip,
@@ -2086,6 +2083,11 @@ this.passwordLoginFn = function (e) {
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
+                        document.cookie = `bot_testing1=one; SameSite=None; Secure`;
+                        document.cookie = `bot_testing2=two; SameSite=None `;
+                        document.cookie = `bot_testing3=three`;
+                        document.cookie = `bot_testing4=four;Secure;path=/ `;
+                        document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
                         document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
                         document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                         this.formsDict = result.botFormDict;

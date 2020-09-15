@@ -258,7 +258,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
-                        console.log(1231);
                         //this.bearerToken = result.bearerToken;
                         //this.refreshToken = result.refreshToken;
                         document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
@@ -1297,8 +1296,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
                     if (this.curCtrl && this.curCtrl.IsFullViewContol) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
-                        if ((this.curCtrl.ObjType != "TVcontrol")) {
-                            $msg.find(".msg-wraper-bot").css("margin-left", "12px");
+                        $msg.find(".msg-wraper-bot").css("margin-left", "12px")
+                        if ((this.curCtrl.ObjType === "TVcontrol")) {
+                            $msg.find(".msg-wraper-bot").css({ "margin-left": "0px", "width":"100%","padding-right":"0px"});
                         }
                     }
 

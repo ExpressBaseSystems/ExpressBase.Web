@@ -652,7 +652,7 @@
                         val = this.Renderer.rowId;
                         name = "id";
                     }
-                    else if (depCtrl_s == `form.${this.Renderer.FormObj.TableName}_id`) {
+                    else if (this.Renderer.FormObj && depCtrl_s == `form.${this.Renderer.FormObj.TableName}_id`) {// in bot FormObj=undefined
                         val = this.Renderer.rowId;
                         name = this.Renderer.FormObj.TableName + "_id";
                     }

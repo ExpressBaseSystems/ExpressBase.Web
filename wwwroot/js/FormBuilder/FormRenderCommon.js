@@ -465,17 +465,20 @@
         let notOk1stCtrl = null;
         $.each(this.FO.flatControlsWithDG, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
-            this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
+            if (this.FO.EbAlert)
+                this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
             if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
                 required_valid_flag = false;
                 this.addInvalidStyle2TabPanes(ctrl);
-
-                this.FO.EbAlert.alert({
-                    id: ctrl.EbSid_CtxId + "-al",
-                    head: "required",
-                    body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>" + ctrl.Label + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
-                    type: "danger"
-                });
+                if (this.FO.EbAlert) {
+                    this.FO.EbAlert.alert({
+                        id: ctrl.EbSid_CtxId + "-al",
+                        head: "required",
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
+                                    + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                        type: "danger"
+                    });
+                }
 
                 if (!$notOk1stCtrl) {
                     $notOk1stCtrl = $ctrl;
@@ -488,10 +491,12 @@
             this.GoToCtrl(notOk1stCtrl);
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
-        if (!required_valid_flag)
-            this.FO.headerObj.showElement(["webforminvalidmsgs"]);
-        else
-            this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
+        if (this.FO.headerObj && this.FO.EbAlert) {
+            if (!required_valid_flag)
+                this.FO.headerObj.showElement(["webforminvalidmsgs"]);
+            else
+                this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
+        }
 
         return required_valid_flag;
     }.bind(this);
@@ -544,16 +549,22 @@
             $el.attr('ebinval-ctrls', ebinvalCtrls);
             let ctrls = $el[0].className.replace('eb-tab-warn-icon-cont ', '').split(' ');
             let content = 'issues in : ';
-            ctrls.every(function (ctrlName) {
-                content += ctrlName.replace('invalid-by-', '') + ',';
-            })
 
-            $el.attr("data-content", content.replace(/,\s*$/, ""));
-            $el.popover({
-                trigger: 'hover',
-                html: true,
-                container: "body [eb-root-obj-container]:first"
-            });
+            ctrls.every(function (inval_ebSid_CtxId) {
+                let ebSid_CtxId = inval_ebSid_CtxId.replace('invalid-by-', '');
+                let flatCtrls = getAllctrlsFrom(this.FO.FormObj);
+                content += getObjByval(flatCtrls, "EbSid_CtxId", ebSid_CtxId).Label + ', ';
+            }.bind(this))
+
+            $el.attr("data-content", content.replace(/, \s*$/, ""));
+            if ($el.attr('set-hover') !== 'true') {
+                $el.popover({
+                    trigger: 'hover',
+                    html: true,
+                    container: "body [eb-root-obj-container]:first"
+                });
+                $el.attr('set-hover', 'true');
+            }
         }
     };
 

@@ -167,9 +167,6 @@
     </div>
     <div class="usecase-bots-cont"></div>
     <script type="text/javascript">
-                //window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
-                //window.EXPRESSbase_APP_IDS = [13, 93];
-
                 $(document).ready(function () {
                     console.log("bots");
                     d = document;
@@ -178,21 +175,20 @@
                     /**/
                     /**/
                     var BotList = @BotDtls ;
-                    var solutionId = '@ViewBag.SolutionIdExt';
-                    /**/
-                    //var jssrc = "https://"+solutionId+".localhost:41502";
-                    //if (d.ebmod === 'Production')
-                    //    jssrc = "https://"+solutionId+".expressbase.com";
-                    //else if (d.ebmod === 'Staging')
-                    //    jssrc = "https://" + solutionId + ".eb-test.cloud";
+                    var solutionId = '@ViewBag.SolutionId';
                     window.hostValue = '@ViewBag.HostValue';
-                    var jssrc = "https://" + window.hostValue;
-                    console.log("jssrc=" + jssrc);
-                   // window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
+                     console.log("host=" + window.hostValue);
+                    /**/
+                    var jssrc = "https://"+solutionId+".localhost:41502";
+                    if (d.ebmod === 'Production')
+                        jssrc = "https://"+solutionId+".expressbase.com";
+                    else if (d.ebmod === 'Staging')
+                        jssrc = "https://" + solutionId + ".eb-test.cloud";
+                    
                     window.EXPRESSbase_SOLUTION_ID ='@ViewBag.SolutionIdExt';
-                    console.log("EXPRESSbase_SOLUTION_ID=" + window.EXPRESSbase_SOLUTION_ID);
                     window.EXPRESSbase_cid = '@ViewBag.SolutionId';
-                    console.log("EXPRESSbase_cid=" +  window.EXPRESSbase_cid);
+          console.log("EXPRESSbase_SOLUTION_ID=" + window.EXPRESSbase_SOLUTION_ID);
+          console.log("EXPRESSbase_cid=" +  window.EXPRESSbase_cid);
                     window.EXPRESSbase_APP_IDS = [];
                     d.ebbotThemeColorColl = [];
                     d.botWelcomeMsgColl = [];
@@ -219,7 +215,6 @@
                     });
      console.log("?bt=" + window.EXPRESSbase_APP_IDS.toString());
                     d.appIdColl = window.EXPRESSbase_APP_IDS;
-                    //d.ebbotThemeColorColl = ["#fcb714", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
                     d.ebbotNameColl = botNames;
                     d.botdpURLColl = botDpUrl;
                     d.ebbotSubtextColl = botSubtext;
@@ -230,11 +225,12 @@
                         d = document;
                         d.createBotFns.push(function () {
                             s = d.createElement("script");
-                            s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_SOLUTION_ID + "-" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
+                            s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
                             s.async = 1;
                             d.getElementsByTagName("head")[0].appendChild(s);
                         });
                     }
+                 
                     if ('@ViewBag.singlebot' != false) {
                          $.each(d.createBotFns, function (i, fun) {
                          $(".botBtnsCont").append(`<div class="btnOutCont col col-md-6 col-lg-6 col-sm-12 col-xs-12">
@@ -263,7 +259,6 @@
         if ('@ViewBag.singlebot' != false) {
               function clickOnDiv(i, appid, e) {
                     $('.btnInnerCont').removeClass('actvbot');
-                    //console.error(7);
                     $(`#botno${appid}`).addClass('actvbot');
                     var d = document;
                     if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')

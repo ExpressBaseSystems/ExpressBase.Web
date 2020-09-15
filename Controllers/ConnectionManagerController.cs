@@ -903,7 +903,31 @@ namespace ExpressBase.Web.Controllers
                 res.ResponseStatus.Message = e.Message;
                 return null;
             }
-        }
+        }   
+        //public string AddOpenStreetMap()
+        //{
+        //    AddOpenStreetMapResponse res = new AddOpenStreetMapResponse();
+        //    IFormCollection req = this.HttpContext.Request.Form;
+        //    try
+        //    {
+        //        OpenStreetMapConfig con = new OpenStreetMapConfig
+        //        {
+        //            ApiKey = req["ApiKey"],
+        //            NickName = req["NickName"],
+        //            Id = Convert.ToInt32(req["Id"]),
+        //            MapType = MapType.COMMON,
+        //            Vendor = MapVendors.OSM
+        //        };
+        //        res = this.ServiceClient.Post<AddOpenStreetMapResponse>(new AddOpenStreetMapRequest { Config = con, SolnId = req["SolutionId"] });
+        //        GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+        //        return JsonConvert.SerializeObject(resp);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.ResponseStatus.Message = e.Message;
+        //        return null;
+        //    }
+        //}
         public string AddDropBox()
         {
             AddDropBoxResponse res = new AddDropBoxResponse();

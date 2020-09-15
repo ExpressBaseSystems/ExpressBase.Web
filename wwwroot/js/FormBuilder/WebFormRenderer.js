@@ -494,9 +494,6 @@ const WebFormRender = function (option) {
 
             this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         }
-        else if (respObj.Status === 403) {
-            EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
-        }
         else {
             EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000' });
             console.error(respObj.MessageInt);
@@ -753,7 +750,6 @@ const WebFormRender = function (option) {
             type: "POST",
             url: "/WebForm/InsertWebformData",
             data: {
-                TableName: this.FormObj.TableName,
                 ValObj: this.getFormValuesObjWithTypeColl(),
                 RefId: this.formRefId,
                 RowId: this.rowId,
@@ -1371,7 +1367,7 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
-                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('ExcelImport') > -1 && mode === 'New Mode')
+                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('ExcelImport') > -1 && mode === 'New Mode' && this.FormObj.EnableExcelImport)
                     r.push(btns[i]);
                 else if (btns[i] === "webformclone" && this.formPermissions[loc].indexOf('Clone') > -1 && mode === 'View Mode')
                     r.push(btns[i]);

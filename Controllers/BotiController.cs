@@ -308,7 +308,7 @@ namespace ExpressBase.Web.Controllers
 
 		//======================================================= NEW CODE END ================================================================
 		
-		public List<object> GetBotformlist(string cid, string appid, string wc = TokenConstants.BC)
+		public List<object> GetBotformlist( string appid, string wc = TokenConstants.BC)
 		{
 			//string btoken_aid = HelperFunction.GetDecriptedString_Aes(HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN]);
 			//string BearerToken = btoken_aid.Substring(0, btoken_aid.LastIndexOf(CharConstants.DOT));

@@ -402,15 +402,15 @@ namespace ExpressBase.Web.Controllers
             return Resp.Json;
         }
 
-        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId)
+        public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId)
         {
             try
             {
-                //string Operation = OperationConstants.NEW;
-                //if (RowId > 0)
-                //    Operation = OperationConstants.EDIT;
-                //if (!this.HasPermission(RefId, Operation, CurrentLoc))
-                //    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.FORBIDDEN, RowAffected = -2, RowId = -2 });
+                string Operation = OperationConstants.NEW;
+                if (RowId > 0)
+                    Operation = OperationConstants.EDIT;
+                if (!this.HasPermission(RefId, Operation, CurrentLoc))
+                    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
                 WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);

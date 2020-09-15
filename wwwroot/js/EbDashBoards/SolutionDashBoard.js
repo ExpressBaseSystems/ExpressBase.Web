@@ -1534,8 +1534,13 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         };
 
                 } else if ($trigger.hasClass('SMTPedit 1')) {
-                    options.items.RemoveP = { name: "Unset" },
-                        options.items.FALLBACK = { name: "Set as FALLBACK" };
+                    if (this.Connections.Integrations.SMTP.length > 1) {
+                        options.items.RemoveP = { name: "Unset" },
+                            options.items.FALLBACK = { name: "Set as FALLBACK" };
+                    }
+                    else {
+                        options.items.RemoveP = { name: "Unset" }
+                    }
 
                 } else if ($trigger.hasClass('SMTPedit 2')) {
                     options.items.Remove = { name: "Unset" },

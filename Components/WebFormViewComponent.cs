@@ -117,7 +117,10 @@ namespace ExpressBase.Web.Components
                         //(control as EbMeetingScheduler).UsersList = WebForm.SolutionObj.Users;
                         (control as EbMeetingScheduler).InitParticipantsList(this.ServiceClient);
                     }
-
+                    else if (control is EbInputGeoLocation)
+                    {
+                        (control as EbInputGeoLocation).GetDefaultApikey(this.ServiceClient);
+                    }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();

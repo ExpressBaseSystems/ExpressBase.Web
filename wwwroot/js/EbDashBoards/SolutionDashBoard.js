@@ -28,7 +28,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "DropBox": "<img class='img- responsive image-vender' src='../images/dropbox_logo.png' style='width:100%' />",
         "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />",
         "Facebook": "<img class='img- responsive image-vender' src='../images/fb_logo.png' style='width:46%' />",
-        "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"
+        "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />",
+        "OSM": "<img class='img- responsive image-vender' src='../images/open-street-map-medium-1.png' style='width:55%' />"
     };
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/postgre.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -212,6 +213,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 EbMessage("show", { Message: "Data Removing Failed", Background: "red" });
         }.bind(this));
     };
+
     this.credientialBot = function (CId, dt) {
         $.ajax({
             type: 'POST',
@@ -437,6 +439,26 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $("#MyIntegration").trigger("click");
         }.bind(this));
     };
+
+    //this.OSMOnSubmit = function (e) {
+    //    e.preventDefault();
+    //    var postData = $(e.target).serializeArray();
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: "../ConnectionManager/AddOpenStreetMap",
+    //        data: postData,
+    //        beforeSend: function () {
+    //            $("#Map_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+    //        }
+    //    }).done(function (data) {
+    //        this.Conf_obj_update(JSON.parse(data));
+    //        $("#Map_loader").EbLoader("hide");
+    //        EbMessage("show", { Message: "Connection Added Successfully" });
+    //        $("#MapConnectionEdit").modal("toggle");
+    //        $("#IntegrationsCall").trigger("click");
+    //        $("#MyIntegration").trigger("click");
+    //    }.bind(this));
+    //};
 
     this.DropBoxOnSubmit = function (e) {
         e.preventDefault();
@@ -721,6 +743,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             }
         }
     };
+
     this.MongoDBinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#filesDbConnectEdit').modal('toggle');
@@ -2029,6 +2052,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
+        //$("#OSMConnectionSubmit").on("submit", this.OSMOnSubmit.bind(this));
         $("#GoogleDriveConnectionSubmit").on("submit", this.GoogleDriveOnSubmit.bind(this));
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));

@@ -38,7 +38,7 @@
 <script src="~/js/EbGaugeConfig.js" asp-append-version=@bApnd></script>
 <script src="~/js/EbUserDashBoard/DashboardStyleHelper.js"></script>
 <script src="~/js/EbGauges/gauge.js"></script>
-<script src="~/js/EbGauges/ProgressGauge.js"></script>
+<script src="~/js/EbGauges/ProgressGauge.js"></script>  
 <script src="~/js/EbGauges/SpeedoMeter.js"></script>
 <script type="text/javascript" src="~/js/DV/loader.js"></script>
 <script src="~/js/DV/apexcharts.js"></script>
@@ -129,5 +129,8 @@
         if ($(evt.target).attr("src") !== undefined)
             $("#iFrameFormPopupOverlay").hide();
     });
+
+    let header = new EbHeader();
+    header.addRootObjectHelp(DBobj.EbObject);
 
 </script>

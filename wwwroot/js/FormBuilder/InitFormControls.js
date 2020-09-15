@@ -652,6 +652,10 @@
                         val = this.Renderer.rowId;
                         name = "id";
                     }
+                    else if (depCtrl_s == `form.${this.Renderer.FormObj.TableName}_id`) {
+                        val = this.Renderer.rowId;
+                        name = this.Renderer.FormObj.TableName + "_id";
+                    }
                     else {
                         val = depCtrl.getValue();
                         name = depCtrl.Name;
@@ -772,18 +776,133 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 0, long: 0 };
-        if (typeof _rowId === 'undefined' || _rowId === 0) {
+        if (!ctrl.DefaultApikey && this.Renderer.rendererName === 'WebForm')// WebForm - restricted other renderers for testing purpose.
+            this.initOSM(ctrl);
+        else {
+            ebcontext.userLoc = { lat: 0, long: 0 };
+            this.InitMap4inpG(ctrl);
+            if (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    $('#' + ctrl.EbSid_CtxId).locationpicker('location', {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    });
+                }.bind(this));
+            }
+            $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) => $(event.target).closest('.locinp-cont').find('.locinp').val(''));
+            $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
+        }
+    };
+
+    this.initOSM = function (ctrl) {
+        $(`#${ctrl.EbSid_CtxId}_Cont`).find('.locinp-wraper-address').hide();//temp
+        ctrl.__mapVendor = "osm";//
+        let lat = 0, lon = 0;
+        let map, marker;
+
+        try {
+            map = new L.Map(ctrl.EbSid_CtxId);
+        }
+        catch (e) {
+            console.log(e);
+        }
+
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+        var osm = new L.TileLayer(osmUrl, { minZoom: 1, maxZoom: 18, attribution: osmAttrib });
+        map.setView([lat, lon], 14);
+        map.addLayer(osm);
+        if (!marker)
+            marker = new L.marker([lat, lon], { draggable: 'true' });
+        else
+            marker.setLatLng([lat, lon]);
+        ctrl.__map = map;//
+        ctrl.__mapMarker = marker;//
+
+        marker.on('dragend', function (e) {
+            map.setView(e.target.getLatLng());
+            $(`#${ctrl.EbSid_CtxId}lat`).val(e.target.getLatLng().lat);
+            $(`#${ctrl.EbSid_CtxId}long`).val(e.target.getLatLng().lng);
+            this.OSM_Call_OnChangeFns(ctrl);
+        }.bind(this));
+
+        map.addLayer(marker);
+
+        $(`#${ctrl.EbSid_CtxId}lat`).on('change', function () {
+            let val = parseFloat($(`#${ctrl.EbSid_CtxId}lat`).val());
+            if (isNaN(val)) {
+                let Value = ctrl.DataVals.Value;
+                let tmp = Value.includes(',') ? Value.split(',') : Value.split('/');
+                val = tmp[0];
+                $(`#${ctrl.EbSid_CtxId}lat`).val(val);
+                return;
+            }
+            marker.setLatLng([val, marker.getLatLng().lng]);
+            map.setView(marker.getLatLng());
+            this.OSM_Call_OnChangeFns(ctrl);
+        }.bind(this));
+
+        $(`#${ctrl.EbSid_CtxId}long`).on('change', function () {
+            let val = parseFloat($(`#${ctrl.EbSid_CtxId}long`).val());
+            if (isNaN(val)) {
+                let Value = ctrl.DataVals.Value;
+                let tmp = Value.includes(',') ? Value.split(',') : Value.split('/');
+                val = tmp[1];
+                $(`#${ctrl.EbSid_CtxId}long`).val(val);
+                return;
+            }
+            marker.setLatLng([marker.getLatLng().lat, val]);
+            map.setView(marker.getLatLng());
+            this.OSM_Call_OnChangeFns(ctrl);
+        }.bind(this));
+
+        //$(`#${ctrl.EbSid_CtxId}address`).on('change', function () {
+        //    let text = $(this).val();
+        //    var requestUrl = "http://nominatim.openstreetmap.org/search?format=json&q=" + text;
+        //    $.ajax({
+        //        url: requestUrl,
+        //        type: "GET",
+        //        dataType: 'json',
+        //        error: function (err) {
+        //            console.log(err);
+        //        },
+        //        success: function (data) {
+        //            console.log(data);
+        //            var item = data[0];
+        //            $(`#${ctrl.EbSid_CtxId}lat`).val(item.lat);
+        //            $(`#${ctrl.EbSid_CtxId}long`).val(item.lon);
+        //            marker.setLatLng([item.lat, item.lon]);
+        //            map.setView([item.lat, item.lon]);
+        //        }
+        //    });
+        //});
+
+        if ((typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0) && !this.Renderer.__fromImport) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                $('#' + ctrl.EbSid_CtxId).locationpicker('location', {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                });
+                $("#" + ctrl.EbSid_CtxId + "lat").val(position.coords.latitude);
+                $("#" + ctrl.EbSid_CtxId + "long").val(position.coords.longitude);
+                marker.setLatLng([position.coords.latitude, position.coords.longitude]);
+                map.setView({ lat: position.coords.latitude, lng: position.coords.longitude });
             }.bind(this));
         }
-        this.InitMap4inpG(ctrl);
-        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) => $(event.target).closest('.locinp-cont').find('.locinp').val(''));
-        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
+
+        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
+            if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
+                map.invalidateSize();
+            }
+        });
+    };
+
+    this.OSM_Call_OnChangeFns = function (ctrl) {
+        if (!ctrl.__isJustSetValue) {
+            if (ctrl.__ebonchangeFns) {
+                for (let i = 0; i < ctrl.__ebonchangeFns.length; i++) {
+                    ctrl.__ebonchangeFns[i]();
+                }
+            }
+        }
+        else
+            ctrl.__isJustSetValue = false;
     };
 
     this.InitMap4inpG = function (ctrl) {

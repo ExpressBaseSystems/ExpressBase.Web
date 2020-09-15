@@ -440,6 +440,7 @@
             }
         }
         this.isSecondTime = false;
+        this.totalcount = 0;
         if (this.login === "uc")
             $(".dv-body1").show();
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
@@ -824,8 +825,8 @@
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        //if (dq.length === -1)
-        //    dq.length = this.RowCount;
+        if (dq.length === -1)
+            dq.length = this.totalcount;
         this.RemoveColumnRef();
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
@@ -1132,6 +1133,8 @@
                     EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
             }
         }
+        if (!this.isSecondTime)
+            this.totalcount = dd.recordsFiltered;
         this.isRun = true;
         if (this.login === "uc" && this.Source === "EbDataTable") {
             dvcontainerObj.currentObj.data = dd;
@@ -4224,7 +4227,7 @@
         dq.TableId = "tbl" + idx;
         if (Dvobj.RowGroupCollection.$values.length > 0) {
             dq.CurrentRowGroup = JSON.stringify(Dvobj.RowGroupCollection.$values[0]);
-            this.CurrentRowGroup = Dvobj.RowGroupCollection.$values[0]
+            this.CurrentRowGroup = Dvobj.RowGroupCollection.$values[0];
         }
         else
             this.CurrentRowGroup = null;

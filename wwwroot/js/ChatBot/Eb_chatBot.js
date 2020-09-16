@@ -258,7 +258,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
-                        console.log(1231);
                         //this.bearerToken = result.bearerToken;
                         //this.refreshToken = result.refreshToken;
                         document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;

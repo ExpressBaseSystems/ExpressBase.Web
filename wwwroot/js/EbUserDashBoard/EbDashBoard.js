@@ -572,7 +572,7 @@ var DashBoardWrapper = function (options) {
     this.MakeLinks = function (obj) {
         let a = `<div id="${obj.EbSid}" class="link-dashboard-pane"  eb-type="Links"> 
             <div id="${obj.EbSid}_icon" class="link-icon" >  <i class="fa fa-external-link-square"> </i> </div>
-            <div id="${obj.EbSid}_text" class="link-text">  <a id="${obj.EbSid}_link" href="#" target="_blanc"></a> </div>
+            <div id="${obj.EbSid}_text" class="link-text">  <div class="link-target" id="${obj.EbSid}_link" href="#" target="_blanc"></div> </div>
         </div>`;
         return a;
     };

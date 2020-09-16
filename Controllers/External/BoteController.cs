@@ -44,8 +44,6 @@ namespace ExpressBase.Web.Controllers
 			////for getting page url in which bot is deployed
 			byte[] Pge = Convert.FromBase64String(pgur);
 			string ExtUrl = System.Text.Encoding.UTF8.GetString(Pge);
-			//EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
-			//string cid = this.GetIsolutionId(tid);
 			string cid = IntSolutionId;
 			EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid));
 			if (settings == null)
@@ -81,30 +79,13 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.appid = appid;
 			ViewBag.cid = cid;
 			ViewBag.settings = JsonConvert.SerializeObject(settings);
-			//ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(new EbBotForm() as EbControlContainer, BuilderType.BotForm);
 			return View();
-
-			//this.ServiceClient.Headers.Add("SolId", tid);
-			//GetBotSettingsResponse settings = this.ServiceClient.Get<GetBotSettingsResponse>(new GetBotSettingsRequest { AppId = Convert.ToInt32(appid) });
-			//EbBotSettings seObj =  this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", tid, appid));
-			//if(seObj != null)
-			//{
-			//	settings.ThemeColor = seObj.ThemeColor ?? settings.ThemeColor;
-			//	settings.DpUrl = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(seObj.DpUrl)) ?? botdpURL;
-			//	settings.WelcomeMessage = seObj.WelcomeMessage ?? "Hi, I am EBbot from EXPRESSbase!";
-			//}
 		}
 
 		public FileContentResult Js(string id, string mode)
 		{
-			Console.WriteLine(" ___________________bot settings JS method called id= " + id);
-			//string[] args = id.Split("-");
 			string PushContent = "";
-			//string solid = args[0];
-			//Console.WriteLine(" ___________________bot settings JS method solid= " + solid);
-			Console.WriteLine(" ___________________bot settings JS method appid= " + id);
-			//string cid = this.GetIsolutionId(solid);
 			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			if (mode.Equals("s"))//if single bot
@@ -184,18 +165,14 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 
 		public FileContentResult Css(string id, string mode)
 		{
-			Console.WriteLine(" ___________________bot settings css method called id= " + id);
 			int appid = Convert.ToInt32(id);
 			string cid = IntSolutionId;
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			string FileContent = "";
-			Console.WriteLine(" ___________________bot settings solid from id= " + cid);
-			Console.WriteLine(" ___________________bot settings appid= " + appid);
 			{
 				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid.ToString()));
 				if (settings == null)
 				{
-					Console.WriteLine(" ________________bot settings is null in redis");
 					RedisBotSettingsResponse stgres = this.ServiceClient.Post<RedisBotSettingsResponse>(new RedisBotSettingsRequest
 					{
 						AppId = appid,
@@ -204,12 +181,10 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 					});
 					if (stgres.ResStatus == 1)
 					{
-						Console.WriteLine(" ___________________bot settings has been updated in redis");
 						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid.ToString()));
 					}
 					else
 					{
-						Console.WriteLine(" ___________________bot settings has failed to updated in redis  ...row count is 0");
 						settings = new EbBotSettings()
 						{
 							Name = "- Application Name -",
@@ -226,25 +201,18 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 					settings.CssContent = FetchCss(settings.CssContent);
 				}
 				FileContent = ReplaceCssContent(settings.CssContent, appid.ToString());
-				//byte[] data = System.Convert.FromBase64String(settings.CssContent);
-				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
-
 			}
-
-			//FileContent = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
-			//FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
-			Console.WriteLine(" ___________________bot settings file replace");
 			return File(FileContent.ToUtf8Bytes(), "text/css");
 		}
 		public Dictionary<string, string> FetchCss(Dictionary<string, string> btCss)
-		{//public Dictionary<string, Dictionary<string, string>> CssContent()
+		{
 			var CssDict = new Dictionary<string, string>();
 			var Cssconst = new Dictionary<string, string>();
 			Cssconst = new EbBotSettings().CssContent;
 			int i = 0;
 			List<string> CssList = new List<string>();
 			List<string> NameArr = new List<string>();
-			//if any changes change in bote too
+			////if any changes change in bote too
 			foreach (var item in Cssconst)
 			{
 				NameArr.Add(item.Key);
@@ -405,7 +373,6 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 			string Password;
 			//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
 			//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			//cid = this.GetIsolutionId(cid);		
 			string cid = IntSolutionId;
 			MyAuthenticateResponse authResponse = null;
 			List<object> returnlist = new List<object>();
@@ -698,12 +665,7 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 		[HttpGet("Bots")]
 		public IActionResult Bots(string bt,string s)
 		{
-			//var host = this.HttpContext.Request.Host;
-			//string[] hostParts = host.Host.Split(CharConstants.DOT);
-			//if (!(hostParts.Length > 1))
-			//{
-			//    return RedirectToAction("SignIn", "Common");
-			//}
+		
 			if (ViewBag.WhichConsole == "uc")
 			{
 				if (String.Equals(s, "true"))

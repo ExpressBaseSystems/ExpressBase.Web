@@ -440,6 +440,7 @@
             }
         }
         this.isSecondTime = false;
+        this.totalcount = 0;
         if (this.login === "uc")
             $(".dv-body1").show();
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
@@ -824,8 +825,8 @@
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        //if (dq.length === -1)
-        //    dq.length = this.RowCount;
+        if (dq.length === -1)
+            dq.length = this.totalcount;
         this.RemoveColumnRef();
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
@@ -1132,6 +1133,8 @@
                     EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
             }
         }
+        if (!this.isSecondTime)
+            this.totalcount = dd.recordsFiltered;
         this.isRun = true;
         if (this.login === "uc" && this.Source === "EbDataTable") {
             dvcontainerObj.currentObj.data = dd;
@@ -1352,7 +1355,7 @@
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
                 if ($("#" + this.tableId + " tr").length > 7) {
                     $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
-                    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "155px", "important");
+                    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "173px", "important");
                 }
                 $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_RightBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
                 $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_LeftBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
@@ -4222,14 +4225,35 @@
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
         dq.TableId = "tbl" + idx;
-        if (Dvobj.RowGroupCollection.$values.length > 0) {
+        if (Dvobj.RowGroupCollection.$values.length > 0) 
             dq.CurrentRowGroup = JSON.stringify(Dvobj.RowGroupCollection.$values[0]);
-            this.CurrentRowGroup = Dvobj.RowGroupCollection.$values[0]
-        }
-        else
-            this.CurrentRowGroup = null;
-        dq.OrderBy = this.getOrderByInfo();
+        dq.OrderBy = this.getOrderByInfoforInline(Dvobj);
         return dq;
+    };
+
+    this.getOrderByInfoforInline = function (Dvobj) {
+        var tempArray = [];
+        if (Dvobj.RowGroupCollection.$values.length > 0) {
+            let rwog = Dvobj.RowGroupCollection.$values[0];
+            if (rwog.RowGrouping.$values.length > 0) {
+                for (let i = 0; i < rwog.RowGrouping.$values.length; i++)
+                    tempArray.push(new order_obj(rwog.RowGrouping.$values[i].name, rwog.RowGrouping.$values[i].Direction));
+            }
+            if (rwog.OrderBy.$values.length > 0) {
+                for (let i = 0; i < rwog.OrderBy.$values.length; i++)
+                    tempArray.push(new order_obj(rwog.OrderBy.$values[i].name, rwog.OrderBy.$values[i].Direction));
+            }
+        }
+
+        if (tempArray.length === 0) {
+            $.each(Dvobj.OrderBy.$values, function (i, obj) {
+                if (tempArray.filter(e => e.Column === obj.name).length === 0)
+                    tempArray.push(new order_obj(obj.name, obj.Direction));
+            });
+        }
+
+        return tempArray;
+
     };
 
     this.getStaticParameter = function (index) {

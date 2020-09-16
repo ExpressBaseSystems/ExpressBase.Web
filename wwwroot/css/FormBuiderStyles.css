@@ -2839,10 +2839,11 @@ input.locinp {
     font-family: Roboto;
     font-weight: 500;
     position: absolute;
-    bottom: 13px;
+    bottom: 24px;
     cursor: pointer;
     left: 21px;
     line-height: 1.5;
+    color: white;
 }
 
 .pdfwrapper-cont img {

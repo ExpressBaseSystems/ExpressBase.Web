@@ -200,10 +200,11 @@
         $("title").empty().append(this.EbObject.DisplayName);
         //
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
+            this.EbObject.Filter_Dialogue = "";
             $('.db-user-filter').remove();
             $(".form-group #filter-dg").remove();
-            //if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             grid.removeAll();
+            this.GetFilterValuesForDataSource();
             this.DrawTiles();
         }
         else if (this.EbObject.Tiles.$values.length !== 0) {
@@ -719,7 +720,7 @@
 
     this.GetFilterValuesForDataSource = function () {
         this.filtervalues = [];
-        if (this.filterDialog)
+        if (this.filterDialog && this.EbObject.Filter_Dialogue != "")
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
 
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });

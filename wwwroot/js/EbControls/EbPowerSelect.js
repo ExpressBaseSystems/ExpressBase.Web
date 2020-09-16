@@ -344,7 +344,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
-        this.clearValues();
+        //this.clearValues();
+        let triggerChange = (StrValues === "" || StrValues === undefined);// trigger if set with nothing
+        this.clearValues(triggerChange);
         if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
@@ -666,15 +668,15 @@ const EbPowerSelect = function (ctrl, options) {
         if (this.IsFromReloadWithParams2setOldval)
             this.ComboObj.___DoNotImport = true;
         try {
-            let VMs = this.Vobj.valueMembers || [];
+            let tempVMs = [];
+
             let DMs = this.Vobj.displayMembers || [];
 
-            if (VMs.length > 0)// clear if already values there
+            if (this.Vobj.valueMembers.length > 0)// clear if already values there
                 this.clearValues();
 
             let valMsArr = setvaluesColl;
-            let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
-
+            let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;            
             for (let i = 0; i < valMsArr.length; i++) {
                 let vm = valMsArr[i].trim();
                 let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
@@ -686,7 +688,7 @@ const EbPowerSelect = function (ctrl, options) {
                     return;
                 }
 
-                VMs.push(vm);
+                tempVMs.push(vm);
                 this.addColVals(vm);
                 let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
 
@@ -698,6 +700,16 @@ const EbPowerSelect = function (ctrl, options) {
                     DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
                 }
             }
+            setTimeout(function () {//to catch by watcher
+
+             try {
+                this.Vobj.valueMembers.push(...tempVMs);
+                }
+                catch (e) {
+                    console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
+                }
+            }.bind(this));
+
         }
         catch (e) {
             console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
@@ -1070,20 +1082,21 @@ const EbPowerSelect = function (ctrl, options) {
         //    $('#' + this.name + 'Container [type=search]').val("");
         //}.bind(this), 10);
 
-        if (this.datatable === null) {
-            if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
-                this.reSetColumnvals_();
-
-        }
-        else
-            this.reSetColumnvals_();
 
         if (this.Changed) {
+            if (this.datatable === null) {
+                if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
+                    this.reSetColumnvals_();
+
+            }
+            else
+                this.reSetColumnvals_();
+
             this.$inp.val(this.Vobj.valueMembers).trigger("change");
             this.required_min_Check();
+            this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
         }
 
-        this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
@@ -1382,6 +1395,8 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.getDisplayMemberModel = function () {
         let newDMs = {};
+        if (this.Vobj.valueMembers.length === 0)
+            return newDMs;
         let DmClone = removePropsOfType($.extend(true, {}, this.Vobj.displayMembers), 'function');
         let ValueMembers = this.Vobj.valueMembers.toString().split(",");
         for (var i = 0; i < ValueMembers.length; i++) {

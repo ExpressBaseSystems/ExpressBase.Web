@@ -23,13 +23,23 @@
             $(el).popover({
                 trigger: 'focus',
                 html: true,
-                container: "body [eb-root-obj-container]:first",
+                container: "body",
                 placement: this.PopoverPlacement,
                 content: decodeURIComponent(escape(window.atob(ctrl.Info)))
             });
         }
         else {
             el.remove();
+        }
+
+        // hide popover on scroll
+        let scrollableContSelectors = this.scrollableContSelectors.concat('[eb-root-obj-container]');
+        for (let i = 0; i < scrollableContSelectors.length; i++) {
+            let $containers = $(el).parents(scrollableContSelectors[i]).filter(':not([onscroll-hide-info="true"])');
+            $containers.scroll(function (event) {
+               $(event.target).find('.label-infoCont:focus').blur();
+            }.bind(this));
+            $containers.attr('onscroll-hide-info', 'true');
         }
     };
 

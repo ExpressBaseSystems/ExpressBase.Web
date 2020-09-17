@@ -4,8 +4,12 @@
 @using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
+
     List<EbSolutionsWrapper> sarr = ViewBag.Solutions;
+    List<EbSolutionsWrapper> PrimarySolutions = ViewBag.PrimarySolutions; 
+
     int fs = sarr.FindAll(it => it.PricingTier == PricingTiers.FREE).Count;
+    int ps = PrimarySolutions.Count;
     var bApnd = true;
     if (ViewBag.Env == "Development")
     {
@@ -66,6 +70,45 @@
                 }
             </div>
         </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="replicationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title col-md-8" id="exampleModalLabel"> Replication details </h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Replicate from</label>
+                            <select class="form-control" id="replicateSoln" style="height:40px">
+                                @foreach (EbSolutionsWrapper s in PrimarySolutions)
+                                {
+                                    <option value="@s.IsolutionId">@s.SolutionName (@s.EsolutionId)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select a package </label>
+                            <select class="form-control" id="replicatePkg" style="height:40px">
+                                @foreach (AppStore s in ViewBag.MasterPackages)
+                                {
+                                    <option value="@s.Id">@s.Name </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer"> 
+                        <button type="button" class="btn btn-primary" id="replicateBtn">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -73,7 +116,7 @@
     <script>
         $(document).ready(function () {
             window.ebcontext.header.setName("My Solutions");
-            TenantDashBoard(@fs);//init tenant assset js
+            TenantDashBoard(@fs, @ps,  @Html.Raw(JsonConvert.SerializeObject(ViewBag.MasterPackages)));//init tenant assset js
 
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });

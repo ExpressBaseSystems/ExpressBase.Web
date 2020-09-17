@@ -24,13 +24,13 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public string DashBoardGetObj(string refid)
         {
-            string s = string.Empty;
-            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
-            {
-                RefId = refid
-            });
-            if (Resp.Data.Count > 0)
-                s = EbSerializers.Json_Serialize(EbSerializers.Json_Deserialize(Resp.Data[0].Json));
+            string Type = refid.Split("-")[2];
+            EbObject Resp1 = new EbObject();
+            if (Type == "17")
+                Resp1 = EbFormHelper.GetEbObject<EbChartVisualization>(refid, this.ServiceClient, this.Redis, null);
+            else if (Type == "16")
+                Resp1 = EbFormHelper.GetEbObject<EbTableVisualization>(refid, this.ServiceClient, this.Redis, null);
+            string s = EbSerializers.Json_Serialize(Resp1);
             return s;
         }
         public IActionResult DashBoardView(string refid, string rowData, string filterValues, int tabNum)
@@ -41,16 +41,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-
-            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
-            {
-                RefId = refid
-            });
-            //ViewBag.Refid = refid;
-            ViewBag.VersionNumber = Resp.Data[0].VersionNumber;
-            ViewBag.ObjType = Resp.Data[0].EbObjectType;
-            ViewBag.dsObj = Resp.Data[0].Json;
-            ViewBag.Status = Resp.Data[0].Status;
+            //EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest(){ RefId = refid  });
+            EbObject EbObj = EbFormHelper.GetEbObject<EbDashBoard>(refid, this.ServiceClient, this.Redis, null);
+            ViewBag.VersionNumber = EbObj.VersionNumber;
+            ViewBag.dsObj = EbSerializers.Json_Serialize(EbObj);
+            ViewBag.Status = EbObj.Status;
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
             ViewBag.rowData = rowData;

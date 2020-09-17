@@ -25,16 +25,10 @@
 
     function testAjax() {
         $.ajax({
-            url: "/api/get_data",
-            type: "POST",
+            url: "/api/get_actions/863",
+            type: "GET",
             data: {
-                refid: datao.DataSourceRefId,
-                limit: datao.Limit,
-                offset: datao.Offset,
-                param: JSON.stringify(datao.Params),
-                sort_order: JSON.stringify(datao.SortOrder),
-                search: JSON.stringify(datao.SearchColumns),
-                is_powerselect: datao.IsPowerSelect
+                id: 0,
             },
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("bToken", getTok());
@@ -47,8 +41,12 @@
 
     var payload = {
         "data": {
-            "Title":"welcome to expressbase",
-            "Message": "hi"
+            Title: "Welcome to expressbase",
+            Message: "hi",
+            Link: {
+                LinkType: 1,
+                LinkRefId: "fsdfdsf"
+            }
         }
     };
 

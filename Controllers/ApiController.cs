@@ -990,13 +990,13 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_actions")]
-        public GetMyActionsResponse GetMyActions()
+        public MyActionsResponse GetMyActions()
         {
             try
             {
                 if (Authenticated)
                 {
-                    return this.ServiceClient.Get(new GetMyActionsRequest());
+                    return this.ServiceClient.Get(new MyActionsRequest());
                 }
             }
             catch (Exception ex)
@@ -1004,17 +1004,41 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-            return new GetMyActionsResponse();
+            return new MyActionsResponse();
+        }
+
+        [HttpGet("api/get_actions/{id}")]
+        public ParticularActionResponse GetParticularAction(int id)
+        {
+            ParticularActionResponse response = null;
+            try
+            {
+                if (Authenticated)
+                {
+                    if (id == 0)
+                    {
+                        Console.WriteLine("GetParticularAction parameter id must be greater than 0");
+                        return response;
+                    }
+                    response = this.ServiceClient.Get(new ParticularActionsRequest { ActionId = id });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return response;
         }
 
         [HttpGet("api/get_action_info")]
-        public GetMyActionInfoResponse GetMyActionInfo(int stageid, string refid, int dataid)
+        public MyActionInfoResponse GetMyActionInfo(int stageid, string refid, int dataid)
         {
             try
             {
                 if (Authenticated)
                 {
-                    return this.ServiceClient.Get(new GetMyActionInfoRequest
+                    return this.ServiceClient.Get(new MyActionInfoRequest
                     {
                         StageId = stageid,
                         WebFormDataId = dataid,
@@ -1027,7 +1051,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-            return new GetMyActionInfoResponse();
+            return new MyActionInfoResponse();
         }
 
         [HttpPost("api/init_device")]

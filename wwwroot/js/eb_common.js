@@ -1122,6 +1122,7 @@ function EBPSSetDisplayMember(p1, p2) {
     if (p1 === '')
         return;
     let VMs = this.initializer.Vobj.valueMembers || [];
+    let tempVMs = [];
     let DMs = this.initializer.Vobj.displayMembers || [];
     let columnVals = this.initializer.columnVals || {};
 
@@ -1130,32 +1131,36 @@ function EBPSSetDisplayMember(p1, p2) {
 
     let valMsArr = p1.split(',');
 
-    setTimeout(function () {//to catch by watcher one time (even if multiple value members are pushed)
-        for (let i = 0; i < valMsArr.length; i++) {
-            let vm = valMsArr[i];
-            VMs.push(vm);
-            for (let j = 0; j < this.initializer.dmNames.length; j++) {
-                let dmName = this.initializer.dmNames[j];
-                if (!DMs[dmName])
-                    DMs[dmName] = []; // dg edit mode call
-                DMs[dmName].push(this.DataVals.D[vm][dmName]);
-            }
+    for (let i = 0; i < valMsArr.length; i++) {
+        let vm = valMsArr[i];
+        tempVMs.push(vm);
+        for (let j = 0; j < this.initializer.dmNames.length; j++) {
+            let dmName = this.initializer.dmNames[j];
+            if (!DMs[dmName])
+                DMs[dmName] = []; // dg edit mode call
+            DMs[dmName].push(this.DataVals.D[vm][dmName]);
         }
+    }
 
-        if (this.initializer.datatable === null) {//for aftersave actions
-            let colNames = Object.keys(this.DataVals.R);
-            for (let i = 0; i < valMsArr.length; i++) {
-                for (let j = 0; j < colNames.length; j++) {
-                    let colName = colNames[j];
-                    let val = this.DataVals.R[colName][i];
-                    if (columnVals[colName])
-                        columnVals[colName].push(val);
-                    else
-                        console.warn("Not found colName: " + colName);
-                }
+
+    setTimeout(function () {//to catch by watcher one time (even if multiple value members are pushed)
+        this.initializer.Vobj.valueMembers.push(...tempVMs);
+    }.bind(this));
+
+
+    if (this.initializer.datatable === null) {//for aftersave actions
+        let colNames = Object.keys(this.DataVals.R);
+        for (let i = 0; i < valMsArr.length; i++) {
+            for (let j = 0; j < colNames.length; j++) {
+                let colName = colNames[j];
+                let val = this.DataVals.R[colName][i];
+                if (columnVals[colName])
+                    columnVals[colName].push(val);
+                else
+                    console.warn("Not found colName: " + colName);
             }
         }
-    }.bind(this));
+    }
 
     //$("#" + this.EbSid_CtxId).val(p1);
     //this.initializer.V_watchVMembers(VMs);

@@ -1,4 +1,4 @@
-﻿var TenantDashBoard = function (scount) {
+﻿var TenantDashBoard = function (scount, primarySolutionCount, MasterPackages) {
     this.goToSolutionWindow = function (e) {
         var console = $(e.target).closest(".sso-btn").attr("wc");
         var sid = $(e.target).closest(".sso-btn").attr("sid");
@@ -41,7 +41,10 @@
     }
 
     this.ns = function (e) {
-        if (scount <= 3) {
+        if (primarySolutionCount > 0) {
+            $('#replicationModal').modal('show');
+        }
+        else if (scount <= 3) {
             let po = {
                 Message: "Creating solution...",
                 Html: function ($selector) {
@@ -66,15 +69,16 @@
         }
         else {
             self.EbPopBox("show", {
-                Message:"You can't create more than 3 FREE solution "
+                Message: "You can't create more than 3 FREE solution "
             });
         }
     };
 
-    this.cs = function (fn) {
+    this.cs = function (fn, sid, pid) {
         $.ajax({
             url: "/Tenant/CreateSolution",
             type: "POST",
+            data: { sid: sid, pid: pid },
             success: function (data) {
                 fn(data);
             },
@@ -84,10 +88,30 @@
         })
     };
 
+    this.replicate = function () {
+
+        let sid = $('#replicateSoln').val();
+        let pid = $('#replicatePkg').val();
+        this.cs(function (res) {
+            if (res.status)
+                self.EbPopBox("show", { Message: "Solution created :)" });
+            else
+                self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
+        },sid,pid);
+    };
+
+    //$("#replicateSoln").on('change'),(function () {
+    //    $('#replicatePkg').empty();
+    //    for (i of MasterPackages) {
+    //        $('#replicatePkg').append('<option id="' + i.Id + '">' + i.Name + '</option>');
+    //    }
+    //});
+
     this.init = function () {
         $("body").off("click").on("click", ".single__sso", this.goToSolutionWindow.bind(this));
         $("#solSearch").off("keyup").on("keyup", this.searchSolution.bind(this));
         $("#eb-new-solution").off("click").on("click", this.ns.bind(this))
+        $("#replicateBtn").off("click").on("click", this.replicate.bind(this))
     };
 
     this.init();

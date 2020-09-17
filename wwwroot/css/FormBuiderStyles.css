@@ -841,8 +841,8 @@ eb-disable {
 }
 
 .toolicons .btn[role='invalid-msgs'] {
-   color:red;
-   display:none;
+    color: red;
+    display: none;
 }
 
 [coltype='DGNumericColumn'] {
@@ -1502,8 +1502,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .ctrl-cover[eb-readonly="true"] input,
 .ctrl-cover[eb-readonly="true"] .input-group-addon,
-.ctrl-cover[eb-readonly="true"] .dropdown-toggle {
-    background-color: #eee !important;
+.ctrl-cover[eb-readonly="true"] .dropdown-toggle,
+.ctrl-cover[eb-readonly="true"] {
+    background-color: #f3f3f3 !important;
     pointer-events: none !important;
 }
 

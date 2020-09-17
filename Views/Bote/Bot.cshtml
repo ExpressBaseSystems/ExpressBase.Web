@@ -12,7 +12,10 @@
     console.log(Date.now);
     var t0 = performance.now();
 </script>
+<head>
 
+    <script type="text/javascript" src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
 
 <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
@@ -154,6 +157,7 @@
         font-family: var(--bot_fontfamily,Open Sans);
         font-size: var(--bot_fontsize,14px);
     }
+    .grecaptcha-badge { visibility: hidden; }
 </style>
 
 @{
@@ -177,6 +181,12 @@
             env:'@ViewBag.Env'
         }
 </script>
+
+<div class="g-recaptcha"
+    data-sitekey="@ViewBag.ReCaptchaKey"
+    data-callback="RecaptchaCallback"
+    data-size="invisible">
+</div>
 
 <script>
     var solid = "@ViewBag.tid";

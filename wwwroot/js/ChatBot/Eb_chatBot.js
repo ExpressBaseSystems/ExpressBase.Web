@@ -50,11 +50,13 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.ssurl = ssurl;
     this.userLoc = {};
     this.botQueue = [];
+    this.recaptcha_tkn = "";
     this.botflg = {};
     this.botflg.loadFormlist = false;
     this.botflg.singleBotApp = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
+    this.botflg.login_call_to = "";
     this.formObject = {};// for passing to user defined functions
     this.CurFormflatControls = [];// for passing to user defined functions
 
@@ -95,12 +97,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", ".eb-chatBox [name=formcancel_fm]", this.formCancel_fm);
         $("body").on("click", "[for=loginOptions]", this.loginSelectedOpn);
-        $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
+        //$("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", "[name=contactSubmitMail]", this.contactSubmitMail);
         $("body").on("click", "[name=contactSubmitPhn]", this.contactSubmitPhn);
         $("body").on("click", "[name=contactSubmitName]", this.contactSubmitName);
-        $("body").on("click", "[name=passwordSubmitBtn]", this.passwordLoginFn);
-        $("body").on("click", "[name=otpUserSubmitBtn]", this.otpLoginFn);
+        $("body").on("click", "[name=passwordSubmitBtn]", this.submitpasswordLogin);
+        $("body").on("click", "[name=otpUserSubmitBtn]", this.submitotpLoginFn);
         $("body").on("click", "[name=otpvalidateBtn]", this.otpvalidate);
         $("body").on("click", "#resendOTP", this.otpResendFn);
         $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
@@ -130,27 +132,27 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     //if anonimous user /not loggegin using fb
-    this.contactSubmit = function (e) {
-        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
-        let email = "";
-        let phone = "";
-        let username = "";
-        if (settings.Authoptions.Fblogin) {
-            email = $("#anon_mail").val().trim();
-            phone = $("#anon_phno").val().trim();
-            if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-                //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
-                this.msgFromBot("Please enter valid email/phone");
-                return;
-            }
-            this.msgFromBot("Thank you.");
-            this.authenticateAnon(email, phone);
-            $(e.target).closest('.msg-cont').remove();
-        }
+    //this.contactSubmit = function (e) {
+    //    let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    //    let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+    //    let email = "";
+    //    let phone = "";
+    //    let username = "";
+    //    if (settings.Authoptions.Fblogin) {
+    //        email = $("#anon_mail").val().trim();
+    //        phone = $("#anon_phno").val().trim();
+    //        if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
+    //            //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+    //            this.msgFromBot("Please enter valid email/phone");
+    //            return;
+    //        }
+    //        this.msgFromBot("Thank you.");
+    //        this.authenticateAnon(email, phone);
+    //        $(e.target).closest('.msg-cont').remove();
+    //    }
 
 
-    }.bind(this);
+    //}.bind(this);
 
     this.contactSubmitMail = function (e) {
         let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -216,16 +218,45 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     this.submitAnonymous = function () {
-        this.msgFromBot("Thank you.");
-        //let mail = this.userDtls.email || "";
-        //let phn = this.userDtls.phone || "";
-        //let nme = this.userDtls.name || "";
-        let mail = this.userDtls.email;
-        let phn = this.userDtls.phone;
-        let nme = this.userDtls.name;
-        this.authenticateAnon(mail, phn, nme);
-        //  $(e.target).closest('.msg-cont').remove();
+        this.botflg.login_call_to = "authenticateAnon";
+        grecaptcha.execute();
     };
+    this.submitpasswordLogin = function () {
+       
+        this.botflg.login_call_to = "passwordLoginFn";
+        grecaptcha.execute();
+    };
+    this.submitotpLoginFn = function () {
+       
+        this.botflg.login_call_to = "otpLoginFn";
+        grecaptcha.execute();
+    };
+
+    window.RecaptchaCallback = function (token) {
+
+        if (grecaptcha === undefined) {
+            this.msgFromBot('Recaptcha not defined');
+            return;
+        }
+        if (token) {
+            this.recaptcha_tkn = token;
+            if (this.botflg.login_call_to === "authenticateAnon") {
+                this.msgFromBot("Thank you.");
+                this.authenticateAnon();
+            }
+            else if (this.botflg.login_call_to === "passwordLoginFn") {
+                this.passwordLoginFn();
+            }
+            else if (this.botflg.login_call_to === "otpLoginFn") {
+                this.otpLoginFn();
+            }
+        }
+        else  {
+            this.msgFromBot('Could not get recaptcha response');
+            return;
+        }
+        grecaptcha.reset();
+    }.bind(this);
 
     //check user is valid / is user authenticated
     this.ajaxSetup4Future = function () {
@@ -236,8 +267,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         //});
     };
 
-    this.authenticateAnon = function (email, phno, name) {
-
+    this.authenticateAnon = function () {
         setTimeout(function () {
             this.showTypingAnim();
         }.bind(this), this.typeDelay);
@@ -246,11 +276,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": null,
                 "wc": "bc",
-                "anon_email": email,
-                "anon_phno": phno,
+                "anon_email": this.userDtls.email,
+                "anon_phno": this.userDtls.phone,
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
-                "user_name": this.userDtls.name || null
+                "user_name": this.userDtls.name || null,
+                "token":this.recaptcha_tkn
             }, function (result) {
                 this.hideTypingAnim();
                 if (result.status === false) {
@@ -2032,7 +2063,8 @@ this.otpLoginFn = function (e) {
             data: {
                 "uname": uname,
                 "is_email": is_email,
-                "is_mobile": is_mobile
+                "is_mobile": is_mobile,
+                "token": this.recaptcha_tkn
             },
             success: function (result) {
                 this.hideTypingAnim();
@@ -2067,7 +2099,8 @@ this.passwordLoginFn = function (e) {
             "wc": "bc",
             "user_ip": this.userDtls.ip,
             "user_browser": this.userDtls.browser,
-            "otptype": this.botflg.otptype
+            "otptype": this.botflg.otptype,
+            "token":this.recaptcha_tkn
         },
         success: function (result) {
             this.hideTypingAnim();
@@ -2083,11 +2116,6 @@ this.passwordLoginFn = function (e) {
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
-                        document.cookie = `bot_testing1=one; SameSite=None; Secure`;
-                        document.cookie = `bot_testing2=two; SameSite=None `;
-                        document.cookie = `bot_testing3=three`;
-                        document.cookie = `bot_testing4=four;Secure;path=/ `;
-                        document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
                         document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
                         document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                         this.formsDict = result.botFormDict;

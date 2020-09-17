@@ -738,7 +738,7 @@ const EbPowerSelect = function (ctrl, options) {
             let ColIdx = this.getColumnIdx(this.ComboObj.Columns.$values, colName);
 
             let cellData;
-            if (type === 5 || type === 11)
+            if (type === 11)
                 cellData = this.formattedData[unFormattedRowIdx][ColIdx];// unformatted data for date or integer
             else
                 cellData = RowUnformattedData[ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data

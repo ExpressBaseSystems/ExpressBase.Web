@@ -216,7 +216,7 @@
         let header = new EbHeader();
         header.clearHeader();
         header.addRootObjectHelp(this.EbObject);
-        header.insertButton(`<button id="dashboard-refresh-btn" class='btn' title='Copy this form to a new form'><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="dashboard-refresh-btn" class='btn' title='Refresh'><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#dashboard-refresh-btn").off("click").on("click", this.DashBoardRefresh.bind(this));
         $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));

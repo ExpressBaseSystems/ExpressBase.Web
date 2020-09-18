@@ -1543,75 +1543,75 @@
         }
     };
 
-    this.BluePrint = function (ctrl, ctrlopts) {
-        console.log("view mode bp");
-        var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
-                        <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
-                           <div class='vertical-align_tlbr' >
+    //this.BluePrint = function (ctrl, ctrlopts) {
+    //    console.log("view mode bp");
+    //    var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
+    //                    <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
+    //                       <div class='vertical-align_tlbr' >
                                 
-                                    <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Mark">
-                                        <i class="fa fa-object-ungroup "></i>   
-                                    </div>
+    //                                <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Mark">
+    //                                    <i class="fa fa-object-ungroup "></i>   
+    //                                </div>
 
-                                    <div  id='bg_image_BP' class='bp_toolbarproperties 'title="Image upload">
-                                        <label for="bg_image">
-                                           <i class='fa fa-picture-o'></i>
-                                        </label>
-                                         <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
-                                    </div> 
+    //                                <div  id='bg_image_BP' class='bp_toolbarproperties 'title="Image upload">
+    //                                    <label for="bg_image">
+    //                                       <i class='fa fa-picture-o'></i>
+    //                                    </label>
+    //                                     <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
+    //                                </div> 
 
-                                    <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
-                                        <i class='fa fa-minus-circle'></i>
-                                    </div>
+    //                                <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
+    //                                    <i class='fa fa-minus-circle'></i>
+    //                                </div>
 
-                                     <div id='resetsvg_BP' class='bp_toolbarproperties 'title="Reset position">
-                                        <i class='fa fa-refresh'></i>
-                                    </div>
+    //                                 <div id='resetsvg_BP' class='bp_toolbarproperties 'title="Reset position">
+    //                                    <i class='fa fa-refresh'></i>
+    //                                </div>
 
-                                    <div id='clearsvg_BP' class='bp_toolbarproperties 'title="Clear layers">
-                                        <i class='fa fa-eraser '></i>
-                                    </div>
+    //                                <div id='clearsvg_BP' class='bp_toolbarproperties 'title="Clear layers">
+    //                                    <i class='fa fa-eraser '></i>
+    //                                </div>
 
-                                    <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
-                                        <i class='fa fa-stop-circle-o '></i>
-                                    </div>
+    //                                <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
+    //                                    <i class='fa fa-stop-circle-o '></i>
+    //                                </div>
 
-                                    <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
-                                        <i class='fa fa-search  '></i>
-                                    </div>
-                            </div>
-                        </div>
-                        <div class="col-md-11 col-lg-11 col-sm-11 svgcntnrBP_usr">
+    //                                <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
+    //                                    <i class='fa fa-search  '></i>
+    //                                </div>
+    //                        </div>
+    //                    </div>
+    //                    <div class="col-md-11 col-lg-11 col-sm-11 svgcntnrBP_usr">
 
-                            <div id="svgContainer"></div>
-                        </div>
-                    </div>`;
-        $('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid).addClass('bpdiv_retrive').html(bphtml);
-        $('#cont_' + ctrl.EbSid).css('height', '100%');
-        $('#bpdiv_' + ctrl.EbSid).css('height', '100%');
-        $('#' + ctrl.EbSid + 'Wraper').css('height', '100%');
+    //                        <div id="svgContainer"></div>
+    //                    </div>
+    //                </div>`;
+    //    $('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid).addClass('bpdiv_retrive').html(bphtml);
+    //    $('#cont_' + ctrl.EbSid).css('height', '100%');
+    //    $('#bpdiv_' + ctrl.EbSid).css('height', '100%');
+    //    $('#' + ctrl.EbSid + 'Wraper').css('height', '100%');
 
 
-        var drawBP = new drawBluePrintfn(ctrl);
+    //    var drawBP = new drawBluePrintfn(ctrl);
 
-        drawBP.redrawSVGelements_usr();
+    //    drawBP.redrawSVGelements_usr();
 
-        ctrl.getValueFromDOM = drawBP.getvalueSelected;
-        ctrl.setValue = drawBP.setvalueSelected;
-        ctrl._onChangeFunctions = [];
-        ctrl.bindOnChange = function (p1) {
-            if (!this._onChangeFunctions.includes(p1))
-                this._onChangeFunctions.push(p1);
-        };
-        ctrl.clear = drawBP.clear_ctrlAftrsave;
-        //display
-        //ctrl.setValue = dgbf;
-        ////store
-        // ctrl.getValueFromDOM = drawBP.getvalueSelected();
-        ////call fn onchange
-        //ctrl.bindOnChange = asgd;
+    //    ctrl.getValueFromDOM = drawBP.getvalueSelected;
+    //    ctrl.setValue = drawBP.setvalueSelected;
+    //    ctrl._onChangeFunctions = [];
+    //    ctrl.bindOnChange = function (p1) {
+    //        if (!this._onChangeFunctions.includes(p1))
+    //            this._onChangeFunctions.push(p1);
+    //    };
+    //    ctrl.clear = drawBP.clear_ctrlAftrsave;
+    //    //display
+    //    //ctrl.setValue = dgbf;
+    //    ////store
+    //    // ctrl.getValueFromDOM = drawBP.getvalueSelected();
+    //    ////call fn onchange
+    //    //ctrl.bindOnChange = asgd;
 
-    }
+    //}
 
     this.Rating = function (ctrl) {
         if ((ebcontext.user.wc == 'uc') || this.Renderer.rendererName === "Bot") {

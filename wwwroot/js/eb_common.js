@@ -803,6 +803,9 @@ function EbConvertValue(val, type) {
         val = val.replace(/,/g, "");//  temporary fix
         return parseInt(val);
     }
+    else if (type === 3) {
+        return val === "true";
+    }
     return val;
 }
 

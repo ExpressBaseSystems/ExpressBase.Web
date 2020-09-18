@@ -265,6 +265,12 @@
         }
     }.bind(this);
 
+    this.validateCtrl = function (ctrl) {
+        this.isRequiredOK(ctrl);
+        this.isValidationsOK(ctrl);
+        this.sysValidationsOK(ctrl);
+    };
+
     this.UpdateValExpDepCtrls = function (curCtrl) {
         $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
@@ -282,7 +288,7 @@
                             if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
                                 depCtrl.justSetValue(ValueExpr_val);
-                                //this.isRequiredOK(depCtrl);
+                                this.validateCtrl(depCtrl);
                             }
                             else {
                                 $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

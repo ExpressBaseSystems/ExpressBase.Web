@@ -76,7 +76,7 @@
     <div class="row" style="background: transparent;">
         @*<div class="dash-loader">
 
-        </div>*@
+            </div>*@
         <div class="col-sm-12" style="background: transparent;width: 99%">
             <div id="dashbord-user-view">
                 <div class="grid-stack"></div>
@@ -91,22 +91,25 @@
     if (ViewBag.AllDashBoard != null)
     {
         <script>
-            var DBobj = new DashBoardViewWrapper({
-            Version: '@ViewBag.VersionNumber',
-            ObjType: @ViewBag.ObjType,
-            dvObj: @Html.Raw(ViewBag.dsObj),
-            Status: '@ViewBag.Status',
-            googlekey: '@ViewBag.al_arz_map_key',
-            AllDashBoards: @Html.Raw(ViewBag.AllDashBoard),
-        });
+            $(document).ready(function () {
+                console.log("ready!");
+                var DBobj = new DashBoardViewWrapper({
+                                Version: '@ViewBag.VersionNumber',
+                                ObjType: @ViewBag.ObjType,
+                                dvObj: @Html.Raw(ViewBag.dsObj),
+                                Status: '@ViewBag.Status',
+                                googlekey: '@ViewBag.al_arz_map_key',
+                                AllDashBoards: @Html.Raw(ViewBag.AllDashBoard)});
+            });
+
         </script>
     }
     @*else
-    {
-        <script>
-            $(".dash-loader").hide();
-        </script>
-    }*@
+        {
+            <script>
+                $(".dash-loader").hide();
+            </script>
+        }*@
 }
 <script type="text/javascript">
     $(document).ready(function () {

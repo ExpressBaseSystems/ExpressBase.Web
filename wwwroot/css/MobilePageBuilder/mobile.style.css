@@ -308,6 +308,22 @@
 .eb_stacklayout .dp-avatar img{
     height:100%;
 }
+
+.eb_stacklayout .eb-mob-qrreader input {
+    flex: 1;
+    border: none;
+}
+.eb_stacklayout .eb-mob-qrreader span {
+    align-self: center;
+}
+.eb_stacklayout .ctrl-group {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    height: 25px;
+    padding: 0 5px;
+}
 /*table layout*/
 .eb_mob_tablelayout {
     display: flex;

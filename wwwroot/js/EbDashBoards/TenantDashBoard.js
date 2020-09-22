@@ -45,21 +45,7 @@
             $('#replicationModal').modal('show');
         }
         else if (scount <= 3) {
-            let po = {
-                Message: "Creating solution...",
-                Html: function ($selector) {
-                    $selector.html(`<span>Creating solution...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
-                },
-                ButtonStyle: {
-                    Text: "Continue",
-                    Color: "white",
-                    Background: "#508bf9",
-                    Callback: function () {
-                        location.reload();
-                    }
-                }
-            };
-            self.EbPopBox("show", po);
+            this.ncs();
             this.cs(function (res) {
                 if (res.status)
                     self.EbPopBox("show", { Message: "Solution created :)" });
@@ -72,6 +58,25 @@
                 Message: "You can't create more than 3 FREE solution "
             });
         }
+    };
+    this.ncs = function () {
+        let po = {
+            Message: "Creating solution...",
+            Html: function ($selector) {
+                $selector.html(`<span>Creating solution...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
+            },
+            ButtonStyle: {
+                Text: "Continue",
+                Color: "white",
+                Background: "#508bf9",
+                Callback: function () {
+                    location.reload();
+                }
+            }
+        };
+        self.EbPopBox("show", po);
+
+        
     };
 
     this.cs = function (fn, sid, pid) {
@@ -92,7 +97,9 @@
 
         let sid = $('#replicateSoln').val();
         let pid = $('#replicatePkg').val();
-        this.cs(function (res) {
+        $('#replicationModal').modal('hide');
+        this.ncs();
+        this.cs(function (res) {           
             if (res.status)
                 self.EbPopBox("show", { Message: "Solution created :)" });
             else

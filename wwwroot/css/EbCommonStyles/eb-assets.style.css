@@ -767,11 +767,6 @@
     padding-right: 10px;
 }
 
-.loc-switchbtn {
-    background: #508bf9;
-    color: white;
-}
-
 .subtitle {
     font-size: 13px;
     color: #7d7b7b;
@@ -805,11 +800,14 @@
 .loc_switchModal_box .locs_foot .loc_count{
    padding:2px 5px;
 }
-    .loc_switchModal_box .locs_foot button {
+    .loc_switchModal_box .locs_foot .loc-switchbtn {
         letter-spacing: 0.1em;
         font-weight: 500;
     }
-
+    .loc_switchModal_box .locs_foot .loc-switchbtn[disabled] {
+        cursor: no-drop !important;
+    }
+}
 .loc_switchModal_fade {
     display: none;
     position: fixed;

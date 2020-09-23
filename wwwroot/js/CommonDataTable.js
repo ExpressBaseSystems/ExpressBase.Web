@@ -366,6 +366,7 @@
         }
         else if (this.Source === "WebForm") {
             this.MainData = null;
+            this.totalcount = 0;
         }
         this.getNotvisibleColumns();
         this.initCompleteflag = false;

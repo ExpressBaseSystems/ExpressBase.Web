@@ -244,17 +244,27 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>  
+                                    </div>
                                     @*<div id="OSM" class="connection_wrap_outer" data-toggle="modal" data-target="#OSMConnectionEdit" data-whatever="Maps">
+                                            <div class="connection_wrap w-100">
+                                                <div class="connection_wrap_header w-100 image-hover" id="OSMConnection_config">
+                                                    <img class="img-responsive image-vender" src="~/images/open-street-map-medium-1.png" style="height: 80%; width: 80%;" />
+                                                    <div class="image-add">
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                    <div id="MobileConfig" class="connection_wrap_outer" data-toggle="modal" data-target="#MobileConfigEdit" data-whatever="Maps">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="OSMConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/open-street-map-medium-1.png" style="height: 80%; width: 80%;" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="MobileConfig_config">
+                                                <img class="img-responsive image-vender" src="~/images/mobile settings.png" style="height: 100%; width: 40%;" />
                                                 <div class="image-add">
                                                     <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>*@
+                                    </div>
                                     <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#SentGridConnectionEdit" data-whatever="SendGrid">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
@@ -462,6 +472,20 @@
                                             </div>
                                             <div id="AUTHENTICATION" class="panel-collapse collapse">
                                                 <div id="AUTHENTICATION-all" class="panel-body">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="MOBILECONFIG" data-toggle="collapse" data-parent="#MyIntegrations" href="#MOBILE_CONFIG">
+                                                        MOBILE SETTINGS
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="MOBILE_CONFIG" class="panel-collapse collapse">
+                                                <div id="MOBILECONFIG-all" class="panel-body">
 
                                                 </div>
                                             </div>
@@ -1300,53 +1324,131 @@
 </div>
 
 @*<div id="OSMConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" id="OSM_mask">
-            <form action="" method="post" id="OSMConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative border-style-none">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Open Street Maps</h4>
-                    <div id="OSM_loader" class="MapConnection_loder"></div>
-                </div>
-                <div class="modal-body" style="display:flex">
-                    <div class="vender-data-holder" style="width:25%">
-                        <img class='img-responsive' src='~/images/open-street-map-medium-1.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
-                        <div class="connection-vender-desp">
-                            <span>Build customized, agile experiences that bring the real world to your users with static and dynamic maps, Street View imagery, and 360° views.</span>
-                        </div>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" id="OSM_mask">
+                <form action="" method="post" id="OSMConnectionSubmit" data-toggle="validator">
+                    <div class="modal-header relative border-style-none">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Open Street Maps</h4>
+                        <div id="OSM_loader" class="MapConnection_loder"></div>
                     </div>
-                    <div class="connection-data-holder">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input name="OSMVendor" type="hidden" value="OSM" class="form-control Vendor" readonly />
-                                <div class="form-group">
-                                    <label>Nick Name</label>
-                                    <input id="OSMInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
-                                </div>
+                    <div class="modal-body" style="display:flex">
+                        <div class="vender-data-holder" style="width:25%">
+                            <img class='img-responsive' src='~/images/open-street-map-medium-1.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                            <div class="connection-vender-desp">
+                                <span>Build customized, agile experiences that bring the real world to your users with static and dynamic maps, Street View imagery, and 360° views.</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-group">
+                        <div class="connection-data-holder">
+                            <div class="row">
                                 <div class="col-md-12">
+                                    <input name="OSMVendor" type="hidden" value="OSM" class="form-control Vendor" readonly />
                                     <div class="form-group">
-                                        <label>ApiKey</label>
-                                        <input id="OSMInputApiKey" name="ApiKey" type="text" class="form-control Inputclear eb_input-h" required />
+                                        <label>Nick Name</label>
+                                        <input id="OSMInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>ApiKey</label>
+                                            <input id="OSMInputApiKey" name="ApiKey" type="text" class="form-control Inputclear eb_input-h" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                            <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
-                        <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
                     </div>
-                </div>
 
-                <div class="modal-footer border-style-none">
-                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm MapConnection">Save</button>
-                </div>
-            </form>
+                    <div class="modal-footer border-style-none">
+                        <button type="submit" class="ebbtn eb_btnblue eb_btn-sm MapConnection">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>*@
+    <div id="MobileConfigEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="" display: block;>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" id="MobileConfig_mask">
+                <form action="" method="post" id="MobileConfigSubmit" data-toggle="validator">
+                    <input name="DatabaseVendor" value="MobileConfig" class="form-control Vendor" type="hidden" readonly />
+                    <div class="modal-header relative border-style-none">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Mobile Config</h4>
+                        <div id="MobileConfig_loader" class="MobileConfig_loder"></div>
+                    </div>
+                    <div class="modal-body" style="display:flex">
+                        <div class="vender-data-holder" style="width:25%;">
+                            <img class='img-responsive' src='~/images/mobile settings.png' align='middle' style='padding: 0rem 5rem; margin: auto; margin-top: 15px; margin-bottom: 15px;' />
+                            <div class="connection-vender-desp">
+                                <span> Mobile Config is blah blah blah</span>
+                            </div>
+                        </div>
+                        <div class="connection-data-holder">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Nick Name</label>
+                                        <input id="MobileConfigNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Azure Notification Hub Name</label>
+                                            <input id="AzureNotificationHubName" name="HubName" type="text" class="form-control Inputclear eb_input-h" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Azure Notification Connection</label>
+                                            <input id="AzureNotificationConStr" name="ConnectionStr" type="text" class="form-control Inputclear eb_input-h" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label> Android App signin key</label>
+                                            <input id="signinkey" name="SigninKey" type="text" class="form-control Inputclear eb_input-h" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label> Android App URL</label>
+                                            <input id="AndroidAppURL" name="AndroidAppURL" type="text" class="form-control Inputclear eb_input-h" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                            <input type="hidden" class="Inputclear IntConfId" id="MobileConfigConfId" name="Id" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-style-none">
+                        <button type="submit" class="ebbtn eb_btnblue eb_btn-sm AzureNotificationConnection">Save</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>*@
 
 <div id="GoogleDriveConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog">
     <div class="modal-dialog modal-lg">

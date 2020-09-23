@@ -497,7 +497,7 @@ const EbPowerSelect = function (ctrl, options) {
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         let params = this.ajaxData();
-        let url = "../dv/getData4PowerSelect";
+        let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect": "../dv/getData4PowerSelect";
         $.ajax({
             url: url,
             type: 'POST',
@@ -748,27 +748,6 @@ const EbPowerSelect = function (ctrl, options) {
             this.columnVals[colName].push(fval);
         }
     };
-
-
-
-    //this.addColVals = function (val = this.lastAddedOrDeletedVal) {
-    //    $.each(this.ColNames, function (i, name) {
-    //        let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
-    //        let type = obj.Type;
-    //        let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
-    //        let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
-    //        let vmindex = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-    //        let cellData;
-    //        if (type === 5 || type === 11)
-    //            cellData = this.datatable.data.filter(ro => ro[vmindex] === val)[0][idx];// unformatted data for date or integer
-    //        else
-    //            cellData = this.datatable.Api.row($rowEl).data()[idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
-    //        if (type === 11 && cellData === null)///////////
-    //            cellData = "0";
-    //        let fval = EbConvertValue(cellData, type);
-    //        this.columnVals[name].push(fval);
-    //    }.bind(this));
-    //};
 
     this.initDataTable = function () {
         this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
@@ -1095,7 +1074,7 @@ const EbPowerSelect = function (ctrl, options) {
                 this.reSetColumnvals_();
 
             this.$inp.val(this.Vobj.valueMembers).trigger("change");
-            this.required_min_Check();
+            this.required_min_valid_Check();
             this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
         }
 
@@ -1378,11 +1357,11 @@ const EbPowerSelect = function (ctrl, options) {
         let _name = this.ComboObj.EbSid_CtxId;
         if (this.Vobj.DDstate === true && (!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
-            this.required_min_Check();
+            this.required_min_valid_Check();
         }
     };
 
-    this.required_min_Check = function () {
+    this.required_min_valid_Check = function () {
         let reqNotOK = false;
         let minLimitNotOk = false;
         let contId = this.isDGps ? `#td_${this.ComboObj.EbSid_CtxId}` : `#cont_${this.ComboObj.EbSid_CtxId}`;// to handle special case of DG powerselect
@@ -1403,6 +1382,7 @@ const EbPowerSelect = function (ctrl, options) {
         }
         else {
             EbMakeValid(contId, wraperId, this.ComboObj);
+            this.renderer.FRC.isValidationsOK(this.ComboObj);
         }
     }.bind(this);
 

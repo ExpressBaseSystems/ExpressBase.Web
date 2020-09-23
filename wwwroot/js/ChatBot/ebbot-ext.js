@@ -30,7 +30,7 @@
             dpurl = headerLogo;
         }
         else {
-            dpurl = (/^\d+$/.test(d.botdpURLColl[d.appIdCount])) ? (`images/${d.botdpURLColl[d.appIdCount]}.png`) : (d.botdpURLColl[d.appIdCount] || '../images/demobotdp4.png');
+            dpurl = (/^\d+$/.test(d.botdpURLColl[d.appIdCount])) ? (`botExt/images/original/${d.botdpURLColl[d.appIdCount]}.png`) : (d.botdpURLColl[d.appIdCount] || '../images/demobotdp4.png');
         }
         
         themeColor = d.ebbotThemeColorColl[d.appIdCount] || '#055c9b';

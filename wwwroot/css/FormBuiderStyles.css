@@ -13,6 +13,40 @@ html {
     outline: 1px solid #0075FF !important;
 }
 
+/*.ctrl-cover outline only*/
+
+
+
+.Eb-ctrlContainer[ctype="TextBox"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="Numeric"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="Date"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="EmailControl"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="CheckBoxGroup"] .radio-wrap:focus,
+.Eb-ctrlContainer[ctype="RadioGroup"] .radio-wrap:focus,
+.Eb-ctrlContainer[ctype="BooleanSelect"] .dropdown-toggle[data-toggle="dropdown"]:focus,
+.Eb-ctrlContainer[ctype="SimpleSelect"] .dropdown-toggle[data-toggle="dropdown"]:focus,
+.Eb-ctrlContainer[ctype="PowerSelect"] .dropdown-toggle[data-toggle="dropdown"]:focus,
+[tdcoltype="DGNumericColumn"] [ui-inp]:focus,
+[tdcoltype="DGStringColumn"] [ui-inp]:focus {
+    outline: 0px !important;
+}
+
+.Eb-ctrlContainer[ctype="TextBox"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="Numeric"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="Date"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="EmailControl"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="RadioGroup"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="CheckBoxGroup"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="PowerSelect"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="BooleanSelect"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="RichText"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="SimpleSelect"] .ctrl-cover:focus-within {
+    outline: 1px solid #0075FF !important;
+    outline-offset: -1px;
+}
+
+/*--------------------*/
+
 body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
     --txtarea-bg: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
@@ -2342,6 +2376,25 @@ input.locinp {
 
 
 /*animations*/
+
+
+.ebblink {
+    animation: blinkn 0.7s ease-out infinite;
+}
+
+@keyframes blinkn {
+    0% {
+        filter: drop-shadow(0px 0px 0px #00ff977d) drop-shadow(0px 0px 0px #00ff97);
+    }
+
+    50% {
+        filter: drop-shadow(0px 0px 1px #00ff977d) drop-shadow(0px 0px 4px #00ff97);
+    }
+
+    100% {
+        filter: drop-shadow(0px 0px 0px #00ff977d) drop-shadow(0px 0px 0px #00ff97);
+    }
+}
 
 /* Safari 4.0 - 8.0 */
 /*@-webkit-keyframes dim_border {

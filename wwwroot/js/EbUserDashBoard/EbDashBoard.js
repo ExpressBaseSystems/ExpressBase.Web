@@ -15,7 +15,7 @@ var DashBoardWrapper = function (options) {
     this.Cid = options.Cid;
     this.TileCollection = {};
     this.CurrentTile;
-    this.CurrentRefid;  
+    this.CurrentRefid;
     this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
@@ -703,7 +703,7 @@ var DashBoardWrapper = function (options) {
         else {
             $(".dash-loader").hide();
         }
-        
+
 
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
@@ -932,6 +932,7 @@ var DashBoardWrapper = function (options) {
                     }
                     this.RedrwFnHelper(this.CurrentTile);
                     this.loader.hide();
+                    this.DataLabelContext();
                 }
 
             }
@@ -1054,7 +1055,7 @@ var DashBoardWrapper = function (options) {
             }
             else {
                 $('.param-div-cont').remove();
-                if (this.FilterBtn)this.FilterBtn.remove();
+                if (this.FilterBtn) this.FilterBtn.remove();
             }
         }
         if (obj.$type.indexOf("EbDataObject") > -1 && pname === "DataSource") {
@@ -1464,6 +1465,64 @@ var DashBoardWrapper = function (options) {
             let xx = ProgressGaugeWrapper(obj, { isEdit: true });
         }
         this.RedrwFnHelper(this.CurrentTile);
+    };
+    this.DataLabelContext = function () {
+        $.contextMenu({
+            selector: '.Label_Data_pane',
+            trigger: 'right',
+            items: {
+                copy: { name: "Copy", callback: this.copyDataLabelStyle.bind(this) },
+                Paste: { name: "Paste", callback: this.pasteDataLabelStyle.bind(this) }
+            }
+        });
+    }
+    this.copyDataLabelStyle = function (key, opt, e) {
+        this.Copied_DL_Style = this.Procs[opt.$trigger[0].parentNode.id];
+        this.Copied_DL_id = opt.$trigger[0].parentNode.id;
+    };
+    this.pasteDataLabelStyle = function (key, opt, e) {
+        this.Current_DL = this.Procs[opt.$trigger[0].parentNode.id];
+        this.Current_DL_id = opt.$trigger[0].parentNode.id;
+        this.Current_DL.ChangeTextPositon = this.Copied_DL_Style.ChangeTextPositon;
+        this.Current_DL.StaticLabelPosition = this.Copied_DL_Style.StaticLabelPosition;
+        this.Current_DL.DynamicLabelPositon = this.Copied_DL_Style.DynamicLabelPositon;
+        this.Current_DL.DescriptionPosition = this.Copied_DL_Style.DescriptionPosition;
+
+        this.Current_DL.DescriptionFont = this.Copied_DL_Style.DescriptionFont;
+        this.Current_DL.DynamicLabelFont = this.Copied_DL_Style.DynamicLabelFont;
+
+        this.Current_DL.LabelBackColor = this.Copied_DL_Style.LabelBackColor;
+        this.Current_DL.LabelBorderColor = this.Copied_DL_Style.LabelBorderColor;
+        this.Current_DL.LabelBorderRadius = this.Copied_DL_Style.LabelBorderRadius;
+        this.Current_DL.LabelStyle = this.Copied_DL_Style.LabelStyle;
+        this.Current_DL.TextPosition = this.Copied_DL_Style.TextPosition;
+        this.Current_DL.IsGradient = this.Copied_DL_Style.IsGradient;
+        this.Current_DL.GradientColor1 = this.Copied_DL_Style.GradientColor1;
+        this.Current_DL.GradientColor2 = this.Copied_DL_Style.GradientColor2;
+        this.Current_DL.HideFooter = this.Copied_DL_Style.HideFooter;
+        this.Current_DL.FooterIconColor = this.Copied_DL_Style.FooterIconColor;
+        this.Current_DL.FooterTextColor = this.Copied_DL_Style.FooterTextColor;
+
+        this.Current_DL.IconColor = this.Copied_DL_Style.IconColor;
+        this.Current_DL.IconGradientColor1 = this.Copied_DL_Style.IconGradientColor1;
+        this.Current_DL.IconGradientColor2 = this.Copied_DL_Style.IconGradientColor2;
+
+        this.Current_DL.RenderIcon = this.Copied_DL_Style.RenderIcon;
+        this.Current_DL.Shadow = this.Copied_DL_Style.Shadow;
+        this.Current_DL.StaticLabelFont = this.Copied_DL_Style.StaticLabelFont;
+        this.Current_DL.TextPosition = this.Copied_DL_Style.TextPosition;
+        this.Current_DL.Top = this.Copied_DL_Style.Top;
+        this.Current_DL.Left = this.Copied_DL_Style.Left;
+     
+        for (i = 0; i < this.EbObject.Tiles.$values.length; i++) {
+            let temp = this.EbObject.Tiles.$values[i];
+            if (this.EbObject.Tiles.$values[i].LabelColl.$values.length == 1) {
+                if (this.EbObject.Tiles.$values[i].LabelColl.$values[0].EbSid == this.Current_DL_id) {
+                    this.EbObject.Tiles.$values[i].LabelColl.$values[0] = this.Current_DL;
+                }
+            }
+        }
+
     };
     this.DeleteGauge = function () {
         var obj = this.Procs[this.currentgauge.EbSid];

@@ -29,7 +29,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />",
         "Facebook": "<img class='img- responsive image-vender' src='../images/fb_logo.png' style='width:46%' />",
         "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />",
-        "OSM": "<img class='img- responsive image-vender' src='../images/open-street-map-medium-1.png' style='width:55%' />"
+        "OSM": "<img class='img- responsive image-vender' src='../images/open-street-map-medium-1.png' style='width:55%' />",
+        "MobileConfig": "<img class='img- responsive image-vender' src='../images/mobile settings.png' style='width:30%' />",
     };
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/postgre.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -458,7 +459,26 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     //        $("#IntegrationsCall").trigger("click");
     //        $("#MyIntegration").trigger("click");
     //    }.bind(this));
-    //};
+    //}; 
+    this.AzureNotiConOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddAzureNotificationHub",
+            data: postData,
+            beforeSend: function () {
+                $("#Map_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#Map_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#MapConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
 
     this.DropBoxOnSubmit = function (e) {
         e.preventDefault();
@@ -951,6 +971,20 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
     };
 
+    this.MobileConfiginteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#MobileConfigEdit').modal('toggle');
+        var data = JSON.parse(JSON.parse(data).ConnObj);
+        $.each(temp, function (i, obj) {
+            $('#MobileConfigNickname').val(obj.NickName);
+            $('#MobileConfigConfId').val(obj.Id);
+            $('#AzureNotificationHubName').val(data.AzureNFHubName);
+            $('#AzureNotificationConStr').val(data.AzureNFConnection);
+            $('#signinkey').val(data.AndroidAppSignInKey);
+            $('#AndroidAppURL').val(data.AndroidAppURL);
+        }.bind(this));
+    };
+
     this.VerticalTab = function (evt, cityName) {
         var button = $(evt.currentTarget);
         var datatype = button.text();
@@ -1218,7 +1252,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 }
                             }.bind(this));
                             if (flag === 0) {
-                                postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id };
+                                if (key === "MOBILECONFIG")
+                                    postData = { "SolutionId": this.Sid, "Preference": "OTHER", "Id": 0, "Type": key, "ConfigId": id };
+                                else postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id };
                                 if (key === "EbDATA" && temp === undefined) {
                                     EbDialog("show",
                                         {
@@ -1273,6 +1309,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 }
                                 else if (key === "AUTHENTICATION") {
                                     postData.Preference = "MULTIPLE";
+                                    this.IntegrationSubmit();
+                                }
+                                else if (key === "MobileConfig") {
+                                    postData.Preference = "OTHER";
                                     this.IntegrationSubmit();
                                 }
                                 else {
@@ -1387,6 +1427,17 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                     options.items.AUTHENTICATION = { name: "Configure as AUTHENTICATION" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('MobileConfigedit')) {
+                    if (this.Connections.Integrations.MOBILECONFIG != undefined && this.Connections.Integrations.MOBILECONFIG.length >= 1) {
+                            options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                    else {
+                    options.items.MOBILECONFIG = { name: "Configure" },
+                        options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
                 }
                 if (preventContextMenu == 0)
                     return options;
@@ -1575,6 +1626,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 } else if ($trigger.hasClass('AUTHENTICATIONedit 1')) {
                     options.items.Remove = { name: "Unset" };
                 }
+                else if ($trigger.hasClass('MOBILECONFIGedit')) {
+                    options.items.Remove = { name: "Unset" };
+                } 
                 if (preventContextMenu === 0)
                     return options;
             }.bind(this)
@@ -1933,7 +1987,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
         else if ($('div.checkbox-group :checkbox:checked').length < 1) {
             if (postData)
-            $("#2faSwitch").bootstrapToggle('off');
+                $("#2faSwitch").bootstrapToggle('off');
             EbMessage("show", {
                 Message: "Please select OTP delivery method", Background: "red"
             });
@@ -2002,7 +2056,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 }.bind(this)
             });
     };
-    
+
     this.SMTPautoFill = function (e) {
         var target = e.target.options.selectedIndex;
         if (target === 0) {
@@ -2011,6 +2065,30 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
         }
         $('#EmailInputPort').val("587");
+    }.bind(this);
+
+    this.integration_MobileConf_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["MOBILECONFIG"];
+        $("#MOBILECONFIG-All").empty();
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
+                                <div class="integrationContainer_Image">
+                                    ${Imageurl[rows.Ctype]}
+                                </div>
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                    <span>${rows.NickName}</span>
+                                </div>
+                                <div id="nm" class="integrationContainer_caret-down">
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </div>
+                            </div>`);
+            html.join("");
+            count += 1;
+        }.bind(this));
+        $('#MOBILECONFIG-all').append(html);
+        $('#MOBILECONFIG').empty().append(" Mobile Connections (" + count + ")");
     }.bind(this);
 
     this.init = function () {
@@ -2058,6 +2136,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
         //$("#OSMConnectionSubmit").on("submit", this.OSMOnSubmit.bind(this));
+        $("#MobileConfigSubmit").on("submit", this.AzureNotiConOnSubmit.bind(this));
         $("#GoogleDriveConnectionSubmit").on("submit", this.GoogleDriveOnSubmit.bind(this));
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));
@@ -2100,6 +2179,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_Map_all();
         this.integration_IChat_all();
         this.integration_AUTHENTICATION_all();
+        this.integration_MobileConf_all();
 
 
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));

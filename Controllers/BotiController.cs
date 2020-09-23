@@ -320,6 +320,9 @@ namespace ExpressBase.Web.Controllers
 			GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
 			List<object> returnlist = new List<object>();
 			List<object> objpro = new List<object>();
+			List<string> tileBG_color = new List<string>();
+			List<string> tileText_color = new List<string>();
+
 			returnlist.Add(formlist.BotForms);
 			if (this.LoggedInUser.UserId == 1)
 				this.LoggedInUser.Preference.Locale = "en-IN";
@@ -328,11 +331,16 @@ namespace ExpressBase.Web.Controllers
 
 			foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
 			{
+				Dictionary<string, string> BotProperty = new Dictionary<string, string>();
 				string rfid = rfidlst.Key;
 				EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
 				objpro.Add(BtFrm?.IconPicker);
+				tileBG_color.Add(BtFrm?.TileColor);
+				tileText_color.Add(BtFrm?.TileTextColor);
 			}
 			returnlist.Add(objpro);
+			returnlist.Add(tileBG_color);
+			returnlist.Add(tileText_color);
 			return returnlist;
 		}
 			public dynamic GetCurForm(string refid)

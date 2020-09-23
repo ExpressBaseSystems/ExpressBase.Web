@@ -373,7 +373,7 @@ border-radius: 4px;
 
 .formname-btn_botformlist {
     height: 100px;
-    border-radius: 4px;
+    border-radius: 6px;
     color: var(--botThemeColor);
     /*margin: 1px 1px;*/
     margin: 7px 0;
@@ -388,7 +388,7 @@ border-radius: 4px;
     padding: 5px;
     font-size: 13px;
     transition-duration: 0.1s;
-    box-shadow: 1px 1px 4px 2px #dedfe1;
+    box-shadow: 1px 1px 3px 1px #dedfe1;
     white-space: normal !important;
     word-wrap: break-word;
     overflow: hidden;

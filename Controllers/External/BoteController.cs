@@ -534,6 +534,8 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 			GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
 			List<object> returnlist = new List<object>();
 			List<object> objpro = new List<object>();
+			List<string> tileBG_color = new List<string>();
+			List<string> tileText_color = new List<string>();
 
 			Bot_Obj.BearerToken=(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
 			Bot_Obj.RefreshToken=authResponse.RefreshToken;
@@ -552,8 +554,12 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 				string rfid = rfidlst.Key;
 				EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
 				objpro.Add(BtFrm?.IconPicker);
+				tileBG_color.Add(BtFrm?.TileColor);
+				tileText_color.Add(BtFrm?.TileTextColor);
 			}
 			Bot_Obj.BotFormIcons=objpro;
+			Bot_Obj.TileBG_color = tileBG_color;
+			Bot_Obj.TileText_color = tileText_color;
 			Bot_Obj.Status = true;
 			return Bot_Obj;
 		}
@@ -589,6 +595,8 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 						GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
 						List<object> returnlist = new List<object>();
 						List<object> objpro = new List<object>();
+						List<string> tileBG_color = new List<string>();
+						List<string> tileText_color = new List<string>();
 
 						Bot_Obj.BearerToken = (HelperFunction.GetEncriptedString_Aes(_u.BearerToken + CharConstants.DOT + _u.UserId.ToString()));
 						Bot_Obj.RefreshToken = _u.RefreshToken;
@@ -607,8 +615,12 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 							string rfid = rfidlst.Key;
 							EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
 							objpro.Add(BtFrm?.IconPicker);
+							tileBG_color.Add(BtFrm?.TileColor);
+							tileText_color.Add(BtFrm?.TileTextColor);
 						}
 						Bot_Obj.BotFormIcons = objpro;
+						Bot_Obj.TileBG_color = tileBG_color;
+						Bot_Obj.TileText_color = tileText_color;
 						Bot_Obj.Status = true;
 					}
 					
@@ -709,6 +721,8 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 			public string User { get; set; }
 			public Dictionary<string, string> BotFormNames { get; set; }
 			public object BotFormIcons { get; set; }
+			public object TileBG_color { get; set; }
+			public object TileText_color { get; set; }
 			public bool Status { get; set; } = false;
 			public string ErrorMsg { get; set; }
 			public string OtpTo { get; set; }

@@ -53,6 +53,11 @@
         $("body").off("keydown").on("keydown", this.Keypress_selectLoc.bind(this));
         let s = this.getParentPath(this.CurrentLoc);
         $('#current_loc').attr('loc_id', this.CurrentLoc).text(s);
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.altKey && e.keyCode == 76) {
+                this.showSwitcher();
+            }
+        }.bind(this));
     };
 
     this.getCurrent = function () {

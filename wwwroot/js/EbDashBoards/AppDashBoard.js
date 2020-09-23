@@ -485,8 +485,8 @@
 
         dpImg.uploadSuccess = function (fileid) {
             if (fileid > 0) {
-                let k = ` <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" "></div>`;
-
+                let k = ` <div class="demodpdiv" style=" background:url('../images/${fileid}.png')center center no-repeat" "></div>`;
+                $("#dp_modal").append(k);
                 $('#bot_dp_url').val(`../images/${fileid}.png`);
                 $('#bot_dp_url').attr("dpRefid",fileid)
             }

@@ -32,6 +32,7 @@
     this.txtDateOfBirth = $("#txtDateOfBirth");
     this.txtAlternateEmail = $(".txtAlternateEmail");
     this.txtPhPrimary = $("#txtPhPrimary");
+    this.spanPhone = $("#spanPhone");
     this.txtPhSecondary = $("#txtPhSecondary");
     this.txtLandPhone = $("#txtLandPhone");
     this.txtExtension = $("#txtExtension");
@@ -63,8 +64,11 @@
     this.fbId = null;
     this.fbName = null;
     this.timer1 = null;
-    this.isInfoValidEmail = false;
-    this.isInfoValidEmail2 = true;
+    this.timer2 = null;
+    this.isPhoneUnique = false;
+    this.isEmailUnique = false;
+    this.emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    this.pwdRegex = /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/;
 
     this.rolesTile = null;
     this.userGroupTile = null;
@@ -88,10 +92,12 @@
 
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
-        this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
-        this.pwdPasswordCon.on('keyup', function (e) { this.validateInfo(this.pwdPasswordCon, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
+        this.txtPhPrimary.on('keyup', this.validatePhone.bind(this));
+        this.txtPhPrimary.on('change', this.validatePhone.bind(this));
+        this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, this.pwdRegex); }.bind(this));
+        this.pwdPasswordCon.on('keyup', function (e) { this.validateInfo(this.pwdPasswordCon, this.pwdRegex); }.bind(this));
         this.makeAsShowPwdField(this.pwdPasswordCon);
-        this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/); }.bind(this));
+        this.txtAlternateEmail.on('change', function (e) { this.validateInfo(this.txtAlternateEmail, this.emailRegex); }.bind(this));
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
         this.btnChangePassword.on("click", this.initChangePwdModal.bind(this));
@@ -190,7 +196,7 @@
     };
 
     this.onKeyUpPwdInModal = function (pwdThis) {
-        if (this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/)) {
+        if (this.validateInfo(pwdThis, this.pwdRegex)) {
             if (this.pwdNewConfirm.val() === this.pwdNew.val() || pwdThis === this.pwdOld)
                 this.lblPwdChngMsg.text("");
             else
@@ -211,7 +217,7 @@
             document.title = "Manage User - " + this.userinfo["fullname"];
             //$(this.divFormHeading).text("Edit User");
             //this.btnCreateUser.text("Update");
-            this.txtEmail.attr("disabled", "true");
+            //this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
             this.selUserType.attr("disabled", "true");
             $("#imgprofimage").attr("src", "/images/dp/" + this.itemId + ".png");
@@ -227,7 +233,8 @@
                 this.divResetPassword.css("display", "block");
             }
 
-            this.isInfoValidEmail = true;
+            this.isPhoneUnique = true;
+            this.isEmailUnique = true;
             this.initUserInfo();
             this.initFbConnect();
         }
@@ -543,41 +550,66 @@
 
     this.validateEmail = function () {
         clearTimeout(this.timer1);
-        this.isInfoValidEmail = false;
-        var val = this.txtEmail.val();
-        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (regex.test(val)) {
-            this.txtEmail.css("border-color", "rgb(204, 204, 204)");
-            this.spanEmail.children().remove();
-            this.spanEmail.append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true" style="padding: 9px;"></i>`);
-            this.spanEmail.attr("title", "Validating...");
-            this.timer1 = setTimeout(function () { this.validateEmailAjaxCall(); }.bind(this), 3000);
+        let val = this.txtEmail.val().trim();
+        if ((this.userinfo && this.userinfo["email"] === val) || val === '')
+            return;
+        if (this.emailRegex.test(val)) {
+            this.timer1 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtEmail, this.spanEmail, 'email', 1); }.bind(this), 1000);
         }
         else {
             this.txtEmail.css("border-color", "rgb(204, 0, 0)");
+            this.txtEmail.prev().css("border-color", "rgb(204, 0, 0)");
             this.spanEmail.children().remove();
-            this.spanEmail.append(`<i class="fa fa-times" aria-hidden="true" style="color:red; padding: 9px;"></i>`);
-            this.spanEmail.attr("title", "Invalid Email ID");
+            this.spanEmail.append(`<i class="fa fa-exclamation-circle" aria-hidden="true" style="color:red;"></i>`);
+            this.spanEmail.attr("title", "Invalid email");
         }
     };
 
-    this.validateEmailAjaxCall = function () {
+    this.validatePhone = function () {
+        clearTimeout(this.timer2);
+        let val = this.txtPhPrimary.val().trim();
+        if ((this.userinfo && this.userinfo["phnoprimary"] === val) || val === '')
+            return;
+        this.timer2 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtPhPrimary, this.spanPhone, 'phone number', 2); }.bind(this), 1000);
+    };
+
+    this.uniqueCheckAjaxCall = function ($txtCtrl, $span, title, mode) {
+        if ($txtCtrl.val() === '' || $txtCtrl.val().trim() === '')
+            return;
+        $txtCtrl.css("border-color", "rgb(204, 204, 204)");
+        $txtCtrl.prev().css("border-color", "rgb(204, 204, 204)");
+        $span.html(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
+        $span.attr("title", "Validating...");
+        if (mode === 1)
+            this.isEmailUnique = false;
+        else if (mode === 2)
+            this.isPhoneUnique = false;
         $.ajax({
             type: "POST",
-            url: "../Security/isValidEmail",
-            data: { reqEmail: this.txtEmail.val() },
-            success: function (result) {
-                if (result) {
-                    this.txtEmail.css("border-color", "rgb(204, 0, 0)");
-                    this.spanEmail.children().remove();
-                    this.spanEmail.append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red; padding: 9px;"></i>`);
-                    this.spanEmail.attr("title", "Email ID Already Exists");
+            url: "../Security/IsUnique",
+            data: { val: $txtCtrl.val(), id: this.itemId, mode: mode},
+            error: function (xhr, ajaxOptions, thrownError) {
+                $span.html(`<i class="fa fa-refresh" aria-hidden="true" style="color:red;"></i>`);
+                $span.attr("title", "Unique check failed. Click here to retry.");
+                $span.css("cursor", "pointer");
+                $span.off('click').on('click', function () {
+                    this.uniqueCheckAjaxCall($txtCtrl, $span, title, mode);
+                }.bind(this));
+            }.bind(this),
+            success: function (isUnique) {
+                if (isUnique) {
+                    $span.html(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
+                    $span.attr("title", "Unique " + title);
+                    if (mode === 1)
+                        this.isEmailUnique = true;
+                    else if (mode === 2)
+                        this.isPhoneUnique = true;
                 }
                 else {
-                    this.spanEmail.children().remove();
-                    this.spanEmail.append(`<i class="fa fa-check" aria-hidden="true" style="color:green; padding: 9px;"></i>`);
-                    this.spanEmail.attr("title", "Valid Email ID");
-                    this.isInfoValidEmail = true;
+                    $txtCtrl.css("border-color", "rgb(204, 0, 0)");
+                    $txtCtrl.prev().css("border-color", "rgb(204, 0, 0)");
+                    $span.html(`<i class="fa fa-exclamation-circle" aria-hidden="true" style="color:red;"></i>`);
+                    $span.attr("title", `This ${title} already exists.`);
                 }
             }.bind(this)
         });
@@ -588,10 +620,12 @@
         var val = target.val();
         if (regex.test(val)) {
             target.css("border-color", "rgb(204, 204, 204)");
+            target.prev().css("border-color", "rgb(204, 204, 204)");
             return true;
         }
         else {
             target.css("border-color", "rgb(204, 0, 0)");
+            target.prev().css("border-color", "rgb(204, 0, 0)");
             return false;
         }
     };
@@ -679,19 +713,29 @@
     };
 
     this.clickbtnCreateUser = function () {
-        if (this.txtName.val() === "") {
+        if (this.txtName.val().trim() === "") {
             EbMessage("show", { Message: 'Please enter a valid full name.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
-        if (this.txtEmail.val() === "") {
-            EbMessage("show", { Message: 'Please enter a valid email.', AutoHide: true, Background: '#bf1e1e' });
+        let _email = this.txtEmail.val().trim();
+        let _phone = this.txtPhPrimary.val().trim();
+        if (_email === '' && _phone === '') {
+            EbMessage("show", { Message: 'Please enter a valid email or phone number.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
-        if (!this.isInfoValidEmail) {
-            EbMessage("show", { Message: 'Email is not valid or already exists.', AutoHide: true, Background: '#bf1e1e' });
+        if (_email !== '' && !this.validateInfo(this.txtEmail, this.emailRegex)) {
+            EbMessage("show", { Message: 'Email is not valid.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
-        if (!this.isInfoValidEmail2) {
+        if (_email !== '' && !this.isEmailUnique) {
+            EbMessage("show", { Message: 'Email is already exists.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+        if (_phone !== '' && !this.isPhoneUnique) {
+            EbMessage("show", { Message: 'Phone is already exists.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+        if (this.txtAlternateEmail.val().trim() !== '' && !this.validateInfo(this.txtAlternateEmail, this.emailRegex)) {
             EbMessage("show", { Message: 'Alternate email is not valid.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
@@ -703,13 +747,18 @@
             EbMessage("show", { Message: 'Password length too short. Minimum length 8 required.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
+        if (!this.validateInfo(this.pwdPassword, this.pwdRegex) && this.whichMode === 1 && this.itemId < 2) {
+            EbMessage("show", { Message: 'Invalid password. Please try another password.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+
         var dateRegex = /^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/;
         if (!dateRegex.test(this.txtDateOfBirth.val().trim())) {
             this.txtDateOfBirth.val('2000-01-01');
         }
 
         this.btnCreateUser.attr("disabled", "true");
-        $("#eb_common_loader").EbLoader("show");
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: ".s-dash-container" } });
 
         var oldstus = this.itemId > 1 ? parseInt(this.userinfo["statusid"]) : -1;
         var newstus = $("#divStatus input:radio[name='status']:checked").val();
@@ -752,7 +801,7 @@
                 $("#eb_common_loader").EbLoader("hide");
             }.bind(this),
             success: function (result) {
-                if (result > -1) {
+                if (result > 0) {
                     EbDialog("show",
                         {
                             Message: "Saved Successfully",
@@ -771,7 +820,9 @@
                 else if (result === -1)
                     EbMessage("show", { Message: 'Unable to create new user. Reached maximum user limit.', AutoHide: true, Background: '#1e1ebf' });
                 else if (result === -2)
-                    EbMessage("show", { Message: 'Unable to create new user. Email already exists.', AutoHide: true, Background: '#1e1ebf' });
+                    EbMessage("show", { Message: 'Unable to save user. Email already exists.', AutoHide: true, Background: '#1e1ebf' });
+                else if (result === -3)
+                    EbMessage("show", { Message: 'Unable to save user. Phone already exists.', AutoHide: true, Background: '#1e1ebf' });
                 else
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $("#btnCreateUser").removeAttr("disabled");
@@ -797,9 +848,9 @@
                     }
                 },
                 CallBack: function (name) {
-                    $("#btnDeleteUser").attr("disabled", true);
-                    $("#eb_common_loader").EbLoader("show");
                     if (name === "Yes") {
+                        $("#btnDeleteUser").attr("disabled", true);
+                        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: ".s-dash-container" } });
                         $.ajax({
                             type: "POST",
                             url: "../Security/DeleteUser",

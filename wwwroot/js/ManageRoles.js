@@ -180,7 +180,7 @@
             return;
         $("#spanRoleName").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" padding: 9px;"></i>`);
         $("#spanRoleName").attr("title", "Validating...");
-        this.timer1 = setTimeout(function () { this.validateRoleNameAjaxCall(val, e); }.bind(this), 3000);
+        this.timer1 = setTimeout(function () { this.validateRoleNameAjaxCall(val, e); }.bind(this), 1000);
     };
     this.validateRoleNameAjaxCall = function (val, e) {
         $.ajax({

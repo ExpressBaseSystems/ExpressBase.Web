@@ -497,7 +497,7 @@ const EbPowerSelect = function (ctrl, options) {
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         let params = this.ajaxData();
-        let url = "../dv/getData4PowerSelect";
+        let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect": "../dv/getData4PowerSelect";
         $.ajax({
             url: url,
             type: 'POST',
@@ -1074,7 +1074,7 @@ const EbPowerSelect = function (ctrl, options) {
                 this.reSetColumnvals_();
 
             this.$inp.val(this.Vobj.valueMembers).trigger("change");
-            this.required_min_Check();
+            this.required_min_valid_Check();
             this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
         }
 
@@ -1357,11 +1357,11 @@ const EbPowerSelect = function (ctrl, options) {
         let _name = this.ComboObj.EbSid_CtxId;
         if (this.Vobj.DDstate === true && (!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
-            this.required_min_Check();
+            this.required_min_valid_Check();
         }
     };
 
-    this.required_min_Check = function () {
+    this.required_min_valid_Check = function () {
         let reqNotOK = false;
         let minLimitNotOk = false;
         let contId = this.isDGps ? `#td_${this.ComboObj.EbSid_CtxId}` : `#cont_${this.ComboObj.EbSid_CtxId}`;// to handle special case of DG powerselect
@@ -1382,6 +1382,7 @@ const EbPowerSelect = function (ctrl, options) {
         }
         else {
             EbMakeValid(contId, wraperId, this.ComboObj);
+            this.renderer.FRC.isValidationsOK(this.ComboObj);
         }
     }.bind(this);
 

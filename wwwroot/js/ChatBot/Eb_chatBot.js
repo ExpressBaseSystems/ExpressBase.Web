@@ -66,6 +66,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
         this.$chatCont.append(this.$renderAtBottom);
+        this.FRC = new FormRenderCommon({ FO: this });
         if (settings.BotProp.EbTag) {
             this.$chatCont.append(this.$poweredby);
         }
@@ -890,6 +891,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
         }
+        if (this.curCtrl.ObjType === 'PowerSelect') 
+            this.curCtrl.initializer.destroy();
         this.callGetControl(this.controlHideDelay);
 
         if ($('[saveprompt]').length === 1) {

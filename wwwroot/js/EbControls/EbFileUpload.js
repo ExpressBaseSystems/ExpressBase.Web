@@ -286,12 +286,13 @@ class EbFileUpload extends EbFupStaticData {
 
     thumbNprevHtml(o) {
         return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
-                <div class="eb_uplGal_thumbO_img">
-                    <img src="${this.SpinImage}" data-src="/images/small/${o.FileRefId}.jpg" class="EbFupThumbLzy" style="display: block;">
-                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
-                <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
-                </div>
-            </div>`);
+                    <div class="eb_uplGal_thumbO_img">
+                        <img src="${this.SpinImage}" data-src="/images/small/${o.FileRefId}.jpg" class="EbFupThumbLzy" style="display: block;">
+                        <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                        <div class="upload-time">${o.UploadTime}</div>
+                        <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
+                    </div>
+                </div>`);
     }
 
     galleryFullScreen(ev) {

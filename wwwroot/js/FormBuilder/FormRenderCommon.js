@@ -96,7 +96,7 @@
     };
 
     this.bindValidators = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
+            $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
     };
 
     this.setDisabledControls = function (flatControls) {
@@ -289,6 +289,7 @@
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
                                 depCtrl.justSetValue(ValueExpr_val);
                                 this.validateCtrl(depCtrl);
+                                EbBlink(depCtrl);
                             }
                             else {
                                 $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
@@ -481,7 +482,7 @@
                         id: ctrl.EbSid_CtxId + "-al",
                         head: "required",
                         body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
-                                    + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                            + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
                 }
@@ -513,12 +514,13 @@
     }.bind(this);
 
     this.GoToCtrl = function (ctrl) {
-        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        let $inp = ctrl.ObjType === "PowerSelect" ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
         this.activateTabHierarchy(ctrl);
         setTimeout(function () {
-            $ctrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            $inp[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
             setTimeout(function () {
-                $ctrl.select();
+                $inp.select();
+                EbBlink(ctrl);
             }, 400);
         }.bind(this), (ctrl.__noOfParentPanes || 0) * 400);
     };
@@ -605,6 +607,9 @@
 
         if (UniqObjs.length === 0 && !isSaveAfter)
             return true;
+
+        if (UniqObjs.length === 0 && isSaveAfter)
+            this.FO.saveForm_call();
 
         if (isFromCtrl) {
             hide_inp_loader($ctrl_, this.FO.$saveBtn);

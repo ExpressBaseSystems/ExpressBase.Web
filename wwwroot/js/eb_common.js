@@ -305,6 +305,11 @@ function EbMakeValid(contSel, _ctrlCont, ctrl) {
         $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
 }
 
+function EbBlink(ctrl) {
+    $(`#${ctrl.EbSid_CtxId}Wraper`).addClass("ebblink");
+    setTimeout(function () { $(`#${ctrl.EbSid_CtxId}Wraper`).removeClass("ebblink"); }, 700);
+}
+
 
 //function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
 //    let borderColor = "rgb(242 5 0)";

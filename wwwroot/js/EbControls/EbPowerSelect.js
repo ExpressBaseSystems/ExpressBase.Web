@@ -749,27 +749,6 @@ const EbPowerSelect = function (ctrl, options) {
         }
     };
 
-
-
-    //this.addColVals = function (val = this.lastAddedOrDeletedVal) {
-    //    $.each(this.ColNames, function (i, name) {
-    //        let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
-    //        let type = obj.Type;
-    //        let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
-    //        let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
-    //        let vmindex = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-    //        let cellData;
-    //        if (type === 5 || type === 11)
-    //            cellData = this.datatable.data.filter(ro => ro[vmindex] === val)[0][idx];// unformatted data for date or integer
-    //        else
-    //            cellData = this.datatable.Api.row($rowEl).data()[idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
-    //        if (type === 11 && cellData === null)///////////
-    //            cellData = "0";
-    //        let fval = EbConvertValue(cellData, type);
-    //        this.columnVals[name].push(fval);
-    //    }.bind(this));
-    //};
-
     this.initDataTable = function () {
         this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         let o = {};

@@ -289,6 +289,7 @@
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
                                 depCtrl.justSetValue(ValueExpr_val);
                                 this.validateCtrl(depCtrl);
+                                EbBlink(depCtrl);
                             }
                             else {
                                 $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

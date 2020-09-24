@@ -4,16 +4,12 @@
 @using System.Reflection;
 @using Newtonsoft.Json;
 @{
-    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
     ApiMetaResponse Meta = ViewBag.Meta;
 }
-@await Component.InvokeAsync("PageHeaderCommon")
 <style>
     .ApiMeta_wrpr {
-        min-height: 100vh;
         padding-top: 38px;
-        font-family: open sans;
-        background:white;
     }
     .metaRequest {
         margin-top: 30px;
@@ -45,7 +41,7 @@
     }
 </style>
 <script>$(".obj_dash_proimage_drp").remove();</script>
-<div class="row ApiMeta_wrpr">
+<div class="ApiMeta_wrpr">
     <div class="container">
         <div class="req_resp">
             <h3>@Meta.Name</h3>

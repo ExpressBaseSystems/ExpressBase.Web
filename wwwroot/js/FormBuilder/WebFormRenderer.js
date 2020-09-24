@@ -620,42 +620,51 @@ const WebFormRender = function (option) {
     //            return false;
     //        }
     //    }.bind(this));
-    //    return IsDGsHavePartialEntry;
+    //    return IsDGsHavePartialEntry;  
     //};
 
     this.IsDGsHaveActiveRows = function () {
         let hasActiveRows = false;
+        let dgb;
         $.each(this.DGBuilderObjs, function (k, DGB) {
             if (DGB.hasActiveRow()) {
+                dgb = DGB;
                 hasActiveRows = true;
                 return false;
             }
         }.bind(this));
-        return hasActiveRows;
+        return { DGB: dgb, hasActiveRows: hasActiveRows };
     };
 
     this.DGsB4Save = function () {
-        if (this.IsDGsHaveActiveRows()) {
+        let actRows = this.IsDGsHaveActiveRows();
+        if (actRows.hasActiveRows) {
             EbDialog("show", {
-                Message: "Please commit or delete uncommited rows",
-                //Buttons: {
-                //    "Yes": {
-                //        Background: "green",
-                //        Align: "right",
-                //        FontColor: "white;"
-                //    },
-                //    "No": {
-                //        Background: "red",
-                //        Align: "left",
-                //        FontColor: "white;"
-                //    }
-                //},
-                //CallBack: this.dialogboxAction.bind(this)
+                Message: `
+<div class='dg-commit-dilog-msgbox'>
+    Please confirm <span class="fa fa-check"></span> or delete <span class="fa fa-trash"></span>
+    <br>unconfirmed entry in : <span class="fa fa-table"></span>${actRows.DGB.ctrl.Label.trim() || actRows.DGB.ctrl.Name}
+</div>`,
+                hideClose: true,
+                $for: $('#layout_div'),
+                Buttons: {
+                    "OK": {
+                        Background: "green",
+                        Align: "right",
+                        FontColor: "white;"
+                    },
+                },
+                CallBack: this.dialogboxAction.bind(this, actRows)
             });
             return false;
         }
         else
             return true;
+    };
+
+    this.dialogboxAction = function (actRows, value) {
+        if (value === "OK")
+            this.FRC.GoToCtrl(actRows.DGB.objectMODEL[actRows.DGB.curRowId][0], actRows.DGB.ctrl);
     };
 
     this.DGsNewB4Save = function () {
@@ -687,10 +696,6 @@ const WebFormRender = function (option) {
         });
         return resp;
     };
-    //this.dialogboxAction = function (value) {
-    //    if (value === "Yes")
-    //        this.saveForm_call();
-    //};
 
     this.DGsB4SaveActions = function () {
         $.each(this.DGBuilderObjs, function (k, DGB) {

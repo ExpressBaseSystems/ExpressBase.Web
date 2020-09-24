@@ -804,9 +804,10 @@
         letter-spacing: 0.1em;
         font-weight: 500;
     }
-    .loc_switchModal_box .locs_foot .loc-switchbtn[disabled] {
-        cursor: no-drop !important;
-    }
+        .loc_switchModal_box .locs_foot .loc-switchbtn[disabled] {
+            cursor: no-drop !important;
+            background: #8a8a8a;
+        }
 }
 .loc_switchModal_fade {
     display: none;

@@ -551,8 +551,13 @@
     this.validateEmail = function () {
         clearTimeout(this.timer1);
         let val = this.txtEmail.val().trim();
-        if ((this.userinfo && this.userinfo["email"] === val) || val === '')
+        if ((this.userinfo && this.userinfo["email"] === val) || val === '') {
+            this.txtEmail.css("border-color", "rgb(204, 204, 204)");
+            this.txtEmail.prev().css("border-color", "rgb(204, 204, 204)");
+            this.spanEmail.html(``);
+            this.isEmailUnique = true;
             return;
+        }
         if (this.emailRegex.test(val)) {
             this.timer1 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtEmail, this.spanEmail, 'email', 1); }.bind(this), 1000);
         }
@@ -568,8 +573,13 @@
     this.validatePhone = function () {
         clearTimeout(this.timer2);
         let val = this.txtPhPrimary.val().trim();
-        if ((this.userinfo && this.userinfo["phnoprimary"] === val) || val === '')
+        if ((this.userinfo && this.userinfo["phnoprimary"] === val) || val === '') {
+            this.txtPhPrimary.css("border-color", "rgb(204, 204, 204)");
+            this.txtPhPrimary.prev().css("border-color", "rgb(204, 204, 204)");
+            this.spanPhone.html(``);
+            this.isPhoneUnique = true;
             return;
+        }
         this.timer2 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtPhPrimary, this.spanPhone, 'phone number', 2); }.bind(this), 1000);
     };
 

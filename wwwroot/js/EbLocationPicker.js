@@ -110,8 +110,11 @@
         if (items.length > 0) {
             $(".loc_switchModal_box .locs_bdy li").removeClass("active-loc");
             $(".loc_switchModal_box .locs_bdy li[data-id=" + items[0].id + "]").addClass("active-loc").parents("ul").addClass("show");
-            if (this.CurrentLoc != items[0].id) {
+            if (this.PrevLocation != items[0].id) {
                 $(SetLoc).prop("disabled", false);
+            }
+            else {
+                $(SetLoc).prop("disabled", true);
             }
             this.CurrentLoc = items[0].id;
             this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];

@@ -1712,6 +1712,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     this.login2FB = function () {
+        console.log("fblogin");
         this.FB.login(function (response) {
             if (response.authResponse) {
                 // statusChangeCallback(response);
@@ -2296,7 +2297,23 @@ this.botUserLogin = function () {
     if (!settings.UserType_Internal) {
         if (settings.Authoptions.Fblogin) {
             // This is called with the results from from FB.getLoginStatus().
+            statusChangeCallback = function (response) {
+                console.log('statusChangeCallback');
+                this.FB = FB;
 
+                if (response.status === 'connected') {
+                    this.FBLogined();
+                } else {
+                    this.FBNotLogined();
+                }
+            }.bind(this);
+
+            // This function is called when someone finishes with the Login
+            function checkLoginState() {
+                FB.getLoginStatus(function (response) {
+                    statusChangeCallback(response);
+                });
+            };
             window.fbAsyncInit = function () {
                 console.log("bot" + settings.Authoptions.FbAppVer);
                 FB.init({
@@ -2325,22 +2342,7 @@ this.botUserLogin = function () {
             }(document, 'script', 'facebook-jssdk'));
 
 
-            function statusChangeCallback(response) {
-                console.log('statusChangeCallback');
-                this.FB = FB;
-                //if (response.status === 'connected') {
-                //    this.FBLogined();
-                //} else {
-                //    this.FBNotLogined();
-                //}
-            }
-
-            // This function is called when someone finishes with the Login
-            function checkLoginState() {
-                FB.getLoginStatus(function (response) {
-                    statusChangeCallback(response);
-                });
-            };
+           
         }
     }
     if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {

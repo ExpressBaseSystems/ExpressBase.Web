@@ -6,7 +6,7 @@
             "Ok": {
                 Background: "#508bf9",
                 Align: "left",
-                FontColor:"white;"
+                FontColor: "white;"
             },
             "Cancel": {
                 Background: "#989898",
@@ -14,6 +14,7 @@
                 FontColor: "white"
             }
         },
+        hideClose: false,
         CallBack: function (name) { }
     }, options);
 
@@ -22,15 +23,15 @@
             $('body').append(`<div class="eb_dlgMsk"></div>
                                 <div class="eb_dlogBox_container" id="eb_dlogBox_container">
                                     <div class="cw">
-                                        <div class="_cls"><i class="fa fa-close"></i></div>
+                                        @close@
                                         <div class="msgbdy">${settings.Message}</div>
                                         <div class="cnfrmBox-btnc">
                                             ${generateBtn()}
                                         </div>
                                     </div>
-                                </div>`);
+                                </div>`.replace("@close@", settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>'));
         else {
-            $(`#eb_dlogBox_container .msgbdy`).text(settings.Message);
+            $(`#eb_dlogBox_container .msgbdy`).html(settings.Message);
             $(`#eb_dlogBox_container .cnfrmBox-btnc`).html(generateBtn());
         }
         $(".dlgBoxBtn-cust").off("click").on("click", function (ev) {
@@ -44,10 +45,14 @@
     function showMsg() {
         div();
         $(`#eb_dlogBox_container,.eb_dlgMsk`).fadeIn();
+        if (settings.$for)
+            settings.$for.css('filter', 'blur(3px)');
     };
 
     function hideMsg() {
         $(`#eb_dlogBox_container,.eb_dlgMsk`).fadeOut();
+        if (settings.$for)
+            settings.$for.css('filter', 'none');
     };
 
     function generateBtn() {

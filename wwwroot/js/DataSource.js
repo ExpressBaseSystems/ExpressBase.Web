@@ -199,6 +199,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 }
             }
             else {
+                this.EbObject.InputParams.$values = [];
                 this.isPw = false;
                 this.RunDs();
             }

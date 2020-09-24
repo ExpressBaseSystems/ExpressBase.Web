@@ -513,9 +513,9 @@
             $(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).hide();
     }.bind(this);
 
-    this.GoToCtrl = function (ctrl) {
+    this.GoToCtrl = function (ctrl, parent) {
         let $inp = ctrl.ObjType === "PowerSelect" ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
-        this.activateTabHierarchy(ctrl);
+        this.activateTabHierarchy(ctrl, parent);
         setTimeout(function () {
             $inp[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
             setTimeout(function () {
@@ -538,8 +538,8 @@
         this.GoToCtrl(ctrl);
     };
 
-    this.activateTabHierarchy = function (ctrl) {
-        let TabPaneParents = getParentsOfType('TabPane', ctrl, this.FO.FormObj);
+    this.activateTabHierarchy = function (ctrl, parent) {
+        let TabPaneParents = parent ? getParentsOfType('TabPane', parent, this.FO.FormObj) : getParentsOfType('TabPane', ctrl, this.FO.FormObj);
         ctrl.__noOfParentPanes = TabPaneParents.length;
         for (let i = TabPaneParents.length - 1; i >= 0; i--) {
             $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`).tab('show');
@@ -608,8 +608,10 @@
         if (UniqObjs.length === 0 && !isSaveAfter)
             return true;
 
-        if (UniqObjs.length === 0 && isSaveAfter)
+        if (UniqObjs.length === 0 && isSaveAfter) {
             this.FO.saveForm_call();
+            return true;
+        }
 
         if (isFromCtrl) {
             hide_inp_loader($ctrl_, this.FO.$saveBtn);

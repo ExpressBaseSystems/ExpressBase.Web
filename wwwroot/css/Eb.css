@@ -399,12 +399,16 @@
     align-items: stretch;
 }
 
-.ps-cont {
-    height: 100%;
-    margin-top: auto;
-    margin-bottom: auto;
-    position: relative;
+.ps-cont .eb-loader-prcbar, .ps-cont .eb-loader-prcbar:before {
+    height: 2px;
 }
+
+    .ps-cont {
+        height: 100%;
+        margin-top: auto;
+        margin-bottom: auto;
+        position: relative;
+    }
 
 .ps-pb {
     bottom: 0;

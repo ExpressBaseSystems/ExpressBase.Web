@@ -280,7 +280,7 @@
             }
         }
         else {
-            this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; font-weight: 300;"> Nothing to Display </div>`);
+            this.divSelectedDisplay.append(`<div class="nothing-text"> Nothing to display </div>`);
         }
     };
 
@@ -686,7 +686,7 @@
                             }
                         }
                         if (this.resultObject.length === 0)
-                            this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
+                            this.divSelectedDisplay.append(`<div class="nothing-text"> Nothing to display </div>`);
                     }
                 }.bind(this)
             });

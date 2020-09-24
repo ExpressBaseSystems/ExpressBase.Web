@@ -130,6 +130,8 @@ namespace ExpressBase.Web.Controllers
             ViewBag.UserData = fr.UserData;
             ViewBag.RefIds = fr.RefIds;
             ViewBag.Mode = mode;
+            ViewBag.Cultures = CultureHelper.Cultures;
+            ViewBag.TimeZones = CultureHelper.Timezones;
             return View();
         }
 
@@ -142,6 +144,8 @@ namespace ExpressBase.Web.Controllers
                 GetMyProfileResponse fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
                 ViewBag.UserData = fr.UserData;
                 ViewBag.Title = "My Profile";
+                ViewBag.Cultures = CultureHelper.Cultures;
+                ViewBag.TimeZones = CultureHelper.Timezones;
                 return View();
             }
             return Redirect("/StatusCode/404");
@@ -185,24 +189,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Culture = CultureHelper.CulturesAsJson;
             ViewBag.TimeZone = CultureHelper.TimezonesAsJson;
             ViewBag.MU_Mode = Mode == 0 ? 1 : Mode;
-
-            //var ip2 = HttpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
-            //string ip =  this.Request.HttpContext.Connection.RemoteIpAddress.ToString();
-            //string ip3 = GetRequestIP();
-
-            //HttpClient client = new HttpClient(); 
-            ////string result = await client.GetStringAsync("http://freegeoip.net/json");
-            //string result = await client.GetStringAsync("http://ip-api.com/json");
-            //IpApiResponse ooo = JsonConvert.DeserializeObject<IpApiResponse>(result);
-
-
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            //List<EbRole> Sysroles = new List<EbRole>();
-            //foreach (var role in Enum.GetValues(typeof(SystemRoles)))
-            //{
-            //	Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
-            //}
-            //ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
+            
             GetManageUserResponse fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, RqstMode = Mode, SolnId = ViewBag.cid });
             foreach (var role in Enum.GetValues(typeof(SystemRoles)))
             {
@@ -217,23 +204,17 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
             ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
             ViewBag.UserTypes = fr.UserTypes;
+
             List<string> UserStatus = new List<string>();
             foreach (var status in Enum.GetValues(typeof(EbUserStatus)))
-            {
                 UserStatus.Add(status.ToString());
-            }
             ViewBag.UserStatusList = UserStatus;
 
             if (Mode == 3)
-            {
                 itemid = Convert.ToInt32(fr.UserData["id"]);
-            }
 
             if (itemid == 1)
-            {
-                dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(AnonymousUserInfo);
-                ViewBag.U_Info = dict;
-            }
+                ViewBag.U_Info = JsonConvert.DeserializeObject<Dictionary<string, string>>(AnonymousUserInfo);
             else if (itemid > 1)
             {
                 if (fr.UserData.Count > 0)
@@ -256,6 +237,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.U_Groups = "";
             }
             ViewBag.itemid = itemid;
+
             //for showing login activity log
             LoginActivityResponse Lar = this.ServiceClient.Post<LoginActivityResponse>(new LoginActivityRequest
             {
@@ -264,7 +246,6 @@ namespace ExpressBase.Web.Controllers
                 TargetUser = itemid
             });
             ActivityLogin(Lar);
-
 
             return View();
         }
@@ -329,9 +310,19 @@ namespace ExpressBase.Web.Controllers
             return res.id;
         }
 
-        public bool isValidEmail(string reqEmail)
+        public bool IsUnique(string val, int id, int mode)
         {
-            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail.Trim().ToLower() });
+            //val = value to be checked
+            //id = check except this id// for edit purpose
+            //mode = to select the query// see ss
+            if (string.IsNullOrEmpty(val) || mode <= 0)
+                return false;
+            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest
+            {
+                Value = val,
+                Id = id,
+                QryId = (UniqueCheckQueryId)mode
+            });
             return temp.unrespose;
         }
 
@@ -533,8 +524,8 @@ namespace ExpressBase.Web.Controllers
                     return false;
                 if (Enum.TryParse(typeof(SystemRoles), reqRoleName.ToLower(), true, out object r))
                     return true;//role name is already exists
-                UniqueCheckResponse result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { roleName = reqRoleName });
-                return result.unrespose;
+                UniqueCheckResponse result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { Value = reqRoleName, QryId = UniqueCheckQueryId.eb_roles__role_name });
+                return !result.unrespose;///////////////////
             }
             catch (Exception ex)
             {

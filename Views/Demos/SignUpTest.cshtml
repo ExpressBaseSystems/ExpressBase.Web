@@ -59,8 +59,24 @@
         PayLoad: JSON.stringify(payload),
         Platform: 1,
         Handle: info.handle,
-        Tags: ["global:eb_pns_tag"],
+        Tags: ["global:eb_pns_tag_ExpressBase"],
         Vendor: 1
+    }
+
+    function GetSolutionData() {
+        $.ajax({
+            url: "api/get_solution_data",
+            type: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("bToken", getTok());
+                xhr.setRequestHeader("rToken", getrToken());
+            },
+            data: {
+                export: false
+            }
+        }).done(function (data) {
+            info.regid = data;
+        });
     }
 
     function CreateRegistration() {
@@ -70,9 +86,6 @@
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("bToken", getTok());
                 xhr.setRequestHeader("rToken", getrToken());
-            },
-            data: {
-                vendor_type: "1"
             }
         }).done(function (data) {
             info.regid = data;

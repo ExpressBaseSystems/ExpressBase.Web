@@ -41,6 +41,17 @@
 
     this.BeforeSave = this.beforeSave;
 
+
+    //functions to be executed before UpdateDashboard
+    this.BeforeUpdateDashboard = function () {
+        $.LoadingOverlay("show");
+    }.bind(this);
+
+    //functions to be executed after UpdateDashboard
+    this.afterUpdateDashboard = function () {
+        $.LoadingOverlay("hide");
+    }.bind(this);
+
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 
     this.$form = $("#" + this.formId);

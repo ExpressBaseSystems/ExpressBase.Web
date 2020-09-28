@@ -731,7 +731,7 @@ function getSingleColumn(obj) {
     let SingleColumn = {};
     SingleColumn.Name = obj.Name;
     SingleColumn.Type = obj.EbDbType;
-    SingleColumn.Value = "";
+    SingleColumn.Value = (obj.ObjType === "PowerSelect" && obj.__isFDcontrol) ? -1 : "";
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;

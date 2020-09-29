@@ -417,6 +417,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
             ViewBag.IpConsList = JsonConvert.SerializeObject(fr.IpConsList);
             ViewBag.DtConsList = JsonConvert.SerializeObject(fr.DtConsList);
+            ViewBag.UsersListAll = JsonConvert.SerializeObject(fr.UsersListAll);
             return View();
         }
 
@@ -476,14 +477,6 @@ namespace ExpressBase.Web.Controllers
             }
 
             return EbSerializers.Json_Serialize(_listObj);
-        }
-
-        public object GetUserDetails(string srchTxt)
-        {
-            if (!HasPemissionToSecurity())
-                return string.Empty;
-            GetUserDetailsResponse fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText = srchTxt, SolnId = ViewBag.cid });
-            return fr.UserList;
         }
 
         public string SaveRole(int _roleId, string _roleName, string _roleDesc, bool _isAnonymous, int _appId, string _permission, string _role2role, string _users, string _locations)

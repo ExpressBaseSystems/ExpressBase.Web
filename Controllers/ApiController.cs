@@ -30,11 +30,9 @@ namespace ExpressBase.Web.Controllers
 {
     public class ApiController : EbBaseIntApiController
     {
-        private readonly EbAzureNotificationClient nFClient;
-
         public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_client, _redis, _sfc, _auth)
         {
-            nFClient = new EbAzureNotificationClient();
+
         }
 
         [HttpGet("/api/{_name}/{_version}/{format?}")]
@@ -1081,27 +1079,47 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/notifications/get_registration_id")]
-        public async Task<IActionResult> GetNFRegistrationId(int vendor_type)
+        public async Task<IActionResult> GetNFRegistrationId()
         {
             if (Authenticated)
             {
-                EbAppVendors vendor = (EbAppVendors)vendor_type;
+                try
+                {
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
 
-                string id = await nFClient.CreateRegistrationId(vendor);
-                return Ok(id);
+                    string id = await client.CreateRegistrationId();
+
+                    Console.WriteLine("NF Registration created : " + id);
+
+                    return Ok(id);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
             return Unauthorized();
         }
 
         [HttpDelete("api/notifications/delete_registration")]
-        public async Task<IActionResult> DeleteNFRegistration(string regid, int vendor_type)
+        public async Task<IActionResult> DeleteNFRegistration(string regid)
         {
             if (Authenticated)
             {
-                EbAppVendors vendor = (EbAppVendors)vendor_type;
+                try
+                {
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
 
-                await nFClient.DeleteRegistration(regid, vendor);
-                return Ok(true);
+                    await client.DeleteRegistration(regid);
+
+                    Console.WriteLine("NF Registrationid '" + regid + "' deleted");
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
             return Unauthorized();
         }
@@ -1121,12 +1139,18 @@ namespace ExpressBase.Web.Controllers
 
                 DeviceRegistration reg = JsonConvert.DeserializeObject<DeviceRegistration>(device);
 
-                resp = await nFClient.Register(regid, reg);
-
-                if (resp == null)
+                try
                 {
-                    Console.WriteLine("push notification register request failed");
-                    resp = new EbNFRegisterResponse("Failed to register");
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
+
+                    resp = await client.Register(regid, reg);
+
+                    Console.WriteLine("NF Registrationid '" + regid + "' deleted");
+                }
+                catch (Exception ex)
+                {
+                    resp = new EbNFRegisterResponse(ex.Message);
+                    Console.WriteLine(ex.Message);
                 }
             }
             else
@@ -1144,7 +1168,7 @@ namespace ExpressBase.Web.Controllers
 
             if (Authenticated)
             {
-                if (payload == null)
+                if (string.IsNullOrEmpty(payload))
                 {
                     Console.WriteLine("push notification send payload empty");
                     return new EbNFResponse("Parameters empty");
@@ -1152,12 +1176,16 @@ namespace ExpressBase.Web.Controllers
 
                 EbNFRequest req = JsonConvert.DeserializeObject<EbNFRequest>(payload);
 
-                resp = await nFClient.Send(req);
-
-                if (resp == null)
+                try
                 {
-                    Console.WriteLine("failed to send notification");
-                    resp = new EbNFResponse("Failed to send");
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
+
+                    resp = await client.Send(req);
+                }
+                catch (Exception ex)
+                {
+                    resp = new EbNFResponse(ex.Message);
+                    Console.WriteLine(ex.Message);
                 }
             }
             else

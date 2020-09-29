@@ -1073,7 +1073,7 @@
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
             rendererName: this.Renderer.rendererName,
             renderer: this.Renderer,
-            scrollableContSelectors: this.scrollableContSelectors
+            scrollableContSelectors: this.Renderer.rendererName === "WebForm" ? this.scrollableContSelectors : []
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)

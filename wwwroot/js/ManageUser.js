@@ -468,7 +468,7 @@
         }
     };
 
-    this.chkItemCustomFunc = function (_this, e) {
+    this.chkItemCustomFunc = function (_this, $chkBox) {
         _this.dependentList = [];
 
         $.each($(this.divSearchResults).find('input'), function (i, ob) {
@@ -478,8 +478,8 @@
             }
         });
 
-        if ($(e.target).is(':checked')) {
-            _this.findDependentRoles($(e.target).attr("data-id"));
+        if ($chkBox.is(':checked')) {
+            _this.findDependentRoles($chkBox.attr("data-id"));
             var st = "";
             var itemid = [];
             $.each($(this.divSelectedDisplay).children(), function (i, ob) {
@@ -497,7 +497,7 @@
                     }
                 }
                 else {
-                    $(e.target).removeAttr("checked");
+                    $chkBox.removeAttr("checked");
                 }
             }
         }
@@ -920,11 +920,12 @@
 };
 
 //---------------------------------------------------------------USERGROUP-----------------------------------------------------------------------------
-var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
+var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList, userListAll) {
     this.menuBarObj = new EbHeader();
     this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;
+    this.usersListAll = userListAll;
     this.ipconsList = ipconsList;//Constraint
     this.dtconsList = dtconsList;//Constraint
     this.txtUserGroupName = $("#txtUserGroupName");
@@ -945,6 +946,11 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
         //------------------INIT USERS TILE------------------
         var initUserList = null;
         var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
+        var userListAll = [];
+        for (let i = 0; i < this.usersListAll.length; i++) {
+            let _name = this.usersListAll[i].Name || this.usersListAll[i].Email || this.usersListAll[i].Phone;
+            userListAll.push({ id: this.usersListAll[i].Id, name: _name, email: this.usersListAll[i].Email });
+        }
         if (parseInt(this.infoDict['id']) > 0) {
             //this.btnSaveAll.text("Update");
             this.menuBarObj.setName(this.infoDict['name']);
@@ -960,7 +966,7 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
             document.title = "New User Group";
         }
         if (this.usersTile === null) {
-            this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, null, metadata2, "../Security/GetUserDetails", null, this);
+            this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, userListAll, metadata2, null, null, this);
         }
         //-----------------------------------------------
 

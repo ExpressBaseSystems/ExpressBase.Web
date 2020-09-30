@@ -1,6 +1,7 @@
 ﻿.form-cont {
 	min-height: 100vh;
-	margin:0 -15px;
+	margin: 0 -15px;
+	background-color: #f2f2f2;
 }
 .white-tab {
 	width: 100%;

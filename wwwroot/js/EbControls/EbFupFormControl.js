@@ -360,8 +360,7 @@
                 return `<img src="/images/file-image.png" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
             else {
-                let fl = (o.hasOwnProperty('Recent')) ? o.FileB64 : `${src}.${exten}`;
-                return `<iframe src="${fl}" class="gallerythumbfile"></iframe>`;
+                return `<img src="/images/pdf-image.png" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
 
         }
@@ -758,6 +757,7 @@
     }
 
     outerHtml() {
+        let fileType = (this.Options.Type == "image") ? "image/*" : "";
         let isVisible = (this.Options.DisableUpload) ? "none" : "block";
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
                                                      <div class="FUP_Head_W" style="display:${isVisible}">
@@ -790,7 +790,7 @@
                                   </div>
                                   <div class="modal-footer"> 
                                         <button class="modal-ok pull-right" id="${this.Options.Container}-upl-ok">Ok</button>
-                                        <input type="file" id="${this.Options.Container}-file-input" style="display:none;" ${this.Multiple}/>
+                                        <input type="file" accept="${fileType}" id="${this.Options.Container}-file-input" style="display:none;" ${this.Multiple}/>
                                         <button class="browse-btn" onclick="$('#${this.Options.Container}-file-input').click();">
                                             <i class="fa fa-folder-open-o"></i> Browse
                                         </button>

@@ -179,17 +179,19 @@
                 let taghtml = "";
                 if (renderFiles[i].Meta !== null) {
                     if (renderFiles[i].Meta.hasOwnProperty('Tags')) {
-                        let filetags = renderFiles[i].Meta.Tags[0].split(',');
-                        $.each(filetags, function (j, tagval) {
-                            if (!this.TagList[tagval]) {
-                                this.TagList[tagval] = [renderFiles[i]];
-                                $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
-                            }
-                            else {
-                                this.TagList[tagval].push(renderFiles[i]);
-                            }
+                        if (renderFiles[i].Meta.Tags.length > 0) {
+                            let filetags = renderFiles[i].Meta.Tags[0].split(',');
+                            $.each(filetags, function (j, tagval) {
+                                if (!this.TagList[tagval]) {
+                                    this.TagList[tagval] = [renderFiles[i]];
+                                    $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
+                                }
+                                else {
+                                    this.TagList[tagval].push(renderFiles[i]);
+                                }
 
-                        }.bind(this));
+                            }.bind(this));
+                        }
                     }
                 }
 
@@ -312,12 +314,18 @@
                 src = o.FileB64;
             }
             return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
-                <div class="eb_uplGal_thumbO_img">
-                    ${this.getThumbType(o, src)}
-                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
-                <i class="fa fa-info-circle filesave_info" data-toggle="tooltip" data-placement="bottom" title="will be saved only if form is saved " ></i>
-                </div>
-            </div>`);
+                        <div class="eb_uplGal_thumbO_img">
+                            ${this.getThumbType(o, src)}
+                                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                     <i class="fa fa-info-circle filesave_info" data-toggle="tooltip" data-placement="bottom" title="will be saved only if form is saved " ></i>
+                                </div>
+                                <div class="eb_uplGal_thumb_loader">
+                                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div>
+                                      <div></div><div></div><div></div><div></div><div>
+                                      </div><div></div><div></div></div>
+                                </div>
+                         </div>
+                    </div>`);
         }
         else {
             if (o.FileCategory === 0) {
@@ -327,13 +335,19 @@
                 src = `/images/small/${o.FileRefId}.jpg`;
             }
             return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
-                <div class="eb_uplGal_thumbO_img">
-                    ${this.getThumbType(o, src)}
-                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
-                <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
-                </div>
-                <div class="select-fade"></div>
-            </div>`);
+                        <div class="eb_uplGal_thumbO_img">
+                            ${this.getThumbType(o, src)}
+                            <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
+                            </div>
+                            <div class="select-fade"></div>
+                            <div class="eb_uplGal_thumb_loader">
+                                <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div>
+                                  <div></div><div></div><div></div><div></div><div>
+                                  </div><div></div><div></div></div>
+                            </div>
+                          </div>
+                      </div>`);
         }
 
     }
@@ -728,6 +742,7 @@
                 var k = this.Gallery.find(`[filename_RE='${this.Files[i].name}']`)
                 if (k.length > 0) {
                     k.attr("original_refid", refid);
+                    k.attr("id", `prev-thumb${refid}`);
                 }
                 if (this.Files[i].name === thumb.attr("exact")) {
                     this.uploadSuccess(refid);
@@ -923,11 +938,22 @@
     }
 
     contextMcallback(eType, selector, action, originalEvent) {
-        let refids = [eval($(selector.$trigger).attr("filref"))];
-        this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
-            if (!refids.Contains(eval($(o).attr("refid"))))
-                refids.push(eval($(o).attr("refid")));
-        }.bind(this));
+        let refids = [];
+        if ($(selector.$trigger).attr("recent") == "true") {            
+            var attr = $(selector.$trigger).attr('original_refid');
+            if (typeof attr !== typeof undefined && attr !== false) {
+                refids = [eval($(selector.$trigger).attr("original_refid"))];
+            }
+            
+        }
+        else {
+
+             refids = [eval($(selector.$trigger).attr("filref"))];
+            this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
+                if (!refids.Contains(eval($(o).attr("refid"))))
+                    refids.push(eval($(o).attr("refid")));
+            }.bind(this));
+        }
         this.changeCatAjax(eType, refids);
     }
 
@@ -944,9 +970,17 @@
             contentType: false,
             processData: false,
             beforeSend: function (evt) {
-
+                for (var i = 0; i < fileref.length; i++) {
+                    var thumb = this.Gallery.find(`#prev-thumb${fileref[i]}`);
+                    thumb.find(".eb_uplGal_thumb_loader").show(); 
+                }
+                
             }.bind(this)
         }).done(function (status) {
+            for (var i = 0; i < fileref.length; i++) {
+                var thumb = this.Gallery.find(`#prev-thumb${fileref[i]}`);
+                thumb.find(".eb_uplGal_thumb_loader").hide();
+            }
             if (status)
                 this.redrawCategry(fileref, cat);
         }.bind(this));
@@ -954,7 +988,11 @@
     redrawCategry(fileref, cat) {
         let $t;
         for (let i = 0; i < fileref.length; i++) {
-            $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).append(this.Gallery.find(`div[filref="${fileref[i]}"]`));
+            var thump = this.Gallery.find(`div[filref="${fileref[i]}"]`);
+            if (thump.length === 0) {
+                thump = this.Gallery.find(`div[original_refid="${fileref[i]}"]`);
+            }
+            $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).append(thump);
             $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
         }
@@ -973,6 +1011,11 @@
                     name: "Delete",
                     icon: "fa-trash",
                     callback: this.contextM_REcallback.bind(this)
+                },
+                "changeCategory": {
+                    name: "Move to Category",
+                    icon: "fa-list",
+                    items: this.getCateryLinks()
                 }
             }
         });

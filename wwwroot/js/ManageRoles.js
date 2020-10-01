@@ -535,7 +535,7 @@
         if (this.roleId > 0) {
             initUserList = [];
             for (let i = 0; i < this.usersList.length; i++) {
-                let _name = this.usersListAll[i].Name || this.usersListAll[i].Email || this.usersListAll[i].Phone;
+                let _name = this.usersList[i].Name || this.usersList[i].Email || this.usersList[i].Phone;
                 initUserList.push({ id: this.usersList[i].Id, name: _name, email: this.usersList[i].Email });
             }
         }

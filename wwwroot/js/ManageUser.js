@@ -286,9 +286,9 @@
             this.selectTimeZone.val(this.Preference.TimeZone);
         }
         else {
-            this.selectLocale.val("en-IN");
+            this.selectLocale.val(ebcontext.user?.Preference?.Locale || "en-IN");
             this.selectLocaleChangeAction();
-            this.selectTimeZone.val("(UTC) Coordinated Universal Time");
+            this.selectTimeZone.val(ebcontext.user?.Preference?.TimeZone || "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi");
         }
     };
 
@@ -957,7 +957,8 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList, userLis
             document.title = "Edit User Group - " + this.infoDict['name'];
             initUserList = [];
             for (i = 0; i < this.usersList.length; i++) {
-                initUserList.push({ id: this.usersList[i].Id, name: this.usersList[i].Name, email: this.usersList[i].Email });
+                let _name = this.usersList[i].Name || this.usersList[i].Email || this.usersList[i].Phone;
+                initUserList.push({ id: this.usersList[i].Id, name: _name, email: this.usersList[i].Email });
             }
         }
         else {

@@ -475,15 +475,15 @@
     position: absolute;
     background: #0046bb;
     height: 30px;
-    width: 30px;
-    border-radius: 50%;
+    border-radius: 15px;
     text-align: center;
     color: white;
-    padding: 6px;
-    right: 10px;
+    padding: 6px 10px;
     bottom: 10px;
-    font-size: 14px;
-    display:none;
+    font-size: 13px;
+    display: none;
+    left: 50%;
+    transform: translateX(-50%);
 }
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {

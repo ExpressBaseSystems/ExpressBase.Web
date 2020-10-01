@@ -37,7 +37,7 @@
         for (let i = 0; i < scrollableContSelectors.length; i++) {
             let $containers = $(el).parents(scrollableContSelectors[i]).filter(':not([onscroll-hide-info="true"])');
             $containers.scroll(function (event) {
-               $(event.target).find('.label-infoCont:focus').blur();
+                $(event.target).find('.label-infoCont:focus').blur();
             }.bind(this));
             $containers.attr('onscroll-hide-info', 'true');
         }
@@ -169,6 +169,49 @@
 
         }.bind(this, ctrlOpts.DpControlsList);
 
+        imgup.contextM_REcallback = function (arr, name, obj) {
+            let refids = obj.$trigger.attr('original_refid');
+            let filref = [];
+            filref.push(obj.$trigger.attr('filref'));
+
+            if (name === "delete") {
+                EbDialog("show",
+                    {
+                        Message: "Are you sure? Changes Affect only if Form is Saved.",
+                        Buttons: {
+                            "Yes": {
+                                Background: "green",
+                                Align: "left",
+                                FontColor: "white;"
+                            },
+                            "No": {
+                                Background: "violet",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            if (name === "Yes") {
+                                let initLen = uploadedFileRefList[ctrl.Name].length;
+                                for (let i = 0; i < refids.length; i++) {
+                                    let index = uploadedFileRefList[ctrl.Name].indexOf(eval(refids));
+                                    if (index !== -1) {
+                                        uploadedFileRefList[ctrl.Name].splice(index, 1);
+                                    }
+                                }
+                                if (initLen > uploadedFileRefList[ctrl.Name].length) {
+                                    obj.$trigger.remove();
+                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                }
+                                imgup.customMenuCompleted("Delete", filref);
+
+
+                            }
+                        }
+                    });
+            }
+
+        }.bind(this, ctrlOpts.DpControlsList);
     };
 
     //edit by amal for signature pad
@@ -1275,12 +1318,12 @@
 
         ctrl.setValue = function () {
             if (!this.DataVals)
-                    return;
+                return;
             this._finalObj = JSON.parse(this.DataVals.F);
             let _d = this._finalObj;
             let $img = $('#' + this.EbSid_CtxId + '_usrimg');
-            if (_d['map_id']) { 
-				$img.off('error').on('error', function(){$(this).attr('src', '/images/nulldp.png');}).attr('src','/images/dp/'+ _d['map_id'] +'.png');
+            if (_d['map_id']) {
+                $img.off('error').on('error', function () { $(this).attr('src', '/images/nulldp.png'); }).attr('src', '/images/dp/' + _d['map_id'] + '.png');
                 let dispText = _d['map_fullname'] ? _d['map_fullname'] : (_d['map_email'] ? _d['map_email'] : (_d['map_phprimary'] ? _d['map_phprimary'] : ''));
                 $('#' + this.EbSid_CtxId).text(dispText);
                 let popoverText = 'Name: ' + (_d['map_fullname'] ? _d['map_fullname'] : '---') + '<br/>';
@@ -1291,7 +1334,7 @@
                 $img.attr('data-content', popoverText);
             }
             else {
-                $img.attr('src','/images/nulldp.png');
+                $img.attr('src', '/images/nulldp.png');
                 $('#' + this.EbSid_CtxId).text('---');
             }
         }.bind(ctrl);
@@ -1579,7 +1622,7 @@
     //    var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
     //                    <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
     //                       <div class='vertical-align_tlbr' >
-                                
+
     //                                <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Mark">
     //                                    <i class="fa fa-object-ungroup "></i>   
     //                                </div>

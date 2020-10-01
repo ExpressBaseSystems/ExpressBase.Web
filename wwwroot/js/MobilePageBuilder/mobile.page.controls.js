@@ -4,7 +4,7 @@
 
     this.initForm = function (o) {
 
-        $(".emulator_f").css("display", "flex");
+        $(`#eb_mobpage_wraper${this.Root.Conf.TabNum} .emulator_f`).text(o.SubmitButtonText || "Save").css("display", "flex");
 
         this.Root.makeDropable(o.EbSid, "EbMobileForm");
         this.Root.makeSortable(o.EbSid);
@@ -18,7 +18,7 @@
 
     this.initVisualization = function (o) {
 
-        $(".emulator_f").css("display", "none");
+        $(`#eb_mobpage_wraper${this.Root.Conf.TabNum} .emulator_f`).css("display", "none");
 
         let tobj = this.Root.makeElement("EbMobileTableLayout", "TableLayout");
         $(`#${o.EbSid} .eb_mob_container_inner .vis-table-container`).append(tobj.$Control.outerHTML());

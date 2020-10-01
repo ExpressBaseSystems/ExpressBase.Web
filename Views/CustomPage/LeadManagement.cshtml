@@ -991,7 +991,7 @@
     var imgup = new EbFileUpload({
         Type: "image",
         PreviewWraper: "#divAllImg1",
-        Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"],
+        Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "PRP1", "PRP2", "PRP3", "PRP4", "PRP5", "PRP6", "PRP7", "PRP8", "PRP9", "PRP10"],
         FilesUrl: "/FilesOf/@ViewBag.AccId",
         //Context:"",
         Toggle: "#btnUploadImg",
@@ -999,7 +999,7 @@
         SolutionId: "@ViewBag.SolnId",
         Container: "uploadtest",
         Multiple: true,
-        ServerEventUrl: 'https://se.eb-test.cloud',
+        ServerEventUrl: ebcontext.se_url,
         EnableTag: true,
         EnableCrop: true,
         MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes

@@ -6,7 +6,7 @@
     this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
-    this.initControls = new InitControls(this);
+    this.initControls = new InitControls(this.formRenderer);
     this.Mode = options.Mode;
     this.RowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
     this.DataMODEL = options.isDynamic ? [] : this.formRenderer.DataMODEL[this.ctrl.TableName];

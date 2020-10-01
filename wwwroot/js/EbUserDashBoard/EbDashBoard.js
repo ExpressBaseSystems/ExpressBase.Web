@@ -1481,7 +1481,9 @@ var DashBoardWrapper = function (options) {
         this.Copied_DL_id = opt.$trigger[0].parentNode.id;
     };
     this.pasteDataLabelStyle = function (key, opt, e) {
-        this.Current_DL = this.Procs[opt.$trigger[0].parentNode.id];
+        this.CurrentTile = opt.$trigger.closest(".grid-stack-item-content")[0].id;
+        this.CurrentDataLabelId = opt.$trigger.closest(".display-block")[0].id;
+        this.Current_DL = this.Procs[this.CurrentDataLabelId];
         this.Current_DL_id = opt.$trigger[0].parentNode.id;
         this.Current_DL.ChangeTextPositon = this.Copied_DL_Style.ChangeTextPositon;
         this.Current_DL.StaticLabelPosition = this.Copied_DL_Style.StaticLabelPosition;
@@ -1522,6 +1524,10 @@ var DashBoardWrapper = function (options) {
                 }
             }
         }
+        this.Procs[this.CurrentDataLabelId] = this.Current_DL;
+        let htm = this.MakeDashboardLabel(this.Current_DL);
+        $(`[data-id="${this.CurrentTile}"]`).empty().append(htm);
+        EbDataLabelFn(this.Current_DL, this.CurrentTile)
 
     };
     this.DeleteGauge = function () {

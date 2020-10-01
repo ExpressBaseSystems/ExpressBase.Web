@@ -7,7 +7,7 @@
 
 var a___MT = 0;
 
-var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn, initCompleteCallback) {
+const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn, initCompleteCallback) {
     try {
         console.log("Eb_FilterDialogRender ....");
         this.FormObj = fObj;
@@ -92,6 +92,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             }];
             for (let i = 0; i < this.FormObj.Controls.$values.length; i++) {
                 let ctrl = this.FormObj.Controls.$values[i];
+                ctrl.__isFDcontrol = true;
                 this.DataMODEL[this.FormObj.TableName][0].Columns.push(getSingleColumn(ctrl));
             }
         };

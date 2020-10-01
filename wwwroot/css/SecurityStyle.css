@@ -1,31 +1,11 @@
-﻿/*----------------------------------USERS---------------------------------------*/
-#divVisibility .toggle {
-    width: 100px !important;
-    height: 32px !important;
-}
-.user-tab-paneInner {
-    display: flex;
-    flex-flow: column;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.outer-section-createuser {
-    height: 100vh;
-    font-weight: 300;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding-bottom: 15px;
-}
+﻿/*----------------------------------TILE SETUP---------------------------------------*/
 .md-search-box button {
     background: white;
     border: 1px solid #ccc;
 }
-.md-search-box input{
-    border-left:none;
-}
-.searchRsulsItemsDiv:hover {
-    background-color: #eee;
+
+.md-search-box input {
+    border-left: none;
 }
 
 .mydiv1 {
@@ -37,8 +17,9 @@
     margin-top: 15px;
     box-shadow: 2px 2px 8px #ccc;
 }
-    .mydiv1 b{
-        font-weight:400;
+
+    .mydiv1 b {
+        font-weight: 400;
     }
 
     .mydiv1:hover {
@@ -49,9 +30,7 @@
         font-size: 16px;
         color: blue;
     }
-.user-status-div {
-    margin-top:20px;
-}
+
 .icondiv1 {
     display: inline-block;
     font-size: xx-large;
@@ -73,12 +52,12 @@
     vertical-align: top;
 }
 
-.tilediv1 {
+.ts-body-disp {
     display: flex;
     flex-flow: row wrap;
 }
 
-.nothing-text {
+.ts-body-nothing-text {
     text-align: center;
     height: 100%;
     display: flex;
@@ -91,23 +70,95 @@
     padding-top: 120px;
 }
 
-.roles-tab-header{
-    display:flex;
+.ts-head-div {
+    display: flex;
 }
-.subHeading {
+    .ts-head-div > .ts-head-text {
+        font-size: 18px;
+        color: #585555;
+    }
+    .ts-head-div .ts-head-span {
+        top: 0;
+        right: 16px;
+        pointer-events: all;
+    }
+    .ts-head-div .ts-head-add-btn {
+        background: #4987fb;
+        color: #fff;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 3px;
+        -webkit-transition: .2s;
+        transition: .2s;
+        -webkit-user-select: none;
+        user-select: none;
+        letter-spacing: 0.5px;
+        font-weight: 400;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+.ts-body-div .modal-body {
+    padding-bottom: 0px;
+    height: calc(100vh - 180px);
+}
+.ts-body-md-msg {
+    padding-top: calc((100vh/2) - 150px);
     font-size: 18px;
-    color: #585555;
+    text-align: center;
+    color: #bbb;
+    display: none;
 }
-.eb-usrgrp-pane #divIp, .eb-usrgrp-pane #divTime {
+.ts-body-md-loader {
+    margin-left: 45%;
+    margin-top: 25%;
+    display: none;
+}
+.ts-body-md-rslt {
+    height: calc(100vh - 246px);
+    overflow-y: auto;
+}
+.ts-body-md-pageinfo {
+    color: #aaa;
+    font-size: 12px;
+    text-align: right;
+    font-style: italic;
+}
+
+.ts-body-md-srch-rslt {
+    margin-left: 5px;
+    margin-right: 5px;
+    display: none;
+    cursor: pointer;
+    /*pointer-events: none;
+    opacity: 0.5;*/
+}
+    .ts-body-md-srch-rslt:hover {
+        background-color: #eee;
+    }
+
+
+/*---------------------------------CREATE USER-------------------------------------*/
+#divVisibility .toggle {
+    width: 100px !important;
+    height: 32px !important;
+}
+
+.user-tab-paneInner {
     display: flex;
     flex-flow: column;
-    margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 10px;
-    background: #f2f2f2;
 }
-/*---------------------------------CREATE USER-------------------------------------*/
+
+.user-status-div {
+    margin-top: 20px;
+}
+
 .mu-parent-div {
     padding-bottom: 30px;
     display: flex;
@@ -198,9 +249,6 @@
     .eb-perm-wrapper .dataTable tr:last-child {
         border-bottom: 1px solid #ccc;
     }
-.searchRsulsItemsDiv:hover {
-    background-color: #eee;
-}
 
 .loc-all-select {
     width: 100px;
@@ -281,6 +329,19 @@
     background-color: #fff !important;
 }
 
+.nothing-text {
+    text-align: center;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #bbb;
+    font-weight: 300;
+    width: 100%;
+    padding-top: 120px;
+}
+
 
 /*----------------------------------USER GROUP---------------------------------------*/
 
@@ -293,6 +354,16 @@
     display: flex;
     flex-flow: column;
 }
+
+    .eb-usrgrp-pane #divIp, .eb-usrgrp-pane #divTime {
+        display: flex;
+        flex-flow: column;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 10px;
+        background: #f2f2f2;
+    }
 
 .mug-parent-div .tab-pane {
     

@@ -332,7 +332,23 @@
                     root.pg.HideProperty('LinkFormParameters');
                 }
             },
-        }
+        },
+        "EbMobileRating": {
+            propertyChanged: function () {
+                let htm = "";
+                for (i = 0; i < this.MaxValue; i++)
+                    htm += "<span class='fa fa-star-o wrd_spacing'></span>";
+                $(`#${this.EbSid} .eb_ctrlhtml`).empty().append(htm);
+                $(`#${this.EbSid} .eb_ctrlhtml .wrd_spacing`).css("padding-right", this.Spacing);
+            },
+            trigger: function () {
+                let htm = "";
+                for (i = 0; i < this.MaxValue; i++)
+                    htm += "<span class='fa fa-star-o wrd_spacing'></span>"
+                $(`#${this.EbSid} .eb_ctrlhtml`).empty().append(htm);
+                $(`#${this.EbSid} .eb_ctrlhtml .wrd_spacing`).css("padding-right", this.Spacing);
+            },
+        },
     };
 })(jQuery);
 

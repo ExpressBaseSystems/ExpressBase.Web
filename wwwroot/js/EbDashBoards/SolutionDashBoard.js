@@ -72,6 +72,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.IntegrationSubmit = function (e) {
+        $("#eb_common_loader").EbLoader("show");
         //e.preventDefault();
         //var postData = $(e.target).serializeArray();
         $.ajax({
@@ -83,6 +84,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 //$("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#eb_common_loader").EbLoader("hide");
             var temp = JSON.parse(data);
             if (temp.ResponseStatus) {
                 EbMessage("show", { Message: "Integreation Change Not Complete", Background: "red" });
@@ -174,6 +176,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.IntergrationConfigDelete = function (Id) {
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/IntegrateConfDelete",
@@ -183,6 +186,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#eb_common_loader").EbLoader("hide");
             preventContextMenu = 0;
             $("#Integration_loder").EbLoader("hide");
             if (data) {
@@ -195,6 +199,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.IntergrationDelete = function (Id) {
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/IntegrateDelete",
@@ -204,6 +209,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#eb_common_loader").EbLoader("hide");
             preventContextMenu = 0;
             $("#Integration_loder").EbLoader("hide");
             if (data) {
@@ -244,6 +250,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.dbconnectionsubmit = function (e) {
+
         e.preventDefault();
         postData = $(e.target).serializeArray();
         var oconfid = $(e.target).find("#IntConfId").val();
@@ -460,7 +467,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     //        $("#MyIntegration").trigger("click");
     //    }.bind(this));
     //}; 
-    this.AzureNotiConOnSubmit = function (e) {
+    this.MobileConfigConnectionSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
         $.ajax({
@@ -468,15 +475,13 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             url: "../ConnectionManager/AddAzureNotificationHub",
             data: postData,
             beforeSend: function () {
-                $("#Map_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+                $("#MobileConfig_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
             this.Conf_obj_update(JSON.parse(data));
-            $("#Map_loader").EbLoader("hide");
+            $("#MobileConfig_loader").EbLoader("hide");
+            $("#MobileConfigEdit").modal("toggle");
             EbMessage("show", { Message: "Connection Added Successfully" });
-            $("#MapConnectionEdit").modal("toggle");
-            $("#IntegrationsCall").trigger("click");
-            $("#MyIntegration").trigger("click");
         }.bind(this));
     };
 
@@ -1315,6 +1320,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                     postData.Preference = "OTHER";
                                     this.IntegrationSubmit();
                                 }
+                                else if (key === "ERROR") {
+                                    alert("reload the page")
+                                }
                                 else {
                                     EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
                                 }
@@ -1430,14 +1438,17 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 }
                 else if ($trigger.hasClass('MobileConfigedit')) {
                     if (this.Connections.Integrations.MOBILECONFIG != undefined && this.Connections.Integrations.MOBILECONFIG.length >= 1) {
-                            options.items.Delete = { name: "Remove" },
-                            options.items.Edit = { name: "Edit" };
-                    }
-                    else {
-                    options.items.MOBILECONFIG = { name: "Configure" },
                         options.items.Delete = { name: "Remove" },
                             options.items.Edit = { name: "Edit" };
                     }
+                    else {
+                        options.items.MOBILECONFIG = { name: "Configure" },
+                            options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                }
+                else {
+                    options.items.ERROR = { name: "Refresh Page" }
                 }
                 if (preventContextMenu == 0)
                     return options;
@@ -1552,6 +1563,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 }.bind(this)
                             });
                         }
+                        else if (key == 'ERROR') {
+                            location.reload();
+                        }
                     }.bind(this),
                     items: {}
                 };
@@ -1628,7 +1642,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 }
                 else if ($trigger.hasClass('MOBILECONFIGedit')) {
                     options.items.Remove = { name: "Unset" };
-                } 
+                }
+                else {
+                    options.items.ERROR = { name: "Refresh Page" };
+                }
                 if (preventContextMenu === 0)
                     return options;
             }.bind(this)
@@ -1904,6 +1921,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_Map_all();
         this.integration_IChat_all();
         this.integration_AUTHENTICATION_all();
+        this.integration_MobileConf_all();
     }.bind(this);
 
     this.db_modal_show_append = function (DatabaseName) {
@@ -2071,7 +2089,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         let html = [];
         var count = 0;
         Integrations = this.Connections.Integrations["MOBILECONFIG"];
-        $("#MOBILECONFIG-All").empty();
+        $("#MOBILECONFIG-all").empty();
         $.each(Integrations, function (i, rows) {
             html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
                                 <div class="integrationContainer_Image">
@@ -2136,7 +2154,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
         //$("#OSMConnectionSubmit").on("submit", this.OSMOnSubmit.bind(this));
-        $("#MobileConfigSubmit").on("submit", this.AzureNotiConOnSubmit.bind(this));
+        $("#MobileConfigSubmit").on("submit", this.MobileConfigConnectionSubmit.bind(this));
         $("#GoogleDriveConnectionSubmit").on("submit", this.GoogleDriveOnSubmit.bind(this));
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));

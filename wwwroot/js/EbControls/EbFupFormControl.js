@@ -146,7 +146,7 @@
         let html = new Array();
         if ('Categories' in this.Options) {
             for (let i = 0; i < this.Options.Categories.length; i++) {
-                html.push(`<div class="ClpsGalItem_Sgl" Catogory="${this.Options.Categories[i]}" alt="${this.Options.Categories[i]}">
+                html.push(`<div class="ClpsGalItem_Sgl" Catogory="${this.Options.Categories[i].trim()}" alt="${this.Options.Categories[i].trim()}">
                             <div class="Col_head collapsed" data-toggle="collapse" data-target="#${this.Options.Container}_G_${this.Options.Categories[i].replace(/\s/g, "")}">${this.Options.Categories[i].toUpperCase()}
                             <span class="FcnT">(0)</span></div>
                             <div class="Col_apndBody collapse" id="${this.Options.Container}_G_${this.Options.Categories[i].replace(/\s/g, "")}">
@@ -928,8 +928,8 @@
     getCateryLinks() {
         let o = {};
         for (let i = 0; i < this.Options.Categories.length; i++) {
-            o[this.Options.Categories[i]] = {
-                name: this.Options.Categories[i],
+            o[this.Options.Categories[i].trim()] = {
+                name: this.Options.Categories[i].trim(),
                 icon: "",
                 callback: this.contextMcallback.bind(this)
             };

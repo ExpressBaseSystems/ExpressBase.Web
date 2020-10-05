@@ -1303,6 +1303,7 @@ body {
         position: relative;
         padding-left: 14vh;
         padding-right: 3vh;
+        overflow: hidden;
         -webkit-box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
         -moz-box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
         box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
@@ -1384,13 +1385,14 @@ body {
     .label-cont .footer-inner i {
         font-size: 18px;
         font-weight: 200;
-        padding: 2%;
+        padding: 5px 2% 0px 0px;
         padding-left: 2vh;
     }
 
     .label-cont .footer-inner label {
         font-size: 18px;
         font-weight: 200;
+        padding-top: 2px;
     }
 /*Style 2*/
 
@@ -1459,7 +1461,6 @@ body {
     padding: 2.4rem 2rem;
     height: 100%;
     max-width: 10rem;
-    max-height: 10rem;
 }
 
     .grid-stack .label2-cont .card-icon i {
@@ -1468,10 +1469,7 @@ body {
 
 .label2-cont .label-footer {
     width: 100%;
-    position: absolute;
     border-top: solid 1px #e3e3e3;
-    top: 74%;
-    left: 0px;
 }
 
 .label2-cont .footer-inner {
@@ -1481,24 +1479,28 @@ body {
     .label2-cont .footer-inner i {
         font-size: 18px;
         font-weight: 200;
-        padding: 2%;
+        padding: 5px 2% 0px 0px;
         padding-left: 2vh;
     }
 
     .label2-cont .footer-inner label {
         font-size: 18px;
         font-weight: 200;
+        padding-top: 2px;
     }
 
 .label2-cont .lb2-data {
     padding-left: 2rem;
     padding-right: 2rem;
     width: 100%;
+    overflow: hidden;
 }
+    .label2-cont .lb2-data .lb3-data .lbl {
+        margin: 0px 1rem;
+    }
 
 /*Style 3*/
-
-.label3-cont {
+    .label3-cont {
     text-align: center;
     height: 100%;
     width: 100%;
@@ -1563,7 +1565,6 @@ body {
     padding: 2.4rem 2rem;
     height: 100%;
     max-width: 10rem;
-    max-height: 10rem;
 }
 
     .grid-stack .label3-cont .card-icon i {
@@ -1572,10 +1573,7 @@ body {
 
 .label3-cont .label-footer {
     width: 100%;
-    position: absolute;
     border-top: solid 1px #e3e3e3;
-    top: 74%;
-    left: 0px;
 }
 
 .label3-cont .footer-inner {
@@ -1585,7 +1583,7 @@ body {
     .label3-cont .footer-inner i {
         font-size: 18px;
         font-weight: 200;
-        padding: 2%;
+        padding: 5px 2% 0px 0px;
         padding-left: 2vh;
     }
 
@@ -1595,9 +1593,13 @@ body {
     }
 
 .label3-cont .lb3-data {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    /*padding-left: 2rem;*/
+    /*padding-right: 2rem;*/
     width: 100%;
+    overflow: hidden;
+}
+.label3-cont .lb3-data .lbl {
+    margin: 0px 1rem;
 }
 
 /*Style 4*/
@@ -1664,7 +1666,6 @@ body {
     padding: 1.4rem 2rem;
     height: 7.2rem;
     max-width: 10rem;
-    max-height: 10rem;
     margin: 1rem 0rem 0rem 1rem;
 }
 
@@ -1674,10 +1675,7 @@ body {
 
 .label4-cont .label-footer {
     width: 100%;
-    position: absolute;
     border-top: solid 1px #e3e3e3;
-    top: 74%;
-    left: 0px;
 }
 
 .label4-cont .footer-inner {
@@ -1687,7 +1685,7 @@ body {
     .label4-cont .footer-inner i {
         font-size: 18px;
         font-weight: 200;
-        padding: 2%;
+        padding: 5px 2% 0px 0px;
         padding-left: 2vh;
     }
 
@@ -1700,7 +1698,12 @@ body {
     padding-left: 2rem;
     padding-right: 2rem;
     width: 100%;
+    overflow: hidden;
 }
+
+    .label4-cont .lb4-data .lb3-data .lbl {
+        margin: 0px 1rem;
+    }
 
 
 /*Dashboard Link STyle*/
@@ -1722,7 +1725,7 @@ body {
     }
 
     .link-dashboard-pane .link-text {
-        width: 100%;
+        width: 70%;
         height: 100%;
     }
 
@@ -2381,7 +2384,7 @@ table.dataTable tbody td.dt-body-right {
 
 .containerrow .dataTables_scroll {
     height: 100% !important;
-    float:left;
+    /*float:left;*/
 }
 .containerrow .dataTables_scrollBody {
     /*height: calc(100% - 18px) !important;*/

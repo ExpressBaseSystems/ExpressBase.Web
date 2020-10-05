@@ -234,6 +234,9 @@
                         }
                     }.bind(this));
                 }
+                else if (propname === "SubmitButtonText") {
+                    $(`#eb_mobpage_wraper${root.Conf.TabNum} .emulator_f`).text(this.SubmitButtonText || "Save");
+                }
             }
         },
         "EbMobileVisualization": {
@@ -244,6 +247,10 @@
                     root.pg.ShowProperty('LinkFormParameters');
                     root.pg.ShowProperty('ContextToControlMap');
                     root.pg.ShowProperty('ShowNewButton');
+                    if (this.ShowNewButton)
+                        root.pg.ShowProperty('NewButtonText');
+                    else
+                        root.pg.HideProperty('NewButtonText');
                 }
                 else {
                     root.pg.HideProperty('FormMode');
@@ -251,16 +258,23 @@
                     root.pg.HideProperty('LinkFormParameters');
                     root.pg.HideProperty('ContextToControlMap');
                     root.pg.HideProperty('ShowNewButton');
+                    root.pg.HideProperty('NewButtonText');
                 }
             },
             propertyChanged: function (propname) {
                 if (propname === "ShowNewButton") {
                     if (this.ShowNewButton) {
+                        this.propertyChanged("NewButtonText");
                         $(`#${this.EbSid} .vis-container-newbtn`).show();
                     }
                     else {
                         $(`#${this.EbSid} .vis-container-newbtn`).hide();
                     }
+                }
+                else if (propname === "NewButtonText") {
+                    let mr = this.NewButtonText ? 8 : 0;
+                    let template = `<span style="margin-right:${mr}px">${this.NewButtonText || ""}</span><i class="fa fa-plus"></i>`;
+                    $(`#${this.EbSid} .vis-container-newbtn`).html(template);
                 }
             }
         },
@@ -349,6 +363,12 @@
                 $(`#${this.EbSid} .eb_ctrlhtml .wrd_spacing`).css("padding-right", this.Spacing);
             },
         },
+        "EbMobileStackLayout": {
+            trigger: function (root) {
+                root.makeDropable(this.EbSid, "EbMobileDashBoard");
+                root.makeSortable(this.EbSid);
+            }
+        }
     };
 })(jQuery);
 

@@ -200,6 +200,7 @@
       "wwwroot/js/Eb_UtilityFuncions.js",
       "wwwroot/js/EbControls/EbPowerSelect.js",
       "wwwroot/js/FormBuilder/EbSurveyRender.js",
+      "wwwroot/js/FormBuilder/FormRenderCommon.js",
       "wwwroot/js/FormBuilder/Bootstrap-select.v1.12.2.js",
       "wwwroot/js/slick.min.js",
       "wwwroot/js/FormBuilder/locationpicker.jquery.min.js",

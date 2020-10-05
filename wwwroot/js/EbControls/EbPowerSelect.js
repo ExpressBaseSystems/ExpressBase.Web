@@ -914,6 +914,12 @@ const EbPowerSelect = function (ctrl, options) {
         }
     };
 
+    this.removeClosedColVals = function () {
+        $.each(this.ColNames, function (i, name) {
+            this.columnVals[name].splice(this.ClosedItemIdx, 1);
+        }.bind(this));
+    };
+
     this.removeColVals = function (vmValue) {
         let idx = this.columnVals[this.vmName].indexOf(vmValue);
         if (idx < 0)// to handle special case of setting values which are not in DV
@@ -1067,7 +1073,7 @@ const EbPowerSelect = function (ctrl, options) {
         if (this.Changed) {
             if (this.datatable === null) {
                 if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
-                    this.reSetColumnvals_();
+                    this.removeClosedColVals();
 
             }
             else
@@ -1295,7 +1301,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.tagCloseBtnHand = function (e) {
-        this.ClosedItem = this.Vobj.valueMembers.splice(delid(), 1)[0];
+        this.ClosedItemIdx = delid();
+        this.ClosedItem = this.Vobj.valueMembers.splice(this.ClosedItemIdx, 1)[0];
         if (this.ComboObj.MultiSelect)
             $(this.DTSelector + " [type=checkbox][value='" + this.ClosedItem + "']").prop("checked", false);
         //else

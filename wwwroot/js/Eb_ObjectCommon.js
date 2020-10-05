@@ -176,9 +176,8 @@
     };
 
     this.UpdateDashboard = function () {
-        var getNav = this.target;/*$("#versionNav li.active a").attr("href");*/
-        if (this.ObjCollection[getNav].BeforeUpdateDashboard) {
-            this.ObjCollection[getNav].BeforeUpdateDashboard();
+        if (this.ObjCollection[this.target].BeforeUpdateDashboard) {
+            this.ObjCollection[this.target].BeforeUpdateDashboard();
         }
         $.post("../Eb_Object/UpdateObjectDashboard", { refid: this.ver_Refid, versioning: this.isversioned }).done(this.UpdateDashboard_Success.bind(this));
     };
@@ -208,17 +207,22 @@
         if (this.ObjectType === 0)
             this.UpdateBuilder();
 
-        var getNav = this.target;/*$("#versionNav li.active a").attr("href");*/
-        if (this.ObjCollection[getNav].afterUpdateDashboard) {
-            this.ObjCollection[getNav].afterUpdateDashboard();
+        if (this.ObjCollection[this.target].afterUpdateDashboard) {
+            this.ObjCollection[this.target].afterUpdateDashboard();
         }
     };
 
     this.UpdateBuilder = function () {
+        if (this.ObjCollection[this.target].beforeUpdateBuilder) {
+            this.ObjCollection[this.target].beforeUpdateBuilder();
+        }
         $.post("../Eb_Object/UpdateBuilder", { _refid: this.ver_Refid, _tabnum: this.tabNum, _ObjType: this.ObjectType, _ssurl: this.ssurl }).done(this.UpdateBuilder_Success.bind(this));
     };
 
     this.UpdateBuilder_Success = function (data) {
+        if (this.ObjCollection[this.target].afterUpdateBuilder) {
+            this.ObjCollection[this.target].afterUpdateBuilder();
+        }
         $(this.target).html(data);
     };
 

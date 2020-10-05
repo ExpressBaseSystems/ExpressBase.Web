@@ -13,54 +13,101 @@
     this.PopByName = function (_name) {
         let parentId = this.getParentId(_name);
         let ele = this.GetByName(_name);
+        let parentArr;
         console.log("parentId" + parentId);
-        if ($(`[ebsid ="${parentId}"]`).attr("eb-form")) {
-            let idx = this.$values.indexOf(ele);
-            if (idx === -1) {
-                console.error("element not found in collection");
-                return;
-            }
-            return this.$values.splice(idx, 1)[0];
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form") === "true")
+            parentArr = this;
+        else
+            parentArr = this.GetByName(parentId).Controls;
+
+        let idx = parentArr.$values.indexOf(ele);
+        if (idx === -1) {
+            console.error("element not found in collection");
+            return;
         }
 
-        let parent = this.GetByName(parentId);
-        return parent.Controls.PopByIndex(parent.Controls.$values.indexOf(ele));
+        let obj = parentArr.PopByIndex(idx);
+        obj.dragFromAt = function () {
+            return { parentArr: parentArr, index: idx };
+        }.bind(this);
+        return obj;
+    };
+
+    this.insertInto = function (_name) {
+        let parentId = this.getParentId(_name);
+        let ele = this.GetByName(_name);
+        let parentArr;
+        console.log("parentId" + parentId);
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form") === "true")
+            parentArr = this;
+        else
+            parentArr = this.GetByName(parentId).Controls;
+
+        let idx = parentArr.$values.indexOf(ele);
+        if (idx === -1) {
+            console.error("element not found in collection");
+            return;
+        }
+
+        let obj = parentArr.PopByIndex(idx);
+        obj.dragFromAt = function () {
+            return { parentArr: parentArr, index: idx };
+        }.bind(this);
+        return obj;
     };
 
     this.Append = function (newObject) {
-        let parentId = this.getParentId(newObject.EbSid);
-        if (!$(`[ebsid ="${parentId}"]`).attr("eb-form")) {
-            let parent = this.GetByName(parentId);
-            parent.Controls.$values.push(newObject);
+        try {
+            let parentId = this.getParentId(newObject.EbSid);
+            let parent;
+            if ($(`[ebsid ="${parentId}"]`).attr("eb-form") === "true")
+                parent = this;
+            else {//parentId is root form id
+                parent = this.GetByName(parentId).Controls;
+            }
+
+            parent.$values.push(newObject);
         }
-        else //parentId is root form id
-            this.$values.push(newObject);
-    };
-
-    this.PopByindex = function () {
-
+        catch (e) {
+            debugger;
+        }
     };
 
     this.getParent = function (obj) {
         let parentId = this.getParentId(obj.EbSid);
-        if ($(`[ebsid ="${parentId}"]`).attr("eb-form"))
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form") === "true")
             return commonObj.Current_obj;
         return this.GetByName(parentId);
     };
 
     this.InsertAt = function (index, newObject) {
         let parentId = this.getParentId(newObject.EbSid);
-        if ($(`[ebsid ="${parentId}"]`).attr("eb-form")) {
-            this.$values.splice(index, 0, newObject);
-            return this.$values.length;
-        }
-        let parent = this.GetByName(parentId);
-        parent.Controls.$values.splice(index, 0, newObject);
-        return parent.Controls.$values.length;
+        let parentArr;
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form") === "true")
+            parentArr = this;
+        else
+            parentArr = this.GetByName(parentId).Controls;
+
+        //if (newObject.dragFromAt) {
+        //    let dragFromAt = newObject.dragFromAt();
+        //    if (dragFromAt.parentArr === parentArr && dragFromAt.index < index)
+        //        index--;// to consider on drag control pop
+        //}
+
+        parentArr.$values.splice(index, 0, newObject);
+        console.log("append");
+        console.log(parentArr.$values);
+        return parentArr.$values.length;
     };
 
     this.InsertBefore = function (beforeObj, newObject) {
-        this.$values.splice(this.$values.indexOf(beforeObj), 0, newObject);
+        let parentId = this.getParentId(beforeObj.EbSid);
+        let parentArr;
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form") === "true")
+            parentArr = this;
+        else
+            parentArr = this.GetByName(parentId).Controls;
+        parentArr.$values.splice(parentArr.$values.indexOf(beforeObj), 0, newObject);
     };
 
     this.GetByIndex = function (_index) {

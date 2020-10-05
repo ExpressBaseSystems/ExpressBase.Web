@@ -52,6 +52,16 @@
         $.LoadingOverlay("hide");
     }.bind(this);
 
+    //functions to be executed before UpdateBuilder
+    this.beforeUpdateBuilder = function () {
+        $.LoadingOverlay("show");
+    }.bind(this);
+
+    //functions to be executed after UpdateBuilder
+    this.afterUpdateBuilder = function () {
+        $.LoadingOverlay("hide");
+    }.bind(this);
+
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 
     this.$form = $("#" + this.formId);
@@ -100,6 +110,47 @@
         this.saveObj();
         return ctrl;
     }.bind(this);
+
+    this.copy = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let ebsid = $e.attr("ebsid");
+        let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+        if (ctrl.ObjType === "Approval")
+            this.ApprovalCtrl = null;
+        if (ctrl.ObjType === "Review")
+            this.ReviewCtrl = null;
+        else if (ctrl.ObjType === "ProvisionLocation")
+            this.ProvisionLocationCtrl = null;
+        this.ctxClipboard = JSON.parse(JSON.stringify(ctrl));
+    }.bind(this);
+
+    this.paste = function (eType, selector, action, originalEvent) {
+        let copiedCtrl = this.getCopiedCtrl(this.ctxClipboard);
+        let colTile = $('.context-menu-active').attr('ebsid')
+        this.rootContainerObj.Controls.InsertAfter(this.rootContainerObj.Controls.GetByName($sibling.attr('ebsid')), copiedCtrl);
+    }.bind(this);
+
+    this.getCopiedCtrl = function (ctrl) {
+        let ctrlCpy = this.ctxClipboard;
+        let copyStr = this.getNxtCtrlCopyStr(ctrl);
+        ctrlCpy.Name = ctrl.Name + copyStr;
+        ctrlCpy.EbSid_CtxId = ctrl.EbSid_CtxId + copyStr;
+        ctrlCpy.EbSid = ctrl.EbSid + copyStr;
+        ctrlCpy.Id = ctrl.Id + copyStr;
+        return ctrlCpy;
+    };
+
+    this.getNxtCtrlCopyStr = function (ctrl) {
+        let num = 1;
+        for (let i = 1; i < 1000; i++) {
+            let ifCtrl = this.rootContainerObj.Controls.GetByName(ctrl.EbSid_CtxId + 'Copy' + i);
+            if (!ifCtrl) {
+                num = i;
+                break;
+            }
+        }
+        return 'Copy' + num;
+    };
 
     this.controlOnFocus = function (e) {
         e.stopPropagation();
@@ -347,7 +398,8 @@
             //Drag end with in the form
             if ($target.attr("ebclass") !== this.toolContClass) {
                 if ($sibling.attr("id")) {
-                    let idx = $sibling.index() - 1;
+                    //let idx = $sibling.index() - 1;
+                    let idx = $(el).parent().children('.Eb-ctrlContainer').index(el);
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
@@ -397,8 +449,7 @@
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
-                    let idx = $sibling.index() - 1;
-                    this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
+                    this.rootContainerObj.Controls.InsertBefore(this.rootContainerObj.Controls.GetByName($sibling.attr('ebsid')), ctrlObj);
                 }
                 else {
                     $target.append($ctrl);
@@ -462,8 +513,7 @@
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
-                    let idx = $sibling.index() - 1;
-                    this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
+                    this.rootContainerObj.Controls.InsertBefore(this.rootContainerObj.Controls.GetByName($sibling.attr('ebsid')), ctrlObj);
                 }
                 else {
                     $target.append($ctrl);

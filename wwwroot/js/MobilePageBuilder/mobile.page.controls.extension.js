@@ -363,6 +363,12 @@
                 $(`#${this.EbSid} .eb_ctrlhtml .wrd_spacing`).css("padding-right", this.Spacing);
             },
         },
+        "EbMobileStackLayout": {
+            trigger: function (root) {
+                root.makeDropable(this.EbSid, "EbMobileDashBoard");
+                root.makeSortable(this.EbSid);
+            }
+        }
     };
 })(jQuery);
 

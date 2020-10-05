@@ -185,7 +185,7 @@
 
 .emulator_h {
     height: 60px;
-    background: #0046bb;/*#508bf9;*/
+    background: #0046bb; /*#508bf9;*/
     width: 100%;
     border-top-left-radius: 30%;
     border-top-right-radius: 30%;
@@ -297,25 +297,29 @@
     height: 25px;
     border-radius: 4px;
 }
+
 .eb_stacklayout .dp-avatar {
-    text-align:center;
-    border:1px solid #ccc;
-    border-radius:4px;
-    margin-bottom:5px;
-    background:#ddd;
-    height:100px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    background: #ddd;
+    height: 100px;
 }
-.eb_stacklayout .dp-avatar img{
-    height:100%;
-}
+
+    .eb_stacklayout .dp-avatar img {
+        height: 100%;
+    }
 
 .eb_stacklayout .eb-mob-qrreader input {
     flex: 1;
     border: none;
 }
+
 .eb_stacklayout .eb-mob-qrreader span {
     align-self: center;
 }
+
 .eb_stacklayout .ctrl-group {
     display: flex;
     border: 1px solid #ccc;
@@ -422,7 +426,7 @@
         justify-content: center;
         align-items: center;
     }
-    
+
 /*visualization*/
 .eb_mob_vis_container .eb_mob_container_inner {
     /*display: flex;
@@ -475,15 +479,15 @@
     position: absolute;
     background: #0046bb;
     height: 30px;
-    width: 30px;
-    border-radius: 50%;
+    border-radius: 15px;
     text-align: center;
     color: white;
-    padding: 6px;
-    right: 10px;
+    padding: 6px 10px;
     bottom: 10px;
-    font-size: 14px;
-    display:none;
+    font-size: 13px;
+    display: none;
+    left: 50%;
+    transform: translateX(-50%);
 }
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {
@@ -504,10 +508,8 @@
     display: flex;
     width: 100%;
     background: white;
-    padding: 5px;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-    border-radius: 4px;
-    margin-bottom: 10px;
+    /* box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2); */
+    margin: 10px 0;
 }
 
     .mob_dash_control .eb_dash_ctrlhtml {
@@ -580,9 +582,8 @@
 }
 
 /*toggle button styles*/
-    .ebmb-tooglebtn{
-
-    }
+.ebmb-tooglebtn {
+}
 /**/
 
 /*Button control*/
@@ -597,11 +598,30 @@
     top: 0;
     height: 100%;
     left: 0;
-    font-size:12px;
+    font-size: 12px;
 }
+
     .eb_mob_vis_container [eb-type="EbMobileButton"] .eb_btnctrlhtml {
         height: 100%;
     }
-    .eb_mob_vis_container [eb-type="EbMobileButton"] .eb_btnctrlhtml button {
-        height: 100%;
+
+        .eb_mob_vis_container [eb-type="EbMobileButton"] .eb_btnctrlhtml button {
+            height: 100%;
+        }
+/*Mobile Rating control*/
+.mob_control .eb_ctrlhtml {
+    padding: 0px 2px;
+}
+
+    .mob_control .eb_ctrlhtml span {
+        font-size: 20px;
+        padding-right: 5px;
     }
+
+/*Dashboard StackLayout*/
+.eb_mob_dashboard_container .control_container {
+    min-height: 50px;
+    border: 2px dashed #ccc;
+    padding: 10px;
+    width: 100%;
+}

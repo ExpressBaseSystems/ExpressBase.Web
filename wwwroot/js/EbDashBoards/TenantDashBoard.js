@@ -40,11 +40,15 @@
         });
     }
 
-    this.ns = function (e) {
+    this.rs = function () {
         if (primarySolutionCount > 0) {
             $('#replicationModal').modal('show');
         }
-        else if (scount <= 3) {
+    };
+
+    this.ns = function (e) {
+        scount = 2;
+        if (scount <= 3) {
             this.ncs();
             this.cs(function (res) {
                 if (res.status)
@@ -59,6 +63,7 @@
             });
         }
     };
+
     this.ncs = function () {
         let po = {
             Message: "Creating solution...",
@@ -76,7 +81,7 @@
         };
         self.EbPopBox("show", po);
 
-        
+
     };
 
     this.cs = function (fn, sid, pid) {
@@ -99,26 +104,30 @@
         let pid = $('#replicatePkg').val();
         $('#replicationModal').modal('hide');
         this.ncs();
-        this.cs(function (res) {           
+        this.cs(function (res) {
             if (res.status)
                 self.EbPopBox("show", { Message: "Solution created :)" });
             else
                 self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
-        },sid,pid);
+        }, sid, pid);
     };
 
-    //$("#replicateSoln").on('change'),(function () {
-    //    $('#replicatePkg').empty();
-    //    for (i of MasterPackages) {
-    //        $('#replicatePkg').append('<option id="' + i.Id + '">' + i.Name + '</option>');
-    //    }
-    //});
+    this.UpdatePackage = function () {
+        let sid = $('#replicateSoln').val();
+        $('#replicatePkg').empty();
+        for (i of MasterPackages[sid]) {
+            $('#replicatePkg').append('<option value="' + i.Id + '">' + i.Name + '</option>');
+        }
+    };;
 
     this.init = function () {
         $("body").off("click").on("click", ".single__sso", this.goToSolutionWindow.bind(this));
         $("#solSearch").off("keyup").on("keyup", this.searchSolution.bind(this));
-        $("#eb-new-solution").off("click").on("click", this.ns.bind(this))
-        $("#replicateBtn").off("click").on("click", this.replicate.bind(this))
+        $("#eb-new-solution").off("click").on("click", this.ns.bind(this));
+        $("#eb-replicate-solution").off("click").on("click", this.rs.bind(this));
+        $("#replicateBtn").off("click").on("click", this.replicate.bind(this));
+        $("#replicateSoln").on('change', this.UpdatePackage.bind(this));
+
     };
 
     this.init();

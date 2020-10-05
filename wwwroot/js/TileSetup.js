@@ -6,7 +6,7 @@
     this.options = options || {};
     this.resultObject = [];
     this.initObjectList = initObjList === null ? [] : initObjList;
-    this.objectList = searchObjList === null ? [] : searchObjList;
+    this.objectList = searchObjList === null ? [] : searchObjList;//all
     this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
     this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
@@ -27,6 +27,8 @@
     this.loader = null;
     this.divMessage = null;
     this.divSearchResults = null;
+    this.divSelected = null;
+    this.pageInfo = null;
 
     //DOM ELEMENTS IP
     this.txtIpAddress = null;
@@ -48,6 +50,7 @@
     //this.constraintDateTimeObj = [];
     this.profilePicStatus = null;
     this.readOnly = false;
+    this.isSrchRsltInitialized = false;
 
     this.init = function () {
         this.createBody.bind(this)(this.parentDiv, this.title);
@@ -177,19 +180,20 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" style="font-weight:400">${this.title}</h4>
+                            <h4 class="modal-title" style="font-weight:400; line-height:1.0;">${this.title}</h4>
                         </div>   
                         <div class="modal-body">
                             <div class="input-group md-search-box">
                                 <span class="input-group-btn">
                                     <button id="btnSearch${t}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                 </span>
-                                <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">
-                                
+                                <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">                                
                             </div>
-                            <div id="message${t}" style=" margin-left: 32%; margin-top: 25% ;font-size: 24px; color: #bbb; display:none;">Type Few Characters</div>
-                            <div id="loader${t}" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
-                            <div id="divSearchResults${t}" style="height:338px;padding-top:10px;overflow-y:auto"></div>
+                            <div id="divSelected${t}"></div>
+                            <div id="pageInfo${t}" class="ts-body-md-pageinfo">Showing 0 of 0</div>
+                            <div id="message${t}" class="ts-body-md-msg">Type few characters</div>
+                            <div id="loader${t}" class="ts-body-md-loader"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
+                            <div id="divSearchResults${t}" class="ts-body-md-rslt"></div>
                         </div>
                         <div class="modal-footer">
                             <button id="btnModalOk${t}" class="ebbtn eb_btn-sm eb_btnblue">OK</button>
@@ -204,21 +208,19 @@
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
-        <div class="roles-tab-header">
-            <div class="col-md-7"><div class="subHeading">${this.options.longTitle || ""}</div></div>
+        <div class="ts-head-div">
+            <div class="col-md-7"><div class="ts-head-text">${this.options.longTitle || ""}</div></div>
             <div class="col-md-3" style="margin-left:auto;">
-                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" />
-                <span id="spanSrch${t}" class="form-control-feedback" style="top: 0; right: 16px;"><i class="fa fa-search" aria-hidden="true"></i></span>
-                <span id="spanRemv${t}" class="form-control-feedback" style="top: 0; right: 16px; display:none;"><i class="fa fa-times" aria-hidden="true"></i></span>                
+                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to search" />
+                <span id="spanSrch${t}" class="form-control-feedback ts-head-span"><i class="fa fa-search" aria-hidden="true"></i></span>
+                <span id="spanRemv${t}" class="form-control-feedback ts-head-span" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></span>
             </div>
-            <button class="ebbtn eb_btnblue eb_btn-sm" id="btnAddModal${t}">
+            <button class="ts-head-add-btn" id="btnAddModal${t}">
                 <i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}
-            </button>            
+            </button>
         </div>
-        <div class="container">`
-            + this.getPresetModalBody() +
-            `</div>
-        <div id="divSelectedDisplay${t}" class="tilediv1" style="Height: ${this.options.tileDivHeight || 'auto'}"> </div>`);
+        <div class="container ts-body-div">${this.getPresetModalBody()}</div>
+        <div id="divSelectedDisplay${t}" class="ts-body-disp" style="Height: ${this.options.tileDivHeight || 'auto'}"> </div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.spanSrch = $('#spanSrch' + t);
@@ -255,11 +257,29 @@
             this.loader = $('#loader' + t);
             this.divMessage = $('#message' + t);
             this.divSearchResults = $('#divSearchResults' + t);
+            this.divSelected = $('#divSelected' + t);
+            this.pageInfo = $('#pageInfo' + t);
 
             $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
             $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
-            $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
+            //$(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
             $(this.divSelectedDisplay).on('click', ".dropDownViewClass", this.onClickViewFromSelected.bind(this));
+
+            $(this.divSearchResults).on('click', ".ts-body-md-srch-rslt",
+                function (e) {
+                    let $chkbox = $(e.target);
+                    let $srchRsltItem = $(e.currentTarget);
+                    if (!$chkbox.hasClass('SearchCheckbox')) {
+                        $chkbox = $srchRsltItem.find('input');//[type='checkbox']
+                        $chkbox.prop('checked', !$chkbox.prop('checked'));
+                    }
+                    //if (this.doChkUnChkItemCustomFunc !== null) {
+                    //    this.doChkUnChkItemCustomFunc(this.parentthis, $srchRsltItem);
+                    //}
+                    if (this.title === 'Add Roles') {
+                        this.chkItemCustomFunc(this.parentthis, $srchRsltItem);
+                    }
+                }.bind(this));
         }
 
 
@@ -267,7 +287,13 @@
         $(this.parentDiv).on('click', '#spanRemv' + t, this.onClickbtnClearDemoSearch.bind(this));
         $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
         $(this.parentDiv).on('shown.bs.modal', '#addModal' + t, this.initModal.bind(this));
-        $(this.parentDiv).on('hidden.bs.modal', '#addModal' + t, this.finalizeModal.bind(this));
+        $(this.parentDiv).on('hidden.bs.modal', '#addModal' + t, function () {
+            if (this.title !== 'New IP' && this.title !== 'New DateTime') {
+                $(this.txtSearch).val("");
+
+                this.divSearchResults.hide();
+            }
+        }.bind(this));
         $(this.parentDiv).on('click', '#btnAddModal' + t, this.onClickBtnAddModal.bind(this));
         $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
 
@@ -280,13 +306,101 @@
             }
         }
         else {
-            this.divSelectedDisplay.append(`<div class="nothing-text"> Nothing to display </div>`);
+            this.divSelectedDisplay.append(`<div class="ts-body-nothing-text"> Nothing to display </div>`);
         }
+    };
+
+    //testing
+    this.chkItemCustomFunc = function (_this, $srchRsltItem) {
+        //_this.dependentList = [];
+        //let $chkbox = $srchRsltItem.find('input');
+        //$.each($(this.divSearchResults).children(), function (i, ob) {
+        //    if (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+        //        $(ob).attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+        //        $(ob).find('input').prop('checked', false);
+        //        //$(ob).removeAttr("checked");
+        //        //$(ob).attr("disabled", "true");
+        //    }
+        //});
+
+        //if ($chkbox.is(':checked')) {
+        //    _this.findDependentRoles($chkbox.attr("data-id"));
+        //    var st = "";
+        //    var itemid = [];
+        //    $.each(this.divSelectedDisplay.children(), function (i, ob) {
+        //        for (var i = 0; i < _this.dependentList.length; i++) {
+        //            if (_this.dependentList[i] == $(ob).attr('data-id')) {
+        //                st += '\n' + $(ob).attr('data-name');
+        //                itemid.push($(ob).attr('data-id'));
+        //            }
+        //        }
+        //    });
+        //    if (st !== '') {
+        //        if (confirm("Continuing this Operation will Remove the following Item(s)" + st + "\n\nClick OK to Continue")) {
+        //            for (i = 0; i < itemid.length; i++) {
+        //                this.divSelectedDisplay.children("[data-id='" + itemid[i] + "']").remove();
+        //            }
+        //        }
+        //        else {
+        //            $srchRsltItem.removeAttr('disabled').css('pointer-events', 'all').css('opacity', '1.0');
+        //            $chkbox.prop("checked", false);
+        //        }
+        //    }
+        //}
+
+        //$.each(this.divSearchResults.find('.SearchCheckbox:checked'), function (i, ob) {
+        //    _this.findDependentRoles($(ob).attr('data-id'));
+        //});
+        //$.each(this.divSelectedDisplay.children(), function (i, ob) {
+        //    _this.dependentList.push(parseInt($(ob).attr('data-id')));
+        //    _this.findDependentRoles($(ob).attr('data-id'));
+        //});
+        //$.each(this.divSearchResults.children(), function (i, ob) {
+        //    let $srIt = $(ob);
+        //    let $ckBx = $(ob).find('input');
+        //    if (_this.dependentList.indexOf(parseInt($srIt.attr('data-id'))) !== -1 || _this.dominantList.indexOf(parseInt($srIt.attr('data-id'))) !== -1) {
+        //        $srIt.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+        //        $ckBx.prop('checked', false);
+        //        //$(ob).removeAttr("checked");
+        //        //$(ob).attr("disabled", "true");
+        //    }
+        //    else {
+        //        $srchRsltItem.removeAttr('disabled').css('pointer-events', 'all').css('opacity', '1.0');
+        //        //$(ob).removeAttr("disabled");
+        //    }
+
+        //    if ($(this.divSelectedDisplay).children("[data-id=" + $(ob).attr('data-id') + "]").length > 0) {
+        //        $srIt.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+        //        $ckBx.prop('checked', true);
+        //        //$(ob).attr("disabled", "true");
+        //        //$(ob).prop("checked", "true");
+        //    }
+        //}.bind(this));
+    };
+
+    this.getBaseRoles = function (in_roleid, out_roleids = []) {
+        for (let i = 0; i < this.parentthis.r2rList.length; i++) {
+            if (this.parentthis.r2rList[i].Dependent == in_roleid && !out_roleids.includes(this.parentthis.r2rList[i].Dominant)) {
+                out_roleids.push(this.parentthis.r2rList[i].Dominant);
+                this.getBaseRoles(this.parentthis.r2rList[i].Dominant, out_roleids);
+            }
+        }
+        return out_roleids;
+    };
+    this.getSubRoles = function (in_roleid, out_roleids = []) {
+        for (let i = 0; i < this.parentthis.r2rList.length; i++) {
+            if (this.parentthis.r2rList[i].Dominant == in_roleid && !out_roleids.includes(this.parentthis.r2rList[i].Dependent)) {
+                out_roleids.push(this.parentthis.r2rList[i].Dependent);
+                this.getSubRoles(this.parentthis.r2rList[i].Dependent, out_roleids);
+            }
+        }
+        return out_roleids;
     };
 
     //FUNCTIONS FOR EXTERNAL USE--------------------------------------
     this.setObjectList = function (obj) {
         this.objectList = obj;
+        this.isSrchRsltInitialized = false;
     };
 
     this.setReadOnly = function () {
@@ -402,22 +516,72 @@
         }
         else {
             this.divMessage.show();
+            this.divSearchResults.hide();
             this.txtSearch.focus();
+            this.initSearchResultDiv();
             this.getSearchResult(false);
         }
     };
 
-    this.finalizeModal = function () {
-        if (this.title !== 'New IP' && this.title !== 'New DateTime') {
-            $(this.txtSearch).val("");
-            $(this.divSearchResults).children().remove();
+    this.initSearchResultDiv = function () {
+        if (!this.isSrchRsltInitialized)
+            this.divSearchResults.empty();
+        if (this.objectList.length === 0) {
+            this.divMessage.text("... Nothing Found ...");
+            this.divMessage.show();
+            this.divSearchResults.hide();
+        }
+        else {
+            if (!this.isSrchRsltInitialized) {
+                for (let i = 0; i < this.objectList.length; i++) {
+                    this.appendToSearchResult(this.divSearchResults,
+                        {
+                            Id: this.objectList[i][this.objectMetadata[0]],
+                            Name: this.objectList[i][this.objectMetadata[1]],
+                            Data1: this.objectList[i][this.objectMetadata[2]]
+                        });
+                }
+                this.divSearchResults.find('img').Lazy();
+            }
+            $.each(this.divSearchResults.children(), function (i, obj) {
+                $(obj).removeAttr('disabled').css('pointer-events', 'all').css('opacity', '1.0');
+                $(obj).find('input').prop('checked', false);
+            }.bind(this));
+
+            if (this.parentthis.roleId > 0 && this.title === 'Add Roles') {
+                let role_ids = this.getBaseRoles(this.parentthis.roleId);
+                for (let j = 0; j < role_ids.length; j++) {
+                    let $srchRsltTemp = this.divSearchResults.children(`[data-id='${role_ids[j]}']`);
+                    if ($srchRsltTemp > 0)
+                        $srchRsltTemp.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+                }
+            }
+
+            $.each(this.divSelectedDisplay.children(), function (i, obj) {
+                let $srchRslt = this.divSearchResults.children(`[data-id='${$(obj).attr('data-id')}']`);
+                if ($srchRslt.length > 0) {
+                    $srchRslt.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+                    $srchRslt.find('input').prop('checked', true);
+
+                    if (this.title === 'Add Roles') {
+                        let role_ids = this.getBaseRoles(parseInt($(obj).attr('data-id')));
+                        for (let j = 0; j < role_ids.length; j++) {
+                            let $srchRsltTemp = this.divSearchResults.children(`[data-id='${role_ids[j]}']`);
+                            if ($srchRsltTemp > 0)
+                                $srchRsltTemp.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+                        }
+                    }
+                }
+            }.bind(this));
         }
 
+        this.isSrchRsltInitialized = true;
     };
 
     this.keyUptxtSearch = function (e) {
-        $(this.divSearchResults).children().remove();
+        //$(this.divSearchResults).children().remove();
         this.divMessage.hide();
+        this.divSearchResults.hide();
         this.loader.show();
         clearTimeout($.data(this, 'timer'));
         if (e.keyCode === 13 || this.searchAjaxUrl === null)
@@ -431,19 +595,15 @@
         var Url = this.searchAjaxUrl;
         if (Url === null) {
             this.loader.hide();
-            if (this.objectList.length !== 0) {
-                this.divMessage.hide();
-                this.drawSearchResults(this.objectList, searchtext);
-            }
-            else {
-                this.divMessage.text("... Nothing Found ...");
-                this.divMessage.show();
-            }
+            this.divMessage.hide();
+            this.divSearchResults.show();
+            this.showSearchResults(searchtext);
         }
         else if (!force && searchtext.length < 2) {
             this.loader.hide();
-            this.divMessage.text("Type Few Characters");
+            this.divMessage.text("Type few characters");
             this.divMessage.show();
+            this.divSearchResults.hide();
             return;
         }
         else {
@@ -456,49 +616,125 @@
         }
     };
 
+    this.showSearchResults = function (srchTxt) {
+        this.divSearchResults.children().hide();
+        let limit = /*this.profilePicStatus ? 10 :*/ this.objectList.length;
+        if (srchTxt === '') {
+            for (let i = 0; i < limit; i++) {
+                let $srchRslt = this.divSearchResults.children(`[data-id='${this.objectList[i][this.objectMetadata[0]]}']`);
+                $srchRslt.show();
+            }
+            this.pageInfo.text(`Showing ${limit} of ${this.objectList.length}`);
+        }
+        else {
+            let counter = 0;
+            let matched = 0;
+            for (let i = 0; i < this.objectList.length; i++) {
+                if (this.objectList[i][this.objectMetadata[1]].toLowerCase().includes(srchTxt.toLowerCase())) {
+                    if (counter < limit) {
+                        let $srchRslt = this.divSearchResults.children(`[data-id='${this.objectList[i][this.objectMetadata[0]]}']`);
+                        $srchRslt.show();
+                        counter++;
+                    }
+                    matched++;
+                }
+            }
+            this.pageInfo.text(`Showing ${counter} of ${matched}`);
+            if (matched === 0) {
+                this.divMessage.text("... Nothing found ...");
+                this.divMessage.show();
+                this.divSearchResults.hide();
+            }
+        }
+    };
+
     this.getItemdetailsSuccess = function (data) {
         this.loader.hide();
         if (data.length === 0) {
             this.divMessage.text("... Nothing Found ...");
             this.divMessage.show();
+            this.divSearchResults.hide();
             return;
         }
         this.drawSearchResults(data, "");
     };
 
     this.drawSearchResults = function (objList, srchTxt) {
-        var txt = srchTxt;
-        var divSelectedDisplay = this.divSelectedDisplay;
-        var divSearchResults = this.divSearchResults;
-        $(divSearchResults).children().remove();
-        for (var i = 0; i < objList.length; i++) {
-            var st = null;
-            if (objList[i][this.objectMetadata[1]].substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
-                if ($(divSelectedDisplay).find(`[data-id='${objList[i][this.objectMetadata[0]]}']`).length > 0) {
-                    st = 'checked disabled';
+        if (this.divSearchResults.children().length === 0 && objList.length === 0) {
+            this.divMessage.text("... Nothing found ...");
+            this.divMessage.show();
+            this.divSearchResults.hide();
+            return;
+        }
+        if (this.divSearchResults.children().length === 0) {
+            for (let i = 0; i < objList.length; i++) {
+                this.appendToSearchResult(this.divSearchResults, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });
+            }
+            this.divSearchResults.find('img').Lazy();
+        }
+
+        this.divSearchResults.children().hide();
+        let limit = this.profilePicStatus ? 10 : objList.length;
+        if (srchTxt === '') {
+            this.divSearchResults.children().hide();
+            for (let i = 0; i < limit; i++) {
+                this.setSrchRsltItem(objList, i);
+            }
+            this.pageInfo.text(`Showing ${limit} of ${objList.length}`);
+        }
+        else {
+            let counter = 0;
+            let matched = 0;
+            for (let i = 0; i < objList.length; i++) {
+                if (objList[i][this.objectMetadata[1]].toLowerCase().includes(srchTxt.toLowerCase())) {
+                    if (counter < limit) {
+                        this.setSrchRsltItem(objList, i);
+                        counter++;
+                    }
+                    matched++;
                 }
-                this.appendToSearchResult(divSearchResults, st, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });
+            }
+            this.pageInfo.text(`Showing ${counter} of ${matched}`);
+            if (matched === 0) {
+                this.divMessage.text("... Nothing found ...");
+                this.divMessage.show();
+                this.divSearchResults.hide();
             }
         }
-        if ($(this.divSearchResults).children().length === 0) {
-            this.divMessage.text("... Nothing Found ...");
-            this.divMessage.show();
-        }
     };
 
-    this.OnChangeSearchCheckbox = function (e) {
-        if (this.doChkUnChkItemCustomFunc !== null) {
-            this.doChkUnChkItemCustomFunc(parentThis, e);
-        }
+    this.setSrchRsltItem = function (objList, i) {
+        let data_id = objList[i][this.objectMetadata[0]];
+        let $srchRslt = this.divSearchResults.children(`[data-id='${data_id}']`);
+        //if (isFresh) {
+        //    let $selDisp = this.divSelectedDisplay.find(`[data-id='${data_id}']`);
+        //    if ($selDisp.length > 0) {
+        //        $srchRslt.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+        //        $srchRslt.find('input').prop('checked', true);
+        //        if (this.title === 'Add Roles') {
+        //            let base_roles = this.getBaseRoles(data_id); 
+        //            for (let i = 0; i < base_roles; i++) {
+        //                let $srchRsltTemp = this.divSearchResults.children(`[data-id='${base_roles[i]}']`);
+        //                $srchRsltTemp.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+        //                $srchRsltTemp.find('input').prop('checked', false);
+        //            }
+        //        }
+        //    }
+        //    else if (is not Dependent){
+        //        $srchRslt.removeAttr('disabled').css('pointer-events', 'all').css('opacity', '1.0');
+        //        $srchRslt.find('input').prop('checked', false);
+        //    }
+        //}
+        $srchRslt.show();
     };
 
-    this.appendToSearchResult = function (divSearchResults, st, obj) {
-        var temp = `<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id='${obj.Id}'>
+    this.appendToSearchResult = function (divSearchResults, obj) {
+        var temp = `<div class='row ts-body-md-srch-rslt' disabled='disabled' data-id='${obj.Id}'>
                         <div class='col-md-1' style="padding:10px">
-                            <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d1 = '${obj.Data1}' aria-label='...'>
+                            <input type ='checkbox' class='SearchCheckbox' data-name = '${obj.Name}' data-id = '${obj.Id}' data-d1 = '${obj.Data1}' aria-label='...'>
                         </div>`;
 
-        if (this.profilePicStatus === true)
+        if (false)//this.profilePicStatus === true
             temp += `   <div class='col-md-2'>
                             <img class='img-thumbnail pull-right' src='/images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />
                         </div>`;
@@ -601,7 +837,7 @@
             return;
         }
 
-        var checkedBoxList = $('.SearchCheckbox:checked');
+        var checkedBoxList = this.divSearchResults.find('.SearchCheckbox:checked');
         var _this = this;
         $(checkedBoxList).each(function () {
             _this.appendToSelected(_this.divSelectedDisplay, { Id: $(this).attr('data-id'), Name: $(this).attr('data-name'), Data1: $(this).attr('data-d1') });
@@ -686,7 +922,7 @@
                             }
                         }
                         if (this.resultObject.length === 0)
-                            this.divSelectedDisplay.append(`<div class="nothing-text"> Nothing to display </div>`);
+                            this.divSelectedDisplay.append(`<div class="ts-body-nothing-text"> Nothing to display </div>`);
                     }
                 }.bind(this)
             });

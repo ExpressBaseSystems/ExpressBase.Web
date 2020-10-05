@@ -15,6 +15,7 @@
         this.FileFlag.tagflag = true;
         this.CurrentFimg = null;
         this.TagList = {};
+        this.TempCount = 100;
         this.Multiple = this.Options.Multiple ? "multiple" : "";
         if (this.validateOpt())
             this.init();
@@ -68,7 +69,7 @@
             // this.GalleryFS = this.appendFSHtml();//full screen preview init html
             //ebfileviewer start
             $(`#${this.Options.Container}_view`).remove();
-            $("body").append(`<div id='${this.Options.Container}_view'></div>`); 
+            $("body").append(`<div id='${this.Options.Container}_view'></div>`);
             this[`${this.Options.Container}_cont`] = $(`#${this.Options.Container}_view`).ebFileViewer(this.Options.Files);
             //ebfileviewer end
             this.pullFile();
@@ -145,7 +146,7 @@
         let html = new Array();
         if ('Categories' in this.Options) {
             for (let i = 0; i < this.Options.Categories.length; i++) {
-                html.push(`<div class="ClpsGalItem_Sgl" Catogory="${this.Options.Categories[i]}" alt="${this.Options.Categories[i]}">
+                html.push(`<div class="ClpsGalItem_Sgl" Catogory="${this.Options.Categories[i].trim()}" alt="${this.Options.Categories[i].trim()}">
                             <div class="Col_head collapsed" data-toggle="collapse" data-target="#${this.Options.Container}_G_${this.Options.Categories[i].replace(/\s/g, "")}">${this.Options.Categories[i].toUpperCase()}
                             <span class="FcnT">(0)</span></div>
                             <div class="Col_apndBody collapse" id="${this.Options.Container}_G_${this.Options.Categories[i].replace(/\s/g, "")}">
@@ -168,6 +169,7 @@
     }
 
     renderFiles(renderFiles) {
+        let recentUpload = false;
         for (let i = 0; i < renderFiles.length; i++) {
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
@@ -177,17 +179,19 @@
                 let taghtml = "";
                 if (renderFiles[i].Meta !== null) {
                     if (renderFiles[i].Meta.hasOwnProperty('Tags')) {
-                        let filetags = renderFiles[i].Meta.Tags[0].split(',');
-                        $.each(filetags, function (j, tagval) {
-                            if (!this.TagList[tagval]) {
-                                this.TagList[tagval] = [renderFiles[i]];
-                                $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
-                            }
-                            else {
-                                this.TagList[tagval].push(renderFiles[i]);
-                            }
+                        if (renderFiles[i].Meta.Tags.length > 0) {
+                            let filetags = renderFiles[i].Meta.Tags[0].split(',');
+                            $.each(filetags, function (j, tagval) {
+                                if (!this.TagList[tagval]) {
+                                    this.TagList[tagval] = [renderFiles[i]];
+                                    $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
+                                }
+                                else {
+                                    this.TagList[tagval].push(renderFiles[i]);
+                                }
 
-                        }.bind(this));
+                            }.bind(this));
+                        }
                     }
                 }
 
@@ -215,16 +219,29 @@
                     }
                 }
             }
-            $(`#prev-thumb${renderFiles[i].FileRefId}`).data("meta", JSON.stringify(renderFiles[i]));
+            if (!renderFiles[i].hasOwnProperty('Recent')) {
+                $(`#prev-thumb${renderFiles[i].FileRefId}`).data("meta", JSON.stringify(renderFiles[i]));
+            }
+            else {
+                recentUpload = true;
+                this[`${this.Options.Container}_cont`].addToImagelist(renderFiles[i]);
+            }
+
         }
 
+        if (recentUpload) {
+            this.contextmenu_recent();
+        }
+        else {
+
+            $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
+            $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
+            $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
+            this.contextMenu();
+        }
+        $(".FUP_TagLi").off("click").on("click", this.sortByTagFn.bind(this));
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         $(`.${this.Options.Container}_preview`).off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
-        $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
-        $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
-        $(".FUP_TagLi").off("click").on("click", this.sortByTagFn.bind(this));
-        $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
-        this.contextMenu();
         this.hideEmptyCategoryFn();
     }
 
@@ -263,13 +280,16 @@
             $(e.target).addClass('current');
             let tag = $(e.target).closest('li')[0].innerHTML;
             for (let i = 0; i < this.FileList.length; i++) {
-                let filetags = this.FileList[i].Meta.Tags[0].split(',');
-                if ($.inArray(tag, filetags) >= 0) {
-                    tagsArr.push(this.FileList[i]);
+                if (this.FileList[i].Meta.Tags.length > 0) {
+                    let filetags = this.FileList[i].Meta.Tags[0].split(',');
+                    if ($.inArray(tag, filetags) >= 0) {
+                        tagsArr.push(this.FileList[i]);
+                    }
                 }
             }
             this.renderFiles(tagsArr);
         }
+        this.setThumbnailCount();
     }
 
     rmChecked(evt) {
@@ -289,20 +309,50 @@
 
     thumbNprevHtml(o) {
         let src = null;
-        if (o.FileCategory === 0) {
-            src = `/files/${o.FileRefId}`;
+        if (o.hasOwnProperty('Recent')) {
+            if (o.FileCategory === 0) {
+                src = `/files/${o.FileB64}`;
+            }
+            else if (o.FileCategory === 1) {
+                src = o.FileB64;
+            }
+            return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
+                        <div class="eb_uplGal_thumbO_img">
+                            ${this.getThumbType(o, src)}
+                                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                     <i class="fa fa-info-circle filesave_info" data-toggle="tooltip" data-placement="bottom" title="will be saved only if form is saved " ></i>
+                                </div>
+                                <div class="eb_uplGal_thumb_loader">
+                                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div>
+                                      <div></div><div></div><div></div><div></div><div>
+                                      </div><div></div><div></div></div>
+                                </div>
+                         </div>
+                    </div>`);
         }
-        else if (o.FileCategory === 1) {
-            src = `/images/small/${o.FileRefId}.jpg`;
+        else {
+            if (o.FileCategory === 0) {
+                src = `/files/${o.FileRefId}`;
+            }
+            else if (o.FileCategory === 1) {
+                src = `/images/small/${o.FileRefId}.jpg`;
+            }
+            return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
+                        <div class="eb_uplGal_thumbO_img">
+                            ${this.getThumbType(o, src)}
+                            <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
+                            </div>
+                            <div class="select-fade"></div>
+                            <div class="eb_uplGal_thumb_loader">
+                                <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div>
+                                  <div></div><div></div><div></div><div></div><div>
+                                  </div><div></div><div></div></div>
+                            </div>
+                          </div>
+                      </div>`);
         }
-        return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
-                <div class="eb_uplGal_thumbO_img">
-                    ${this.getThumbType(o, src)}
-                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
-                <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
-                </div>
-                <div class="select-fade"></div>
-            </div>`);
+
     }
 
     getThumbType(o, src) {
@@ -312,8 +362,10 @@
             if (exten !== 'pdf') {
                 return `<img src="/images/file-image.png" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
-            else
-                return `<iframe src="${src}.${exten}" class="gallerythumbfile"></iframe>`;
+            else {
+                return `<img src="/images/pdf-image.png" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
+            }
+
         }
         else {
             return `<img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
@@ -432,6 +484,7 @@
         evt.stopPropagation();
         evt.preventDefault();
 
+        this.FilesBase64 = [];
         let files = evt.target.files || evt.originalEvent.dataTransfer.files; // FileList object
 
         for (var i = 0; i < files.length; i++) {
@@ -467,11 +520,12 @@
 
     drawThumbNail(e, file) {
         if ((file.size / (1024)) < (this.MaxSize * 1024)) {
+            let b64 = e.target.result;
             $(`#${this.Options.Container}-eb-upl-bdy`).append(`
                                                         <div class="file-thumb-wraper">
                                                             <div class="eb-upl_thumb" exact="${file.name}" file="${this.replceSpl(file.name)}">
                                                                 <div class="eb-upl-thumb-bdy">
-                                                                    ${this.getThumbNailHead(e.target.result, file)}
+                                                                    ${this.getThumbNailHead(b64, file)}
                                                                 </div>
                                                                 <div class="eb-upl-thumb-info">
                                                                     <h4 class="fname text-center">${file.name}</h4>
@@ -500,7 +554,7 @@
 
             if (this.Options.EnableCrop)
                 $(`#${this.replceSpl(file.name)}-crop`).off("click").on("click", this.cropImg.bind(this));
-
+            this.FilesBase64.push(b64)
             this.Files.push(file);
             this.isDropZoneEmpty();
         }
@@ -572,7 +626,7 @@
             }
         }
         $(e.target).closest(".file-thumb-wraper").remove();
-        document.getElementById("uploadtest-file-input").value = "";
+        //document.getElementById("uploadtest-file-input").value = "";
         this.isDropZoneEmpty();
     }
     //lines commented for testing
@@ -601,9 +655,11 @@
     }
 
     comUpload() {
+        this.TempFilesList = [];
         let url = "";
         for (let k = 0; k < this.Files.length; k++) {
             let type = this.getFileType(this.Files[k]);
+            this.showInGallery(this.Files[k], type, k);
             if (type === "image")
                 url = "../StaticFile/UploadImageAsync";
             else
@@ -611,6 +667,31 @@
 
             this.uploadItem(url, this.Files[k]);
         }
+        this.renderFiles(this.TempFilesList)
+    }
+
+    showInGallery(file, type, k) {
+        var obj = {};
+        var metaObj = {};
+        this.TempCount += 1;
+        if (type === "image")
+            obj.FileCategory = 1;
+        else
+            obj.FileCategory = 0;
+        obj.FileName = file.name;
+        obj.FileRefId = "ebfupRecent"+this.TempCount;
+        obj.FileB64 = this.FilesBase64[k];
+        obj.FileSize = file.size;
+        obj.UploadTime = (new Date()).toISOString().split('T')[0];
+        obj.Recent = true;
+        let c = this.readCategory(file);
+        if (c.length > 0)
+            metaObj.Category = c;
+        let t = this.getTag(file);
+        if (t.length > 0)
+            metaObj.Tags = t;
+        obj.Meta = metaObj;
+        this.TempFilesList.push(obj);
     }
 
     uploadItem(_url, file) {
@@ -660,6 +741,11 @@
             thumb.find(".error").hide();
             thumb.closest('file-thumb-wraper').remove();
             for (let i = 0; i < this.Files.length; i++) {
+                var k = this.Gallery.find(`[filename_RE='${this.Files[i].name}']`)
+                if (k.length > 0) {
+                    k.attr("original_refid", refid);
+                    k.attr("id", `prev-thumb${refid}`);
+                }
                 if (this.Files[i].name === thumb.attr("exact")) {
                     this.uploadSuccess(refid);
                     this.Files.splice(i, 1);
@@ -674,6 +760,7 @@
     }
 
     outerHtml() {
+        let fileType = (this.Options.Type == "image") ? "image/*" : "";
         let isVisible = (this.Options.DisableUpload) ? "none" : "block";
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
                                                      <div class="FUP_Head_W" style="display:${isVisible}">
@@ -706,7 +793,7 @@
                                   </div>
                                   <div class="modal-footer"> 
                                         <button class="modal-ok pull-right" id="${this.Options.Container}-upl-ok">Ok</button>
-                                        <input type="file" id="${this.Options.Container}-file-input" style="display:none;" ${this.Multiple}/>
+                                        <input type="file" accept="${fileType}" id="${this.Options.Container}-file-input" style="display:none;" ${this.Multiple}/>
                                         <button class="browse-btn" onclick="$('#${this.Options.Container}-file-input').click();">
                                             <i class="fa fa-folder-open-o"></i> Browse
                                         </button>
@@ -844,8 +931,8 @@
     getCateryLinks() {
         let o = {};
         for (let i = 0; i < this.Options.Categories.length; i++) {
-            o[this.Options.Categories[i]] = {
-                name: this.Options.Categories[i],
+            o[this.Options.Categories[i].trim()] = {
+                name: this.Options.Categories[i].trim(),
                 icon: "",
                 callback: this.contextMcallback.bind(this)
             };
@@ -854,11 +941,22 @@
     }
 
     contextMcallback(eType, selector, action, originalEvent) {
-        let refids = [eval($(selector.$trigger).attr("filref"))];
-        this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
-            if (!refids.Contains(eval($(o).attr("refid"))))
-                refids.push(eval($(o).attr("refid")));
-        }.bind(this));
+        let refids = [];
+        if ($(selector.$trigger).attr("recent") == "true") {            
+            var attr = $(selector.$trigger).attr('original_refid');
+            if (typeof attr !== typeof undefined && attr !== false) {
+                refids = [eval($(selector.$trigger).attr("original_refid"))];
+            }
+            
+        }
+        else {
+
+             refids = [eval($(selector.$trigger).attr("filref"))];
+            this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
+                if (!refids.Contains(eval($(o).attr("refid"))))
+                    refids.push(eval($(o).attr("refid")));
+            }.bind(this));
+        }
         this.changeCatAjax(eType, refids);
     }
 
@@ -875,9 +973,17 @@
             contentType: false,
             processData: false,
             beforeSend: function (evt) {
-
+                for (var i = 0; i < fileref.length; i++) {
+                    var thumb = this.Gallery.find(`#prev-thumb${fileref[i]}`);
+                    thumb.find(".eb_uplGal_thumb_loader").show(); 
+                }
+                
             }.bind(this)
         }).done(function (status) {
+            for (var i = 0; i < fileref.length; i++) {
+                var thumb = this.Gallery.find(`#prev-thumb${fileref[i]}`);
+                thumb.find(".eb_uplGal_thumb_loader").hide();
+            }
             if (status)
                 this.redrawCategry(fileref, cat);
         }.bind(this));
@@ -885,13 +991,52 @@
     redrawCategry(fileref, cat) {
         let $t;
         for (let i = 0; i < fileref.length; i++) {
-            $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).append(this.Gallery.find(`div[filref="${fileref[i]}"]`));
+            var thump = this.Gallery.find(`div[filref="${fileref[i]}"]`);
+            if (thump.length === 0) {
+                thump = this.Gallery.find(`div[original_refid="${fileref[i]}"]`);
+            }
+            $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).append(thump);
             $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
+            this.setThumbnailCount();
         }
         this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
         $(".eb_uplGal_thumbO").find(".select-fade").hide();
     }
+
+    contextmenu_recent() {
+        $.contextMenu({
+
+            selector: ".eb_uplGal_thumbO_RE",
+            autoHide: true,
+            className: "ebfup-context-menu_RE",
+            items: {
+                "delete": {
+                    name: "Delete",
+                    icon: "fa-trash",
+                    callback: this.contextM_REcallback.bind(this)
+                },
+                "changeCategory": {
+                    name: "Move to Category",
+                    icon: "fa-list",
+                    items: this.getCateryLinks()
+                }
+            }
+        });
+
+        // set a title
+        $('.ebfup-context-menu_RE').attr('ebfup-context-menutitle_RE', "Yet to save Form");
+
+
+    }
+    //contextM_REcallback(itemKey, opt, e) {
+
+    //    let refid = opt.$trigger.attr('filref');
+    //    uploadedFileRefList[ctrl.Name] 
+    //    opt.$trigger.remove();
+    //    var m = "edit was clicked";
+    //    window.console && console.log(m) || alert(m);
+    //}
 
     deleteFromGallery(filerefs) {
         for (let i = 0; i < filerefs.length; i++) {
@@ -902,7 +1047,19 @@
     customMenuCompleted(name, refids) {
         if (name === "Delete") {
             this[`${this.Options.Container}_cont`].deleteimage(refids);
+            this.setThumbnailCount();
         }
 
+    }
+
+    setThumbnailCount() {
+        var catHead = $(`#${this.Options.Container}`).find('.ClpsGalItem_Sgl');
+        var l = catHead.length;
+        if (l > 0) {
+            for (var i = 0; i < l; i++) {
+                var thumb_len = $(catHead[i]).find(`.${this.Options.Container}_preview`).length;
+                $(catHead[i]).find('.FcnT').text(`(${thumb_len})`);
+            }
+        }
     }
 }

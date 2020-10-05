@@ -75,7 +75,8 @@
 
             }
             else {
-                EbMessage("show", { Message: "No image found", Background: 'red' });
+                ////commented because in fup control incase of single image after delete it shows this dailoguebox
+               // EbMessage("show", { Message: "No image found", Background: 'red' });
             }
         }
 

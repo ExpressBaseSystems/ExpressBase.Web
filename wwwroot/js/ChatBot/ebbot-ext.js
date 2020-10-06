@@ -44,7 +44,7 @@
             dpurl = headerLogo;
         }
         else {
-            dpurl = (/^\d+$/.test(d.botdpURL)) ? `images/${d.botdpURL}.png` : (d.botdpURL || '../images/demobotdp4.png');
+            dpurl = (/^\d+$/.test(d.botdpURL)) ? `botExt/images/original/${d.botdpURL}.png` : (d.botdpURL || '../images/demobotdp4.png');
         }
         themeColor = d.ebbotThemeColor;
         subtxt = d.botsubtext || '';

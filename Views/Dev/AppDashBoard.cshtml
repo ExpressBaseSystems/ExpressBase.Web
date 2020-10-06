@@ -7,18 +7,23 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     string domurl = string.Empty;
+    string jssrc = string.Empty;
+    var sol_cid=ViewBag.cid;
     var solutionid = ViewBag.cide;
     if (ViewBag.Env == "Development")
     {
         domurl = "http://" + solutionid + ".localhost:41500";
+        jssrc = "https://" + sol_cid + ".localhost:41502";
     }
     if (ViewBag.Env == "Staging")
     {
         domurl = "https://" + solutionid + ".eb-test.cloud";
+        jssrc = "https://" + sol_cid + ".eb-test.cloud";
     }
     if (ViewBag.Env == "Production")
     {
         domurl = "https://" + solutionid + ".expressbase.com";
+        jssrc = "https://" + sol_cid + ".expressbase.com";
     }
 }
 
@@ -305,7 +310,7 @@
                                                         <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp6.png')"></div>
                                                     </div>
                                                     <div class="modal-footer" style="">
-                                                       @* <button type="button" class="btn btn-default" id="dpBrowse" data-dismiss="modal">Browse</button>*@
+                                                        <button type="button" class="btn btn-default" id="dpBrowse" data-dismiss="modal">Browse</button>
                                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                                     </div>
                                                 </div>
@@ -539,7 +544,7 @@
                                             (function () {
                                                 d = document;
                                                 s = d.createElement("script");
-                                                s.src = "@domurl/Bote/Js?id=@ViewBag.cide-@appinfo.Id&mode=s";
+                                                s.src = "@jssrc/Bote/Js?id=@appinfo.Id&mode=s";
                                                 s.async = 1;
                                                 d.getElementsByTagName("head")[0].appendChild(s);
                                             })();

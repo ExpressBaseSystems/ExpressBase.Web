@@ -23,13 +23,23 @@
             $(el).popover({
                 trigger: 'focus',
                 html: true,
-                container: "body [eb-root-obj-container]:first",
+                container: "body",
                 placement: this.PopoverPlacement,
                 content: decodeURIComponent(escape(window.atob(ctrl.Info)))
             });
         }
         else {
             el.remove();
+        }
+
+        // hide popover on scroll
+        let scrollableContSelectors = this.scrollableContSelectors.concat('[eb-root-obj-container]');
+        for (let i = 0; i < scrollableContSelectors.length; i++) {
+            let $containers = $(el).parents(scrollableContSelectors[i]).filter(':not([onscroll-hide-info="true"])');
+            $containers.scroll(function (event) {
+                $(event.target).find('.label-infoCont:focus').blur();
+            }.bind(this));
+            $containers.attr('onscroll-hide-info', 'true');
         }
     };
 
@@ -159,6 +169,49 @@
 
         }.bind(this, ctrlOpts.DpControlsList);
 
+        imgup.contextM_REcallback = function (arr, name, obj) {
+            let refids = obj.$trigger.attr('original_refid');
+            let filref = [];
+            filref.push(obj.$trigger.attr('filref'));
+
+            if (name === "delete") {
+                EbDialog("show",
+                    {
+                        Message: "Are you sure? Changes Affect only if Form is Saved.",
+                        Buttons: {
+                            "Yes": {
+                                Background: "green",
+                                Align: "left",
+                                FontColor: "white;"
+                            },
+                            "No": {
+                                Background: "violet",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            if (name === "Yes") {
+                                let initLen = uploadedFileRefList[ctrl.Name].length;
+                                for (let i = 0; i < refids.length; i++) {
+                                    let index = uploadedFileRefList[ctrl.Name].indexOf(eval(refids));
+                                    if (index !== -1) {
+                                        uploadedFileRefList[ctrl.Name].splice(index, 1);
+                                    }
+                                }
+                                if (initLen > uploadedFileRefList[ctrl.Name].length) {
+                                    obj.$trigger.remove();
+                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                }
+                                imgup.customMenuCompleted("Delete", filref);
+
+
+                            }
+                        }
+                    });
+            }
+
+        }.bind(this, ctrlOpts.DpControlsList);
     };
 
     //edit by amal for signature pad
@@ -807,8 +860,8 @@
             console.log(e);
         }
 
-        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+        var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osmAttrib = 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
         var osm = new L.TileLayer(osmUrl, { minZoom: 1, maxZoom: 18, attribution: osmAttrib });
         map.setView([lat, lon], 14);
         map.addLayer(osm);
@@ -1063,7 +1116,7 @@
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
             rendererName: this.Renderer.rendererName,
             renderer: this.Renderer,
-            scrollableContSelectors: this.scrollableContSelectors
+            scrollableContSelectors: this.Renderer.rendererName === "WebForm" ? this.scrollableContSelectors : []
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
@@ -1254,14 +1307,45 @@
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
+        $('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
+            trigger: 'hover',
+            html: true,
+            container: "body",
+            placement: "right",
+            content: "<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>Created/Linked user</div>- Not assigned yet -",
+            delay: { "show": 500, "hide": 100 }
+        });
 
-        $.each(ctrl.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
-                if (c)
-                    obj.Control = c;
+        ctrl.setValue = function () {
+            if (!this.DataVals)
+                return;
+            this._finalObj = JSON.parse(this.DataVals.F);
+            let _d = this._finalObj;
+            let $img = $('#' + this.EbSid_CtxId + '_usrimg');
+            if (_d['map_id']) {
+                $img.off('error').on('error', function () { $(this).attr('src', '/images/nulldp.png'); }).attr('src', '/images/dp/' + _d['map_id'] + '.png');
+                let dispText = _d['map_fullname'] ? _d['map_fullname'] : (_d['map_email'] ? _d['map_email'] : (_d['map_phprimary'] ? _d['map_phprimary'] : ''));
+                $('#' + this.EbSid_CtxId).text(dispText);
+                let popoverText = 'Name: ' + (_d['map_fullname'] ? _d['map_fullname'] : '---') + '<br/>';
+                popoverText += 'Email: ' + (_d['map_email'] ? _d['map_email'] : '---') + '<br/>';
+                popoverText += 'Phone: ' + (_d['map_phprimary'] ? _d['map_phprimary'] : '---');
+                let title = `<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>${(_d['id'] ? 'Created user' : 'Linked user')}</div>`;
+                popoverText = title + popoverText;
+                $img.attr('data-content', popoverText);
             }
-        }.bind(this));
+            else {
+                $img.attr('src', '/images/nulldp.png');
+                $('#' + this.EbSid_CtxId).text('---');
+            }
+        }.bind(ctrl);
+
+        //$.each(ctrl.Fields.$values, function (i, obj) {
+        //    if (obj.ControlName !== '') {
+        //        let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
+        //        if (c)
+        //            obj.Control = c;
+        //    }
+        //}.bind(this));
     };
 
     this.ProvisionLocation = function (ctrl, ctrlopts) {
@@ -1533,75 +1617,75 @@
         }
     };
 
-    this.BluePrint = function (ctrl, ctrlopts) {
-        console.log("view mode bp");
-        var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
-                        <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
-                           <div class='vertical-align_tlbr' >
-                                
-                                    <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Mark">
-                                        <i class="fa fa-object-ungroup "></i>   
-                                    </div>
+    //this.BluePrint = function (ctrl, ctrlopts) {
+    //    console.log("view mode bp");
+    //    var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
+    //                    <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
+    //                       <div class='vertical-align_tlbr' >
 
-                                    <div  id='bg_image_BP' class='bp_toolbarproperties 'title="Image upload">
-                                        <label for="bg_image">
-                                           <i class='fa fa-picture-o'></i>
-                                        </label>
-                                         <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
-                                    </div> 
+    //                                <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Mark">
+    //                                    <i class="fa fa-object-ungroup "></i>   
+    //                                </div>
 
-                                    <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
-                                        <i class='fa fa-minus-circle'></i>
-                                    </div>
+    //                                <div  id='bg_image_BP' class='bp_toolbarproperties 'title="Image upload">
+    //                                    <label for="bg_image">
+    //                                       <i class='fa fa-picture-o'></i>
+    //                                    </label>
+    //                                     <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
+    //                                </div> 
 
-                                     <div id='resetsvg_BP' class='bp_toolbarproperties 'title="Reset position">
-                                        <i class='fa fa-refresh'></i>
-                                    </div>
+    //                                <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
+    //                                    <i class='fa fa-minus-circle'></i>
+    //                                </div>
 
-                                    <div id='clearsvg_BP' class='bp_toolbarproperties 'title="Clear layers">
-                                        <i class='fa fa-eraser '></i>
-                                    </div>
+    //                                 <div id='resetsvg_BP' class='bp_toolbarproperties 'title="Reset position">
+    //                                    <i class='fa fa-refresh'></i>
+    //                                </div>
 
-                                    <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
-                                        <i class='fa fa-stop-circle-o '></i>
-                                    </div>
+    //                                <div id='clearsvg_BP' class='bp_toolbarproperties 'title="Clear layers">
+    //                                    <i class='fa fa-eraser '></i>
+    //                                </div>
 
-                                    <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
-                                        <i class='fa fa-search  '></i>
-                                    </div>
-                            </div>
-                        </div>
-                        <div class="col-md-11 col-lg-11 col-sm-11 svgcntnrBP_usr">
+    //                                <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
+    //                                    <i class='fa fa-stop-circle-o '></i>
+    //                                </div>
 
-                            <div id="svgContainer"></div>
-                        </div>
-                    </div>`;
-        $('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid).addClass('bpdiv_retrive').html(bphtml);
-        $('#cont_' + ctrl.EbSid).css('height', '100%');
-        $('#bpdiv_' + ctrl.EbSid).css('height', '100%');
-        $('#' + ctrl.EbSid + 'Wraper').css('height', '100%');
+    //                                <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
+    //                                    <i class='fa fa-search  '></i>
+    //                                </div>
+    //                        </div>
+    //                    </div>
+    //                    <div class="col-md-11 col-lg-11 col-sm-11 svgcntnrBP_usr">
+
+    //                        <div id="svgContainer"></div>
+    //                    </div>
+    //                </div>`;
+    //    $('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid).addClass('bpdiv_retrive').html(bphtml);
+    //    $('#cont_' + ctrl.EbSid).css('height', '100%');
+    //    $('#bpdiv_' + ctrl.EbSid).css('height', '100%');
+    //    $('#' + ctrl.EbSid + 'Wraper').css('height', '100%');
 
 
-        var drawBP = new drawBluePrintfn(ctrl);
+    //    var drawBP = new drawBluePrintfn(ctrl);
 
-        drawBP.redrawSVGelements_usr();
+    //    drawBP.redrawSVGelements_usr();
 
-        ctrl.getValueFromDOM = drawBP.getvalueSelected;
-        ctrl.setValue = drawBP.setvalueSelected;
-        ctrl._onChangeFunctions = [];
-        ctrl.bindOnChange = function (p1) {
-            if (!this._onChangeFunctions.includes(p1))
-                this._onChangeFunctions.push(p1);
-        };
-        ctrl.clear = drawBP.clear_ctrlAftrsave;
-        //display
-        //ctrl.setValue = dgbf;
-        ////store
-        // ctrl.getValueFromDOM = drawBP.getvalueSelected();
-        ////call fn onchange
-        //ctrl.bindOnChange = asgd;
+    //    ctrl.getValueFromDOM = drawBP.getvalueSelected;
+    //    ctrl.setValue = drawBP.setvalueSelected;
+    //    ctrl._onChangeFunctions = [];
+    //    ctrl.bindOnChange = function (p1) {
+    //        if (!this._onChangeFunctions.includes(p1))
+    //            this._onChangeFunctions.push(p1);
+    //    };
+    //    ctrl.clear = drawBP.clear_ctrlAftrsave;
+    //    //display
+    //    //ctrl.setValue = dgbf;
+    //    ////store
+    //    // ctrl.getValueFromDOM = drawBP.getvalueSelected();
+    //    ////call fn onchange
+    //    //ctrl.bindOnChange = asgd;
 
-    }
+    //}
 
     this.Rating = function (ctrl) {
         if ((ebcontext.user.wc == 'uc') || this.Renderer.rendererName === "Bot") {

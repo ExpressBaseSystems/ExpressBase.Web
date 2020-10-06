@@ -1,4 +1,4 @@
-﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList, locationList) {
+﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList, locationList, usersListAll) {
     this.menuBarObj = new EbHeader();
     this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.appCollection = appCollection._acol.$values;
@@ -10,6 +10,7 @@
     this.r2rList = r2rList.$values;
     this.usersList = usersList.$values;
     this.locationList = locationList.$values;
+    this.usersListAll = usersListAll.$values;
     this.dependentList = [];
     this.dominantList = [];
     this.selectApp = $("#selectApp");
@@ -180,7 +181,7 @@
             return;
         $("#spanRoleName").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" padding: 9px;"></i>`);
         $("#spanRoleName").attr("title", "Validating...");
-        this.timer1 = setTimeout(function () { this.validateRoleNameAjaxCall(val, e); }.bind(this), 3000);
+        this.timer1 = setTimeout(function () { this.validateRoleNameAjaxCall(val, e); }.bind(this), 1000);
     };
     this.validateRoleNameAjaxCall = function (val, e) {
         $.ajax({
@@ -230,21 +231,21 @@
         }
     };
 
-    this.chkItemCustomFunc = function (_this, e) {
+    this.chkItemCustomFunc = function (_this, $srchRsltItem) {
         _this.dependentList = [];
+        let $chkbox = $srchRsltItem.find('input');
+        //$.each($(this.divSearchResults).find('input'), function (i, ob) {
+        //    if (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
+        //        $(ob).removeAttr("checked");
+        //        $(ob).attr("disabled", "true");
+        //    }
+        //});
 
-        $.each($(this.divSearchResults).find('input'), function (i, ob) {
-            if (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
-                $(ob).removeAttr("checked");
-                $(ob).attr("disabled", "true");
-            }
-        });
-
-        if ($(e.target).is(':checked')) {
-            _this.findDependentRoles($(e.target).attr("data-id"));
+        if ($chkbox.is(':checked')) {
+            _this.findDependentRoles($chkbox.attr("data-id"));
             var st = "";
             var itemid = [];
-            $.each($(this.divSelectedDisplay).children(), function (i, ob) {
+            $.each(this.divSelectedDisplay.children(), function (i, ob) {
                 for (var i = 0; i < _this.dependentList.length; i++) {
                     if (_this.dependentList[i] == $(ob).attr('data-id')) {
                         st += '\n' + $(ob).attr('data-name');
@@ -255,33 +256,42 @@
             if (st !== '') {                
                 if (confirm("Continuing this Operation will Remove the following Item(s)" + st + "\n\nClick OK to Continue")) {
                     for (i = 0; i < itemid.length; i++) {
-                        $(this.divSelectedDisplay).children("[data-id='" + itemid[i] + "']").remove();
+                        this.divSelectedDisplay.children("[data-id='" + itemid[i] + "']").remove();
                     }
                 }
                 else {
-                    $(e.target).removeAttr("checked");
+                    $srchRsltItem.removeAttr('disabled').css('pointer-events', 'all').css('opacity', '1.0');
+                    $chkbox.prop("checked", false);
                 }
             }
         }
 
-        $.each($(this.divSearchResults).find('.SearchCheckbox:checked'), function (i, ob) {
+        $.each(this.divSearchResults.find('.SearchCheckbox:checked'), function (i, ob) {
             _this.findDependentRoles($(ob).attr('data-id'));
         });
-        $.each($(this.divSelectedDisplay).children(), function (i, ob) {
+        $.each(this.divSelectedDisplay.children(), function (i, ob) {
             _this.dependentList.push(parseInt($(ob).attr('data-id')));
             _this.findDependentRoles($(ob).attr('data-id'));
         });
-        $.each($(this.divSearchResults).find('input'), function (i, ob) {
-            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1 || _this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
-                $(ob).removeAttr("checked");
-                $(ob).attr("disabled", "true");
+        $.each(this.divSearchResults.children(), function (i, ob) {
+            let $srIt = $(ob);
+            let $ckBx = $(ob).find('input');
+            if (_this.dependentList.indexOf(parseInt($srIt.attr('data-id'))) !== -1 || _this.dominantList.indexOf(parseInt($srIt.attr('data-id'))) !== -1) {
+                $srIt.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+                $ckBx.prop('checked', false);
+                //$(ob).removeAttr("checked");
+                //$(ob).attr("disabled", "true");
             }
-            else
-                $(ob).removeAttr("disabled");
+            else {
+                $srchRsltItem.removeAttr('disabled').css('pointer-events', 'all').css('opacity', '1.0');
+                //$(ob).removeAttr("disabled");
+            }
 
             if ($(this.divSelectedDisplay).children("[data-id=" + $(ob).attr('data-id') + "]").length > 0) {
-                $(ob).attr("disabled", "true");
-                $(ob).prop("checked", "true");
+                $srIt.attr('disabled', 'disabled').css('pointer-events', 'none').css('opacity', '0.5');
+                $ckBx.prop('checked', true);
+                //$(ob).attr("disabled", "true");
+                //$(ob).prop("checked", "true");
             }
         }.bind(this));
     };
@@ -481,7 +491,7 @@
             //}
         }.bind(this));
         if ($('#divObjList').children().length === 0)
-            $('#divObjList').append(`<div style="text-align: center; margin-top: 28%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
+            $('#divObjList').append(`<div class="nothing-text" style="padding-top: 150px;"> Nothing to Display </div>`);
 
 
 
@@ -516,15 +526,21 @@
 
         //------------------INIT USERS TILE------------------
         var initUserList = null;
+        var userListAll = [];
         var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
+        for (let i = 0; i < this.usersListAll.length; i++) {
+            let _name = this.usersListAll[i].Name || this.usersListAll[i].Email || this.usersListAll[i].Phone;
+            userListAll.push({ id: this.usersListAll[i].Id, name: _name, email: this.usersListAll[i].Email });            
+        }
         if (this.roleId > 0) {
             initUserList = [];
-            for (i = 0; i < this.usersList.length; i++) {
-                initUserList.push({ id: this.usersList[i].Id, name: this.usersList[i].Name, email: this.usersList[i].Email });
+            for (let i = 0; i < this.usersList.length; i++) {
+                let _name = this.usersList[i].Name || this.usersList[i].Email || this.usersList[i].Phone;
+                initUserList.push({ id: this.usersList[i].Id, name: _name, email: this.usersList[i].Email });
             }
         }
         if (this.usersTile === null) {
-            this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, null, metadata2, "../Security/GetUserDetails", null, this);
+            this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, userListAll, metadata2, null, null, this);
         }
         //-----------------------------------------------
     };

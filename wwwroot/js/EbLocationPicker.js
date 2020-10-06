@@ -21,10 +21,10 @@
     };
 
     this.Init = function () {
-        if (this.loc_count>20) {
+        if (this.loc_count > 20) {
             $(".locs_bdy").css('min-height', '70vh');
         }
-        $("#loc_tot_count").text(this.loc_count+" location");
+        $("#loc_tot_count").text(this.loc_count + " location");
         this.CurrentLoc = this.getCurrent();
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
@@ -53,6 +53,11 @@
         $("body").off("keydown").on("keydown", this.Keypress_selectLoc.bind(this));
         let s = this.getParentPath(this.CurrentLoc);
         $('#current_loc').attr('loc_id', this.CurrentLoc).text(s);
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.altKey && e.keyCode == 76) {
+                this.showSwitcher();
+            }
+        }.bind(this));
     };
 
     this.getCurrent = function () {
@@ -66,7 +71,8 @@
 
     this.ModifyLocationObject = function () {
         for (let i = 0; i < this.Locations.length; i++) {
-            this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: (this.Locations[i].LongName === this.Locations[i].ShortName) ? (this.Locations[i].LongName):(this.Locations[i].LongName + `  (${this.Locations[i].ShortName})`) });
+            let type = `<span class="loc_typ">${this.Locations[i].TypeName}</span>`;
+            this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: (this.Locations[i].LongName === this.Locations[i].ShortName) ? (this.Locations[i].LongName + type) : (this.Locations[i].LongName + `  (${this.Locations[i].ShortName + type})`) });
         }
         this.Tempdata = JSON.parse(JSON.stringify(this.data));
         this.Tempdata.sort(function (a, b) {
@@ -104,6 +110,12 @@
         if (items.length > 0) {
             $(".loc_switchModal_box .locs_bdy li").removeClass("active-loc");
             $(".loc_switchModal_box .locs_bdy li[data-id=" + items[0].id + "]").addClass("active-loc").parents("ul").addClass("show");
+            if (this.PrevLocation != items[0].id) {
+                $(SetLoc).prop("disabled", false);
+            }
+            else {
+                $(SetLoc).prop("disabled", true);
+            }
             this.CurrentLoc = items[0].id;
             this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         }
@@ -163,7 +175,7 @@
             else if (keycode == '8') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
                 if (y.closest("ul.show").length) {
-                    y = y.closest("ul.show"); 
+                    y = y.closest("ul.show");
                     let k = y.closest("li");
                     k.find("a:first").trigger('click');
                     k.find('.sim-tree-spread:first').trigger('click');
@@ -172,7 +184,7 @@
             else if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
                 if (y.find("ul.show").length) {
-                    y = y.find("ul.show:first"); 
+                    y = y.find("ul.show:first");
                     while (y.hasClass("show")) {
                         let k = y.closest("li");
                         k.find("a:first").trigger('click');
@@ -291,6 +303,7 @@
                         container.scrollTop() - 100
                 }, 'medium');
                 scrollTo.focus();
+                $(SetLoc).prop("disabled", true);
             }
             else {
                 //  $(".html-root").style("overflow", "visible", "important");
@@ -368,7 +381,7 @@
                     t.push(n);
                     x.push(l);
                 }
-                else{
+                else {
                     break;
                 }
 
@@ -420,10 +433,10 @@
             for (i = 0; i < temoloc.length; i++) {
                 p = this.getParentPath(temoloc[i].LocId);
                 let k = $(".loc_switchModal_box .locs_bdy li[data-id=" + temoloc[i].LocId + "]").find('a')[0];
-                $(k).prepend(`<span><span class="parent_path">${p}</span><span class="loc_typ">${temoloc[i].TypeName}</span></span>`);
+                $(k).prepend(`<span><span class="parent_path">${p}</span></span>`);
             }
         }
-        $("#loc_tot_count").text(temoloc.length +" of "+this.loc_count + " location");
+        $("#loc_tot_count").text(temoloc.length + " of " + this.loc_count + " location");
     };
 
     this.confirmLocFn = function () {

@@ -305,6 +305,11 @@ function EbMakeValid(contSel, _ctrlCont, ctrl) {
         $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
 }
 
+function EbBlink(ctrl) {
+    $(`#${ctrl.EbSid_CtxId}Wraper`).addClass("ebblink");
+    setTimeout(function () { $(`#${ctrl.EbSid_CtxId}Wraper`).removeClass("ebblink"); }, 700);
+}
+
 
 //function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
 //    let borderColor = "rgb(242 5 0)";
@@ -726,7 +731,7 @@ function getSingleColumn(obj) {
     let SingleColumn = {};
     SingleColumn.Name = obj.Name;
     SingleColumn.Type = obj.EbDbType;
-    SingleColumn.Value = "";
+    SingleColumn.Value = (obj.ObjType === "PowerSelect" && obj.__isFDcontrol) ? -1 : "";
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;
@@ -802,6 +807,9 @@ function EbConvertValue(val, type) {
     if (type === 11) {
         val = val.replace(/,/g, "");//  temporary fix
         return parseInt(val);
+    }
+    else if (type === 3) {
+        return val === "true";
     }
     return val;
 }
@@ -1122,6 +1130,7 @@ function EBPSSetDisplayMember(p1, p2) {
     if (p1 === '')
         return;
     let VMs = this.initializer.Vobj.valueMembers || [];
+    let tempVMs = [];
     let DMs = this.initializer.Vobj.displayMembers || [];
     let columnVals = this.initializer.columnVals || {};
 
@@ -1132,9 +1141,7 @@ function EBPSSetDisplayMember(p1, p2) {
 
     for (let i = 0; i < valMsArr.length; i++) {
         let vm = valMsArr[i];
-        setTimeout(function () {
-            VMs.push(vm);
-        });
+        tempVMs.push(vm);
         for (let j = 0; j < this.initializer.dmNames.length; j++) {
             let dmName = this.initializer.dmNames[j];
             if (!DMs[dmName])
@@ -1142,6 +1149,12 @@ function EBPSSetDisplayMember(p1, p2) {
             DMs[dmName].push(this.DataVals.D[vm][dmName]);
         }
     }
+
+
+    setTimeout(function () {//to catch by watcher one time (even if multiple value members are pushed)
+        this.initializer.Vobj.valueMembers.push(...tempVMs);
+    }.bind(this));
+
 
     if (this.initializer.datatable === null) {//for aftersave actions
         let colNames = Object.keys(this.DataVals.R);
@@ -1157,7 +1170,7 @@ function EBPSSetDisplayMember(p1, p2) {
         }
     }
 
-    $("#" + this.EbSid_CtxId).val(p1);
+    //$("#" + this.EbSid_CtxId).val(p1);
     //this.initializer.V_watchVMembers(VMs);
 }
 

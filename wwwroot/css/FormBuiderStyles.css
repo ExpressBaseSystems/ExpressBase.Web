@@ -13,6 +13,40 @@ html {
     outline: 1px solid #0075FF !important;
 }
 
+/*.ctrl-cover outline only*/
+
+
+
+.Eb-ctrlContainer[ctype="TextBox"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="Numeric"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="Date"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="EmailControl"] [ui-inp]:focus,
+.Eb-ctrlContainer[ctype="CheckBoxGroup"] .radio-wrap:focus,
+.Eb-ctrlContainer[ctype="RadioGroup"] .radio-wrap:focus,
+.Eb-ctrlContainer[ctype="BooleanSelect"] .dropdown-toggle[data-toggle="dropdown"]:focus,
+.Eb-ctrlContainer[ctype="SimpleSelect"] .dropdown-toggle[data-toggle="dropdown"]:focus,
+.Eb-ctrlContainer[ctype="PowerSelect"] .dropdown-toggle[data-toggle="dropdown"]:focus,
+[tdcoltype="DGNumericColumn"] [ui-inp]:focus,
+[tdcoltype="DGStringColumn"] [ui-inp]:focus {
+    outline: 0px !important;
+}
+
+.Eb-ctrlContainer[ctype="TextBox"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="Numeric"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="Date"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="EmailControl"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="RadioGroup"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="CheckBoxGroup"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="PowerSelect"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="BooleanSelect"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="RichText"] .ctrl-cover:focus-within,
+.Eb-ctrlContainer[ctype="SimpleSelect"] .ctrl-cover:focus-within {
+    outline: 1px solid #0075FF !important;
+    outline-offset: -1px;
+}
+
+/*--------------------*/
+
 body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
     --txtarea-bg: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
@@ -376,15 +410,30 @@ body {
     box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
 }
 
-
-
-
-.dgtr:focus {
-    /*border: solid 1px rgb(85, 94, 167) !important;*/
-    /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
-    box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
-    outline: 0 none;
+.dg-commit-dilog-msgbox {
+    text-align: center;
+    width: 100%;
+    font-size: 17px;
+    letter-spacing: 0.3px;
 }
+
+    .dg-commit-dilog-msgbox .fa-check {
+        color: #019a01;
+    }
+    .dg-commit-dilog-msgbox .fa-trash {
+        color: #f55d5d;
+    }
+    .dg-commit-dilog-msgbox .fa-table {
+        color: #555;
+    }
+
+
+    .dgtr:focus {
+        /*border: solid 1px rgb(85, 94, 167) !important;*/
+        /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
+        box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
+        outline: 0 none;
+    }
 
     .dgtr:focus > td {
         border-right: dotted 1px transparent !important;
@@ -841,8 +890,8 @@ eb-disable {
 }
 
 .toolicons .btn[role='invalid-msgs'] {
-   color:red;
-   display:none;
+    color: red;
+    display: none;
 }
 
 [coltype='DGNumericColumn'] {
@@ -1502,8 +1551,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .ctrl-cover[eb-readonly="true"] input,
 .ctrl-cover[eb-readonly="true"] .input-group-addon,
-.ctrl-cover[eb-readonly="true"] .dropdown-toggle {
-    background-color: #eee !important;
+.ctrl-cover[eb-readonly="true"] .dropdown-toggle,
+.ctrl-cover[eb-readonly="true"] {
+    background-color: #f3f3f3 !important;
     pointer-events: none !important;
 }
 
@@ -2342,6 +2392,25 @@ input.locinp {
 
 /*animations*/
 
+
+.ebblink {
+    animation: blinkn 0.7s ease-out infinite;
+}
+
+@keyframes blinkn {
+    0% {
+        filter: drop-shadow(0px 0px 0px #00ff977d) drop-shadow(0px 0px 0px #00ff97);
+    }
+
+    50% {
+        filter: drop-shadow(0px 0px 1px #00ff977d) drop-shadow(0px 0px 4px #00ff97);
+    }
+
+    100% {
+        filter: drop-shadow(0px 0px 0px #00ff977d) drop-shadow(0px 0px 0px #00ff97);
+    }
+}
+
 /* Safari 4.0 - 8.0 */
 /*@-webkit-keyframes dim_border {
     from {
@@ -2839,10 +2908,11 @@ input.locinp {
     font-family: Roboto;
     font-weight: 500;
     position: absolute;
-    bottom: 13px;
+    bottom: 24px;
     cursor: pointer;
     left: 21px;
     line-height: 1.5;
+    color: white;
 }
 
 .pdfwrapper-cont img {

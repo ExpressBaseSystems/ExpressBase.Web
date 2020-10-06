@@ -903,7 +903,7 @@ namespace ExpressBase.Web.Controllers
                 res.ResponseStatus.Message = e.Message;
                 return null;
             }
-        }   
+        }
         //public string AddOpenStreetMap()
         //{
         //    AddOpenStreetMapResponse res = new AddOpenStreetMapResponse();
@@ -928,6 +928,31 @@ namespace ExpressBase.Web.Controllers
         //        return null;
         //    }
         //}
+        public string AddAzureNotificationHub()
+        {
+            MobileConfigResponse res = new MobileConfigResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                MobileConfig con = new MobileConfig
+                {
+                    AzureNFConnection = req["ConnectionStr"],
+                    AzureNFHubName = req["HubName"],
+                    NickName = req["NickName"],
+                    AndroidAppSignInKey = req["SigninKey"],
+                    AndroidAppURL = req["AndroidAppURL"],
+                    Id = Convert.ToInt32(req["Id"]),
+                };
+                res = this.ServiceClient.Post<MobileConfigResponse>(new MobileConfigRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
         public string AddDropBox()
         {
             AddDropBoxResponse res = new AddDropBoxResponse();

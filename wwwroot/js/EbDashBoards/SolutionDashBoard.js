@@ -29,7 +29,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />",
         "Facebook": "<img class='img- responsive image-vender' src='../images/fb_logo.png' style='width:46%' />",
         "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />",
-        "OSM": "<img class='img- responsive image-vender' src='../images/open-street-map-medium-1.png' style='width:55%' />"
+        "OSM": "<img class='img- responsive image-vender' src='../images/open-street-map-medium-1.png' style='width:55%' />",
+        "MobileConfig": "<img class='img- responsive image-vender' src='../images/mobile settings.png' style='width:30%' />",
     };
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/postgre.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -71,6 +72,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.IntegrationSubmit = function (e) {
+        $("#eb_common_loader").EbLoader("show");
         //e.preventDefault();
         //var postData = $(e.target).serializeArray();
         $.ajax({
@@ -82,6 +84,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 //$("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#eb_common_loader").EbLoader("hide");
             var temp = JSON.parse(data);
             if (temp.ResponseStatus) {
                 EbMessage("show", { Message: "Integreation Change Not Complete", Background: "red" });
@@ -173,6 +176,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.IntergrationConfigDelete = function (Id) {
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/IntegrateConfDelete",
@@ -182,6 +186,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#eb_common_loader").EbLoader("hide");
             preventContextMenu = 0;
             $("#Integration_loder").EbLoader("hide");
             if (data) {
@@ -194,6 +199,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.IntergrationDelete = function (Id) {
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/IntegrateDelete",
@@ -203,6 +209,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#eb_common_loader").EbLoader("hide");
             preventContextMenu = 0;
             $("#Integration_loder").EbLoader("hide");
             if (data) {
@@ -243,6 +250,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.dbconnectionsubmit = function (e) {
+
         e.preventDefault();
         postData = $(e.target).serializeArray();
         var oconfid = $(e.target).find("#IntConfId").val();
@@ -458,7 +466,24 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     //        $("#IntegrationsCall").trigger("click");
     //        $("#MyIntegration").trigger("click");
     //    }.bind(this));
-    //};
+    //}; 
+    this.MobileConfigConnectionSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddAzureNotificationHub",
+            data: postData,
+            beforeSend: function () {
+                $("#MobileConfig_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#MobileConfig_loader").EbLoader("hide");
+            $("#MobileConfigEdit").modal("toggle");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+        }.bind(this));
+    };
 
     this.DropBoxOnSubmit = function (e) {
         e.preventDefault();
@@ -951,6 +976,20 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
     };
 
+    this.MobileConfiginteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#MobileConfigEdit').modal('toggle');
+        var data = JSON.parse(JSON.parse(data).ConnObj);
+        $.each(temp, function (i, obj) {
+            $('#MobileConfigNickname').val(obj.NickName);
+            $('#MobileConfigConfId').val(obj.Id);
+            $('#AzureNotificationHubName').val(data.AzureNFHubName);
+            $('#AzureNotificationConStr').val(data.AzureNFConnection);
+            $('#signinkey').val(data.AndroidAppSignInKey);
+            $('#AndroidAppURL').val(data.AndroidAppURL);
+        }.bind(this));
+    };
+
     this.VerticalTab = function (evt, cityName) {
         var button = $(evt.currentTarget);
         var datatype = button.text();
@@ -1218,7 +1257,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 }
                             }.bind(this));
                             if (flag === 0) {
-                                postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id };
+                                if (key === "MOBILECONFIG")
+                                    postData = { "SolutionId": this.Sid, "Preference": "OTHER", "Id": 0, "Type": key, "ConfigId": id };
+                                else postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id };
                                 if (key === "EbDATA" && temp === undefined) {
                                     EbDialog("show",
                                         {
@@ -1243,6 +1284,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                                 }
                                             }.bind(this)
                                         });
+                                }
+                                else if (key === "SUPPORTINGDATA") {
+                                    this.IntegrationSubmit(false);
                                 }
                                 else if (temp === undefined) {
                                     this.IntegrationSubmit(false);
@@ -1275,6 +1319,13 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                     postData.Preference = "MULTIPLE";
                                     this.IntegrationSubmit();
                                 }
+                                else if (key === "MobileConfig") {
+                                    postData.Preference = "OTHER";
+                                    this.IntegrationSubmit();
+                                }
+                                else if (key === "ERROR") {
+                                    alert("reload the page")
+                                }
                                 else {
                                     EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
                                 }
@@ -1289,15 +1340,33 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 };
 
                 if ($trigger.hasClass('PGSQLedit')) {
-                    options.items.EbDATA = { name: "Configure as Data Store" },
-                        options.items.EbFILES = { name: "Configure as File Store" },
-                        options.items.Delete = { name: "Remove" },
-                        //options.items.EbLOGS = { name: "Set as EbLogs" },
-                        options.items.Edit = { name: "Edit" };
+                    let id = $trigger[0].id;
+                    let tem = this.Connections.Integrations["EbDATA"]
+                    let flg = 0;
+                    $.each(tem, function (i) {
+                        if (tem[i].ConfId === id) {
+                            flg = 1;
+                        }
+                    }.bind(this));
+                    if (flg == 1) {
+                        options.items.EbDATA = { name: "Configure as Data Store" },
+                            options.items.EbFILES = { name: "Configure as File Store" },
+                            options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                    else {
+                        options.items.EbDATA = { name: "Configure as Data Store" },
+                            options.items.EbFILES = { name: "Configure as File Store" },
+                            options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
+                            options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                    
                 }
                 else if ($trigger.hasClass('MYSQLedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1305,6 +1374,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 else if ($trigger.hasClass('MSSQLedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1312,6 +1382,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 else if ($trigger.hasClass('ORACLEedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1319,6 +1390,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 else if ($trigger.hasClass('MongoDBedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1387,6 +1459,20 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                     options.items.AUTHENTICATION = { name: "Configure as AUTHENTICATION" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('MobileConfigedit')) {
+                    if (this.Connections.Integrations.MOBILECONFIG != undefined && this.Connections.Integrations.MOBILECONFIG.length >= 1) {
+                        options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                    else {
+                        options.items.MOBILECONFIG = { name: "Configure" },
+                            options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                }
+                else {
+                    options.items.ERROR = { name: "Refresh Page" }
                 }
                 if (preventContextMenu == 0)
                     return options;
@@ -1501,6 +1587,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 }.bind(this)
                             });
                         }
+                        else if (key == 'ERROR') {
+                            location.reload();
+                        }
                     }.bind(this),
                     items: {}
                 };
@@ -1574,6 +1663,15 @@ var SolutionDashBoard = function (connections, sid, versioning) {
 
                 } else if ($trigger.hasClass('AUTHENTICATIONedit 1')) {
                     options.items.Remove = { name: "Unset" };
+                }
+                else if ($trigger.hasClass('MOBILECONFIGedit')) {
+                    options.items.Remove = { name: "Unset" };
+                }
+                else if ($trigger.hasClass('SUPPORTINGDATAedit')){
+                    options.items.Remove = { name: "Unset" };
+                }
+                else {
+                    options.items.ERROR = { name: "Refresh Page" };
                 }
                 if (preventContextMenu === 0)
                     return options;
@@ -1850,6 +1948,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_Map_all();
         this.integration_IChat_all();
         this.integration_AUTHENTICATION_all();
+        this.integration_MobileConf_all();
+        this.integration_SUPPORTINGDATA_all();
     }.bind(this);
 
     this.db_modal_show_append = function (DatabaseName) {
@@ -1933,7 +2033,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
         else if ($('div.checkbox-group :checkbox:checked').length < 1) {
             if (postData)
-            $("#2faSwitch").bootstrapToggle('off');
+                $("#2faSwitch").bootstrapToggle('off');
             EbMessage("show", {
                 Message: "Please select OTP delivery method", Background: "red"
             });
@@ -2002,7 +2102,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 }.bind(this)
             });
     };
-    
+
     this.SMTPautoFill = function (e) {
         var target = e.target.options.selectedIndex;
         if (target === 0) {
@@ -2011,6 +2111,53 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
         }
         $('#EmailInputPort').val("587");
+    }.bind(this);
+
+    this.integration_SUPPORTINGDATA_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["SUPPORTINGDATA"];
+        $("#SUPPORTINGDATA-All").empty();
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
+                                <div class="integrationContainer_Image">
+                                    ${Imageurl[rows.Ctype]}
+                                </div>
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                    <span>${rows.NickName}</span>
+                                </div>
+                                <div id="nm" class="integrationContainer_caret-down">
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </div>
+                            </div>`);
+            html.join("");
+            count += 1;
+        }.bind(this));
+        $('#SUPPORTINGDATA-All').append(html);
+        $('#Supporting_Data_Head').empty().append(" Supporting Data Store (" + count + ")");
+    }.bind(this);
+    this.integration_MobileConf_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["MOBILECONFIG"];
+        $("#MOBILECONFIG-all").empty();
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
+                                <div class="integrationContainer_Image">
+                                    ${Imageurl[rows.Ctype]}
+                                </div>
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                    <span>${rows.NickName}</span>
+                                </div>
+                                <div id="nm" class="integrationContainer_caret-down">
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </div>
+                            </div>`);
+            html.join("");
+            count += 1;
+        }.bind(this));
+        $('#MOBILECONFIG-all').append(html);
+        $('#MOBILECONFIG').empty().append(" Mobile Connections (" + count + ")");
     }.bind(this);
 
     this.init = function () {
@@ -2058,6 +2205,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
         //$("#OSMConnectionSubmit").on("submit", this.OSMOnSubmit.bind(this));
+        $("#MobileConfigSubmit").on("submit", this.MobileConfigConnectionSubmit.bind(this));
         $("#GoogleDriveConnectionSubmit").on("submit", this.GoogleDriveOnSubmit.bind(this));
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));
@@ -2100,6 +2248,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_Map_all();
         this.integration_IChat_all();
         this.integration_AUTHENTICATION_all();
+        this.integration_MobileConf_all();
+        this.integration_SUPPORTINGDATA_all();
 
 
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));

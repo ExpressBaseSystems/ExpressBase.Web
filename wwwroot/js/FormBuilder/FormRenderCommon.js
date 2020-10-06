@@ -96,7 +96,7 @@
     };
 
     this.bindValidators = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
+            $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
     };
 
     this.setDisabledControls = function (flatControls) {
@@ -265,6 +265,12 @@
         }
     }.bind(this);
 
+    this.validateCtrl = function (ctrl) {
+        this.isRequiredOK(ctrl);
+        this.isValidationsOK(ctrl);
+        this.sysValidationsOK(ctrl);
+    };
+
     this.UpdateValExpDepCtrls = function (curCtrl) {
         $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
@@ -282,7 +288,8 @@
                             if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
                                 depCtrl.justSetValue(ValueExpr_val);
-                                //this.isRequiredOK(depCtrl);
+                                this.validateCtrl(depCtrl);
+                                EbBlink(depCtrl);
                             }
                             else {
                                 $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
@@ -475,7 +482,7 @@
                         id: ctrl.EbSid_CtxId + "-al",
                         head: "required",
                         body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
-                                    + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                            + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
                 }
@@ -506,13 +513,14 @@
             $(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).hide();
     }.bind(this);
 
-    this.GoToCtrl = function (ctrl) {
-        let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        this.activateTabHierarchy(ctrl);
+    this.GoToCtrl = function (ctrl, parent) {
+        let $inp = ctrl.ObjType === "PowerSelect" ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
+        this.activateTabHierarchy(ctrl, parent);
         setTimeout(function () {
-            $ctrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            $inp[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
             setTimeout(function () {
-                $ctrl.select();
+                $inp.select();
+                EbBlink(ctrl);
             }, 400);
         }.bind(this), (ctrl.__noOfParentPanes || 0) * 400);
     };
@@ -530,8 +538,8 @@
         this.GoToCtrl(ctrl);
     };
 
-    this.activateTabHierarchy = function (ctrl) {
-        let TabPaneParents = getParentsOfType('TabPane', ctrl, this.FO.FormObj);
+    this.activateTabHierarchy = function (ctrl, parent) {
+        let TabPaneParents = parent ? getParentsOfType('TabPane', parent, this.FO.FormObj) : getParentsOfType('TabPane', ctrl, this.FO.FormObj);
         ctrl.__noOfParentPanes = TabPaneParents.length;
         for (let i = TabPaneParents.length - 1; i >= 0; i--) {
             $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`).tab('show');
@@ -599,6 +607,11 @@
 
         if (UniqObjs.length === 0 && !isSaveAfter)
             return true;
+
+        if (UniqObjs.length === 0 && isSaveAfter) {
+            this.FO.saveForm_call();
+            return true;
+        }
 
         if (isFromCtrl) {
             hide_inp_loader($ctrl_, this.FO.$saveBtn);

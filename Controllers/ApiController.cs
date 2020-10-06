@@ -24,18 +24,15 @@ using ExpressBase.Common.Data;
 using ExpressBase.Common.Connections;
 using System.Net;
 using ExpressBase.Common.NotificationHubs;
-using Microsoft.Azure.NotificationHubs;
 using ExpressBase.Security;
 
 namespace ExpressBase.Web.Controllers
 {
     public class ApiController : EbBaseIntApiController
     {
-        private readonly NotificationHubProxy _nfClient;
-
         public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_client, _redis, _sfc, _auth)
         {
-            _nfClient = new NotificationHubProxy();
+
         }
 
         [HttpGet("/api/{_name}/{_version}/{format?}")]
@@ -991,13 +988,13 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_actions")]
-        public GetMyActionsResponse GetMyActions()
+        public MyActionsResponse GetMyActions()
         {
             try
             {
                 if (Authenticated)
                 {
-                    return this.ServiceClient.Get(new GetMyActionsRequest());
+                    return this.ServiceClient.Get(new MyActionsRequest());
                 }
             }
             catch (Exception ex)
@@ -1005,17 +1002,41 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-            return new GetMyActionsResponse();
+            return new MyActionsResponse();
+        }
+
+        [HttpGet("api/get_actions/{id}")]
+        public ParticularActionResponse GetParticularAction(int id)
+        {
+            ParticularActionResponse response = null;
+            try
+            {
+                if (Authenticated)
+                {
+                    if (id == 0)
+                    {
+                        Console.WriteLine("GetParticularAction parameter id must be greater than 0");
+                        return response;
+                    }
+                    response = this.ServiceClient.Get(new ParticularActionsRequest { ActionId = id });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return response;
         }
 
         [HttpGet("api/get_action_info")]
-        public GetMyActionInfoResponse GetMyActionInfo(int stageid, string refid, int dataid)
+        public MyActionInfoResponse GetMyActionInfo(int stageid, string refid, int dataid)
         {
             try
             {
                 if (Authenticated)
                 {
-                    return this.ServiceClient.Get(new GetMyActionInfoRequest
+                    return this.ServiceClient.Get(new MyActionInfoRequest
                     {
                         StageId = stageid,
                         WebFormDataId = dataid,
@@ -1028,7 +1049,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-            return new GetMyActionInfoResponse();
+            return new MyActionInfoResponse();
         }
 
         [HttpPost("api/init_device")]
@@ -1057,68 +1078,123 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
-        [HttpGet("api/notifications/register")]
-        public async Task<IActionResult> CreatePushRegistrationId()
+        [HttpGet("api/notifications/get_registration_id")]
+        public async Task<IActionResult> GetNFRegistrationId()
         {
             if (Authenticated)
             {
-                string registrationId = await _nfClient.CreateRegistrationId();
-                return Ok(registrationId);
-            }
-
-            return Unauthorized();
-        }
-
-        [HttpDelete("api/notifications/unregister")]
-        public async Task<IActionResult> UnregisterFromNotifications(string regid)
-        {
-            if (Authenticated)
-            {
-                await _nfClient.DeleteRegistration(regid);
-                return Ok();
-            }
-
-            return Unauthorized();
-        }
-
-        [HttpPut("api/notifications/enable")]
-        [HttpPost("api/notifications/enable")]
-        public async Task<IActionResult> RegisterForPushNotifications(string regid, string device)
-        {
-            if (Authenticated)
-            {
-                if (device != null)
+                try
                 {
-                    DeviceRegistration dr = JsonConvert.DeserializeObject<DeviceRegistration>(device);
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
 
-                    HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(regid, dr);
+                    string id = await client.CreateRegistrationId();
 
-                    if (registrationResult.CompletedWithSuccess)
-                        return Ok(true);
+                    Console.WriteLine("NF Registration created : " + id);
 
-                    return BadRequest("An error occurred while sending push notification");
+                    return Ok(id);
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Hub registration updation :: device empty");
+                    return BadRequest(ex.Message);
                 }
             }
             return Unauthorized();
+        }
+
+        [HttpDelete("api/notifications/delete_registration")]
+        public async Task<IActionResult> DeleteNFRegistration(string regid)
+        {
+            if (Authenticated)
+            {
+                try
+                {
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
+
+                    await client.DeleteRegistration(regid);
+
+                    Console.WriteLine("NF Registrationid '" + regid + "' deleted");
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            return Unauthorized();
+        }
+
+        [HttpPost("api/notifications/register")]
+        public async Task<EbNFRegisterResponse> RegisterForNotification(string regid, string device)
+        {
+            EbNFRegisterResponse resp;
+
+            if (Authenticated)
+            {
+                if (device == null || regid == null)
+                {
+                    Console.WriteLine("push notification register request parameter unset");
+                    return new EbNFRegisterResponse("Parameters empty");
+                }
+
+                DeviceRegistration reg = JsonConvert.DeserializeObject<DeviceRegistration>(device);
+
+                try
+                {
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
+
+                    resp = await client.Register(regid, reg);
+
+                    Console.WriteLine("NF Registrationid '" + regid + "' deleted");
+                }
+                catch (Exception ex)
+                {
+                    resp = new EbNFRegisterResponse(ex.Message);
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Unauthorized");
+                resp = new EbNFRegisterResponse("Unauthorized");
+            }
+            return resp;
         }
 
         [HttpPost("api/notifications/send")]
-        public async Task<IActionResult> SendNotification([FromBody] Common.NotificationHubs.Notification newNotification)
+        public async Task<EbNFResponse> SendNotification(string payload)
         {
+            EbNFResponse resp;
+
             if (Authenticated)
             {
-                HubResponse<NotificationOutcome> pushDeliveryResult = await _nfClient.SendNotification(newNotification);
+                if (string.IsNullOrEmpty(payload))
+                {
+                    Console.WriteLine("push notification send payload empty");
+                    return new EbNFResponse("Parameters empty");
+                }
 
-                if (pushDeliveryResult.CompletedWithSuccess)
-                    return Ok();
+                EbNFRequest req = JsonConvert.DeserializeObject<EbNFRequest>(payload);
 
-                return BadRequest("An error occurred while sending push notification: " + pushDeliveryResult.FormattedErrorMessages);
+                try
+                {
+                    var client = EbAzureNFClient.Create(this.IntSolutionId, this.Redis);
+
+                    resp = await client.Send(req);
+                }
+                catch (Exception ex)
+                {
+                    resp = new EbNFResponse(ex.Message);
+                    Console.WriteLine(ex.Message);
+                }
             }
-            return Unauthorized();
+            else
+            {
+                Console.WriteLine("Unauthorized");
+                resp = new EbNFResponse("Unauthorized");
+            }
+            return resp;
         }
     }
 }
+

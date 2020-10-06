@@ -320,6 +320,9 @@ namespace ExpressBase.Web.Controllers
 			GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
 			List<object> returnlist = new List<object>();
 			List<object> objpro = new List<object>();
+			List<string> tileBG_color = new List<string>();
+			List<string> tileText_color = new List<string>();
+
 			returnlist.Add(formlist.BotForms);
 			if (this.LoggedInUser.UserId == 1)
 				this.LoggedInUser.Preference.Locale = "en-IN";
@@ -328,11 +331,16 @@ namespace ExpressBase.Web.Controllers
 
 			foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
 			{
+				Dictionary<string, string> BotProperty = new Dictionary<string, string>();
 				string rfid = rfidlst.Key;
 				EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
 				objpro.Add(BtFrm?.IconPicker);
+				tileBG_color.Add(BtFrm?.TileColor);
+				tileText_color.Add(BtFrm?.TileTextColor);
 			}
 			returnlist.Add(objpro);
+			returnlist.Add(tileBG_color);
+			returnlist.Add(tileText_color);
 			return returnlist;
 		}
 			public dynamic GetCurForm(string refid)
@@ -506,6 +514,47 @@ namespace ExpressBase.Web.Controllers
                     request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
                 if (request.CurrentRowGroup != null)
                     (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
+                request.DataVizObjString = null;
+                request.UserInfo = this.LoggedInUser;
+                if (request.TFilters != null)
+                {
+                    foreach (TFilters para in request.TFilters)
+                    {
+
+                        if (para.Type == EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
+                        {
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                        }
+                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                    }
+                }
+                DataSourceDataResponse resultlist1 = null;
+                try
+                {
+                    this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                    resultlist1 = this.ServiceClient.Post(request);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.ToString());
+                }
+                return resultlist1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
+            }
+            return null;
+        }
+
+        public DataSourceDataResponse getData4PowerSelect(TableDataRequest request)
+        {
+            try
+            {
+                request.eb_Solution = GetSolutionObject(ViewBag.cid);
+                request.ReplaceEbColumns = false;
+                if (request.DataVizObjString != null)
+                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
                 request.DataVizObjString = null;
                 request.UserInfo = this.LoggedInUser;
                 if (request.TFilters != null)

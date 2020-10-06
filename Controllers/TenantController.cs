@@ -43,15 +43,17 @@ namespace ExpressBase.Web.Controllers
             ViewBag.IsSSO = TempData["SSO"];
             ViewBag.Msg = TempData[Msg];
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
-            ViewBag.Solutions = result.Data;
+            ViewBag.Solutions = result.AllSolutions;
+            ViewBag.PrimarySolutions = result.PrimarySolutions;
+            ViewBag.MasterPackages = result.MasterPackages;
             return View();
         }
 
         [HttpPost]
-        public CreateSolutionFurtherResponse CreateSolution(int i)
+        public CreateSolutionFurtherResponse CreateSolution(string sid, int pid)
         {
             if (ViewBag.wc == RoutingConstants.TC)
-                return this.ServiceClient.Post(new CreateSolutionFurtherRequest());
+                return this.ServiceClient.Post(new CreateSolutionFurtherRequest { PrimarySId = sid, PackageId = pid });
             else
             {
                 var r = new CreateSolutionFurtherResponse();
@@ -138,7 +140,7 @@ namespace ExpressBase.Web.Controllers
             IFormCollection form = this.HttpContext.Request.Form;
             Eb_Solution slno = GetSolutionObject(form["isid"]);
 
-            if (slno !=null && slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
+            if (slno != null && slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
             {
                 if (this.Redis.ContainsKey(string.Format(CoreConstants.SOLUTION_ID_MAP, form["newesid"])) && (form["newesid"] != form["oldesid"]))
                 {

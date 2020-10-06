@@ -13,6 +13,7 @@
     var _role2RoleList = Html.Raw(ViewBag.Role2RoleList);
     var _usersList = Html.Raw(ViewBag.UsersList);
     var _locationList = Html.Raw(ViewBag.LocationList);
+    var _usersListAll = Html.Raw(ViewBag.UsersListAll);
 }
 
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
@@ -31,7 +32,7 @@
             <label class="label-custom-style">Role Name</label>
             <div class="from-group has-feedback">
                 <input type="text" class="form-control input-custom-style" id="txtRoleName" data-id=@ViewBag.RoleId title="Role Name" required />
-                <span class="input-group-addon form-control-feedback" id="spanRoleName" style="background-color: transparent; border: none; padding: 0px; right: 26px;top: 6px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>
+                <span class="input-group-addon form-control-feedback" id="spanRoleName" style="pointer-events: all; background-color: transparent; border: none; padding: 0px; right: 26px; top: 6px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>
             </div>
         </div>
         <div class="form-group">
@@ -79,7 +80,7 @@
             <div id="divroles" class="tab-pane fade"></div>
             <div id="divusers" class="tab-pane fade"></div>
             <div id="divconstraints" class="tab-pane fade">
-                <div style="text-align: center; padding-top: 28%; font-size: 32px; color: #bbb;"> Coming Soon </div>
+                <div class="nothing-text" style="padding-top: 150px;"> Coming Soon </div>
             </div>
         </div>
     </div>
@@ -90,6 +91,6 @@
 <script>
     $('document').ready(function () {
         var _dict = @Html.Raw(ViewBag._dict);
-        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList, @_usersList, @_locationList);
+        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList, @_usersList, @_locationList, @_usersListAll);
     });
 </script>

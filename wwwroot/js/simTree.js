@@ -206,6 +206,9 @@
                     var e = this;
                     this.$el.off("click").on("click", function (t) {
                         var i = $(t.target);
+                        if (t.target.nodeName === "A" || t.target.nodeName === "SPAN") {
+                           i= $(t.target).closest("a");
+                        }
                         return i.hasClass("sim-tree-spread") && e.spread.call(e, i),
                             i.hasClass("sim-tree-checkbox") && (i = i.parent()),
                             "a" === i[0].tagName.toLowerCase() && e.clickNode.call(e, i),

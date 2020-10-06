@@ -33,6 +33,7 @@ namespace ExpressBase.Web.Components
             ViewBag.AppCollection = EbSerializers.Json_Serialize(fr.ApplicationCollection);
             ViewBag.SelectedRoleInfo = EbSerializers.Json_Serialize(fr.SelectedRoleInfo);
             ViewBag.PermissionList = EbSerializers.Json_Serialize(fr.PermissionList);
+            ViewBag.UsersListAll = EbSerializers.Json_Serialize(fr.UsersListAll);
             ViewBag.RoleId = itemid;
             ViewBag._dict = GetPermissionOperationsAsJs();
             foreach (var role in Enum.GetValues(typeof(SystemRoles)))

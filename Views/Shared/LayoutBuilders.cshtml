@@ -166,6 +166,7 @@
     <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>
     <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/FormBuilder/jquery.scrollTo.js" asp-append-version=@bApnd></script>
+    <script src="/js/FilterDialogBuilder/Eb_FilterDialogRender.js" type="text/javascript" asp-append-version=@bApnd></script>
 
     @*COMMON JS && EB PLUGINS*@
     <environment include="Development">
@@ -262,7 +263,7 @@
                                 <div class="locs_bdy"></div>
                                 <div class="locs_foot">
                                     <span id="loc_tot_count" class=" loc_count pull-left"></span>
-                                    <button class="btn btn-sm loc-switchbtn pull-right" id="setLocSub">Switch</button>
+                                    <button class="ebbtn eb_btnblue eb_btn-sm loc-switchbtn pull-right" id="setLocSub">Switch</button>
                                 </div>
                                 <div class="no_loc_config">No Locations.</div>
                             </div>

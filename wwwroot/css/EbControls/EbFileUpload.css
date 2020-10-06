@@ -328,6 +328,25 @@
 .ebFupGalleryOt {
     width: 100%;
 }
+.eb_uplGal_thumbO_img .eb_uplGal_thumb_loader {
+    display: none;
+    position: absolute;
+    border-radius: 4px;
+    width: 100%;
+    text-align: center;
+    height: 100%;
+    background-color: black;
+    opacity: .4;
+}
+
+    .eb_uplGal_thumbO_img .eb_uplGal_thumb_loader .lds-spinner {
+        display: inline-block;
+        position: absolute;
+        top: 30%;
+        width: 64px;
+        height: 64px;
+        left: 40%;
+    }
 
     .ebFupGalleryOt .ClpsGalItem_Sgl {
         margin: 10px 0;
@@ -358,7 +377,7 @@
                 flex-flow: row wrap;
             }
 
-            .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO {
+            .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO, .eb_uplGal_thumbO_RE {
                 /*width: 18%;
                 padding: 5px;*/
                 border-radius: 4px;
@@ -367,8 +386,15 @@
                 box-shadow: 1px 1px 5px 0 #a2958a;
                 position: relative;
                 /*vrgs*/
-                height: 185px;
+                /*height: 185px;*/
                 width: 250px
+            }
+
+            .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .upload-time {
+                text-align: center;
+                font-size: 12px;
+                padding: 5px 0 10px 0;
+                color: #545454;
             }
 
             .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO_img {
@@ -389,26 +415,28 @@
                     margin: auto;
                 }
 
-            .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO:hover {
-                box-shadow: 2px 2px 5px 3px #a2958a;
-                transform: translateY(-2px) scale(1.01);
-            }
 
-        .ebFupGalleryOt .ClpsGalItem_Sgl .Col_head:after {
-            font-family: "FontAwesome";
-            content: "\f0d7";
-            float: right;
-            font-size: 15px;
-            padding-right: 20px;
-        }
 
-        .ebFupGalleryOt .ClpsGalItem_Sgl .Col_head.collapsed:after {
-            font-family: "FontAwesome";
-            content: "\f0da";
-            float: right;
-            font-size: 15px;
-            padding-right: 20px;
-        }
+.ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO:hover {
+    box-shadow: 2px 2px 5px 3px #a2958a;
+    transform: translateY(-2px) scale(1.01);
+}
+
+.ebFupGalleryOt .ClpsGalItem_Sgl .Col_head:after {
+    font-family: "FontAwesome";
+    content: "\f0d7";
+    float: right;
+    font-size: 15px;
+    padding-right: 20px;
+}
+
+.ebFupGalleryOt .ClpsGalItem_Sgl .Col_head.collapsed:after {
+    font-family: "FontAwesome";
+    content: "\f0da";
+    float: right;
+    font-size: 15px;
+    padding-right: 20px;
+}
 
 
 
@@ -532,6 +560,17 @@
     display: none;
 }
 
+.filesave_info {
+    bottom: 2px;
+    position: absolute;
+    right: 5px;
+    CURSOR: POINTER;
+    font-size: 20px;
+    color: #2387ef;
+    background-color: white;
+    border-radius: 50%;
+}
+
 .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO:hover .mark-thumb {
     display: block;
 }
@@ -567,4 +606,26 @@
         padding-top: 8px;
         padding-bottom: 8px;
         border-radius: 2px;
+    }
+
+.ebfup-context-menu_RE {
+    min-width: 15em !important;
+}
+
+    .ebfup-context-menu_RE:before {
+        content: attr(ebfup-context-menutitle_RE);
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        background: #DDD;
+        padding: 4px;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .ebfup-context-menu_RE .context-menu-icon :first-child {
+        margin-top: 20px;
     }

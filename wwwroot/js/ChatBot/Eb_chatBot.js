@@ -8,8 +8,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.ebbotThemeColor = settings.ThemeColor || "#055c9b";
     this.welcomeMessage = settings.WelcomeMessage || "Hi, I am EBbot from EXPRESSbase!";
     this.ServerEventUrl = _serverEventUrl;
-    this.botdpURL = 'url(' + (settings.DpUrl || ('../images/businessmantest.png')) + ')center center no-repeat';
-    //this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('../images/businessmantest.png')) + ')center center no-repeat';
+    let dpurl = (/^\d+$/.test(settings.DpUrl)) ? (`../botExt/images/original/${settings.DpUrl}.png`) : (settings.DpUrl || '../images/demobotdp4.png');
+    this.botdpURL = 'url(' + dpurl + ')center center no-repeat';
     this.$chatCont = $(`<div class="eb-chat-cont" eb-form='true'  eb-root-obj-container isrendermode='true'></div>`);
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$frameHeader = $('<div class="eb-FrameHeader"></div>');
@@ -35,6 +35,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.formsDict = {};
     this.formNames = [];
     this.formIcons = [];
+    this.tile_BG = [];
+    this.tile_TxtClr = [];
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
@@ -50,11 +52,13 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.ssurl = ssurl;
     this.userLoc = {};
     this.botQueue = [];
+    this.recaptcha_tkn = "";
     this.botflg = {};
     this.botflg.loadFormlist = false;
     this.botflg.singleBotApp = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
+    this.botflg.login_call_to = "";
     this.formObject = {};// for passing to user defined functions
     this.CurFormflatControls = [];// for passing to user defined functions
 
@@ -64,17 +68,18 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
         this.$chatCont.append(this.$renderAtBottom);
+        this.FRC = new FormRenderCommon({ FO: this });
         if (settings.BotProp.EbTag) {
             this.$chatCont.append(this.$poweredby);
         }
-        this.$TypeAnim = $(`<div><svg class="lds-typing" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-                    <circle cx="27.5" cy="40.9532" r="5" fill="#999">
+        this.$TypeAnim = $(`<div><svg class="lds-typing" width="50px" height="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                    <circle cx="0" cy="0" r="12" fill="#999">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.5s"></animate>
                     </circle>
-                    <circle cx="42.5" cy="56.4907" r="5" fill="#aaa">
+                    <circle cx="40" cy="0" r="12" fill="#aaa">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.375s"></animate>
                     </circle>
-                    <circle cx="57.5" cy="62.5" r="5" fill="#bbb">
+                    <circle cx="80" cy="0" r="12" fill="#bbb">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.25s"></animate>
                     </circle>
                 </svg><div>`);
@@ -95,12 +100,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", ".eb-chatBox [name=formcancel_fm]", this.formCancel_fm);
         $("body").on("click", "[for=loginOptions]", this.loginSelectedOpn);
-        $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
+        //$("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", "[name=contactSubmitMail]", this.contactSubmitMail);
         $("body").on("click", "[name=contactSubmitPhn]", this.contactSubmitPhn);
         $("body").on("click", "[name=contactSubmitName]", this.contactSubmitName);
-        $("body").on("click", "[name=passwordSubmitBtn]", this.passwordLoginFn);
-        $("body").on("click", "[name=otpUserSubmitBtn]", this.otpLoginFn);
+        $("body").on("click", "[name=passwordSubmitBtn]", this.submitpasswordLogin);
+        $("body").on("click", "[name=otpUserSubmitBtn]", this.submitotpLoginFn);
         $("body").on("click", "[name=otpvalidateBtn]", this.otpvalidate);
         $("body").on("click", "#resendOTP", this.otpResendFn);
         $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
@@ -130,27 +135,27 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     //if anonimous user /not loggegin using fb
-    this.contactSubmit = function (e) {
-        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
-        let email = "";
-        let phone = "";
-        let username = "";
-        if (settings.Authoptions.Fblogin) {
-            email = $("#anon_mail").val().trim();
-            phone = $("#anon_phno").val().trim();
-            if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-                //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
-                this.msgFromBot("Please enter valid email/phone");
-                return;
-            }
-            this.msgFromBot("Thank you.");
-            this.authenticateAnon(email, phone);
-            $(e.target).closest('.msg-cont').remove();
-        }
+    //this.contactSubmit = function (e) {
+    //    let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    //    let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+    //    let email = "";
+    //    let phone = "";
+    //    let username = "";
+    //    if (settings.Authoptions.Fblogin) {
+    //        email = $("#anon_mail").val().trim();
+    //        phone = $("#anon_phno").val().trim();
+    //        if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
+    //            //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+    //            this.msgFromBot("Please enter valid email/phone");
+    //            return;
+    //        }
+    //        this.msgFromBot("Thank you.");
+    //        this.authenticateAnon(email, phone);
+    //        $(e.target).closest('.msg-cont').remove();
+    //    }
 
 
-    }.bind(this);
+    //}.bind(this);
 
     this.contactSubmitMail = function (e) {
         let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -216,16 +221,45 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     this.submitAnonymous = function () {
-        this.msgFromBot("Thank you.");
-        //let mail = this.userDtls.email || "";
-        //let phn = this.userDtls.phone || "";
-        //let nme = this.userDtls.name || "";
-        let mail = this.userDtls.email;
-        let phn = this.userDtls.phone;
-        let nme = this.userDtls.name;
-        this.authenticateAnon(mail, phn, nme);
-        //  $(e.target).closest('.msg-cont').remove();
+        this.botflg.login_call_to = "authenticateAnon";
+        grecaptcha.execute();
     };
+    this.submitpasswordLogin = function () {
+       
+        this.botflg.login_call_to = "passwordLoginFn";
+        grecaptcha.execute();
+    };
+    this.submitotpLoginFn = function () {
+       
+        this.botflg.login_call_to = "otpLoginFn";
+        grecaptcha.execute();
+    };
+
+    window.RecaptchaCallback = function (token) {
+
+        if (grecaptcha === undefined) {
+            this.msgFromBot('Recaptcha not defined');
+            return;
+        }
+        if (token) {
+            this.recaptcha_tkn = token;
+            if (this.botflg.login_call_to === "authenticateAnon") {
+                this.msgFromBot("Thank you.");
+                this.authenticateAnon();
+            }
+            else if (this.botflg.login_call_to === "passwordLoginFn") {
+                this.passwordLoginFn();
+            }
+            else if (this.botflg.login_call_to === "otpLoginFn") {
+                this.otpLoginFn();
+            }
+        }
+        else  {
+            this.msgFromBot('Could not get recaptcha response');
+            return;
+        }
+        grecaptcha.reset();
+    }.bind(this);
 
     //check user is valid / is user authenticated
     this.ajaxSetup4Future = function () {
@@ -236,8 +270,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         //});
     };
 
-    this.authenticateAnon = function (email, phno, name) {
-
+    this.authenticateAnon = function () {
         setTimeout(function () {
             this.showTypingAnim();
         }.bind(this), this.typeDelay);
@@ -246,11 +279,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": null,
                 "wc": "bc",
-                "anon_email": email,
-                "anon_phno": phno,
+                "anon_email": this.userDtls.email,
+                "anon_phno": this.userDtls.phone,
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
-                "user_name": this.userDtls.name || null
+                "user_name": this.userDtls.name || null,
+                "token":this.recaptcha_tkn
             }, function (result) {
                 this.hideTypingAnim();
                 if (result.status === false) {
@@ -267,6 +301,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         //this.formNames = Object.values(this.formsDict);
                         this.formNames = Object.values(result.botFormNames);
                         this.formIcons = result.botFormIcons;
+                        this.tile_BG = result.tileBG_color;
+                        this.tile_TxtClr = result.tileText_color;
                         $('.eb-chatBox').empty();
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
@@ -317,6 +353,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             window.ebcontext.user = JSON.parse(result[1]);
                             this.formNames = Object.values(result[2]);
                             this.formIcons = result[3];
+                            this.tile_BG = result[4];
+                            this.tile_TxtClr = result[5];
                             if (Object.keys(this.formsDict).length == 1) {
                                 this.botflg.singleBotApp = true;
                                 this.curRefid = Object.keys(this.formsDict)[0];
@@ -509,16 +547,21 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         return Html;
     };
 
-    this.Query_botformlist = function (msg, OptArr, For, ids, icns) {
+    this.Query_botformlist = function (msg, OptArr, For, ids, icns,tileBG,tileTxtClr) {
         this.msgFromBot(msg);
-        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, icns);
+        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, icns, tileBG, tileTxtClr);
         this.msgFromBot($('<div class="btn-box_botformlist" >' + Options + '</div>'));
     };
 
-    this.getButtons_botformlist = function (OptArr, For, ids, icns) {
+    this.getButtons_botformlist = function (OptArr, For, ids, icns, tileBG, tileTxtClr) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
-            Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px;" class="fa ${icns[i]}"></i>${opt} </button>`;
+            if ((tileBG[i] || tileTxtClr[i]) && (tileBG[i] === tileTxtClr[i])) {
+                Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px;" class="fa ${icns[i]}"></i>${opt} </button>`;
+            }
+            else {
+                Html += `<button for="${For}" class="btn formname-btn_botformlist" style=" color:${tileTxtClr[i]}; background-color:${tileBG[i]}" class="fa ${icns[i]} idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px; " class="fa ${icns[i]}"></i>${opt} </button>`;
+            }
         });
         return Html;
     };
@@ -859,6 +902,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
         }
+        if (this.curCtrl.ObjType === 'PowerSelect') 
+            this.curCtrl.initializer.destroy();
         this.callGetControl(this.controlHideDelay);
 
         if ($('[saveprompt]').length === 1) {
@@ -1546,7 +1591,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.AskWhatU = function () {
         //this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
-        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict), this.formIcons);
+        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict), this.formIcons,this.tile_BG, this.tile_TxtClr);
     };
 
     this.showDate = function () {
@@ -1634,6 +1679,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         //this.formNames = Object.values(this.formsDict);
                         this.formNames = Object.values(result.botFormNames);
                         this.formIcons = result.botFormIcons;
+                        this.tile_BG = result.tileBG_color;
+                        this.tile_TxtClr = result.tileText_color;
                         $('.eb-chatBox').empty();
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
@@ -1665,6 +1712,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     this.login2FB = function () {
+        console.log("fblogin");
         this.FB.login(function (response) {
             if (response.authResponse) {
                 // statusChangeCallback(response);
@@ -1921,6 +1969,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             //this.formNames = Object.values(this.formsDict);
                             this.formNames = Object.values(result.botFormNames);
                             this.formIcons = result.botFormIcons;
+                            this.tile_BG = result.tileBG_color;
+                            this.tile_TxtClr = result.tileText_color;
                             $('.eb-chatBox').empty();
                             this.showDate();
                             if (Object.keys(this.formsDict).length == 1) {
@@ -1959,6 +2009,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             //this.formNames = Object.values(this.formsDict);
                             this.formNames = Object.values(result.botFormNames);
                             this.formIcons = result.botFormIcons;
+                            this.tile_BG = result.tileBG_color;
+                            this.tile_TxtClr = result.tileText_color;
                             $('.eb-chatBox').empty();
                             this.showDate();
                             if (Object.keys(this.formsDict).length == 1) {
@@ -2032,7 +2084,8 @@ this.otpLoginFn = function (e) {
             data: {
                 "uname": uname,
                 "is_email": is_email,
-                "is_mobile": is_mobile
+                "is_mobile": is_mobile,
+                "token": this.recaptcha_tkn
             },
             success: function (result) {
                 this.hideTypingAnim();
@@ -2067,7 +2120,8 @@ this.passwordLoginFn = function (e) {
             "wc": "bc",
             "user_ip": this.userDtls.ip,
             "user_browser": this.userDtls.browser,
-            "otptype": this.botflg.otptype
+            "otptype": this.botflg.otptype,
+            "token":this.recaptcha_tkn
         },
         success: function (result) {
             this.hideTypingAnim();
@@ -2083,11 +2137,6 @@ this.passwordLoginFn = function (e) {
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
-                        document.cookie = `bot_testing1=one; SameSite=None; Secure`;
-                        document.cookie = `bot_testing2=two; SameSite=None `;
-                        document.cookie = `bot_testing3=three`;
-                        document.cookie = `bot_testing4=four;Secure;path=/ `;
-                        document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
                         document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
                         document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
                         this.formsDict = result.botFormDict;
@@ -2095,6 +2144,8 @@ this.passwordLoginFn = function (e) {
                         //this.formNames = Object.values(this.formsDict);
                         this.formNames = Object.values(result.botFormNames);
                         this.formIcons = result.botFormIcons;
+                        this.tile_BG = result.tileBG_color;
+                        this.tile_TxtClr = result.tileText_color;
                         $('.eb-chatBox').empty();
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
@@ -2246,7 +2297,23 @@ this.botUserLogin = function () {
     if (!settings.UserType_Internal) {
         if (settings.Authoptions.Fblogin) {
             // This is called with the results from from FB.getLoginStatus().
+            statusChangeCallback = function (response) {
+                console.log('statusChangeCallback');
+                this.FB = FB;
 
+                if (response.status === 'connected') {
+                    this.FBLogined();
+                } else {
+                    this.FBNotLogined();
+                }
+            }.bind(this);
+
+            // This function is called when someone finishes with the Login
+            function checkLoginState() {
+                FB.getLoginStatus(function (response) {
+                    statusChangeCallback(response);
+                });
+            };
             window.fbAsyncInit = function () {
                 console.log("bot" + settings.Authoptions.FbAppVer);
                 FB.init({
@@ -2275,22 +2342,7 @@ this.botUserLogin = function () {
             }(document, 'script', 'facebook-jssdk'));
 
 
-            function statusChangeCallback(response) {
-                console.log('statusChangeCallback');
-                this.FB = FB;
-                //if (response.status === 'connected') {
-                //    this.FBLogined();
-                //} else {
-                //    this.FBNotLogined();
-                //}
-            }
-
-            // This function is called when someone finishes with the Login
-            function checkLoginState() {
-                FB.getLoginStatus(function (response) {
-                    statusChangeCallback(response);
-                });
-            };
+           
         }
     }
     if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {

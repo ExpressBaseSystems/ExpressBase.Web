@@ -6,7 +6,7 @@
     this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
-    this.initControls = new InitControls(this);
+    this.initControls = new InitControls(this.formRenderer);
     this.Mode = options.Mode;
     this.RowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
     this.DataMODEL = options.isDynamic ? [] : this.formRenderer.DataMODEL[this.ctrl.TableName];
@@ -620,7 +620,9 @@
         this.addRowDataModel(rowId, this.objectMODEL[rowId]);
         if (insertIdx !== undefined) {
             this.insertRowAt(insertIdx, $tr);
-        } else {
+            this.resetRowSlNo(insertIdx);
+        }
+        else {
             if (!this.ctrl.AscendingOrder) {
                 //if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {///
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
@@ -635,9 +637,9 @@
                 //else
                 $(`#${this.TableId}>tbody`).append($tr);
             }
+            if (!this.ctrl.AscendingOrder)
+                this.resetRowSlNo();
         }
-        if (!this.ctrl.AscendingOrder)
-            this.UpdateSlNo();
         $tr.show(300);
         this.setCurRow(rowId);
         let rowCtrls = this.initRowCtrls(rowId, false);
@@ -1146,9 +1148,10 @@
         $tr.hide(100);
         this.markDelColCtrls(rowId);
         setTimeout(function () {
+            let trIdx = $tr.index();
             $tr.remove();
             let t0 = performance.now();
-            this.resetRowSlNo($tr.index() - 1);
+            this.resetRowSlNo(trIdx);
             console.dev_log("resetRowSlNoUnder :  took " + (performance.now() - t0) + " milliseconds.");
             this.updateAggCols();
         }.bind(this), 101);
@@ -1196,24 +1199,25 @@
         //    this.addRow();
     };
 
-    this.UpdateSlNo = function () {
-        if (!this.ctrl.IsShowSerialNumber)
-            return;
-        let $rows = $(`#${this.TableId}>tbody>tr`);
-        for (let i = 0; i < $rows.length; i++) {
-            let $row = $($rows[i]);
-            let SlNo = i + 1;
-            $row.find("td.row-no-td").attr("id", `${this.TableId + "_" + SlNo}_sl`).attr("idx", SlNo).text(SlNo);
-        }
-    };
+    //this.UpdateSlNo = function () {
+    //    if (!this.ctrl.IsShowSerialNumber)
+    //        return;
+    //    let $rows = $(`#${this.TableId}>tbody>tr`);
+    //    for (let i = 0; i < $rows.length; i++) {
+    //        let $row = $($rows[i]);
+    //        let SlNo = i + 1;
+    //        $row.find("td.row-no-td").attr("id", `${this.TableId + "_" + SlNo}_sl`).attr("idx", SlNo).text(SlNo);
+    //    }
+    //};
 
-    this.resetRowSlNo = function (slno) {
+    this.resetRowSlNo = function (slno = 0) {
         if (!this.ctrl.IsShowSerialNumber)
             return;
         let rowCount = $(`#${this.TableId}>tbody>tr`).length;
         for (let i = slno; i < rowCount; i++) {
             $(`#${this.TableId}>tbody>tr td.row-no-td:eq(${i})`).attr("id", `${this.TableId + "_" + (i + 1)}_sl`).attr("idx", i + 1).text(i + 1);
         }
+        this.rowSLCounter = rowCount;
     };
 
     //this.resetRowSlNoUnder = function ($tr) {

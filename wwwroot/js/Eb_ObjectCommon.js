@@ -176,6 +176,9 @@
     };
 
     this.UpdateDashboard = function () {
+        if (this.ObjCollection[this.target].BeforeUpdateDashboard) {
+            this.ObjCollection[this.target].BeforeUpdateDashboard();
+        }
         $.post("../Eb_Object/UpdateObjectDashboard", { refid: this.ver_Refid, versioning: this.isversioned }).done(this.UpdateDashboard_Success.bind(this));
     };
 
@@ -203,13 +206,23 @@
         // only for form autosave
         if (this.ObjectType === 0)
             this.UpdateBuilder();
+
+        if (this.ObjCollection[this.target].afterUpdateDashboard) {
+            this.ObjCollection[this.target].afterUpdateDashboard();
+        }
     };
 
     this.UpdateBuilder = function () {
+        if (this.ObjCollection[this.target].beforeUpdateBuilder) {
+            this.ObjCollection[this.target].beforeUpdateBuilder();
+        }
         $.post("../Eb_Object/UpdateBuilder", { _refid: this.ver_Refid, _tabnum: this.tabNum, _ObjType: this.ObjectType, _ssurl: this.ssurl }).done(this.UpdateBuilder_Success.bind(this));
     };
 
     this.UpdateBuilder_Success = function (data) {
+        if (this.ObjCollection[this.target].afterUpdateBuilder) {
+            this.ObjCollection[this.target].afterUpdateBuilder();
+        }
         $(this.target).html(data);
     };
 
@@ -487,6 +500,12 @@
     }.bind(this);
 
     this.ajaxSave = function (tagvalues, apps, getNav, callback) {
+        //if (this.Current_obj.Controls.$values[1] && this.Current_obj.Controls.$values[1].Controls.$values[0].Controls.$values) {
+        //    console.log("append");
+        //    console.log(this.Current_obj.Controls.$values[1].Controls.$values[0].Controls.$values);
+        //}
+
+        $.LoadingOverlay("show");
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
             $.post("../Eb_Object/SaveEbObject", {
                 _refid: this.ver_Refid,
@@ -497,7 +516,8 @@
             }, function (result) {
                 if (callback)
                     callback(result);
-                this.UpdateTab(result);
+                    this.UpdateTab(result);
+                    $.LoadingOverlay("hide");
             }.bind(this));
         }
         else
@@ -815,12 +835,12 @@
                     if (res === "Yes") {
                         $("#eb_common_loader").EbLoader("show");
                         $.post("../Eb_Object/CloneObject",
-                            { refid: this.ver_Refid,  apps : $("#apps").val() },
+                            { refid: this.ver_Refid, apps: $("#apps").val() },
                             function (result) {
                                 $("#eb_common_loader").EbLoader("hide");
                                 if (result.status) {
-                                    EbMessage("show", { Message: "Clone completed.", Background: this.GreenColor }); 
-                                    window.open("../Eb_Object/Index?objid=" + result.objId + "&objtype=" + result.objectType, "_blank"); 
+                                    EbMessage("show", { Message: "Clone completed.", Background: this.GreenColor });
+                                    window.open("../Eb_Object/Index?objid=" + result.objId + "&objtype=" + result.objectType, "_blank");
                                 }
                                 else
                                     EbMessage("show", { Message: "failed. Please retry", Background: this.RedColor });

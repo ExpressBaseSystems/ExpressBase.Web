@@ -28,6 +28,8 @@ using ExpressBase.Data;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Web.Models;
+using ExpressBase.Web2.Models;
+using System.Net;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -308,15 +310,30 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 		}
 
 		[HttpPost]
-		public async Task<BotAuth_andFormList> AuthAndGetformlist(string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = TokenConstants.BC)
+		public async Task<BotAuth_andFormList> AuthAndGetformlist(string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string token)
 		{
-			HttpClient client = new HttpClient();
-			string result = await client.GetStringAsync("http://ip-api.com/json/" + this.RequestSourceIp);
-			IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			//cid = this.GetIsolutionId(cid);
-			string cid = IntSolutionId;
-			Dictionary<string, string> _Meta;
-			_Meta = new Dictionary<string, string> {
+			Recaptcha Recap = null;
+			BotAuth_andFormList Bot_Obj = new BotAuth_andFormList();
+			try
+			{
+				Recap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("RECAPTCHA EXCEPTION");
+				Console.WriteLine(e.Message);
+				Bot_Obj.Status = false;
+				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
+			}
+			if (Recap.Success)
+			{
+				HttpClient client = new HttpClient();
+				string result = await client.GetStringAsync("http://ip-api.com/json/" + this.RequestSourceIp);
+				IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
+				//cid = this.GetIsolutionId(cid);
+				string cid = IntSolutionId;
+				Dictionary<string, string> _Meta;
+				_Meta = new Dictionary<string, string> {
 					{ TokenConstants.WC, RoutingConstants.BC },
 					{ TokenConstants.CID, cid },
 					{ TokenConstants.SOCIALID, socialId },
@@ -336,141 +353,174 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 					{ "iplocationjson", result}
 				};
 
-			this.AuthClient.Headers.Add("SolId", cid);
+				this.AuthClient.Headers.Add("SolId", cid);
 
-			MyAuthenticateResponse authResponse = this.AuthClient.Send<MyAuthenticateResponse>(new Authenticate
-			{
-				provider = CredentialsAuthProvider.Name,
-				UserName = "NIL",
-				Password = "NIL",
-				Meta = _Meta,
-			});
-			if (authResponse != null)
-			{
+				MyAuthenticateResponse authResponse = this.AuthClient.Send<MyAuthenticateResponse>(new Authenticate
+				{
+					provider = CredentialsAuthProvider.Name,
+					UserName = "NIL",
+					Password = "NIL",
+					Meta = _Meta,
+				});
+				if (authResponse != null)
+				{
 
-				return GetBotformlist(authResponse, cid, RoutingConstants.BC, appid);
-				//CookieOptions options = new CookieOptions();
-				//Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
-				//Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-				//Mymain();
-				//string ctxt = GetEncriptedString("helleo", key_iv);
-				//string ptxt = GetDecriptedString(ctxt, key_iv);
+					return GetBotformlist(authResponse, cid, RoutingConstants.BC, appid);
+					//CookieOptions options = new CookieOptions();
+					//Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
+					//Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+					//Mymain();
+					//string ctxt = GetEncriptedString("helleo", key_iv);
+					//string ptxt = GetDecriptedString(ctxt, key_iv);
+				}
+				else
+				{
+					return null;
+				}
 			}
 			else
 			{
-				return null;
+				Bot_Obj.Status = false;
+				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
+				return Bot_Obj;
 			}
+			
 		}
 
 
 
 		[HttpPost]
-		public BotAuth_andFormList PasswordAuthAndGetformlist( string appid, string socialId, string uname, string anon_phno, string user_ip, string user_browser, string pass, string otptype, string wc = TokenConstants.BC)
+		public async Task<BotAuth_andFormList> PasswordAuthAndGetformlist( string appid, string socialId, string uname, string anon_phno, string user_ip, string user_browser, string pass, string otptype, string token)
 		{
-			HttpClient client = new HttpClient();
-			IFormCollection req = this.HttpContext.Request.Form;
-			string UserName;
-			string Password;
-			//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
-			//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			string cid = IntSolutionId;
-			MyAuthenticateResponse authResponse = null;
-			List<object> returnlist = new List<object>();
+			Recaptcha Recap = null;
 			BotAuth_andFormList Bot_Obj = new BotAuth_andFormList();
-			try {
-				if (req["otptype"] == "signinotp")
+			try
+			{
+				Recap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("RECAPTCHA EXCEPTION");
+				Console.WriteLine(e.Message);
+				Bot_Obj.Status = false;
+				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
+			}
+			if (Recap.Success)
+			{
+				HttpClient client = new HttpClient();
+				IFormCollection req = this.HttpContext.Request.Form;
+				string UserName;
+				string Password;
+				//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
+				//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
+				string cid = IntSolutionId;
+				MyAuthenticateResponse authResponse = null;
+				List<object> returnlist = new List<object>();
+				try
 				{
-					BotAuth_andFormList validateResp = ValidateOtp(req["otp"], appid);
-					UserName = req["uname"];
-					Password = "NIL";
-					if (!validateResp.Status)
+					if (req["otptype"] == "signinotp")
 					{
-						Bot_Obj.Status = false;
-						Bot_Obj.ErrorMsg = validateResp.ErrorMsg;
-						return Bot_Obj;
+						BotAuth_andFormList validateResp = ValidateOtp(req["otp"], appid);
+						UserName = req["uname"];
+						Password = "NIL";
+						if (!validateResp.Status)
+						{
+							Bot_Obj.Status = false;
+							Bot_Obj.ErrorMsg = validateResp.ErrorMsg;
+							return Bot_Obj;
+						}
 					}
-				}
-				else
-				{
-					UserName = uname;
-					Password = (pass + uname).ToMD5Hash();
-				}
-			
-				Authenticate AuthenticateReq = new Authenticate
-				{
-					provider = CredentialsAuthProvider.Name,
-					UserName = UserName,
-					Password = Password,
-					Meta = new Dictionary<string, string> {
+					else
+					{
+						UserName = uname;
+						Password = (pass + uname).ToMD5Hash();
+					}
+
+					Authenticate AuthenticateReq = new Authenticate
+					{
+						provider = CredentialsAuthProvider.Name,
+						UserName = UserName,
+						Password = Password,
+						Meta = new Dictionary<string, string> {
 							{ RoutingConstants.WC, RoutingConstants.BC },
 							{ TokenConstants.CID, IntSolutionId },
 							{ TokenConstants.IP, this.RequestSourceIp},
 							{ RoutingConstants.USER_AGENT, this.UserAgent}
 						},
-					RememberMe = true,
+						RememberMe = true,
 
-				};
-				if (req["otptype"] == "signinotp")
-				{
-					AuthenticateReq.Meta.Add("sso", "true");
-				}
-				authResponse = this.AuthClient.Get<MyAuthenticateResponse>(AuthenticateReq);
-			}
-			catch(Exception e)
-			{
-				Console.WriteLine("Exception: " + e.ToString());
-				Bot_Obj.ErrorMsg=e.Message;
-			}
-			
-			if (authResponse != null)
-			{
-				Console.WriteLine("authResponse != null " + req["uname"]);
-				bool is2fa = false;
-				if (RoutingConstants.BC == "bc" && req["otptype"] != "signinotp")
-				{
-					 Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
-					if (sol_Obj != null && sol_Obj.Is2faEnabled)
-						is2fa = true;
-				}
-				if (is2fa) //if 2fa enabled
-				{
-					EbAuthResponse authresp = new EbAuthResponse();
-					this.ServiceClient.BearerToken = authResponse.BearerToken;
-					this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-					Authenticate2FAResponse resp = this.ServiceClient.Post(new Authenticate2FARequest
+					};
+					if (req["otptype"] == "signinotp")
 					{
-						MyAuthenticateResponse = authResponse,
-						SolnId = ViewBag.SolutionId,
-					});
-					authresp.AuthStatus = resp.AuthStatus;
-					authresp.ErrorMessage = resp.ErrorMessage;
-					authresp.Is2fa = resp.Is2fa;
-					authresp.OtpTo = resp.OtpTo;
+						AuthenticateReq.Meta.Add("sso", "true");
+					}
+					authResponse = this.AuthClient.Get<MyAuthenticateResponse>(AuthenticateReq);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Exception: " + e.ToString());
+					Bot_Obj.ErrorMsg = e.Message;
+				}
 
-					CookieOptions options = new CookieOptions();
-					Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
-					Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-					Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
-					if (req.ContainsKey("remember"))
-						Response.Cookies.Append("UserName", req["uname"], options);
-					Bot_Obj.Status = resp.AuthStatus; ;
-					Bot_Obj.Is2Factor = resp.Is2fa;
-					Bot_Obj.OtpTo = resp.OtpTo;
-					Bot_Obj.ErrorMsg = resp.ErrorMessage;
+				if (authResponse != null)
+				{
+					Console.WriteLine("authResponse != null " + req["uname"]);
+					bool is2fa = false;
+					if (RoutingConstants.BC == "bc" && req["otptype"] != "signinotp")
+					{
+						Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
+						if (sol_Obj != null && sol_Obj.Is2faEnabled)
+							is2fa = true;
+					}
+					if (is2fa) //if 2fa enabled
+					{
+						EbAuthResponse authresp = new EbAuthResponse();
+						this.ServiceClient.BearerToken = authResponse.BearerToken;
+						this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+						Authenticate2FAResponse resp = this.ServiceClient.Post(new Authenticate2FARequest
+						{
+							MyAuthenticateResponse = authResponse,
+							SolnId = ViewBag.SolutionId,
+						});
+						authresp.AuthStatus = resp.AuthStatus;
+						authresp.ErrorMessage = resp.ErrorMessage;
+						authresp.Is2fa = resp.Is2fa;
+						authresp.OtpTo = resp.OtpTo;
+
+						CookieOptions options = new CookieOptions();
+						Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
+						Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+						Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+						if (req.ContainsKey("remember"))
+							Response.Cookies.Append("UserName", req["uname"], options);
+						Bot_Obj.Status = resp.AuthStatus; ;
+						Bot_Obj.Is2Factor = resp.Is2fa;
+						Bot_Obj.OtpTo = resp.OtpTo;
+						Bot_Obj.ErrorMsg = resp.ErrorMessage;
+						return Bot_Obj;
+					}
+
+					else//2fa NOT enabled
+					{
+						Console.WriteLine("Bot - AuthStatus true, not 2fa " + req["uname"]);
+						return GetBotformlist(authResponse, IntSolutionId, RoutingConstants.BC, appid);
+					}
+
+				}
+				else
+				{
+					Bot_Obj.Status = false;
+					Bot_Obj.ErrorMsg = "error occured";
 					return Bot_Obj;
 				}
-
-				else//2fa NOT enabled
-				{
-					Console.WriteLine("Bot - AuthStatus true, not 2fa " + req["uname"]);
-					return GetBotformlist(authResponse, IntSolutionId, RoutingConstants.BC, appid);
-				}
-				
 			}
 			else
 			{
-				return  Bot_Obj;
+				Bot_Obj.Status = false;
+				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
+				return Bot_Obj;
 			}
+
 		}
 		public BotAuth_andFormList GetBotformlist(MyAuthenticateResponse authResponse,string cid,string wc,string appid)
 		{
@@ -484,6 +534,8 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 			GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
 			List<object> returnlist = new List<object>();
 			List<object> objpro = new List<object>();
+			List<string> tileBG_color = new List<string>();
+			List<string> tileText_color = new List<string>();
 
 			Bot_Obj.BearerToken=(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
 			Bot_Obj.RefreshToken=authResponse.RefreshToken;
@@ -502,8 +554,12 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 				string rfid = rfidlst.Key;
 				EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
 				objpro.Add(BtFrm?.IconPicker);
+				tileBG_color.Add(BtFrm?.TileColor);
+				tileText_color.Add(BtFrm?.TileTextColor);
 			}
 			Bot_Obj.BotFormIcons=objpro;
+			Bot_Obj.TileBG_color = tileBG_color;
+			Bot_Obj.TileText_color = tileText_color;
 			Bot_Obj.Status = true;
 			return Bot_Obj;
 		}
@@ -539,6 +595,8 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 						GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
 						List<object> returnlist = new List<object>();
 						List<object> objpro = new List<object>();
+						List<string> tileBG_color = new List<string>();
+						List<string> tileText_color = new List<string>();
 
 						Bot_Obj.BearerToken = (HelperFunction.GetEncriptedString_Aes(_u.BearerToken + CharConstants.DOT + _u.UserId.ToString()));
 						Bot_Obj.RefreshToken = _u.RefreshToken;
@@ -557,8 +615,12 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 							string rfid = rfidlst.Key;
 							EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
 							objpro.Add(BtFrm?.IconPicker);
+							tileBG_color.Add(BtFrm?.TileColor);
+							tileText_color.Add(BtFrm?.TileTextColor);
 						}
 						Bot_Obj.BotFormIcons = objpro;
+						Bot_Obj.TileBG_color = tileBG_color;
+						Bot_Obj.TileText_color = tileText_color;
 						Bot_Obj.Status = true;
 					}
 					
@@ -598,33 +660,54 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 			return authresp;
 		}
 
-		public EbAuthResponse SendSignInOtp()
+		public async Task<EbAuthResponse>  SendSignInOtp()
 		{
+			Recaptcha Recap = null;
 			EbAuthResponse authresp = new EbAuthResponse { };
 			IFormCollection req = this.HttpContext.Request.Form;
-			string tenantid = ViewBag.SolutionId;
-			string uname = req["uname"];
-			bool is_email = Convert.ToBoolean(req["is_email"]);
-			bool is_mobile = Convert.ToBoolean(req["is_mobile"]);
-			Authenticate2FAResponse resp = this.ServiceClient.Post<Authenticate2FAResponse>(new SendSignInOtpRequest
+			string token = req["token"];
+			try
 			{
-				UName = uname,
-				SignInOtpType = (is_email) ? OtpType.Email : OtpType.Sms,
-				SolutionId = tenantid,
-				WhichConsole= TokenConstants.BC
-			});
-			authresp.AuthStatus = resp.AuthStatus;
-			if (authresp.AuthStatus)
+				Recap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+			}
+			catch (Exception e)
 			{
-				authresp.Is2fa = resp.Is2fa;
-				authresp.OtpTo = resp.OtpTo;
-				CookieOptions options = new CookieOptions();
-				Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
-				Response.Cookies.Append(TokenConstants.USERAUTHID, resp.UserAuthId, options);
+				Console.WriteLine("RECAPTCHA EXCEPTION");
+				Console.WriteLine(e.Message);
+				authresp.AuthStatus = false;
+				authresp.ErrorMessage = "Recaptcha error, try again";
+			}
+			if (Recap.Success){				
+				string tenantid = ViewBag.SolutionId;
+				string uname = req["uname"];
+				bool is_email = Convert.ToBoolean(req["is_email"]);
+				bool is_mobile = Convert.ToBoolean(req["is_mobile"]);
+				Authenticate2FAResponse resp = this.ServiceClient.Post<Authenticate2FAResponse>(new SendSignInOtpRequest
+				{
+					UName = uname,
+					SignInOtpType = (is_email) ? OtpType.Email : OtpType.Sms,
+					SolutionId = tenantid,
+					WhichConsole = TokenConstants.BC
+				});
+				authresp.AuthStatus = resp.AuthStatus;
+				if (authresp.AuthStatus)
+				{
+					authresp.Is2fa = resp.Is2fa;
+					authresp.OtpTo = resp.OtpTo;
+					CookieOptions options = new CookieOptions();
+					Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
+					Response.Cookies.Append(TokenConstants.USERAUTHID, resp.UserAuthId, options);
+				}
+				else
+				{
+					authresp.ErrorMessage = resp.ErrorMessage;
+				}
+
 			}
 			else
 			{
-				authresp.ErrorMessage = resp.ErrorMessage;
+				authresp.AuthStatus = false;
+				authresp.ErrorMessage = "Recaptcha error, try again";
 			}
 
 			return authresp;
@@ -638,6 +721,8 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 			public string User { get; set; }
 			public Dictionary<string, string> BotFormNames { get; set; }
 			public object BotFormIcons { get; set; }
+			public object TileBG_color { get; set; }
+			public object TileText_color { get; set; }
 			public bool Status { get; set; } = false;
 			public string ErrorMsg { get; set; }
 			public string OtpTo { get; set; }
@@ -660,6 +745,17 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 			public string Status { get; set; }
 			public string Timezone { get; set; }
 			public string Zip { get; set; }
+		}
+
+		private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
+		{
+			string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);
+			var req = WebRequest.Create(url);
+			var r = await req.GetResponseAsync().ConfigureAwait(false);
+			var responseReader = new StreamReader(r.GetResponseStream());
+			var responseData = await responseReader.ReadToEndAsync();
+			var d = Newtonsoft.Json.JsonConvert.DeserializeObject<Recaptcha>(responseData);
+			return d;
 		}
 
 		[HttpGet("Bots")]

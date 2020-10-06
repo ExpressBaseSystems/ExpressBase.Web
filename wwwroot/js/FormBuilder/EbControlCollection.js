@@ -110,6 +110,16 @@
         parentArr.$values.splice(parentArr.$values.indexOf(beforeObj), 0, newObject);
     };
 
+    this.InsertAfter = function (relativeObj, newObject) {
+        let parentId = this.getParentId(relativeObj.EbSid);
+        let parentArr;
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form") === "true")
+            parentArr = this;
+        else
+            parentArr = this.GetByName(parentId).Controls;
+        parentArr.$values.splice((parentArr.$values.indexOf(relativeObj) + 1), 0, newObject);
+    };
+
     this.GetByIndex = function (_index) {
         return this.$values[_index];
     };

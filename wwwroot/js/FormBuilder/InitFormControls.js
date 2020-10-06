@@ -936,6 +936,8 @@
                 $("#" + ctrl.EbSid_CtxId + "long").val(position.coords.longitude);
                 marker.setLatLng([position.coords.latitude, position.coords.longitude]);
                 map.setView({ lat: position.coords.latitude, lng: position.coords.longitude });
+                if (ctrl.DataVals)
+                    ctrl.DataVals.Value = position.coords.latitude + ',' + position.coords.longitude;
             }.bind(this));
         }
 

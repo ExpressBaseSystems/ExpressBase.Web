@@ -121,24 +121,42 @@
             this.ReviewCtrl = null;
         else if (ctrl.ObjType === "ProvisionLocation")
             this.ProvisionLocationCtrl = null;
-        this.ctxClipboard = JSON.parse(JSON.stringify(ctrl));
+        this.ctxClipboard.ctrl = JSON.parse(JSON.stringify(ctrl));
+        this.ctxClipboard.$colTile = $e;
     }.bind(this);
 
     this.paste = function (eType, selector, action, originalEvent) {
-        let copiedCtrl = this.getCopiedCtrl(this.ctxClipboard);
-        let colTile = $('.context-menu-active').attr('ebsid')
-        this.rootContainerObj.Controls.InsertAfter(this.rootContainerObj.Controls.GetByName($sibling.attr('ebsid')), copiedCtrl);
+        let copiedCtrl = this.getCopiedCtrl();
+        let $clickedColTile = $('.context-menu-active');
+        let clickedCtrl = this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
+        if (clickedCtrl.IsContainer) {
+            clickedCtrl.Controls.$values.push(copiedCtrl);
+        }
+        else {
+            if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid')))
+                this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
+        }
     }.bind(this);
 
-    this.getCopiedCtrl = function (ctrl) {
-        let ctrlCpy = this.ctxClipboard;
-        let copyStr = this.getNxtCtrlCopyStr(ctrl);
-        ctrlCpy.Name = ctrl.Name + copyStr;
-        ctrlCpy.EbSid_CtxId = ctrl.EbSid_CtxId + copyStr;
-        ctrlCpy.EbSid = ctrl.EbSid + copyStr;
-        ctrlCpy.Id = ctrl.Id + copyStr;
+    this.getCopiedCtrl = function () {
+        let $ctrlCpy = this.ctxClipboard.$colTile;
+        let ctrlCpy = this.getModifiedCtrl(this.ctxClipboard.ctrl)
         return ctrlCpy;
     };
+
+    this.getModifiedCtrl = function (control) {
+        let flatControls = getAllctrlsFrom(control);
+        for (let i = 0; i < flatControls.length; i++) {
+            let _ctrl = flatControls[i];
+            let copyStr = this.getNxtCtrlCopyStr(_ctrl);
+            _ctrl.Name = _ctrl.Name + copyStr;
+            _ctrl.EbSid_CtxId = _ctrl.EbSid_CtxId + copyStr;
+            _ctrl.EbSid = _ctrl.EbSid + copyStr;
+            _ctrl.Label = _ctrl.Label + copyStr;
+            _ctrl.Id = _ctrl.Id + copyStr;
+        }
+        return control;
+    }
 
     this.getNxtCtrlCopyStr = function (ctrl) {
         let num = 1;
@@ -952,6 +970,16 @@
                     name: "Remove",
                     icon: "fa-trash",
                     callback: this.del
+                },
+                "Copy": {
+                    name: "Copy",
+                    icon: "fa-clone",
+                    callback: this.copy
+                },
+                "Paste": {
+                    name: "Paste",
+                    icon: "fa-clipboard",
+                    callback: this.paste
                 }
             }
         };
@@ -977,6 +1005,7 @@
         this.$form.on("click", ".ebtab-add-btn", this.contTabAddClick.bind(this));
         this.$form.on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
         this.$form.on("keyup", this.keyUp.bind(this));
+        this.ctxClipboard = {};
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
         if (this.rootContainerObj.DisplayName.trim() === "")

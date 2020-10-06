@@ -185,7 +185,8 @@
       "wwwroot/js/EbControls/EbPopBox.js",
 
       "wwwroot/js/FormBuilder/bootstrap-toggle.min.js",
-      "wwwroot/js/FormBuilder/jquery.scrollTo.js"
+      "wwwroot/js/FormBuilder/jquery.scrollTo.js",
+      "wwwroot/js/FormBuilder/FormRenderCommon.js"
     ],
     "minify": {
       "enabled": false

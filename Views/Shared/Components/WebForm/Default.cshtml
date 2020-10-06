@@ -14,6 +14,11 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
+<script>
+    console.log(Date.now);
+    var t0 = performance.now();
+</script>
+
 @* BOOTSTRAP CSS *@
 
 <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
@@ -54,6 +59,14 @@
 <script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
 @*<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>*@
 <script type="text/javascript" src="~/js/LayoutCommon/MonthPicker.min.js"></script>
+
+
+
+@*BUNDLES*@
+@*<environment exclude="Development">
+    <script type="text/javascript" src="~/js/Bundles/eb-formrender.p1.bundle.js" asp-append-version=@bApnd></script>
+</environment>*@
+
 <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbPowerSelect.js" asp-append-version=@bApnd></script>
@@ -69,8 +82,7 @@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
 @*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/DGUCcolumn.js" asp-append-version=@bApnd></script>
-@*jith*@
-<script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>
+@*<script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>*@
 @*jith*@
 <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>
 @*jith*@
@@ -113,6 +125,11 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <script src="~/js/DV/leaflet.js"></script>
+
+<script>
+    var t1 = performance.now();
+    console.log("web form link loading took " + (t1 - t0) + " milliseconds.");
+</script>
 
 @{
 

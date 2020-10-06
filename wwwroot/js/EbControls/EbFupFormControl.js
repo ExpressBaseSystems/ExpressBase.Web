@@ -280,13 +280,16 @@
             $(e.target).addClass('current');
             let tag = $(e.target).closest('li')[0].innerHTML;
             for (let i = 0; i < this.FileList.length; i++) {
-                let filetags = this.FileList[i].Meta.Tags[0].split(',');
-                if ($.inArray(tag, filetags) >= 0) {
-                    tagsArr.push(this.FileList[i]);
+                if (this.FileList[i].Meta.Tags.length > 0) {
+                    let filetags = this.FileList[i].Meta.Tags[0].split(',');
+                    if ($.inArray(tag, filetags) >= 0) {
+                        tagsArr.push(this.FileList[i]);
+                    }
                 }
             }
             this.renderFiles(tagsArr);
         }
+        this.setThumbnailCount();
     }
 
     rmChecked(evt) {
@@ -623,7 +626,7 @@
             }
         }
         $(e.target).closest(".file-thumb-wraper").remove();
-        document.getElementById("uploadtest-file-input").value = "";
+        //document.getElementById("uploadtest-file-input").value = "";
         this.isDropZoneEmpty();
     }
     //lines commented for testing
@@ -995,6 +998,7 @@
             $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).append(thump);
             $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
+            this.setThumbnailCount();
         }
         this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
         $(".eb_uplGal_thumbO").find(".select-fade").hide();
@@ -1043,7 +1047,19 @@
     customMenuCompleted(name, refids) {
         if (name === "Delete") {
             this[`${this.Options.Container}_cont`].deleteimage(refids);
+            this.setThumbnailCount();
         }
 
+    }
+
+    setThumbnailCount() {
+        var catHead = $(`#${this.Options.Container}`).find('.ClpsGalItem_Sgl');
+        var l = catHead.length;
+        if (l > 0) {
+            for (var i = 0; i < l; i++) {
+                var thumb_len = $(catHead[i]).find(`.${this.Options.Container}_preview`).length;
+                $(catHead[i]).find('.FcnT').text(`(${thumb_len})`);
+            }
+        }
     }
 }

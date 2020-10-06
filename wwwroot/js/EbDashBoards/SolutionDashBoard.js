@@ -1285,6 +1285,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                             }.bind(this)
                                         });
                                 }
+                                else if (key === "SUPPORTINGDATA") {
+                                    this.IntegrationSubmit(false);
+                                }
                                 else if (temp === undefined) {
                                     this.IntegrationSubmit(false);
                                 }
@@ -1337,15 +1340,33 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 };
 
                 if ($trigger.hasClass('PGSQLedit')) {
-                    options.items.EbDATA = { name: "Configure as Data Store" },
-                        options.items.EbFILES = { name: "Configure as File Store" },
-                        options.items.Delete = { name: "Remove" },
-                        //options.items.EbLOGS = { name: "Set as EbLogs" },
-                        options.items.Edit = { name: "Edit" };
+                    let id = $trigger[0].id;
+                    let tem = this.Connections.Integrations["EbDATA"]
+                    let flg = 0;
+                    $.each(tem, function (i) {
+                        if (tem[i].ConfId === id) {
+                            flg = 1;
+                        }
+                    }.bind(this));
+                    if (flg == 1) {
+                        options.items.EbDATA = { name: "Configure as Data Store" },
+                            options.items.EbFILES = { name: "Configure as File Store" },
+                            options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                    else {
+                        options.items.EbDATA = { name: "Configure as Data Store" },
+                            options.items.EbFILES = { name: "Configure as File Store" },
+                            options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
+                            options.items.Delete = { name: "Remove" },
+                            options.items.Edit = { name: "Edit" };
+                    }
+                    
                 }
                 else if ($trigger.hasClass('MYSQLedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1353,6 +1374,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 else if ($trigger.hasClass('MSSQLedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1360,6 +1382,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 else if ($trigger.hasClass('ORACLEedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1367,6 +1390,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 else if ($trigger.hasClass('MongoDBedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
                         options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.SUPPORTINGDATA = { name: "Configure as supporting data Store" },
                         options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
@@ -1641,6 +1665,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                     options.items.Remove = { name: "Unset" };
                 }
                 else if ($trigger.hasClass('MOBILECONFIGedit')) {
+                    options.items.Remove = { name: "Unset" };
+                }
+                else if ($trigger.hasClass('SUPPORTINGDATAedit')){
                     options.items.Remove = { name: "Unset" };
                 }
                 else {
@@ -1922,6 +1949,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_IChat_all();
         this.integration_AUTHENTICATION_all();
         this.integration_MobileConf_all();
+        this.integration_SUPPORTINGDATA_all();
     }.bind(this);
 
     this.db_modal_show_append = function (DatabaseName) {
@@ -2085,6 +2113,29 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $('#EmailInputPort').val("587");
     }.bind(this);
 
+    this.integration_SUPPORTINGDATA_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["SUPPORTINGDATA"];
+        $("#SUPPORTINGDATA-All").empty();
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
+                                <div class="integrationContainer_Image">
+                                    ${Imageurl[rows.Ctype]}
+                                </div>
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                    <span>${rows.NickName}</span>
+                                </div>
+                                <div id="nm" class="integrationContainer_caret-down">
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </div>
+                            </div>`);
+            html.join("");
+            count += 1;
+        }.bind(this));
+        $('#SUPPORTINGDATA-All').append(html);
+        $('#Supporting_Data_Head').empty().append(" Supporting Data Store (" + count + ")");
+    }.bind(this);
     this.integration_MobileConf_all = function () {
         let html = [];
         var count = 0;
@@ -2198,6 +2249,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_IChat_all();
         this.integration_AUTHENTICATION_all();
         this.integration_MobileConf_all();
+        this.integration_SUPPORTINGDATA_all();
 
 
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));

@@ -486,20 +486,29 @@
 
         this.FilesBase64 = [];
         let files = evt.target.files || evt.originalEvent.dataTransfer.files; // FileList object
-
+        var t = (this.Options.Type == 'image') ? 1 : 0;
         for (var i = 0; i < files.length; i++) {
-            //if (!files[i].type.match('image.*')) {
-            //    continue;
-            //}
-            let reader = new FileReader();
-            reader.onload = (function (file) {
-                return function (e) {
-                    (this.validate(file)) ? this.drawThumbNail(e, file) : null;
-                }.bind(this);
+            let x = 0;
+            if (files[i].type.match('image.*'))
+                x = 1;
+            else
+                x = 0;
 
-            }.bind(this))(files[i]);
+            let filetype = (t == 1) ? x : 1;
+            if (filetype == 1) {
+                let reader = new FileReader();
+                reader.onload = (function (file) {
+                    return function (e) {
+                        (this.validate(file)) ? this.drawThumbNail(e, file) : null;
+                    }.bind(this);
 
-            reader.readAsDataURL(files[i]);
+                }.bind(this))(files[i]);
+
+                reader.readAsDataURL(files[i]);
+            }
+            else {
+                EbMessage("show", { Message: "Only images are allowed", Background: 'red' });
+            }
         }
     }
 
@@ -679,7 +688,7 @@
         else
             obj.FileCategory = 0;
         obj.FileName = file.name;
-        obj.FileRefId = "ebfupRecent"+this.TempCount;
+        obj.FileRefId = "ebfupRecent" + this.TempCount;
         obj.FileB64 = this.FilesBase64[k];
         obj.FileSize = file.size;
         obj.UploadTime = (new Date()).toISOString().split('T')[0];
@@ -942,16 +951,16 @@
 
     contextMcallback(eType, selector, action, originalEvent) {
         let refids = [];
-        if ($(selector.$trigger).attr("recent") == "true") {            
+        if ($(selector.$trigger).attr("recent") == "true") {
             var attr = $(selector.$trigger).attr('original_refid');
             if (typeof attr !== typeof undefined && attr !== false) {
                 refids = [eval($(selector.$trigger).attr("original_refid"))];
             }
-            
+
         }
         else {
 
-             refids = [eval($(selector.$trigger).attr("filref"))];
+            refids = [eval($(selector.$trigger).attr("filref"))];
             this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
                 if (!refids.Contains(eval($(o).attr("refid"))))
                     refids.push(eval($(o).attr("refid")));
@@ -975,9 +984,9 @@
             beforeSend: function (evt) {
                 for (var i = 0; i < fileref.length; i++) {
                     var thumb = this.Gallery.find(`#prev-thumb${fileref[i]}`);
-                    thumb.find(".eb_uplGal_thumb_loader").show(); 
+                    thumb.find(".eb_uplGal_thumb_loader").show();
                 }
-                
+
             }.bind(this)
         }).done(function (status) {
             for (var i = 0; i < fileref.length; i++) {

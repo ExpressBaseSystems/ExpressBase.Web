@@ -121,7 +121,6 @@
                     o.Type = dragged.attr("DbType");
                     o.ColumnName = dragged.attr("ColName");
                     o.ColumnIndex = dragged.attr("index");
-                    o.TableIndex = dragged.attr("tableIndex");
                 }
                 window.MobilePage[this.tab].Creator.refreshControl(o);
             },

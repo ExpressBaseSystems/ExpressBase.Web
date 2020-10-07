@@ -1751,11 +1751,12 @@
     };
 
     this.SimpleFileUploader = function (ctrl) {
+        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
             renderer: this.Renderer.rendererName,
             maxSize: ctrl.MaxSize,
-            fileTypes: ctrl.FileTypes,
+            fileTypes: fileType,
             maxFiles: ctrl.MaxFiles
 
         });

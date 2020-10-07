@@ -339,7 +339,6 @@
             var t = (plugin.settings.fileTypes == 'image') ? 1 : 0;
             $(files).each(function (i, file) {
                 let url = "";
-                let  = getFileType(files[i]);
                 let filetype = (t == 1) ? getFileType(files[i]) : 1;
                 if (filetype==1) {
                     if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {

@@ -711,14 +711,11 @@ const WebFormRender = function (option) {
     };
 
     this.openSourceForm = function () {
-        if (this.formData.SourceId > 0 && this.formData.DataPushId?.length > 0) {
-            let refid_mpid = this.formData.DataPushId.split('|');
-            if (refid_mpid.length > 1) {
-                let params = [];
-                params.push(new fltr_obj(11, "id", this.formData.SourceId));
-                let url = `../WebForm/Index?refid=${refid_mpid[0]}&_params=${btoa(JSON.stringify(params))}&_mode=1&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
-                window.open(url, '_blank');
-            }
+        if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+            let params = [];
+            params.push(new fltr_obj(11, "id", this.formData.SrcDataId));
+            let url = `../WebForm/Index?refid=${this.formData.SrcRefId}&_params=${btoa(JSON.stringify(params))}&_mode=1&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+            window.open(url, '_blank');
         }
     };
 
@@ -1334,11 +1331,8 @@ const WebFormRender = function (option) {
                 btnsArr.splice(3, 1);//
                 console.warn("Cancelled record!.............");
             }
-            if (this.formData.SourceId > 0 && this.formData.DataPushId?.length > 0) {
-                let refid_mpid = this.formData.DataPushId.split('|');
-                if (refid_mpid.length > 1) {
-                    btnsArr.push("webformopensrc");
-                }
+            if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+                btnsArr.push("webformopensrc");
             }
             this.headerObj.showElement(this.filterHeaderBtns(btnsArr, currentLoc, reqstMode));
         }

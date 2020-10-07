@@ -6,6 +6,67 @@
     Dictionary<string, List<EbObjectWrapper>> All_ObjList = ViewBag.all_objlist;
     string signupFormRefid = ViewBag.signupFormRefid;
 }
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 23px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 15px;
+            width: 15px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
 <div class="container-fluid center" style="background-color:white;height:100%;">
     <div class="row">
         <div class="col-md-12" style="margin-top:50px; margin-bottom: 15px;">
@@ -59,6 +120,110 @@
                 }
             </select>
         </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="margin-top:50px; margin-bottom: 15px;">
+            <h4 class="col-md-10" style="margin-bottom:15px;"><i class="fa fa-cog"></i> Mobile App Setting Console  </h4>
+        </div>
+        <div class="col-md-12">
+            <div>
+                SignUp
+                @{
+                    if (ViewBag.MobileSignup.MobileSignUpSettings.SignUp)
+                    { <label class="switch"> <input type="checkbox" id="SignUp" checked> <span class="slider round"></span> </label> }
+                    else
+                    { <label class="switch"> <input type="checkbox" id="SignUp" > <span class="slider round"></span> </label>}
+                }
+            </div>
+            <div>
+                <div class="radio">
+                    @{
+                        if (ViewBag.MobileSignup.MobileSignUpSettings.Email)
+                        { <label><input type="radio" name="login" id="Mob_Email" checked>Email</label>}
+                        else
+                        { <label><input type="radio" name="login" id="Mob_Email">Email</label>}
+                    }
+                </div>
+                <div class="radio">
+                    @{
+                        if (ViewBag.MobileSignup.MobileSignUpSettings.MobileNo)
+                        { <label><input type="radio" name="login" id="Mob_Phone" checked>Phone</label> }
+                        else
+                        { <label><input type="radio" name="login" id="Mob_Phone">Phone</label>}
+                    }
+                </div>
+            </div>
+            <div>
+                <div class="radio">
+                    @{
+                        if (ViewBag.MobileSignup.MobileSignUpSettings.Password)
+                        { <label><input type="radio" name="psw" id="Mob_Password" checked>Password</label> }
+                        else
+                        { <label><input type="radio" name="psw" id="Mob_Password">Password</label>}
+                    }
+
+                </div>
+                <div class="radio">
+                    @{
+                        if (ViewBag.MobileSignup.MobileSignUpSettings.Verification)
+                        { <label><input type="radio" name="psw" id="Mob_Verfi" checked>Verification</label> }
+                        else
+                        { <label><input type="radio" name="psw" id="Mob_Verfi">Verification</label>}
+                    }
+
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#mob_pages">mobilepages</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="mob_pages" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Mobile Pages</h4>
+            </div>
+            <div class="modal-body">
+
+                @foreach (KeyValuePair<string, List<EbObjectWrapper>> type in ViewBag.MobilePages)
+                {
+                    bool temp = false;
+                    foreach (string refid in ViewBag.MobileSignup.MobileSignUpSettings.ProfileSetupPages)
+                    {
+                        if (refid == type.Value[0].RefId)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (temp)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="@type.Value[0].Name" id="@type.Value[0].RefId" checked>
+                            <label class="form-check-label" for="@type.Value[0].RefId"> @type.Value[0].Name </label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="@type.Value[0].Name" id="@type.Value[0].RefId">
+                            <label class="form-check-label" for="@type.Value[0].RefId"> @type.Value[0].Name </label>
+                        </div>
+                    }
+
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="mobilepage_submit" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+
     </div>
 </div>
 <script>
@@ -67,7 +232,17 @@
             $("#signup_object").val("@signupFormRefid");
 
     });
-
+    var MobPageColl = [];
+    $("#mobilepage_submit").on("click", function () {
+        MobPageColl = [];
+        if ($('#Mob_Email').is(':checked')) {
+        alert("it's checked");
+    }
+        var abc = $("input:checkbox[class=form-check-input]:checked");
+        $.each(abc, function (i, ob) {
+            MobPageColl.push(ob.id);
+        });
+    });
 
     $("#save").on("click", function () {
           $("#eb_common_loader").EbLoader("show");
@@ -75,15 +250,34 @@
         $(".usr_typ").each(function (index) {
             arr.push({Id : this.id, RefId :$('#'+this.id +' .user_type_forms').val()});
         });
+        let mobSignupSettings = {
+            SignUp: $('#SignUp').is(':checked'),
+            Email: $('#Mob_Email').is(':checked'),
+            MobileNo: $('#Mob_Phone').is(':checked'),
+            Password: $('#Mob_Password').is(':checked'),
+            Verification: $('#Mob_Verfi').is(':checked'),
+            ProfileSetupPages: MobPageColl
+        }
         let obj = {
             SignupFormRefid: $("#signup_object").val(),
-            UserTypeForms : arr
+            UserTypeForms: arr,
+            MobileAppSettings: { MobileSignUpSettings: mobSignupSettings},
         };
         $.post("../Dev/SaveSolutionSettings",
             { obj: JSON.stringify(obj) },
             function (result) {
-                  $("#eb_common_loader").EbLoader("hide");
-                alert(result);
+                $("#eb_common_loader").EbLoader("hide");
+                EbDialog("show", {
+                    Message: result ,
+                    Buttons: {
+                        "Ok": {
+                            Background: "blue",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+
+                });
             }
         );
     });

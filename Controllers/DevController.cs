@@ -930,6 +930,7 @@ namespace ExpressBase.Web.Controllers
         {
             EbObjectObjListAllVerResponse public_res = this.ServiceClient.Get(new PublicObjListAllVerRequest { EbObjectType = 0 });
             EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
+            EbObjectObjListAllVerResponse All_mobilePages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 13 });
             GetUserTypesResponse _userTypesResp = this.ServiceClient.Get(new GetUserTypesRequest());
 
             Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
@@ -951,6 +952,8 @@ namespace ExpressBase.Web.Controllers
             ViewBag.userTypes = _userTypesResp.UserTypes;
             ViewBag.objlist = public_res.Data;
             ViewBag.all_objlist = all_resp.Data;
+            ViewBag.MobilePages = All_mobilePages.Data;
+            ViewBag.MobileSignup = solutionObj.SolutionSettings.MobileAppSettings;
             return View();
         }
 

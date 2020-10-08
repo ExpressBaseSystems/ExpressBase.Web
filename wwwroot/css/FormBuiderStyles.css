@@ -2892,12 +2892,15 @@ input.locinp {
     bottom: 1px;
     right: 1px;
     padding: 7px;
+    background-color: #eaeaea;
 }
 
     .phnContextBtn i {
         display: inline-block;
     }
-
+    .phnContextBtn:hover {
+        cursor: pointer;
+    }
 /*ebEmail control*/
 .emailCtrl_invalid {
     background: #ffb2b24f;

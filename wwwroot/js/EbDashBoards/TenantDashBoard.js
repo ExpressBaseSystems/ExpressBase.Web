@@ -1,16 +1,28 @@
 ﻿var TenantDashBoard = function (scount, primarySolutionCount, MasterPackages) {
     this.goToSolutionWindow = function (e) {
         var console = $(e.target).closest(".sso-btn").attr("wc");
-        var sid = $(e.target).closest(".sso-btn").attr("sid");
+        var esid = $(e.target).closest(".sso-btn").attr("sid");
+        var isid = $(e.target).closest(".sso-btn").attr("isid");
         var tk = getTok();
         var rtk = getrToken();
         var form = document.createElement("form");
         form.style.display = "none";
         form.setAttribute("method", "post");
-        if (console === "dc")
-            form.setAttribute("action", window.location.protocol + "//" + sid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
-        else if (console === "uc")
-            form.setAttribute("action", window.location.protocol + "//" + sid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+
+        debugger;
+        if (esid.includes(".")) {
+            if (console === "dc")
+                form.setAttribute("action", window.location.protocol + "//" + isid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+            else if (console === "uc")
+                form.setAttribute("action", window.location.protocol + "//" + esid + "/Ext/SwitchContext");
+        }
+        else {
+            if (console === "dc")
+                form.setAttribute("action", window.location.protocol + "//" + esid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+            else if (console === "uc")
+                form.setAttribute("action", window.location.protocol + "//" + esid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+        }
+
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");
@@ -46,7 +58,8 @@
         }
     };
 
-    this.ns = function (e) { 
+    this.ns = function (e) {
+        scount = 2;
         if (scount <= 3) {
             this.ncs();
             this.cs(function (res) {

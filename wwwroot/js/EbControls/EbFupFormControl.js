@@ -316,10 +316,12 @@
             else if (o.FileCategory === 1) {
                 src = o.FileB64;
             }
+            let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
             return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                    ${upTime}
                                      <i class="fa fa-info-circle filesave_info" data-toggle="tooltip" data-placement="bottom" title="will be saved only if form is saved " ></i>
                                 </div>
                                 <div class="eb_uplGal_thumb_loader">
@@ -337,10 +339,12 @@
             else if (o.FileCategory === 1) {
                 src = `/images/small/${o.FileRefId}.jpg`;
             }
+            let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
             return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                             <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                ${upTime}
                                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                             </div>
                             <div class="select-fade"></div>
@@ -368,7 +372,7 @@
 
         }
         else {
-            return `<img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
+            return `<img src="${src}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
         }
     }
 
@@ -433,7 +437,7 @@
 
     initCropy() {
         return new EbCropper({
-            Container: 'container_crp',
+            Container: `${this.Options.Container}_container_crp`,
             Toggle: '._crop',
             ResizeViewPort: this.Options.ResizeViewPort
         });
@@ -486,20 +490,29 @@
 
         this.FilesBase64 = [];
         let files = evt.target.files || evt.originalEvent.dataTransfer.files; // FileList object
-
+        var t = (this.Options.Type == 'image') ? 1 : 0;
         for (var i = 0; i < files.length; i++) {
-            //if (!files[i].type.match('image.*')) {
-            //    continue;
-            //}
-            let reader = new FileReader();
-            reader.onload = (function (file) {
-                return function (e) {
-                    (this.validate(file)) ? this.drawThumbNail(e, file) : null;
-                }.bind(this);
+            let x = 0;
+            if (files[i].type.match('image.*'))
+                x = 1;
+            else
+                x = 0;
 
-            }.bind(this))(files[i]);
+            let filetype = (t == 1) ? x : 1;
+            if (filetype == 1) {
+                let reader = new FileReader();
+                reader.onload = (function (file) {
+                    return function (e) {
+                        (this.validate(file)) ? this.drawThumbNail(e, file) : null;
+                    }.bind(this);
 
-            reader.readAsDataURL(files[i]);
+                }.bind(this))(files[i]);
+
+                reader.readAsDataURL(files[i]);
+            }
+            else {
+                EbMessage("show", { Message: "Only images are allowed", Background: 'red' });
+            }
         }
     }
 
@@ -679,7 +692,7 @@
         else
             obj.FileCategory = 0;
         obj.FileName = file.name;
-        obj.FileRefId = "ebfupRecent"+this.TempCount;
+        obj.FileRefId = "ebfupRecent" + this.TempCount;
         obj.FileB64 = this.FilesBase64[k];
         obj.FileSize = file.size;
         obj.UploadTime = (new Date()).toISOString().split('T')[0];
@@ -942,16 +955,16 @@
 
     contextMcallback(eType, selector, action, originalEvent) {
         let refids = [];
-        if ($(selector.$trigger).attr("recent") == "true") {            
+        if ($(selector.$trigger).attr("recent") == "true") {
             var attr = $(selector.$trigger).attr('original_refid');
             if (typeof attr !== typeof undefined && attr !== false) {
                 refids = [eval($(selector.$trigger).attr("original_refid"))];
             }
-            
+
         }
         else {
 
-             refids = [eval($(selector.$trigger).attr("filref"))];
+            refids = [eval($(selector.$trigger).attr("filref"))];
             this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
                 if (!refids.Contains(eval($(o).attr("refid"))))
                     refids.push(eval($(o).attr("refid")));
@@ -975,9 +988,9 @@
             beforeSend: function (evt) {
                 for (var i = 0; i < fileref.length; i++) {
                     var thumb = this.Gallery.find(`#prev-thumb${fileref[i]}`);
-                    thumb.find(".eb_uplGal_thumb_loader").show(); 
+                    thumb.find(".eb_uplGal_thumb_loader").show();
                 }
-                
+
             }.bind(this)
         }).done(function (status) {
             for (var i = 0; i < fileref.length; i++) {
@@ -1029,14 +1042,6 @@
 
 
     }
-    //contextM_REcallback(itemKey, opt, e) {
-
-    //    let refid = opt.$trigger.attr('filref');
-    //    uploadedFileRefList[ctrl.Name] 
-    //    opt.$trigger.remove();
-    //    var m = "edit was clicked";
-    //    window.console && console.log(m) || alert(m);
-    //}
 
     deleteFromGallery(filerefs) {
         for (let i = 0; i < filerefs.length; i++) {

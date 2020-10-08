@@ -8,7 +8,7 @@
 	float: left;
 	border: 1px solid #ddd;
 	border-top: none;
-	background-color: white;
+	background-color: #fafafa;
 }
 .lm-form-body {
 	padding-top: 42px;
@@ -136,12 +136,29 @@
 	}
 
 	.lm-form-inline .form-control {
-		height: 25px !important;
+		height: 28px !important;
 		padding: 1px 12px;
+		/*border-radius: 0;*/
+		box-shadow: none;
+		border: solid 1px rgba(180, 180, 180, 0.49)
+	}
+		.lm-form-inline .form-control:focus {
+			border-color: rgba(102, 175, 233, 0.67);
+			outline: 0;
+			-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+			box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+		}
+
+	.lm-form-inline .input-group-addon {
+		/*border-radius: 0;*/
+		padding: 0 9px;
+		box-shadow: none;
+		border: solid 1px rgba(204, 204, 204, 0.49);
+		border-left: none;
 	}
 
 .lm-img-cont {
-	height: 138px;
+	height: 144px;
 	width: 132px;
 	margin-top: 10px;
 	border: 1px solid #cfced0;
@@ -162,7 +179,7 @@
 	color: #aaa;
 }
 
-.form-cont .input-group-addon {
+/*.form-cont .input-group-addon {
 	border-radius: 0;
 	padding: 0 9px;
 	box-shadow: none;
@@ -181,7 +198,7 @@
 		outline: 0;
 		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 		box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-	}
+	}*/
 
 .dataTables_empty {
 	text-align: center;

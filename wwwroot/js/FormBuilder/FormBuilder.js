@@ -111,39 +111,62 @@
         return ctrl;
     }.bind(this);
 
+    this.cut = function (eType, selector, action, originalEvent) {
+        this.copy(eType, selector, action, originalEvent);
+        this.del(eType, selector, action, originalEvent);
+    }.bind(this);
+
     this.copy = function (eType, selector, action, originalEvent) {
         let $e = selector.$trigger;
         let ebsid = $e.attr("ebsid");
         let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+        let clonedCtrl = { ...ctrl };
         if (ctrl.ObjType === "Approval")
             this.ApprovalCtrl = null;
         if (ctrl.ObjType === "Review")
             this.ReviewCtrl = null;
         else if (ctrl.ObjType === "ProvisionLocation")
             this.ProvisionLocationCtrl = null;
-        this.ctxClipboard.ctrl = JSON.parse(JSON.stringify(ctrl));
+
+        delete clonedCtrl["$Control"];
+        delete clonedCtrl["__oldValues"];
+        this.ctxClipboard.ctrl = JSON.parse(JSON.stringify(clonedCtrl));
+
         navigator.clipboard.writeText('@#%ebcontrolclip@#%' + JSON.stringify(this.ctxClipboard.ctrl));
-        this.ctxClipboard.$colTile = $e;
         this.isCtrlInClipboard = true;
     }.bind(this);
 
     this.paste = function (eType, selector, action, originalEvent) {
         let $e = $(event.target);
-        navigator.clipboard.readText().then(function (text) {
+        navigator.clipboard.readText().then(function (text) { // need optimize
             if (text.startsWith('@#%ebcontrolclip@#%')) {
-                text = text.replace('@#%ebcontrolclip@#%', '');
-                let copiedCtrl = this.getCopiedCtrl(JSON.parse(text));
+                let ctrl = JSON.parse(text.replace('@#%ebcontrolclip@#%', ''));
+                let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
+                let copiedCtrl = this.getCopiedCtrl(ctrl);
+                let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl);
                 let offset = $e.closest('.context-menu-list').offset();
                 $('#context-menu-layer').css('z-index', 0);
-                let $clickedColTile = $(document.elementFromPoint(offset.left, offset.top - 1)).closest('[ebsid]');
+                let $clickedEl = $(document.elementFromPoint(offset.left, offset.top - 1));
+                let $clickedColTile = $clickedEl.closest('[ebsid]');
                 let clickedCtrl = this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
+
                 if (clickedCtrl.IsContainer) {
                     clickedCtrl.Controls.$values.push(copiedCtrl);
+                    $clickedEl.append($copiedCtrl);
                 }
                 else {
-                    if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid')))
+                    if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
                         this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
+                        $copiedCtrl.insertAfter($clickedColTile);
+                    }
                 }
+
+                let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
+                for (let i = 0; i < flatControlsModified.length; i++) {
+                    this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
+                }
+
+
                 this.isCtrlInClipboard = true;
             }
             else {
@@ -160,18 +183,36 @@
         }.bind(this));
     }.bind(this);
 
-    this.getCopiedCtrl = function (ctrl) {
-        let $ctrlCpy = this.ctxClipboard.$colTile;
-        let ctrlCpy = this.getModifiedCtrl(ctrl)
-        return ctrlCpy;
+
+    this.dropedCtrlInit = function ($ctrl, type, id) {
+        $ctrl.attr("tabindex", "1");
+        this.ctrlOnClickBinder($ctrl, type);
+        $ctrl.on("focus", this.controlOnFocus.bind(this));
+        $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
+        $ctrl.attr("eb-type", type);
     };
 
-    this.getModifiedCtrl = function (control) {
+    this.getCopied$Ctrl = function (ModifiedCtrl, OriginalCtrl) {
+        let flatControlsModified = getAllctrlsFrom(ModifiedCtrl);
+        let flatControlsOriginal = [...getAllctrlsFrom(OriginalCtrl)];
+        let $ctrl = $(`[ebsid='${OriginalCtrl.EbSid_CtxId}']`).clone();
+        for (let i = 0; i < flatControlsModified.length; i++) {
+            let ctrlModified = flatControlsModified[i];
+            let $_ctrl = (i === 0) ? $ctrl : $ctrl.find(`[ebsid='${flatControlsOriginal[i].EbSid_CtxId}']`);
+
+            this.ctrlOnClickBinder($_ctrl, type);
+            $_ctrl.on("focus", this.controlOnFocus.bind(this));
+            $_ctrl.attr("id", "cont_" + ctrlModified.EbSid_CtxId).attr("ebsid", ctrlModified.EbSid_CtxId);
+        }
+        return $ctrl;
+    }
+
+    this.getCopiedCtrl = function (control) {
         let flatControls = getAllctrlsFrom(control);
         for (let i = 0; i < flatControls.length; i++) {
             let _ctrl = flatControls[i];
             let copyStr = this.getNxtCtrlCopyStr(_ctrl);
-            _ctrl.Name = _ctrl.Name + copyStr;
+            _ctrl.Name = _ctrl.Name + copyStr.toLowerCase();
             _ctrl.EbSid_CtxId = _ctrl.EbSid_CtxId + copyStr;
             _ctrl.EbSid = _ctrl.EbSid + copyStr;
             _ctrl.Label = (_ctrl.Label || '') + copyStr;
@@ -631,14 +672,6 @@
         EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
     };
 
-    this.dropedCtrlInit = function ($ctrl, type, id) {
-        $ctrl.attr("tabindex", "1");
-        this.ctrlOnClickBinder($ctrl, type);
-        $ctrl.on("focus", this.controlOnFocus.bind(this));
-        $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
-        $ctrl.attr("eb-type", type);
-    };
-
     //this.controlCloseOnClick = function (e) {
     //    var ControlTile = $(e.target).parent().parent();
     //    var id = ControlTile.attr("id");
@@ -997,6 +1030,11 @@
                     icon: "fa-trash",
                     callback: this.del
                 },
+                "Cut": {
+                    name: "Cut",
+                    icon: "fa-scissors",
+                    callback: this.cut
+                },
                 "Copy": {
                     name: "Copy",
                     icon: "fa-clone",
@@ -1006,7 +1044,7 @@
                     name: "Paste",
                     icon: "fa-clipboard",
                     callback: this.paste,
-                    visible: function (key, opt) { return this.isCtrlInClipboard;}.bind(this)
+                    visible: function (key, opt) { return this.isCtrlInClipboard; }.bind(this)
                 }
             }
         };

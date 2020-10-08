@@ -393,7 +393,7 @@
             .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .upload-time {
                 text-align: center;
                 font-size: 12px;
-                padding: 5px 0 10px 0;
+                padding: 0px 0 2px 0;
                 color: #545454;
             }
 
@@ -407,12 +407,12 @@
             }
 
                 .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO_img img {
-                    /*max-width:100%;*/
                     /*vrgs*/
                     max-width: 240px;
                     min-width: 110px;
                     height: 156px;
                     margin: auto;
+                    padding-top:4px;
                 }
 
 
@@ -445,13 +445,13 @@
 }
 
 .fnamethumb {
-    /*margin-top: 10px;*/
     margin-top: 5px; /*.vrgs*/
     margin-bottom: 0;
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    padding-bottom: 2px;
 }
 
 /*gallery fscreen*/

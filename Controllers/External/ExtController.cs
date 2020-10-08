@@ -158,7 +158,6 @@ namespace ExpressBase.Web.Controllers
             return res;
         }
 
-
         public int EmailCheck(string email)
         {
             try
@@ -372,7 +371,7 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
             ViewBag.GoogleSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GOOGLE_CLIENT_ID);
-            
+
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
@@ -636,9 +635,17 @@ namespace ExpressBase.Web.Controllers
             string btoken = req["Btoken"].ToString();
             string rtoken = req["Rtoken"].ToString();
             string console = req["WhichConsole"];
+            //string req_url = this.HttpContext.Request.Host.Value;
             if (TenantSingleSignOn(btoken, rtoken, console))
             {
-                if (console == RoutingConstants.DC)
+                //string Subdomain = this.HttpContext.Request.Host.Host.Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+                //bool is_ourdomain = (req_url.Contains(RoutingConstants.LIVEHOSTADDRESS) || req_url.Contains(RoutingConstants.STAGEHOSTADDRESS) || req_url.Contains(RoutingConstants.LOCALHOSTADDRESS));
+                //if (console == RoutingConstants.UC && Subdomain.Contains(CharConstants.DOT))
+                //{
+                //    return  Response.Redirect(this.HttpContext.Request.Scheme + "://" + Subdomain + "/UserDashboard");
+                //}
+
+                 if (console == RoutingConstants.DC)
                     return RedirectToAction("DevDashBoard", "Dev");
                 else if (console == RoutingConstants.UC)
                     return RedirectToAction("UserDashboard", "TenantUser");
@@ -649,14 +656,15 @@ namespace ExpressBase.Web.Controllers
         public bool TenantSingleSignOn(string btoken, string rtoken, string wc)
         {
             var host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split(CharConstants.DOT);
+            string Subdomain = host.Host.Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+            //string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = wc;
 
             string email = ValidateTokensAndGetUserName(btoken, rtoken);
             if (string.IsNullOrEmpty(email))
                 return false;
 
-            this.DecideConsole(hostParts[0], out whichconsole);
+            this.DecideConsole(Subdomain, out whichconsole);
             MyAuthenticateResponse authResponse = null;
             try
             {
@@ -923,7 +931,7 @@ namespace ExpressBase.Web.Controllers
             string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
             string authid = Request.Cookies[TokenConstants.USERAUTHID];
             IFormCollection req = this.HttpContext.Request.Form;
-            User _u = GetUserObject(authid);            
+            User _u = GetUserObject(authid);
             if (_u != null)
             {
                 Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateTokenRequest

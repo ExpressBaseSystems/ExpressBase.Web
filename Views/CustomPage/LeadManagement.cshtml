@@ -328,7 +328,7 @@
                         <div class="lm-form-group">
                             <label>DOB</label>
                             <div class="input-group">
-                                <input id="txtDob" type="text" class="form-control" autocomplete="off">
+                                <input id="txtDob" type="text" class="form-control" autocomplete="off" style="z-index: 0;">
                                 <span class="input-group-addon" onclick="$('#txtDob').focusin();"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -421,6 +421,7 @@
             <li><a data-toggle="tab" href="#menuBilling">Billing</a></li>
             <li><a data-toggle="tab" href="#menuSurgery">Surgery Details</a></li>
             <li><a data-toggle="tab" href="#menuAttach">Attach</a></li>
+            <li><a data-toggle="tab" href="#menuPRP">PRP</a></li>
         </ul>
 
         <div class="tab-content white-tab">
@@ -625,20 +626,25 @@
             </div>
 
             <!-- Attach Menu -->
-            <div id="menuAttach" class="tab-pane fade" style="min-height: 200px; ">
+            <div id="menuAttach" class="tab-pane fade" style="min-height: calc(100vh - 256px); ">
                 @*<div style="padding: 15px 15px; display:inline-block; width:79%;">
-                        <button id="btnFirstImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-step-backward"></i> First</button>
-                        <button id="btnPrevImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-chevron-left"></i> Prev</button>
-                        <label id="lblImgPage">Page 0 of 0</label>
-                        <button id="btnNextImgPage" class="ebbtn eb_btn-sm ">Next <i class="fa fa-chevron-right"></i></button>
-                        <button id="btnLastImgPage" class="ebbtn eb_btn-sm ">Last <i class="fa fa-step-forward"></i></button>
-                    </div>*@
-                <div style="text-align:right; padding: 15px 15px 5px 15px; display:inline-block; width:100%;">
+                <button id="btnFirstImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-step-backward"></i> First</button>
+                <button id="btnPrevImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-chevron-left"></i> Prev</button>
+                <label id="lblImgPage">Page 0 of 0</label>
+                <button id="btnNextImgPage" class="ebbtn eb_btn-sm ">Next <i class="fa fa-chevron-right"></i></button>
+                <button id="btnLastImgPage" class="ebbtn eb_btn-sm ">Last <i class="fa fa-step-forward"></i></button>
+            </div>*@
+                @*<div style="text-align:right; padding: 15px 15px 5px 15px; display:inline-block; width:100%;">
                     <button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
-                </div>
+                </div>*@
                 @*<div id="divAllImg"> </div>*@
-                <div id="divAllImg1" style="padding: 0 15px;"> </div>
+                <div id="divAllImg1"> </div>
                 @*<div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>*@
+            </div>
+
+            <!-- PRP Menu -->
+            <div id="menuPRP" class="tab-pane fade" style="min-height: calc(100vh - 256px);">
+                <div id="divAllImg2"> </div>
             </div>
         </div>
     </div>
@@ -988,7 +994,175 @@
     var intSpecialPermission = '@ViewBag.Permission';
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
 
-    var imgup = new EbFileUpload({
+    let uploadedFileRefList = {};
+    let files1 = @Html.Raw(ViewBag.AttachImgInfo);
+    let imgup1 = new FUPFormControl({
+        Type: 'image',
+        ShowGallery: true,
+        Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"],
+        Files: files1,
+        TenantId: '@ViewBag.cid',
+        SolutionId: '@ViewBag.cid',
+        Container: 'divAllImg1',
+        Multiple: true,
+        ServerEventUrl: ebcontext.se_url,
+        EnableTag: true,
+        EnableCrop: true,
+        MaxSize: '@ViewBag.Env' === 'Staging' ? 15: 2,
+        CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }],
+        DisableUpload: false,
+        HideEmptyCategory: true,
+        ShowUploadDate: true
+    });
+
+    let getInitFileIds = function (files) {
+        let ids = [];
+        for (let i = 0; i < files.length; i++)
+            ids.push(files[i].FileRefId);
+        return ids;
+    };
+
+    let fupUploadSuccessCallBack = function (gallName, fileid) {
+        if (uploadedFileRefList[gallName].indexOf(fileid) === -1)
+            uploadedFileRefList[gallName].push(fileid);
+    };
+
+    let fupWindowCloseCallBack = function (gallName) {
+        if (uploadedFileRefList[gallName].length > 0)
+            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+    };
+
+    let fupTriggerCallBack = function (gallName, imgup, name, refids) {
+        if (name === "Delete") {
+            if (name === "Delete") {
+                EbDialog("show",
+                {
+                    Message: "Are you sure? Changes Affect only if Form is Saved.",
+                    Buttons: {
+                        "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                        "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                    },
+                    CallBack: function (name) {
+                        if (name === "Yes") {
+                            let initLen = uploadedFileRefList[gallName].length;
+                            for (let i = 0; i < refids.length; i++) {
+                                let index = uploadedFileRefList[gallName].indexOf(refids[i]);
+                                if (index !== -1) {
+                                    uploadedFileRefList[gallName].splice(index, 1);
+                                }
+                            }
+                            if (initLen > uploadedFileRefList[gallName].length) {
+                                imgup.deleteFromGallery(refids);
+                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                            }
+                            imgup.customMenuCompleted("Delete", refids);
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            if (name === 'Set as DP') {
+                EbDialog("show",
+                {
+                    Message: "Are you sure? Changes Affect only if Form is Saved.",
+                    Buttons: {
+                        "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                        "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                    },
+                    CallBack: function (name) {
+                        if (name === "Yes") {
+                            if (refids.length > 0) {
+                                let id = refids[0];
+                                $("#divCustomerDp").children().remove();
+                                $("#divCustomerDp").append(`
+                                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
+                                    </div>`);
+                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    let fupTriggerRecentCallBack = function (gallName, imgup, name, obj) {
+        let refids = obj.$trigger.attr('original_refid');
+        let filref = [];
+        filref.push(obj.$trigger.attr('filref'));
+        debugger;
+        if (name === "delete") {
+            EbDialog("show",
+            {
+                Message: "Are you sure? Changes Affect only if Form is Saved.",
+                Buttons: {
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        let initLen = uploadedFileRefList[gallName].length;
+                        for (let i = 0; i < refids.length; i++) {
+                            let index = uploadedFileRefList[gallName].indexOf(eval(refids));
+                            if (index !== -1) {
+                                uploadedFileRefList[gallName].splice(index, 1);
+                            }
+                        }
+                        if (initLen > uploadedFileRefList[gallName].length) {
+                            obj.$trigger.remove();
+                            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                        }
+                        imgup.customMenuCompleted("Delete", filref);
+                    }
+                }
+            });
+        }
+    };
+
+    uploadedFileRefList['attachImg'] = getInitFileIds(files1);
+
+    imgup1.uploadSuccess = fupUploadSuccessCallBack.bind('<this>', 'attachImg');
+
+    imgup1.windowClose = fupWindowCloseCallBack.bind('<this>', 'attachImg');
+
+    imgup1.customTrigger = fupTriggerCallBack.bind('<this>', 'attachImg', imgup1);
+
+    imgup1.contextM_REcallback = fupTriggerRecentCallBack.bind('<this>', 'attachImg', imgup1);
+
+
+    let files2 = @Html.Raw(ViewBag.PrpImgInfo);
+    let imgup2 = new FUPFormControl({
+        Type: 'image',
+        ShowGallery: true,
+        Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "PRP1", "PRP2", "PRP3", "PRP4", "PRP5", "PRP6", "PRP7", "PRP8", "PRP9", "PRP10"],
+        Files: files2,
+        TenantId: '@ViewBag.cid',
+        SolutionId: '@ViewBag.cid',
+        Container: 'divAllImg2',
+        Multiple: true,
+        ServerEventUrl: ebcontext.se_url,
+        EnableTag: true,
+        EnableCrop: true,
+        MaxSize: '@ViewBag.Env' === 'Staging' ? 15: 2,
+        CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }],
+        DisableUpload: false,
+        HideEmptyCategory: true,
+        ShowUploadDate: true
+    });
+
+    uploadedFileRefList['prpImg'] = getInitFileIds(files2);
+
+    imgup2.uploadSuccess = fupUploadSuccessCallBack.bind('<this>', 'prpImg');
+
+    imgup2.windowClose = fupWindowCloseCallBack.bind('<this>', 'prpImg');
+
+    imgup2.customTrigger = fupTriggerCallBack.bind('<this>', 'prpImg', imgup2);
+
+    imgup2.contextM_REcallback = fupTriggerRecentCallBack.bind('<this>', 'prpImg', imgup2);
+
+    @*var imgup = new EbFileUpload({
         Type: "image",
         PreviewWraper: "#divAllImg1",
         Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "PRP1", "PRP2", "PRP3", "PRP4", "PRP5", "PRP6", "PRP7", "PRP8", "PRP9", "PRP10"],
@@ -1070,5 +1244,6 @@
                     }
                 });
         }
-    }
+    }*@
+
 </script>

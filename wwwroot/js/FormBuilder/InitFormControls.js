@@ -841,6 +841,8 @@
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude
                     });
+                    if (ctrl.DataVals)
+                        ctrl.DataVals.Value = position.coords.latitude + ',' + position.coords.longitude;
                 }.bind(this));
             }
             $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) => $(event.target).closest('.locinp-cont').find('.locinp').val(''));

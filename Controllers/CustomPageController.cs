@@ -51,6 +51,8 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.StatusDict = fr.StatusDict;
 			ViewBag.ServiceList = fr.ServiceList;
 			ViewBag.CustomerCategoryDict = fr.CustomerCategoryDict;
+			ViewBag.AttachImgInfo = fr.AttachImgInfo;
+			ViewBag.PrpImgInfo = fr.PrpImgInfo;
 
 			//ViewBag.ImageIdList = fr.ImageIdList;
 			ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
@@ -65,11 +67,11 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
-        [HttpGet("FilesOf/{ac}")]
-        public string GetImgInfo(int ac)
-        {
-            return JsonConvert.SerializeObject(this.ServiceClient.Get(new GetImageInfoRequest { CustomerId = ac }).Data);
-        }
+        //[HttpGet("FilesOf/{ac}")]
+        //public string GetImgInfo(int ac)////
+        //{
+        //    return JsonConvert.SerializeObject(this.ServiceClient.Get(new GetImageInfoRequest { CustomerId = ac }).Data);
+        //}
 
 		public int SaveCustomer(int Mode, string CustomerInfo, string ImgRefId)
 		{
@@ -112,11 +114,11 @@ namespace ExpressBase.Web.Controllers
 			return res.Status;
 		}
 
-        public int DeleteImages(int CustId, string ImgRefIds)
-        {
-            LmDeleteImageResponse res = this.ServiceClient.Post<LmDeleteImageResponse>(new LmDeleteImageRequest { CustId = CustId, ImgRefIds = ImgRefIds });
-            return res.RowsAffected;
-        }
+        //public int DeleteImages(int CustId, string ImgRefIds)
+        //{
+        //    LmDeleteImageResponse res = this.ServiceClient.Post<LmDeleteImageResponse>(new LmDeleteImageRequest { CustId = CustId, ImgRefIds = ImgRefIds });
+        //    return res.RowsAffected;
+        //}
 
         public bool DeleteCustomer(int CustId)
         {

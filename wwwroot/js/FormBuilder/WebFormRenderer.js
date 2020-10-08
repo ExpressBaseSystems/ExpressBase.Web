@@ -706,8 +706,17 @@ const WebFormRender = function (option) {
     this.cloneForm = function () {
         let params = [];
         params.push(new fltr_obj(11, "srcRowId", this.rowId));
-        let url = `../WebForm/Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify(params))}&_mode=7`;
+        let url = `../WebForm/Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify(params))}&_mode=7&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
         window.open(url, '_blank');
+    };
+
+    this.openSourceForm = function () {
+        if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+            let params = [];
+            params.push(new fltr_obj(11, "id", this.formData.SrcDataId));
+            let url = `../WebForm/Index?refid=${this.formData.SrcRefId}&_params=${btoa(JSON.stringify(params))}&_mode=1&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+            window.open(url, '_blank');
+        }
     };
 
     this.saveForm = function () {
@@ -1292,7 +1301,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
@@ -1313,7 +1322,19 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, "New Mode"));
         }
         else if (this.Mode.isView) {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone"], currentLoc, reqstMode));
+            let btnsArr = ["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone"];
+            if (this.formData.IsLocked) {
+                btnsArr.splice(1, 3);//
+                console.warn("Locked record!.............");
+            }
+            else if (this.formData.IsCancelled) {
+                btnsArr.splice(3, 1);//
+                console.warn("Cancelled record!.............");
+            }
+            if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+                btnsArr.push("webformopensrc");
+            }
+            this.headerObj.showElement(this.filterHeaderBtns(btnsArr, currentLoc, reqstMode));
         }
 
         let title_val = '';
@@ -1355,26 +1376,29 @@ const WebFormRender = function (option) {
                 r.push('webformedit');
         }
         else {
+            let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7 };
             for (let i = 0; i < btns.length; i++) {
-                if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode'))
+                if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].includes(op.New) && (mode === 'New Mode'))
                     r.push(btns[i]);
-                else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
+                else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].includes(op.Edit) && mode === 'Edit Mode')
                     r.push(btns[i]);
-                else if (btns[i] === "webformedit" && this.formPermissions[loc].indexOf('Edit') > -1)
+                else if (btns[i] === "webformedit" && this.formPermissions[loc].includes(op.Edit))
                     r.push(btns[i]);
-                else if (btns[i] === "webformdelete" && this.formPermissions[loc].indexOf('Delete') > -1)
+                else if (btns[i] === "webformdelete" && this.formPermissions[loc].includes(op.Delete))
                     r.push(btns[i]);
-                else if (btns[i] === "webformcancel" && this.formPermissions[loc].indexOf('Cancel') > -1)
+                else if (btns[i] === "webformcancel" && this.formPermissions[loc].includes(op.Cancel))
                     r.push(btns[i]);
-                else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].indexOf('AuditTrail') > -1)
+                else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].includes(op.AuditTrail))
                     r.push(btns[i]);
-                else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
+                else if (btns[i] === "webformnew" && this.formPermissions[loc].includes(op.New))
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
-                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('ExcelImport') > -1 && mode === 'New Mode' && this.FormObj.EnableExcelImport)
+                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].includes(op.ExcelImport) && mode === 'New Mode' && this.FormObj.EnableExcelImport)
                     r.push(btns[i]);
-                else if (btns[i] === "webformclone" && this.formPermissions[loc].indexOf('Clone') > -1 && mode === 'View Mode')
+                else if (btns[i] === "webformclone" && this.formPermissions[loc].includes(op.Clone) && mode === 'View Mode')
+                    r.push(btns[i]);
+                else if (btns[i] === "webformopensrc" && this.formPermissions[loc].includes(op.View) && mode === 'View Mode')
                     r.push(btns[i]);
             }
         }
@@ -1488,6 +1512,7 @@ const WebFormRender = function (option) {
         this.$auditBtn.off("click").on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.off("click").on("click", function () { window.parent.closeModal(); });// for iframe
         this.$cloneBtn.off("click").on("click", this.cloneForm.bind(this));
+        this.$openSrcBtn.off("click").on("click", this.openSourceForm.bind(this));
         //$("body").on("blur", "[ui-inp]", function () {
         //    window.justbluredElement = event.target;
         //});
@@ -1653,6 +1678,7 @@ const WebFormRender = function (option) {
         this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
         this.$closeBtn = $('#' + option.headerBtns['Close']);
         this.$cloneBtn = $('#webformclone');
+        this.$openSrcBtn = $('#webformopensrc');
         this.Env = option.env;
         this.initControls = new InitControls(this);
         this.formRefId = option.formRefId || "";

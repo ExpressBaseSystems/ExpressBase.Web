@@ -8,7 +8,7 @@
             preloaded: [],
             maxSize: 2,
             maxFiles: 1,
-            fileTypes: 'image/jpeg,image/png,image/jpg'
+            fileTypes: 'image/*'
         };
 
         // Get instance
@@ -88,7 +88,7 @@
         //   let dataTransfer = new DataTransfer();
 
         let createContainer = function () {
-
+            let fileType = (plugin.settings.fileTypes == "image") ? "image/*" : "";
             // Create the image uploader container
             let $flcontainer = $("#" + plugin.settings.fileCtrl.EbSid + "_SFUP"),
 
@@ -96,7 +96,7 @@
                 $input = $('<input>', {
                     type: 'file',
                     id: `${plugin.settings.fileCtrl.EbSid}_inputID`,
-                    accept: plugin.settings.fileTypes,
+                    accept: fileType,
                     name: "fileInputnm",
                     multiple: plugin.settings.maxFiles
                 }).appendTo($flcontainer),
@@ -151,13 +151,13 @@
                     } else {
                         filelurl = '/images/file-image.png';
                     }
-                   
+
                 }
                 file.name = file.name;
             } else {
                 if (cntype == 1) {
                     filelurl = URL.createObjectURL(file);
-                } else  {
+                } else {
                     let arr = file.name.split('.');
                     let exten = arr[arr.length - 1];
                     if (exten === 'pdf') {
@@ -260,14 +260,14 @@
                 if (plugin.settings.renderer === "Bot") {
                     f_refid = $(e.target).closest('.botfilethumb').attr('filrefid');
                     $(e.target).closest('.botfilethumb').remove();
-                } 
+                }
                 else {
                     f_refid = $(e.target).closest('.filethumb').attr('filrefid');
                     $(e.target).closest('.filethumb').remove();
 
                 }
-               
-                                
+
+
                 filedel.push(f_refid);
                 let del_indx = refidArr.indexOf(f_refid);
                 refidArr.splice(del_indx, 1);
@@ -321,7 +321,7 @@
                 // Makes the upload
                 setPreview($container, fileArr);
             }
-           
+
         };
 
         let setPreview = function ($container, files) {
@@ -336,64 +336,66 @@
                 $input = $container.find('input[type="file"]');
 
             // Run through the files
+            var t = (plugin.settings.fileTypes == 'image') ? 1 : 0;
             $(files).each(function (i, file) {
                 let url = "";
-                // if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
-                if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
-                    //if (((preloadedfile - filedel.length) + newfilearray.length) < plugin.settings.maxFiles) {
-                    if (((preloadedfile + newfilearray.length)  - filedel.length) < plugin.settings.maxFiles) {
-                  //  if (newfilearray.length< plugin.settings.maxFiles) {
+                let filetype = (t == 1) ? getFileType(files[i]) : 1;
+                if (filetype==1) {
+                    if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
+                        //if (((preloadedfile - filedel.length) + newfilearray.length) < plugin.settings.maxFiles) {
+                        if (((preloadedfile + newfilearray.length) - filedel.length) < plugin.settings.maxFiles) {
+                            //  if (newfilearray.length< plugin.settings.maxFiles) {
 
 
 
-                        // Add it to data transfer
-                        //   dataTransfer.items.add(file);
+                            // Add it to data transfer
+                            //   dataTransfer.items.add(file);
 
-                        // Set preview
+                            // Set preview
 
-                        //if (files[i].type == "application/pdf") {
+                            //if (files[i].type == "application/pdf") {
 
-                        //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
-                        //}
-                        //else
-                        let type = getFileType(file);
-                        {
-                            $uploadedContainer.append(createImg(file, newfilearray.length, type), false);
-                           // $(".trggrpreview").on("click", viewFilesFn);
-                            // let createImg = function (file, id, cntype, prelod, fileno, refid) {
-                        }
+                            //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
+                            //}
+                            //else
+                            let type = getFileType(file);
+                            {
+                                $uploadedContainer.append(createImg(file, newfilearray.length, type), false);
+                                // $(".trggrpreview").on("click", viewFilesFn);
+                                // let createImg = function (file, id, cntype, prelod, fileno, refid) {
+                            }
 
 
-                        if (plugin.settings.renderer === "Bot") {
-                            if (type === 1)
-                                url = "../Boti/UploadImageAsync";
-                            else
-                                url = "../Boti/UploadFileAsync";
+                            if (plugin.settings.renderer === "Bot") {
+                                if (type === 1)
+                                    url = "../Boti/UploadImageAsync";
+                                else
+                                    url = "../Boti/UploadFileAsync";
+                            }
+                            else {
+
+                                if (type === 1)
+                                    url = "../StaticFile/UploadImageAsync";
+                                else
+                                    url = "../StaticFile/UploadFileAsync";
+                            }
+
+
+                            uploadItem(url, file);
+
+
                         }
                         else {
-
-                            if (type === 1)
-                                url = "../StaticFile/UploadImageAsync";
-                            else
-                                url = "../StaticFile/UploadFileAsync";
+                            EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
                         }
-
-
-                        uploadItem(url, file);
-
-
                     }
                     else {
-                        EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
+                        EbMessage("show", { Message: `Maximum file size is ${plugin.settings.maxSize}MB`, Background: 'red' });
                     }
                 }
                 else {
-                    EbMessage("show", { Message: `Maximum file size is ${plugin.settings.MaxSize}MB`, Background: 'red' });
+                    EbMessage("show", { Message: "Only images are allowed", Background: 'red' });
                 }
-                //}
-                //else {
-                //    EbMessage("show", { Message: "Only image and pdf are allowed", Background: 'red' });
-                //}
 
 
 

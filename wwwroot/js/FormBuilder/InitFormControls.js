@@ -85,7 +85,8 @@
             MaxSize: ctrl.MaxFileSize,
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
-            HideEmptyCategory: ctrl.HideEmptyCategory
+            HideEmptyCategory: ctrl.HideEmptyCategory,
+            ShowUploadDate: ctrl.ShowUploadDate
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);

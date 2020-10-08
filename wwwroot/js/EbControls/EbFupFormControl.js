@@ -316,10 +316,12 @@
             else if (o.FileCategory === 1) {
                 src = o.FileB64;
             }
+            let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
             return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                    ${upTime}
                                      <i class="fa fa-info-circle filesave_info" data-toggle="tooltip" data-placement="bottom" title="will be saved only if form is saved " ></i>
                                 </div>
                                 <div class="eb_uplGal_thumb_loader">
@@ -337,10 +339,12 @@
             else if (o.FileCategory === 1) {
                 src = `/images/small/${o.FileRefId}.jpg`;
             }
+            let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
             return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                             <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                ${upTime}
                                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                             </div>
                             <div class="select-fade"></div>
@@ -368,7 +372,7 @@
 
         }
         else {
-            return `<img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
+            return `<img src="${src}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
         }
     }
 
@@ -433,7 +437,7 @@
 
     initCropy() {
         return new EbCropper({
-            Container: 'container_crp',
+            Container: `${this.Options.Container}_container_crp`,
             Toggle: '._crop',
             ResizeViewPort: this.Options.ResizeViewPort
         });
@@ -1038,14 +1042,6 @@
 
 
     }
-    //contextM_REcallback(itemKey, opt, e) {
-
-    //    let refid = opt.$trigger.attr('filref');
-    //    uploadedFileRefList[ctrl.Name] 
-    //    opt.$trigger.remove();
-    //    var m = "edit was clicked";
-    //    window.console && console.log(m) || alert(m);
-    //}
 
     deleteFromGallery(filerefs) {
         for (let i = 0; i < filerefs.length; i++) {

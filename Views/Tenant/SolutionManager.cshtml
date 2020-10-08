@@ -74,22 +74,32 @@
                 </p>
             </div>
             <div class="col-md-3 col-lg-3 col-xs-12 pd-0 form-inline s-dash-btnwraper">
-                <form method="post" action="@sso_dev.Replace("myaccount.", "")" target="_blank">
-                    <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
-                    <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
-                    <input type="hidden" name="WhichConsole" value="dc" />
-                    <button class="ebbtn eb_btnwhite eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
-                        <i class="fa fa-wrench"></i> Dev Login
-                    </button>
-                </form>
-                <form method="post" action="@sso_user.Replace("myaccount.", "")" target="_blank">
-                    <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
-                    <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
-                    <input type="hidden" name="WhichConsole" value="uc" />
-                    <button class="ebbtn eb_btnblue eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
-                        <i class="fa fa-user-o" aria-hidden="true"></i> User Login
-                    </button>
-                </form>
+                @{
+                    string devaction = sso_dev.Replace("myaccount.", "");
+                    string useraction = sso_user.Replace("myaccount.", "");
+                    if (ViewBag.Connections.SolutionInfo.EsolutionId.Contains("."))
+                    {
+                        devaction = sso_dev.Replace("myaccount.", "").Replace(ViewBag.Connections.SolutionInfo.EsolutionId, ViewBag.Connections.SolutionInfo.IsolutionId);
+                        useraction = sso_user.Replace("myaccount.", "").Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS+":41500", string.Empty);
+                    }
+
+                    <form method="post" action=@devaction target="_blank">
+                        <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
+                        <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
+                        <input type="hidden" name="WhichConsole" value="dc" />
+                        <button class="ebbtn eb_btnwhite eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
+                            <i class="fa fa-wrench"></i> Dev Login
+                        </button>
+                    </form>
+                    <form method="post" action="@useraction" target="_blank">
+                        <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
+                        <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
+                        <input type="hidden" name="WhichConsole" value="uc" />
+                        <button class="ebbtn eb_btnblue eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
+                            <i class="fa fa-user-o" aria-hidden="true"></i> User Login
+                        </button>
+                    </form>
+                }
             </div>
         </div>
         <div class="col-md-12 col-lg-12 pd-0 s-dash-workplace-tabs">
@@ -1385,84 +1395,84 @@
             </div>
         </div>
     </div>*@
-    <div id="MobileConfigEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="" display: block;>
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" id="MobileConfig_mask">
-                <form action="" method="post" id="MobileConfigSubmit" data-toggle="validator">
-                    <input name="DatabaseVendor" value="MobileConfig" class="form-control Vendor" type="hidden" readonly />
-                    <div class="modal-header relative border-style-none">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Mobile Config</h4>
-                        <div id="MobileConfig_loader" class="MobileConfig_loder" style="width: 96%;"></div>
+<div id="MobileConfigEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="MobileConfig_mask">
+            <form action="" method="post" id="MobileConfigSubmit" data-toggle="validator">
+                <input name="DatabaseVendor" value="MobileConfig" class="form-control Vendor" type="hidden" readonly />
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mobile Config</h4>
+                    <div id="MobileConfig_loader" class="MobileConfig_loder" style="width: 96%;"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:25%;">
+                        <img class='img-responsive' src='~/images/mobile settings.png' align='middle' style='padding: 0rem 5rem; margin: auto; margin-top: 15px; margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span> Mobile Config is blah blah blah</span>
+                        </div>
                     </div>
-                    <div class="modal-body" style="display:flex">
-                        <div class="vender-data-holder" style="width:25%;">
-                            <img class='img-responsive' src='~/images/mobile settings.png' align='middle' style='padding: 0rem 5rem; margin: auto; margin-top: 15px; margin-bottom: 15px;' />
-                            <div class="connection-vender-desp">
-                                <span> Mobile Config is blah blah blah</span>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="MobileConfigNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+                                </div>
                             </div>
                         </div>
-                        <div class="connection-data-holder">
-                            <div class="row">
+                        <div class="row">
+                            <div class="form-group">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Nick Name</label>
-                                        <input id="MobileConfigNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+                                        <label>Azure Notification Hub Name</label>
+                                        <input id="AzureNotificationHubName" name="HubName" type="text" class="form-control Inputclear eb_input-h" required />
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>Azure Notification Hub Name</label>
-                                            <input id="AzureNotificationHubName" name="HubName" type="text" class="form-control Inputclear eb_input-h" required />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>Azure Notification Connection</label>
-                                            <input id="AzureNotificationConStr" name="ConnectionStr" type="text" class="form-control Inputclear eb_input-h" required />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>  
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label> Android App signin key</label>
-                                            <input id="signinkey" name="SigninKey" type="text" class="form-control Inputclear eb_input-h" required />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label> Android App URL</label>
-                                            <input id="AndroidAppURL" name="AndroidAppURL" type="text" class="form-control Inputclear eb_input-h" required />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
-                            <input type="hidden" class="Inputclear IntConfId" id="MobileConfigConfId" name="Id" value="0" />
                         </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Azure Notification Connection</label>
+                                        <input id="AzureNotificationConStr" name="ConnectionStr" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label> Android App signin key</label>
+                                        <input id="signinkey" name="SigninKey" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label> Android App URL</label>
+                                        <input id="AndroidAppURL" name="AndroidAppURL" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="MobileConfigConfId" name="Id" value="0" />
                     </div>
+                </div>
 
-                    <div class="modal-footer border-style-none">
-                        <button type="submit" class="ebbtn eb_btnblue eb_btn-sm AzureNotificationConnection">Save</button>
-                    </div>
-                </form>
-            </div>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm AzureNotificationConnection">Save</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
 <div id="GoogleDriveConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog">
     <div class="modal-dialog modal-lg">

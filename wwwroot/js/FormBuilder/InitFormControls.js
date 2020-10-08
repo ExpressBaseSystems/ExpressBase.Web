@@ -85,7 +85,8 @@
             MaxSize: ctrl.MaxFileSize,
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
-            HideEmptyCategory: ctrl.HideEmptyCategory
+            HideEmptyCategory: ctrl.HideEmptyCategory,
+            ShowUploadDate: ctrl.ShowUploadDate
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -840,6 +841,8 @@
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude
                     });
+                    if (ctrl.DataVals)
+                        ctrl.DataVals.Value = position.coords.latitude + ',' + position.coords.longitude;
                 }.bind(this));
             }
             $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) => $(event.target).closest('.locinp-cont').find('.locinp').val(''));
@@ -936,6 +939,8 @@
                 $("#" + ctrl.EbSid_CtxId + "long").val(position.coords.longitude);
                 marker.setLatLng([position.coords.latitude, position.coords.longitude]);
                 map.setView({ lat: position.coords.latitude, lng: position.coords.longitude });
+                if (ctrl.DataVals)
+                    ctrl.DataVals.Value = position.coords.latitude + ',' + position.coords.longitude;
             }.bind(this));
         }
 
@@ -1749,11 +1754,12 @@
     };
 
     this.SimpleFileUploader = function (ctrl) {
+        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
             renderer: this.Renderer.rendererName,
             maxSize: ctrl.MaxSize,
-            fileTypes: ctrl.FileTypes,
+            fileTypes: fileType,
             maxFiles: ctrl.MaxFiles
 
         });

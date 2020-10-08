@@ -55,6 +55,7 @@
     //functions to be executed before UpdateBuilder
     this.beforeUpdateBuilder = function () {
         $.LoadingOverlay("show");
+        $.contextMenu('destroy');
     }.bind(this);
 
     //functions to be executed after UpdateBuilder
@@ -96,7 +97,6 @@
         let $e = selector.$trigger;
         let ebsid = $e.attr("ebsid");
         let ControlTile = $(`#cont_${ebsid}`).closest(".Eb-ctrlContainer");
-        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(ebsid).EbSid);
         let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
         if (ctrl.ObjType === "Approval")
             this.ApprovalCtrl = null;
@@ -121,35 +121,79 @@
             this.ReviewCtrl = null;
         else if (ctrl.ObjType === "ProvisionLocation")
             this.ProvisionLocationCtrl = null;
-        this.ctxClipboard = JSON.parse(JSON.stringify(ctrl));
+        this.ctxClipboard.ctrl = JSON.parse(JSON.stringify(ctrl));
+        navigator.clipboard.writeText('@#%ebcontrolclip@#%' + JSON.stringify(this.ctxClipboard.ctrl));
+        this.ctxClipboard.$colTile = $e;
+        this.isCtrlInClipboard = true;
     }.bind(this);
 
     this.paste = function (eType, selector, action, originalEvent) {
-        let copiedCtrl = this.getCopiedCtrl(this.ctxClipboard);
-        let colTile = $('.context-menu-active').attr('ebsid')
-        this.rootContainerObj.Controls.InsertAfter(this.rootContainerObj.Controls.GetByName($sibling.attr('ebsid')), copiedCtrl);
+        let $e = $(event.target);
+        navigator.clipboard.readText().then(function (text) {
+            if (text.startsWith('@#%ebcontrolclip@#%')) {
+                text = text.replace('@#%ebcontrolclip@#%', '');
+                let copiedCtrl = this.getCopiedCtrl(JSON.parse(text));
+                let offset = $e.closest('.context-menu-list').offset();
+                $('#context-menu-layer').css('z-index', 0);
+                let $clickedColTile = $(document.elementFromPoint(offset.left, offset.top - 1)).closest('[ebsid]');
+                let clickedCtrl = this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
+                if (clickedCtrl.IsContainer) {
+                    clickedCtrl.Controls.$values.push(copiedCtrl);
+                }
+                else {
+                    if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid')))
+                        this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
+                }
+                this.isCtrlInClipboard = true;
+            }
+            else {
+                this.isCtrlInClipboard = false;
+                this.EbAlert.clearAlert("pasteError");
+                this.EbAlert.alert({
+                    id: "pasteError",
+                    head: "Copy again and try.",
+                    body: "Try after copying",
+                    type: "info",
+                    delay: 2100
+                });
+            }
+        }.bind(this));
     }.bind(this);
 
     this.getCopiedCtrl = function (ctrl) {
-        let ctrlCpy = this.ctxClipboard;
-        let copyStr = this.getNxtCtrlCopyStr(ctrl);
-        ctrlCpy.Name = ctrl.Name + copyStr;
-        ctrlCpy.EbSid_CtxId = ctrl.EbSid_CtxId + copyStr;
-        ctrlCpy.EbSid = ctrl.EbSid + copyStr;
-        ctrlCpy.Id = ctrl.Id + copyStr;
+        let $ctrlCpy = this.ctxClipboard.$colTile;
+        let ctrlCpy = this.getModifiedCtrl(ctrl)
         return ctrlCpy;
     };
 
+    this.getModifiedCtrl = function (control) {
+        let flatControls = getAllctrlsFrom(control);
+        for (let i = 0; i < flatControls.length; i++) {
+            let _ctrl = flatControls[i];
+            let copyStr = this.getNxtCtrlCopyStr(_ctrl);
+            _ctrl.Name = _ctrl.Name + copyStr;
+            _ctrl.EbSid_CtxId = _ctrl.EbSid_CtxId + copyStr;
+            _ctrl.EbSid = _ctrl.EbSid + copyStr;
+            _ctrl.Label = (_ctrl.Label || '') + copyStr;
+            _ctrl.Id = (_ctrl.Id || '') + copyStr;
+            if (_ctrl.IsContainer)
+                _ctrl.Controls = new EbControlCollection(_ctrl.Controls);
+        }
+        return control;
+    }
+
     this.getNxtCtrlCopyStr = function (ctrl) {
         let num = 1;
-        for (let i = 1; i < 1000; i++) {
-            let ifCtrl = this.rootContainerObj.Controls.GetByName(ctrl.EbSid_CtxId + 'Copy' + i);
+        let copyStr = '';
+        for (let i = 0; i < 1000; i++) {
+            copyStr = (i === 0 ? '' : 'Copy' + i);
+            let ifCtrl = this.rootContainerObj.Controls.GetByName(ctrl.EbSid_CtxId + copyStr);
             if (!ifCtrl) {
                 num = i;
                 break;
             }
         }
-        return 'Copy' + num;
+        return copyStr;
     };
 
     this.controlOnFocus = function (e) {
@@ -952,6 +996,17 @@
                     name: "Remove",
                     icon: "fa-trash",
                     callback: this.del
+                },
+                "Copy": {
+                    name: "Copy",
+                    icon: "fa-clone",
+                    callback: this.copy
+                },
+                "Paste": {
+                    name: "Paste",
+                    icon: "fa-clipboard",
+                    callback: this.paste,
+                    visible: function (key, opt) { return this.isCtrlInClipboard;}.bind(this)
                 }
             }
         };
@@ -977,6 +1032,8 @@
         this.$form.on("click", ".ebtab-add-btn", this.contTabAddClick.bind(this));
         this.$form.on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
         this.$form.on("keyup", this.keyUp.bind(this));
+        $("body").on('copy', function () { this.isCtrlInClipboard = false; }.bind(this));
+        this.ctxClipboard = {};
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
         if (this.rootContainerObj.DisplayName.trim() === "")

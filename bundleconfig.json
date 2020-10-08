@@ -272,6 +272,25 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-formrender.p1.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/FormBuilder/WebFormRenderer.js",
+      "wwwroot/js/FormBuilder/FormRenderCommon.js",
+      "wwwroot/js/EbControls/EbPowerSelect.js",
+      "wwwroot/js/EbControls/EbDataGrid.js",
+      "wwwroot/js/EbControls/EbDataGrid_New.js",
+      "wwwroot/js/EbControls/EbDpFormControl.js",
+      "wwwroot/js/EbControls/EbItemListControl.js",
+      "wwwroot/js/EbControls/EbDynamicTab.js",
+      "wwwroot/js/EbControls/EbReview.js",
+      "wwwroot/js/FormBuilder/InitFormControls.js",
+      "wwwroot/js/FormBuilder/DGUCcolumn.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
   }
 
 ]

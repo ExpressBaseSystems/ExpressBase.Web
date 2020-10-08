@@ -601,10 +601,11 @@ function RecurFlatContControls(src_obj, dest_coll) {
 }
 
 
-function getAllctrlsFrom(formObj) {
+function getAllctrlsFrom(container) {
     let coll = [];
-    coll.push(formObj);
-    RecurgetAllctrlsFrom(formObj, coll);
+    coll.push(container);
+    if (container.IsContainer)
+        RecurgetAllctrlsFrom(container, coll);
     return coll;
 }
 
@@ -1395,4 +1396,12 @@ function timeDifference(current, previous) {
     else {
         return Math.round(elapsed / msPerYear) + ' years ago';
     }
+}
+
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
 }

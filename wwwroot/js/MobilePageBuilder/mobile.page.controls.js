@@ -79,7 +79,6 @@
         obj.Type = dragged.attr("DbType");
         obj.ColumnName = dragged.attr("ColName");
         obj.ColumnIndex = dragged.attr("index");
-        obj.TableIndex = dragged.attr("tableIndex");
         $(event.target).append(obj.$Control.outerHTML());
         this.Root.refreshControl(obj);
         $("#" + obj.EbSid).off("focus");
@@ -162,7 +161,6 @@
                 $div.append(`<li class='styl'>
                                 <span eb-type='${type}'
                                     ctrname="DataColumn"
-                                    tableIndex="${i}"
                                     index='${obj.columnIndex}'
                                     DbType='${obj.type}'
                                     ColName='${obj.columnName}'

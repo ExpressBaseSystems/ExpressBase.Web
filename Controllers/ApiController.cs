@@ -728,26 +728,36 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("api/validate_solution")]
         public ValidateSidResponse ValidateSolution()
         {
-            ValidateSidResponse resp = new ValidateSidResponse();
+            ValidateSidResponse resp = new ValidateSidResponse { Message = "Success" };
             try
             {
                 resp.IsValid = this.IsValidSolution;
                 if (resp.IsValid)
                 {
-                    DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
+                    try
                     {
-                        SolnId = this.IntSolutionId,
-                    });
-                    resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
+                        DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
+                        {
+                            SolnId = this.IntSolutionId,
+                        });
+                        resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        resp.Message = "Solution is valid. Failed to fetch logo";
+                        Console.WriteLine(ex.Message);
+                    }
                 }
 
-                resp.SolutionObj = GetSolutionObject(this.IntSolutionId);
+                resp.SolutionObj = this.GetSolutionObject(this.IntSolutionId);
 
-                if (resp.SolutionObj == null) throw new Exception("Solution object null");
+                if (resp.SolutionObj == null)
+                    throw new Exception("Solution is valid. Solution object null");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                resp.Message = ex.Message;
             }
             return resp;
         }

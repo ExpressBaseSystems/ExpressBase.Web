@@ -740,6 +740,10 @@ namespace ExpressBase.Web.Controllers
                     });
                     resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
                 }
+
+                resp.SolutionObj = GetSolutionObject(this.IntSolutionId);
+
+                if (resp.SolutionObj == null) throw new Exception("Solution object null");
             }
             catch (Exception ex)
             {

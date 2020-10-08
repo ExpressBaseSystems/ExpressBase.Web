@@ -85,7 +85,8 @@
             MaxSize: ctrl.MaxFileSize,
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
-            HideEmptyCategory: ctrl.HideEmptyCategory
+            HideEmptyCategory: ctrl.HideEmptyCategory,
+            ShowUploadDate: ctrl.ShowUploadDate
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -1751,11 +1752,12 @@
     };
 
     this.SimpleFileUploader = function (ctrl) {
+        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
             renderer: this.Renderer.rendererName,
             maxSize: ctrl.MaxSize,
-            fileTypes: ctrl.FileTypes,
+            fileTypes: fileType,
             maxFiles: ctrl.MaxFiles
 
         });

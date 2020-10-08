@@ -6,6 +6,7 @@
         this.Url = null;
         this.Cropy = null;
         this.FileName = null;
+        $(`#${this.Options.Container}crp_modal`).remove();
         this.CrpModal = this.appendModal();
         this.initCroper();
     };

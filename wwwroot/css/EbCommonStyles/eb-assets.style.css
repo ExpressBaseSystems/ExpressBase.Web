@@ -648,6 +648,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #000000b8;
 }
 
 .loc_switchModal_box .locs_head {

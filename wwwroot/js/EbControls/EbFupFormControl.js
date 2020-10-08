@@ -317,7 +317,7 @@
                 src = o.FileB64;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
-            return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
+            return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb_RE" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
@@ -340,7 +340,7 @@
                 src = `/images/small/${o.FileRefId}.jpg`;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
-            return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
+            return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                             <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
@@ -907,7 +907,7 @@
         };
 
         $.contextMenu({
-            selector: ".eb_uplGal_thumbO",
+            selector: `.${this.Options.Container}_eb_Gal_thumb`,
             autoHide: true,
             className: "ebfup-context-menu",
             build: function ($trigger, e) {
@@ -1020,7 +1020,7 @@
     contextmenu_recent() {
         $.contextMenu({
 
-            selector: ".eb_uplGal_thumbO_RE",
+            selector: `.${this.Options.Container}_eb_Gal_thumb_RE`,
             autoHide: true,
             className: "ebfup-context-menu_RE",
             items: {

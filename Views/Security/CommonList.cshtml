@@ -222,7 +222,7 @@
                 mnuBarObj.setName("Users");
                 document.title = "Users";
                 //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
-                var _metadata = ["7", "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Status", "_user", "_profPic"];
+                var _metadata = [8, "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "User_Type", "Status", "_user", "_profPic"];
                 if ('@ViewBag.DisableNewUser' === 'true')
                     _metadata.push('_disableNewUser');
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
@@ -231,13 +231,13 @@
             else if ("@ViewBag.ListType" === "anonymoususers") {
                 mnuBarObj.setName("Anonymous Users");
                 document.title = "Anonymous Users";
-                var _metadata = ["8", "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic"];
+                var _metadata = [8, "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
             }
             else if ("@ViewBag.ListType" === "usergroups") {
                 mnuBarObj.setName("User Groups");
                 document.title = "User Groups";
-                var _metadata = ["3", "Id", "Name", "Description", "_userGroup"];
+                var _metadata = [3, "Id", "Name", "Description", "_userGroup"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
                 $($(".eb-dashbord-sidebar").children()[1]).hide();
             }
@@ -245,14 +245,14 @@
                 mnuBarObj.setName("Roles");
                 document.title = "Roles";
                 //mnuBarObj.BuildMenu(`<button class='btn' title='New' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i></button>`);
-                var _metadata = ["7", "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
+                var _metadata = [7, "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
                 $($(".eb-dashbord-sidebar").children()[2]).hide();
             }
             else if ("@ViewBag.ListType" === "usertypes") {
                 mnuBarObj.setName("User Types");
                 document.title = "User Types";
-                var _metadata = ["2", "Id", "Name","_userTypes"];
+                var _metadata = [2, "Id", "Name","_userTypes"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
             }
     });

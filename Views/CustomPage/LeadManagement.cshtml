@@ -955,6 +955,10 @@
     </div>*@
 
 <style>
+    body {
+        overflow-y: scroll !important;
+    }
+
     .MyTempColStyle {
         overflow: visible;
         white-space: normal !important;
@@ -1011,7 +1015,7 @@
         MaxSize: '@ViewBag.Env' === 'Staging' ? 15: 2,
         CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }],
         DisableUpload: false,
-        HideEmptyCategory: false,
+        HideEmptyCategory: true,
         ShowUploadDate: true
     });
 
@@ -1029,7 +1033,7 @@
 
     let fupWindowCloseCallBack = function (gallName) {
         if (uploadedFileRefList[gallName].length > 0)
-            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
     };
 
     let fupTriggerCallBack = function (gallName, imgup, name, refids) {
@@ -1053,7 +1057,7 @@
                             }
                             if (initLen > uploadedFileRefList[gallName].length) {
                                 imgup.deleteFromGallery(refids);
-                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
                             }
                             imgup.customMenuCompleted("Delete", refids);
                         }
@@ -1079,7 +1083,7 @@
                                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
                                         <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
                                     </div>`);
-                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
                             }
                         }
                     }
@@ -1112,7 +1116,7 @@
                         }
                         if (initLen > uploadedFileRefList[gallName].length) {
                             obj.$trigger.remove();
-                            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
                         }
                         imgup.customMenuCompleted("Delete", filref);
                     }
@@ -1148,7 +1152,7 @@
         MaxSize: '@ViewBag.Env' === 'Staging' ? 15: 2,
         CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }],
         DisableUpload: false,
-        HideEmptyCategory: false,
+        HideEmptyCategory: true,
         ShowUploadDate: true
     });
 

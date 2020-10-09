@@ -280,10 +280,12 @@
             $(e.target).addClass('current');
             let tag = $(e.target).closest('li')[0].innerHTML;
             for (let i = 0; i < this.FileList.length; i++) {
-                if (this.FileList[i].Meta.Tags.length > 0) {
-                    let filetags = this.FileList[i].Meta.Tags[0].split(',');
-                    if ($.inArray(tag, filetags) >= 0) {
-                        tagsArr.push(this.FileList[i]);
+                if (this.FileList[i].Meta.hasOwnProperty('Tags')) {
+                    if (this.FileList[i].Meta.Tags.length > 0) {
+                        let filetags = this.FileList[i].Meta.Tags[0].split(',');
+                        if ($.inArray(tag, filetags) >= 0) {
+                            tagsArr.push(this.FileList[i]);
+                        }
                     }
                 }
             }

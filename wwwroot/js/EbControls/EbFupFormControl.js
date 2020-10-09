@@ -1008,11 +1008,14 @@
             if (thump.length === 0) {
                 thump = this.Gallery.find(`div[original_refid="${fileref[i]}"]`);
             }
-            $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).append(thump);
+            var catDiv = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"]`);
+            catDiv.show();
+            catDiv.find('.Col_apndBody_apndPort').append(thump);
             $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
-            this.setThumbnailCount();
+           
         }
+        this.setThumbnailCount();
         this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
         $(".eb_uplGal_thumbO").find(".select-fade").hide();
     }

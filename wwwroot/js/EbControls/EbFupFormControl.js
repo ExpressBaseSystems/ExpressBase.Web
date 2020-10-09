@@ -184,7 +184,7 @@
                             $.each(filetags, function (j, tagval) {
                                 if (!this.TagList[tagval]) {
                                     this.TagList[tagval] = [renderFiles[i]];
-                                    $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
+                                    $(`#${this.Options.Container} .FUP_TagUl`).append(`<li class='${this.Options.Container}_FUP_TagLi FUP_TagLi' >${tagval}</li>`)
                                 }
                                 else {
                                     this.TagList[tagval].push(renderFiles[i]);
@@ -239,7 +239,7 @@
             $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
             this.contextMenu();
         }
-        $(".FUP_TagLi").off("click").on("click", this.sortByTagFn.bind(this));
+        $(`.${this.Options.Container}_FUP_TagLi`).off("click").on("click", this.sortByTagFn.bind(this));
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         $(`.${this.Options.Container}_preview`).off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
         this.hideEmptyCategoryFn();
@@ -780,7 +780,7 @@
                                                          <div tabindex = "0" id = "${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right" > <i class="fa fa-upload"></i> Upload</div>
                                                             <div class='FUP_TagDiv' >
                                                                 <ul class='FUP_TagUl' style=''>
-                                                                    <li class='FUP_TagLi showAllFile current' >All</li>
+                                                                    <li class='${this.Options.Container}_FUP_TagLi FUP_TagLi showAllFile current' >All</li>
                                                                 </ul>
                                                             </div>
                                                      </div>

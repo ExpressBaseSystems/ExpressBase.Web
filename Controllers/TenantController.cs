@@ -178,20 +178,8 @@ namespace ExpressBase.Web.Controllers
             bool result = false;
             if (prompt_esid == EsolnId)
             {
-                EditSolutionResponse resp = null;
-                resp = this.ServiceClient.Post(new EditSolutionRequest
-                {
-                    OldESolutionId = EsolnId,
-                    NewESolutionId = EsolnId + "_Deleted",
-                    IsDelete = true,
-                    Description = "",
-                    SolutionName = ""
-                });
-                if (resp.Status)
-                {
-                    DeleteSolutionResponse res = this.ServiceClient.Post<DeleteSolutionResponse>(new DeleteSolutionRequset { ISolutionId = SolnId });
-                    result = res.Status; resp.Message = "Solution upgraded successfully :)";
-                }
+                DeleteSolutionResponse res = this.ServiceClient.Post<DeleteSolutionResponse>(new DeleteSolutionRequset { ISolutionId = SolnId, ESolutionId = EsolnId });
+                result = res.Status;
             }
             return result;
         }

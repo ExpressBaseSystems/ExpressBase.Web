@@ -139,6 +139,8 @@
             this.PrevLocation = this.CurrentLoc;
             this.prev_loc_name = this.CurrentLocObj.LongName;
             this.prev_loc = this.CurrentLoc;
+            if ($('#dashboard-refresh-btn').length !== 0)
+                $('#dashboard-refresh-btn').trigger("click");
         }
         let s = this.getParentPath(this.CurrentLoc);
         this.showSwitcher();

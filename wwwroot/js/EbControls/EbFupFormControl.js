@@ -206,7 +206,7 @@
                 $countdef.text("(" + $portdef.children().length + ")");
             }
             else {
-                if (renderFiles[i].Meta.Category[0] === "Category") {
+                if ((renderFiles[i].Meta.Category[0] === "Category")||(!renderFiles[i].Meta.Category[0])) {
                     $portdef.append(this.thumbNprevHtml(renderFiles[i]));
                     $countdef.text("(" + $portdef.children().length + ")");
                 }

@@ -1,5 +1,5 @@
 ﻿
-var SolutionDashBoard = function (connections, sid, versioning) {
+var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
     this.Connections = connections;
     this.whichModal = "";
     this.Sid = sid;
@@ -1361,7 +1361,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             options.items.Delete = { name: "Remove" },
                             options.items.Edit = { name: "Edit" };
                     }
-                    
+
                 }
                 else if ($trigger.hasClass('MYSQLedit')) {
                     options.items.EbDATA = { name: "Configure as Data Store" },
@@ -1667,7 +1667,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 else if ($trigger.hasClass('MOBILECONFIGedit')) {
                     options.items.Remove = { name: "Unset" };
                 }
-                else if ($trigger.hasClass('SUPPORTINGDATAedit')){
+                else if ($trigger.hasClass('SUPPORTINGDATAedit')) {
                     options.items.Remove = { name: "Unset" };
                 }
                 else {
@@ -1960,6 +1960,65 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#vender-data-holder").empty().append(venderdec[DatabaseName]);
     };
 
+
+    this.SMTPautoFill = function (e) {
+        var target = e.target.options.selectedIndex;
+        if (target === 0) {
+            $('#EmailInputSMTP').val("smtp.gmail.com");
+        } else if (target === 1) {
+            $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
+        }
+        $('#EmailInputPort').val("587");
+    }.bind(this);
+
+    this.integration_SUPPORTINGDATA_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["SUPPORTINGDATA"];
+        $("#SUPPORTINGDATA-All").empty();
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
+                                <div class="integrationContainer_Image">
+                                    ${Imageurl[rows.Ctype]}
+                                </div>
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                    <span>${rows.NickName}</span>
+                                </div>
+                                <div id="nm" class="integrationContainer_caret-down">
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </div>
+                            </div>`);
+            html.join("");
+            count += 1;
+        }.bind(this));
+        $('#SUPPORTINGDATA-All').append(html);
+        $('#Supporting_Data_Head').empty().append(" Supporting Data Store (" + count + ")");
+    }.bind(this);
+
+    this.integration_MobileConf_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["MOBILECONFIG"];
+        $("#MOBILECONFIG-all").empty();
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
+                                <div class="integrationContainer_Image">
+                                    ${Imageurl[rows.Ctype]}
+                                </div>
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                    <span>${rows.NickName}</span>
+                                </div>
+                                <div id="nm" class="integrationContainer_caret-down">
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </div>
+                            </div>`);
+            html.join("");
+            count += 1;
+        }.bind(this));
+        $('#MOBILECONFIG-all').append(html);
+        $('#MOBILECONFIG').empty().append(" Mobile Connections (" + count + ")");
+    }.bind(this);
+
     this.VersioningSwitch = function (e) {
         postData = e.target.checked;
         SolutionId = this.Sid;
@@ -2103,62 +2162,49 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             });
     };
 
-    this.SMTPautoFill = function (e) {
-        var target = e.target.options.selectedIndex;
-        if (target === 0) {
-            $('#EmailInputSMTP').val("smtp.gmail.com");
-        } else if (target === 1) {
-            $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
-        }
-        $('#EmailInputPort').val("587");
-    }.bind(this);
+    this.DeleteSolution = function () {
+        SolutionId = this.Sid;
+        EbDialog("show",
+            {
+                Message: "Enter External Solution Id to confirm permanant deletion of the solution '" + sname + "'",
+                Buttons: {
+                    "Confirm": {
+                        Background: "green",
+                        Align: "right",
+                        FontColor: "white;"
+                    },
+                    "Cancel": {
+                        Background: "red",
+                        Align: "left",
+                        FontColor: "white;"
+                    }
+                },
+                IsPrompt: true,
+                CallBack: function (name, prompt) {
+                    if (name === "Confirm") {
+                        if (prompt === esid) {
+                            $.ajax({
+                                type: 'POST',
+                                url: "../Tenant/DeleteSolution",
+                                data: { SolnId: SolutionId, EsolnId: esid, prompt_esid: prompt }
+                            }).done(function (data) {
+                                if (data) {
+                                    window.location.href = '../';
+                                    EbMessage("show", { Message: "Permanantly deleted" });
+                                }
+                                else {
+                                    EbMessage("show", { Message: "Something went wrong.", Background: "red" }); 
+                                }
+                            }.bind(this));
+                        }
+                        else {
+                            EbMessage("show", { Message: "External Solution Id doesn't match.", Background: "red" });
+                        }
+                    } 
+                }
+            });
+    };
 
-    this.integration_SUPPORTINGDATA_all = function () {
-        let html = [];
-        var count = 0;
-        Integrations = this.Connections.Integrations["SUPPORTINGDATA"];
-        $("#SUPPORTINGDATA-All").empty();
-        $.each(Integrations, function (i, rows) {
-            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
-                                <div class="integrationContainer_Image">
-                                    ${Imageurl[rows.Ctype]}
-                                </div>
-                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
-                                    <span>${rows.NickName}</span>
-                                </div>
-                                <div id="nm" class="integrationContainer_caret-down">
-                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </div>
-                            </div>`);
-            html.join("");
-            count += 1;
-        }.bind(this));
-        $('#SUPPORTINGDATA-All').append(html);
-        $('#Supporting_Data_Head').empty().append(" Supporting Data Store (" + count + ")");
-    }.bind(this);
-    this.integration_MobileConf_all = function () {
-        let html = [];
-        var count = 0;
-        Integrations = this.Connections.Integrations["MOBILECONFIG"];
-        $("#MOBILECONFIG-all").empty();
-        $.each(Integrations, function (i, rows) {
-            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
-                                <div class="integrationContainer_Image">
-                                    ${Imageurl[rows.Ctype]}
-                                </div>
-                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
-                                    <span>${rows.NickName}</span>
-                                </div>
-                                <div id="nm" class="integrationContainer_caret-down">
-                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </div>
-                            </div>`);
-            html.join("");
-            count += 1;
-        }.bind(this));
-        $('#MOBILECONFIG-all').append(html);
-        $('#MOBILECONFIG').empty().append(" Mobile Connections (" + count + ")");
-    }.bind(this);
 
     this.init = function () {
         if (this.versioning === 'True') {
@@ -2192,6 +2238,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#2faSwitch").change(this.TwoFASwitch.bind(this));
+        $("#del-soln-outer").on("click", this.DeleteSolution.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));

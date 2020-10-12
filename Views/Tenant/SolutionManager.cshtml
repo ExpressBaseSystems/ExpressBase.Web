@@ -80,7 +80,7 @@
                     if (ViewBag.Connections.SolutionInfo.EsolutionId.Contains("."))
                     {
                         devaction = sso_dev.Replace("myaccount.", "").Replace(ViewBag.Connections.SolutionInfo.EsolutionId, ViewBag.Connections.SolutionInfo.IsolutionId);
-                        useraction = sso_user.Replace("myaccount.", "").Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS+":41500", string.Empty);
+                        useraction = sso_user.Replace("myaccount.", "").Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS + ":41500", string.Empty);
                     }
 
                     <form method="post" action=@devaction target="_blank">
@@ -625,6 +625,24 @@
                                                 <div style="color:red">Please integrate sms or email</div>
                                             }
                                         }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="eb-sdash-longdiv">
+                            <div class="eb-sdash-longdivhead">
+                                <label>Permanently Delete Solution</label>
+                            </div>
+                            <div class="eb-sdash-longdivcontainer">
+                                <div class="left-sec">
+                                    <p>
+                                        When you permanently delete a solution, the solution and all associated data will be romoved.You won't be able to accesss the solution or retrieve any data or objects you've added.
+                                    </p>
+                                </div>
+                                <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
+                                    <div class="uname-advanced-sec">
+                                        <div class="btn btn-danger" id="del-soln-outer"> <i class="fa fa-trash" aria-hidden="true"></i>  Delete Solution </div> 
                                     </div>
                                 </div>
                             </div>
@@ -1855,7 +1873,7 @@
     <script>
         let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
         let GoogleRedirecturi = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Env));
-	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.IsolutionId', '@ViewBag.Connections.SolutionInfo.IsVersioningEnabled');
+	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.IsolutionId', '@ViewBag.Connections.SolutionInfo.IsVersioningEnabled', '@ViewBag.Connections.SolutionInfo.EsolutionId', '@ViewBag.Connections.SolutionInfo.SolutionName');
 	    $("#no_user").change(function (e) {
 		    $("#user_countForm").val(e.target.value);
         });

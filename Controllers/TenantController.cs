@@ -173,6 +173,17 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        public bool DeleteSolution(string SolnId, string EsolnId, string prompt_esid)
+        {
+            bool result = false;
+            if (prompt_esid == EsolnId)
+            {
+                DeleteSolutionResponse res = this.ServiceClient.Post<DeleteSolutionResponse>(new DeleteSolutionRequset { ISolutionId = SolnId, ESolutionId = EsolnId });
+                result = res.Status;
+            }
+            return result;
+        }
+
         public IActionResult Logout()
         {
             ViewBag.Fname = null;

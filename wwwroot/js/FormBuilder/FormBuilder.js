@@ -152,7 +152,7 @@
 
                 if (clickedCtrl.IsContainer) {
                     clickedCtrl.Controls.$values.push(copiedCtrl);
-                    $clickedEl.append($copiedCtrl);
+                    ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
                 }
                 else {
                     if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {

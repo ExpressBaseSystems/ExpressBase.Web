@@ -51,7 +51,7 @@ namespace ExpressBase.Web.Controllers
                 WorkbookPart workbookPart = doc.WorkbookPart;
                 WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
                 Worksheet sheet = worksheetPart.Worksheet;
-                SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0 ? 
+                SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0 ?
                     workbookPart.GetPartsOfType<SharedStringTablePart>().First() : null;
                 SharedStringTable sst = sstpart != null ? sstpart.SharedStringTable : null;
                 var rows = sheet.Descendants<SheetData>().First().Elements<Row>();
@@ -72,7 +72,7 @@ namespace ExpressBase.Web.Controllers
                         colIndex++;
                     }
                     var startRow = 0;
-                    foreach(Row row in rows)
+                    foreach (Row row in rows)
                     {
                         if (startRow > 0)
                         {
@@ -86,7 +86,7 @@ namespace ExpressBase.Web.Controllers
                                 {
                                     if (tbl.Columns[colIndex1].Type == EbDbTypes.DateTime)
                                     {
-                                        DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.First()));
+                                        DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText));
                                         rr[colIndex1] = dt.ToString("yyyy-MM-dd HH:mm:ss");
                                     }
                                     else if (tbl.Columns[colIndex1].Type == EbDbTypes.Date)
@@ -94,19 +94,30 @@ namespace ExpressBase.Web.Controllers
                                         DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText));
                                         rr[colIndex1] = dt.ToString("yyyy-MM-dd");
                                     }
-                                    else if (tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
+                                    else if (tbl.Columns[colIndex1].Type == EbDbTypes.Time)
                                     {
-                                        var val = "false";
-                                        if (cell.CellValue.ToString() == "Yes")
-                                            val = "true";
-                                        rr[colIndex1] = val;
+                                        rr[colIndex1] = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText)).ToString("HH:mm:ss");
                                     }
-                                    else if (tbl.Columns[colIndex1].Type == EbDbTypes.BooleanOriginal)
+                                    else if (cell.DataType != null && cell.DataType == "s")
                                     {
-                                        var val = false;
-                                        if (cell.CellValue.ToString() == "Yes")
-                                            val = true;
-                                        rr[colIndex1] = val;
+                                        int ssid = int.Parse(cell.CellValue.Text);
+                                        string str = sst.ChildElements[ssid].InnerText;
+                                        if (tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
+                                        {
+                                            var val = "false";
+                                            if (str == "Yes")
+                                                val = "true";
+                                            rr[colIndex1] = val;
+                                        }
+                                        else if (tbl.Columns[colIndex1].Type == EbDbTypes.BooleanOriginal)
+                                        {
+                                            var val = false;
+                                            if (str == "Yes")
+                                                val = true;
+                                            rr[colIndex1] = val;
+                                        }
+                                        else if (tbl.Columns[colIndex1].Type == EbDbTypes.String)
+                                            rr[colIndex1] = str;
                                     }
                                     else if (cell.DataType != null && cell.DataType == CellValues.SharedString)
                                     {

@@ -110,10 +110,10 @@
             //});
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
-            if (!this.FilterObj.FormObj.AutoRun)
+            if (this.FilterObj.FormObj.AutoRun) {
                 $("#btnGo").trigger("click");
-
-            this.CloseParamDiv();
+                this.CloseParamDiv();
+            }
             $("#filter-dg").off("click").on("click", this.toggleFilter.bind(this));
         }
         else {

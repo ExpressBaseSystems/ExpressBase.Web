@@ -192,21 +192,23 @@
                             }
                         },
                         CallBack: function (name) {
-                            if (name === "Yes") {
-                                let initLen = uploadedFileRefList[ctrl.Name].length;
-                                for (let i = 0; i < refids.length; i++) {
-                                    let index = uploadedFileRefList[ctrl.Name].indexOf(eval(refids));
-                                    if (index !== -1) {
-                                        uploadedFileRefList[ctrl.Name].splice(index, 1);
+                            if (refids > 0) {
+                                if (name === "Yes") {
+                                    let initLen = uploadedFileRefList[ctrl.Name].length;
+                                    for (let i = 0; i < refids.length; i++) {
+                                        let index = uploadedFileRefList[ctrl.Name].indexOf(eval(refids));
+                                        if (index !== -1) {
+                                            uploadedFileRefList[ctrl.Name].splice(index, 1);
+                                        }
                                     }
+                                    if (initLen > uploadedFileRefList[ctrl.Name].length) {
+                                        obj.$trigger.remove();
+                                        let indx = imgup.FileList.findIndex(item => item.FileRefId == refids);
+                                        imgup.FileList.splice(indx, 1);
+                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                    }
+                                    imgup.customMenuCompleted("Delete", filref);
                                 }
-                                if (initLen > uploadedFileRefList[ctrl.Name].length) {
-                                    obj.$trigger.remove();
-                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-                                }
-                                imgup.customMenuCompleted("Delete", filref);
-
-
                             }
                         }
                     });

@@ -49,7 +49,7 @@
             tblcols.push({ data: null, title: "", className: "dataTableColumnStyle text-center", width: '60px', render: this.tblProfPicRender, searchable: false, orderable: false });
         if (this.metadata.indexOf("_fbProfPic") !== -1) {
             tblcols.push({ data: null, title: "", className: "dataTableColumnStyle text-center", width: '60px', render: this.tblFbProfPicRender, searchable: false, orderable: false });
-            tblcols.push({ data: parseInt(this.metadata[0]) + 1, title: this.metadata[parseInt(this.metadata[0]) + 1], visible: false });
+            tblcols.push({ data: this.metadata[0] + 1, title: this.metadata[this.metadata[0] + 1], visible: false });
         }
 
 
@@ -57,31 +57,26 @@
 
         tblcols.push({ data: 2, title: this.metadata[2].replace("_", " "), className: "dataTableColumnStyle", width: '220px', render: this.tblNameColumnRender });
 
-        for (var i = 3; i <= parseInt(this.metadata[0]); i++)
+        for (var i = 3; i <= this.metadata[0]; i++)
             tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), className: "dataTableColumnStyle", width: '150px' });
         tblcols.push({ data: null, title: "View/Edit", className: "dataTableColumnStyle text-center", width: '80px', render: this.tblEditColumnRender, searchable: false, orderable: false });
 
         if (this.metadata.indexOf("_user") !== -1) {// to fill tbldata with appropriate data
-            for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
+            tbldata = this.GetTableData();
         }
         else if (this.metadata.indexOf("_userGroup") !== -1) {
-            for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]] });
+            tbldata = this.GetTableData();
         }
         else if (this.metadata.indexOf("_roles") !== -1) {
-            for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
+            tbldata = this.GetTableData();
         }
-
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
             tblcols.push({ data: null, title: "Add as User", className: "dataTableColumnStyle text-center", width: '100px', render: this.tblConvertColumnRender, searchable: false, orderable: false });
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]] });
         }
         else if (this.metadata.indexOf("_userTypes") !== -1) {
-            for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]] });
+            tbldata = this.GetTableData();
         }
 
         var tbl = "#tblCommonList";
@@ -107,6 +102,17 @@
 
         $(".CL_Image").Lazy();
         this.setMenuBar();
+    };
+
+    this.GetTableData = function () {
+        let tbldata = [];
+        for (let i = 0; i < this.itemList.length; i++) {
+            let obj = {};
+            for (let j = 1; j <= this.metadata[0]; j++)
+                obj[j] = this.itemList[i][this.metadata[j]];
+            tbldata.push(obj);
+        }
+        return tbldata;
     };
 
     this.setMenuBar = function () {

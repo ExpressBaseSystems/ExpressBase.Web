@@ -363,19 +363,19 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>City</label>
-                            <input id="txtCrntCity" type="text" class="form-control">
+                            <input id="txtCrntCity" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-2" style="padding-left: 5px;">
                         <div class="form-group">
                             <label>Country</label>
-                            <input id="txtCrntCountry" type="text" class="form-control">
+                            <input id="txtCrntCountry" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-3" style="padding-left: 5px;">
                         <div class="form-group">
                             <label>Home City</label>
-                            <input id="txtHomeCity" type="text" class="form-control">
+                            <input id="txtHomeCity" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-2" style="padding-left: 5px;">
@@ -427,7 +427,7 @@
         <div class="tab-content white-tab">
 
             <!-- Home Menu -->
-            <div id="home" class="tab-pane fade in active" style="padding-top: 15px; height: calc(100vh - 256px); min-height: 200px;">
+            <div id="home" class="tab-pane fade in active" style="padding-top: 15px; min-height: calc(100vh - 266px);">
                 <div class="lm-form-inline">
                     <div class="col-md-2">
                         <div class="form-group">
@@ -464,7 +464,7 @@
                     <div class="col-md-2" style="min-width: 21%;">
                         <div class="form-group">
                             <label>Sub Category</label>
-                            <input id="txtSubCategory" type="text" class="form-control">
+                            <input id="txtSubCategory" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-1" style="min-width: 12%;">
@@ -496,7 +496,7 @@
                     <div class="col-md-1" style="min-width: 13%;">
                         <div class="form-group">
                             <label>Probable Month</label>
-                            <input id="txtProbableMonth" type="text" class="form-control" maxlength="7">
+                            <input id="txtProbableMonth" type="text" class="form-control" maxlength="7" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-1" style="min-width: 13%;">
@@ -598,7 +598,7 @@
                         Followup Details
                     </div>
                     <div style="text-align:right; padding: 15px 0px; display: inline-block; width:49%;">
-                        <button id="btnNewFeedBack" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                        <button id="btnNewFeedBack" class="ebbtn btn eb_btn-sm eb_btnblue"><i class="fa fa-plus"></i>&nbsp;New</button>
                     </div>
                     <div id="divFdbk"></div>
                 </div>
@@ -606,9 +606,9 @@
             </div>
 
             <!-- Billing Menu -->
-            <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
+            <div id="menuBilling" class="tab-pane fade" style="min-height: calc(100vh - 266px); ">
                 <div style="text-align:right; padding: 15px 15px;">
-                    <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                    <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btnblue"><i class="fa fa-plus"></i>&nbsp;New</button>
                 </div>
                 <div class="lm-form-inline">
                     <div id="divBilling"></div>
@@ -616,9 +616,9 @@
             </div>
 
             <!-- Surgery Menu -->
-            <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
+            <div id="menuSurgery" class="tab-pane fade" style="min-height: calc(100vh - 266px);">
                 <div style="text-align:right; padding: 15px 15px;">
-                    <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                    <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btnblue"><i class="fa fa-plus"></i>&nbsp;New</button>
                 </div>
                 <div class="lm-form-inline">
                     <div id="divSrgy"></div>
@@ -626,7 +626,7 @@
             </div>
 
             <!-- Attach Menu -->
-            <div id="menuAttach" class="tab-pane fade" style="min-height: calc(100vh - 256px); ">
+            <div id="menuAttach" class="tab-pane fade" style="min-height: calc(100vh - 266px);">
                 @*<div style="padding: 15px 15px; display:inline-block; width:79%;">
                 <button id="btnFirstImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-step-backward"></i> First</button>
                 <button id="btnPrevImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-chevron-left"></i> Prev</button>
@@ -635,7 +635,7 @@
                 <button id="btnLastImgPage" class="ebbtn eb_btn-sm ">Last <i class="fa fa-step-forward"></i></button>
             </div>*@
                 @*<div style="text-align:right; padding: 15px 15px 5px 15px; display:inline-block; width:100%;">
-                    <button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
+                    <button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btnblue"><i class="fa fa-upload"></i> Upload</button>
                 </div>*@
                 @*<div id="divAllImg"> </div>*@
                 <div id="divAllImg1"> </div>
@@ -643,7 +643,7 @@
             </div>
 
             <!-- PRP Menu -->
-            <div id="menuPRP" class="tab-pane fade" style="min-height: calc(100vh - 256px);">
+            <div id="menuPRP" class="tab-pane fade" style="min-height: calc(100vh - 266px);">
                 <div id="divAllImg2"> </div>
             </div>
         </div>
@@ -653,7 +653,7 @@
 <!-- Add Followup Details Modal -->
 <div class="modal fade" id="mdlFeedBack" role="dialog" data-id="">
     <div class="modal-dialog" style="max-width: 550px;">
-        <div class="modal-content">
+        <div class="modal-content" style="background-color: #f8f8f8;">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Feedback Details</h4>
@@ -662,7 +662,7 @@
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Date</label>
+                            <label>Date</label>
                             <div class="input-group">
                                 <input id="txtFlUpDate" type="text" class="form-control" autocomplete="off">
                                 <span class="input-group-addon" onclick="$('#txtFlUpDate').focusin();"><i class="fa fa-calendar"></i></span>
@@ -671,14 +671,14 @@
                     </div>
                     <div class="col-md-8">
                         <div class="lm-form-group" style="text-align: right; padding-top: 15px;">
-                            <label class="tag-title" style="user-select: none; cursor: pointer; color: red;"><input id="chkFlUpNotPicked" type="checkbox" /> Not Picking Up</label>
+                            <label style="user-select: none; cursor: pointer; color: red;"><input id="chkFlUpNotPicked" type="checkbox" /> Not Picking Up</label>
                         </div>
                     </div>
                 </div>
                 <div class="lm-form-inline">
                     <div class="col-md-8">
                         <div class="lm-form-group">
-                            <label class="tag-title">Lead Status</label>
+                            <label>Lead Status</label>
                             <select id="selFlUpStatus" class="form-control">
                                 @{
                                     foreach (KeyValuePair<string, string> item in ViewBag.StatusDict)
@@ -691,7 +691,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Follow up Date</label>
+                            <label>Follow up Date</label>
                             <div class="input-group">
                                 <input id="txtFlUpFolDate" type="text" class="form-control" autocomplete="off">
                                 <span class="input-group-addon" onclick="$('#txtFlUpFolDate').focusin();"><i class="fa fa-calendar"></i></span>
@@ -702,14 +702,14 @@
                 <div class="lm-form-inline">
                     <div class="col-md-12">
                         <div class="lm-form-group">
-                            <label class="tag-title">Comment</label>
+                            <label>Comment</label>
                             <textarea id="txaFlUpComnt" class="form-control" style="height: 100px !important; resize:none;"></textarea>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnFlUpSave" class="ebbtn eb_btn-sm eb_btngreen" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
+                <button id="btnFlUpSave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
             </div>
         </div>
     </div>
@@ -719,28 +719,28 @@
 <!-- Billing Details Modal -->
 <div class="modal fade" id="mdlBilling" role="dialog" data-id="">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="background-color: #f8f8f8;">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Billing Details</h4>
             </div>
-            <div class="modal-body" style="height: 290px;">
+            <div class="modal-body" style="height: 300px;">
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Total Amount</label>
+                            <label>Total Amount</label>
                             <input id="txtBlngTotal" type="number" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Amount Received</label>
+                            <label>Amount Received</label>
                             <input id="txtBlngRcvd" type="number" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Balance Amount</label>
+                            <label>Balance Amount</label>
                             <input id="txtBlngBal" type="number" class="form-control" autocomplete="off">
                         </div>
                     </div>
@@ -749,14 +749,14 @@
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Cash Paid</label>
+                            <label>Cash Paid</label>
                             <input id="txtBlngPaid" type="number" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Date</label>
+                            <label>Date</label>
                             <div class="input-group">
                                 <input id="txtBlngDate" type="text" class="form-control" autocomplete="off">
                                 <span class="input-group-addon" onclick="$('#txtBlngDate').focusin();"><i class="fa fa-calendar"></i></span>
@@ -767,7 +767,7 @@
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Payment Mode</label>
+                            <label>Payment Mode</label>
                             <select id="selBlngMode" class="form-control">
                                 <option>Cash</option>
                                 <option>Cheque</option>
@@ -779,7 +779,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="lm-form-group">
-                            <label class="tag-title">Bank</label>
+                            <label>Bank</label>
                             <input id="txtBlngBank" type="text" class="form-control" disabled>
                         </div>
                     </div>
@@ -788,7 +788,7 @@
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">PDC</label>
+                            <label>PDC</label>
                             <select id="selBlngPDC" class="form-control" disabled>
                                 <option value="false">No</option>
                                 <option value="true">Yes</option>
@@ -800,7 +800,7 @@
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Clearence Date</label>
+                            <label>Clearence Date</label>
                             <div class="input-group">
                                 <input id="txtBlngClrDate" type="text" class="form-control" autocomplete="off">
                                 <span class="input-group-addon" onclick="$('#txtBlngClrDate').focusin();"><i class="fa fa-calendar"></i></span>
@@ -809,14 +809,14 @@
                     </div>
                     <div class="col-md-8">
                         <div class="lm-form-group">
-                            <label class="tag-title">Narration</label>
+                            <label>Narration</label>
                             <input id="txtBlngNarr" type="text" class="form-control" maxlength="30">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnBlngSave" class="ebbtn eb_btn-sm eb_btngreen" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
+                <button id="btnBlngSave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
             </div>
         </div>
     </div>
@@ -826,16 +826,16 @@
 <!-- Surgery Details Modal -->
 <div class="modal fade" id="mdlSurgery" role="dialog" data-id="">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="background-color: #f8f8f8;">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Surgery Details</h4>
             </div>
-            <div class="modal-body" style="height: 310px;">
+            <div class="modal-body" style="height: 330px;">
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Date of Surgery</label>
+                            <label>Date of Surgery</label>
                             <div class="input-group">
                                 <input id="txtSrgyDate" type="text" class="form-control" autocomplete="off">
                                 <span class="input-group-addon" onclick="$('#txtSrgyDate').focusin();"><i class="fa fa-calendar"></i></span>
@@ -845,7 +845,7 @@
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Branch</label>
+                            <label>Branch</label>
                             <select id="selSrgyBranch" class="form-control">
                                 <option>Kochi</option>
                                 <option>Kozhikode</option>
@@ -858,37 +858,37 @@
                 <div class="lm-form-inline">
                     <div class="col-md-6">
                         <div class="lm-form-group">
-                            <label class="tag-title">Extraction Done By</label>
+                            <label>Extraction Done By</label>
                             <select id="selSrgyExtrDnBy" class="form-control"></select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="lm-form-group">
-                            <label class="tag-title">Implantation By</label>
+                            <label>Implantation By</label>
                             <select id="selSrgyImplantBy" class="form-control"></select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="lm-form-group">
-                            <label class="tag-title">Consent By</label>
+                            <label>Consent By</label>
                             <select id="selSrgyConsentBy" class="form-control"></select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="lm-form-group">
-                            <label class="tag-title">Anaesthesia By</label>
+                            <label>Anaesthesia By</label>
                             <select id="selSrgyAnasthBy" class="form-control"></select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="lm-form-group">
-                            <label class="tag-title">Post Briefing By</label>
+                            <label>Post Briefing By</label>
                             <select id="selSrgyPostBrfBy" class="form-control"></select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="lm-form-group">
-                            <label class="tag-title">Nurse</label>
+                            <label>Nurse</label>
                             <select id="selSrgyNurse" class="form-control"></select>
                         </div>
                     </div>
@@ -896,14 +896,14 @@
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Complimentary</label>
+                            <label>Complimentary</label>
                             <select id="selSrgyCmpltry" class="form-control">
                                 <option value="No">No</option>
                                 <option value="Yes">Yes</option>
                             </select>
                         </div>
                         <div class="lm-form-group">
-                            <label class="tag-title">Method</label>
+                            <label>Method</label>
                             <select id="selSrgyMethod" class="form-control">
                                 <option value="Pen">Pen</option>
                                 <option value="Needle">Needle</option>
@@ -912,8 +912,8 @@
                     </div>
                     <div class="col-md-8">
                         <div class="lm-form-group">
-                            <label class="tag-title">Comment</label>
-                            <textarea id="txaSrgyComnt" class="form-control" style="height: 70px !important; resize:none;"></textarea>
+                            <label>Comment</label>
+                            <textarea id="txaSrgyComnt" class="form-control" style="height: 76px !important; resize:none;"></textarea>
                         </div>
                     </div>
                 </div>
@@ -955,6 +955,10 @@
     </div>*@
 
 <style>
+    body {
+        overflow-y: scroll !important;
+    }
+
     .MyTempColStyle {
         overflow: visible;
         white-space: normal !important;
@@ -1029,7 +1033,7 @@
 
     let fupWindowCloseCallBack = function (gallName) {
         if (uploadedFileRefList[gallName].length > 0)
-            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
     };
 
     let fupTriggerCallBack = function (gallName, imgup, name, refids) {
@@ -1053,7 +1057,7 @@
                             }
                             if (initLen > uploadedFileRefList[gallName].length) {
                                 imgup.deleteFromGallery(refids);
-                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
                             }
                             imgup.customMenuCompleted("Delete", refids);
                         }
@@ -1079,7 +1083,7 @@
                                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
                                         <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
                                     </div>`);
-                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
                             }
                         }
                     }
@@ -1112,7 +1116,7 @@
                         }
                         if (initLen > uploadedFileRefList[gallName].length) {
                             obj.$trigger.remove();
-                            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
                         }
                         imgup.customMenuCompleted("Delete", filref);
                     }

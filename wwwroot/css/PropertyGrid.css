@@ -187,7 +187,7 @@
 }
 
 .pg-table [subtype-of] > .pgTdval input {
-    height:16px;
+    height: 16px;
 }
 
 .outer-pg > .pgHead {
@@ -226,6 +226,16 @@
     box-shadow: none;
     border: none;
     text-shadow: none;
+}
+
+.oseobjgo2icon {
+    display: inline-flex;
+    margin-right: 5px;
+    margin-left: 8px;
+    padding: 2px 4px;
+    color: #00316e;
+    right: 0;
+    border-radius: 50%;
 }
 
 .pgCX-Editor-Btn {
@@ -795,12 +805,7 @@
     display: none;
 }
 
-.DD-refresh:hover {
-    color: #2d5f91;
-    transform: rotateZ(180deg);
-}
-
-.DD-refresh {
+.DD-refresh, .ose-refresh {
     margin-right: 20px;
     margin-top: 2.4px;
     float: right;
@@ -808,6 +813,15 @@
     transition-duration: 1s;
 }
 
+.ose-refresh {
+    display: none;
+    margin-right: 1px;
+}
+
+    .DD-refresh:hover, .ose-refresh:hover {
+        color: #2d5f91;
+        transform: rotateZ(180deg);
+    }
 /*.controls-dd-cont .dropdown-toggle {
     height: 24px !important;
     padding: 2px !important;
@@ -818,7 +832,6 @@
     border-radius: 0px !important;
     border-bottom: var(--pgTdBorder) !important;
 }*/
-
 .controls-dd-cont .dropdown-toggle {
     margin-left: 0 !important;
     box-shadow: none !important;
@@ -1001,6 +1014,7 @@
     font-size: 15px;
     color: white;
 }
+
 .FE-preview .font-preview-wrpr {
     border: 1px solid rgb(204, 204, 204);
     display: flex;
@@ -1017,7 +1031,7 @@
 }
 
 .FEcol {
-    padding:5px;
+    padding: 5px;
 }
 
 .FEfont-family {
@@ -1086,7 +1100,7 @@
     height: 30px;
     padding: 3px;
     font-size: 15px;
-    color:white;
+    color: white;
 }
 
 .font-editor-contaner {
@@ -1104,33 +1118,36 @@
     margin-right: 2px;
     margin-top: 3px;
 }
+
 .ppgrid-tree-head {
-    cursor:pointer;
+    cursor: pointer;
 }
+
 .pgCXEditor-Cont .OSE-verTile-Cont .colTile .bootstrap-select {
     margin-left: 25px;
     width: auto !important;
     height: auto !important;
 }
 
-.pgCXEditor-Cont .OSE-verTile-Cont .colTile .bootstrap-select button{
-    padding: 0px 25px 0px 5px;
-}
+    .pgCXEditor-Cont .OSE-verTile-Cont .colTile .bootstrap-select button {
+        padding: 0px 25px 0px 5px;
+    }
 
-.ColT-left-arrow{
-    font-size:20px;
+.ColT-left-arrow {
+    font-size: 20px;
 }
 
 .colTile-osce {
     display: flex;
 }
 
-.colTile-osce .versionTiletext {
-    flex: 1;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-.colTile-osce bootstrap-select {
-    margin-left: auto;
-}
+    .colTile-osce .versionTiletext {
+        flex: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .colTile-osce bootstrap-select {
+        margin-left: auto;
+    }

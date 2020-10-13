@@ -954,6 +954,10 @@ namespace ExpressBase.Web.Controllers
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
             ViewBag.MobileSignup = solutionObj.SolutionSettings.MobileAppSettings;
+            if(solutionObj.SolutionSettings.MobileAppSettings == null)
+            {
+                ViewBag.MobileSignup = new MobileAppSettings();
+            }
             return View();
         }
 

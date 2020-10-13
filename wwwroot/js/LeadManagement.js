@@ -900,7 +900,7 @@
         this.$TotalRate.val(this.CustomerInfo["totalrate"]);
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
-        this.$Closing.val(this.CustomerInfo["closing"]);
+        this.$Closing.val(this.CustomerInfo["eb_closing"]);
         this.$Nature.val(this.CustomerInfo["nature"]);
     };
 
@@ -990,7 +990,7 @@
         this.pushToList("totalrate", this.$TotalRate.val());
         this.pushToList("prpsessions", this.$NoOfPRP.val());
         this.pushToList("consultingfeepaid", this.$FeePaid.val());
-        this.pushToList("closing", this.$Closing.val());
+        this.pushToList("eb_closing", this.$Closing.val());
         this.pushToList("nature", $("#selNature option:selected").text());
 
         //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  

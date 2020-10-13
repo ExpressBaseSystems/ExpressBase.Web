@@ -21,6 +21,30 @@
         });
     }.bind(this);
 
+    this.dataSourceReInit = function (callbackFn) {
+        if (getObjByval(this.PGobj.Metas, "name", "Columns") === undefined)
+            return;
+
+        $.LoadingOverlay('show');
+        this.PGobj.isBussy = true;
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetColumns4Control",
+            data: { DataSourceRefId: this.PGobj.PropsObj.DataSourceId },
+            success: function (Columns) {
+                this.PGobj.isBussy = false;
+                let allCols = JSON.parse(Columns);
+                if (callbackFn) {
+                    callbackFn(allCols.$values);
+                }
+                this.PGobj.PropsObj[this.PGobj.CXVE.CurMeta.source] = allCols;
+                this.PGobj.CXVE.CurMeta.__isReloadedAfterInit = true;
+                this.PGobj.CXVE.CEHelper();
+                $.LoadingOverlay('hide');
+            }.bind(this)
+        });
+    }.bind(this);
+
     this.UrlInit = function (opt) {
         if (getObjByval(this.PGobj.Metas, "name", "Columns") === undefined)
             return;

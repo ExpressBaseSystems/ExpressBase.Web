@@ -460,7 +460,7 @@ var DashBoardWrapper = function (options) {
             }
             $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
-
+        $(".grid-stack , .Eb-ctrlContainer").off("click").on("click", this.TileSelectorJs.bind(this));
     };
 
     this.labelstyleApply = function (tileId) {
@@ -710,6 +710,7 @@ var DashBoardWrapper = function (options) {
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
         $('#myDropdown').on('hide.bs.dropdown', this.DropDownClose.bind(this));
         $('#myDropdown').on('click.bs.dropdown.data-api', '.dropdown.keep-inside-clicks-open', this.DropDownClose2.bind(this));
+        $(".grid-stack , .Eb-ctrlContainer").off("click").on("click", this.TileSelectorJs.bind(this));
     }
 
     this.DropDownClose = function (e) {

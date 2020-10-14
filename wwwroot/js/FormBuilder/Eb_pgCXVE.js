@@ -402,7 +402,7 @@
         else {
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").show();
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").off('click').on('click', this.refreshCEFromSrc);
-            if (!this.CurMeta.__isReloadedAfterInit) {
+            if (!this.CurMeta.__isReloadedAfterInit && this.CurMeta.Dprop2 === "True") {
                 this.refreshCEFromSrc();
                 return;
             }

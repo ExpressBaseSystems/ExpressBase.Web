@@ -1883,11 +1883,11 @@
         let visibleChanges = false;
         $.each(this.CurrentRowGroup.RowGrouping.$values, function (i, rgobj) {
             this.RGIndex.push(rgobj.data);
-            this.rowgroupCols.unshift(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "data":null, "defaultContent": ""}'));
+            this.rowgroupCols.unshift(JSON.parse('{ "sWidth":"10px","searchable": false, "orderable": false, "bVisible":true, "data":null, "defaultContent": ""}'));
         }.bind(this));
 
         if (this.rowgroupCols.length > 0 && this.CurrentRowGroup.$type.indexOf("MultipleLevelRowGroup") !== -1)
-            this.rowgroupCols.unshift(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "name":"AllGroup", "data":null, "defaultContent": ""}'));
+            this.rowgroupCols.unshift(JSON.parse('{ "sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"AllGroup", "data":null, "defaultContent": ""}'));
 
         $.each(this.EbObject.Columns.$values, function (i, colobj) {
             visibleChanges = false;

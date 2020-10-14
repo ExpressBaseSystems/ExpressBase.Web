@@ -267,12 +267,12 @@
             <tr>
 
             <td style="padding: 0px;">
-            <div class="CE-controls-head"> All </div>
+            <div class="CE-controls-head"> All <i class="fa fa-refresh ose-refresh" aria-hidden="true"></i></div>
             <div id="${this.CE_all_ctrlsContId}" class="CE-all-ctrlsCont"></div>
             </td>
 
             <td style="padding: 0px;">
-            <div class="CE-controls-head" > ${this.CurProplabel} </div>
+            <div class="CE-controls-head" > ${this.CurProplabel}</div>
             <div id="${this.CEctrlsContId}" class="CEctrlsCont"></div>
             </td>
 
@@ -289,9 +289,7 @@
             this.initHelper7_22();
         }
         else if ((this.editor > 7 && this.editor < 11) || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
-            let sourceProp = this.CurMeta.source;
-
-            this.CEHelper(sourceProp);
+            this.CEHelper();
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
         this.drake.on("drag", this.onDragFn.bind(this));
@@ -338,6 +336,26 @@
         return _CElistFromSrc;
     };
 
+    this.refreshCEFromSrc = function () {
+        this.PGobj.PGHelper.dataSourceReInit(this.setOldSelection)
+    }.bind(this);
+
+    this.setOldSelection = function (allCols) {
+        this.CElistFromSrc = this.getCElistFromSrc(this.CurMeta.source);
+        if (this.editor === 24 || this.editor === 27 || this.editor === 35) {
+            let selectedCols = [... this.getSelectedColsByProp(this.CElistFromSrc)];
+            if (selectedCols && selectedCols.length !== 0) {
+                $.each(allCols, function (i, obj) {
+                    if (getObjByval(selectedCols, "name", obj.name)) {
+                        obj[this.Dprop] = true;
+                    }
+                    else
+                        obj[this.Dprop] = false;
+                }.bind(this));
+            }
+        }
+    }.bind(this);
+
     this.buildMapObjList = function (data) {
         this.CE_mapList = data ? JSON.parse(data).$values : this.CE_mapList;
         $.each(this.CE_mapList, function (i, control) {
@@ -372,7 +390,8 @@
             this.buildMapObjList();
     };
 
-    this.CEHelper = function (sourceProp) {
+    this.CEHelper = function () {
+        let sourceProp = this.CurMeta.source;
         this.Dprop = this.CurMeta.Dprop;
         let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
@@ -380,8 +399,15 @@
 
         if (this.CurMeta.source.trimStart().startsWith("return "))
             this.CElistFromSrc = this.getCElistFromFn(sourceProp);
-        else
+        else {
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").show();
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").off('click').on('click', this.refreshCEFromSrc);
+            if (!this.CurMeta.__isReloadedAfterInit) {
+                this.refreshCEFromSrc();
+                return;
+            }
             this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
+        }
 
         if (this.editor === 8 || this.editor === 27 || this.editor === 35) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
@@ -428,7 +454,7 @@
                 dependedProp: this.CurMeta.Dprop2
             }, this.PGobj);
         }
-    };
+    }.bind(this);
 
     this.getSelectedColsByProp = function (allCols) {
         let res = [];
@@ -745,6 +771,11 @@
 
     }.bind(this);
 
+    this.gotoObjOse = function () {
+        let $e = $(event.target).closest('.colTile');
+        window.open(decodeURIComponent(escape(window.atob($e.attr('objurl')))), '_blank');
+    }.bind(this);
+
     this.searchObj = function (event) {
         let $e = $(event.target);
         if (event.which === 40) {
@@ -830,13 +861,17 @@
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
             $.each(data[ObjName], function (i, obj) {
                 if (obj.versionNumber) {
-                    let $verTile = $('<div class="colTile" style="display:none" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
+                    let $verTile = $('<div class="colTile" style="display:none"  objurl="' + btoa(unescape(encodeURIComponent('http://' + ebcontext.sid + '-dev.localhost:41500/Eb_Object/Index?objid=' + obj.refId.split("-")[3] + '&objtype=' + obj.refId.split("-")[2])))
+                        + '"is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
+                        + '<div class="oseobjgo2icon"><i class="fa fa-external-link" aria-hidden="true"></i></div>'
                         + '<i class="fa fa-check-circle pull-right vercheck" aria-hidden="true"></i></div>');
                     $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verTile.show(100));
                 }
             }.bind(this));
             if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
                 $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
+
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").off("click", ".oseobjgo2icon").on("click", ".oseobjgo2icon", this.gotoObjOse);
         }
     };
 
@@ -1494,15 +1529,15 @@
             + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
 
             + '<div class="modal-header">'
-                + '<button type="button" class="close">&times;</button>'
-                + '<h4 class="modal-title"> </h4>'
+            + '<button type="button" class="close">&times;</button>'
+            + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
             + '<div class="modal-body"> </div>'
-                + '<div class="modal-footer">'
-                + '<div class="modal-footer-body">'
-                + '</div>'
-                + '<button type="button" name="CXE_OK" class="btn">OK</button>'
+            + '<div class="modal-footer">'
+            + '<div class="modal-footer-body">'
+            + '</div>'
+            + '<button type="button" name="CXE_OK" class="btn">OK</button>'
             + '</div>'
 
             + '</div>'

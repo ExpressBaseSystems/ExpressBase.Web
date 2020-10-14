@@ -84,7 +84,7 @@
                 let realData = block[1].split(",")[1];
                 let blob = this.b64toBlob(realData, contentType);
                 this.replaceFile(blob, filename, contentType);
-                $(`div[file='${this.replceSpl(filename)}']`).find("img").attr("src", b64);
+                $(`div[file='${this.replceSpl(filename)}']`).find("img").attr({ "src": b64,"cropped":true });
             }.bind(this);
         }
         this.Modal.find('.eb-upl-bdy').on("dragover", this.handleDragOver.bind(this));
@@ -206,7 +206,7 @@
                 $countdef.text("(" + $portdef.children().length + ")");
             }
             else {
-                if (renderFiles[i].Meta.Category[0] === "Category") {
+                if ((renderFiles[i].Meta.Category[0] === "Category")||(!renderFiles[i].Meta.Category[0])) {
                     $portdef.append(this.thumbNprevHtml(renderFiles[i]));
                     $countdef.text("(" + $portdef.children().length + ")");
                 }
@@ -266,7 +266,7 @@
 
         this.FileFlag.tagflag = false;
         let tagsArr = [];
-        let flLst = $(`#${this.Options.Container}`).find('.eb_uplGal_thumbO');
+        let flLst = $(`#${this.Options.Container}`).find(`.${this.Options.Container}_preview`);
         $(`#${this.Options.Container}`).find('.FUP_TagUl .current').removeClass('current');
         $.each(flLst, function (k, imgdiv) {
             $(imgdiv).remove();
@@ -319,7 +319,7 @@
                 src = o.FileB64;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
-            return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb_RE" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
+            return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb_RE" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" original_refid="${o.original_refid ? o.original_refid : o.FileRefId}" recent=true>
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
@@ -703,10 +703,15 @@
         if (c.length > 0)
             metaObj.Category = c;
         let t = this.getTag(file);
-        if (t.length > 0)
-            metaObj.Tags = t;
+        if (t.length > 0) {
+            metaObj.Tags = [];
+            metaObj.Tags.push(t.join(','));
+        }
+            
         obj.Meta = metaObj;
         this.TempFilesList.push(obj);
+        this.FileList.push(obj);
+
     }
 
     uploadItem(_url, file) {
@@ -756,13 +761,19 @@
             thumb.find(".error").hide();
             thumb.closest('file-thumb-wraper').remove();
             for (let i = 0; i < this.Files.length; i++) {
-                var k = this.Gallery.find(`[filename_RE='${this.Files[i].name}']`)
-                if (k.length > 0) {
-                    k.attr("original_refid", refid);
-                    k.attr("id", `prev-thumb${refid}`);
-                }
+               
                 if (this.Files[i].name === thumb.attr("exact")) {
                     this.uploadSuccess(refid);
+                    var k = this.Gallery.find(`[filename_RE='${this.Files[i].name}']`)
+                    if (k.length > 0) {
+                        k.attr("original_refid", refid);
+                        k.attr("id", `prev-thumb${refid}`);
+                        let indx = this.TempFilesList.findIndex(item => item.FileName == this.Files[i].name);
+                        if (indx > -1) {
+                            let j = this.FileList.findIndex(item => item.FileRefId == this.TempFilesList[indx].FileRefId);
+                            this.FileList[j].original_refid = refid;
+                        }                      
+                    }
                     this.Files.splice(i, 1);
                     break;
                 }
@@ -879,6 +890,12 @@
         for (let k = 0; k < this.Files.length; k++) {
             if (filename === this.Files[k].name) {
                 this.Files[k] = new File([file], filename, { type: contentType });
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = function () {
+                    this.FilesBase64[k] = reader.result;
+                }.bind(this);
+                
                 break;
             }
         }
@@ -1051,6 +1068,8 @@
     deleteFromGallery(filerefs) {
         for (let i = 0; i < filerefs.length; i++) {
             this.Gallery.find(`div[filref="${filerefs[i]}"]`).remove();
+            let indx = this.FileList.findIndex(item => item.FileRefId == filerefs[i]);
+            this.FileList.splice(indx, 1);  
         }
     }
 

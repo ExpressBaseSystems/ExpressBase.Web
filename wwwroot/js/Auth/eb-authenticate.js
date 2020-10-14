@@ -163,7 +163,20 @@
 
     $(document).on("keypress", function (e) {
         if (e.which == 13) {
-            $(`[validator="submit"]`)[0].click();
+            if (!$(`#2fauth_form`).is(':visible')) {
+                var id = $(`.login_tabcontent-uc .tab-pane.active`).attr('id');
+                if (id === 'withpw_container') {
+                    $(`[validator="submit"]`)[0].click();
+                }
+                else if (id === 'withotp_container') {
+                    $(`#otplogin`)[0].click();
+                }
+            }
+            else {
+                $(`#otpvalidate`)[0].click();
+            }
+           
+            
         }
     });
 

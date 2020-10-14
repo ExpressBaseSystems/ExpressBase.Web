@@ -305,10 +305,14 @@ namespace ExpressBase.Web.Controllers
             {
                 dfq.ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
 
+                Console.WriteLine("Image Info: " + dfq.ImageInfo.ToString());
+
                 dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
 
                 if (dfs.StreamWrapper != null)
                 {
+                    Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
+
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }

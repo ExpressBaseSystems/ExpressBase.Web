@@ -40,6 +40,7 @@
                 this.PGobj.PropsObj[this.PGobj.CXVE.CurMeta.source] = allCols;
                 this.PGobj.CXVE.CurMeta.__isReloadedAfterInit = true;
                 this.PGobj.CXVE.CEHelper();
+                this.PGobj.refresh();
                 $.LoadingOverlay('hide');
             }.bind(this)
         });

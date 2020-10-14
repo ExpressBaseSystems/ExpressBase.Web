@@ -337,20 +337,23 @@
     };
 
     this.refreshCEFromSrc = function () {
-        this.PGobj.PGHelper.dataSourceReInit(this.setOldSelection)
+        this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp)
     }.bind(this);
 
-    this.setOldSelection = function (allCols) {
+    this.setOldSelectionByResettingProp = function (allCols) {
         this.CElistFromSrc = this.getCElistFromSrc(this.CurMeta.source);
         if (this.editor === 24 || this.editor === 27 || this.editor === 35) {
-            let selectedCols = [... this.getSelectedColsByProp(this.CElistFromSrc)];
+            let Dprop = this.Dprop;
+            if (this.editor === 27)
+                Dprop = getObjByval(this.PGobj.Metas, "name", this.CurMeta.source).Dprop;
+            let selectedCols = [... this.getSelectedColsByProp(this.CElistFromSrc, Dprop)];
             if (selectedCols && selectedCols.length !== 0) {
                 $.each(allCols, function (i, obj) {
                     if (getObjByval(selectedCols, "name", obj.name)) {
-                        obj[this.Dprop] = true;
+                        obj[Dprop] = true;
                     }
                     else
-                        obj[this.Dprop] = false;
+                        obj[Dprop] = false;
                 }.bind(this));
             }
         }
@@ -400,17 +403,20 @@
         if (this.CurMeta.source.trimStart().startsWith("return "))
             this.CElistFromSrc = this.getCElistFromFn(sourceProp);
         else {
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").show();
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").off('click').on('click', this.refreshCEFromSrc);
-            if (!this.CurMeta.__isReloadedAfterInit && this.CurMeta.Dprop2 === "True") {
-                this.refreshCEFromSrc();
-                return;
+
+            if (this.CurMeta.Dprop2 === "True") {
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").show();
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").off('click').on('click', this.refreshCEFromSrc);
+                if (!getObjByval(this.PGobj.Metas, "name", this.CurMeta.source).__isReloadedAfterInit) {
+                    this.refreshCEFromSrc();
+                    return;
+                }
             }
             this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
         }
 
         if (this.editor === 8 || this.editor === 27 || this.editor === 35) {
-            this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+            this.selectedCols = this.getAvailableSelectedFromSource();
             this.changeCopyToRef();
             if (this.editor === 8)
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
@@ -456,10 +462,10 @@
         }
     }.bind(this);
 
-    this.getSelectedColsByProp = function (allCols) {
+    this.getSelectedColsByProp = function (allCols, Dprop = this.Dprop) {
         let res = [];
         $.each(allCols, function (i, obj) {
-            if (obj[this.Dprop] === true)// hard code
+            if (obj[Dprop] === true)// hard code
                 res.push(obj);
         }.bind(this));
         return res;
@@ -1517,6 +1523,26 @@
                 this.selectedCols[idx] = colObj;
             }
         }.bind(this));
+    };
+
+    this.getAvailableSelectedFromSource = function () {
+        let res = [];
+        let idField = "name";//////////////////////
+        if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && (Object.keys(this.CElistFromSrc[0]).includes("ColumnName")))//////////////////
+            idField = "ColumnName";////////////////////////
+        else if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && Object.keys(this.CElistFromSrc[0]).includes("Name"))//////////////////
+            idField = "Name";////////////////////////
+
+        $.each(this.PGobj.PropsObj[this.PGobj.CurProp].$values, function (i, colObj) {
+            let RObj = getObjByval(this.CElistFromSrc, idField, colObj[idField]);
+            if (!RObj)
+                RObj = getObjByval(this.selectedCols, "name", colObj.Name);
+            if (RObj) {
+                res.push(colObj);
+            }
+        }.bind(this));
+        this.PGobj.PropsObj[this.PGobj.CurProp].$values = res;
+        return this.PGobj.PropsObj[this.PGobj.CurProp].$values;
     };
 
     this.Init = function () {

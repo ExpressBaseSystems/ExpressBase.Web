@@ -16,6 +16,7 @@
 }
 <script>
     function Leave() {
+        localStorage.removeItem("Eb_LoginCount");
         if (loc__) {
             loc__.clearSwitchedLoc();
         }

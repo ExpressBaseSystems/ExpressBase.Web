@@ -14,7 +14,7 @@
             success: function (Columns) {
                 this.clearDependantProps("Columns");// destination name hard coding
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
-                getObjByval(this.PGobj.Metas, "name", this.PGobj.CXVE.CurMeta.source).__isReloadedAfterInit = true;
+                getObjByval(this.PGobj.Metas, "name", "Columns").__isReloadedAfterInit = true;
                 this.PGobj.isBussy = false;
                 this.PGobj.refresh();
                 $.LoadingOverlay('hide');

@@ -702,7 +702,7 @@
             this.bindDGUniqueCheck(ctrl);
         }
         if (ctrl.Validators.$values.length > 0)////??
-            this.formRenderer.FRC.bindValidators($ctrl, ctrl);
+            this.formRenderer.FRC.bindValidators(ctrl);
     };
 
     this.bindDGUniqueCheck = function (control) {

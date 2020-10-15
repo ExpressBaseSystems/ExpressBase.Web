@@ -4,7 +4,12 @@
 </script>
 <script>
     $(document).ready(function () {
-        $('#quik_menu').click();
+       var firstTime = localStorage.getItem("Eb_LoginCount");
+        if(!firstTime) {
+            $('#quik_menu').click();
+            localStorage.setItem("Eb_LoginCount","1");
+        }
+       
     });
 
 </script>

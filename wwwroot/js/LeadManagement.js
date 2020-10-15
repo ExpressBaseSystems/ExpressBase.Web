@@ -811,7 +811,7 @@
             //obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]) || this.getKeyByValue(this.NurseInfo, obj["Anaesthesia_By"] - 1000);
             obj["Consent_By"] = this.getKeyByValue(this.DoctorInfo, obj["Consent_By"]) || this.getKeyByValue(this.NurseInfo, obj["Consent_By"]);
             obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]) || this.getKeyByValue(this.NurseInfo, obj["Anaesthesia_By"]);
-            obj["Post_Brief_By"] = this.getKeyByValue(this.NurseInfo, obj["Post_Brief_By"]);
+            obj["Post_Brief_By"] = this.getKeyByValue(this.DoctorInfo, obj["Post_Brief_By"]) || this.getKeyByValue(this.NurseInfo, obj["Post_Brief_By"]);
             obj["Nurse"] = this.getKeyByValue(this.NurseInfo, obj["Nurse"]);
         }.bind(this));
 

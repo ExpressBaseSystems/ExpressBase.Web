@@ -294,7 +294,7 @@
                                         }
                                     }
                                 });
-                            },
+                            }.bind(this),
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
                 }
@@ -547,7 +547,7 @@
                         }
                     }
                 });
-            },
+            }.bind(this),
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
@@ -590,7 +590,7 @@
                                 }
                             }
                         });
-                    },
+                    }.bind(this),
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }

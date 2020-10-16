@@ -203,8 +203,8 @@
             $('#save').show();
             $('#commit_outer').show();
         }
-        // only for form autosave
-        if (this.ObjectType === 0)
+        //  for form and Mobile form  autosave
+        if (this.ObjectType === 0 || this.ObjectType === 13)
             this.UpdateBuilder();
 
         if (this.ObjCollection[this.target].afterUpdateDashboard) {

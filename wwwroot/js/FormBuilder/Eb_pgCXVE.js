@@ -867,7 +867,7 @@
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
             $.each(data[ObjName], function (i, obj) {
                 if (obj.versionNumber) {
-                    let $verTile = $('<div class="colTile" style="display:none"  objurl="' + btoa(unescape(encodeURIComponent('http://' + ebcontext.sid + '-dev.localhost:41500/Eb_Object/Index?objid=' + obj.refId.split("-")[3] + '&objtype=' + obj.refId.split("-")[2])))
+                    let $verTile = $('<div class="colTile" style="display:none"  objurl="' + btoa(unescape(encodeURIComponent('/Eb_Object/Index?objid=' + obj.refId.split("-")[3] + '&objtype=' + obj.refId.split("-")[2])))
                         + '"is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
                         + '<div class="oseobjgo2icon"><i class="fa fa-external-link" aria-hidden="true"></i></div>'
                         + '<i class="fa fa-check-circle pull-right vercheck" aria-hidden="true"></i></div>');

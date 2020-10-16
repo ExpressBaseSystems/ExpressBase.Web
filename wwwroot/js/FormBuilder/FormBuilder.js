@@ -138,45 +138,55 @@
         let $e = $(event.target); // need optimize
         if (localStorage.eb_form_control) {
             let ctrl = JSON.parse(localStorage.eb_form_control);
-                let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
-                let copiedCtrl = this.getCopiedCtrl(ctrl);
-                let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl);
-                let offset = $e.closest('.context-menu-list').offset();
-                $('#context-menu-layer').css('z-index', 0);
-            let $clickedEl = $('.context-menu-active');//$(document.elementFromPoint(offset.left, offset.top - 1));
+            let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
+            let copiedCtrl = this.getCopiedCtrl(ctrl);
+            let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl);
+            let offset = $e.closest('.context-menu-list').offset();
+            $('#context-menu-layer').css('z-index', 0);
+            $('.context-menu-list.context-menu-root').css('z-index', 0);
+            let $clickedEl = $(document.elementFromPoint(offset.left, offset.top));//$('.context-menu-active');//
             let $clickedColTile = $clickedEl.closest('[ebsid]');
             let clickedCtrl = $clickedColTile[0].hasAttribute('eb-root-obj-container') ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
 
-                if (clickedCtrl.IsContainer) {
-                    clickedCtrl.Controls.$values.push(copiedCtrl);
-                    ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
-                }
-                else {
-                    if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
-                        this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
-                        $copiedCtrl.insertAfter($clickedColTile);
-                    }
-                }
-
-                let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
-                for (let i = 0; i < flatControlsModified.length; i++) {
-                    this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
-                }
-
-                EbBlink(copiedCtrl, `[ebsid='${copiedCtrl.EbSid_CtxId}']`);
+            if (clickedCtrl.IsContainer) {
+                clickedCtrl.Controls.$values.push(copiedCtrl);
+                ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
             }
             else {
-                this.EbAlert.clearAlert("pasteError");
-                this.EbAlert.alert({
-                    id: "pasteError",
-                    head: "Copy again and try.",
-                    body: "Try after copying",
-                    type: "info",
-                    delay: 2100
-                });
+                if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
+                    this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
+                    $copiedCtrl.insertAfter($clickedColTile);
+                }
             }
+
+            let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
+            for (let i = 0; i < flatControlsModified.length; i++) {
+                this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
+            }
+            this.pushElmsToDraggable($copiedCtrl);
+            EbBlink(copiedCtrl, `[ebsid='${copiedCtrl.EbSid_CtxId}']`);
+        }
+        else {
+            this.EbAlert.clearAlert("pasteError");
+            this.EbAlert.alert({
+                id: "pasteError",
+                head: "Copy again and try.",
+                body: "Try after copying",
+                type: "info",
+                delay: 2100
+            });
+        }
     }.bind(this);
 
+    this.pushElmsToDraggable = function ($copiedCtrl) {
+        $copiedCtrl.closestInners('.ebcont-inner').each(function (i, el) {
+            if (this.DraggableConts.contains(el))
+                console.eb_log('already contains')
+            else
+                this.DraggableConts.push(el);
+        }.bind(this));
+
+    };
 
     this.dropedCtrlInit = function ($ctrl, type, id) {
         $ctrl.attr("tabindex", "1");

@@ -14,6 +14,7 @@
             success: function (Columns) {
                 this.clearDependantProps("Columns");// destination name hard coding
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
+                getObjByval(this.PGobj.Metas, "name", "Columns").__isReloadedAfterInit = true;
                 this.PGobj.isBussy = false;
                 this.PGobj.refresh();
                 $.LoadingOverlay('hide');
@@ -38,9 +39,11 @@
                     callbackFn(allCols.$values);
                 }
                 this.PGobj.PropsObj[this.PGobj.CXVE.CurMeta.source] = allCols;
-                this.PGobj.CXVE.CurMeta.__isReloadedAfterInit = true;
+                getObjByval(this.PGobj.Metas, "name", this.PGobj.CXVE.CurMeta.source).__isReloadedAfterInit = true;
                 this.PGobj.CXVE.CEHelper();
+                let CurProp = this.PGobj.CurProp;
                 this.PGobj.refresh();
+                this.PGobj.CurProp = CurProp;
                 $.LoadingOverlay('hide');
             }.bind(this)
         });

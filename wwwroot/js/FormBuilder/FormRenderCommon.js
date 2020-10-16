@@ -96,7 +96,7 @@
     };
 
     this.bindValidators = function (control) {
-            $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
+        $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
     };
 
     this.setDisabledControls = function (flatControls) {
@@ -719,7 +719,10 @@
     };
 
     this.removeInvalidStyle = function (ctrl) {
-        EbMakeValid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, ctrl);
+        let contSel = `#cont_${ctrl.EbSid_CtxId}`;
+        if (ctrl.IsDGCtrl)
+            contSel = '#td_' + ctrl.EbSid_CtxId;
+        EbMakeValid(contSel, `.ctrl-cover`, ctrl);
     };
 
     // checks a control value is emptyString
@@ -743,6 +746,9 @@
         //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
         //    EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         //else
-        EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+        let contSel = '#td_' + ctrl.EbSid_CtxId;
+        if (ctrl.IsDGCtrl)
+            contSel = '#td_' + ctrl.EbSid_CtxId;
+        EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);
     };
 };

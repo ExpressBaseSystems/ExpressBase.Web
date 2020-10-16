@@ -759,6 +759,10 @@ function getSingleColumn(obj) {
     }
 })(jQuery);
 
+$.fn.closestInners = function (selector) {
+    return (this.is(selector) ? this.filter(selector).first() : $()).add(this.find(selector));
+};
+
 //JQuery extends ends
 
 //Object.defineProperty(window, "store", {

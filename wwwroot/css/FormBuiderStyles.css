@@ -1515,6 +1515,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .eb-lbltxtb {
     display: none;
+    width:100%;
     min-height: 16px !important;
     height: 16px !important;
     border: 1px solid rgba(34,36,38,.15);

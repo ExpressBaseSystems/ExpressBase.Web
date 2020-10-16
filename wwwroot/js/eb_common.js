@@ -305,9 +305,9 @@ function EbMakeValid(contSel, _ctrlCont, ctrl) {
         $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
 }
 
-function EbBlink(ctrl) {
-    $(`#${ctrl.EbSid_CtxId}Wraper`).addClass("ebblink");
-    setTimeout(function () { $(`#${ctrl.EbSid_CtxId}Wraper`).removeClass("ebblink"); }, 700);
+function EbBlink(ctrl, selector = `#${ctrl.EbSid_CtxId}Wraper`) {
+    $(selector).addClass("ebblink");
+    setTimeout(function () { $(selector).removeClass("ebblink"); }, 700);
 }
 
 

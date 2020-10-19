@@ -337,7 +337,10 @@
     };
 
     this.refreshCEFromSrc = function () {
-        this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp)
+        if (this.PGobj.PropsObj.IsDataFromApi)
+            this.PGobj.PGHelper.UrlReInit(this.setOldSelectionByResettingProp);
+        else
+            this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp);
     }.bind(this);
 
     this.setOldSelectionByResettingProp = function (allCols) {

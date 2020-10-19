@@ -49,7 +49,7 @@
         });
     }.bind(this);
 
-    this.UrlReInit = function (opt) {
+    this.UrlReInit = function (opt, callbackFn) {
         if (getObjByval(this.PGobj.Metas, "name", "Columns") === undefined)
             return;
 

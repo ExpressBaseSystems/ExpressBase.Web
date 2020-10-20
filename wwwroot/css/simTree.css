@@ -144,7 +144,56 @@
 
 
 /*custom css*/
-.locs_bdy ul.sim-tree a {
+.treeviewMdlCls .treeviewMdlBody {
+    overflow: auto;
+    padding: 15px 15px 15px 15px;
+    max-height: 50vh;
+    overflow-y: auto;
+    min-height: 50vh;
+    border: .5px solid #d4d4d4;
+}
+
+.treeviewMdlBox .treeviewMdlHder .treeview_search {
+    display: flex;
+    align-items: center;
+    float: right;
+}
+
+.treeviewMdlBox .treeviewMdlHder .treeview_crntItemWrp {
+    padding-top: 3px;
+}
+
+    .treeviewMdlBox .treeviewMdlHder .treeview_crntItemWrp span {
+        font-weight: 500;
+    }
+
+        .treeviewMdlBox .treeviewMdlHder .treeview_crntItemWrp span i {
+            font-size: 16px;
+            color: green;
+        }
+.treeviewMdlBox .treeviewMdlHder .treeviewMdlClose {
+    float: right;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: .5;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .4;
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.treeviewMdlBox .treeviewMdlHder .treeview_search input {
+    height: 30px;
+    padding-left: 35px;
+}
+.treeviewMdlBox .treeviewMdlHder .treeview_search_div {
+    display: flex;
+    align-items: center;
+    float: right;
+}
+.treeviewMdlBody ul.sim-tree a {
     margin: 3px 0px;
     padding: 6px 3px;
     width: 95%;
@@ -156,24 +205,24 @@
     /*box-shadow: -1px 2px 4px 1px #b5b5b547;*/
 }
 
-    .locs_bdy ul.sim-tree a:focus {
+    .treeviewMdlBody ul.sim-tree a:focus {
         outline: none;
     }
 
-    .locs_bdy ul.sim-tree a:hover {
+    .treeviewMdlBody ul.sim-tree a:hover {
         border-radius: 4px;
         background: #3586cc;
         color: white;
     }
 
-    .locs_bdy ul.sim-tree a span {
+    .treeviewMdlBody ul.sim-tree a span {
         display: flex;
         display: flow-root;
         font-size: 11px;
     }
 
 
-.locs_bdy ul.sim-tree .parent_path {
+.treeviewMdlBody ul.sim-tree .parent_path {
     display: inline-block;
     white-space: nowrap;
     overflow: hidden !important;
@@ -182,7 +231,7 @@
     width: 60%;
 }
 
-.locs_bdy ul.sim-tree .loc_typ {
+.treeviewMdlBody ul.sim-tree .loc_typ {
     display: inline-block;
     white-space: nowrap;
     overflow: hidden !important;
@@ -190,7 +239,7 @@
     float: right;
     padding-left: 10%;
     width: 30%;
-} 
+}
 
 
 div[ctype="LocationSelector"]
@@ -239,6 +288,7 @@ div[ctype="LocationSelector"] .sim-tree {
         margin-top: -4px;
         /*display: none;*/
     }
+
         div[ctype="LocationSelector"] .sim-tree .sim-tree-checkbox.sim-tree-semi, .sim-tree .sim-tree-checkbox.checked {
             border: none;
             background-color: #247;

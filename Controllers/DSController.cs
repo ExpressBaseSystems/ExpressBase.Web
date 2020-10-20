@@ -107,13 +107,43 @@ namespace ExpressBase.Web.Controllers
         public DashboardControlReturn GetData4DashboardControl(string DataSourceRefId, List<Param> param)
         {
             DataSourceDataSetResponse columnresp = this.ServiceClient.Post<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = DataSourceRefId , Params = param  });
+            DashboardControlReturn obj = new DashboardControlReturn();
+            try
+            {
+                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
-            var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                 var Columns = GetColumns(__columns);
+                if (columnresp != null && columnresp.DataSet != null && columnresp.DataSet.Tables[0] !=null && columnresp.DataSet.Tables[0].Rows[0] !=null &&  columnresp.DataSet.Tables[0].Rows[0].Count > 0 )
+                {
+                    var _row = columnresp.DataSet.Tables[0].Rows[0];
+                    obj = new DashboardControlReturn { Columns = EbSerializers.Json_Serialize(Columns), Row = _row };
+                }
+                else
+                {
+                    EbDataRow row = new EbDataRow();
+                    foreach (var abc in __columns)
+                    {
+                        if (abc.Type == EbDbTypes.Int32 || abc.Type == EbDbTypes.Int64 || abc.Type == EbDbTypes.Int16 || abc.Type == EbDbTypes.Int)
+                            row.Add(0); 
+                        else if (abc.Type == EbDbTypes.UInt16 || abc.Type == EbDbTypes.UInt32 || abc.Type == EbDbTypes.UInt64)
+                            row.Add(0);
+                        else if (abc.Type == EbDbTypes.Decimal || abc.Type == EbDbTypes.Double )
+                            row.Add(0.0);
+                        else if (abc.Type == EbDbTypes.Boolean || abc.Type == EbDbTypes.BooleanOriginal || abc.Type == EbDbTypes.Byte)
+                            row.Add(false);
+                        else
+                            row.Add("");
+                    }
+                    obj = new DashboardControlReturn { Columns = EbSerializers.Json_Serialize(Columns), Row = row };
+                }
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message, e.StackTrace);
+            }
 
-            var Columns = GetColumns(__columns);
-            var _row = columnresp.DataSet.Tables[0].Rows[0];
-
-            return new DashboardControlReturn { Columns =EbSerializers.Json_Serialize( Columns), Row = _row };
+            return obj;
         }
     }
 

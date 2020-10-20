@@ -182,11 +182,11 @@ function ExecQuery(refId, ctrlName, params, ctrl) {
 
 function getObjByval(ObjArray, key, val) {
     if (ObjArray === undefined) {
-        console.error("ObjArray undefined");
+        console.eb_log("ObjArray undefined");
         return false;
     }
     if (val === undefined) {
-        console.error("value undefined");
+        console.eb_log("value undefined");
         return false;
     }
     try {

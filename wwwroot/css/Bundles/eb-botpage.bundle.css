@@ -8582,6 +8582,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .eb-lbltxtb {
     display: none;
+    width:100%;
     min-height: 16px !important;
     height: 16px !important;
     border: 1px solid rgba(34,36,38,.15);
@@ -9959,12 +9960,15 @@ input.locinp {
     bottom: 1px;
     right: 1px;
     padding: 7px;
+    background-color: #eaeaea;
 }
 
     .phnContextBtn i {
         display: inline-block;
     }
-
+    .phnContextBtn:hover {
+        cursor: pointer;
+    }
 /*ebEmail control*/
 .emailCtrl_invalid {
     background: #ffb2b24f;

@@ -1272,7 +1272,7 @@ const WebFormRender = function (option) {
             if (event.which === 78) {
                 event.preventDefault();
                 if ($("#webformnew").css("display") !== "none")
-                    window.location.href = window.location.href;
+                    this.startNewMode();
             }
         }
     }.bind(this);

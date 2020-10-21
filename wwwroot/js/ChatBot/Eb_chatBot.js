@@ -1,6 +1,6 @@
 ﻿//import { Array, Object } from "core-js/library/web/timers";
 
-var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl) {
+var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, ebENV,_serverEventUrl) {
     console.log("chatbot.js loaded for bot " + _appid);
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
@@ -243,7 +243,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
                 "user_name": this.userDtls.name || null,
-                "token": this.recaptcha_tkn
+                "token": this.recaptcha_tkn || "nhjsnbnby-edrjewrh"
             }, function (result) {
                 this.hideTypingAnim();
                 if (result.status === false) {
@@ -2043,7 +2043,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     "uname": uname,
                     "is_email": is_email,
                     "is_mobile": is_mobile,
-                    "token": this.recaptcha_tkn
+                    "token": this.recaptcha_tkn || "nhjsnbnby-edrjewrh"
                 },
                 success: function (result) {
                     this.hideTypingAnim();
@@ -2078,7 +2078,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
                 "otptype": this.botflg.otptype,
-                "token": this.recaptcha_tkn
+                "token": this.recaptcha_tkn || "nhjsnbnby-edrjewrh"
             },
             success: function (result) {
                 this.hideTypingAnim();
@@ -2321,19 +2321,35 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.submitAnonymous = function (e) {
         this.botflg.login_call_to = "authenticateAnon";
-        grecaptcha.execute();
+        if (ebENV == "Production") {
+            grecaptcha.execute();
+        }
+        else {
+            this.authenticateAnon();
+        }
+       
     }.bind(this);
 
     this.submitpasswordLogin = function (e) {
         $(e.target).closest('button').attr('disabled', true);
         this.botflg.login_call_to = "passwordLoginFn";
-        grecaptcha.execute();
+        if (ebENV == "Production") {
+            grecaptcha.execute();
+        }
+        else {
+            this.passwordLoginFn();
+        }
     }.bind(this);
 
     this.submitotpLoginFn = function (e) {
         $(e.target).closest('button').attr('disabled', true);
         this.botflg.login_call_to = "otpLoginFn";
-        grecaptcha.execute();
+        if (ebENV == "Production") {
+            grecaptcha.execute();
+        }
+        else {
+            this.otpLoginFn();
+        }
     }.bind(this);
 
     window.RecaptchaCallback = function (token) {

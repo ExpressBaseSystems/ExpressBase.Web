@@ -12,15 +12,15 @@
             this.insertButton(html);
 
             let docbtn = `
-              <li class="nav-item">
-                <a class="nav-link @active@" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
                 <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
                 </a>
               </li>`;
 
             let vidbtn = `
-              <li class="nav-item">
-                <a class="nav-link @active@" id="${obj.EbSid_CtxId}-vidtab" data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
                     <i class="icofont-ui-video-play"></i> Video
                 </a>
               </li>`;
@@ -74,7 +74,8 @@
                 HelpHtml = HelpHtml.replace('@vidbtn@', '').replace('@vidContent@', '')
             }
 
-            HelpHtml = HelpHtml.replace('@activein@', 'active in').replace('@activein@', '').replace('@active@', '').replace('@active@', '');
+            HelpHtml = HelpHtml.replace('@activein@', 'active in').replace('@activein@', '')
+                .replace('@active@', 'active').replace('@active@', '');
 
             $("body").append(HelpHtml);
 
@@ -119,21 +120,20 @@
 
     this.getVidTabsHtml = function (obj) {
         let vidbtn = "";
-        let vidContent = "";
+        let vidContents = "";
         for (let i = 0; i < obj.InfoVideoURLs.$values.length; i++) {
-            debugger;
             let URL = obj.InfoVideoURLs.$values[i];
             if (URL.Hide)
                 continue;
 
             vidbtn += `
-              <li class="nav-item">
-                <a class="nav-link @active@" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">
                     <i class="fa fa-play-circle"></i> ${URL.Title}
                 </a>
               </li>`;
 
-            vidContent += `
+            vidContents += `
               <div class="tab-pane fade @activein@" id="${URL.EbSid}video" is-video="true" role="tabpanel" aria-labelledby="${URL.EbSid}-tab">
                 <iframe src="${URL.URL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>`;
@@ -146,11 +146,11 @@
                       ${vidbtn}
                     </ul>
                     <div class="tab-content" id="myTabContent">
-                        ${vidContent}
+                        ${vidContents}
                     </div>
                 </div>
-            `.replace('@activein@', 'active in').replace('@activein@', '')
-            .replace('@active@', '').replace('@active@', '');
+            `.replace('@activein@', 'active in').replace(/@activein@/g, '')
+            .replace('@active@', 'active').replace('@active@', '');
 
         return tabBody;
     }

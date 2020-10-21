@@ -420,20 +420,22 @@ body {
     .dg-commit-dilog-msgbox .fa-check {
         color: #019a01;
     }
+
     .dg-commit-dilog-msgbox .fa-trash {
         color: #f55d5d;
     }
+
     .dg-commit-dilog-msgbox .fa-table {
         color: #555;
     }
 
 
-    .dgtr:focus {
-        /*border: solid 1px rgb(85, 94, 167) !important;*/
-        /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
-        box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
-        outline: 0 none;
-    }
+.dgtr:focus {
+    /*border: solid 1px rgb(85, 94, 167) !important;*/
+    /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
+    box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
+    outline: 0 none;
+}
 
     .dgtr:focus > td {
         border-right: dotted 1px transparent !important;
@@ -1515,7 +1517,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .eb-lbltxtb {
     display: none;
-    width:100%;
+    width: 100%;
     min-height: 16px !important;
     height: 16px !important;
     border: 1px solid rgba(34,36,38,.15);
@@ -2899,6 +2901,7 @@ input.locinp {
     .phnContextBtn i {
         display: inline-block;
     }
+
     .phnContextBtn:hover {
         cursor: pointer;
     }
@@ -2945,6 +2948,28 @@ input.locinp {
 [class='eb-tab-warn-icon-cont'] {
     display: none;
 }
+
+.info-tab-body {
+    height: calc(100% - 30px);
+}
+
+    .info-tab-body .nav-tabs > li > a {
+        border: none;
+        border-radius: 0;
+        padding: 4px 6px;
+        margin: 1px;
+        font-size: 13px;
+    }
+
+    .info-tab-body .nav-tabs > li.active > a, .info-tab-body .nav-tabs > li.active > a:focus, .info-tab-body .nav-tabs > .info-tab-body li.active > a:hover {
+        border: none;
+        border-right: 1.5px solid #5555550d;
+        border-left: 1.5px solid #5555550d;
+        background-color: #508bf90a;
+        border-bottom: 2px solid #0147f2;
+        color: #333;
+        font-size: 13px;
+    }
 
 .obj-hlp-iframe {
     width: 100%;

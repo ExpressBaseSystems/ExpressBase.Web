@@ -5,7 +5,7 @@
     var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
     this.addRootObjectHelp = function (obj) {
-        let AvailableDocs = { isPdf: (obj.Info && (!!obj.Info.trim())), isVideo: (obj.InfoVideoURL && (!!obj.InfoVideoURL.trim())) };
+        let AvailableDocs = { isPdf: (obj.Info && (!!obj.Info.trim())), isVideo: (obj.InfoVideoURLs && obj.InfoVideoURLs.$values.length > 0) };
 
         if (AvailableDocs.isPdf || AvailableDocs.isVideo) {
             let html = `<button id="${obj.EbSid_CtxId}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
@@ -32,7 +32,7 @@
 
             let vidContent = `
               <div class="tab-pane fade @activein@" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
-                <iframe src="${obj.InfoVideoURL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                ${this.getVidTabsHtml(obj)}
               </div>`;
 
             let HelpHtml = `
@@ -101,7 +101,13 @@
 
 
             $(`#${obj.EbSid}infoCont .hnewt`).on("click", function () {
-                let extURL = ($(`#${obj.EbSid}infoCont .tab-pane.active`).attr('is-video') === "true") ? obj.InfoVideoURL : `/files/${obj.Info}.pdf`
+                let extURL;
+                if ($(`#${obj.EbSid}infoCont .tab-pane.active`).attr('is-video') === "true") {
+                    extURL = getObjByval(obj.InfoVideoURLs.$values, "EbSid", $('.info-tab-body .nav-item.active a').attr('id').replace(/\-vidtab$/, '')).URL
+                }
+                else {
+                    extURL = `/files/${obj.Info}.pdf`;
+                }
                 window.open(extURL, '_blank');
             }.bind(this));
         }
@@ -110,6 +116,44 @@
     this.objhelpHide = function () {
         this.$infoModal.hide();
     }.bind(this)
+
+    this.getVidTabsHtml = function (obj) {
+        let vidbtn = "";
+        let vidContent = "";
+        for (let i = 0; i < obj.InfoVideoURLs.$values.length; i++) {
+            debugger;
+            let URL = obj.InfoVideoURLs.$values[i];
+            if (URL.Hide)
+                continue;
+
+            vidbtn += `
+              <li class="nav-item">
+                <a class="nav-link @active@" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">
+                    <i class="fa fa-play-circle"></i> ${URL.Title}
+                </a>
+              </li>`;
+
+            vidContent += `
+              <div class="tab-pane fade @activein@" id="${URL.EbSid}video" is-video="true" role="tabpanel" aria-labelledby="${URL.EbSid}-tab">
+                <iframe src="${URL.URL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>`;
+        }
+
+
+        let tabBody = `
+                <div class='info-tab-body'>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      ${vidbtn}
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        ${vidContent}
+                    </div>
+                </div>
+            `.replace('@activein@', 'active in').replace('@activein@', '')
+            .replace('@active@', '').replace('@active@', '');
+
+        return tabBody;
+    }
 
     this.infoModalStop = function () {
         this.$infoModal.attr("dragging", "true");

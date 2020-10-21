@@ -658,6 +658,16 @@
                     //this.FO.DGsB4SaveActions();
                     this.FO.saveForm_call();
                 }
+            }.bind(this),
+            error: function (error) {
+                if (isFromCtrl) {
+                    hide_inp_loader($ctrl_, this.FO.$saveBtn);
+                    EbMessage("show", { Message: `Unique check for ${controls[0].Label || controls[0].Name} failed`, AutoHide: true, Background: '#aa0000' });
+                }
+                else {
+                    this.FO.hideLoader();
+                    EbMessage("show", { Message: `Unique check failed`, AutoHide: true, Background: '#aa0000' });
+                }
             }.bind(this)
         });
     };

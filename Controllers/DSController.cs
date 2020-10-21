@@ -106,11 +106,11 @@ namespace ExpressBase.Web.Controllers
 
         public DashboardControlReturn GetData4DashboardControl(string DataSourceRefId, List<Param> param)
         {
-            DataSourceDataSetResponse columnresp = this.ServiceClient.Post<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = DataSourceRefId , Params = param  });
             DashboardControlReturn obj = new DashboardControlReturn();
             try
             {
-                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                DataSourceDataSetResponse columnresp = this.ServiceClient.Post<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = DataSourceRefId, Params = param });
+                var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
                  var Columns = GetColumns(__columns);
                 if (columnresp != null && columnresp.DataSet != null && columnresp.DataSet.Tables[0] !=null && columnresp.DataSet.Tables[0].Rows[0] !=null &&  columnresp.DataSet.Tables[0].Rows[0].Count > 0 )

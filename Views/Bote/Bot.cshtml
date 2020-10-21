@@ -217,7 +217,7 @@
                 html.style.setProperty("--eb-bot-bg-color", `url("/botExt/images/original/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
             }
         }
-        chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.cid','@ViewBag.ServiceUrl', ServerEventUrl);
+        chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.cid','@ViewBag.ServiceUrl', '@ViewBag.Env',ServerEventUrl);
 
         //$.get("https://ipinfo.io", function (response) {
         //    chatBotObj.userDtls.ip = response.ip;

@@ -49,6 +49,46 @@
         });
     }.bind(this);
 
+    this.UrlReInit = function (opt, callbackFn) {
+        if (getObjByval(this.PGobj.Metas, "name", "Columns") === undefined)
+            return;
+
+        $.LoadingOverlay('show');
+        this.PGobj.isBussy = true;
+        $.ajax({
+            type: "POST",
+            url: opt.url,
+            data: { url: opt.apiUrl, headers: opt.headers, parameters: opt.parameters, method: opt.method },
+            success: function (Columns) {
+                if (Columns === "null") {
+                    this.PGobj.EbAlert.alert({
+                        head: "Something went Wrong .",
+                        body: "Couldn't fetch columns.",
+                        type: "danger",
+                        delay: 5000
+                    });
+                }
+                else {
+                    this.PGobj.isBussy = false;
+                    let allCols = JSON.parse(Columns);
+                    if (callbackFn) {
+                        callbackFn(allCols.$values);
+                    }
+                    this.PGobj.PropsObj[this.PGobj.CXVE.CurMeta.source] = allCols;
+                    getObjByval(this.PGobj.Metas, "name", this.PGobj.CXVE.CurMeta.source).__isReloadedAfterInit = true;
+                    this.PGobj.CXVE.CEHelper();
+                    let CurProp = this.PGobj.CurProp;
+                    this.PGobj.refresh();
+                    this.PGobj.CurProp = CurProp;
+
+
+                }
+                this.PGobj.isBussy = false;
+                $.LoadingOverlay('hide');
+            }.bind(this)
+        });
+    }.bind(this);
+
     this.UrlInit = function (opt) {
         if (getObjByval(this.PGobj.Metas, "name", "Columns") === undefined)
             return;

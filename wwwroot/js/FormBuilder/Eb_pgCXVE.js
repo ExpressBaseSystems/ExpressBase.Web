@@ -337,7 +337,18 @@
     };
 
     this.refreshCEFromSrc = function () {
-        this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp)
+        if (this.PGobj.PropsObj.IsDataFromApi) {
+            let opt = {
+                url: "../DS/GetColumnsFromApi",
+                apiUrl: this.PGobj.PropsObj.Url,
+                headers: this.PGobj.PropsObj.Headers,
+                //parameters: this.PGobj.PropsObj.Parameters,
+                method: this.PGobj.PropsObj.Method
+            }
+            this.PGobj.PGHelper.UrlReInit(opt, this.setOldSelectionByResettingProp);
+        }
+        else
+            this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp);
     }.bind(this);
 
     this.setOldSelectionByResettingProp = function (allCols) {

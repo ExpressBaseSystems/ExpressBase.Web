@@ -71,6 +71,7 @@
 }
 @section JavaScript{
     <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/LocationTreeView.js" asp-append-version=@bApnd></script>
 }
 <div class="row s-dash-container h-100">
     @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
@@ -195,17 +196,21 @@
                     </div>
                     <div class="sub-head" style="padding: 20px 0px 20px 0px;">Preferences</div>
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="myLabel">Default Location</label>
-                                <select id="selDefaultLoc" class="form-control myTextField" title="Default Location"></select>
+                        <div class="col-md-4">                           
+                            <label class="myLabel">Default Location</label>
+                            <div class="input-group ">
+                                <input type="text" id="selDefaultLoc" class="form-control myTextField" placeholder="Default Location" disabled autocomplete="off" name="Def_Location">
+                                <div class="input-group-btn">
+                                    <button id="btnDefaultLoc" class="btn eb_btnblue eb_btn_md myTextField" type="submit">Select</button>
+                                </div>
                             </div>
                         </div>
+
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="myLabel">Locale</label>
                                 <select id="selLocale" class="form-control myTextField" title="Locale">
-                                    @foreach(ExpressBase.Common.Singletons.Culture cult in ViewBag.Cultures)
+                                    @foreach (ExpressBase.Common.Singletons.Culture cult in ViewBag.Cultures)
                                     {
                                         <option>@cult.Name</option>
                                     }
@@ -291,8 +296,8 @@
 </div>
 
 <script>
-
-    $('#tenantProLink').click(function (e) {
+    $(document).ready(function(){
+  $('#tenantProLink').click(function (e) {
         let cl = window.location.href;
         let sp1 = cl.split('//');
         let sp2 = sp1[1].split('.');
@@ -339,6 +344,7 @@
             //this.menuBarObj.insertButton(`<button id="btnSaveMyProf" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
 
             $("#btnSaveMyProf").on('click', this.clickbtnSaveMyProf.bind(this));
+            $("#btnDefaultLoc").on('click', this.toggleLocatonModal.bind(this));
             this.$btnUpdatePwd.on('click', this.clickbtnUpdatePwd.bind(this))
 
             this.$ChangePwdModal.on('shown.bs.modal', function (e) {
@@ -347,11 +353,7 @@
                 this.$pwdNewConfirm.val("");
                 this.$btnUpdatePwd.prop("disabled", false);
                 $(this.$btnUpdatePwd.children()[0]).hide();
-            }.bind(this));
-
-            $.each(this.LocsData, function (key, val) {
-                this.$DefaultLoc.append(`<option value='${val}'>${key}</option>`);
-            }.bind(this));
+            }.bind(this));           
 
             this.initFormData();
         }
@@ -367,11 +369,15 @@
             this.$PhLand.val(this.UserData["landline"]);
             this.$PhExt.val(this.UserData["phextension"]);
             if (this.UserData["preferencesjson"]) {
-                let pobj = JSON.parse(this.UserData["preferencesjson"]);
-                this.$Locale.val(pobj.Locale);
-                this.$Timezone.val(pobj.TimeZone);
-                this.$DefaultLoc.val(pobj.DefaultLocation);
-                this.$DefaultDashBoard.val(pobj.DefaultDashBoard);
+                this.pobj = JSON.parse(this.UserData["preferencesjson"]);
+                this.$Locale.val(this.pobj.Locale);
+                this.$Timezone.val(this.pobj.TimeZone);               
+                if (this.pobj.DefaultLocation > 0) {
+                     let locName =ebcontext.locations.Locations.filter(el => el.LocId === parseInt(this.pobj.DefaultLocation))[0];
+                    this.$DefaultLoc.val(locName.LongName);
+                }
+                this.$DefaultLoc.attr("loc_itemId",this.pobj.DefaultLocation);
+                this.$DefaultDashBoard.val(this.pobj.DefaultDashBoard);
             }
 
             if (this.mode !== 'user' || this.UserData['email'] === 'anonymous@anonym.com'){
@@ -410,7 +416,7 @@
             let tempobj = {
                 Locale: this.$Locale.val(),
                 TimeZone: this.$Timezone.val(),
-                DefaultLocation: parseInt(this.$DefaultLoc.val() || "-1"),
+                DefaultLocation: parseInt(this.$DefaultLoc.attr("loc_itemId") || "-1"),
                 DefaultDashBoard :  this.$DefaultDashBoard.val() || ""
             };
             let tempjson = JSON.stringify(tempobj);
@@ -430,7 +436,12 @@
             if (this.UserData[_key] !== _val)
                 this.OutDataList.push({ Key: _key, Value: _val });
         }
+        this.toggleLocatonModal = function () {
 
+         this.loc_treeView = new TreeView_plugin({current_item:this.$DefaultLoc.attr("loc_itemId"),elementAttrId:"selDefaultLoc"});
+         this.loc_treeView.toggleModal();
+
+    };
         this.clickbtnSaveMyProf = function () {
             if (this.prepareOutData()) {
                 $("#btnSaveMyProf").prop("disabled", true);
@@ -528,5 +539,8 @@
     d.windowClose = function () {
         EbMessage("show", { Message: "window closed",Background: "red" });
     }
+
+});
+
 
 </script>

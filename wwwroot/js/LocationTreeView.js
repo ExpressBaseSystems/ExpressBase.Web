@@ -1,37 +1,70 @@
 ﻿
 this.TreeView_plugin = function (options) {
-    let defaults = [{
-        FileName: ""
-        
-
-    }];
+    let defaults = {
+        checkItem: false,
+        linkParent: false,
+        //current_item: "-1",
+        //elementAttrId: "selDefaultLoc", ////for setting any attribute value or show value of selected item
+        //checkedItmId: finalLst, ////for 3 state check box- show checked items
+        //callBackFn: this.treeViewCallBackFn ////function to execute in invoked page when item is selected
+    };
     this.Data4SimTree = ebcontext.locations.loc_data;
     this.TreeRawData = ebcontext.locations.Locations;
     this.data = ebcontext.locations.data;
-    this.CurrentItem = parseInt(options.current_item) ;
-    this.item_parents = {};
-    this.item_parent_id = {};
-    
-    this.Settings = $.extend(defaults, options);
+    this.CurrentItem = parseInt(options.current_item);
+
+    this.Settings = $.extend({}, defaults, options);
     this.init = function () {
+        this.item_parents = {};
+        this.item_parent_id = {};
+        this.item_count = this.TreeRawData.length;
         this.Tempdata = this.Data4SimTree;
         this.createModal();
         //do seperate initilisation
         this.CurrentItemObj = this.TreeRawData.filter(el => el.LocId === parseInt(this.CurrentItem))[0];
         this.findParent_loc();
-        this.item_count = this.TreeRawData.length;
+       
         this.prevItem = this.CurrentItem;
         if (this.CurrentItemObj) {
             this.prev_item_name = this.CurrentItemObj.LongName || "";
-           // $(`#${this.Settings.elementAttrId}`).val(this.CurrentItemObj.LongName);
+            // $(`#${this.Settings.elementAttrId}`).val(this.CurrentItemObj.LongName);
         }
         this.drawLocsTree();
         this.setDefault();
 
+
         $("#treeView_OkBtn").off("click").on("click", this.selectItem.bind(this));
         $("#treeview_search").off("keyup").on("keyup", this.searchItems.bind(this));
-        $("#treeviewMdlBody").off("dblclick").on("dblclick", "li a", this.confirmItemFn.bind(this));
-        $("body").off("keydown").on("keydown", this.Keypress_selectItem.bind(this));
+
+        if (this.Settings.checkItem) {
+            var cLen = options.checkedItmId.length;
+            if (cLen > 0) {
+                for (var i = 0; i < cLen; i++) {
+                    var c = $('#treeviewMdlBody').find('[data-id=' + options.checkedItmId[i] + ']')
+                    c.find('.sim-tree-checkbox').eq(0).trigger('click');
+
+                    var y = c.parents('ul');
+                    if (y.length) {
+                        y.each(function () {
+                            let k = $(this).closest("li");
+                            if (k.length) {
+                                var m = k.find('.sim-tree-spread:first');
+                                if (m.hasClass('sim-icon-r'))
+                               m.trigger('click');
+                            }
+                        });
+                      
+                    }
+                }
+            }
+        }
+        else {
+            $("#treeviewMdlBody").off("dblclick").on("dblclick", "li a", this.confirmItemFn.bind(this));
+            $("body").off("keydown").on("keydown", this.Keypress_selectItem.bind(this));
+        }
+
+        $("#treeview_Itemcnt").text(this.item_count + " location");
+
     }
 
     this.createModal = function () {
@@ -56,7 +89,7 @@ this.TreeView_plugin = function (options) {
                             </div>
                             <div class="modal-footer" id="treeviewMdlftr">
                                  <span id="treeview_Itemcnt" class=" treeview_Itemcnt pull-left"></span>
-                                    <button class="ebbtn eb_btnblue eb_btn-sm treeView_OkBtn pull-right" id="treeView_OkBtn">Switch</button>
+                                    <button class="ebbtn eb_btnblue eb_btn-sm treeView_OkBtn pull-right" id="treeView_OkBtn">Select</button>
                             </div>
                         </div>
 
@@ -66,27 +99,49 @@ this.TreeView_plugin = function (options) {
         if (this.item_count > 20) {
             $(".treeviewMdlBody").css('min-height', '70vh');
         }
+        if (this.Settings.checkItem) {
+            $('#treeview_search').css('display', 'none');
+        }
     }
     this.ClickLocation = function (items) {
-        if (items.length > 0) {
-            $(".treeviewMdlBox .treeviewMdlBody li").removeClass("active-loc");
-            $(".treeviewMdlBox .treeviewMdlBody li[data-id=" + items[0].id + "]").addClass("active-loc").parents("ul").addClass("show");
-            if (this.PrevLocation != items[0].id) {
-                $("#treeView_OkBtn").prop("disabled", false);
+        if (!this.Settings.checkItem) {
+            if (items.length > 0) {
+                $(".treeviewMdlBox .treeviewMdlBody li").removeClass("active-loc");
+                $(".treeviewMdlBox .treeviewMdlBody li[data-id=" + items[0].id + "]").addClass("active-loc").parents("ul").addClass("show");
+                if (this.PrevLocation != items[0].id) {
+                    $("#treeView_OkBtn").prop("disabled", false);
+                }
+                else {
+                    $("#treeView_OkBtn").prop("disabled", true);
+                }
+                this.CurrentItem = items[0].id;
+                this.CurrentItemObj = this.TreeRawData.filter(el => el.LocId === parseInt(this.CurrentItem))[0];
             }
             else {
-                $("#treeView_OkBtn").prop("disabled", true);
-            }
-            this.CurrentItem = items[0].id;
-            this.CurrentItemObj = this.TreeRawData.filter(el => el.LocId === parseInt(this.CurrentItem))[0];
-        }
-        else {
-            if ($("#treeviewMdl").is(":visible")) {
-                if ($('#treeview_search').val() !== "") {
-                    this.setParentPath($('#treeview_search').val());
+                if ($("#treeviewMdl").is(":visible")) {
+                    if ($('#treeview_search').val() !== "") {
+                        this.setParentPath($('#treeview_search').val());
+                    }
                 }
             }
         }
+        else {
+            if (items.length > 0) {
+                $(".treeviewMdlBox .treeviewMdlBody li").removeClass("active-item");
+                this.Settings.checkedItmId = items.map(a => a.id);
+                for (var i = 0; i < items.length; i++) {
+                    $(".treeviewMdlBox .treeviewMdlBody li[data-id=" + items[i].id + "]").addClass("active-loc")
+                }
+            }
+            else {
+                if ($("#treeviewMdl").is(":visible")) {
+                    this.setParentPath($('#treeview_search').val());
+                }
+                $('#treeview_crntItem').text(`${items.length} locations selected `);
+
+            }
+        }
+
     };
 
     this.drawLocsTree = function () {
@@ -94,11 +149,14 @@ this.TreeView_plugin = function (options) {
             this.TreeApi = simTree({
                 el: $("#treeviewMdlBody"),
                 data: this.Tempdata,
-                check:  false,
-                linkParent:  false,
+                check: this.Settings.checkItem,
+                linkParent: this.Settings.linkParent,
                 onClick: this.ClickLocation.bind(this),
                 //onChange: this.ChangeLocationSelector.bind(this)
             });
+            if (this.Settings.checkItem) {
+                this.showContextMenu();
+            }
         }
         //else {
         //    $(EmptyLocs).show();
@@ -119,19 +177,34 @@ this.TreeView_plugin = function (options) {
     };
 
     this.selectItem = function (e) {
+        if (!this.Settings.checkItem) {
+            if (this.prevItem !== this.CurrentItem) {
+                this.prevItem = this.CurrentItem;
+                this.prev_item_name = this.CurrentItemObj.LongName;
+                $(`#${this.Settings.elementAttrId}`).attr("loc_itemId", this.CurrentItem);
+                $(`#${this.Settings.elementAttrId}`).val(this.CurrentItemObj.LongName);
+            }
+        }
        
-        if (this.prevItem !== this.CurrentItem) {
-            this.prevItem = this.CurrentItem;
-            this.prev_item_name = this.CurrentItemObj.LongName;
-            $(`#${this.Settings.elementAttrId}`).attr("loc_itemId", this.CurrentItem);
-            $(`#${this.Settings.elementAttrId}`).val(this.CurrentItemObj.LongName);
+        else {
+            var locLength = this.Settings.checkedItmId.length;
+            if (locLength > 0) {
+                let o = getObjByval(ebcontext.locations.Locations, 'LocId', this.Settings.checkedItmId[0]);
+                var k = (o.LongName === o.ShortName) ? o.LongName : `${o.LongName}(${o.ShortName})`;
+                if (locLength === 1) {
+                    $(`#${this.Settings.elementAttrId}`).val(k);
+                } else {
+                    $(`#${this.Settings.elementAttrId}`).val(`${k} and ${locLength - 1} other locations `);
+                }
+            }   
+            this.Settings.callBackFn();
         }
         $('#treeviewMdl').modal('toggle');
     };
-
+   
     this.searchItems = function (e) {
         let val = $(e.target).val().toLowerCase();
-        $( ".treeviewMdlBody").empty();
+        $(".treeviewMdlBody").empty();
         this.Tempdata = JSON.parse(JSON.stringify(this.data.filter(qq => qq.name.toLowerCase().indexOf(val) >= 0)));
         this.Tempdata.sort(function (a, b) {
             var textA = a.name.toUpperCase().trim();
@@ -139,18 +212,24 @@ this.TreeView_plugin = function (options) {
             return textA.localeCompare(textB);
         });
         if ($("#treeview_search").val() == "") {
-            $("#treeview_Itemcnt").text(this.loc_count + " location");
+            $("#treeview_Itemcnt").text(this.item_count + " location");
         }
         this.drawLocsTree();
         this.setDefault();
     };
 
     this.setDefault = function () {
-        if (this.CurrentItem > 0) {
-            let s = this.getParentPath(this.CurrentItem);
-            $('#treeview_crntItem').text(s);
-            $(".treeviewMdlBox").find(`li[data-id='${this.CurrentItem}'] a`).eq(0).trigger("click");
-        }            
+        if (!this.Settings.checkItem) {
+            if (this.CurrentItem > 0) {
+                let s = this.getParentPath(this.CurrentItem);
+                $('#treeview_crntItem').text(s);
+                $(".treeviewMdlBox").find(`li[data-id='${this.CurrentItem}'] a`).eq(0).trigger("click");
+            }
+        }
+        else {
+            $('#treeview_crntItem').text(`${this.Settings.checkedItmId.length} locations selected `);
+        }
+
     };
 
     this.getParentPath = function (k) {
@@ -158,8 +237,7 @@ this.TreeView_plugin = function (options) {
             let m = "";
             for (let i = 0; i < this.item_parents[k].length; i++) {
                 m += this.item_parents[k][i];
-                if (i < this.item_parents[k].length - 1)
-                { m += " > "; }
+                if (i < this.item_parents[k].length - 1) { m += " > "; }
                 else if (i == this.item_parents[k].length - 1) {
                     let idx = this.TreeRawData.findIndex(x => x.LocId === k);
                     m += " (" + this.TreeRawData[idx].ShortName + ")";
@@ -355,6 +433,34 @@ this.TreeView_plugin = function (options) {
         }
 
     }
+    this.showContextMenu = function () {
+        this.TreeApi.data.map(el => (el.children) ? $(`#treeviewMdlBody [data-id='${el.id}']`).addClass("parentNode") : $(`[data-id='${el.id}']`).addClass("childNode"));
+        $.contextMenu({
+            selector: ".parentNode",
+            events: {
+                show: function (options) {
+                    if ($(event.target).closest("li").hasClass("childNode"))
+                        return false;
+                }
+            },
+            items: {
+                "SelectAll": { name: "Select All", icon: "fa-check-square-o", callback: this.SelectAll.bind(this) },
+                "DeSelectAll": { name: "DeSelect All", icon: "fa-square-o", callback: this.DeSelectAll.bind(this) }
+            }
+        });
+    }
+
+
+    this.SelectAll = function (key, opt, event) {
+        opt.$trigger.find(".sim-tree-checkbox").toArray()
+            .map(el => $(el).hasClass("checked") ? console.log("checked") : $(el).trigger("click"));
+    };
+
+    this.DeSelectAll = function (key, opt, event) {
+        opt.$trigger.find(".sim-tree-checkbox").toArray()
+            .map(el => $(el).hasClass("checked") ? $(el).trigger("click") : console.log("Unchecked"));
+    };
+
     this.toggleModal = function () {
         $('#treeviewMdl').modal('toggle');
     }

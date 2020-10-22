@@ -103,6 +103,10 @@
         this.btnChangePassword.on("click", this.initChangePwdModal.bind(this));
         this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
 
+
+        $('#btnlocWhiteLst').on('click', this.setLocConstrainFn.bind(this));
+
+
         //RESET PWD
         this.btnResetPassword.on("click", this.initResetPwdModal.bind(this));
         this.btnResetPwd.on('click', this.resetPassword.bind(this));
@@ -123,9 +127,10 @@
         if (this.whichMode === 2)
             this.setReadOnly();
         //this.DpImageUpload();
-        this.setLocConstraintDiv();
-    };
 
+      //  this.setLocConstraintDiv();////taginput location constraint
+        this.showConstrainFn();
+    };
 
     //this.DpImageUpload = function () {
     //    var logoCrp = new cropfy({
@@ -143,57 +148,108 @@
 
     //    }.bind(this);
     //};
-
-    this.setLocConstraintDiv = function () {
-        var _locArr = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: $.map(ebcontext.locations.Locations, function (loc) { return { id: loc.LocId, name: loc.ShortName + ' - ' + loc.LongName }; })
+    this.showConstrainFn = function () {
+        var locItems = $.map(this.LocCntr.curItems, function (value, index) {
+            return [value];
         });
-        _locArr.initialize();
-
-        this.txtLocations.tagsinput({
-            typeaheadjs: [
-                {
-                    highlight: false
-                },
-                {
-                    name: 'Locations',
-                    displayKey: 'name',
-                    valueKey: 'id',
-                    source: _locArr.ttAdapter()
-                }
-            ],
-            itemValue: 'name',
-            freeInput: false
-        });
-
-        this.txtLocations.on('itemAdded', function (event) {
-            //console.log(event.item);
-            if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
-                this.LocCntr.options.deleted.splice(this.LocCntr.options.deleted.indexOf(this.LocCntr.curItems[event.item.id]), 1);
+        var locLength = locItems.length;
+        if (locLength > 0) {
+            let o = getObjByval(ebcontext.locations.Locations, 'LocId', locItems[0]);
+            var k = (o.LongName === o.ShortName) ? o.LongName : `${o.LongName}(${o.ShortName})`;           
+            if (locLength === 1) {               
+                $('#locWhiteLst').val(k);
             }
             else {
-                this.LocCntr.options.added.push(event.item.id);
+                $('#locWhiteLst').val(`${k} and ${locLength-1} other locations `)
             }
-        }.bind(this));
+        }       
+    }
 
-        this.txtLocations.on('itemRemoved', function (event) {
-            //console.log(event.item);
-            if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
-                this.LocCntr.options.deleted.push(getKeyByVal(this.LocCntr.curItems, event.item.id));
+    function treeViewGetItem() {
+        var cItems = this.loc_treeView.Settings.checkedItmId;
+        var delItems = [];
+        var addItems = [];
+        var temp = [];
+        var locCurnt = Object.values(this.LocCntr.curItems);
+        for (var i = 0; i < cItems.length; i++) {
+            var idx = $.inArray(cItems[i], locCurnt);
+            if (idx == -1) {
+                addItems.push(cItems[i]);
             }
-            else {
-                this.LocCntr.options.added.splice(this.LocCntr.options.added.indexOf(event.item.id), 1);
-            }
-        }.bind(this));
+        }
+        let cArray = locCurnt.concat(addItems);
+        temp = cArray.filter((item, index) => cArray.indexOf(item) === index);
 
-        $.each(this.LocCntr.curItems, function (i, ob) {
-            let o = getObjByval(ebcontext.locations.Locations, 'LocId', ob);
-            $('#txtLocations').tagsinput('add', { id: o.LocId, name: o.ShortName + ' - ' + o.LongName });
-        }.bind(this));
-        //$('#txtLocations').tagsinput('add', { id: 100, name: 'AERE - AL EID REAL ESTATE.DUBAI.' });
+        delItems = temp.filter((el) => !cItems.includes(el));
+        this.LocCntr.options.added = addItems;
+        this.LocCntr.options.deleted = delItems;
     };
+
+    this.treeViewCallBackFn = treeViewGetItem.bind(this);
+
+    this.setLocConstrainFn = function () {
+        let arr = Object.values(this.LocCntr.curItems);
+        let cArray = arr.concat(this.LocCntr.options.added);
+        var finalLst = cArray.filter((item, index) => cArray.indexOf(item) === index);
+        for (var i = 0; i < this.LocCntr.options.deleted.length; i++) {
+            finalLst.splice(finalLst.indexOf(this.LocCntr.options.deleted[i]), 1);
+        }
+        this.loc_treeView = new TreeView_plugin({
+            current_item: "-1", elementAttrId: "locWhiteLst", checkItem: true, linkParent: false, checkedItmId: finalLst, callBackFn: this.treeViewCallBackFn
+        });
+        this.loc_treeView.toggleModal();
+    }
+
+    //this.setLocConstraintDiv = function () {
+    //    var _locArr = new Bloodhound({
+    //        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    //        queryTokenizer: Bloodhound.tokenizers.whitespace,
+    //        local: $.map(ebcontext.locations.Locations, function (loc) { return { id: loc.LocId, name: loc.ShortName + ' - ' + loc.LongName }; })
+    //    });
+    //    _locArr.initialize();
+
+    //    this.txtLocations.tagsinput({
+    //        typeaheadjs: [
+    //            {
+    //                highlight: false
+    //            },
+    //            {
+    //                name: 'Locations',
+    //                displayKey: 'name',
+    //                valueKey: 'id',
+    //                source: _locArr.ttAdapter()
+    //            }
+    //        ],
+    //        itemValue: 'name',
+    //        freeInput: false
+    //    });
+
+    //    this.txtLocations.on('itemAdded', function (event) {
+    //        //console.log(event.item);
+    //        if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
+    //            this.LocCntr.options.deleted.splice(this.LocCntr.options.deleted.indexOf(this.LocCntr.curItems[event.item.id]), 1);
+    //        }
+    //        else {
+    //            this.LocCntr.options.added.push(event.item.id);
+    //        }
+    //    }.bind(this));
+
+    //    this.txtLocations.on('itemRemoved', function (event) {
+    //        //console.log(event.item);
+    //        if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
+    //            this.LocCntr.options.deleted.push(getKeyByVal(this.LocCntr.curItems, event.item.id));
+    //        }
+    //        else {
+    //            this.LocCntr.options.added.splice(this.LocCntr.options.added.indexOf(event.item.id), 1);
+    //        }
+    //    }.bind(this));
+
+    //    $.each(this.LocCntr.curItems, function (i, ob) {
+    //        let o = getObjByval(ebcontext.locations.Locations, 'LocId', ob);
+    //        $('#txtLocations').tagsinput('add', { id: o.LocId, name: o.ShortName + ' - ' + o.LongName });
+    //    }.bind(this));
+    //    //$('#txtLocations').tagsinput('add', { id: 100, name: 'AERE - AL EID REAL ESTATE.DUBAI.' });
+    //};
 
     this.onKeyUpPwdInModal = function (pwdThis) {
         if (this.validateInfo(pwdThis, this.pwdRegex)) {
@@ -286,9 +342,9 @@
             this.selectTimeZone.val(this.Preference.TimeZone);
         }
         else {
-            this.selectLocale.val(ebcontext.user?.Preference?.Locale || "en-IN");
+            this.selectLocale.val(ebcontext.user ?.Preference ?.Locale || "en-IN");
             this.selectLocaleChangeAction();
-            this.selectTimeZone.val(ebcontext.user?.Preference?.TimeZone || "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi");
+            this.selectTimeZone.val(ebcontext.user ?.Preference ?.TimeZone || "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi");
         }
     };
 
@@ -597,7 +653,7 @@
         $.ajax({
             type: "POST",
             url: "../Security/IsUnique",
-            data: { val: $txtCtrl.val(), id: this.itemId, mode: mode},
+            data: { val: $txtCtrl.val(), id: this.itemId, mode: mode },
             error: function (xhr, ajaxOptions, thrownError) {
                 $span.html(`<i class="fa fa-refresh" aria-hidden="true" style="color:red;"></i>`);
                 $span.attr("title", "Unique check failed. Click here to retry.");

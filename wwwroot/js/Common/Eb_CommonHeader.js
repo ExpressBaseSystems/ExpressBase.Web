@@ -20,7 +20,7 @@
 
             let vidbtn = `
               <li class="nav-item @active@">
-                <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
+                <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" vid-tab data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
                     <i class="icofont-ui-video-play"></i> Video
                 </a>
               </li>`;
@@ -96,6 +96,12 @@
                 this.$infoModal.toggle();
             }.bind(this));
 
+            $('a[data-toggle="tab"][vid-tab]').on('shown.bs.tab', function (e) {
+                let $e = $(e.target); // newly activated tab
+                $activetab = $('.info-tab-body li.active > a');
+                $($activetab.attr("href")).addClass('active').addClass('in');
+            });
+
 
             $(`#${obj.EbSid}infoCont .hclose`).on("click", this.objhelpHide);
             $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick", this.objhelpHide);
@@ -125,11 +131,12 @@
             let URL = obj.InfoVideoURLs.$values[i];
             if (URL.Hide)
                 continue;
-
+            let vidId = URL.URL.substring(URL.URL.lastIndexOf("/embed/") + 7, URL.URL.length);
             vidbtn += `
               <li class="nav-item @active@">
                 <a class="nav-link" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">
-                    <i class="fa fa-play-circle"></i> ${URL.Title}
+                    <img src='https://img.youtube.com/vi/` + vidId +`/hqdefault.jpg' alt=" ${URL.Title}" height="80"></br>
+                    <div class='btn-title'>${URL.Title}</div>
                 </a>
               </li>`;
 
@@ -141,7 +148,7 @@
 
 
         let tabBody = `
-                <div class='info-tab-body'>
+                <div class='info-tab-body v-tab'>
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                       ${vidbtn}
                     </ul>

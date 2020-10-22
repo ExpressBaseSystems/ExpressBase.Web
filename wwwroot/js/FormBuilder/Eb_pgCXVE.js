@@ -360,11 +360,16 @@
             let selectedCols = [... this.getSelectedColsByProp(this.CElistFromSrc, Dprop)];
             if (selectedCols && selectedCols.length !== 0) {
                 $.each(allCols, function (i, obj) {
-                    if (getObjByval(selectedCols, "name", obj.name)) {
-                        obj[Dprop] = true;
+                    let prevSelectedObj = getObjByval(selectedCols, "name", obj.name);
+                    if (prevSelectedObj && obj.$type === prevSelectedObj.$type) {
+                        $.extend(true, obj, prevSelectedObj);
                     }
-                    else
-                        obj[Dprop] = false;
+                    else {
+                        let listFromSrcObj = getObjByval(this.CElistFromSrc, "name", obj.name);
+                        if (listFromSrcObj && obj.$type === listFromSrcObj.$type) {
+                            $.extend(true, obj, listFromSrcObj);
+                        }
+                    }
                 }.bind(this));
             }
         }

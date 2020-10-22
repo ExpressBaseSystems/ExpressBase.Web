@@ -312,7 +312,7 @@ function hide_inp_loader($ctrl, $item) {
     }
 };
 
-function show_inp_loader($ctrl, $item) {
+function show_inp_loader($ctrl, $item = $()) {
     if (!$ctrl.hasClass("inp-inner-loader")) {
         $item.data("_color", $item.css('color'));
         $ctrl.addClass("inp-inner-loader");

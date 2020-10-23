@@ -104,7 +104,7 @@
         this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
 
 
-        $('#btnlocWhiteLst').on('click', this.setLocConstrainFn.bind(this));
+        //$('#btnlocWhiteLst').on('click', this.setLocConstrainFn.bind(this));
 
 
         //RESET PWD
@@ -128,8 +128,8 @@
             this.setReadOnly();
         //this.DpImageUpload();
 
-      //  this.setLocConstraintDiv();////taginput location constraint
-        this.showConstrainFn();
+        this.setLocConstraintDiv();////taginput location constraint
+        //this.showConstrainFn();
     };
 
     //this.DpImageUpload = function () {
@@ -148,108 +148,109 @@
 
     //    }.bind(this);
     //};
-    this.showConstrainFn = function () {
-        var locItems = $.map(this.LocCntr.curItems, function (value, index) {
-            return [value];
+
+    //this.showConstrainFn = function () {
+    //    var locItems = $.map(this.LocCntr.curItems, function (value, index) {
+    //        return [value];
+    //    });
+    //    var locLength = locItems.length;
+    //    if (locLength > 0) {
+    //        let o = getObjByval(ebcontext.locations.Locations, 'LocId', locItems[0]);
+    //        var k = (o.LongName === o.ShortName) ? o.LongName : `${o.LongName}(${o.ShortName})`;           
+    //        if (locLength === 1) {               
+    //            $('#locWhiteLst').val(k);
+    //        }
+    //        else {
+    //            $('#locWhiteLst').val(`${k} and ${locLength-1} other locations `)
+    //        }
+    //    }       
+    //}
+
+    //function treeViewGetItem() {
+    //    var cItems = this.loc_treeView.Settings.checkedItmId;
+    //    var delItems = [];
+    //    var addItems = [];
+    //    var temp = [];
+    //    var locCurnt = Object.values(this.LocCntr.curItems);
+    //    for (var i = 0; i < cItems.length; i++) {
+    //        var idx = $.inArray(cItems[i], locCurnt);
+    //        if (idx == -1) {
+    //            addItems.push(cItems[i]);
+    //        }
+    //    }
+    //    let cArray = locCurnt.concat(addItems);
+    //    temp = cArray.filter((item, index) => cArray.indexOf(item) === index);
+
+    //    delItems = temp.filter((el) => !cItems.includes(el));
+    //    this.LocCntr.options.added = addItems;
+    //    this.LocCntr.options.deleted = delItems;
+    //};
+
+    //this.treeViewCallBackFn = treeViewGetItem.bind(this);
+
+    //this.setLocConstrainFn = function () {
+    //    let arr = Object.values(this.LocCntr.curItems);
+    //    let cArray = arr.concat(this.LocCntr.options.added);
+    //    var finalLst = cArray.filter((item, index) => cArray.indexOf(item) === index);
+    //    for (var i = 0; i < this.LocCntr.options.deleted.length; i++) {
+    //        finalLst.splice(finalLst.indexOf(this.LocCntr.options.deleted[i]), 1);
+    //    }
+    //    this.loc_treeView = new TreeView_plugin({
+    //        current_item: "-1", elementAttrId: "locWhiteLst", checkItem: true, linkParent: false, checkedItmId: finalLst, callBackFn: this.treeViewCallBackFn
+    //    });
+    //    this.loc_treeView.toggleModal();
+    //}
+
+    this.setLocConstraintDiv = function () {
+        var _locArr = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: $.map(ebcontext.locations.Locations, function (loc) { return { id: loc.LocId, name: loc.ShortName + ' - ' + loc.LongName }; })
         });
-        var locLength = locItems.length;
-        if (locLength > 0) {
-            let o = getObjByval(ebcontext.locations.Locations, 'LocId', locItems[0]);
-            var k = (o.LongName === o.ShortName) ? o.LongName : `${o.LongName}(${o.ShortName})`;           
-            if (locLength === 1) {               
-                $('#locWhiteLst').val(k);
+        _locArr.initialize();
+
+        this.txtLocations.tagsinput({
+            typeaheadjs: [
+                {
+                    highlight: false
+                },
+                {
+                    name: 'Locations',
+                    displayKey: 'name',
+                    valueKey: 'id',
+                    source: _locArr.ttAdapter()
+                }
+            ],
+            itemValue: 'name',
+            freeInput: false
+        });
+
+        this.txtLocations.on('itemAdded', function (event) {
+            //console.log(event.item);
+            if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
+                this.LocCntr.options.deleted.splice(this.LocCntr.options.deleted.indexOf(this.LocCntr.curItems[event.item.id]), 1);
             }
             else {
-                $('#locWhiteLst').val(`${k} and ${locLength-1} other locations `)
+                this.LocCntr.options.added.push(event.item.id);
             }
-        }       
-    }
+        }.bind(this));
 
-    function treeViewGetItem() {
-        var cItems = this.loc_treeView.Settings.checkedItmId;
-        var delItems = [];
-        var addItems = [];
-        var temp = [];
-        var locCurnt = Object.values(this.LocCntr.curItems);
-        for (var i = 0; i < cItems.length; i++) {
-            var idx = $.inArray(cItems[i], locCurnt);
-            if (idx == -1) {
-                addItems.push(cItems[i]);
+        this.txtLocations.on('itemRemoved', function (event) {
+            //console.log(event.item);
+            if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
+                this.LocCntr.options.deleted.push(getKeyByVal(this.LocCntr.curItems, event.item.id));
             }
-        }
-        let cArray = locCurnt.concat(addItems);
-        temp = cArray.filter((item, index) => cArray.indexOf(item) === index);
+            else {
+                this.LocCntr.options.added.splice(this.LocCntr.options.added.indexOf(event.item.id), 1);
+            }
+        }.bind(this));
 
-        delItems = temp.filter((el) => !cItems.includes(el));
-        this.LocCntr.options.added = addItems;
-        this.LocCntr.options.deleted = delItems;
+        $.each(this.LocCntr.curItems, function (i, ob) {
+            let o = getObjByval(ebcontext.locations.Locations, 'LocId', ob);
+            $('#txtLocations').tagsinput('add', { id: o.LocId, name: o.ShortName + ' - ' + o.LongName });
+        }.bind(this));
+        //$('#txtLocations').tagsinput('add', { id: 100, name: 'AERE - AL EID REAL ESTATE.DUBAI.' });
     };
-
-    this.treeViewCallBackFn = treeViewGetItem.bind(this);
-
-    this.setLocConstrainFn = function () {
-        let arr = Object.values(this.LocCntr.curItems);
-        let cArray = arr.concat(this.LocCntr.options.added);
-        var finalLst = cArray.filter((item, index) => cArray.indexOf(item) === index);
-        for (var i = 0; i < this.LocCntr.options.deleted.length; i++) {
-            finalLst.splice(finalLst.indexOf(this.LocCntr.options.deleted[i]), 1);
-        }
-        this.loc_treeView = new TreeView_plugin({
-            current_item: "-1", elementAttrId: "locWhiteLst", checkItem: true, linkParent: false, checkedItmId: finalLst, callBackFn: this.treeViewCallBackFn
-        });
-        this.loc_treeView.toggleModal();
-    }
-
-    //this.setLocConstraintDiv = function () {
-    //    var _locArr = new Bloodhound({
-    //        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-    //        queryTokenizer: Bloodhound.tokenizers.whitespace,
-    //        local: $.map(ebcontext.locations.Locations, function (loc) { return { id: loc.LocId, name: loc.ShortName + ' - ' + loc.LongName }; })
-    //    });
-    //    _locArr.initialize();
-
-    //    this.txtLocations.tagsinput({
-    //        typeaheadjs: [
-    //            {
-    //                highlight: false
-    //            },
-    //            {
-    //                name: 'Locations',
-    //                displayKey: 'name',
-    //                valueKey: 'id',
-    //                source: _locArr.ttAdapter()
-    //            }
-    //        ],
-    //        itemValue: 'name',
-    //        freeInput: false
-    //    });
-
-    //    this.txtLocations.on('itemAdded', function (event) {
-    //        //console.log(event.item);
-    //        if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
-    //            this.LocCntr.options.deleted.splice(this.LocCntr.options.deleted.indexOf(this.LocCntr.curItems[event.item.id]), 1);
-    //        }
-    //        else {
-    //            this.LocCntr.options.added.push(event.item.id);
-    //        }
-    //    }.bind(this));
-
-    //    this.txtLocations.on('itemRemoved', function (event) {
-    //        //console.log(event.item);
-    //        if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
-    //            this.LocCntr.options.deleted.push(getKeyByVal(this.LocCntr.curItems, event.item.id));
-    //        }
-    //        else {
-    //            this.LocCntr.options.added.splice(this.LocCntr.options.added.indexOf(event.item.id), 1);
-    //        }
-    //    }.bind(this));
-
-    //    $.each(this.LocCntr.curItems, function (i, ob) {
-    //        let o = getObjByval(ebcontext.locations.Locations, 'LocId', ob);
-    //        $('#txtLocations').tagsinput('add', { id: o.LocId, name: o.ShortName + ' - ' + o.LongName });
-    //    }.bind(this));
-    //    //$('#txtLocations').tagsinput('add', { id: 100, name: 'AERE - AL EID REAL ESTATE.DUBAI.' });
-    //};
 
     this.onKeyUpPwdInModal = function (pwdThis) {
         if (this.validateInfo(pwdThis, this.pwdRegex)) {

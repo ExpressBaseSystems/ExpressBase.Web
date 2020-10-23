@@ -137,9 +137,8 @@ this.TreeView_plugin = function (options) {
                 if ($("#treeviewMdl").is(":visible")) {
                     this.setParentPath($('#treeview_search').val());
                 }
-                $('#treeview_crntItem').text(`${items.length} locations selected `);
-
             }
+            $('#treeview_crntItem').text(`${items.length} locations selected `);
         }
 
     };

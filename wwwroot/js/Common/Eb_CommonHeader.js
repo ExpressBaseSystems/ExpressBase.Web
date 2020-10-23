@@ -11,30 +11,6 @@
             let html = `<button id="${obj.EbSid_CtxId}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
             this.insertButton(html);
 
-            let docbtn = `
-              <li class="nav-item @active@">
-                <a class="nav-link" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
-                <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
-                </a>
-              </li>`;
-
-            let vidbtn = `
-              <li class="nav-item @active@">
-                <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" vid-tab data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
-                    <i class="icofont-ui-video-play"></i> Video
-                </a>
-              </li>`;
-
-            let docContent = `
-              <div class="tab-pane fade @activein@"  id="${obj.EbSid_CtxId}doc" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-doctab">
-                <iframe id='${obj.EbSid_CtxId}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
-              </div>`;
-
-            let vidContent = `
-              <div class="tab-pane fade @activein@" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
-                ${this.getVidTabsHtml(obj)}
-              </div>`;
-
             let HelpHtml = `
             <div id='${obj.EbSid_CtxId}infoCont' class='eb-popup-cont'>
                 <div class='eb-popup-head'>
@@ -62,12 +38,34 @@
             `;
 
             if (AvailableDocs.isPdf) {
+                let docbtn = `
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
+                <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
+                </a>
+              </li>`;
+
+                let docContent = `
+              <div class="tab-pane fade @activein@"  id="${obj.EbSid_CtxId}doc" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-doctab">
+                <iframe id='${obj.EbSid_CtxId}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
+              </div>`;
                 HelpHtml = HelpHtml.replace('@pdfBtn@', docbtn).replace('@pdfContent@', docContent)
             }
             else {
                 HelpHtml = HelpHtml.replace('@pdfBtn@', '').replace('@pdfContent@', '')
             }
+
             if (AvailableDocs.isVideo) {
+                let vidbtn = `
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" vid-tab data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
+                    <i class="icofont-ui-video-play"></i> Video
+                </a>
+              </li>`;
+                let vidContent = `
+              <div class="tab-pane fade @activein@" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
+                ${this.getVidTabsHtml(obj)}
+              </div>`;
                 HelpHtml = HelpHtml.replace('@vidbtn@', vidbtn).replace('@vidContent@', vidContent)
             }
             else {

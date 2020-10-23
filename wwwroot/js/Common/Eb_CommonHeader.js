@@ -129,13 +129,16 @@
         let vidContents = "";
         for (let i = 0; i < obj.InfoVideoURLs.$values.length; i++) {
             let URL = obj.InfoVideoURLs.$values[i];
+            if (URL.includes('?'))
+                URL = URL.substring(0, URL.indexOf('?'));
+
             if (URL.Hide)
                 continue;
             let vidId = URL.URL.substring(URL.URL.lastIndexOf("/embed/") + 7, URL.URL.length);
             vidbtn += `
               <li class="nav-item @active@">
                 <a class="nav-link" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">
-                    <img src='https://img.youtube.com/vi/` + vidId +`/hqdefault.jpg' alt=" ${URL.Title}" height="80"></br>
+                    <img src='https://img.youtube.com/vi/` + vidId + `/hqdefault.jpg' alt=" ${URL.Title}" height="80"></br>
                     <div class='btn-title'>${URL.Title}</div>
                 </a>
               </li>`;

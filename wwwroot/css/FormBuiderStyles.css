@@ -2976,7 +2976,6 @@ input.locinp {
     }
 
     .v-tab .btn-title {
-        word-break: break-all;
         max-width: 106px;
     }
 

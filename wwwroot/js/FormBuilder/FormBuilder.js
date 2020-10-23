@@ -365,6 +365,11 @@
                 return true;
             this.initCtrl(el);
         }.bind(this));
+        $(".form-render-table-Td").each(function (i, el) {// td styles seprately
+            if (el.getAttribute("childOf") === 'EbUserControl')
+                return true;
+            this.updateControlUI(el.getAttribute("ebsid"));
+        }.bind(this));
         $("#" + this.rootContainerObj.EbSid).focus();
     };
 

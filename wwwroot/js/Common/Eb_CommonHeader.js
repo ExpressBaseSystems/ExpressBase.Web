@@ -129,12 +129,13 @@
         let vidContents = "";
         for (let i = 0; i < obj.InfoVideoURLs.$values.length; i++) {
             let URL = obj.InfoVideoURLs.$values[i];
-            if (URL.includes('?'))
-                URL = URL.substring(0, URL.indexOf('?'));
 
             if (URL.Hide)
                 continue;
             let vidId = URL.URL.substring(URL.URL.lastIndexOf("/embed/") + 7, URL.URL.length);
+
+            if (vidId.includes('?'))
+                vidId = vidId.substring(0, vidId.indexOf('?'));
             vidbtn += `
               <li class="nav-item @active@">
                 <a class="nav-link" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">

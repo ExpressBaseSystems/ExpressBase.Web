@@ -135,7 +135,12 @@ this.TreeView_plugin = function (options) {
             }
             else {
                 if ($("#treeviewMdl").is(":visible")) {
-                    this.setParentPath($('#treeview_search').val());
+                    if ($('#treeview_search').val() !== "") {
+                        this.setParentPath($('#treeview_search').val());
+                    }
+                    else {
+                        this.Settings.checkedItmId = [];
+                    }                   
                 }
             }
             $('#treeview_crntItem').text(`${items.length} locations selected `);
@@ -195,7 +200,11 @@ this.TreeView_plugin = function (options) {
                 } else {
                     $(`#${this.Settings.elementAttrId}`).val(`${k} and ${locLength - 1} other locations `);
                 }
-            }   
+            }
+            else
+                if (locLength == 0) {
+                    $(`#${this.Settings.elementAttrId}`).val("");
+                }
             this.Settings.callBackFn();
         }
         $('#treeviewMdl').modal('toggle');

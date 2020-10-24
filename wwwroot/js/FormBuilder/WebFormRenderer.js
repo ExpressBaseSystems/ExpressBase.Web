@@ -734,8 +734,22 @@ const WebFormRender = function (option) {
             if (!this.MeetingB4Save())
                 return;
             this.FRC.checkUnique4All_save(this.flatControls, true);
+
+            //EbProvUserUniqueChkJs({
+            //    FormObj: this.FormObj,
+            //    CallBackFn: this.userProvCallBack.bind(this),
+            //    showLoaderFn: this.showLoader,
+            //    hideLoaderFn: this.hideLoader
+            //});            
         }.bind(this), 4);
     };
+
+    //Provision user related unique check callback function
+    //this.userProvCallBack = function (ok) {
+    //    if (ok) {
+    //        this.FRC.checkUnique4All_save(this.flatControls, true);
+    //    }
+    //};
 
     this.saveAsDraft = function () {
         this.showLoader();

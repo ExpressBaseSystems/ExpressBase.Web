@@ -101,7 +101,7 @@ this.TreeView_plugin = function (options) {
         if (this.item_count > 20) {
             $(".treeviewMdlBody").css('min-height', '70vh');
         }
-      
+
     }
     this.ClickLocation = function (items) {
         if (!this.Settings.checkItem) {
@@ -190,7 +190,9 @@ this.TreeView_plugin = function (options) {
                 //onChange: this.ChangeLocationSelector.bind(this)
             });
             if (this.Settings.checkItem) {
-                this.showContextMenu();
+                if ($('#treeview_search').val() === "") {
+                    this.showContextMenu();
+                }
             }
         }
         //else {
@@ -310,7 +312,7 @@ this.TreeView_plugin = function (options) {
                 $('#treeview_crntItem').text(s);
                 $(".treeviewMdlBox").find(`li[data-id='${this.CurrentItem}'] a`).eq(0).trigger("click");
             }
-        }       
+        }
 
     };
 

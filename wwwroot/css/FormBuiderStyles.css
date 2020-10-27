@@ -3126,3 +3126,124 @@ input.locinp {
     .ebctrl-msg-cont .text-warning {
         color: #feb205;
     }
+
+/*BEGIN Region EbProvisionUser*/
+[ctype=ProvisionUser] .ctrl-cover {
+    border: 1px dashed rgba(34,36,38,.15);
+}
+
+[ctype=ProvisionUser] .pu-cont {
+    overflow: hidden;
+    padding: 4px 6px;
+    height: 150px;
+}
+
+[ctype=ProvisionUser] .pu-btn-cont {
+    height: 22px;
+}
+
+[ctype=ProvisionUser] .pu-btn-select {
+    padding: 2px 6px;
+    background: #4987fb;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-right: 5px;
+    float: left;
+}
+
+[ctype=ProvisionUser] .pu-btn:hover {
+    background: #3876ea;
+    color: white;
+}
+
+[ctype=ProvisionUser] .pu-chkbox {
+    float: left;
+}
+
+[ctype=ProvisionUser] .pu-btn-refresh {
+    float: right;
+    padding: 2px 6px;
+}
+
+[ctype=ProvisionUser] .pu-chkbox label {
+    font-weight: 400;
+    margin: 0px;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 2px 6px;
+    background: #f2f2f2;
+    user-select: none;
+}
+
+    [ctype=ProvisionUser] .pu-chkbox label:hover {
+        background: #e8e8e8;
+    }
+
+[ctype=ProvisionUser] .pu-chkbox input {
+    margin: 0px;
+    vertical-align: text-top;
+}
+
+[ctype=ProvisionUser] .pu-txt-info {
+    padding: 10px 0px 5px 0px;
+    pointer-events: none;
+}
+
+[ctype=ProvisionUser] .pu-users-info {
+}
+
+[ctype=ProvisionUser] .pu-user {
+    padding: 4px 10px;
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: #f2f2f2;
+    margin-left: 5px;
+    border-radius: 3px;
+}
+
+    [ctype=ProvisionUser] .pu-user:nth-child(1):hover, [ctype=ProvisionUser] .pu-user:nth-child(2):hover {
+        background-color: #e8e8e8;
+        cursor: pointer;
+    }
+
+    [ctype=ProvisionUser] .pu-user.active:nth-child(1), [ctype=ProvisionUser] .pu-user.active:nth-child(2) {
+        background-color: #a6c5ff !important;
+    }
+
+.modal.pu-sel-usr .pu-selmdl-uli .col-md-12 {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    min-height: 36px;
+}
+
+    .modal.pu-sel-usr .pu-selmdl-uli .col-md-12.active {
+        background-color: #a6c5ff !important;
+    }
+
+    .modal.pu-sel-usr .pu-selmdl-uli .col-md-12:hover {
+        background-color: #eee;
+    }
+
+#ProvUserConfModal .pu-confmdl-title {
+    padding: 5px 0px;
+}
+
+#ProvUserConfModal .pu-confmdl-sub {
+    font-size: 12px;
+    padding: 0px 15px;
+}
+
+#ProvUserConfModal .pu-confmdl-info {
+    font-size: 12px;
+    display: flex;
+    padding-bottom: 15px;
+}
+
+#ProvUserConfModal .pu-confmdl-uinfo {
+    padding: 0px 15px 0px 45px;
+}
+/*END Region EbProvisionUser*/

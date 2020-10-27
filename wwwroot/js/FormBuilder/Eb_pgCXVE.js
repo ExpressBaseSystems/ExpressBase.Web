@@ -53,8 +53,16 @@
         }
         else if (this.editor === 37) {
             let icon = $("#icon_picker .form-control.search-control").val();
-            PropsObj[_CurProp] = icon;
-            $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+            let unicode = FontAwsomeUnicode(icon);
+            //PropsObj[_CurProp] = icon; 
+            if ($('input[name="unicode"]:checked').length === 1) {
+                PropsObj[_CurProp] = unicode;
+                $(`#${this.PGobj.wraperId}${_CurProp}`).val(unicode);
+            }
+            else {
+                PropsObj[_CurProp] = icon; 
+                $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+            }
         }
         else if (this.editor === 38) {
             let shadowVal = $("#shadow_editor_val").val();
@@ -932,7 +940,9 @@
 
         let value = this.PGobj.PropsObj[this.PGobj.CurProp];
 
-        let IPbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
+        let IPbody = `<div><input type="checkbox" id="unicode" name="unicode" value="unicod">
+                    <label for="unicode"> Unicode </label><br> </div>
+                    <div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(IPbody);
         $("#icon_picker").iconpicker({
             placement: 'bottom',

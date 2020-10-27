@@ -1242,6 +1242,8 @@ var DashBoardWrapper = function (options) {
         var obj = {};
         this.EbObject.Tiles.$values = [];
         this.EbObject.TileCount = 0;
+        if (this.EbObject.EbSid === null || this.EbObject.EbSid ==="")
+            this.EbObject.EbSid = "ctrl_" + Date.now().toString(36);
         $(".grid-stack-item-content").each(function (j, val) {
             var id = $(val).parent().attr("id");
             var id2 = $(val).attr("id");

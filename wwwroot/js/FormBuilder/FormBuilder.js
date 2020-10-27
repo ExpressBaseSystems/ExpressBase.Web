@@ -28,9 +28,12 @@
                     ctrl.Url = ctrl.Url.substring(0, ctrl.Url.indexOf('?'));
             }
 
-            if (ctrl.ObjType === "WebForm" && ctrl.InfoVideoURL) {
-                if (EbIsValidURL(ctrl.InfoVideoURL)) {
-                    this.PGobj.setSimpleProperty('InfoVideoURL', ctrl.InfoVideoURL.replace('.youtube.com/watch?v=', '.youtube.com/embed/').replace(/\?rel=0?$/, '') + '?rel=0')
+            if (ctrl.ObjType === "WebForm" && ctrl.InfoVideoURLs) {
+                for (let i = 0; i < ctrl.InfoVideoURLs.$values.length; i++) {
+                    let obj = ctrl.InfoVideoURLs.$values[i];
+                    if (EbIsValidURL(obj.URL)) {
+                        obj.URL = obj.URL.replace('.youtube.com/watch?v=', '.youtube.com/embed/').replace(/\?rel=0?$/, '') + '?rel=0';
+                    }
                 }
             }
         }

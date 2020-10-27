@@ -17,17 +17,19 @@ this.TreeView_plugin = function (options) {
     this.init = function () {
         this.item_parents = {};
         this.item_parent_id = {};
+        this.SearchFlg = 0;
         this.item_count = this.TreeRawData.length;
+        this.Tempdata = [];
         this.Tempdata = this.Data4SimTree;
         this.createModal();
+
         //do seperate initilisation
         this.CurrentItemObj = this.TreeRawData.filter(el => el.LocId === parseInt(this.CurrentItem))[0];
         this.findParent_loc();
-       
+
         this.prevItem = this.CurrentItem;
         if (this.CurrentItemObj) {
             this.prev_item_name = this.CurrentItemObj.LongName || "";
-            // $(`#${this.Settings.elementAttrId}`).val(this.CurrentItemObj.LongName);
         }
         this.drawLocsTree();
         this.setDefault();
@@ -50,10 +52,10 @@ this.TreeView_plugin = function (options) {
                             if (k.length) {
                                 var m = k.find('.sim-tree-spread:first');
                                 if (m.hasClass('sim-icon-r'))
-                               m.trigger('click');
+                                    m.trigger('click');
                             }
                         });
-                      
+
                     }
                 }
             }
@@ -99,9 +101,7 @@ this.TreeView_plugin = function (options) {
         if (this.item_count > 20) {
             $(".treeviewMdlBody").css('min-height', '70vh');
         }
-        if (this.Settings.checkItem) {
-            $('#treeview_search').css('display', 'none');
-        }
+
     }
     this.ClickLocation = function (items) {
         if (!this.Settings.checkItem) {
@@ -118,39 +118,70 @@ this.TreeView_plugin = function (options) {
                 this.CurrentItemObj = this.TreeRawData.filter(el => el.LocId === parseInt(this.CurrentItem))[0];
             }
             else {
-                if ($("#treeviewMdl").is(":visible")) {
-                    if ($('#treeview_search').val() !== "") {
-                        this.setParentPath($('#treeview_search').val());
-                    }
-                }
+                //if ($("#treeviewMdl").is(":visible")) {
+                //    if ($('#treeview_search').val() !== "") {
+                //        this.setParentPath($('#treeview_search').val());
+                //    }
+                //}
             }
         }
         else {
             if (items.length > 0) {
                 $(".treeviewMdlBox .treeviewMdlBody li").removeClass("active-item");
-                this.Settings.checkedItmId = items.map(a => a.id);
-                for (var i = 0; i < items.length; i++) {
-                    $(".treeviewMdlBox .treeviewMdlBody li[data-id=" + items[i].id + "]").addClass("active-loc")
+
+                if ($('#treeview_search').val() !== "") {
+                    var ckd = items.map(a => a.id);
+                    $.each(ckd, function (i, v) {
+                        this.Settings.checkedItmId.push(v);
+                    }.bind(this));
+                    this.Settings.checkedItmId = this.Settings.checkedItmId.filter((item, index) => this.Settings.checkedItmId.indexOf(item) === index);
+                }
+                else {
+                    this.Settings.checkedItmId = items.map(a => a.id);
+                    this.Settings.checkedItmId.filter((item, index) => this.Settings.checkedItmId.indexOf(item) === index);
+                }
+                for (var i = 0; i < this.Settings.checkedItmId.length; i++) {
+                    $(".treeviewMdlBox .treeviewMdlBody li[data-id=" + this.Settings.checkedItmId[i] + "]").addClass("active-loc")
                 }
             }
             else {
                 if ($("#treeviewMdl").is(":visible")) {
                     if ($('#treeview_search').val() !== "") {
-                        this.setParentPath($('#treeview_search').val());
+                        if (this.SearchFlg === 0) {
+                            var ckLen = this.Settings.checkedItmId.length;
+                            var z = $(".treeviewMdlBox .treeviewMdlBody").find(".sim-tree-checkbox");
+                            if (z.length > 0) {
+                                for (var i = 0; i < z.length; i++) {
+                                    var x = $(z[i].closest('li'));
+                                    if (!z.find('.sim-tree-checkbox').hasClass('.checked')) {
+                                        var delItem = parseInt(x.attr('data-id'));
+                                        var ind = this.Settings.checkedItmId.indexOf(delItem);
+                                        if (ind > -1) {
+                                            x.removeClass("active-loc");
+                                            this.Settings.checkedItmId.splice(ind, 1);
+                                        }
+                                    }
+                                }
+
+
+                            }
+                        }
+
                     }
                     else {
                         this.Settings.checkedItmId = [];
-                    }                   
+                    }
                 }
             }
-            $('#treeview_crntItem').text(`${items.length} locations selected `);
+            this.SearchFlg = 0;
+            $('#treeview_crntItem').text(`${this.Settings.checkedItmId.length} locations selected `);
         }
 
     };
 
     this.drawLocsTree = function () {
         if (this.Tempdata.length > 0) {
-            this.TreeApi = simTree({
+            this.TreeApi = new simTree({
                 el: $("#treeviewMdlBody"),
                 data: this.Tempdata,
                 check: this.Settings.checkItem,
@@ -159,7 +190,9 @@ this.TreeView_plugin = function (options) {
                 //onChange: this.ChangeLocationSelector.bind(this)
             });
             if (this.Settings.checkItem) {
-                this.showContextMenu();
+                if ($('#treeview_search').val() === "") {
+                    this.showContextMenu();
+                }
             }
         }
         //else {
@@ -189,7 +222,7 @@ this.TreeView_plugin = function (options) {
                 $(`#${this.Settings.elementAttrId}`).val(this.CurrentItemObj.LongName);
             }
         }
-       
+
         else {
             var locLength = this.Settings.checkedItmId.length;
             if (locLength > 0) {
@@ -209,21 +242,67 @@ this.TreeView_plugin = function (options) {
         }
         $('#treeviewMdl').modal('toggle');
     };
-   
+
     this.searchItems = function (e) {
+        this.SearchFlg = 1;
         let val = $(e.target).val().toLowerCase();
         $(".treeviewMdlBody").empty();
+        this.Tempdata = [];
+        var ckTempId = this.Settings.checkedItmId;
         this.Tempdata = JSON.parse(JSON.stringify(this.data.filter(qq => qq.name.toLowerCase().indexOf(val) >= 0)));
         this.Tempdata.sort(function (a, b) {
             var textA = a.name.toUpperCase().trim();
             var textB = b.name.toUpperCase().trim();
             return textA.localeCompare(textB);
         });
-        if ($("#treeview_search").val() == "") {
-            $("#treeview_Itemcnt").text(this.item_count + " location");
+        //if ($("#treeview_search").val() !== "") {
+        if (this.Settings.checkItem) {
+            this.Tempdata.forEach(function (element) {
+                this.Settings.checkedItmId.forEach(function (ob) {
+                    if (element.id == ob) {
+                        element.checked = 'checked';
+                    }
+                });
+
+            }.bind(this));
         }
+        // }
+
         this.drawLocsTree();
         this.setDefault();
+
+        if ($("#treeview_search").val() == "") {
+            $("#treeview_Itemcnt").text(this.item_count + " location");
+            if (this.Settings.checkItem) {
+                ckTempId = ckTempId.filter((el) => !this.Settings.checkedItmId.includes(el));
+                var cLen = ckTempId.length;
+                if (cLen > 0) {
+                    for (var i = 0; i < cLen; i++) {
+                        var c = $('#treeviewMdlBody').find('[data-id=' + ckTempId[i] + ']')
+                        c.find('.sim-tree-checkbox').eq(0).trigger('click');
+
+                        var y = c.parents('ul');
+                        if (y.length) {
+                            y.each(function () {
+                                let k = $(this).closest("li");
+                                if (k.length) {
+                                    var m = k.find('.sim-tree-spread:first');
+                                    if (m.hasClass('sim-icon-r'))
+                                        m.trigger('click');
+                                }
+                            });
+
+                        }
+                    }
+                }
+            }
+
+
+        }
+        else {
+            this.setParentPath($('#treeview_search').val());
+        }
+
     };
 
     this.setDefault = function () {
@@ -233,9 +312,6 @@ this.TreeView_plugin = function (options) {
                 $('#treeview_crntItem').text(s);
                 $(".treeviewMdlBox").find(`li[data-id='${this.CurrentItem}'] a`).eq(0).trigger("click");
             }
-        }
-        else {
-            $('#treeview_crntItem').text(`${this.Settings.checkedItmId.length} locations selected `);
         }
 
     };

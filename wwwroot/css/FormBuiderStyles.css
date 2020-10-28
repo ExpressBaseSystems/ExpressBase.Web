@@ -899,10 +899,14 @@ eb-disable {
 }
 
 [coltype='DGNumericColumn'] {
+    position: relative;
     text-align: right;
 }
 
 tr[agg='true'] [coltype='DGNumericColumn'] span {
+    position: absolute;
+    top: -14px;
+    right: 0;
     border-top: solid 1px #585858;
 }
 

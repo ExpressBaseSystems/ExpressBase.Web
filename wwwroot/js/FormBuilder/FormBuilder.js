@@ -27,12 +27,6 @@
                 if (ctrl.Url.includes('?'))
                     ctrl.Url = ctrl.Url.substring(0, ctrl.Url.indexOf('?'));
             }
-
-            if (ctrl.ObjType === "WebForm" && ctrl.InfoVideoURL) {
-                if (EbIsValidURL(ctrl.InfoVideoURL)) {
-                    this.PGobj.setSimpleProperty('InfoVideoURL', ctrl.InfoVideoURL.replace('.youtube.com/watch?v=', '.youtube.com/embed/').replace(/\?rel=0?$/, '') + '?rel=0')
-                }
-            }
         }
 
         this.PGobj.getvaluesFromPG();
@@ -364,6 +358,11 @@
             if (el.getAttribute("childOf") === 'EbUserControl')
                 return true;
             this.initCtrl(el);
+        }.bind(this));
+        $(".form-render-table-Td").each(function (i, el) {// td styles seprately
+            if (el.getAttribute("childOf") === 'EbUserControl')
+                return true;
+            this.updateControlUI(el.getAttribute("ebsid"));
         }.bind(this));
         $("#" + this.rootContainerObj.EbSid).focus();
     };

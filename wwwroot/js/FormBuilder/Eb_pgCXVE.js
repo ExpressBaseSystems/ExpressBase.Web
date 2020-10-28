@@ -53,8 +53,16 @@
         }
         else if (this.editor === 37) {
             let icon = $("#icon_picker .form-control.search-control").val();
-            PropsObj[_CurProp] = icon;
-            $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+            let unicode = FontAwsomeUnicode(icon);
+            //PropsObj[_CurProp] = icon; 
+            if ($('input[name="unicode"]:checked').length === 1) {
+                PropsObj[_CurProp] = unicode;
+                $(`#${this.PGobj.wraperId}${_CurProp}`).val(unicode);
+            }
+            else {
+                PropsObj[_CurProp] = icon; 
+                $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+            }
         }
         else if (this.editor === 38) {
             let shadowVal = $("#shadow_editor_val").val();
@@ -337,7 +345,18 @@
     };
 
     this.refreshCEFromSrc = function () {
-        this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp)
+        if (this.PGobj.PropsObj.IsDataFromApi) {
+            let opt = {
+                url: "../DS/GetColumnsFromApi",
+                apiUrl: this.PGobj.PropsObj.Url,
+                headers: this.PGobj.PropsObj.Headers,
+                //parameters: this.PGobj.PropsObj.Parameters,
+                method: this.PGobj.PropsObj.Method
+            }
+            this.PGobj.PGHelper.UrlReInit(opt, this.setOldSelectionByResettingProp);
+        }
+        else
+            this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp);
     }.bind(this);
 
     this.setOldSelectionByResettingProp = function (allCols) {
@@ -349,11 +368,16 @@
             let selectedCols = [... this.getSelectedColsByProp(this.CElistFromSrc, Dprop)];
             if (selectedCols && selectedCols.length !== 0) {
                 $.each(allCols, function (i, obj) {
-                    if (getObjByval(selectedCols, "name", obj.name)) {
-                        obj[Dprop] = true;
+                    let prevSelectedObj = getObjByval(selectedCols, "name", obj.name);
+                    if (prevSelectedObj && obj.$type === prevSelectedObj.$type) {
+                        $.extend(true, obj, prevSelectedObj);
                     }
-                    else
-                        obj[Dprop] = false;
+                    else {
+                        let listFromSrcObj = getObjByval(this.CElistFromSrc, "name", obj.name);
+                        if (listFromSrcObj && obj.$type === listFromSrcObj.$type) {
+                            $.extend(true, obj, listFromSrcObj);
+                        }
+                    }
                 }.bind(this));
             }
         }
@@ -916,7 +940,9 @@
 
         let value = this.PGobj.PropsObj[this.PGobj.CurProp];
 
-        let IPbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
+        let IPbody = `<div><input type="checkbox" id="unicode" name="unicode" value="unicod">
+                    <label for="unicode"> Unicode </label><br> </div>
+                    <div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(IPbody);
         $("#icon_picker").iconpicker({
             placement: 'bottom',

@@ -86,7 +86,8 @@
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,
-            ShowUploadDate: ctrl.ShowUploadDate
+            ShowUploadDate: ctrl.ShowUploadDate,
+            ViewByCategory: ctrl.ViewByCategory
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -1314,6 +1315,7 @@
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
+        //new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts});        
         $('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
             trigger: 'hover',
             html: true,

@@ -562,6 +562,29 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        //public string CheckEmailAndPhone(string RefId, int RowId, string Data)
+        //{
+        //    CheckEmailAndPhoneResponse Resp = ServiceClient.Post<CheckEmailAndPhoneResponse>(
+        //        new CheckEmailAndPhoneRequest
+        //        {
+        //            RefId = RefId,
+        //            RowId = RowId,
+        //            Data = Data
+        //        });
+        //    return Resp.Data;
+        //}
+
+        //public string GetUserDetails(string RefId, int RowId, string CtrlName, int CurId)
+        //{
+        //    GetProvUserListResponse Resp = ServiceClient.Post<GetProvUserListResponse>(
+        //        new GetProvUserListRequest
+        //        {
+        //            RefId = RefId,
+        //            RowId = RowId
+        //        });
+        //    return Resp.Data;
+        //}
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try

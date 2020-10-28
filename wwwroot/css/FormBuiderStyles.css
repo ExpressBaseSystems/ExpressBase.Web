@@ -420,20 +420,22 @@ body {
     .dg-commit-dilog-msgbox .fa-check {
         color: #019a01;
     }
+
     .dg-commit-dilog-msgbox .fa-trash {
         color: #f55d5d;
     }
+
     .dg-commit-dilog-msgbox .fa-table {
         color: #555;
     }
 
 
-    .dgtr:focus {
-        /*border: solid 1px rgb(85, 94, 167) !important;*/
-        /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
-        box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
-        outline: 0 none;
-    }
+.dgtr:focus {
+    /*border: solid 1px rgb(85, 94, 167) !important;*/
+    /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
+    box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
+    outline: 0 none;
+}
 
     .dgtr:focus > td {
         border-right: dotted 1px transparent !important;
@@ -1162,6 +1164,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     height: 100%;
     width: 100%;
     min-height: 30px;
+    display: flex;
+    flex-direction: column;
 }
 
 .tdDropable {
@@ -1515,7 +1519,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .eb-lbltxtb {
     display: none;
-    width:100%;
+    width: 100%;
     min-height: 16px !important;
     height: 16px !important;
     border: 1px solid rgba(34,36,38,.15);
@@ -2899,6 +2903,7 @@ input.locinp {
     .phnContextBtn i {
         display: inline-block;
     }
+
     .phnContextBtn:hover {
         cursor: pointer;
     }
@@ -2946,9 +2951,71 @@ input.locinp {
     display: none;
 }
 
+.info-tab-body {
+    height: 100%;
+}
+
+.v-tab {
+    display: flex;
+    flex-direction: row;
+}
+
+    .v-tab .nav.nav-tabs {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        background-color: #fcfcfc;
+    }
+
+.v-tab .tab-content {
+    flex-grow: 1;
+}
+
+    .v-tab .nav-tabs > li {
+        background-color: #e1e1e1;
+    }
+
+    .v-tab .btn-title {
+        max-width: 106px;
+    }
+
+    .v-tab ::-webkit-scrollbar-track {
+        /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+        background-color: rgba(214, 214, 214, 0.52);
+        border-radius: 10px;
+    }
+
+    .v-tab ::-webkit-scrollbar {
+        width: 6px;
+        background-color: #F5F5F5;
+    }
+
+    .v-tab ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        /*background-image: var(--gbm);*/
+        background-color: rgb(125 125 125 / 68%);
+    }
+
+.info-tab-body .nav-tabs > li > a {
+    border: none;
+    border-radius: 0;
+    padding: 20px 9px 3px 12px;
+    font-size: 13px;
+    border-bottom: 2px solid #83838314;
+}
+
+.info-tab-body .nav-tabs > li.active > a, .info-tab-body .nav-tabs > li.active > a:focus, .info-tab-body .nav-tabs > .info-tab-body li.active > a:hover {
+    border: none;
+    border-bottom: 2px solid #0147f2;
+    background-color: white;
+    color: #333;
+    font-size: 13px;
+    margin: 0;
+}
+
 .obj-hlp-iframe {
     width: 100%;
-    height: calc(100% - 42px);
+    height: 100%;
     border: none;
 }
 
@@ -2997,7 +3064,11 @@ input.locinp {
     height: calc(100% - 51px);
 }
 
-    .eb-popup-body .tab-content, .eb-popup-body .tab-pane {
+    .eb-popup-body > .tab-content {
+        height: calc(100% - 42px);
+    }
+
+    .eb-popup-body .tab-pane {
         height: 100%;
     }
 
@@ -3055,3 +3126,124 @@ input.locinp {
     .ebctrl-msg-cont .text-warning {
         color: #feb205;
     }
+
+/*BEGIN Region EbProvisionUser*/
+[ctype=ProvisionUser] .ctrl-cover {
+    border: 1px dashed rgba(34,36,38,.15);
+}
+
+[ctype=ProvisionUser] .pu-cont {
+    overflow: hidden;
+    padding: 4px 6px;
+    height: 150px;
+}
+
+[ctype=ProvisionUser] .pu-btn-cont {
+    height: 22px;
+}
+
+[ctype=ProvisionUser] .pu-btn-select {
+    padding: 2px 6px;
+    background: #4987fb;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-right: 5px;
+    float: left;
+}
+
+[ctype=ProvisionUser] .pu-btn:hover {
+    background: #3876ea;
+    color: white;
+}
+
+[ctype=ProvisionUser] .pu-chkbox {
+    float: left;
+}
+
+[ctype=ProvisionUser] .pu-btn-refresh {
+    float: right;
+    padding: 2px 6px;
+}
+
+[ctype=ProvisionUser] .pu-chkbox label {
+    font-weight: 400;
+    margin: 0px;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 2px 6px;
+    background: #f2f2f2;
+    user-select: none;
+}
+
+    [ctype=ProvisionUser] .pu-chkbox label:hover {
+        background: #e8e8e8;
+    }
+
+[ctype=ProvisionUser] .pu-chkbox input {
+    margin: 0px;
+    vertical-align: text-top;
+}
+
+[ctype=ProvisionUser] .pu-txt-info {
+    padding: 10px 0px 5px 0px;
+    pointer-events: none;
+}
+
+[ctype=ProvisionUser] .pu-users-info {
+}
+
+[ctype=ProvisionUser] .pu-user {
+    padding: 4px 10px;
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: #f2f2f2;
+    margin-left: 5px;
+    border-radius: 3px;
+}
+
+    [ctype=ProvisionUser] .pu-user:nth-child(1):hover, [ctype=ProvisionUser] .pu-user:nth-child(2):hover {
+        background-color: #e8e8e8;
+        cursor: pointer;
+    }
+
+    [ctype=ProvisionUser] .pu-user.active:nth-child(1), [ctype=ProvisionUser] .pu-user.active:nth-child(2) {
+        background-color: #a6c5ff !important;
+    }
+
+.modal.pu-sel-usr .pu-selmdl-uli .col-md-12 {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    min-height: 36px;
+}
+
+    .modal.pu-sel-usr .pu-selmdl-uli .col-md-12.active {
+        background-color: #a6c5ff !important;
+    }
+
+    .modal.pu-sel-usr .pu-selmdl-uli .col-md-12:hover {
+        background-color: #eee;
+    }
+
+#ProvUserConfModal .pu-confmdl-title {
+    padding: 5px 0px;
+}
+
+#ProvUserConfModal .pu-confmdl-sub {
+    font-size: 12px;
+    padding: 0px 15px;
+}
+
+#ProvUserConfModal .pu-confmdl-info {
+    font-size: 12px;
+    display: flex;
+    padding-bottom: 15px;
+}
+
+#ProvUserConfModal .pu-confmdl-uinfo {
+    padding: 0px 15px 0px 45px;
+}
+/*END Region EbProvisionUser*/

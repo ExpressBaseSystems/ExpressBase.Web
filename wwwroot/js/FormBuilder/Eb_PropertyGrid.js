@@ -221,7 +221,7 @@
                 TenantId: this.Cid,
                 SolutionId: this.Cid,
                 Container: "mb_" + this.wraperId,
-                Multiple:false,
+                Multiple: false,
                 ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.cloud',
                 EnableTag: false,
                 EnableCrop: false,
@@ -1081,6 +1081,8 @@
     this.initNullpropsWithDefaultVals = function () {
         let keys = Object.keys(this.PropsObj);
         let consName = this.PropsObj.constructor.name;
+        if (this.PropsObj.$type && typeof EbObjects[this.PropsObj.$type.split(",")[0].split(".")[2]] === "function")
+            consName = this.PropsObj.$type.split(",")[0].split(".")[2];
         if (consName === "Object")
             return;
         let dummyObj = new EbObjects[consName]("dummyObj_PG", {});

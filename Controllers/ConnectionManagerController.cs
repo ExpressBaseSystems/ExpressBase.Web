@@ -632,18 +632,18 @@ namespace ExpressBase.Web.Controllers
             {
                 con = new OracleConfig()
                 {
-                    //DatabaseName = req["databaseName"],
-                    //Server = req["server"],
-                    //Port = Convert.ToInt32(req["port"]),
-                    //UserName = req["userName"],
-                    //Password = req["password"],
-                    //ReadWriteUserName = req["readWriteUserName"],
-                    //ReadWritePassword = req["readWritePassword"],
-                    //ReadOnlyUserName = req["readOnlyUserName"],
-                    //ReadOnlyPassword = req["readOnlyPassword"],
-                    //Timeout = Convert.ToInt32(req["timeout"]),
-                    //IsSSL = (req["IsSSL"] == "on") ? true : false,
-                    //NickName = req["nickname"]
+                    DatabaseName = req["databaseName"],
+                    Server = req["server"],
+                    Port = Convert.ToInt32(req["port"]),
+                    UserName = req["userName"],
+                    Password = req["password"],
+                    ReadWriteUserName = req["readWriteUserName"],
+                    ReadWritePassword = req["readWritePassword"],
+                    ReadOnlyUserName = req["readOnlyUserName"],
+                    ReadOnlyPassword = req["readOnlyPassword"],
+                    Timeout = Convert.ToInt32(req["timeout"]),
+                    IsSSL = (req["IsSSL"] == "on") ? true : false,
+                    NickName = req["nickname"]
                 };
             }
             if (vendor == DatabaseVendors.MYSQL)

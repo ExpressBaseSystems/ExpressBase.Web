@@ -368,12 +368,8 @@ namespace ExpressBase.Web.Controllers
                 obj.BeforeSave(ServiceClient, Redis);
 
                 var temp = obj.DiscoverRelatedRefids();
-
-                if (temp != null)
-                {
-                    _rel_obj_tmp = string.Join(",", temp);
-                }
-
+                if (temp != null && temp.Count > 0) 
+                    _rel_obj_tmp = string.Join(",", temp); 
 
                 if (_rel_obj_tmp.Length > 0)
                     _rel_obj_tmp = _rel_obj_tmp.Substring(0, _rel_obj_tmp.Length - 1);//removing excess comma
@@ -461,8 +457,7 @@ namespace ExpressBase.Web.Controllers
                 obj.BeforeSave(ServiceClient, Redis);
 
                 var temp = obj.DiscoverRelatedRefids();
-
-                if (temp != null)
+                if (temp != null && temp.Count > 0)
                     _rel_obj_tmp = string.Join(",", temp);
 
                 if (obj is EbDataReader)

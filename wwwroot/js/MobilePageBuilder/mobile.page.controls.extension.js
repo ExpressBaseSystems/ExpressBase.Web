@@ -1,13 +1,4 @@
 ﻿(function (doc) {
-    var d = doc || document;
-
-    window.getCurrent = function () {
-        var id = $("#versionTab .tab-pane.active").attr("id");
-        let creator = window.MobilePage["Tab" + id.charAt(id.length - 1)].Creator;
-        console.log("mode : " + creator.Mode);
-        return creator.EbObject;
-    };
-
     window.dataColToMobileCol = function (datacols) {
         datacols = datacols || [];
         var mobcols = [];
@@ -32,7 +23,7 @@
                 this.tab = root.Conf.TabNum || "";
             },
             setObject: function () { return null; },
-            propertyChanged: function (propname) { },
+            propertyChanged: function (propname, root) { },
             blackListProps: [],
             refresh: function () { },
             pgSetObject: function (root) { }
@@ -42,10 +33,23 @@
     };
 
     window.expandable = {
-        "EbMobileSimpleSelect": {
-            getColumns: function (ds_refid, root) {
-                //root is the main object
-                root.dataSourceColumn(ds_refid, function (data) {
+        EbMobilePage: {
+            propertyChanged: function (propname, root) {
+                if (propname === "DisplayName") {
+                    root.setEmulatorTitle(this.DisplayName);
+                }
+            },
+        },
+        EbMobileSimpleSelect: {
+            propertyChanged: function (propname, root) {
+                if (propname === "DataSourceRefId") {
+                    this.getColumns(root);
+                }
+            },
+            getColumns: function (root) {
+                EbCommonLoader.EbLoader("show");
+                getDSColums(this.DataSourceRefId).done(function (data) {
+                    EbCommonLoader.EbLoader("hide");
                     let keys = Object.keys(data.columns).length;
                     let c = 1;
                     this.Columns.$values.length = 0;
@@ -68,7 +72,7 @@
                 }.bind(this));
             }
         },
-        "EbMobileGeoLocation": {
+        EbMobileGeoLocation: {
             _toggleSearchBar: function () {
                 if (this.HideSearchBox) {
                     $(`#${this.EbSid} .eb_mob_textbox`).hide();
@@ -83,7 +87,7 @@
                 }
             }
         },
-        "EbMobileTableLayout": {
+        EbMobileTableLayout: {
             trigger: function (root) {
                 this.tab = "Tab" + root.Conf.TabNum;
                 $(`#${this.EbSid} .eb_mob_tablelayout_inner`).append(this.getHtml());
@@ -105,7 +109,7 @@
             },
             droppable: function () {
                 $(`#${this.EbSid} .eb_tablelayout_td`).droppable({
-                    accept: ".draggable_column",
+                    accept: [Constants.DS_COLUMN, Constants.LIST_CONTROL].join(","),
                     hoverClass: "drop-hover-td",
                     drop: this.onDrop.bind(this)
                 });
@@ -173,7 +177,7 @@
                 }.bind(this));
             }
         },
-        "EbMobileDataGrid": {
+        EbMobileDataGrid: {
             trigger: function (root) {
                 root.makeDropable(this.EbSid, "EbMobileForm");
                 root.makeSortable(this.EbSid);
@@ -203,7 +207,7 @@
                 }
             }
         },
-        "EbMobileNumericBox": {
+        EbMobileNumericBox: {
             trigger: function (root) {
                 this.propertyChanged("RenderType");
             },
@@ -220,10 +224,10 @@
                 }
             }
         },
-        "EbMobileForm": {
+        EbMobileForm: {
             propertyChanged: function (propname, root) {
                 if (propname === "RenderValidatorRefId") {
-                    root.dataSourceColumn(this.RenderValidatorRefId, function (result) {
+                    getDSColums(this.RenderValidatorRefId).done(function (result) {
                         try {
                             this.RenderValidatorParams.$values = result.paramsList || [];
                         }
@@ -234,50 +238,103 @@
                     }.bind(this));
                 }
                 else if (propname === "SubmitButtonText") {
-                    $(`#eb_mobpage_wraper${root.Conf.TabNum} .emulator_f`).text(this.SubmitButtonText || "Save");
+                    root.$Selectors.pageWrapper.find(`.emulator_f`).text(this.SubmitButtonText || "Save");
                 }
             }
         },
-        "EbMobileVisualization": {
-            refresh: function (root) {
-                if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
-                    root.pg.ShowProperty('FormMode');
-                    root.pg.ShowProperty('FormId');
-                    root.pg.ShowProperty('LinkFormParameters');
-                    root.pg.ShowProperty('ContextToControlMap');
-                    root.pg.ShowProperty('ShowNewButton');
-                    if (this.ShowNewButton)
-                        root.pg.ShowProperty('NewButtonText');
-                    else
-                        root.pg.HideProperty('NewButtonText');
+        EbMobileVisualization: {
+            LinkSettingsProps: ['FormMode', 'FormId', 'LinkFormParameters', 'ContextToControlMap'],
+            FabSettingsProps: ['FabFormMode', 'FabFormId', 'FabFormParameters', 'ContextToFabControlMap'],
+            propertyChanged: function (propname, root) {
+                if (propname == "DataSourceRefId") {
+                    if (!this.DataSourceRefId) {
+                        this.loadDsColumns({}, root);
+                        return;
+                    }
+                    EbCommonLoader.EbLoader("show");
+                    getDSColums(this.DataSourceRefId).done(function (response) {
+                        this.loadDsColumns(response, root);
+                        EbCommonLoader.EbLoader("hide");
+                    }.bind(this));
                 }
-                else {
-                    root.pg.HideProperty('FormMode');
-                    root.pg.HideProperty('FormId');
-                    root.pg.HideProperty('LinkFormParameters');
-                    root.pg.HideProperty('ContextToControlMap');
-                    root.pg.HideProperty('ShowNewButton');
-                    root.pg.HideProperty('NewButtonText');
+                else if (propname === "LinkRefId") {
+                    if (!this.LinkRefId) {
+                        this.loadLinkFormControls(null, root);
+                        return;
+                    }
+                    EbCommonLoader.EbLoader("show");
+                    getLinkType(this.LinkRefId).done(function (response) {
+                        this.loadLinkFormControls(response, root);
+                        EbCommonLoader.EbLoader("hide");
+                    }.bind(this));
                 }
-            },
-            propertyChanged: function (propname) {
-                if (propname === "ShowNewButton") {
-                    if (this.ShowNewButton) {
-                        this.propertyChanged("NewButtonText");
-                        $(`#${this.EbSid} .vis-container-newbtn`).show();
+                else if (propname == "FabLinkRefId") {
+                    if (!this.FabLinkRefId) {
+                        this.setFabC2ControlMap(null, root);
+                        return;
+                    }
+                    EbCommonLoader.EbLoader("show");
+                    getLinkType(this.FabLinkRefId).done(function (response) {
+                        this.setFabC2ControlMap(response, root);
+                        EbCommonLoader.EbLoader("hide");
+                    }.bind(this));
+                }
+                else if (propname == "Type") {
+                    if (this.Type === 0) {
+                        root.pg.refresh();
+                        $(`#${this.EbSid} .filter_sort-tab`).removeClass("fst-fade-mask");
+                        if (this.DataSourceRefId) {
+                            root.showTreeContainer();
+                        }
                     }
                     else {
-                        $(`#${this.EbSid} .vis-container-newbtn`).hide();
+                        $(`#${this.EbSid} .filter_sort-tab`).addClass("fst-fade-mask");
+                        root.$Selectors.treeContainer.hide(200);
                     }
                 }
-                else if (propname === "NewButtonText") {
-                    let mr = this.NewButtonText ? 8 : 0;
-                    let template = `<span style="margin-right:${mr}px">${this.NewButtonText || ""}</span><i class="fa fa-plus"></i>`;
-                    $(`#${this.EbSid} .vis-container-newbtn`).html(template);
+            },
+            setFabC2ControlMap: function (response, root) {
+                if (!response) {
+                    root.Controls.FilterControls = [];
+                    this.FabControlMetas.$values.length = 0;
+                    this.FabLinkTypeForm = false;
+                    return;
                 }
+                let controlInfo = JSON.parse(response);
+                this.FabControlMetas.$values = controlInfo.ControlMetas.$values;
+                this.FabLinkTypeForm = controlInfo.IsForm;
+                root.pg.refresh();
+            },
+            loadDsColumns: function (getColumnResp, root) {
+                this.DataSourceParams.$values = getColumnResp.paramsList || [];
+                if (getColumnResp.columns && getColumnResp.columns.length > 0) {
+                    this.DataColumns.$values = window.dataColToMobileCol(getColumnResp.columns[0]);
+                }
+                else {
+                    this.DataColumns.$values.length = 0;
+                }
+                root.DSColumnsJSON = getColumnResp.columns || [];
+                root.Controls.drawDsColTree(getColumnResp.columns);
+                if (this.Type === 0) {
+                    root.showTreeContainer();
+                }
+            },
+            loadLinkFormControls: function (response, root) {
+                if (!response) {
+                    root.Controls.FilterControls = [];
+                    this.FormControlMetas.$values.length = 0;
+                    this.LinkTypeForm = false;
+                    return;
+                }
+                var controlInfo = JSON.parse(response);
+                root.Controls.FilterControls = controlInfo.Controls.$values;
+                this.FormControlMetas.$values = controlInfo.ControlMetas.$values;
+                this.LinkTypeForm = controlInfo.IsForm;
+                root.pg.refresh();
+                root.Controls.drawFormControls();
             }
         },
-        "EbMobileDataColumn": {
+        EbMobileDataColumn: {
             trigger: function (root) {
                 this.propertyChanged("HorrizontalAlign");
             },
@@ -287,12 +344,11 @@
                 }
             }
         },
-        "EbMobileButton": {
+        EbMobileButton: {
             __FormIdCopy: null,
             trigger: function (root) {
                 this.propertyChanged("HorrizontalAlign");
                 this.propertyChanged("LinkRefId", root);
-
                 this.__FormIdCopy = this.FormId;
             },
             propertyChanged: function (propname, root) {
@@ -304,23 +360,18 @@
                 }
             },
             setC2ControlMap: function (root) {
-
-                if (!this.LinkRefId)
-                    return;
-
-                window.resolveLinkType(this.LinkRefId, function (json) {
-
-                    let controlInfo = JSON.parse(json);
+                if (!this.LinkRefId) return;
+                EbCommonLoader.EbLoader("show");
+                getLinkType(this.LinkRefId).done(function (response) {
+                    EbCommonLoader.EbLoader("hide");
+                    let controlInfo = JSON.parse(response);
                     let ds_cols = root.DSColumnsJSON || [];
-
                     if (ds_cols.length >= 1) {
                         this.DataColumns.$values = window.dataColToMobileCol(ds_cols[0]);
                     }
-
                     this.FormControlMetas.$values = controlInfo.ControlMetas.$values;
                     this.LinkTypeForm = controlInfo.IsForm;
-                    this.refresh(root);
-
+                    root.pg.refresh();
                 }.bind(this));
             },
             pgSetObject: function (root) {
@@ -331,22 +382,10 @@
                     }
                 }
                 this.FormId = this.__FormIdCopy;
-                this.refresh(root);
-            },
-            refresh: function (root) {
-                if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
-                    root.pg.ShowProperty('FormMode');
-                    root.pg.ShowProperty('FormId');
-                    root.pg.ShowProperty('LinkFormParameters');
-                }
-                else {
-                    root.pg.HideProperty('FormMode');
-                    root.pg.HideProperty('FormId');
-                    root.pg.HideProperty('LinkFormParameters');
-                }
-            },
+                root.pg.refresh();
+            }
         },
-        "EbMobileRating": {
+        EbMobileRating: {
             propertyChanged: function () {
                 let htm = "";
                 for (i = 0; i < this.MaxValue; i++)
@@ -362,80 +401,18 @@
                 $(`#${this.EbSid} .eb_ctrlhtml .wrd_spacing`).css("padding-right", this.Spacing);
             },
         },
-        "EbMobileStackLayout": {
+        EbMobileStackLayout: {
             trigger: function (root) {
                 root.makeDropable(this.EbSid, "EbMobileDashBoard");
                 root.makeSortable(this.EbSid);
             }
+        },
+        EbMobileLabel: {
+            trigger: function (root) {
+                if (root.ContainerType === "EbMobileVisualization") {
+                    this.BindableParams.$values = root.ContainerObject.StaticParameters.$values;
+                }
+            }
         }
     };
 })(jQuery);
-
-function PgHelperMobile(g) {
-
-    this.grid = g;
-
-    this.hideBlackListed = function (o) {
-        let props = o.blackListProps;
-        for (let i = 0; i < props.length; i++) {
-            let el = this.grid.$PGcontainer.find(`tr[name="${props[i]}Tr"]`);
-
-            if (el.prevAll(":visible:first").hasClass("pgGroupRow") && el.next(":visible:first").hasClass("pgGroupRow")) {
-                el.prevAll(":visible:first").hide();
-            }
-            el.hide();
-        }
-    };
-}
-
-function FilterToolBox(ctype, tab) {
-
-    let $div = `#eb_mobpage_toolbox${tab}`;
-
-    if (ctype) {
-        $(`${$div} .eb_mobpage_tbxcategory`).hide();
-        $(`${$div} [tool-types*="${ctype}"]`).show();
-        $(`${$div} [tool-types="*"]`).show();
-    }
-    else {
-        $(`${$div} .eb_mobpage_tbxcategory`).show();
-    }
-}
-
-function alignHorrizontally($div, align) {
-    if (align === 0) {
-        $div.css("justify-content", "flex-start");
-        $div.find("*").css("width", "auto");
-    }
-    else if (align === 1) {
-        $div.css("justify-content", "center");
-        $div.find("*").css("width", "auto");
-    }
-    else if (align === 2) {
-        $div.css("justify-content", "flex-end");
-        $div.find("*").css("width", "auto");
-    }
-    else {
-        $div.css("justify-content", "flex-start");
-        $div.find("*").css("width", "100%");
-    }
-}
-
-function resolveLinkType(linkref, callback) {
-    if (linkref) {
-        $.ajax({
-            url: "../Dev/GetMobileFormControls",
-            type: "GET",
-            cache: false,
-            data: { refid: linkref },
-            beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
-            success: function (result) {
-                $("#eb_common_loader").EbLoader("hide");
-                callback(result);
-            }.bind(this),
-            error: function () {
-                $("#eb_common_loader").EbLoader("hide");
-            }
-        });
-    }
-}

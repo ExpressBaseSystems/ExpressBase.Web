@@ -26,7 +26,10 @@
 <script src="~/js/SqlBuilder/QBuilder.js" type="text/javascript"></script>
 <script src="~/js/SqlBuilder/Sort.js" type="text/javascript"></script>
 <script src="~/js/SqlBuilder/whereClause.js" type="text/javascript"></script>*@
-
+<script>
+    if (!ebcontext.SupportingDataDB)
+        ebcontext.SupportingDataDB = @Html.Raw(ViewBag.SupportingDataDB);
+</script>
 <style>
     .CodeMirror {
         z-index: 0;

@@ -392,7 +392,7 @@ function EbMobStudio(config) {
     this.pg.CXVE.onAddToCE = function (currentProp, $values, obj) {
         if (this.ContainerType === "EbMobileVisualization") {
             if (currentProp === "Items") {
-                var params = this.ContainerObject.StaticParamters.$values || [];
+                var params = this.ContainerObject.StaticParameters.$values || [];
                 for (let i = 0; i < params.length; i++) {
                     var p = params[i];
                     var o = this.makeElement("EbMobileStaticParameter", "ebmobilestaticparameter");

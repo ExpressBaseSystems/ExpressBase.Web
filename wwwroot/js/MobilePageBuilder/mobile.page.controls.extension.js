@@ -410,7 +410,7 @@
         EbMobileLabel: {
             trigger: function (root) {
                 if (root.ContainerType === "EbMobileVisualization") {
-                    this.BindableParams.$values = root.ContainerObject.StaticParamters.$values;
+                    this.BindableParams.$values = root.ContainerObject.StaticParameters.$values;
                 }
             }
         }

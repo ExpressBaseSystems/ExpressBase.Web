@@ -84,7 +84,7 @@
                 let realData = block[1].split(",")[1];
                 let blob = this.b64toBlob(realData, contentType);
                 this.replaceFile(blob, filename, contentType);
-                $(`div[file='${this.replceSpl(filename)}']`).find("img").attr({ "src": b64,"cropped":true });
+                $(`div[file='${this.replceSpl(filename)}']`).find("img").attr({ "src": b64, "cropped": true });
             }.bind(this);
         }
         this.Modal.find('.eb-upl-bdy').on("dragover", this.handleDragOver.bind(this));
@@ -206,7 +206,7 @@
                 $countdef.text("(" + $portdef.children().length + ")");
             }
             else {
-                if ((renderFiles[i].Meta.Category[0] === "Category")||(!renderFiles[i].Meta.Category[0])) {
+                if ((renderFiles[i].Meta.Category[0] === "Category") || (!renderFiles[i].Meta.Category[0])) {
                     $portdef.append(this.thumbNprevHtml(renderFiles[i]));
                     $countdef.text("(" + $portdef.children().length + ")");
                 }
@@ -382,10 +382,29 @@
         if (ev.ctrlKey)
             return this.thumbSelection(ev);
 
-        let fileref = $(ev.target).closest(`.${this.Options.Container}_preview`).attr("filref");
+        if (this.Options.ViewByCategory) {            
+            var catFiles = [];
+            let dv = $(ev.target).closest(`.${this.Options.Container}_preview`);
+            let fileref = dv.attr("filref");
+            var k = dv.parent().find(`.${this.Options.Container}_preview`);
 
-        //ebfileviewer 
-        this[`${this.Options.Container}_cont`].showimage(fileref);
+            if (k.length > 0) {
+                for (var i = 0; i < k.length; i++) {
+                    var z = $(k[i]).attr("filref");
+                    var ind = this.Options.Files.findIndex(x => x.FileRefId == z);
+                    catFiles.push(this.Options.Files[ind]);
+                }
+                this[`${this.Options.Container}_cont`] = $(`#${this.Options.Container}_view`).ebFileViewer(catFiles);
+                this[`${this.Options.Container}_cont`].showimage(fileref);
+            }
+        }
+        else {
+            let fileref = $(ev.target).closest(`.${this.Options.Container}_preview`).attr("filref");
+
+            //ebfileviewer 
+            this[`${this.Options.Container}_cont`].showimage(fileref);
+        }
+
 
 
         //this.GalleryFS.show();//show full screen 
@@ -707,7 +726,7 @@
             metaObj.Tags = [];
             metaObj.Tags.push(t.join(','));
         }
-            
+
         obj.Meta = metaObj;
         this.TempFilesList.push(obj);
         this.FileList.push(obj);
@@ -761,7 +780,7 @@
             thumb.find(".error").hide();
             thumb.closest('file-thumb-wraper').remove();
             for (let i = 0; i < this.Files.length; i++) {
-               
+
                 if (this.Files[i].name === thumb.attr("exact")) {
                     this.uploadSuccess(refid);
                     var k = this.Gallery.find(`[filename_RE='${this.Files[i].name}']`)
@@ -772,7 +791,7 @@
                         if (indx > -1) {
                             let j = this.FileList.findIndex(item => item.FileRefId == this.TempFilesList[indx].FileRefId);
                             this.FileList[j].original_refid = refid;
-                        }                      
+                        }
                     }
                     this.Files.splice(i, 1);
                     break;
@@ -895,7 +914,7 @@
                 reader.onloadend = function () {
                     this.FilesBase64[k] = reader.result;
                 }.bind(this);
-                
+
                 break;
             }
         }
@@ -1032,7 +1051,7 @@
             catDiv.find('.Col_apndBody_apndPort').append(thump);
             $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
-           
+
         }
         this.setThumbnailCount();
         this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
@@ -1069,7 +1088,7 @@
         for (let i = 0; i < filerefs.length; i++) {
             this.Gallery.find(`div[filref="${filerefs[i]}"]`).remove();
             let indx = this.FileList.findIndex(item => item.FileRefId == filerefs[i]);
-            this.FileList.splice(indx, 1);  
+            this.FileList.splice(indx, 1);
         }
     }
 

@@ -86,7 +86,8 @@
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,
-            ShowUploadDate: ctrl.ShowUploadDate
+            ShowUploadDate: ctrl.ShowUploadDate,
+            ViewByCategory: ctrl.ViewByCategory
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);

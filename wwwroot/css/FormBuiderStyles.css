@@ -883,7 +883,9 @@ eb-disable {
 }
 
 .dgtbl > tbody > tr[agg='true'] {
-    border: solid 1px #dededf;
+    border-left: solid 1px #ffffff;
+    border-right: solid 1px #ffffff;
+    border-top: solid 1px #ddddde;
     background-color: #ffffff !important;
 }
 
@@ -1963,6 +1965,7 @@ input.locinp {
 
 .dgtbl > thead > tr > th:last-child {
     text-align: center;
+    border-right: dotted 1px #ddddddc2;
 }
 
 .Dg_head .dgtbl > thead > tr > th {
@@ -1974,7 +1977,8 @@ input.locinp {
     .Dg_head .dgtbl > thead > tr > th:first-child {
         font-size: 11px;
         width: 34px;
-        padding: 0;
+        border-left: 0;
+        padding: 0.5px;
         vertical-align: middle;
     }
 

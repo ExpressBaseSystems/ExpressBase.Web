@@ -458,13 +458,13 @@
     };
 
     this.HideGroup = function (groupName) {
-        $("#" + this.wraperId + " [group=" + groupName + "]").hide(300);
-        $(`#${this.wraperId} .pgGroupRow[group-h=${groupName}]`).hide(300);
+        $(`#${this.wraperId} [group="${groupName}"]`).hide(300);
+        $(`#${this.wraperId} .pgGroupRow[group-h="${groupName}"]`).hide(300);
     };
 
     this.ShowGroup = function (groupName) {
-        $("#" + this.wraperId + " [group=" + groupName + "]").show(300);
-        $(`#${this.wraperId} .pgGroupRow[group-h=${groupName}]`).show(300);
+        $(`#${this.wraperId} [group="${groupName}"]`).show(300);
+        $(`#${this.wraperId} .pgGroupRow[group-h="${groupName}"]`).show(300);
     };
 
     //makes a property row hidden
@@ -986,7 +986,7 @@
         let $GroupHeadRow = $(e.target).closest("[group-h]");
         let isExpanded = $GroupHeadRow.attr("is-expanded") === 'true';
         let groupName = $GroupHeadRow.attr("group-h");
-        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        let $groupRows = $(`#${this.wraperId} [group="${groupName}"]`);
         if (groupName !== "All") {
             let delay = 100;
             if (isExpanded) {

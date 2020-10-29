@@ -122,6 +122,14 @@
 
 .eb_mobpage_tbxbdy {
 }
+
+.draggable_style {
+    background: white;
+    border: 1px dotted black;
+    width: auto;
+    padding: 15px;
+    border-radius: 4px;
+}
 /*ctrl layout*/
 .eb_stacklayout {
     margin: 10px 0;
@@ -449,6 +457,7 @@
         flex: 1;
         display: flex;
         flex-flow: column;
+        position:relative;
     }
 
         .eb_mob_vis_container .eb_mob_container_inner .filter_sort-tab .nav > li > a {
@@ -489,6 +498,18 @@
     left: 50%;
     transform: translateX(-50%);
 }
+
+.eb_mob_vis_container .fst-fade-mask {
+    border: none !important;
+}
+
+    .eb_mob_vis_container .fst-fade-mask:after {
+        content: "";
+        position: absolute;
+        background: white;
+        width: 100%;
+        height: 100%;
+    }
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {
     width: 100%;

@@ -493,6 +493,57 @@ body {
     display: none;
 }
 
+/*table style begin*/
+
+.form-buider-form .tab-btn-cont, .Eb-ctrlContainer .tab-content {
+    border: solid 1px #eaeaec;
+}
+
+.Eb-ctrlContainer .tab-content {
+    border-top: none;
+    border-radius: 0 0 3px 3px;
+    overflow-y: auto;
+    border-width: 2px;
+    box-shadow: 0 4px 4px 0 #f2f3f8;
+}
+
+.form-buider-form .tab-btn-cont {
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    padding: 1rem 0 0rem 0.4rem;
+    background-color: #f2f3f8;
+}
+
+    .form-buider-form .tab-btn-cont > .nav.nav-tabs {
+        min-height: 39px;
+    }
+
+[ctype="TabControl"] .nav-tabs {
+    border-bottom: 1px solid #ddd0;
+}
+
+.form-buider-form .nav-tabs > li {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+    .form-buider-form .nav-tabs > li > a {
+        border-radius: 9px 9px 0 0 !important;
+        margin-right: 5px;
+        color: #000;
+        border-radius: 9px 9px 0 0 !important;
+        background-color: rgba(153, 155, 163, 0.1);
+    }
+
+
+[ctype="TabControl"] .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    color: #333;
+    border-color: transparent;
+    background-color: white;
+}
+/*table style end*/
+
 .dgtbl[is-disabled='true'] {
     filter: grayscale(60%);
     pointer-events: none;
@@ -993,12 +1044,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none !important;
 }
 
-.Eb-ctrlContainer .tab-content {
-    border: 5px solid #ddd;
-    border-top: none;
-    overflow-y: auto;
-}
-
 .Eb-ctrlContainer .tab-pane {
     min-height: 100px;
 }
@@ -1308,17 +1353,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .DDdiv .dataTable tbody tr td {
     padding: 8px 10px !important;
 }
-
-.form-buider-form .tab-btn-cont {
-    padding: 0.75rem 0 0 0;
-    border: solid 4px #dddddd;
-    border-bottom: none;
-    background-color: rgba(0,0,0,.03);
-}
-
-    .form-buider-form .tab-btn-cont > .nav.nav-tabs {
-        min-height: 39px;
-    }
 
 .web-form-wraper .Eb-ctrlContainer {
     border: solid 1px rgba(255, 0, 0, 0);
@@ -2080,15 +2114,6 @@ input.locinp {
     border-radius: 10px;
     /*background-image: var(--gbm);*/
     background-color: rgb(199, 199, 199);
-}
-
-.form-buider-form .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-    border-radius: 3px 3px 0 0 !important;
-}
-
-.form-buider-form .nav-tabs > li {
-    font-size: 13px;
-    font-weight: 500;
 }
 
 .filter-box .input-group-addon, .form-buider-form .input-group-addon, [eb-type="BotForm"] .input-group-addon {
@@ -2975,9 +3000,9 @@ input.locinp {
         background-color: #fcfcfc;
     }
 
-.v-tab .tab-content {
-    flex-grow: 1;
-}
+    .v-tab .tab-content {
+        flex-grow: 1;
+    }
 
     .v-tab .nav-tabs > li {
         background-color: #e1e1e1;

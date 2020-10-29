@@ -3160,7 +3160,7 @@ input.locinp {
         color: #feb205;
     }
 
-/*BEGIN Region EbProvisionUser*/
+/*#region EbProvisionUser*/
 [ctype=ProvisionUser] .ctrl-cover {
     border: 1px dashed rgba(34,36,38,.15);
 }
@@ -3197,6 +3197,7 @@ input.locinp {
 [ctype=ProvisionUser] .pu-btn-refresh {
     float: right;
     padding: 2px 6px;
+    color: #888;
 }
 
 [ctype=ProvisionUser] .pu-chkbox label {
@@ -3279,4 +3280,4 @@ input.locinp {
 #ProvUserConfModal .pu-confmdl-uinfo {
     padding: 0px 15px 0px 45px;
 }
-/*END Region EbProvisionUser*/
+/*#endregion EbProvisionUser*/

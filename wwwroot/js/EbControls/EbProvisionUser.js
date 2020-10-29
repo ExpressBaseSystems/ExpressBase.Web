@@ -66,7 +66,7 @@
         this.$selectUserModal = $(`#${this.ctrl.EbSid_CtxId}_selMdl`);
         if (this.$selectUserModal.length === 0) {
             $('body').append(
-            `<div class="modal fade pu-sel-usr" id="${this.ctrl.EbSid_CtxId}_selMdl" role="dialog">
+                `<div class="modal fade pu-sel-usr" id="${this.ctrl.EbSid_CtxId}_selMdl" role="dialog">
                 <div class="modal-dialog" style="width: 440px;">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -104,10 +104,12 @@
         this.ctrl.setValue = function () {
             if (!this.DataVals)
                 return;
-            
+
             let _d = JSON.parse(this.DataVals.F);
             let dataObj = { id: _d['map_id'], fullname: _d['map_fullname'], email: _d['map_email'], phprimary: _d['map_phprimary'] };
-            if (_d['id'] === _d['map_id'])
+            if (!_d['map_id'])
+                this._JsCtrlMng.appendPuInfo('- Not assigned yet -');
+            else if (_d['id'] === _d['map_id'])
                 this._JsCtrlMng.appendPuInfo('Created user details...', null, null, dataObj);
             else
                 this._JsCtrlMng.appendPuInfo('Linked user details...', null, null, dataObj);
@@ -199,6 +201,9 @@
         this.lastReqstObj['id'] = this.ctrl.getValue();
         if (!this.lastReqstObj['email'] && !this.lastReqstObj['phprimary']) {
             this.appendPuInfo('Please enter email/phone to refresh!');
+            this.$refreshBtn.html(`<i class='fa fa-refresh'></i>`);
+            this.hide_inp_loader('email');
+            this.hide_inp_loader('phprimary');
             return;
         }
 
@@ -287,7 +292,7 @@
                 this.appendPuInfo(msg, null, null, reqObj);
             }
             else if (respObj.emailData !== null && respObj.phoneData !== null) {
-                if (respObj.emailData.id === respObj.phoneData.id === _od['map_id']) {
+                if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['map_id']) {
                     this.appendPuInfo(nothingMsg, null, null, reqObj);
                 }
                 else if (respObj.phoneData.id === _od['map_id']) {
@@ -421,7 +426,7 @@
 
     this.SearchUser = function () {
         this.$SelMdlUlist.find('.pu-selmdl-uli .col-md-12.active').removeClass('active');
-        this.$SelMdlBtn.css({ 'background-color': '#888', 'pointer-events': 'none'});
+        this.$SelMdlBtn.css({ 'background-color': '#888', 'pointer-events': 'none' });
         let srchTxt = this.$SelMdlSrch.val().toLocaleLowerCase();
         if (srchTxt === '') {
             this.$SelMdlUlist.children().show();
@@ -447,7 +452,7 @@
     this.ClickedOnUserItem = function (e) {
         this.$SelMdlUlist.find('.pu-selmdl-uli .col-md-12.active').removeClass('active');
         $(e.currentTarget).addClass('active');
-        this.$SelMdlBtn.css({ 'background-color': '', 'pointer-events': ''});
+        this.$SelMdlBtn.css({ 'background-color': '', 'pointer-events': '' });
     };
 
     this.SelMdlOkClicked = function (e) {
@@ -560,7 +565,7 @@
             let $infoUsr = null;
             if (this.$infoUsr1.hasClass('active'))
                 $infoUsr = this.$infoUsr1;
-            else if (this.$infoUsr2.hasClass('active')) 
+            else if (this.$infoUsr2.hasClass('active'))
                 $infoUsr = this.$infoUsr2;
             if ($infoUsr) {
                 let dataObj = $infoUsr.data('data-obj');
@@ -596,10 +601,9 @@ let EbProvUserUniqueChkJs = function (options) {
             this.CallBackFn(true);
             return;
         }
-        this.showLoaderFn();
         this.initiateAjaxCall();
         this.initModal();
-        this.$OkBtn.on('click', this.modalOkClicked.bind(this));
+        this.$OkBtn.off('click').on('click', this.modalOkClicked.bind(this));
     };
 
     this.initModal = function () {
@@ -641,8 +645,17 @@ let EbProvUserUniqueChkJs = function (options) {
                     reqObj[pucObj.Name][obj.Name] = obj.Control.getValue();
                 }
             }.bind(this));
+            if (!reqObj[pucObj.Name]['email'] && !reqObj[pucObj.Name]['phprimary']) {
+                delete reqObj[pucObj.Name];
+            }
         }.bind(this));
 
+        if ($.isEmptyObject(reqObj)) {
+            this.CallBackFn(true);
+            return;
+        }
+
+        this.showLoaderFn();
         $.ajax({
             type: "POST",
             url: "/WebForm/CheckEmailAndPhone",
@@ -660,48 +673,127 @@ let EbProvUserUniqueChkJs = function (options) {
         });
     };
 
+    this.Msg = {
+        New: 'New user will be created with following details..',
+        Link: 'User already exists. Data will be link to the user with following details.',
+        Link2: 'Data is already linked to the existing user with following details.',
+        AlreayExists1: 'Email and phone already exits for different users.'
+    };
+
     this.ajaxCallSuccess = function (reqObj, resp) {
         let respObjAll = JSON.parse(resp);
         let fullHtml = '';
         $.each(this.provUserAll, function (i, pucObj) {
+            let _od = {};
+            if (pucObj.DataVals)
+                _od = JSON.parse(pucObj.DataVals.F);
+
             let respObj = respObjAll[pucObj.Name];
 
             if (!respObj)
                 return;
-            
-            if (respObj.emailData === null && respObj.phoneData === null) {
-                if (reqObj.email || reqObj.phprimary) {
-                    fullHtml += this.getUserTileHtml('New user will be created with following details..', reqObj);
+
+            if (!_od['map_id']) {//New
+                if (respObj.emailData === null && respObj.phoneData === null) {
+                    fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                }
+                else if (respObj.emailData !== null && respObj.phoneData !== null) {
+                    if (respObj.emailData.id !== respObj.phoneData.id) {
+                        fullHtml += this.getUserTileHtml(this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
+                        this.abortSave = true;
+                    }
+                    else {
+                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                    }
+                }
+                else if (respObj.emailData !== null && respObj.phoneData === null) {
+                    if (reqObj['phprimary']) {
+                        reqObj['email'] = '';
+                        fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                    }
+                    else
+                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                }
+                else if (respObj.emailData === null && respObj.phoneData !== null) {
+                    if (reqObj['email']) {
+                        reqObj['phprimary'] = '';
+                        fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                    }
+                    else
+                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.phoneData);
                 }
             }
-            else if (respObj.emailData !== null && respObj.phoneData !== null) {
-                if (respObj.emailData.id !== respObj.phoneData.id) {
-                    fullHtml += this.getUserTileHtml('Email and phone already exits for different users.', respObj.emailData, respObj.phoneData);
-                    this.abortSave = true;
+            else {//edit
+                if (respObj.emailData === null && respObj.phoneData === null) {
+                    fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
                 }
-                else {
-                    fullHtml += this.getUserTileHtml('Will link to the user with following details.', respObj.emailData);
+                else if (respObj.emailData !== null && respObj.phoneData !== null) {
+                    if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['map_id']) {
+                        //nothing to display
+                    }
+                    else if (respObj.emailData.id === respObj.phoneData.id) {
+                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                    }
+                    else if (respObj.emailData.id === _od['map_id']) {
+                        fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.emailData);
+                    }
+                    else if (respObj.phoneData.id === _od['map_id']) {
+                        fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.phoneData);
+                    }
+                    else {
+                        fullHtml += this.getUserTileHtml(this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
+                        this.abortSave = true;
+                    }
+                }
+                else if (respObj.emailData !== null && respObj.phoneData === null) {
+                    if (reqObj['phprimary']) {
+                        if (respObj.emailData.id === _od['map_id']) {
+                            fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.emailData);
+                        }
+                        else {
+                            reqObj['email'] = '';
+                            fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                        }
+                    }
+                    else {
+                        if (respObj.emailData.id === _od['map_id']) {
+                            //nothing to display
+                        }
+                        else {
+                            fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                        }
+                    }
+                }
+                else if (respObj.emailData === null && respObj.phoneData !== null) {
+                    if (reqObj['email']) {
+                        if (respObj.phoneData.id === _od['map_id']) {
+                            fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.phoneData);
+                        }
+                        else {
+                            reqObj['phprimary'] = '';
+                            fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                        }
+                    }
+                    else {
+                        if (respObj.phoneData.id === _od['map_id']) {
+                            //nothing to display
+                        }
+                        else {
+                            fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.phoneData);
+                        }
+                    }
                 }
             }
-            else if (respObj.emailData !== null && respObj.phoneData === null) {
-                if (reqObj['phprimary'])
-                    fullHtml += this.getUserTileHtml('New user will be created with following details..', reqObj);
-                else
-                    fullHtml += this.getUserTileHtml('Will link to the user with following details.', respObj.emailData);
-            }
-            else if (respObj.emailData === null && respObj.phoneData !== null) {
-                if (reqObj['email'])
-                    fullHtml += this.getUserTileHtml('New user will be created with following details..', reqObj);
-                else
-                fullHtml += this.getUserTileHtml('Will link to the user with following details.', respObj.emailData);
-            }
+
         }.bind(this));
 
+        this.hideLoaderFn();
         if (fullHtml !== '') {
             this.$ModalBody.html(fullHtml);
-            this.hideLoaderFn();
             this.$Modal.modal('show');
         }
+        else
+            this.CallBackFn(true);
     };
 
     this.getUserTileHtml = function (msg, dataObj1 = null, dataObj2 = null) {

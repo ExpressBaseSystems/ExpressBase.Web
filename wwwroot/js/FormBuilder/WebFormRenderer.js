@@ -768,23 +768,23 @@ const WebFormRender = function (option) {
                 return;
             if (!this.MeetingB4Save())
                 return;
-            this.FRC.checkUnique4All_save(this.flatControls, true);
+            //this.FRC.checkUnique4All_save(this.flatControls, true);
 
-            //EbProvUserUniqueChkJs({
-            //    FormObj: this.FormObj,
-            //    CallBackFn: this.userProvCallBack.bind(this),
-            //    showLoaderFn: this.showLoader,
-            //    hideLoaderFn: this.hideLoader
-            //});            
+            EbProvUserUniqueChkJs({
+                FormObj: this.FormObj,
+                CallBackFn: this.userProvCallBack.bind(this),
+                showLoaderFn: this.showLoader,
+                hideLoaderFn: this.hideLoader
+            });            
         }.bind(this), 4);
     };
 
     //Provision user related unique check callback function
-    //this.userProvCallBack = function (ok) {
-    //    if (ok) {
-    //        this.FRC.checkUnique4All_save(this.flatControls, true);
-    //    }
-    //};
+    this.userProvCallBack = function (ok) {
+        if (ok) {
+            this.FRC.checkUnique4All_save(this.flatControls, true);
+        }
+    };
 
     this.saveAsDraft = function () {
         this.showLoader();
@@ -1481,7 +1481,7 @@ const WebFormRender = function (option) {
     };
 
     this.LocationInit = function () {
-        if (ebcontext.locations.Listener) {
+        if (ebcontext.locations.Listener && !this.FormObj.IsLocIndependent) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
                 if (this.rowId > 0) {
                     if (_renderMode !== 4) {
@@ -1513,6 +1513,9 @@ const WebFormRender = function (option) {
     };
 
     this.locInit4viewMode = function () {
+        if (this.FormObj.IsLocIndependent)
+            return;
+
         let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
         let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
         if (ol !== nl) {

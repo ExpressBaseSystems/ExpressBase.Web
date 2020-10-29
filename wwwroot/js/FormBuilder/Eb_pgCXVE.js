@@ -169,14 +169,14 @@
         this.curCXEbtn = $(e.target);
         let _meta = null;
         let visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
-        let right = (this.modalRight + -visibleModalLength * 10) + "px";
+        //let right = (this.modalRight + -visibleModalLength * 10) + "px";
         if ($(e.target).closest("tr").attr("tr-for") === "23")
             _meta = this.PGobj.getDictMeta(this.PGobj.PropsObj[this.PGobj.CurProp]);
         else
             _meta = this.PGobj.Metas;
 
-        $(this.pgCXE_Cont_Slctr).css("right", right);
-        $(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
+        //$(this.pgCXE_Cont_Slctr).css("right", right);
+        //$(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
         //this.CurProplabel = this.CurMeta.alias || this.PGobj.CurProp;
@@ -1572,13 +1572,15 @@
     };
 
     this.Init = function () {
-        let modalSizePercent = 65;
-        let modalWidth = window.screen.availWidth * (modalSizePercent / 100);
-        let modalHeight = modalWidth / 1.574;
-        this.modalRight = window.screen.availWidth * ((1 - (modalSizePercent / 100)) / 2);
-        this.modalTop = ((window.screen.availHeight - modalHeight) / 2) - 15;
+        //let modalSizePercent = 65;
+        //let modalWidth = window.screen.availWidth * (modalSizePercent / 100);
+        //let modalHeight = modalWidth / 1.574;
+        //this.modalRight = window.screen.availWidth * ((1 - (modalSizePercent / 100)) / 2);
+        //this.modalTop = ((window.screen.availHeight - modalHeight) / 2) - 15;
+        //style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;"//
+
         let CXVE_html = '<div class="pgCXEditor-bg">'
-            + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
+            + `<div class="pgCXEditor-Cont">`
 
             + '<div class="modal-header">'
             + '<button type="button" class="close">&times;</button>'

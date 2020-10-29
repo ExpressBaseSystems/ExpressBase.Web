@@ -640,7 +640,8 @@
 
 [iblock] .selected-tag {
     /*padding: 0.1em .45em 0.15em 0.45em !important;*/
-    padding: 5px 8px;
+    /*padding: 5px 8px;*/
+    padding: 2px 8px;
     padding-right: 8px !important;
 }
 

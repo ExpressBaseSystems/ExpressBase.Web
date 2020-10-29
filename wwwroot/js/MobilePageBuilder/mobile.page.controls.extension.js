@@ -115,18 +115,20 @@
                 });
             },
             onDrop: function (event, ui) {
-                let dragged = $(ui.draggable);
-                let ebtype = dragged.attr("eb-type");
-                let ctrlname = dragged.attr("ctrname");
-                let o = window.MobilePage[this.tab].Creator.makeElement(ebtype, ctrlname);
+                let $dragged = $(ui.draggable);
+                let ebtype = $dragged.attr("eb-type");
+                let ctrlname = $dragged.attr("ctrname");
+                let root = window.MobilePage[this.tab].Creator;
+                let o = root.makeElement(ebtype, ctrlname);
+                o.trigger(root);
                 $(event.target).append(o.$Control.outerHTML());
 
                 if (ebtype === "EbMobileDataColumn") {
-                    o.Type = dragged.attr("DbType");
-                    o.ColumnName = dragged.attr("ColName");
-                    o.ColumnIndex = dragged.attr("index");
+                    o.Type = $dragged.attr("DbType");
+                    o.ColumnName = $dragged.attr("ColName");
+                    o.ColumnIndex = $dragged.attr("index");
                 }
-                window.MobilePage[this.tab].Creator.refreshControl(o);
+                root.refreshControl(o);
             },
             resizable: function () {
                 $(`#${this.EbSid} .eb_tablelayout_tr:first-child .eb_tablelayout_td:not(:last-child)`).resizable({
@@ -412,6 +414,7 @@
                 if (root.ContainerType === "EbMobileVisualization") {
                     this.BindableParams.$values = root.ContainerObject.StaticParameters.$values;
                 }
+                setFontCss(this.Font, $(`#${this.EbSid}`));
             }
         }
     };

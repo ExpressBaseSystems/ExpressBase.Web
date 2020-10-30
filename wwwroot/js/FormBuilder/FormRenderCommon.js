@@ -466,11 +466,11 @@
     };
 
     /////////////
-    this.AllRequired_valid_Check = function () {
+    this.AllRequired_valid_Check = function (ctrlsArray = this.FO.flatControlsWithDG) {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let notOk1stCtrl = null;
-        $.each(this.FO.flatControlsWithDG, function (i, ctrl) {
+        $.each(ctrlsArray, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
             if (this.FO.EbAlert)
                 this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");

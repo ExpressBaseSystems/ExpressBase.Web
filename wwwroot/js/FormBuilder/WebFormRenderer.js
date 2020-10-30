@@ -61,6 +61,40 @@ const WebFormRender = function (option) {
         }
     };
 
+    this.initTabs = function () {
+        this.TabControls = getFlatObjOfType(this.FormObj, "TabControl");
+
+        $.each(this.TabControls, function (i, tabControl) {//TabControl Init
+            //if()
+            //return false;
+            let $Tab = $(`#cont_${tabControl.EbSid_CtxId}>.RenderAsWizard`);
+            $Tab.smartWizard({
+                theme: 'arrows',
+                transition: {
+                    animation: 'slide-h', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                    speed: '400', // Transion animation speed
+                    easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
+                },
+                toolbarSettings: {
+                    toolbarPosition: 'bottom', // none, top, bottom, both
+                    toolbarButtonPosition: 'center', // left, right, center
+                    showNextButton: true, // show/hide a Next button
+                    showPreviousButton: true, // show/hide a Previous button
+                }
+            });
+            $Tab.on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
+                debugger;
+                if (stepDirection === 'forward') {
+                    let pane = tabControl.Controls.$values[currentStepIndex];
+                    let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
+                    return this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs);
+                }
+                true;
+            }.bind(this));
+
+        }.bind(this));
+    };
+
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {//dg Init
             this.DGBuilderObjs[DG.EbSid_CtxId] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
@@ -220,6 +254,7 @@ const WebFormRender = function (option) {
         this.initDGs();
         this.initDGsNew();
         this.initReviewCtrl();
+        this.initTabs();
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
@@ -733,23 +768,23 @@ const WebFormRender = function (option) {
                 return;
             if (!this.MeetingB4Save())
                 return;
-            this.FRC.checkUnique4All_save(this.flatControls, true);
+            //this.FRC.checkUnique4All_save(this.flatControls, true);
 
-            //EbProvUserUniqueChkJs({
-            //    FormObj: this.FormObj,
-            //    CallBackFn: this.userProvCallBack.bind(this),
-            //    showLoaderFn: this.showLoader,
-            //    hideLoaderFn: this.hideLoader
-            //});            
+            EbProvUserUniqueChkJs({
+                FormObj: this.FormObj,
+                CallBackFn: this.userProvCallBack.bind(this),
+                showLoaderFn: this.showLoader,
+                hideLoaderFn: this.hideLoader
+            });            
         }.bind(this), 4);
     };
 
     //Provision user related unique check callback function
-    //this.userProvCallBack = function (ok) {
-    //    if (ok) {
-    //        this.FRC.checkUnique4All_save(this.flatControls, true);
-    //    }
-    //};
+    this.userProvCallBack = function (ok) {
+        if (ok) {
+            this.FRC.checkUnique4All_save(this.flatControls, true);
+        }
+    };
 
     this.saveAsDraft = function () {
         this.showLoader();
@@ -1446,7 +1481,7 @@ const WebFormRender = function (option) {
     };
 
     this.LocationInit = function () {
-        if (ebcontext.locations.Listener) {
+        if (ebcontext.locations.Listener && !this.FormObj.IsLocIndependent) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
                 if (this.rowId > 0) {
                     if (_renderMode !== 4) {
@@ -1478,6 +1513,9 @@ const WebFormRender = function (option) {
     };
 
     this.locInit4viewMode = function () {
+        if (this.FormObj.IsLocIndependent)
+            return;
+
         let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
         let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
         if (ol !== nl) {

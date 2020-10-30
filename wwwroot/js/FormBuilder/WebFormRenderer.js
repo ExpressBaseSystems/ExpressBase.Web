@@ -83,13 +83,18 @@ const WebFormRender = function (option) {
                 }
             });
             $Tab.on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
-                debugger;
                 if (stepDirection === 'forward') {
                     let pane = tabControl.Controls.$values[currentStepIndex];
                     let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
-                    return this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs);
+                    if (this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs)) {
+                        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew)
+                            this.saveAsDraft();
+                        return true;
+                    }
+                    else
+                        return false;
                 }
-                true;
+                return true;
             }.bind(this));
 
         }.bind(this));
@@ -775,7 +780,7 @@ const WebFormRender = function (option) {
                 CallBackFn: this.userProvCallBack.bind(this),
                 showLoaderFn: this.showLoader,
                 hideLoaderFn: this.hideLoader
-            });            
+            });
         }.bind(this), 4);
     };
 
@@ -1813,7 +1818,7 @@ const WebFormRender = function (option) {
 
         this.EbAlert = new EbAlert({
             id: this.FormObj.EbSid_CtxId + "_formAlertBox",
-            class:'webform-alert-box',
+            class: 'webform-alert-box',
             top: 60,
             right: 24,
             onClose: this.FRC.invalidBoxOnClose

@@ -245,8 +245,6 @@
             }
         },
         EbMobileVisualization: {
-            LinkSettingsProps: ['FormMode', 'FormId', 'LinkFormParameters', 'ContextToControlMap'],
-            FabSettingsProps: ['FabFormMode', 'FabFormId', 'FabFormParameters', 'ContextToFabControlMap'],
             propertyChanged: function (propname, root) {
                 if (propname == "DataSourceRefId") {
                     if (!this.DataSourceRefId) {
@@ -297,13 +295,11 @@
             },
             setFabC2ControlMap: function (response, root) {
                 if (!response) {
-                    root.Controls.FilterControls = [];
                     this.FabControlMetas.$values.length = 0;
                     this.FabLinkTypeForm = false;
                     return;
                 }
                 let controlInfo = JSON.parse(response);
-                this.FabControlMetas.$values = controlInfo.ControlMetas.$values;
                 this.FabLinkTypeForm = controlInfo.IsForm;
                 root.pg.refresh();
             },

@@ -680,7 +680,7 @@ let EbProvUserUniqueChkJs = function (options) {
         AlreayExists1: 'Email and phone already exits for different users.'
     };
 
-    this.ajaxCallSuccess = function (reqObj, resp) {
+    this.ajaxCallSuccess = function (reqObjAll, resp) {
         let respObjAll = JSON.parse(resp);
         let fullHtml = '';
         $.each(this.provUserAll, function (i, pucObj) {
@@ -688,6 +688,7 @@ let EbProvUserUniqueChkJs = function (options) {
             if (pucObj.DataVals)
                 _od = JSON.parse(pucObj.DataVals.F);
 
+            let reqObj = reqObjAll[pucObj.Name];
             let respObj = respObjAll[pucObj.Name];
 
             if (!respObj)

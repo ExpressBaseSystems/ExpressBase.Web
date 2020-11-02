@@ -65,9 +65,9 @@ const WebFormRender = function (option) {
         this.TabControls = getFlatObjOfType(this.FormObj, "TabControl");
 
         $.each(this.TabControls, function (i, tabControl) {//TabControl Init
-            //if()
-            //return false;
             let $Tab = $(`#cont_${tabControl.EbSid_CtxId}>.RenderAsWizard`);
+            if ($Tab.length === 0)
+                return false;
             $Tab.smartWizard({
                 theme: 'arrows',
                 transition: {
@@ -82,13 +82,15 @@ const WebFormRender = function (option) {
                     showPreviousButton: true, // show/hide a Previous button
                 }
             });
-            $Tab.on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
+            $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 if (stepDirection === 'forward') {
                     let pane = tabControl.Controls.$values[currentStepIndex];
                     let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
                     if (this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs)) {
-                        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew)
+                        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew && !pane.savedAsDraft) {
+                            pane.savedAsDraft = true;
                             this.saveAsDraft();
+                        }
                         return true;
                     }
                     else
@@ -546,7 +548,7 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {
-            EbMessage("show", { Message: "Form saved as draft", AutoHide: false, Background: '#00aa00' });
+            EbMessage("show", { Message: "Form saved as draft", AutoHide: true, Background: '#00aa00' });
         }
         else if (respObj.Status === 403) {
             EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });

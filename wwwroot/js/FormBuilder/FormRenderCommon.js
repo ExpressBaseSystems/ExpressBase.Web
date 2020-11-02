@@ -542,7 +542,11 @@
         let TabPaneParents = parent ? getParentsOfType('TabPane', parent, this.FO.FormObj) : getParentsOfType('TabPane', ctrl, this.FO.FormObj);
         ctrl.__noOfParentPanes = TabPaneParents.length;
         for (let i = TabPaneParents.length - 1; i >= 0; i--) {
-            $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`).tab('show');
+            let $a = $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`);
+            if ($a.closest('ul').parent().hasClass('RenderAsWizard'))
+                $a.trigger('click');
+            else
+                $a.tab('show');
         }
     };
 

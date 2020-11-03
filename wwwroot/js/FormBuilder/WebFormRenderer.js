@@ -84,6 +84,7 @@ const WebFormRender = function (option) {
             });
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 if (stepDirection === 'forward') {
+                    e.stopPropagation();
                     let pane = tabControl.Controls.$values[currentStepIndex];
                     let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
                     if (this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs)) {

@@ -1315,38 +1315,38 @@
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
-        //new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts});        
-        $('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
-            trigger: 'hover',
-            html: true,
-            container: "body",
-            placement: "right",
-            content: "<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>Created/Linked user</div>- Not assigned yet -",
-            delay: { "show": 500, "hide": 100 }
-        });
+        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts});        
+        //$('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
+        //    trigger: 'hover',
+        //    html: true,
+        //    container: "body",
+        //    placement: "right",
+        //    content: "<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>Created/Linked user</div>- Not assigned yet -",
+        //    delay: { "show": 500, "hide": 100 }
+        //});
 
-        ctrl.setValue = function () {
-            if (!this.DataVals)
-                return;
-            this._finalObj = JSON.parse(this.DataVals.F);
-            let _d = this._finalObj;
-            let $img = $('#' + this.EbSid_CtxId + '_usrimg');
-            if (_d['map_id']) {
-                $img.off('error').on('error', function () { $(this).attr('src', '/images/nulldp.png'); }).attr('src', '/images/dp/' + _d['map_id'] + '.png');
-                let dispText = _d['map_fullname'] ? _d['map_fullname'] : (_d['map_email'] ? _d['map_email'] : (_d['map_phprimary'] ? _d['map_phprimary'] : ''));
-                $('#' + this.EbSid_CtxId).text(dispText);
-                let popoverText = 'Name: ' + (_d['map_fullname'] ? _d['map_fullname'] : '---') + '<br/>';
-                popoverText += 'Email: ' + (_d['map_email'] ? _d['map_email'] : '---') + '<br/>';
-                popoverText += 'Phone: ' + (_d['map_phprimary'] ? _d['map_phprimary'] : '---');
-                let title = `<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>${(_d['id'] ? 'Created user' : 'Linked user')}</div>`;
-                popoverText = title + popoverText;
-                $img.attr('data-content', popoverText);
-            }
-            else {
-                $img.attr('src', '/images/nulldp.png');
-                $('#' + this.EbSid_CtxId).text('---');
-            }
-        }.bind(ctrl);
+        //ctrl.setValue = function () {
+        //    if (!this.DataVals)
+        //        return;
+        //    this._finalObj = JSON.parse(this.DataVals.F);
+        //    let _d = this._finalObj;
+        //    let $img = $('#' + this.EbSid_CtxId + '_usrimg');
+        //    if (_d['map_id']) {
+        //        $img.off('error').on('error', function () { $(this).attr('src', '/images/nulldp.png'); }).attr('src', '/images/dp/' + _d['map_id'] + '.png');
+        //        let dispText = _d['map_fullname'] ? _d['map_fullname'] : (_d['map_email'] ? _d['map_email'] : (_d['map_phprimary'] ? _d['map_phprimary'] : ''));
+        //        $('#' + this.EbSid_CtxId).text(dispText);
+        //        let popoverText = 'Name: ' + (_d['map_fullname'] ? _d['map_fullname'] : '---') + '<br/>';
+        //        popoverText += 'Email: ' + (_d['map_email'] ? _d['map_email'] : '---') + '<br/>';
+        //        popoverText += 'Phone: ' + (_d['map_phprimary'] ? _d['map_phprimary'] : '---');
+        //        let title = `<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>${(_d['id'] ? 'Created user' : 'Linked user')}</div>`;
+        //        popoverText = title + popoverText;
+        //        $img.attr('data-content', popoverText);
+        //    }
+        //    else {
+        //        $img.attr('src', '/images/nulldp.png');
+        //        $('#' + this.EbSid_CtxId).text('---');
+        //    }
+        //}.bind(ctrl);
 
         //$.each(ctrl.Fields.$values, function (i, obj) {
         //    if (obj.ControlName !== '') {

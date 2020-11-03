@@ -278,13 +278,13 @@
     }
 
 .pgCXEditor-Cont {
-    border-radius: 3px;
-    /*width: 50%;*/
-    height: 70VH;
     position: fixed;
-    /*left: 25%;
-    top: 15vh;*/
+    height: 80%;
+    width: 65%;
+    top: calc(10% + 18.5px);
+    left: 17.5%;
     background-color: white;
+    border-radius: 3px;
     padding: 3px;
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
     animation-name: flip;
@@ -610,7 +610,7 @@
 .pgCXEditor-Cont .btn[name="CXE_OK"] {
     border-radius: 19px !important;
     border: solid 1px #797979;
-    padding: 6px 15px 6px 12px;
+    padding: 7px 14px 5px 13px;
     background-color: white;
     color: #444;
     font-weight: bold;

@@ -458,13 +458,13 @@
     };
 
     this.HideGroup = function (groupName) {
-        $("#" + this.wraperId + " [group=" + groupName + "]").hide(300);
-        $(`#${this.wraperId} .pgGroupRow[group-h=${groupName}]`).hide(300);
+        $(`#${this.wraperId} [group="${groupName}"]`).hide(300);
+        $(`#${this.wraperId} .pgGroupRow[group-h="${groupName}"]`).hide(300);
     };
 
     this.ShowGroup = function (groupName) {
-        $("#" + this.wraperId + " [group=" + groupName + "]").show(300);
-        $(`#${this.wraperId} .pgGroupRow[group-h=${groupName}]`).show(300);
+        $(`#${this.wraperId} [group="${groupName}"]`).show(300);
+        $(`#${this.wraperId} .pgGroupRow[group-h="${groupName}"]`).show(300);
     };
 
     //makes a property row hidden
@@ -664,7 +664,8 @@
     this.addToDD = function (obj) {
         //  this.AllObjects[obj.EbSid] = obj;
         let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
-        let ebsid = obj.EbSid;
+        let ebsid = obj.EbSid || ("tempfromDev" + Date.now().toString(36));
+        obj.EbSid = obj.EbSid || ebsid;
         let _name = obj.Name || obj.name;
         let objTypeName = obj.ObjType ? (` (${obj.ObjType})`) : "";
         let optText = _name + objTypeName;
@@ -862,7 +863,9 @@
     };
 
     this.refresh = function () {
+        let isModalOpen = this.isModalOpen;
         this.setObject(this.PropsObj, this.Metas);
+        this.isModalOpen = isModalOpen;
     }.bind(this);
 
     // performs some basic tasks after initialization of variables 
@@ -986,7 +989,7 @@
         let $GroupHeadRow = $(e.target).closest("[group-h]");
         let isExpanded = $GroupHeadRow.attr("is-expanded") === 'true';
         let groupName = $GroupHeadRow.attr("group-h");
-        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        let $groupRows = $(`#${this.wraperId} [group="${groupName}"]`);
         if (groupName !== "All") {
             let delay = 100;
             if (isExpanded) {

@@ -105,7 +105,7 @@ class Setup {
         if (nf.length > 0) {
             for (let i = 0; i < nf.length; i++) {
                 this.nf_container.append(`
-                <li class="nf-tile" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
+                <li class="nf-tile nf-lst" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
                     <i class="fa fa-times notification-close" style="float: right;"></i>
                     <div class="notification-inner">
                         <h5>${nf[i].title || plc}</h5>
@@ -118,8 +118,13 @@ class Setup {
             this.nf_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
         }
         $("#nf-window #nf-notification-count").text(`(${nf.length})`);
+        if (nf.length > 0) {
+            $('#closeAll_nf').prop("disabled", false);
+            $('#closeAll_nf').off("click").on('click', this.ClearAll_NF.bind(this));
+        }
         this.notification_count = nf.length;
-        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
+        $('.notification-close,.nf-lst').off("click").on('click', this.CloseNotification.bind(this));
+
     }
 
     drawActions(pa) {
@@ -247,6 +252,35 @@ class Setup {
         }
 
         $('#notification-count').attr("count", x);
+    }
+
+    ClearAll_NF = function () {
+        var nf = $(".nf-lst");
+        var nfArray = [];
+        if (nf.length > 0) {
+            nf.each(function (i,ob) {
+                nfArray.push($(ob).attr("notification-id"));
+            })           
+            $.ajax({
+                type: "POST",
+                url: "../Notifications/ClearAllNotifications",
+                data: { notificationLst: nfArray },
+                success: function () {
+                    nf.each(function (j, obj) {
+                        $(obj).closest("li").detach();
+                    })
+
+                    this.notification_count = 0;
+                    $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);
+                    ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+                    if (this.notification_count === 0) {
+                        this.nf_container.html(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+                    }
+                    $('#closeAll_nf').prop("disabled", true);
+                }.bind(this)
+            });
+           
+        }
     }
 
     CloseNotification = function (e) {

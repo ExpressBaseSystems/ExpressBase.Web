@@ -71,7 +71,7 @@ const WebFormRender = function (option) {
             $Tab.smartWizard({
                 theme: 'arrows',
                 transition: {
-                    animation: 'slide-h', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                    animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
                     speed: '400', // Transion animation speed
                     easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
                 },

@@ -1144,18 +1144,22 @@ const WebFormRender = function (option) {
                     $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 45%; font-size: 20px; color: #aaa; "> Nothing to Display </div>`);
                     return;
                 }
-                else if (result === "") {
+                let auditObj;
+                try {
+                    auditObj = JSON.parse(result);
+                }
+                catch (e) {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something went wrong </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> ${result} </div>`);
                     return;
                 }
-                this.drawAuditTrailTest(result);
+                this.drawAuditTrailTest(auditObj);
             }.bind(this)
         });
     };
 
-    this.drawAuditTrailTest = function (result) {
-        let auditObj = JSON.parse(result);
+    this.drawAuditTrailTest = function (auditObj) {
+
         let $transAll = $(`<div></div>`);
 
         $.each(auditObj, function (idx, Obj) {

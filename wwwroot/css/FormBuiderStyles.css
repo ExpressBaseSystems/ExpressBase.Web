@@ -3274,10 +3274,16 @@ input.locinp {
 #ProvUserConfModal .pu-confmdl-info {
     font-size: 12px;
     display: flex;
-    padding-bottom: 15px;
+    padding: 5px 0px 10px 0px;
+    align-items: center;
 }
 
 #ProvUserConfModal .pu-confmdl-uinfo {
     padding: 0px 15px 0px 45px;
 }
+    #ProvUserConfModal .pu-confmdl-uinfo img {
+        border-radius: 50%;
+        height: 50px;
+        width: 50px;
+    }
 /*#endregion EbProvisionUser*/

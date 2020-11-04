@@ -480,7 +480,7 @@
                 if (this.FO.EbAlert) {
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
-                        head: "required",
+                        head: "Required",
                         body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
@@ -542,7 +542,11 @@
         let TabPaneParents = parent ? getParentsOfType('TabPane', parent, this.FO.FormObj) : getParentsOfType('TabPane', ctrl, this.FO.FormObj);
         ctrl.__noOfParentPanes = TabPaneParents.length;
         for (let i = TabPaneParents.length - 1; i >= 0; i--) {
-            $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`).tab('show');
+            let $a = $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`);
+            if ($a.closest('ul').parent().hasClass('RenderAsWizard'))
+                $a.trigger('click');
+            else
+                $a.tab('show');
         }
     };
 

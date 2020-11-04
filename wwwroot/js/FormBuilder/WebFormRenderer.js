@@ -65,13 +65,14 @@ const WebFormRender = function (option) {
         this.TabControls = getFlatObjOfType(this.FormObj, "TabControl");
 
         $.each(this.TabControls, function (i, tabControl) {//TabControl Init
-            //if()
-            //return false;
             let $Tab = $(`#cont_${tabControl.EbSid_CtxId}>.RenderAsWizard`);
+            if ($Tab.length === 0)
+                return false;
             $Tab.smartWizard({
                 theme: 'arrows',
+                enableURLhash: false, // Enable selection of the step based on url hash
                 transition: {
-                    animation: 'slide-h', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                    animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
                     speed: '400', // Transion animation speed
                     easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
                 },
@@ -82,14 +83,23 @@ const WebFormRender = function (option) {
                     showPreviousButton: true, // show/hide a Previous button
                 }
             });
-            $Tab.on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
-                debugger;
+
+            $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 if (stepDirection === 'forward') {
+                    e.stopPropagation();
                     let pane = tabControl.Controls.$values[currentStepIndex];
                     let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
-                    return this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs);
+                    if (this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs)) {
+                        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew && !pane.savedAsDraft) {
+                            pane.savedAsDraft = true;
+                            this.saveAsDraft();
+                        }
+                        return true;
+                    }
+                    else
+                        return false;
                 }
-                true;
+                return true;
             }.bind(this));
 
         }.bind(this));
@@ -541,7 +551,7 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {
-            EbMessage("show", { Message: "Form saved as draft", AutoHide: false, Background: '#00aa00' });
+            EbMessage("show", { Message: "Form saved as draft", AutoHide: true, Background: '#00aa00' });
         }
         else if (respObj.Status === 403) {
             EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
@@ -775,7 +785,7 @@ const WebFormRender = function (option) {
                 CallBackFn: this.userProvCallBack.bind(this),
                 showLoaderFn: this.showLoader,
                 hideLoaderFn: this.hideLoader
-            });            
+            });
         }.bind(this), 4);
     };
 
@@ -1817,7 +1827,7 @@ const WebFormRender = function (option) {
 
         this.EbAlert = new EbAlert({
             id: this.FormObj.EbSid_CtxId + "_formAlertBox",
-            class:'webform-alert-box',
+            class: 'webform-alert-box',
             top: 60,
             right: 24,
             onClose: this.FRC.invalidBoxOnClose

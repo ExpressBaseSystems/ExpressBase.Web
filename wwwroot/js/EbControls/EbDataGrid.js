@@ -1769,6 +1769,9 @@
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);
+        for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
+            this.initControls.initInfo(this.ctrl.Controls.$values[i]);
+        }
     };
 
     this.dg_HScroll = function (e) {

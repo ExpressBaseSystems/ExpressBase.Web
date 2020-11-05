@@ -70,6 +70,7 @@ const WebFormRender = function (option) {
                 return false;
             $Tab.smartWizard({
                 theme: 'arrows',
+                enableURLhash: false, // Enable selection of the step based on url hash
                 transition: {
                     animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
                     speed: '400', // Transion animation speed
@@ -82,6 +83,7 @@ const WebFormRender = function (option) {
                     showPreviousButton: true, // show/hide a Previous button
                 }
             });
+
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 if (stepDirection === 'forward') {
                     e.stopPropagation();
@@ -1152,18 +1154,22 @@ const WebFormRender = function (option) {
                     $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 45%; font-size: 20px; color: #aaa; "> Nothing to Display </div>`);
                     return;
                 }
-                else if (result === "") {
+                let auditObj;
+                try {
+                    auditObj = JSON.parse(result);
+                }
+                catch (e) {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something went wrong </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> ${result} </div>`);
                     return;
                 }
-                this.drawAuditTrailTest(result);
+                this.drawAuditTrailTest(auditObj);
             }.bind(this)
         });
     };
 
-    this.drawAuditTrailTest = function (result) {
-        let auditObj = JSON.parse(result);
+    this.drawAuditTrailTest = function (auditObj) {
+
         let $transAll = $(`<div></div>`);
 
         $.each(auditObj, function (idx, Obj) {

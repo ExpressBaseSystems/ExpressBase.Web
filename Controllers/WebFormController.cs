@@ -142,7 +142,9 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (RowId > 0)
                 {
-                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId)))
+                    EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
+                    bool neglectLocId = WebForm.IsLocIndependent;
+                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId)))
                     {
                         TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: View/Edit`";
                         return "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
@@ -444,7 +446,9 @@ namespace ExpressBase.Web.Controllers
                 string Operation = OperationConstants.NEW;
                 if (RowId > 0)
                     Operation = OperationConstants.EDIT;
-                if (!this.HasPermission(RefId, Operation, CurrentLoc))
+                EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
+                bool neglectLocId = WebForm.IsLocIndependent;
+                if (!this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId))
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
@@ -488,17 +492,20 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                //if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
-                //{
-                GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
-                return Resp.Json;
-                //}
-                //throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+                EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(refid, this.ServiceClient, this.Redis, null);
+                bool neglectLocId = WebForm.IsLocIndependent;
+                if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc, neglectLocId))
+                {
+                    GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
+                    return Resp.Json;
+                }
+                Console.WriteLine("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+                return "Access denied";
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-                return string.Empty;
+                return $"Internal server error. Message: {ex.Message}";
             }
         }
 
@@ -548,10 +555,12 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult GetPdfReport(string refId, string rowId)
         {
-            if (!this.HasPermission(refId, OperationConstants.PRINT, -1))//////
+            if (!this.HasPermission(refId, OperationConstants.PRINT, 0, true))
                 return Redirect("/StatusCode/401");
-            List<Param> p = new List<Param>();
-            p.Add(new Param { Name = "id", Value = rowId, Type = "7" });
+            List<Param> p = new List<Param>
+            {
+                new Param { Name = "id", Value = rowId, Type = "7" }
+            };
             string s = JsonConvert.SerializeObject(p);
             s = s.ToBase64();
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);

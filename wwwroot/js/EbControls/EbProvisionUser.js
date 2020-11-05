@@ -158,7 +158,7 @@
             let val = this.extCtrls[key].getValue();
             if (this.lastReqstObj[key] !== val) {
                 this.lastReqstObj[key] = val;
-                if (key !== 'fullname') {
+                if (key !== 'fullname' && val) {
                     this.show_inp_loader(key);
                 }
                 return true;
@@ -231,127 +231,179 @@
         });
     };
 
+    this.Msg = {
+        New: 'Data save will create a user with following details.',
+        Link: 'Data save will link to the user with following details.',
+        Choose: 'Choose a user to continue.',
+        Select: 'Select the user to continue.',
+        Nothing: 'Nothing to update to the following user.',
+        Update: 'Data save will also update email/phone of the following user.',
+        UpdateEmail: 'Data save will also update email of the following user.',
+        UpdatePhone: 'Data save will also update phone of the following user.',
+    };
+
+    //PopOver
+    this.POhtml = {
+        PhoneDiff: 'There is already an user with the given Email but their Phone is different',
+        EmailDiff: 'There is already an user with the given Phone but their Email is different',
+        PhoneUpdate: 'This phone will be updated to the existing user',
+        EmailUpdate: 'This email will be updated to the existing user',
+    };
+
     this.checkEmailAndPhoneSuccess = function (reqObj, res) {
         if (this.lastReqstObj['email'] !== reqObj['email'] || this.lastReqstObj['phprimary'] !== reqObj['phprimary'])
             return;
 
-        let linkMsg = 'Data save will link to the user with following details...';
-        let chooseMsg = 'Choose a user to continue.';
-        let selectMsg = 'Select the user to continue.';
-        let nothingMsg = 'Nothing to update to the following user.';
-
         this.hide_inp_loader('email');
         this.hide_inp_loader('phprimary');
+        this.$updateChkBx.prop('checked', false);
 
         this.$refreshBtn.html(`<i class='fa fa-refresh'></i>`);
         let respObj = JSON.parse(res)[this.ctrl.Name];
         this.lastRespObj = respObj;
 
-        if (!(this.Renderer.rowId > 0 && respObj.curData)) {//new 
+        let _od = {};
+        if (this.ctrl.DataVals)
+            _od = JSON.parse(this.ctrl.DataVals.F);
+
+        if (!_od['map_id']) {//New
             if (respObj.emailData === null && respObj.phoneData === null) {
-                let msg = `Data save will create a user with following details...`;
-                this.appendPuInfo(msg, null, null, reqObj);
+                this.appendPuInfo(this.Msg.New, null, null, reqObj);
             }
             else if (respObj.emailData !== null && respObj.phoneData !== null) {
                 if (respObj.emailData.id !== respObj.phoneData.id) {
-                    this.appendPuInfo(chooseMsg, respObj.emailData, respObj.phoneData);
-                    this.addInvalidStyle('email', null, respObj.phoneData);
-                    this.addInvalidStyle('phprimary', null, respObj.emailData);
+                    this.appendPuInfo(this.Msg.Choose, respObj.emailData, respObj.phoneData);
+                    this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                    this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                 }
                 else {
-                    this.appendPuInfo(linkMsg, respObj.emailData);
-                    this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
-                }
-            }
-            else if (respObj.emailData !== null && respObj.phoneData === null) {
-                if (reqObj['phprimary']) {
-                    this.appendPuInfo(selectMsg, respObj.emailData);
-                    this.addInvalidStyle('phprimary', null, respObj.emailData);
-                }
-                else {
-                    this.appendPuInfo(linkMsg, respObj.emailData);
+                    this.appendPuInfo(this.Msg.Link, respObj.emailData);
                     this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                 }
             }
             else if (respObj.emailData === null && respObj.phoneData !== null) {
                 if (reqObj['email']) {
-                    this.appendPuInfo(selectMsg, respObj.phoneData);
-                    this.addInvalidStyle('email', null, respObj.phoneData);
+                    this.appendPuInfo(this.Msg.Select, respObj.phoneData);
+                    this.addInvalidStyle('email', this.POhtml.PhoneDiff);
                 }
                 else {
-                    this.appendPuInfo(linkMsg, respObj.phoneData);
+                    this.appendPuInfo(this.Msg.Link, respObj.phoneData);
                     this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
                 }
             }
+            else if (respObj.emailData !== null && respObj.phoneData === null) {
+                if (reqObj['phprimary']) {
+                    this.appendPuInfo(this.Msg.Select, respObj.emailData);
+                    this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                }
+                else {
+                    this.appendPuInfo(this.Msg.Link, respObj.emailData);
+                    this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
+                }
+            }
         }
-        else { //edit
-            let _od = JSON.parse(this.ctrl.DataVals.F);//_od['id'] _od['map_id']
-
+        else {//edit
+            let dataObj = { id: _od['id'], fullname: _od['fullname'], email: _od['email'], phprimary: _od['phprimary'] };
+            let isUserCreated = _od['map_id'] === _od['id'];
             if (respObj.emailData === null && respObj.phoneData === null) {
-                let msg = `Data save will create a user with following details...`;
-                this.appendPuInfo(msg, null, null, reqObj);
+                if (isUserCreated) {
+                    this.appendPuInfo(this.Msg.Update, null, null, dataObj);
+                    this.$updateChkBx.prop('checked', true);
+                    if (reqObj['email'] !== _od['email']) {
+                        this.addInvalidStyle('email', this.POhtml.EmailUpdate);
+                    }
+                    if (reqObj['phprimary'] !== _od['phprimary']) {
+                        this.addInvalidStyle('phprimary', this.POhtml.PhoneUpdate);
+                    }
+                }
+                else
+                    this.appendPuInfo(this.Msg.New, null, null, reqObj);
             }
             else if (respObj.emailData !== null && respObj.phoneData !== null) {
                 if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['map_id']) {
-                    this.appendPuInfo(nothingMsg, null, null, reqObj);
+                    this.appendPuInfo(this.Msg.Nothing, null, null, respObj.emailData);
                 }
-                else if (respObj.phoneData.id === _od['map_id']) {
-                    this.appendPuInfo(chooseMsg, respObj.phoneData, respObj.emailData);
-                    this.addInvalidStyle('email', null, respObj.phoneData);
+                else if (respObj.emailData.id === respObj.phoneData.id) {
+                    this.appendPuInfo(this.Msg.Link, respObj.emailData);
+                    this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                 }
                 else if (respObj.emailData.id === _od['map_id']) {
-                    this.appendPuInfo(chooseMsg, respObj.emailData, respObj.phoneData);
-                    this.addInvalidStyle('phprimary', null, respObj.emailData);
+                    this.appendPuInfo(this.Msg.Choose, respObj.emailData, respObj.phoneData);
+                    this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                    this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                }
+                else if (respObj.phoneData.id === _od['map_id']) {
+                    this.appendPuInfo(this.Msg.Choose, respObj.phoneData, respObj.emailData);
+                    this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                    this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                 }
                 else {
-                    this.appendPuInfo(chooseMsg, respObj.emailData, respObj.phoneData);
-                    this.addInvalidStyle('email', null, respObj.phoneData);
-                    this.addInvalidStyle('phprimary', null, respObj.emailData);
-                }
-            }
-            else if (respObj.emailData !== null && respObj.phoneData === null) {
-                if (reqObj['phprimary']) {
-                    if (respObj.emailData.id === _od['map_id']) {
-                        this.appendPuInfo(selectMsg, respObj.emailData);
-                        this.addInvalidStyle('phprimary', null, respObj.emailData);
-                    }
-                    else {
-                        this.appendPuInfo(selectMsg, respObj.emailData);
-                        this.addInvalidStyle('email', `Must be unique because '${reqObj['phprimary']}' is unique`);
-                        this.addInvalidStyle('phprimary', null, respObj.emailData);
-                    }
-                }
-                else {
-                    if (respObj.emailData.id === _od['map_id']) {
-                        this.appendPuInfo(nothingMsg, respObj.emailData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
-                    }
-                    else {
-                        this.appendPuInfo(linkMsg, respObj.emailData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
-                    }
+                    this.appendPuInfo(this.Msg.Choose, respObj.emailData, respObj.phoneData);
+                    this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                    this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                 }
             }
             else if (respObj.emailData === null && respObj.phoneData !== null) {
                 if (reqObj['email']) {
                     if (respObj.phoneData.id === _od['map_id']) {
-                        this.appendPuInfo(selectMsg, respObj.phoneData);
-                        this.addInvalidStyle('email', null, respObj.phoneData);
+                        if (isUserCreated) {
+                            this.appendPuInfo(this.Msg.UpdateEmail, null, null, dataObj);
+                            this.addInvalidStyle('email', this.POhtml.EmailUpdate);
+                            this.$updateChkBx.prop('checked', true);
+                        }
+                        else {
+                            this.appendPuInfo(this.Msg.Select, respObj.phoneData);
+                            this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                            //this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                        }
                     }
                     else {
-                        this.appendPuInfo(selectMsg, respObj.phoneData);
-                        this.addInvalidStyle('email', null, respObj.phoneData);
-                        this.addInvalidStyle('phprimary', `Must be unique because '${reqObj['email']}' is unique`);
+                        this.appendPuInfo(this.Msg.Select, respObj.phoneData);
+                        this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                        //this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                        //this.addInvalidStyle('phprimary', `Must be unique because '${reqObj['email']}' is unique`);
                     }
                 }
                 else {
                     if (respObj.phoneData.id === _od['map_id']) {
-                        this.appendPuInfo(nothingMsg, respObj.phoneData);
+                        this.appendPuInfo(this.Msg.Nothing, respObj.phoneData);
                         this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
                     }
                     else {
-                        this.appendPuInfo(linkMsg, respObj.phoneData);
+                        this.appendPuInfo(this.Msg.Link, respObj.phoneData);
                         this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
+                    }
+                }
+            }
+            else if (respObj.emailData !== null && respObj.phoneData === null) {
+                if (reqObj['phprimary']) {
+                    if (respObj.emailData.id === _od['map_id']) {
+                        if (isUserCreated) {
+                            this.appendPuInfo(this.Msg.UpdatePhone, null, null, dataObj);
+                            this.addInvalidStyle('phprimary', this.POhtml.PhoneUpdate);
+                            this.$updateChkBx.prop('checked', true);
+                        }
+                        else {
+                            this.appendPuInfo(this.Msg.Select, respObj.emailData);
+                            this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                            //this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                        }
+                    }
+                    else {
+                        this.appendPuInfo(this.Msg.Select, respObj.emailData);
+                        this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                        //this.addInvalidStyle('email', `Must be unique because '${reqObj['phprimary']}' is unique`);
+                        //this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                    }
+                }
+                else {
+                    if (respObj.emailData.id === _od['map_id']) {
+                        this.appendPuInfo(this.Msg.Nothing, respObj.emailData);
+                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
+                    }
+                    else {
+                        this.appendPuInfo(this.Msg.Link, respObj.emailData);
+                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                     }
                 }
             }
@@ -615,13 +667,13 @@ let EbProvUserUniqueChkJs = function (options) {
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h5 class="modal-title">User provision summary</h5>
+                            <h5 class="modal-title">User creation</h5>
                         </div>
                         <div class="modal-body" style="height: calc(80vh - 180px); overflow: auto;">
 
                         </div>
                         <div class="modal-footer">
-                            <button id="puConfMdlOk" class="ebbtn eb_btn-sm eb_btnblue" type="button">Ok</button>
+                            <button id="puConfMdlOk" class="ebbtn eb_btn-sm eb_btnblue" type="button">Continue</button>
                             <button type="button" class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
@@ -677,7 +729,10 @@ let EbProvUserUniqueChkJs = function (options) {
         New: 'New user will be created with following details..',
         Link: 'User already exists. Data will be link to the user with following details.',
         Link2: 'Data is already linked to the existing user with following details.',
-        AlreayExists1: 'Email and phone already exits for different users.'
+        AlreayExists1: 'Email and phone already exits for different users.',
+        Update: 'Data save will also update email/phone of the following user.',
+        UpdateEmail: 'Data save will also update email of the following user.',
+        UpdatePhone: 'Data save will also update phone of the following user.'
     };
 
     this.ajaxCallSuccess = function (reqObjAll, resp) {
@@ -696,64 +751,73 @@ let EbProvUserUniqueChkJs = function (options) {
 
             if (!_od['map_id']) {//New
                 if (respObj.emailData === null && respObj.phoneData === null) {
-                    fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                    fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
                 }
                 else if (respObj.emailData !== null && respObj.phoneData !== null) {
                     if (respObj.emailData.id !== respObj.phoneData.id) {
-                        fullHtml += this.getUserTileHtml(this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
                         this.abortSave = true;
                     }
                     else {
-                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.emailData);
                     }
                 }
                 else if (respObj.emailData !== null && respObj.phoneData === null) {
                     if (reqObj['phprimary']) {
                         reqObj['email'] = '';
-                        fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
                     }
                     else
-                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.emailData);
                 }
                 else if (respObj.emailData === null && respObj.phoneData !== null) {
                     if (reqObj['email']) {
                         reqObj['phprimary'] = '';
-                        fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
                     }
                     else
-                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.phoneData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.phoneData);
                 }
             }
             else {//edit
+                let dataObj = { id: _od['id'], fullname: _od['fullname'], email: _od['email'], phprimary: _od['phprimary'] };
                 if (respObj.emailData === null && respObj.phoneData === null) {
-                    fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                    if (_od['map_id'] === _od['id'])
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Update, dataObj);
+                    else
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
                 }
                 else if (respObj.emailData !== null && respObj.phoneData !== null) {
                     if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['map_id']) {
                         //nothing to display
                     }
                     else if (respObj.emailData.id === respObj.phoneData.id) {
-                        fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.emailData);
                     }
                     else if (respObj.emailData.id === _od['map_id']) {
-                        fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.emailData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
+                        this.abortSave = true;
                     }
                     else if (respObj.phoneData.id === _od['map_id']) {
-                        fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.phoneData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
+                        this.abortSave = true;
                     }
                     else {
-                        fullHtml += this.getUserTileHtml(this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.AlreayExists1, respObj.emailData, respObj.phoneData);
                         this.abortSave = true;
                     }
                 }
                 else if (respObj.emailData !== null && respObj.phoneData === null) {
                     if (reqObj['phprimary']) {
                         if (respObj.emailData.id === _od['map_id']) {
-                            fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.emailData);
+                            if (_od['map_id'] === _od['id'])
+                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdatePhone, dataObj);
+                            else
+                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link2, respObj.emailData);
                         }
                         else {
                             reqObj['email'] = '';
-                            fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
                         }
                     }
                     else {
@@ -761,18 +825,21 @@ let EbProvUserUniqueChkJs = function (options) {
                             //nothing to display
                         }
                         else {
-                            fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.emailData);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.emailData);
                         }
                     }
                 }
                 else if (respObj.emailData === null && respObj.phoneData !== null) {
                     if (reqObj['email']) {
                         if (respObj.phoneData.id === _od['map_id']) {
-                            fullHtml += this.getUserTileHtml(this.Msg.Link2, respObj.phoneData);
+                            if (_od['map_id'] === _od['id'])
+                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdateEmail, dataObj);
+                            else
+                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link2, respObj.phoneData);
                         }
                         else {
                             reqObj['phprimary'] = '';
-                            fullHtml += this.getUserTileHtml(this.Msg.New, reqObj);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
                         }
                     }
                     else {
@@ -780,7 +847,7 @@ let EbProvUserUniqueChkJs = function (options) {
                             //nothing to display
                         }
                         else {
-                            fullHtml += this.getUserTileHtml(this.Msg.Link, respObj.phoneData);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.phoneData);
                         }
                     }
                 }
@@ -797,23 +864,23 @@ let EbProvUserUniqueChkJs = function (options) {
             this.CallBackFn(true);
     };
 
-    this.getUserTileHtml = function (msg, dataObj1 = null, dataObj2 = null) {
+    this.getUserTileHtml = function (pucObj, msg, dataObj1 = null, dataObj2 = null) {
         let html = '';
         if (dataObj1) {
             html = `<div class='pu-confmdl-info'>
-                        <div class='pu-confmdl-uinfo'>Name<br>Email<br>Phone</div>
-                        <div>: ${dataObj1.fullname}<br>: ${dataObj1.email}<br>: ${dataObj1.phprimary}</div>
+                        <div class='pu-confmdl-uinfo'><img src='/images/proimg.jpg' alt='Display picture'></div>
+                        <div><b> ${(dataObj1.fullname ? (dataObj1.fullname + '<br>') : '')}</b> ${(dataObj1.email ? (dataObj1.email + '<br>') : '')} ${dataObj1.phprimary || ''}</div>
                     </div>`
         }
         if (dataObj2) {
             html += `<div class='pu-confmdl-info'>
-                        <div class='pu-confmdl-uinfo'>Name<br>Email<br>Phone</div>
-                        <div>: ${dataObj2.fullname}<br>: ${dataObj2.email}<br>: ${dataObj2.phprimary}</div>
+                        <div class='pu-confmdl-uinfo'><img src='/images/proimg.jpg' alt='Display picture'></div>
+                        <div><b> ${(dataObj2.fullname ? (dataObj2.fullname + '<br>') : '')}</b> ${(dataObj2.email ? (dataObj2.email + '<br>') : '')} ${dataObj2.phprimary || ''}</div>
                     </div>`
         }
         html = `
             <div class='pu-confmdl-tile'>
-                <div class='pu-confmdl-title'>Provision user</div>
+                <div class='pu-confmdl-title'>${pucObj.Label || 'Provision User'}</div>
                 <div class='pu-confmdl-sub'> ${msg} </div>
                 ${html}
             </div>`

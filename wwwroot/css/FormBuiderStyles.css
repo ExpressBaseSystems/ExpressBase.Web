@@ -3360,5 +3360,11 @@ input.locinp {
     cursor: pointer;
     margin-top: 5px;
     float: right;
+    box-shadow: 1px 1px 6px 2px #ccc;
+    transition-duration: 0.4s;
 }
+    .provUsrCtrlPoBtn:hover {
+        background: #2b72f8;
+        box-shadow: 1px 1px 6px 2px #bbb;
+    }
 /*#endregion EbProvisionUser*/

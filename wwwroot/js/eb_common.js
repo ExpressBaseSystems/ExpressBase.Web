@@ -373,7 +373,7 @@ function EbMakeInvalid_Test(ctrl, contSel, _ctrlCont, msg = "This field is requi
     if ($ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).length === 1)
         $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).remove();
 
-    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
+    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span' style='margin: auto auto auto -24px;'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
     $ctrlCont.css("border", `1px solid ${borderColor}`);
 
     $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
@@ -389,6 +389,12 @@ function EbMakeInvalid_Test(ctrl, contSel, _ctrlCont, msg = "This field is requi
         },
         content: msg
     }).on("mouseenter", function () {
+        let _this = this;
+        $(this).popover("show");
+        $('#' + $(this).attr('aria-describedby')).on("mouseleave", function () {
+            $(_this).popover('hide');
+        });
+    }).on("click", function () {
         let _this = this;
         $(this).popover("show");
         $('#' + $(this).attr('aria-describedby')).on("mouseleave", function () {

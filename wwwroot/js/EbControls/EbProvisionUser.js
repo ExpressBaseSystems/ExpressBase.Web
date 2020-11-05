@@ -37,7 +37,7 @@
         this.$infoUsr1.on('click', this.ClickedOnUserTile.bind(this));
         this.$infoUsr2.on('click', this.ClickedOnUserTile.bind(this));
 
-        $('body').on('click', `#${this.ctrl.EbSid_CtxId}_PoBtn`, this.PopOverBtnClicked.bind(this));
+        $('body').off('click', `#${this.ctrl.EbSid_CtxId}_PoBtn`).on('click', `#${this.ctrl.EbSid_CtxId}_PoBtn`, this.PopOverBtnClicked.bind(this));
     };
 
     this.ctrlInit = function () {
@@ -575,7 +575,7 @@
             let html = '';
             if (msgObj.btnTxt)
                 html = `<div><div class='provUsrCtrlPoBtn' id='${this.ctrl.EbSid_CtxId}_PoBtn' data-id='${msgObj.id}'>${msgObj.btnTxt}</div></div>`;
-            html = `<div style='font-size: 12px;'><div>${msgObj.msg}</div>${html}</div>`;
+            html = `<div style='font-size: 12px; color: rgb(51, 51, 51);'><div>${msgObj.msg}</div>${html}</div>`;
 
             EbMakeInvalid_Test(this.extCtrls[key], '#cont_' + this.extCtrls[key].EbSid_CtxId, '.ctrl-cover', html, 'warning');
         }

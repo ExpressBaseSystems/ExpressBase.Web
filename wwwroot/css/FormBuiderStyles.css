@@ -1514,7 +1514,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none !important;
 }
 
-[isrendermode="true"] .eb-ctrl-label > .label-infoCont {
+[isrendermode="true"] .eb-ctrl-label > .label-infoCont, [isrendermode="true"] .dg-th > .label-infoCont {
     display: flex;
     position: absolute;
     right: -30px;
@@ -1533,18 +1533,24 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     transition-delay: 0.3s;
 }
 
+[isrendermode="true"] .dg-th > .label-infoCont {
+    right: 6px;
+    top: calc(50% - 9px);
+}
+
 [isrendermode="false"] .eb-ctrl-label > .label-infoCont {
     display: none !important;
 }
 
-
 [isrendermode="true"] .Eb-ctrlContainer:hover > .eb-ctrl-label > .label-infoCont,
+[isrendermode="true"] .dg-th:hover > .label-infoCont,
 [isrendermode="true"] .label-infoCont:focus {
     color: #356aff;
     box-shadow: 0 0 3px 0 #356aff;
 }
 
-[isrendermode="true"] .eb-ctrl-label > .label-infoCont > .fa {
+[isrendermode="true"] .eb-ctrl-label > .label-infoCont > .fa,
+[isrendermode="true"] .dg-th > .label-infoCont > .fa {
     margin: auto;
 }
 
@@ -3333,10 +3339,16 @@ input.locinp {
 #ProvUserConfModal .pu-confmdl-info {
     font-size: 12px;
     display: flex;
-    padding-bottom: 15px;
+    padding: 5px 0px 10px 0px;
+    align-items: center;
 }
 
 #ProvUserConfModal .pu-confmdl-uinfo {
     padding: 0px 15px 0px 45px;
 }
+    #ProvUserConfModal .pu-confmdl-uinfo img {
+        border-radius: 50%;
+        height: 50px;
+        width: 50px;
+    }
 /*#endregion EbProvisionUser*/

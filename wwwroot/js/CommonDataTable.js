@@ -2734,10 +2734,13 @@
                 }
             });
         });
-        $(".rating").rateYo({
-            readOnly: true,
-            starWidth: "24px"
-        });
+
+        if (this.Source !== "loginActivity") {
+            $(".rating").rateYo({
+                readOnly: true,
+                starWidth: "24px"
+            });
+        }       
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),

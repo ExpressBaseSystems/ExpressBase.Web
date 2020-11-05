@@ -480,7 +480,19 @@
     }
     catch (er) {
         console.log(er);
-        if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname !=  ("/SupportTicket/EditTicket")) {
+        if (!ebcontext.user.RoleIds.length > 0) {
+            var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
+                                    <div class="cw">
+                                        <div class="msgbdy">User doesn't have any specific roles</div>
+                                        <div class="cnfrmBox-btnc">
+                                            <button name="Logout" onclick="location.href = '/Tenantuser/Logout';" class="btn dlgBoxBtn-cust  pull-right" style="background:green;color:white;">Logout</button>
+                                        </div>
+                                    </div>
+                                </div>`;
+            $('body').append(html);
+        }
+
+        else if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname !=  ("/SupportTicket/EditTicket")) {
             if (confirm("An error occured while selecting location, do you want to report it?")) {
                 window.location = '/SupportTicket/bugsupport';
             } else {

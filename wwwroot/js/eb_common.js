@@ -357,6 +357,67 @@ function EbBlink(ctrl, selector = `#${ctrl.EbSid_CtxId}Wraper`) {
 //    //},400);
 //}
 
+//#region Test4ProvUserCtrl
+function EbMakeInvalid_Test(ctrl, contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+    let borderColor = "rgb(242 5 0)";
+    if (type === "warning")
+        borderColor = "rgb(236, 151, 31)";
+
+    if ($(`${contSel} .req-cont`).length !== 0)
+        return;
+
+    let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
+    if ($ctrlCont.children(".ebctrl-msg-cont").length !== 1)
+        $ctrlCont.append(`<div class="ebctrl-msg-cont"></div>`);
+
+    if ($ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).length === 1)
+        $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).remove();
+
+    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
+    $ctrlCont.css("border", `1px solid ${borderColor}`);
+
+    $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
+        trigger: 'manual',
+        html: true,
+        container: "body",
+        placement: function (context, source) {
+            if (($(source).offset().left + 700) > document.body.clientWidth)
+                return "left";
+            else {
+                return "right";
+            }
+        },
+        content: msg
+    }).on("mouseenter", function () {
+        let _this = this;
+        $(this).popover("show");
+        $('#' + $(this).attr('aria-describedby')).on("mouseleave", function () {
+            $(_this).popover('hide');
+        });
+    }).on("mouseleave", function () {
+        let _this = this;
+        setTimeout(function () {
+            if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+                $(_this).popover("hide");
+            }
+        }, 100);
+    });
+}
+
+function EbMakeValid_Test(contSel, _ctrlCont, ctrl) {
+    $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)");
+    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    if (ctrl)
+        $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
+    $(`${contSel} ${_ctrlCont}:first`).find(`.ebctrl-msg-cont .text-warning`).popover("hide");
+    $(`${contSel} .ebctrl-msg-cont:first`).empty();
+
+    //setTimeout(function () {
+    //$(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+    //
+    //},400);
+}
+//#endregion Test4ProvUserCtrl
 
 function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     if ($(`${contSel} .ctrl-info-msg-cont`).length !== 0)

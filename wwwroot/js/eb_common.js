@@ -373,10 +373,11 @@ function EbMakeInvalid_Test(ctrl, contSel, _ctrlCont, msg = "This field is requi
     if ($ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).length === 1)
         $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).remove();
 
-    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span' style='margin: auto auto auto -24px;'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
+    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span' style='margin: auto auto auto -25px; padding: 2px 5px 2px 2px; outline: none;'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
     $ctrlCont.css("border", `1px solid ${borderColor}`);
 
-    $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
+    let timer1;
+    let $poTrig = $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
         trigger: 'manual',
         html: true,
         container: "body",
@@ -387,27 +388,38 @@ function EbMakeInvalid_Test(ctrl, contSel, _ctrlCont, msg = "This field is requi
                 return "right";
             }
         },
-        content: msg
-    }).on("mouseenter", function () {
+        content: msg,
+        delay: { "hide": 100 }
+    });
+
+    let OnMouseEnter = function () {
+        clearTimeout(timer1);
         let _this = this;
-        $(this).popover("show");
-        $('#' + $(this).attr('aria-describedby')).on("mouseleave", function () {
-            $(_this).popover('hide');
+        let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+        if (!$poDiv.length) {
+            $(_this).popover("show");
+            $poDiv = $('#' + $(_this).attr('aria-describedby'));
+        }
+        $poDiv.off("mouseleave").on("mouseleave", function () {
+            timer1 = setTimeout(function () { $(_this).popover('hide'); }, 300);
         });
-    }).on("click", function () {
-        let _this = this;
-        $(this).popover("show");
-        $('#' + $(this).attr('aria-describedby')).on("mouseleave", function () {
-            $(_this).popover('hide');
+
+        $poDiv.off("mouseenter").on("mouseenter", function () {
+            clearTimeout(timer1);
         });
-    }).on("mouseleave", function () {
+    };
+
+    let OnMouseLeave = function () {
         let _this = this;
-        setTimeout(function () {
+        timer1 = setTimeout(function () {
             if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
                 $(_this).popover("hide");
             }
-        }, 100);
-    });
+        }, 300);
+    };
+
+    $poTrig.on('mouseenter click', OnMouseEnter.bind($poTrig));
+    $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
 }
 
 function EbMakeValid_Test(contSel, _ctrlCont, ctrl) {

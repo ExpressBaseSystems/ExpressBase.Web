@@ -483,9 +483,9 @@
         if (!ebcontext.user.RoleIds.length > 0) {
             var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
                                     <div class="cw">
-                                        <div class="msgbdy">User doesn't have any specific roles</div>
+                                        <div class="msgbdy">You don’t have any roles assigned to you</div>
                                         <div class="cnfrmBox-btnc">
-                                            <button name="Logout" onclick="location.href = '/Tenantuser/Logout';" class="btn dlgBoxBtn-cust  pull-right" style="background:green;color:white;">Logout</button>
+                                            <button name="Logout" onclick="location.href = '/Tenantuser/Logout';" class="btn dlgBoxBtn-cust  pull-right" style="background:red;color:white;">Logout</button>
                                         </div>
                                     </div>
                                 </div>`;

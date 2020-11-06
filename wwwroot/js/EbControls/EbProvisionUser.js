@@ -36,6 +36,8 @@
         this.$updateChkBx.on('change', this.updateChkBxChanged.bind(this))
         this.$infoUsr1.on('click', this.ClickedOnUserTile.bind(this));
         this.$infoUsr2.on('click', this.ClickedOnUserTile.bind(this));
+
+        $('body').off('click', `#${this.ctrl.EbSid_CtxId}_PoBtn`).on('click', `#${this.ctrl.EbSid_CtxId}_PoBtn`, this.PopOverBtnClicked.bind(this));
     };
 
     this.ctrlInit = function () {
@@ -244,10 +246,12 @@
 
     //PopOver
     this.POhtml = {
-        PhoneDiff: 'There is already an user with the given Email but their Phone is different',
-        EmailDiff: 'There is already an user with the given Phone but their Email is different',
-        PhoneUpdate: 'This phone will be updated to the existing user',
-        EmailUpdate: 'This email will be updated to the existing user',
+        PhoneDiff: { id: 1, msg: 'There is already an user with the given Email but their Phone is different', btnTxt: 'Select this user' },//select this user
+        EmailDiff: { id: 2, msg: 'There is already an user with the given Phone but their Email is different', btnTxt: 'Select this user' },
+        PhoneUpdate: { id: 3, msg: 'This phone will be updated to the existing user' },
+        EmailUpdate: { id: 4, msg: 'This email will be updated to the existing user' },
+        PhoneUnique: { id: 5, msg: 'This phone is unique, but there is already an user with the given email', btnTxt: 'New user without email' },//new user without email
+        EmailUnique: { id: 6, msg: 'This email is unique, but there is already an user with the given phone', btnTxt: 'New user without phone' },
     };
 
     this.checkEmailAndPhoneSuccess = function (reqObj, res) {
@@ -284,7 +288,8 @@
             else if (respObj.emailData === null && respObj.phoneData !== null) {
                 if (reqObj['email']) {
                     this.appendPuInfo(this.Msg.Select, respObj.phoneData);
-                    this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                    this.addInvalidStyle('email', this.POhtml.EmailUnique);
+                    this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                 }
                 else {
                     this.appendPuInfo(this.Msg.Link, respObj.phoneData);
@@ -294,7 +299,8 @@
             else if (respObj.emailData !== null && respObj.phoneData === null) {
                 if (reqObj['phprimary']) {
                     this.appendPuInfo(this.Msg.Select, respObj.emailData);
-                    this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                    this.addInvalidStyle('email', this.POhtml.PhoneDiff);
+                    this.addInvalidStyle('phprimary', this.POhtml.PhoneUnique);
                 }
                 else {
                     this.appendPuInfo(this.Msg.Link, respObj.emailData);
@@ -333,7 +339,7 @@
                     this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                 }
                 else if (respObj.phoneData.id === _od['map_id']) {
-                    this.appendPuInfo(this.Msg.Choose, respObj.phoneData, respObj.emailData);
+                    this.appendPuInfo(this.Msg.Choose, respObj.emailData, respObj.phoneData);
                     this.addInvalidStyle('email', this.POhtml.PhoneDiff);
                     this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                 }
@@ -353,15 +359,14 @@
                         }
                         else {
                             this.appendPuInfo(this.Msg.Select, respObj.phoneData);
+                            this.addInvalidStyle('email', this.POhtml.EmailUnique);
                             this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
-                            //this.addInvalidStyle('email', this.POhtml.PhoneDiff);
                         }
                     }
                     else {
                         this.appendPuInfo(this.Msg.Select, respObj.phoneData);
+                        this.addInvalidStyle('email', this.POhtml.EmailUnique);
                         this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
-                        //this.addInvalidStyle('email', this.POhtml.PhoneDiff);
-                        //this.addInvalidStyle('phprimary', `Must be unique because '${reqObj['email']}' is unique`);
                     }
                 }
                 else {
@@ -386,14 +391,13 @@
                         else {
                             this.appendPuInfo(this.Msg.Select, respObj.emailData);
                             this.addInvalidStyle('email', this.POhtml.PhoneDiff);
-                            //this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                            this.addInvalidStyle('phprimary', this.POhtml.PhoneUnique);
                         }
                     }
                     else {
                         this.appendPuInfo(this.Msg.Select, respObj.emailData);
                         this.addInvalidStyle('email', this.POhtml.PhoneDiff);
-                        //this.addInvalidStyle('email', `Must be unique because '${reqObj['phprimary']}' is unique`);
-                        //this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                        this.addInvalidStyle('phprimary', this.POhtml.PhoneUnique);
                     }
                 }
                 else {
@@ -544,16 +548,44 @@
         this.removeInvalidStyle('phprimary');
     };
 
-    this.addInvalidStyle = function (key, msg = null, dataObj = null) {
+    this.PopOverBtnClicked = function (e) {
+        let opId = parseInt($(e.currentTarget).attr('data-id'));
+        if (opId === 1) {
+            this.makeUserTileActive(this.$infoUsr1, this.lastRespObj.emailData);
+        }
+        else if (opId === 2) {
+            if (this.$infoUsr1.data('data-obj').phprimary === this.lastRespObj.phoneData.phprimary)
+                this.makeUserTileActive(this.$infoUsr1, this.lastRespObj.phoneData);
+            else
+                this.makeUserTileActive(this.$infoUsr2, this.lastRespObj.phoneData);
+        }
+        else if (opId === 5) {
+            this.updateExtCtrls('email', '', false);
+        }
+        else if (opId === 6) {
+            this.updateExtCtrls('phprimary', '', false);
+        }
+    };
+
+    this.addInvalidStyle = function (key, msgObj) {
         if (this.extCtrls[key]) {
             let t = key === 'email' ? 'phprimary' : 'email';
-            this.extCtrls[key].addInvalidStyle((msg || (dataObj ? `Must be '${dataObj[key] || 'blank'}' based on '${dataObj[t]}'` : 'Not allowed')), 'warning');
+            //this.extCtrls[key].addInvalidStyle((msg || (dataObj ? `Must be '${dataObj[key] || 'blank'}' based on '${dataObj[t]}'` : 'Not allowed')), 'warning');
+
+            let html = '';
+            if (msgObj.btnTxt)
+                html = `<div><div class='provUsrCtrlPoBtn' id='${this.ctrl.EbSid_CtxId}_PoBtn' data-id='${msgObj.id}'>${msgObj.btnTxt}</div></div>`;
+            html = `<div style='font-size: 12px; color: rgb(51, 51, 51);'><div>${msgObj.msg}</div>${html}</div>`;
+
+            EbMakeInvalid_Test(this.extCtrls[key], '#cont_' + this.extCtrls[key].EbSid_CtxId, '.ctrl-cover', html, 'warning');
         }
     };
 
     this.removeInvalidStyle = function (key) {
-        if (this.extCtrls[key])
-            this.extCtrls[key].removeInvalidStyle();
+        if (this.extCtrls[key]) {
+            //this.extCtrls[key].removeInvalidStyle();
+            EbMakeValid_Test('#cont_' + this.extCtrls[key].EbSid_CtxId, '.ctrl-cover', this.extCtrls[key]);
+        }
     };
 
     this.show_inp_loader = function (key) {
@@ -566,9 +598,10 @@
             hide_inp_loader($('#' + this.extCtrls[key].EbSid_CtxId), $());
     };
 
-    this.updateExtCtrls = function (key, val) {
+    this.updateExtCtrls = function (key, val, updateLstRqObj = true) {
         if (this.extCtrls[key]) {
-            this.lastReqstObj[key] = val;
+            if (updateLstRqObj)
+                this.lastReqstObj[key] = val;
             if (this.extCtrls[key].getValue() !== val)
                 this.extCtrls[key].setValue(val);
 
@@ -729,7 +762,7 @@ let EbProvUserUniqueChkJs = function (options) {
         New: 'New user will be created with following details..',
         Link: 'User already exists. Data will be link to the user with following details.',
         Link2: 'Data is already linked to the existing user with following details.',
-        AlreayExists1: 'Email and phone already exits for different users.',
+        AlreayExists1: 'Email and phone already exits for different users. Unable to continue.',
         Update: 'Data save will also update email/phone of the following user.',
         UpdateEmail: 'Data save will also update email of the following user.',
         UpdatePhone: 'Data save will also update phone of the following user.'
@@ -857,6 +890,10 @@ let EbProvUserUniqueChkJs = function (options) {
 
         this.hideLoaderFn();
         if (fullHtml !== '') {
+            if (this.abortSave)
+                this.$OkBtn.hide();
+            else
+                this.$OkBtn.show();
             this.$ModalBody.html(fullHtml);
             this.$Modal.modal('show');
         }

@@ -514,7 +514,7 @@
     }.bind(this);
 
     this.GoToCtrl = function (ctrl, parent) {
-        let $inp = ctrl.ObjType === "PowerSelect" ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
+        let $inp = (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
         this.activateTabHierarchy(ctrl, parent);
         setTimeout(function () {
             $inp[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });

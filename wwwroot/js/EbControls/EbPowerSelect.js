@@ -497,7 +497,7 @@ const EbPowerSelect = function (ctrl, options) {
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         let params = this.ajaxData();
-        let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect": "../dv/getData4PowerSelect";
+        let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect" : "../dv/getData4PowerSelect";
         $.ajax({
             url: url,
             type: 'POST',
@@ -1230,6 +1230,10 @@ const EbPowerSelect = function (ctrl, options) {
             this.$DDdiv.find(".dataTables_paginate.paging_simple").hide(50);
         else
             this.$DDdiv.find(".dataTables_paginate.paging_simple").show(50);
+        if (this.OnInitialDraw) {
+            this.OnInitialDraw();
+            this.OnInitialDraw = null;
+        }
     }.bind(this);
 
     this.colAdjust = function () {
@@ -1465,6 +1469,7 @@ const EbPowerSelect = function (ctrl, options) {
         //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
         let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
         let $form_div = $(document).find("[eb-root-obj-container]:first");
+        let $scrollBody = this.$DDdiv.find('.dataTables_scrollBody');
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 
         let ctrlContOffset = $ctrlCont.offset();
@@ -1480,8 +1485,8 @@ const EbPowerSelect = function (ctrl, options) {
         let windowWidth = $(window).width();
         let windowHeight = $(window).height();
 
-        //if (WIDTH !== ctrlWidth)
-        //    LEFT = DDoffset.left - ((WIDTH - ctrlWidth) / 2);
+        let topDist = ctrlContOffset.top - formTopOffset;
+        let bottomDist = windowHeight - ctrlBottom;
 
         if (WIDTH > windowWidth) {
             WIDTH = windowWidth - 20;
@@ -1493,33 +1498,34 @@ const EbPowerSelect = function (ctrl, options) {
             LEFT = 10;
 
 
-
-        if (ctrlBottom + DD_height > windowHeight) {
+        if (ctrlBottom + DD_height > windowHeight && topDist < DD_height && topDist > bottomDist) {
             this.$DDdiv.addClass("dd-ctrl-top");
-
-            let pageHeight = $form_div.outerHeight() + formTopOffset;
-            let cotrolTop = $ctrl.offset().top + formScrollTop;
-            let BOTTOM = (pageHeight - cotrolTop) + 1;
-            console.log("scrollTop :" + formScrollTop);
-            console.log("cotrolTop :" + cotrolTop);
-            this.$DDdiv.css("top", "unset");
-            this.$DDdiv.css("bottom", BOTTOM);
-            console.log("dd offset top :" + this.$DDdiv.offset().top);
+            let pageHeight = $form_div.outerHeight() + formTopOffset,
+                cotrolTop = $ctrl.offset().top + formScrollTop,
+                BOTTOM = (pageHeight - cotrolTop) + 1;
+            this.$DDdiv.css("top", "unset").css("bottom", BOTTOM);
+            if (topDist < DD_height) {
+                this.$DDdiv.css("height", topDist + 'px').css("top", formScrollTop + 'px').css("bottom", "unset");
+                if ($scrollBody.length === 0)
+                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(topDist - 32); }.bind(this);
+                else
+                    $scrollBody.height(topDist - 32);
+            }
 
         }
         else {
-            //let Hdiff = $ctrl.offset().bottom - ctrlHeight - formTopOffset;
-            //if (Hdiff >)
-            //    this.$DDdiv.find("dataTables_scrollBody").css("height", this.$DDdiv.height() - )
+            this.$DDdiv.css("bottom", "unset").css("top", TOP).removeClass("dd-ctrl-top");
 
-
-            this.$DDdiv.css("bottom", "unset");
-            this.$DDdiv.css("top", TOP);
-            this.$DDdiv.removeClass("dd-ctrl-top");
+            if (bottomDist < DD_height) {
+                this.$DDdiv.css("height", bottomDist + 'px');
+                if ($scrollBody.length === 0)
+                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(bottomDist - 32); }.bind(this);
+                else
+                    $scrollBody.height(bottomDist - 32);
+            }
         }
 
-        this.$DDdiv.css("left", LEFT);
-        this.$DDdiv.width(WIDTH);
+        this.$DDdiv.css("left", LEFT).width(WIDTH);
     };
 
     this.appendDD2Body = function () {

@@ -25,6 +25,7 @@ using ExpressBase.Common.Connections;
 using System.Net;
 using ExpressBase.Common.NotificationHubs;
 using ExpressBase.Security;
+using ExpressBase.Objects;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -732,7 +733,8 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 resp.IsValid = this.IsValidSolution;
-                if (resp.IsValid)
+
+                if (IsValidSolution)
                 {
                     try
                     {
@@ -747,12 +749,23 @@ namespace ExpressBase.Web.Controllers
                         resp.Message = "Solution is valid. Failed to fetch logo";
                         Console.WriteLine(ex.Message);
                     }
+
+                    resp.SolutionObj = this.GetSolutionObject(this.IntSolutionId);
+
+                    if (resp.SolutionObj != null && resp.SolutionObj.IsMobileSignupEnabled(out string refid))
+                    {
+                        try
+                        {
+                            EbMobilePage mobilePage = this.Redis.Get<EbMobilePage>(refid);
+                            resp.SignUpPage = EbSerializers.Json_Serialize(mobilePage);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Redis exception while getting mobile page");
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
                 }
-
-                resp.SolutionObj = this.GetSolutionObject(this.IntSolutionId);
-
-                if (resp.SolutionObj == null)
-                    throw new Exception("Solution is valid. Solution object null");
             }
             catch (Exception ex)
             {
@@ -811,7 +824,7 @@ namespace ExpressBase.Web.Controllers
             return new EbMobileSolutionData { StatusCode = HttpStatusCode.Unauthorized };
         }
 
-        [HttpPost("/api/push_data")]
+        [HttpPost("api/push_data")]
         public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm] Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;
@@ -824,13 +837,6 @@ namespace ExpressBase.Web.Controllers
                     int RowId = Convert.ToInt32(form["rowid"]);
                     string RefId = form["refid"];
                     int LocId = Convert.ToInt32(form["locid"]);
-
-                    //string Operation = OperationConstants.NEW;
-                    //if (RowId > 0)
-                    //    Operation = OperationConstants.EDIT;
-
-                    //if (!this.LoggedInUser.HasFormPermission(RefId, Operation, LocId))
-                    //    return new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 };
 
                     Resp = ServiceClient.Post(new InsertDataFromWebformRequest
                     {
@@ -847,41 +853,6 @@ namespace ExpressBase.Web.Controllers
                 }
             }
             return Resp;
-        }
-
-        [HttpGet("api/get_data")]
-        public MobileVisDataResponse GetMobileVisData(string refid, string param, string sort_order, int limit, int offset, bool is_powerselect)
-        {
-            MobileVisDataResponse resp = null;
-            try
-            {
-                if (Authenticated)
-                {
-                    MobileVisDataRequest request = new MobileVisDataRequest()
-                    {
-                        DataSourceRefId = refid,
-                        Limit = limit,
-                        Offset = offset,
-                        IsPowerSelect = is_powerselect
-                    };
-
-                    if (param != null)
-                        request.Params.AddRange(JsonConvert.DeserializeObject<List<Param>>(param));
-
-                    if (sort_order != null)
-                        request.SortOrder.AddRange(JsonConvert.DeserializeObject<List<SortColumn>>(sort_order));
-
-                    resp = this.ServiceClient.Get(request);
-                }
-                else
-                    resp = new MobileVisDataResponse { Message = ViewBag.Message };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
-            return resp;
         }
 
         [HttpPost("api/get_data")]

@@ -120,7 +120,7 @@ namespace ExpressBase.Web.Controllers
                                 COALESCE(EO.eb_del, 'F') = 'F' AND
                                 COALESCE(EOV.working_mode, 'F') <> 'T' AND
                                 COALESCE(EO2A.eb_del, 'F') = 'F';", subquery);
-                                        ;
+            ;
             string[] arrayy = new string[] { "id", "type_name", "obj_name", "display_name", "obj_desc", "obj_id", "app_Id", "applicationname" };
             DVColumnCollection DVColumnCollection = GetColumnsForAppsTree(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = DVColumnCollection, AutoGen = false, IsPaging = false };
@@ -953,10 +953,10 @@ namespace ExpressBase.Web.Controllers
             ViewBag.objlist = public_res.Data;
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
-            ViewBag.MobileSignup = solutionObj.SolutionSettings.MobileAppSettings;
-            if(solutionObj.SolutionSettings.MobileAppSettings == null)
+            ViewBag.MobileSettings = solutionObj.SolutionSettings.MobileAppSettings;
+            if (solutionObj.SolutionSettings.MobileAppSettings == null)
             {
-                ViewBag.MobileSignup = new MobileAppSettings();
+                ViewBag.MobileSettings = new MobileAppSettings();
             }
             return View();
         }
@@ -966,12 +966,15 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
-                if (solutionsettings != null && solutionsettings.UserTypeForms != null)
+                if (solutionsettings != null)
                 {
-                    CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
+                    if(solutionsettings.UserTypeForms != null)
                     {
-                        UserTypeForms = solutionsettings.UserTypeForms
-                    });
+                        CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
+                        {
+                            UserTypeForms = solutionsettings.UserTypeForms
+                        });
+                    }
                     SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
                     return resp.Message;
                 }

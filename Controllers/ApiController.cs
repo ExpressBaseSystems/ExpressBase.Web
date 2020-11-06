@@ -255,7 +255,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/auth")]
         [HttpPost("/api/auth")]
-        public ApiAuthResponse ApiLoginByMd5(string username, string password, bool sso = false)
+        public ApiAuthResponse ApiLoginByMd5(string username, string password, bool sso = false, bool anonymous = false)
         {
             ApiAuthResponse response = new ApiAuthResponse();
             try
@@ -275,6 +275,11 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 if (sso) authRequest.Meta.Add("sso", "true");
+                if (anonymous)
+                {
+                    authRequest.Meta.Add("anonymous", "true");
+                    authRequest.Meta.Add("emailId", Guid.NewGuid().ToString("N") + "@rmad.com");
+                }
 
                 MyAuthenticateResponse authResponse = this.AuthClient.Get<MyAuthenticateResponse>(authRequest);
 
@@ -315,7 +320,6 @@ namespace ExpressBase.Web.Controllers
                     {
                         Console.WriteLine("2FA failed :: " + ex.Message);
                     }
-
                     //set user dp to the authresponse
                     SetUserDp(response);
                 }

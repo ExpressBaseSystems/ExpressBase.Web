@@ -740,7 +740,7 @@
 
         $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
             if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
-                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted) {
+                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted && ctrl.initializer.isSecondTime) {
                     ctrl.initializer.Api.columns.adjust();
                     ctrl.initializer.__ColAdjusted = true;
                 }

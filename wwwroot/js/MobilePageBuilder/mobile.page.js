@@ -251,7 +251,7 @@ function EbMobStudio(config) {
                     this.Controls.initVisualization(o);
                     break;
                 case "EbMobileDashBoard":
-                    this.makeDropable(o.EbSid, ebtype);
+                    this.Controls.initDashBoard(o);
                     break;
                 default:
                     console.error("undefined container");
@@ -548,4 +548,8 @@ function alignHorrizontally($div, align) {
         $div.css("justify-content", "flex-start");
         $div.find("*").css("width", "100%");
     }
+}
+
+function setPadding(obj, $el) {
+
 }

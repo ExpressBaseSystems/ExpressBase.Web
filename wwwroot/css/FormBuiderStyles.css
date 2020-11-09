@@ -473,10 +473,10 @@ body {
     padding: 3px 11.5px;
     position: absolute;
     text-shadow: none;
-    top: -25px;
+    top: -24px;
     border-radius: 3px 5px 0 0;
     letter-spacing: 0.2px;
-    right: -1px;
+    right: 8px;
     background-color: #00bd31 !important;
 }
 
@@ -2008,6 +2008,21 @@ input.locinp {
     padding-right: 8px;
 }
 
+    .grid-cont .Dg_head > table > thead {
+        background-color: #dddddd;
+        background: linear-gradient(45deg, #dddddd 0%,#ececec 50%,#dddddd 100%);
+        color: black;
+    }
+
+        .grid-cont .Dg_head > table, .grid-cont .Dg_head > table > thead > tr > th {
+            border-bottom-width: 0px;
+        }
+
+.Eb-ctrlContainer[ctype="DataGrid"] > .ctrl-cover{
+    border-width: 0 0 1px 0;
+    border-bottom: 1px solid rgb(227, 227, 227);
+}
+
 .grid-cont .ctrlth {
     width: 50px;
 }
@@ -3346,6 +3361,7 @@ input.locinp {
 #ProvUserConfModal .pu-confmdl-uinfo {
     padding: 0px 15px 0px 45px;
 }
+
     #ProvUserConfModal .pu-confmdl-uinfo img {
         border-radius: 50%;
         height: 50px;
@@ -3363,6 +3379,7 @@ input.locinp {
     box-shadow: 1px 1px 6px 2px #ccc;
     transition-duration: 0.4s;
 }
+
     .provUsrCtrlPoBtn:hover {
         background: #2b72f8;
         box-shadow: 1px 1px 6px 2px #bbb;

@@ -991,7 +991,7 @@
         $e.hide();
 
         if ($e.parent().attr("data-toggle") === "tab") {
-            $e.prev(".eb-label-editable").show();
+            $e.closest('li').find(".eb-label-editable").show();
             $e.siblings(".ebtab-close-btn").show();
         }
         else if ($e.siblings('.grid-col-title').length === 1) {

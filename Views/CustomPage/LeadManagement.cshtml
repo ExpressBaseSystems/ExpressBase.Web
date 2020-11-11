@@ -1047,7 +1047,7 @@
                         "No": { Background: "violet", Align: "right", FontColor: "white;" }
                     },
                     CallBack: function (name) {
-                        if (name === "Yes") {
+                        if (name === "Yes" && refids.length > 0) {
                             let initLen = uploadedFileRefList[gallName + '_del'].length;
 
                             for (let i = 0; i < refids.length; i++) {
@@ -1061,9 +1061,9 @@
                             }
 
                             if (initLen < uploadedFileRefList[gallName + '_del'].length) {
-                                imgup.deleteFromGallery(refids);
                                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa', Delay: 2000 });
                             }
+                            imgup.deleteFromGallery(refids);
                             imgup.customMenuCompleted("Delete", refids);
                         }
                     }
@@ -1117,6 +1117,8 @@
                             uploadedFileRefList[gallName + '_add'].splice(index, 1);
                         }
                         obj.$trigger.remove();
+                        let indx = imgup.FileList.findIndex(item => item.FileRefId == refids);
+                        imgup.FileList.splice(indx, 1);
                         imgup.customMenuCompleted("Delete", filref);
                     }
                 }

@@ -90,15 +90,17 @@
             ViewByCategory: ctrl.ViewByCategory
         });
 
-        uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
+        //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
+        uploadedFileRefList[ctrl.Name + '_add'] = [];
+        uploadedFileRefList[ctrl.Name + '_del'] = [];
 
         imgup.uploadSuccess = function (fileid) {
-            if (uploadedFileRefList[ctrl.Name].indexOf(fileid) === -1)
-                uploadedFileRefList[ctrl.Name].push(fileid);
+            if (uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
+                uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
         };
 
         imgup.windowClose = function () {
-            if (uploadedFileRefList[ctrl.Name].length > 0)
+            if (uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
         };
 
@@ -106,65 +108,53 @@
             if (name === "Delete") {
                 if (name === "Delete") {
                     EbDialog("show",
-                        {
-                            Message: "Are you sure? Changes Affect only if Form is Saved.",
-                            Buttons: {
-                                "Yes": {
-                                    Background: "green",
-                                    Align: "left",
-                                    FontColor: "white;"
-                                },
-                                "No": {
-                                    Background: "violet",
-                                    Align: "right",
-                                    FontColor: "white;"
-                                }
-                            },
-                            CallBack: function (name) {
-                                if (name === "Yes") {
-                                    let initLen = uploadedFileRefList[ctrl.Name].length;
-                                    for (let i = 0; i < refids.length; i++) {
-                                        let index = uploadedFileRefList[ctrl.Name].indexOf(refids[i]);
-                                        if (index !== -1) {
-                                            uploadedFileRefList[ctrl.Name].splice(index, 1);
-                                        }
+                    {
+                        Message: "Are you sure? Changes Affect only if Form is Saved.",
+                        Buttons: {
+                            "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                            "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                        },
+                        CallBack: function (name) {
+                            if (name === "Yes" && refids.length > 0) {
+                                let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
+
+                                for (let i = 0; i < refids.length; i++) {
+                                    let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
+                                    if (index !== -1) {
+                                        uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
                                     }
-                                    if (initLen > uploadedFileRefList[ctrl.Name].length) {
-                                        imgup.deleteFromGallery(refids);
-                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                    else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
+                                        uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
                                     }
-                                    imgup.customMenuCompleted("Delete", refids);
                                 }
+                                if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
+                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                }
+                                imgup.deleteFromGallery(refids);
+                                imgup.customMenuCompleted("Delete", refids);
                             }
-                        });
+                        }
+                    });
                 }
             }
             else {
                 $.each(DpControlsList, function (i, dpObj) {
                     if (name === 'Set as ' + dpObj.Label) {
                         EbDialog("show",
-                            {
-                                Message: "Are you sure? Changes Affect only if Form is Saved.",
-                                Buttons: {
-                                    "Yes": {
-                                        Background: "green",
-                                        Align: "left",
-                                        FontColor: "white;"
-                                    },
-                                    "No": {
-                                        Background: "violet",
-                                        Align: "right",
-                                        FontColor: "white;"
+                        {
+                            Message: "Are you sure? Changes Affect only if Form is Saved.",
+                            Buttons: {
+                                "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                                "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                            },
+                            CallBack: function (name) {
+                                if (name === "Yes") {
+                                    if (refids.length > 0) {
+                                        dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
                                     }
-                                },
-                                CallBack: function (name) {
-                                    if (name === "Yes") {
-                                        if (refids.length > 0) {
-                                            dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
-                                        }
-                                    }
-                                }.bind()
-                            });
+                                }
+                            }.bind()
+                        });
                     }
                 });
             }
@@ -185,12 +175,12 @@
         };
     };
 
-    this.getInitFileIds = function (files) {
-        let ids = [];
-        for (let i = 0; i < files.length; i++)
-            ids.push(files[i].FileRefId);
-        return ids;
-    };
+    //this.getInitFileIds = function (files) {
+    //    let ids = [];
+    //    for (let i = 0; i < files.length; i++)
+    //        ids.push(files[i].FileRefId);
+    //    return ids;
+    //};
 
     this.DGUserControlColumn = function (ctrl, ctrlOpts) {
         ctrl.__Col.__DGUCC.initForctrl(ctrl);

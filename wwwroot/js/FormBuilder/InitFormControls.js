@@ -171,51 +171,7 @@
 
         }.bind(this, ctrlOpts.DpControlsList);
 
-        imgup.contextM_REcallback = function (arr, name, obj) {
-            let refids = obj.$trigger.attr('original_refid');
-            let filref = [];
-            filref.push(obj.$trigger.attr('filref'));
-
-            if (name === "delete") {
-                EbDialog("show",
-                    {
-                        Message: "Are you sure? Changes Affect only if Form is Saved.",
-                        Buttons: {
-                            "Yes": {
-                                Background: "green",
-                                Align: "left",
-                                FontColor: "white;"
-                            },
-                            "No": {
-                                Background: "violet",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            if (refids > 0) {
-                                if (name === "Yes") {
-                                    let initLen = uploadedFileRefList[ctrl.Name].length;
-                                    for (let i = 0; i < refids.length; i++) {
-                                        let index = uploadedFileRefList[ctrl.Name].indexOf(eval(refids));
-                                        if (index !== -1) {
-                                            uploadedFileRefList[ctrl.Name].splice(index, 1);
-                                        }
-                                    }
-                                    if (initLen > uploadedFileRefList[ctrl.Name].length) {
-                                        obj.$trigger.remove();
-                                        let indx = imgup.FileList.findIndex(item => item.FileRefId == refids);
-                                        imgup.FileList.splice(indx, 1);
-                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-                                    }
-                                    imgup.customMenuCompleted("Delete", filref);
-                                }
-                            }
-                        }
-                    });
-            }
-
-        }.bind(this, ctrlOpts.DpControlsList);
+        
     };
 
     //edit by amal for signature pad

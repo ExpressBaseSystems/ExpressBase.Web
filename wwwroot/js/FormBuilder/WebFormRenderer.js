@@ -61,8 +61,8 @@ const WebFormRender = function (option) {
         }
     };
 
-    this.initTabs = function () {
-        this.TabControls = getFlatObjOfType(this.FormObj, "TabControl");
+    this.initWizards = function () {
+        this.TabControls = getFlatObjOfType(this.FormObj, "WizardControl");
 
         $.each(this.TabControls, function (i, tabControl) {//TabControl Init
             let $Tab = $(`#cont_${tabControl.EbSid_CtxId}>.RenderAsWizard`);
@@ -264,7 +264,7 @@ const WebFormRender = function (option) {
         this.initDGs();
         this.initDGsNew();
         this.initReviewCtrl();
-        this.initTabs();
+        this.initWizards();
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);

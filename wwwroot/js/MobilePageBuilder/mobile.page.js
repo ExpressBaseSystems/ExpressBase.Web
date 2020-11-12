@@ -83,7 +83,7 @@ function EbMobStudio(config) {
         $.each(metas, function (i, meta) {
             var name = meta.name;
             if (meta.IsUIproperty) {
-                NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
+                NewHtml = NewHtml.replace(`@${name}`, obj[name]);
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
@@ -251,7 +251,7 @@ function EbMobStudio(config) {
                     this.Controls.initVisualization(o);
                     break;
                 case "EbMobileDashBoard":
-                    this.makeDropable(o.EbSid, ebtype);
+                    this.Controls.initDashBoard(o);
                     break;
                 default:
                     console.error("undefined container");
@@ -392,7 +392,7 @@ function EbMobStudio(config) {
     this.pg.CXVE.onAddToCE = function (currentProp, $values, obj) {
         if (this.ContainerType === "EbMobileVisualization") {
             if (currentProp === "Items") {
-                var params = this.ContainerObject.StaticParamters.$values || [];
+                var params = this.ContainerObject.StaticParameters.$values || [];
                 for (let i = 0; i < params.length; i++) {
                     var p = params[i];
                     var o = this.makeElement("EbMobileStaticParameter", "ebmobilestaticparameter");
@@ -548,4 +548,8 @@ function alignHorrizontally($div, align) {
         $div.css("justify-content", "flex-start");
         $div.find("*").css("width", "100%");
     }
+}
+
+function setPadding(obj, $el) {
+
 }

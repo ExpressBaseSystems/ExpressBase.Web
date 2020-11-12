@@ -1,10 +1,13 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @using ExpressBase.Common.LocationNSolution;
+@using Newtonsoft.Json;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     Dictionary<string, List<EbObjectWrapper>> Public_ObjList = ViewBag.objlist;
     Dictionary<string, List<EbObjectWrapper>> All_ObjList = ViewBag.all_objlist;
+    Dictionary<string, List<EbObjectWrapper>> mobile_allpages = ViewBag.MobilePages;
     string signupFormRefid = ViewBag.signupFormRefid;
+    MobileAppSettings mobile_settings = ViewBag.MobileSettings;
 }
 <style>
     .switch {
@@ -102,208 +105,180 @@
     }
 
     .mobile_signup_set {
-        border: solid 1px #c7c7c7;
-        margin-left: 17px;
-        padding: 10px 10px;
-        border-radius: 4px;
+        width: 50%;
     }
+
+    .mobile_signup_set_inner {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 10px;
+    }
+
     .solution_cons {
-        border: solid 1px #c7c7c7;
-        margin-left: 17px;
-        padding: 10px 10px;
-        border-radius: 4px;
+        width: 50%;
+        display: flex;
+    }
+
+    .solution_cons_inner {
+        border: 1px solid #ccc;
+        height: 100%;
+        padding: 10px;
+        border-radius: 6px;
     }
 </style>
-<script src='~/js/Eb_dragula.js'></script>
-<div class="container-fluid center" style="background-color:white;height:100%;">
-    <div class="row">
-        <div class="col-md-12" style="margin-top:50px; margin-bottom: 15px;">
-            <h4 class="col-md-10" style="margin-bottom:15px;padding-left:0px"><i class="fa fa-cog"></i> Mobile App Settings  </h4>
-            <div class="col-md-2">
-                <button id="save" class="btn btn-success pull-right form-inline ">Save</button>
+<script src='~/js/Eb_dragula.js' type="text/javascript"></script>
+
+<div class="row s-dash-container h-100">
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12 pd-0">
+                <h4 class="mr-t-0 mr-b-0">Solution Console</h4>
             </div>
-        </div>
-        <div class="col-md-6 mobile_signup_set">
-            <div class="col-md-12 " style=" margin-bottom: 2rem;"> <div style="font-weight: 500;">Mobile Signup Settings</div></div>
-            <div class="col-md-5">
-                <div style="display:flex">
-                    <div style="width: 80%">Enable SignUp</div>
-                    @{
-                        if (ViewBag.MobileSignup.MobileSignUpSettings.SignUp)
-                        { <label class="switch"> <input type="checkbox" id="SignUp" checked> <span class="slider round"></span> </label> }
-                        else
-                        { <label class="switch"> <input type="checkbox" id="SignUp"> <span class="slider round"></span> </label>}
-                    }
-                </div>
-                <div>
-                    <div class="checkbox" style="display:flex">
-                        <div style="width:80%">Email</div>
-                        @{
-                            if (ViewBag.MobileSignup.MobileSignUpSettings.Email)
-                            { <label class="switch"> <input type="checkbox" name="login" id="Mob_Email" checked><span class="slider round"></span></label>}
-                            else
-                            { <label class="switch"> <input type="checkbox" name="login" id="Mob_Email"><span class="slider round"></span></label>}
-                        }
-                    </div>
-                    <div class="radio" style="display:flex">
-                        <div style="width: 80%">Mobile</div>
-                        @{
-                            if (ViewBag.MobileSignup.MobileSignUpSettings.MobileNo)
-                            { <label class="switch"> <input type="checkbox" name="login" id="Mob_Phone" checked><span class="slider round"></span></label> }
-                            else
-                            { <label class="switch"><input type="checkbox" name="login" id="Mob_Phone"><span class="slider round"></span></label>}
-                        }
-                    </div>
-                </div>
-                <div>
-                    <div class="checkbox" style="display:flex">
-                        <div style="width: 80%">Password</div>
-                        @{
-                            if (ViewBag.MobileSignup.MobileSignUpSettings.Password)
-                            { <label class="switch"><input type="checkbox" name="psw" id="Mob_Password" checked><span class="slider round"></span></label> }
-                            else
-                            { <label class="switch"><input type="checkbox" name="psw" id="Mob_Password"><span class="slider round"></span></label>}
-                        }
-
-                    </div>
-                    <div class="radio" style="display:flex">
-                        <div style="width: 80%">Verification</div>
-                        @{
-                            if (ViewBag.MobileSignup.MobileSignUpSettings.Verification)
-                            { <label class="switch"><input type="checkbox" name="psw" id="Mob_Verfi" checked><span class="slider round"></span></label> }
-                            else
-                            { <label class="switch"><input type="checkbox" name="psw" id="Mob_Verfi"><span class="slider round"></span></label>}
-                        }
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-md-7">
-                <div>
-                    <div class="" style=" margin-bottom: 1rem;display:flex">
-                        <div style=" width: 100%;font-weight: 500;">Profile</div>
-                        <button class="mob_add_page" data-toggle="modal" data-target="#mob_pages"><i class="fa fa-list" aria-hidden="true"></i></button>
-                    </div>
-                    <div id="profile_setup_pages">
-                        @{int count = 0;
-
-                            foreach (string refid in ViewBag.MobileSignup.MobileSignUpSettings.ProfileSetupPages)
-                            {
-                                @foreach (KeyValuePair<string, List<EbObjectWrapper>> type in ViewBag.MobilePages)
-                                {
-
-                                    if (refid == type.Value[0].RefId)
-                                    {
-                                        count++;
-                                        <div refid="@type.Value[0].RefId" class="profile_setup">
-                                            <i class="fa fa-mobile" aria-hidden="true"></i>
-                                            <p> @type.Value[0].DisplayName </p>
-                                        </div>
-                                    }
-                                }
-                            }
-                            if (count == 0)
-                            {
-                                <div> Empty</div>
-                            }
-                        }
-                    </div>
-                </div>
-
+            <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 pd-0 s-dash-btnwraper">
+                <button id="save" class="ebbtn eb_btn-sm pull-right" style="background: #15ad15; color: white; padding: 5px 20px;">Save settings</button>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12" style="margin-top:50px; margin-bottom: 15px;">
-            <h4 class="col-md-10" style="margin-bottom:15px;padding-left:0px"><i class="fa fa-cog"></i> Solution Console  </h4>
-        </div>
-        <hr />
-        <div class="form-group col-md-4 solution_cons">
-            <label> Select Profile Forms For Each User Types</label>
-            @{
-                int i = 1;
-                @foreach (EbProfileUserType type in ViewBag.userTypes)
-                {
-                    <div class="usr_typ" id="@type.Id">
-                        <label style="padding-top: 10px;font-weight: 500;">@i.  @type.Name </label>
-                        <select class="form-control col-md-3 pull-right user_type_forms" value="@type.Id">
-                            <option> </option>
-                            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in All_ObjList)
-                            {
-                                @foreach (EbObjectWrapper ver in obj.Value)
-                                {
-                                    if (ver.RefId == type.RefId)
+    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
+        <div class="mr-t-15 w-100 display-flex" id="form-settings-container" style="padding:10px 15px">
+            <div class="solution_cons">
+                <div class="solution_cons_inner w-100" style="margin-right: 10px;">
+                    <label> Select Profile Forms For Each User Types </label>
+                    @{
+                        int i = 1;
+                        @foreach (EbProfileUserType type in ViewBag.userTypes)
+                        {
+                            <div class="usr_typ" id="@type.Id">
+                                <label style="padding-top: 10px;font-weight: 500;">@i.  @type.Name </label>
+                                <select class="form-control col-md-3 pull-right user_type_forms" value="@type.Id">
+                                    <option> </option>
+                                    @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in All_ObjList)
                                     {
-                                        <option value="@ver.RefId" selected> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                        @foreach (EbObjectWrapper ver in obj.Value)
+                                        {
+                                            if (ver.RefId == type.RefId)
+                                            {
+                                                <option value="@ver.RefId" selected> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                            }
+                                        }
                                     }
-                                    else
+                                </select>
+                            </div>
+                            i++;
+                        }
+                    }
+                </div>
+            </div>
+            <div class="solution_cons">
+                <div class="solution_cons_inner w-100" style="margin-left: 10px;">
+                    <label> Select External Forms </label>
+                    <div>
+                        <label style="padding-top:10px;font-weight: 500;">1.  Signup Form</label>
+                    </div>
+                    <select class="form-control" id="signup_object">
+                        <option> </option>
+                        @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in Public_ObjList)
+                        {
+                            @foreach (EbObjectWrapper ver in obj.Value)
+                            {
+                                <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-settings-container w-100" style="padding:10px 15px">
+            <h5>Mobile settings</h5>
+            <div class="settings-container display-flex">
+                <div class="mobile_signup_set">
+                    <div class="mobile_signup_set_inner h-100" style="margin-right: 10px;">
+                        <label style="font-weight:500;"> Signup page </label>
+                        <select class="form-control" id="mobile-signup-refid">
+                            <option> --- Choose signup page --- </option>
+                            @{
+                                foreach (KeyValuePair<string, List<EbObjectWrapper>> pair in mobile_allpages)
+                                {
+                                    @foreach (EbObjectWrapper ver in pair.Value)
                                     {
                                         <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
                                     }
                                 }
                             }
                         </select>
+
+                        @{
+                            string verify_user = mobile_settings.VerifyUserByOTP ? "checked" : "";
+
+                            <div class="verify-signup-container" style="margin-top:15px;">
+                                <label style="font-weight:500;">Verify User</label>
+                                <input type="checkbox" id="verify-user-mobilesetting" style="margin:0;margin-left:10px;" @verify_user/>
+                            </div>
+                        }
+
+                        <div class="mr-t-10 mr-b-15 display-flex">
+                            <div style=" width: 100%;font-weight: 500;">Profile</div>
+                            <button class="mob_add_page" data-toggle="modal" data-target="#mob_pages"><i class="fa fa-list" aria-hidden="true"></i></button>
+                        </div>
+                        <div id="profile_setup_pages">
+                            @{
+                                int count = 0;
+
+                                foreach (string refid in mobile_settings.ProfileSetupPages)
+                                {
+                                    @foreach (KeyValuePair<string, List<EbObjectWrapper>> type in mobile_allpages)
+                                    {
+                                        if (type.Value.Count > 0 && refid == type.Value[0].RefId)
+                                        {
+                                            count++;
+                                            <div refid="@type.Value[0].RefId" class="profile_setup">
+                                                <i class="fa fa-mobile" aria-hidden="true"></i>
+                                                <p> @type.Value[0].DisplayName </p>
+                                            </div>
+                                        }
+                                    }
+                                }
+                                if (count == 0)
+                                {
+                                    <div class="text-center"> Empty</div>
+                                }
+                            }
+                        </div>
                     </div>
-                    i++;
-                }
-            }
+                </div>
+            </div>
         </div>
-        <div class="form-group objlist col-md-4 solution_cons">
-            <label> Select External Forms</label>
-            <div><label style="padding-top:10px;font-weight: 500;">1.  Signup Form</label></div>
-            <select class="form-control" id="signup_object">
-                <option> </option>
-                @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in Public_ObjList)
-                {
-                    @foreach (EbObjectWrapper ver in obj.Value)
-                    {
-                        <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
-                    }
-                }
-            </select>
-        </div>
-
     </div>
-
 </div>
-<!-- Modal -->
+
 <div class="modal fade" id="mob_pages" role="dialog">
     <div class="modal-dialog">
-
-        <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header" style="padding: 15px 15px 0px 15px;border-bottom:none">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Mobile Pages</h4>
             </div>
-            <div class="modal-body" >
+            <div class="modal-body">
                 <div style=" border: solid 1px #cfcfcf; padding: 10px 25px;max-height: 50rem; overflow: auto;">
-                    @foreach (KeyValuePair<string, List<EbObjectWrapper>> type in ViewBag.MobilePages)
-                    {
-                        bool temp = false;
-                        foreach (string refid in ViewBag.MobileSignup.MobileSignUpSettings.ProfileSetupPages)
+                    @{
+                        List<string> profiles = mobile_settings.ProfileSetupPages ?? new List<string>();
+
+                        foreach (KeyValuePair<string, List<EbObjectWrapper>> type in mobile_allpages)
                         {
-                            if (refid == type.Value[0].RefId)
+                            if (type.Value.Count > 0)
                             {
-                                temp = true;
+                                string selected = profiles.Contains(type.Value[0].RefId) ? "checked" : "";
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="@type.Value[0].DisplayName" id="@type.Value[0].RefId" @selected>
+                                    <label class="form-check-label" for="@type.Value[0].RefId"> @type.Value[0].DisplayName </label>
+                                </div>
                             }
                         }
-                        if (temp)
-                        {
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="@type.Value[0].DisplayName" id="@type.Value[0].RefId" checked>
-                                <label class="form-check-label" for="@type.Value[0].RefId"> @type.Value[0].DisplayName </label>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="@type.Value[0].DisplayName" id="@type.Value[0].RefId">
-                                <label class="form-check-label" for="@type.Value[0].RefId"> @type.Value[0].DisplayName </label>
-                            </div>
-                        }
-
                     }
                 </div>
             </div>
@@ -315,17 +290,23 @@
     </div>
 </div>
 <script>
+    var MobileSettings = @Html.Raw(JsonConvert.SerializeObject(mobile_settings));
     var MobPageColl = [];
+
     $(document).ready(function () {
-        if("@signupFormRefid"!="")
+        if ("@signupFormRefid" != "") {
             $("#signup_object").val("@signupFormRefid");
+        }
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
-        drake.off("drop").on("drop", function () {
-        });
-    });
-    $("#mobilepage_submit").on("click", function () {
+        drake.off("drop").on("drop", function () {});
 
+        if (MobileSettings && MobileSettings.SignUpPageRefId) {
+            $('#mobile-signup-refid').val(MobileSettings.SignUpPageRefId);
+        }
+    });
+
+    $("#mobilepage_submit").on("click", function () {
         let htm = "";
         var abc = $("input:checkbox[class=form-check-input]:checked");
         $.each(abc, function (i, ob) {
@@ -335,28 +316,19 @@
     });
 
     $("#save").on("click", function () {
-          $("#eb_common_loader").EbLoader("show");
-         let arr = [];
+        $("#eb_common_loader").EbLoader("show");
+        let arr = [];
+
         $(".usr_typ").each(function (index) {
             arr.push({Id : this.id, RefId :$('#'+this.id +' .user_type_forms').val()});
         });
-        MobPageColl = [];
-        var abc = $(".profile_setup");
-        $.each(abc, function (i, obj) {
-            MobPageColl.push(obj.getAttribute("refid").trim());
-        });
-        let mobSignupSettings = {
-            SignUp: $('#SignUp').is(':checked'),
-            Email: $('#Mob_Email').is(':checked'),
-            MobileNo: $('#Mob_Phone').is(':checked'),
-            Password: $('#Mob_Password').is(':checked'),
-            Verification: $('#Mob_Verfi').is(':checked'),
-            ProfileSetupPages: MobPageColl
-        }
+
+        setMobileSettings();
+
         let obj = {
             SignupFormRefid: $("#signup_object").val(),
             UserTypeForms: arr,
-            MobileAppSettings: { MobileSignUpSettings: mobSignupSettings},
+            MobileAppSettings: MobileSettings,
         };
         $.post("../Dev/SaveSolutionSettings",
             { obj: JSON.stringify(obj) },
@@ -370,10 +342,23 @@
                             Align: "right",
                             FontColor: "white;"
                         }
-                    },
-
+                    }
                 });
             }
         );
     });
+
+    function setMobileSettings() {
+        MobileSettings.SignUpPageRefId = $('#mobile-signup-refid').val() || null;
+        MobileSettings.ProfileSetupPages = getMobileProfilePages();
+        MobileSettings.VerifyUserByOTP = $("#verify-user-mobilesetting").is(":checked");
+    }
+
+    function getMobileProfilePages() {
+        profiles = [];
+        $(".profile_setup").each(function (i, obj) {
+            profiles.push(obj.getAttribute("refid").trim());
+        });
+        return profiles;
+    }
 </script>

@@ -64,9 +64,16 @@ namespace ExpressBase.Web.Controllers
             });
             return res;
         }
-
-              
-
+		
+        public int ClearAllNotifications(List<string> notificationLst)
+        {
+			for(var i=0;i< notificationLst.Count; i++)
+			{
+				GetNotificationFromDB(notificationLst[i]);
+			}
+			return 1;
+        }
+		
         public IActionResult GetAllActions()
         {
             ListSqlJobsResponse resp = new ListSqlJobsResponse();

@@ -109,13 +109,10 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
-            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-            if (wfd.FormData == null)
-            {
-                TempData["ErrorResp"] = ViewBag.formData;
-                return Redirect("/StatusCode/" + wfd.Status);
-                //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-            }
+            string temp = GetRedirectUrl(refId, _mode, _locId);
+            if (temp != null)
+                return Redirect(temp);
+
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
 
@@ -123,6 +120,46 @@ namespace ExpressBase.Web.Controllers
             ViewBag.__User = this.LoggedInUser;
 
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
+        }
+
+        //Check permission
+        private string GetRedirectUrl(string RefId, int Mode, int LocId)
+        {
+            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+            if (wfd.FormData == null)
+            {
+                TempData["ErrorResp"] = ViewBag.formData;
+                return "/StatusCode/" + wfd.Status;
+            }
+            else if (ViewBag.wc != TokenConstants.DC)
+            {
+                int RowId = 0;
+                if ((int)WebFormModes.Draft_Mode != Mode)
+                {
+                    SingleRow primRow = wfd.FormData.MultipleTables[wfd.FormData.MasterTable][0];
+                    RowId = primRow.RowId;
+                    LocId = primRow.LocId;
+                }
+                if (RowId > 0)
+                {
+                    EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
+                    bool neglectLocId = WebForm.IsLocIndependent;
+                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId)))
+                    {
+                        TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: View/Edit`";
+                        return "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
+                    }
+                }
+                else
+                {
+                    if (!this.HasPermission(RefId, OperationConstants.NEW, LocId, true))
+                    {
+                        TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: New`";
+                        return "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
+                    }
+                }
+            }
+            return null;
         }
 
         //[HttpGet("WebFormRender/{refId}/{_params}/{_mode}/{_locId}/{rendermode}")]
@@ -409,7 +446,9 @@ namespace ExpressBase.Web.Controllers
                 string Operation = OperationConstants.NEW;
                 if (RowId > 0)
                     Operation = OperationConstants.EDIT;
-                if (!this.HasPermission(RefId, Operation, CurrentLoc))
+                EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
+                bool neglectLocId = WebForm.IsLocIndependent;
+                if (!this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId))
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
@@ -453,21 +492,24 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                //if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
-                //{
-                GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
-                return Resp.Json;
-                //}
-                //throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+                EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(refid, this.ServiceClient, this.Redis, null);
+                bool neglectLocId = WebForm.IsLocIndependent;
+                if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc, neglectLocId))
+                {
+                    GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
+                    return Resp.Json;
+                }
+                Console.WriteLine("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+                return "Access denied";
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-                return string.Empty;
+                return $"Internal server error. Message: {ex.Message}";
             }
         }
 
-        private bool HasPermission(string RefId, string ForWhat, int LocId)
+        private bool HasPermission(string RefId, string ForWhat, int LocId, bool NeglectLocId = false)
         {
             if (ViewBag.wc != RoutingConstants.UC)
                 return false;
@@ -486,10 +528,15 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                string Ps = string.Concat(RefId.Split("-")[2].PadLeft(2, '0'), '-', RefId.Split("-")[3].PadLeft(5, '0'), '-', Op.IntCode.ToString().PadLeft(2, '0'));
-                string t = this.LoggedInUser.Permissions.FirstOrDefault(p => p.Substring(p.IndexOf("-") + 1).Equals(Ps + ":" + LocId) ||
-                            (p.Substring(p.IndexOf("-") + 1, 11).Equals(Ps) && p.Substring(p.LastIndexOf(":") + 1).Equals("-1")));
-                if (!t.IsNullOrEmpty())
+                //Permission string format => 020-00-00982-02:5
+                string[] refidParts = RefId.Split("-");
+                string objType = refidParts[2].PadLeft(2, '0');
+                string objId = refidParts[3].PadLeft(5, '0');
+                string operation = Op.IntCode.ToString().PadLeft(2, '0');
+                string pWithLoc = objType + '-' + objId + '-' + operation + (NeglectLocId ? "" : (":" + LocId));///////////
+                string pGlobalLoc = objType + '-' + objId + '-' + operation + ":-1";
+                string temp = this.LoggedInUser.Permissions.Find(p => p.Contains(pWithLoc) || p.Contains(pGlobalLoc));
+                if (temp != null)
                     return true;
             }
             catch (Exception e)
@@ -508,10 +555,12 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult GetPdfReport(string refId, string rowId)
         {
-            if (!this.HasPermission(refId, OperationConstants.PRINT, -1))//////
+            if (!this.HasPermission(refId, OperationConstants.PRINT, 0, true))
                 return Redirect("/StatusCode/401");
-            List<Param> p = new List<Param>();
-            p.Add(new Param { Name = "id", Value = rowId, Type = "7" });
+            List<Param> p = new List<Param>
+            {
+                new Param { Name = "id", Value = rowId, Type = "7" }
+            };
             string s = JsonConvert.SerializeObject(p);
             s = s.ToBase64();
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
@@ -562,28 +611,28 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        //public string CheckEmailAndPhone(string RefId, int RowId, string Data)
-        //{
-        //    CheckEmailAndPhoneResponse Resp = ServiceClient.Post<CheckEmailAndPhoneResponse>(
-        //        new CheckEmailAndPhoneRequest
-        //        {
-        //            RefId = RefId,
-        //            RowId = RowId,
-        //            Data = Data
-        //        });
-        //    return Resp.Data;
-        //}
+        public string CheckEmailAndPhone(string RefId, int RowId, string Data)
+        {
+            CheckEmailAndPhoneResponse Resp = ServiceClient.Post<CheckEmailAndPhoneResponse>(
+                new CheckEmailAndPhoneRequest
+                {
+                    RefId = RefId,
+                    RowId = RowId,
+                    Data = Data
+                });
+            return Resp.Data;
+        }
 
-        //public string GetUserDetails(string RefId, int RowId, string CtrlName, int CurId)
-        //{
-        //    GetProvUserListResponse Resp = ServiceClient.Post<GetProvUserListResponse>(
-        //        new GetProvUserListRequest
-        //        {
-        //            RefId = RefId,
-        //            RowId = RowId
-        //        });
-        //    return Resp.Data;
-        //}
+        public string GetUserDetails(string RefId, int RowId, string CtrlName, int CurId)
+        {
+            GetProvUserListResponse Resp = ServiceClient.Post<GetProvUserListResponse>(
+                new GetProvUserListRequest
+                {
+                    RefId = RefId,
+                    RowId = RowId
+                });
+            return Resp.Data;
+        }
 
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {

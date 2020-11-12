@@ -466,11 +466,11 @@
     };
 
     /////////////
-    this.AllRequired_valid_Check = function () {
+    this.AllRequired_valid_Check = function (ctrlsArray = this.FO.flatControlsWithDG) {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let notOk1stCtrl = null;
-        $.each(this.FO.flatControlsWithDG, function (i, ctrl) {
+        $.each(ctrlsArray, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
             if (this.FO.EbAlert)
                 this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
@@ -480,7 +480,7 @@
                 if (this.FO.EbAlert) {
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
-                        head: "required",
+                        head: "Required",
                         body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
@@ -514,7 +514,7 @@
     }.bind(this);
 
     this.GoToCtrl = function (ctrl, parent) {
-        let $inp = ctrl.ObjType === "PowerSelect" ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
+        let $inp = (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
         this.activateTabHierarchy(ctrl, parent);
         setTimeout(function () {
             $inp[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
@@ -542,7 +542,11 @@
         let TabPaneParents = parent ? getParentsOfType('TabPane', parent, this.FO.FormObj) : getParentsOfType('TabPane', ctrl, this.FO.FormObj);
         ctrl.__noOfParentPanes = TabPaneParents.length;
         for (let i = TabPaneParents.length - 1; i >= 0; i--) {
-            $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`).tab('show');
+            let $a = $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`);
+            if ($a.closest('ul').parent().hasClass('RenderAsWizard'))
+                $a.trigger('click');
+            else
+                $a.tab('show');
         }
     };
 

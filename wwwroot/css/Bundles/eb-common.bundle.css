@@ -2310,7 +2310,7 @@ body {
 .tabcontent {
     float: left;
     padding: 0px 12px;
-    // border: 1px solid #ccc;
+     /*border: 1px solid #ccc;*/
     width: 80%;
     border-left: none;
     height: 100%;
@@ -2643,7 +2643,7 @@ body {
             cursor: no-drop !important;
             background: #8a8a8a;
         }
-}
+
 .loc_switchModal_fade {
     display: none;
     position: fixed;

@@ -229,16 +229,12 @@
 
         }
 
-        if (recentUpload) {
-            this.contextmenu_recent();
-        }
-        else {
-
+        if (!recentUpload) {
             $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
             $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
-            $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
-            this.contextMenu();
+            $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));           
         }
+        this.contextMenu();
         $(`.${this.Options.Container}_FUP_TagLi`).off("click").on("click", this.sortByTagFn.bind(this));
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         $(`.${this.Options.Container}_preview`).off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
@@ -319,7 +315,7 @@
                 src = o.FileB64;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
-            return (`<div class="eb_uplGal_thumbO_RE ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb_RE" filename_RE="${o.FileName}" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" original_refid="${o.original_refid ? o.original_refid : o.FileRefId}" recent=true>
+            return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
                                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
@@ -382,7 +378,7 @@
         if (ev.ctrlKey)
             return this.thumbSelection(ev);
 
-        if (this.Options.ViewByCategory) {            
+        if (this.Options.ViewByCategory) {
             var catFiles = [];
             let dv = $(ev.target).closest(`.${this.Options.Container}_preview`);
             let fileref = dv.attr("filref");
@@ -701,7 +697,6 @@
 
             this.uploadItem(url, this.Files[k]);
         }
-        this.renderFiles(this.TempFilesList)
     }
 
     showInGallery(file, type, k) {
@@ -713,7 +708,6 @@
         else
             obj.FileCategory = 0;
         obj.FileName = file.name;
-        obj.FileRefId = "ebfupRecent" + this.TempCount;
         obj.FileB64 = this.FilesBase64[k];
         obj.FileSize = file.size;
         obj.UploadTime = (new Date()).toISOString().split('T')[0];
@@ -782,17 +776,15 @@
             for (let i = 0; i < this.Files.length; i++) {
 
                 if (this.Files[i].name === thumb.attr("exact")) {
-                    this.uploadSuccess(refid);
-                    var k = this.Gallery.find(`[filename_RE='${this.Files[i].name}']`)
-                    if (k.length > 0) {
-                        k.attr("original_refid", refid);
-                        k.attr("id", `prev-thumb${refid}`);
-                        let indx = this.TempFilesList.findIndex(item => item.FileName == this.Files[i].name);
-                        if (indx > -1) {
-                            let j = this.FileList.findIndex(item => item.FileRefId == this.TempFilesList[indx].FileRefId);
-                            this.FileList[j].original_refid = refid;
-                        }
+                    let indx = this.TempFilesList.findIndex(x => x.FileName === this.Files[i].name);
+                    if (indx > -1) {
+                        this.TempFilesList[indx].FileRefId = refid;
+                        this.uploadSuccess(refid);
+                        let j = this.FileList.findIndex(item => item.FileRefId == this.TempFilesList[indx].FileRefId);
+                        var tm = this.TempFilesList.slice(indx, indx + 1);
+                        this.renderFiles(tm);
                     }
+
                     this.Files.splice(i, 1);
                     break;
                 }
@@ -883,7 +875,6 @@
     startSE() {
         this.ss = new EbServerEvents({ ServerEventUrl: ebcontext.se_url, Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (ImageRefid) {
-
         }.bind(this);
     }
 
@@ -936,10 +927,19 @@
                 "items": this.getCateryLinks()
             },
             "fold3": {
-                "name": "Open in New Tab", icon: "fa-external-link", callback: function (eType, selector, action, originalEvent) {
+                "name": "Open in New Tab", icon: "fa-external-link",
+                callback: function (eType, selector, action, originalEvent) {
                     let url = $(selector.$trigger).find("img").attr("src") || $(selector.$trigger).find("iframe").attr("src");
-                    var win = window.open(url, '_blank');
-                    win.focus();
+                    if ($(selector.$trigger).attr("recent") == "true") {                       
+                        var newTab = window.open();
+                        newTab.document.body.innerHTML = `<img style="max-height: 100vh;" src="${url}">`
+                    }
+                    else {
+                        var win = window.open(url, '_blank');
+                        win.focus();
+                    }
+                    
+                   
                 }
             }
         };
@@ -954,6 +954,7 @@
                 };
             }.bind(this)
         });
+        //$('.ebfup-context-menu_RE').attr('ebfup-context-menutitle_RE', "Yet to save Form");
     }
 
     getCustomMenu() {
@@ -993,21 +994,11 @@
 
     contextMcallback(eType, selector, action, originalEvent) {
         let refids = [];
-        if ($(selector.$trigger).attr("recent") == "true") {
-            var attr = $(selector.$trigger).attr('original_refid');
-            if (typeof attr !== typeof undefined && attr !== false) {
-                refids = [eval($(selector.$trigger).attr("original_refid"))];
-            }
-
-        }
-        else {
-
             refids = [eval($(selector.$trigger).attr("filref"))];
             this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
                 if (!refids.Contains(eval($(o).attr("refid"))))
                     refids.push(eval($(o).attr("refid")));
             }.bind(this));
-        }
         this.changeCatAjax(eType, refids);
     }
 
@@ -1043,9 +1034,6 @@
         let $t;
         for (let i = 0; i < fileref.length; i++) {
             var thump = this.Gallery.find(`div[filref="${fileref[i]}"]`);
-            if (thump.length === 0) {
-                thump = this.Gallery.find(`div[original_refid="${fileref[i]}"]`);
-            }
             var catDiv = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"]`);
             catDiv.show();
             catDiv.find('.Col_apndBody_apndPort').append(thump);
@@ -1058,31 +1046,7 @@
         $(".eb_uplGal_thumbO").find(".select-fade").hide();
     }
 
-    contextmenu_recent() {
-        $.contextMenu({
-
-            selector: `.${this.Options.Container}_eb_Gal_thumb_RE`,
-            autoHide: true,
-            className: "ebfup-context-menu_RE",
-            items: {
-                "delete": {
-                    name: "Delete",
-                    icon: "fa-trash",
-                    callback: this.contextM_REcallback.bind(this)
-                },
-                "changeCategory": {
-                    name: "Move to Category",
-                    icon: "fa-list",
-                    items: this.getCateryLinks()
-                }
-            }
-        });
-
-        // set a title
-        $('.ebfup-context-menu_RE').attr('ebfup-context-menutitle_RE', "Yet to save Form");
-
-
-    }
+    
 
     deleteFromGallery(filerefs) {
         for (let i = 0; i < filerefs.length; i++) {

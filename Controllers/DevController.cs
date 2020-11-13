@@ -100,13 +100,12 @@ namespace ExpressBase.Web.Controllers
 
         public string GetAppsTree()
         {
-            string typestring = @"(0,'WebForm'),(2,'DataReader'),(3,'Report'),(4,'DataWriter'),(5,'SqlFunction'),(7,'JavascriptFunction'),(12,'FilterDialog'),(13,'MobilePage'),
-            (14,'UserControl'),(15,'EmailBuilder'),(16,'TableVisualization'),(17,'ChartVisualization'),(18,'BotForm'),(19,'SmsBuilder'),(20,'Api'),(21,'MapView'),(22,'DashBoard'),
-            (23,'KanBan'),(24,'CalendarView'),(25,'CsharpFunction'),(26,'SqlJob')";//(1, 'foo'), (2, 'bar'), (3, 'fooBar')
+            string typestring = @"(0,'WebForm'),(3,'Report'),(13,'MobilePage'),(16,'TableVisualization'),(17,'ChartVisualization'),(18,'BotForm'),(20,'Api'),
+            (21,'MapView'),(22,'DashBoard'),(23,'KanBan'),(24,'CalendarView'),(26,'SqlJob')";
 
             string subquery = string.Format("(SELECT * FROM (values {0}) AS EOT(type_id, type_name)) AS EOT", typestring);
             string query = string.Format(@"SELECT 
-	                             EO.id, EOT.type_name, EO.obj_name,EO.display_name,EO.obj_desc, EO2A.obj_id, EO2A.app_Id,app.applicationname
+	                             EO.id, EOT.type_name as Type, EO.obj_name,EO.display_name,EO.obj_desc, EO2A.obj_id, EO2A.app_Id,app.applicationname
                             FROM
 	                             eb_objects_ver EOV,eb_objects EO, 
 	                             {0},
@@ -120,11 +119,10 @@ namespace ExpressBase.Web.Controllers
                                 COALESCE(EO.eb_del, 'F') = 'F' AND
                                 COALESCE(EOV.working_mode, 'F') <> 'T' AND
                                 COALESCE(EO2A.eb_del, 'F') = 'F';", subquery);
-            ;
-            string[] arrayy = new string[] { "id", "type_name", "obj_name", "display_name", "obj_desc", "obj_id", "app_Id", "applicationname" };
+            string[] arrayy = new string[] { "id", "Type", "obj_name", "Display Name", "Description", "obj_id", "app_Id", "applicationname" };
             DVColumnCollection DVColumnCollection = GetColumnsForAppsTree(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = DVColumnCollection, AutoGen = false, IsPaging = false };
-            List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("applicationname"), Visualization.Columns.Get("type_name") };
+            List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("applicationname"), Visualization.Columns.Get("Type") };
             (Visualization as EbTableVisualization).RowGroupCollection.Add(new MultipleLevelRowGroup { RowGrouping = RowGroupingColumns, Name = "multilevel" });
             (Visualization as EbTableVisualization).CurrentRowGroup = (Visualization as EbTableVisualization).RowGroupCollection[0];
             return EbSerializers.Json_Serialize(Visualization);
@@ -140,13 +138,13 @@ namespace ExpressBase.Web.Controllers
                     DVBaseColumn _col = null;
                     if (str == "id")
                         _col = new DVNumericColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
-                    if (str == "type_name")
+                    if (str == "Type")
                         _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "obj_name")
                         _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = false };
-                    if (str == "display_name")
+                    if (str == "Display Name")
                         _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
-                    if (str == "obj_desc")
+                    if (str == "Description")
                         _col = new DVStringColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     if (str == "obj_id")
                         _col = new DVNumericColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };

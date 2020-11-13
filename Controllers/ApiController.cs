@@ -821,10 +821,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     Console.WriteLine("Exception at Solution data api,locations :: " + ex.Message);
                 }
-
                 return data;
             }
-
             return new EbMobileSolutionData { StatusCode = HttpStatusCode.Unauthorized };
         }
 

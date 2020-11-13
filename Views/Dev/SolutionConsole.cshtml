@@ -210,6 +210,16 @@
                                 }
                             }
                         </select>
+
+                        @{
+                            string verify_user = mobile_settings.VerifyUserByOTP ? "checked" : "";
+
+                            <div class="verify-signup-container" style="margin-top:15px;">
+                                <label style="font-weight:500;">Verify User</label>
+                                <input type="checkbox" id="verify-user-mobilesetting" style="margin:0;margin-left:10px;" @verify_user/>
+                            </div>
+                        }
+
                         <div class="mr-t-10 mr-b-15 display-flex">
                             <div style=" width: 100%;font-weight: 500;">Profile</div>
                             <button class="mob_add_page" data-toggle="modal" data-target="#mob_pages"><i class="fa fa-list" aria-hidden="true"></i></button>
@@ -341,6 +351,7 @@
     function setMobileSettings() {
         MobileSettings.SignUpPageRefId = $('#mobile-signup-refid').val() || null;
         MobileSettings.ProfileSetupPages = getMobileProfilePages();
+        MobileSettings.VerifyUserByOTP = $("#verify-user-mobilesetting").is(":checked");
     }
 
     function getMobileProfilePages() {

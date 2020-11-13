@@ -263,7 +263,7 @@
     this.initStr64E = function () {
         this.curEditorLabel = "String Editor";
         let PropsObj = this.getPropsObj();
-        let HtmlEbody = '<textarea id="Str64E_txtEdtr' + this.PGobj.wraperId + '" class="str64E-texarea" rows="15" cols="85">' + decodeURIComponent(escape(window.atob(PropsObj[this.PGobj.CurProp])) || "") + '</textarea>';
+        let HtmlEbody = '<textarea id="Str64E_txtEdtr' + this.PGobj.wraperId + '" class="str64E-texarea" rows="15" cols="85">' + decodeURIComponent(escape(window.atob(PropsObj[this.PGobj.CurProp] || ""))) + '</textarea>';
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(HtmlEbody);
     };
 

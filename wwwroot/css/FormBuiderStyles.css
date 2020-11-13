@@ -1,5 +1,9 @@
 ﻿/*CRChng - 'check new DG row for every row' related change*/
 
+:root {
+    --eb-bluishgray: rgba(36, 36, 42, 0.13);
+}
+
 html {
     overflow: hidden !important;
 }
@@ -511,7 +515,8 @@ body {
     border: solid 1px #eaeaec;
 }
 
-.Eb-ctrlContainer > .tab-content, .Eb-ctrlContainer > .RenderAsWizard {
+.Eb-ctrlContainer > .tab-content,
+.Eb-ctrlContainer > .RenderAsWizard {
     border-top: none;
     border-radius: 0 0 3px 3px;
     overflow-y: auto;
@@ -1066,7 +1071,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .ctrl-cover {
-    border: 1px solid rgba(34,36,38,.15);
+    border: 1px solid var(--eb-bluishgray);
     display: flex;
     flex-flow: column;
     position: relative;
@@ -3017,7 +3022,7 @@ input.locinp {
     left: 50px;
 }
 
-[renderaswizard="true"] .eb-tab-warn-icon-cont {
+[ctype=WizardControl] .eb-tab-warn-icon-cont {
     top: calc(50% - 6px);
     right: -18px;
     z-index: 3;

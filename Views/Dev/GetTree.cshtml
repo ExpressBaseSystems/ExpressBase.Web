@@ -17,6 +17,9 @@
 <div id="apps_tree_container" style="margin-top:40px;height: calc(100vh - 149px);"></div>
 
 <script>
+    var cm = new EbHeader().setName("Export Applications");
+    window.document.title = "Export Applications";
+
      @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);

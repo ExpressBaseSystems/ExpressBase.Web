@@ -388,8 +388,34 @@
             let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
             var blueprintModaledt = new blueprintModalfn(ctrlobjt);
         }
+        else if (type == "WizardControl") {
+            let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
+            this.initWizard(ctrlobjt);
+        }
         this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
+
+    this.initWizard = function (ctrl) {
+        let $Tab = $(`#cont_${ctrl.EbSid_CtxId}>.RenderAsWizard`);
+        if ($Tab.length === 0)
+            return false;
+        $Tab.smartWizard({
+            theme: 'arrows',
+            enableURLhash: false, // Enable selection of the step based on url hash
+            transition: {
+                animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                speed: '400', // Transion animation speed
+                easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
+            },
+            toolbarSettings: {
+                toolbarPosition: 'bottom', // none, top, bottom, both
+                toolbarButtonPosition: 'center', // left, right, center
+                showNextButton: true, // show/hide a Next button
+                showPreviousButton: true, // show/hide a Previous button
+            }
+        });
+
+    }
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
         if (type === "TabControl")
@@ -550,11 +576,13 @@
                     this.DraggableConts.push($(`#cont_${ctrlObj.EbSid_CtxId} .Dt-Rdr-col-cont`)[0]);
 
                 }
-                else
-                    if (type === "BluePrint") {
-                        var blueprintModal = new blueprintModalfn(ctrlObj);
+                else if (type === "BluePrint") {
+                    var blueprintModal = new blueprintModalfn(ctrlObj);
 
-                    }
+                }
+                else if (type == "WizardControl") {
+                    this.initWizard(ctrlObj);
+                }
 
                 $ctrl.focus();
                 ctrlObj.Label = ebsid;

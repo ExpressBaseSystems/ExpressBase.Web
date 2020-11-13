@@ -40,6 +40,7 @@
     this.$SourceCategory = $("#selSourceCategory");
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
+    this.$OnlineConsultation = $("#selOnlineConsultation");
     this.$PicReceived = $("#selPicReceived");
     this.$BaldnessGrade = $("#selBaldnessGrade");
     this.$DiffusePattern = $("#selDiffusePattern");
@@ -877,6 +878,7 @@
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
+        this.$OnlineConsultation.val(this.CustomerInfo["online_consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
         this.$BaldnessGrade.val(this.CustomerInfo["baldnessgrade"]);
         this.$DiffusePattern.val(this.CustomerInfo["diffusepattern"]);
@@ -975,6 +977,7 @@
         this.pushToList("sourcecategory", this.$SourceCategory.val());
         this.pushToList("subcategory", this.$SubCategory.val());
         this.pushToList("consultation", this.$Consultation.val());
+        this.pushToList("online_consultation", this.$OnlineConsultation.val());
         this.pushToList("picsrcvd", this.$PicReceived.val());
         this.pushToList("baldnessgrade", this.$BaldnessGrade.val());
         this.pushToList("diffusepattern", this.$DiffusePattern.val());

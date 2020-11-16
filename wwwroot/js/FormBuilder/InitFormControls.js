@@ -1672,6 +1672,21 @@
     }
 
     this.TagInput = function (ctrl) {
+        var $ctrl = $("#" + ctrl.EbSid_CtxId +'_tagId');
+        if (ctrl.AutoSuggestion === true) {           
+            var BloodhoundEngine = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                local: ctrl.Suggestions.$values                    
+            });
+            BloodhoundEngine.initialize();
+            $ctrl.tagsinput({
+                typeaheadjs: {
+                    source: BloodhoundEngine.ttAdapter()
+                }
+            });
+
+        }
         //$('#' + ctrl.EbSid).find('.bootstrap-tagsinput').find('.tag');
         //$('input[name = ' + ctrl.EbSid_CtxId + '_tags]').css("font-size", ctrl.FontSizes + 'px')
         //ctrl.clear = function (p1) {

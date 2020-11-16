@@ -2023,7 +2023,7 @@ input.locinp {
             border-bottom-width: 0px;
         }
 
-.Eb-ctrlContainer[ctype="DataGrid"] > .ctrl-cover{
+.Eb-ctrlContainer[ctype="DataGrid"] > .ctrl-cover {
     border-width: 0 0 1px 0;
     border-bottom: 1px solid rgb(227, 227, 227);
 }
@@ -2541,7 +2541,16 @@ input.locinp {
 
     [ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag {
         font-size: 12px;
+        line-height: 2.5;
     }
+
+.tagInputDiv .twitter-typeahead .tt-input {
+    padding-top: 0px !important;
+}
+
+.tagInputDiv .twitter-typeahead .tt-hint {
+    padding-top: 0px !important;
+}
 
 /*EbRitchText*/
 [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {

@@ -265,6 +265,32 @@ namespace ExpressBase.Web.Controllers
             }
             return resp;
         }
+         [HttpGet("audio/{filename}")]
+        public IActionResult GetAudio(string filename)
+        {
+            DownloadFileResponse dfs = null;
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadFileByIdRequest
+                        {
+                            FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Audio }
+                        });
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
 
         [HttpGet("files/ref/{filename}")]
         public IActionResult GetFileByRefId(string filename)
@@ -391,6 +417,63 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
                         uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
+
+                        uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
+                        uploadFileRequest.FileDetails.MetaDataDictionary.Add("Tags", tags);
+                        uploadFileRequest.FileDetails.MetaDataDictionary.Add("Category", catogory);
+                        uploadFileRequest.FileDetails.Context = context;
+
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("file Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: file Upload Failure");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
+            }
+            return res.FileRefId;
+        }
+
+         [HttpPost]
+        public async Task<int> UploadAudioAsync(int i)
+        {
+            UploadAsyncResponse res = new UploadAsyncResponse();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+
+                List<string> tags = string.IsNullOrEmpty(req["Tags"]) ? new List<string>() : req["Tags"].ToList<string>();
+                List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
+                string context = (req.ContainsKey("Context")) ? context = req["Context"] : StaticFileConstants.CONTEXT_DEFAULT;
+
+                UploadAudioAsyncRequest uploadFileRequest = new UploadAudioAsyncRequest();
+                uploadFileRequest.FileDetails = new FileMeta();
+
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        byte[] myFileContent;
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+
+                            uploadFileRequest.FileByte = myFileContent;
+                        }
+
+                        uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
+                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
+                        uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
+                        uploadFileRequest.FileDetails.FileCategory = EbFileCategory.Audio;
 
                         uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
                         uploadFileRequest.FileDetails.MetaDataDictionary.Add("Tags", tags);
@@ -571,7 +654,6 @@ namespace ExpressBase.Web.Controllers
             }
             return res.FileRefId;
         }
-
 
         [HttpPost]
         public async Task<int> UploadDPAsync(int i)

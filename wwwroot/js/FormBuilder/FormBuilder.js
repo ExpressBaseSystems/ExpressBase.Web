@@ -889,9 +889,10 @@
         let id = SelectedCtrl.EbSid;
         let $wizard = $("#cont_" + id + ">.RenderAsWizard");
         let smartWizardObj = $wizard.data('smartWizard')
-        let $wizMenu = $wizard.find(`[li-of=${delobj.EbSid}]`).remove();
-        let $wizPane = $(`#${delobj.EbSid_CtxId}`).remove();
-
+        let $wizMenu = $wizard.find(`[li-of=${delobj.EbSid}]`);
+        $wizMenu.siblings(':first').children('a').trigger('click');
+        $wizMenu.remove();
+        $(`#${delobj.EbSid_CtxId}`).remove();
         smartWizardObj.steps.splice(smartWizardObj.steps.toArray().indexOf($wizMenu.children('a')[0]), 1);
     };
 

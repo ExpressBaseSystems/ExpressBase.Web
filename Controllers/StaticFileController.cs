@@ -265,6 +265,7 @@ namespace ExpressBase.Web.Controllers
             }
             return resp;
         }
+
          [HttpGet("audio/{filename}")]
         public IActionResult GetAudio(string filename)
         {
@@ -451,8 +452,8 @@ namespace ExpressBase.Web.Controllers
                 List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
                 string context = (req.ContainsKey("Context")) ? context = req["Context"] : StaticFileConstants.CONTEXT_DEFAULT;
 
-                UploadAudioAsyncRequest uploadFileRequest = new UploadAudioAsyncRequest();
-                uploadFileRequest.FileDetails = new FileMeta();
+                UploadAudioAsyncRequest request = new UploadAudioAsyncRequest();
+                request.FileDetails = new FileMeta();
 
                 foreach (var formFile in req.Files)
                 {
@@ -467,20 +468,20 @@ namespace ExpressBase.Web.Controllers
                             myFileContent = new byte[memoryStream.Length];
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
 
-                            uploadFileRequest.FileByte = myFileContent;
+                            request.FileByte = myFileContent;
                         }
 
-                        uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
-                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
-                        uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
-                        uploadFileRequest.FileDetails.FileCategory = EbFileCategory.Audio;
+                        request.FileDetails.FileName = formFile.FileName.ToLower();
+                        request.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
+                        request.FileDetails.Length = request.FileByte.Length;
+                        request.FileDetails.FileCategory = EbFileCategory.Audio;
 
-                        uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
-                        uploadFileRequest.FileDetails.MetaDataDictionary.Add("Tags", tags);
-                        uploadFileRequest.FileDetails.MetaDataDictionary.Add("Category", catogory);
-                        uploadFileRequest.FileDetails.Context = context;
+                        request.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
+                        request.FileDetails.MetaDataDictionary.Add("Tags", tags);
+                        request.FileDetails.MetaDataDictionary.Add("Category", catogory);
+                        request.FileDetails.Context = context;
 
-                        res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
+                        res = this.FileClient.Post<UploadAsyncResponse>(request);
 
                         if (res.FileRefId > 0)
                             Console.WriteLine(String.Format("file Upload Success [RefId:{0}]", res.FileRefId));

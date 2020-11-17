@@ -40,13 +40,28 @@
         }
     };
     this.UploadAudio = function () {
-        let audioData = new Blob(dataArray, { 'type': 'audio/mp3;' });
+        let audioData = new Blob(dataArray, { 'type': 'audio/mp3;','name': 'tets1.mp3' });
         var arrayBuffer;
         var fileReader = new FileReader();
         fileReader.onload = function (event) {
             arrayBuffer = event.target.result;  
         };
         fileReader.readAsArrayBuffer(audioData);
+        let formData = new FormData();
+        formData.append("File", audioData);
+        $.ajax({
+            url: "../StaticFile/UploadAudioAsync",
+            type: "POST",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function (evt) {
+                //EbLoader("show");
+            }.bind(this)
+        }).done(function (refid) {
+            //EbLoader("hide");            
+        }.bind(this)); 
     };
     this.init = function () {
         $('#btnStart').on('click', this.StartRec.bind(this));

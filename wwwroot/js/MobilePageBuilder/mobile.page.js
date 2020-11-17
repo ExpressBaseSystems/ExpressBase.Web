@@ -522,11 +522,19 @@ function extendPropertyGrid(pg) {
 function FilterToolBox(ctype, tab) {
     let $div = `#eb_mobpage_toolbox${tab}`;
     if (ctype) {
-        $(`${$div} .eb_mobpage_tbxcategory`).hide();
+        $(`${$div} .toolitems`).not(".page-container").hide();
         $(`${$div} [tool-types*="${ctype}"]`).show();
-        $(`${$div} [tool-types="*"]`).show();
+        $(`${$div} .eb_mobpage_tbxcategory`).each(function (i, obj) {
+            if ($(obj).find(".toolitems:visible").length <= 0) {
+                $(obj).hide();
+            }
+            else {
+                $(obj).show();
+            }
+        });
     }
     else {
+        $(`${$div} .toolitems`).show();
         $(`${$div} .eb_mobpage_tbxcategory`).show();
     }
 }
@@ -552,4 +560,18 @@ function alignHorrizontally($div, align) {
 
 function setPadding(obj, $el) {
 
+}
+
+function setShadow($el, color = "rgba(0,0,0,0.15)") {
+    $el.css({
+        "box-shadow": `0px 3px 12px 0px ${color}`,
+        "border-color": "transparent"
+    });
+}
+
+function setBorderColor($el, color = "#ccc") {
+    $el.css({
+        "box-shadow": "none",
+        "border-color": color
+    })
 }

@@ -1383,6 +1383,9 @@
             $ctrl.on('input', this.checkEmail.bind(this, ctrl));
         }
     };
+    this.AudioInput = function (ctrl, ctrlopts) {
+        AudioInput(ctrl, ctrlopts);
+    };
 
     this.EmailControl = function (ctrl) {
         $("#" + ctrl.EbSid_CtxId).on('input', this.checkEmail.bind(this, ctrl));
@@ -1669,6 +1672,21 @@
     }
 
     this.TagInput = function (ctrl) {
+        var $ctrl = $("#" + ctrl.EbSid_CtxId +'_tagId');
+        if (ctrl.AutoSuggestion === true) {           
+            var BloodhoundEngine = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                local: ctrl.Suggestions.$values                    
+            });
+            BloodhoundEngine.initialize();
+            $ctrl.tagsinput({
+                typeaheadjs: {
+                    source: BloodhoundEngine.ttAdapter()
+                }
+            });
+
+        }
         //$('#' + ctrl.EbSid).find('.bootstrap-tagsinput').find('.tag');
         //$('input[name = ' + ctrl.EbSid_CtxId + '_tags]').css("font-size", ctrl.FontSizes + 'px')
         //ctrl.clear = function (p1) {

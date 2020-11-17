@@ -7068,6 +7068,10 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 
 /*CRChng - 'check new DG row for every row' related change*/
 
+:root {
+    --eb-bluishgray: rgba(36, 36, 42, 0.13);
+}
+
 html {
     overflow: hidden !important;
 }
@@ -7541,10 +7545,10 @@ body {
     padding: 3px 11.5px;
     position: absolute;
     text-shadow: none;
-    top: -25px;
+    top: -24px;
     border-radius: 3px 5px 0 0;
     letter-spacing: 0.2px;
-    right: -1px;
+    right: 8px;
     background-color: #00bd31 !important;
 }
 
@@ -7579,7 +7583,8 @@ body {
     border: solid 1px #eaeaec;
 }
 
-.Eb-ctrlContainer > .tab-content, .Eb-ctrlContainer > .RenderAsWizard {
+.Eb-ctrlContainer > .tab-content,
+.Eb-ctrlContainer > .RenderAsWizard {
     border-top: none;
     border-radius: 0 0 3px 3px;
     overflow-y: auto;
@@ -8134,7 +8139,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .ctrl-cover {
-    border: 1px solid rgba(34,36,38,.15);
+    border: 1px solid var(--eb-bluishgray);
     display: flex;
     flex-flow: column;
     position: relative;
@@ -9076,6 +9081,21 @@ input.locinp {
     padding-right: 8px;
 }
 
+    .grid-cont .Dg_head > table > thead {
+        background-color: #dddddd;
+        background: linear-gradient(45deg, #dddddd 0%,#ececec 50%,#dddddd 100%);
+        color: black;
+    }
+
+        .grid-cont .Dg_head > table, .grid-cont .Dg_head > table > thead > tr > th {
+            border-bottom-width: 0px;
+        }
+
+.Eb-ctrlContainer[ctype="DataGrid"] > .ctrl-cover {
+    border-width: 0 0 1px 0;
+    border-bottom: 1px solid rgb(227, 227, 227);
+}
+
 .grid-cont .ctrlth {
     width: 50px;
 }
@@ -9589,7 +9609,16 @@ input.locinp {
 
     [ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag {
         font-size: 12px;
+        line-height: 2.5;
     }
+
+.tagInputDiv .twitter-typeahead .tt-input {
+    padding-top: 0px !important;
+}
+
+.tagInputDiv .twitter-typeahead .tt-hint {
+    padding-top: 0px !important;
+}
 
 /*EbRitchText*/
 [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
@@ -10061,7 +10090,7 @@ input.locinp {
     left: 50px;
 }
 
-[renderaswizard="true"] .eb-tab-warn-icon-cont {
+[ctype=WizardControl] .eb-tab-warn-icon-cont {
     top: calc(50% - 6px);
     right: -18px;
     z-index: 3;
@@ -10414,12 +10443,31 @@ input.locinp {
 #ProvUserConfModal .pu-confmdl-uinfo {
     padding: 0px 15px 0px 45px;
 }
+
     #ProvUserConfModal .pu-confmdl-uinfo img {
         border-radius: 50%;
         height: 50px;
         width: 50px;
     }
+
+.provUsrCtrlPoBtn {
+    padding: 2px 6px;
+    background: #4987fb;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 5px;
+    float: right;
+    box-shadow: 1px 1px 6px 2px #ccc;
+    transition-duration: 0.4s;
+}
+
+    .provUsrCtrlPoBtn:hover {
+        background: #2b72f8;
+        box-shadow: 1px 1px 6px 2px #bbb;
+    }
 /*#endregion EbProvisionUser*/
+
 .alt {
     background-color: rgb(243, 249, 249);
 }

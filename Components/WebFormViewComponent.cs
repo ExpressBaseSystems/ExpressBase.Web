@@ -121,7 +121,11 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbInputGeoLocation).GetDefaultApikey(this.ServiceClient);
                     }
-                }
+					else if (control is EbTagInput)
+					{
+						(control as EbTagInput).InitFromDataBase(this.ServiceClient);
+					}
+				}
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();
                 ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(WebForm_L as EbControlContainer, BuilderType.WebForm);

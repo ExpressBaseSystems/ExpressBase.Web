@@ -1383,6 +1383,9 @@
             $ctrl.on('input', this.checkEmail.bind(this, ctrl));
         }
     };
+    this.AudioInput = function (ctrl, ctrlopts) {
+        AudioInput(ctrl, ctrlopts);
+    };
 
     this.EmailControl = function (ctrl) {
         $("#" + ctrl.EbSid_CtxId).on('input', this.checkEmail.bind(this, ctrl));

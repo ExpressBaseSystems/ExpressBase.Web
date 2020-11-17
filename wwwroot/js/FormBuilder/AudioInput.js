@@ -10,10 +10,13 @@
 
     // Access the permission for use 
     // the microphone 
-
+    let _StartBtn = $('#btnStart');
+    let _StopBtn = $('#btnStop');
 
 
     this.StartRec = function () {
+        _StartBtn.css("color", "#03af03");
+        _StopBtn.css("color", "#ff0000");
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
                 mediaRecorder = new MediaRecorder(stream);
@@ -36,10 +39,14 @@
                     clipContainerElement.setAttribute('data-id', dataArray.length - 1);
                     clipContainerElement.setAttribute('style', 'display:flex;');
                     var dltElement = document.createElement('i');
-                    dltElement.setAttribute('class', 'fa fa-times-circle aud-close');
+                    dltElement.setAttribute('class', 'fa fa-trash aud-close');
+                    dltElement.setAttribute('data-id', dataArray.length - 1);
                     dltElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
                     clipContainerElement.appendChild(dltElement);
-                    $('.AudioColl').append(clipContainerElement);
+                    if (this.ctrl.IsMultipleUpload)
+                        $('.AudioColl').append(clipContainerElement);
+                    else
+                        $('.AudioColl').empty().append(clipContainerElement);
                     this.Conver2file(dataArray[dataArray.length - 1]);
                     $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
                     //dataArray = [];
@@ -60,9 +67,33 @@
         return file;
     };
     this.DeleteAudio = function (e) {
-        var target = $(e.target);
+        EbDialog("show", {
+            Message: "Are you sure, you want to submit ?",
+            Buttons: {
+                "Yes": {
+                    Background: "green",
+                    Align: "right",
+                    FontColor: "white;"
+                },
+                "No": {
+                    Background: "red",
+                    Align: "left",
+                    FontColor: "white;"
+                }
+            },
+            CallBack: this.confirmBoxCallBack.bind(this, e)
+        });
+
     };
+    this.confirmBoxCallBack = function (e, cur) {
+        if (cur == "Yes") {
+            $(`[data-id=${e.target.getAttribute('data-id')}]`).remove();
+        }
+    };
+
     this.StopRec = function () {
+        _StartBtn.css("color", "#000000");
+        _StopBtn.css("color", "#000000");
         if (mediaRecorder) {
             mediaRecorder.stop();
         }
@@ -95,10 +126,11 @@
             }.bind(this));
         }.bind(this));
     };
+
     this.init = function () {
-        $('#btnStart').on('click', this.StartRec.bind(this));
-        $('#btnStop').on('click', this.StopRec.bind(this));
-        $('#uploadAudio').on('click', this.UploadAudio.bind(this));
+        $('#btnStart').off("click").on('click', this.StartRec.bind(this));
+        $('#btnStop').off("click").on('click', this.StopRec.bind(this));
+        $('#uploadAudio').off("click").on('click', this.UploadAudio.bind(this));
     };
 
     this.init();

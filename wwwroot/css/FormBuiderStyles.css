@@ -3399,3 +3399,13 @@ input.locinp {
         box-shadow: 1px 1px 6px 2px #bbb;
     }
 /*#endregion EbProvisionUser*/
+
+/*#startregion EbAudioInput*/
+.audio-input-container button {
+    font-size: 20px;
+    padding: 5px 15px;
+    border: solid 1px #ccc;
+    background-color: #efefef;
+    margin: 5px 5px;
+}
+/*#sendregion EbAudioInput*/

@@ -2,45 +2,58 @@
     this.rTok = options.Rtoken || getrToken();
     this.ServerEventUrl = options.ServerEventUrl;
     this.Channels = options.Channels.join();
-    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
+    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();    
     this.sEvent = $.ss;
 
-    this.onUploadSuccess = function (m, e) { };
+    this.onUploadSuccess = function (m, e) {
+        $(`[sse_Refid=${m}]`).find(".success").hide();
+        $(`[sse_Refid=${m}]`).find(".sse_success").show();
+    };
     this.onShowMsg = function (m, e) { };
     this.onLogOut = function (m, e) { };
     this.onNotification = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
 
+
+
     this.onConnect = function (sub) {
-        //console.log("You've connected! welcome " + sub.displayName);
-        if (sub) {
-            window.ebcontext.subscription_id = sub.id;
-        }
+        console.log("You've connected!SSE welcome " + sub.displayName, sub.id);
+        //if (sub) {
+        //    window.ebcontext.subscription_id = sub.id;
+        //}
     };
 
     this.onJoin = function (user) {
-        //console.log("Welcome, " + user.displayName);
+     //   console.log("onJoin Welcome, " + user.displayName);
     };
 
     this.onLeave = function (user) {
-        //console.log(user.displayName + " has left the building");
+      //  console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
-        //if (console) console.log("onHeartbeat", msg, e);
+        //if (console)
+        console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
-        this.onUploadSuccess(m,e);
+        this.onUploadSuccess(m, e);
     };
 
+
+    this.mybroadcast = function (msg, e) {
+        console.log("mybroadcast", msg, e);
+        //alert(213);
+    }
+
+
     this.onMsgSuccess = function (m, e) {
-        //console.log(m);
-        this.onShowMsg(m, e);
+        //console.log("onMsgSuccess, " + m);
+        //this.onShowMsg(m, e);
     };
 
     this.onLogOutMsg = function (m, e) {
-        //console.log(m);
+      //  console.log(m);
         location.href = "../Tenantuser/Logout";
         this.onLogOut(m, e);
     };
@@ -53,7 +66,7 @@
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-        //console.log("stopped listening");
+       // console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
@@ -64,13 +77,13 @@
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
         }
-    });   
+    });
 
     this.ES.addEventListener('error', function (e) {
         console.log("ERROR!", e);
-    }, false);
+    }, false);    
 
-    this.sEvent.eventReceivers = { "document": document }; 
+    this.sEvent.eventReceivers = { "document": document };
 
     $(document).bindHandlers({
         announce: function (msg) {
@@ -103,7 +116,8 @@
             onExportToExcel: this.onExportToExcel.bind(this),
             onMsgSuccess: this.onMsgSuccess.bind(this),
             onLogOut: this.onLogOutMsg.bind(this),
-            onNotification: this.onNotifyMsg.bind(this)
+            onNotification: this.onNotifyMsg.bind(this),
+            mybroadcast: this.mybroadcast.bind(this)
         }
     });
 };

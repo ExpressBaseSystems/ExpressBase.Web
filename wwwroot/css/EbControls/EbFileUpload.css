@@ -268,6 +268,14 @@
     }
 
 .file-thumb-wraper .success {
+    color: #2387ef;
+    font-size: 24px;
+    align-self: center;
+    margin-left: auto;
+    display: none;
+}
+
+.file-thumb-wraper .sse_success {
     color: #47af08;
     font-size: 24px;
     align-self: center;

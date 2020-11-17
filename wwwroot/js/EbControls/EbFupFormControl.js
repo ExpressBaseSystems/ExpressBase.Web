@@ -568,7 +568,7 @@
                                                                  </div>
                                                                 <div class="eb-upl-thumb-footer display-flex">
                                                                     ${this.thumbButtons(file)}
-                                                                    <span class="fa fa-check-circle-o success"></span><span class="fa fa-exclamation-circle error"></span>                                                                    
+                                                                    <span class="fa fa-check-circle-o success" title="upload processsing"></span><span class="fa fa-check-circle-o sse_success" title="upload completed"></span><span class="fa fa-exclamation-circle error"></span>                                                                    
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -771,6 +771,7 @@
         thumb.find(".eb-upl-loader").hide();
         if (refid > 0) {
             thumb.find(".success").show();
+            thumb.attr("sse_Refid", refid);
             thumb.find(".error").hide();
             thumb.closest('file-thumb-wraper').remove();
             for (let i = 0; i < this.Files.length; i++) {
@@ -873,9 +874,12 @@
     }
 
     startSE() {
-        this.ss = new EbServerEvents({ ServerEventUrl: ebcontext.se_url, Channels: ["file-upload"] });
-        this.ss.onUploadSuccess = function (ImageRefid) {
-        }.bind(this);
+        //this.ss = new EbServerEvents({ ServerEventUrl: ebcontext.se_url, Channels: ["file-upload"] });
+        //this.ss.onUploadSuccess = function (ImageRefid) {
+        //    alert("qweqwe");
+        //    $(`[sse_Refid=${ImageRefid}]`).find(".success").hide();
+        //    $(`[sse_Refid=${ImageRefid}]`).find(".sse_success").show();
+        //}.bind(this);
     }
 
     b64toBlob(b64Data, contentType, sliceSize) {

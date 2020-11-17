@@ -77,7 +77,7 @@ const WebFormRender = function (option) {
                     easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
                 },
                 toolbarSettings: {
-                    toolbarPosition: 'bottom', // none, top, bottom, both
+                    toolbarPosition: 'both', // none, top, bottom, both
                     toolbarButtonPosition: 'center', // left, right, center
                     showNextButton: true, // show/hide a Next button
                     showPreviousButton: true, // show/hide a Previous button

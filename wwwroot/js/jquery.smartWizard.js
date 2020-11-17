@@ -234,15 +234,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             value: function _setEvents() {
                 var _this = this;
 
-                // Check if event handler already exists
-                if (this.main.data('click-init')) {
-                    return true;
-                } // Flag item to prevent attaching handler again
-
-
-                this.main.data('click-init', true); // Anchor click event
-
-                $(this.steps).on("click", function (e) {
+                this.nextButtonEventFun = function (e) {
                     e.preventDefault();
 
                     if (_this.options.anchorSettings.anchorClickable === false) {
@@ -263,7 +255,17 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                     if (_this.options.anchorSettings.enableAllAnchors !== false || _this._isDone(idx)) {
                         _this._showStep(idx);
                     }
-                }); // Next button event
+                };
+
+                // Check if event handler already exists
+                if (this.main.data('click-init')) {
+                    return true;
+                } // Flag item to prevent attaching handler again
+
+
+                this.main.data('click-init', true); // Anchor click event
+
+                $(this.steps).on("click", this.nextButtonEventFun); // Next button event
 
                 this.main.find('.sw-btn-next').on("click", function (e) {
                     e.preventDefault();

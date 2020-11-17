@@ -12,6 +12,7 @@
     // the microphone 
 
 
+
     this.StartRec = function () {
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
@@ -21,11 +22,25 @@
                     dataArray.push(event.data);
                 });
                 mediaRecorder.addEventListener("stop", () => {
-                    const audioBlob = new Blob(dataArray, { 'type': 'audio/mp3;' });
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    let playAudio = document.getElementById('adioPlay');
+                    //const audioBlob = new Blob(dataArray, { 'type': 'audio/mp3;' });
+                    //const audioUrl = URL.createObjectURL(audioBlob);
+                    //let playAudio = document.getElementById('adioPlay');
+                    var audioElement = document.createElement('audio');
+                    audioElement.setAttribute('controls', '');
+                    audioElement.setAttribute('style', 'padding: 10px 0px;');
+                    audioElement.setAttribute('id', dataArray.length - 1);
+                    audioElement.src = URL.createObjectURL(dataArray[dataArray.length - 1]);
+                    var clipContainerElement = document.createElement('div');
+                    clipContainerElement.appendChild(audioElement);
+                    clipContainerElement.setAttribute('class', dataArray.length - 1);
+                    clipContainerElement.setAttribute('style', 'display:flex;');
+                    var dltElement = document.createElement('i');
+                    dltElement.setAttribute('class', 'fa fa-times-circle');
+                    dltElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
+                    clipContainerElement.appendChild(dltElement);
+                    $('.AudioColl').append(clipContainerElement);
 
-                    playAudio.src = audioUrl;
+                    $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
                     //dataArray = [];
                     //const audio = new Audio(audioUrl);
                     //audio.play();
@@ -34,6 +49,9 @@
 
     };
 
+    this.DeleteAudio = function () {
+
+    };
     this.StopRec = function () {
         if (mediaRecorder) {
             mediaRecorder.stop();

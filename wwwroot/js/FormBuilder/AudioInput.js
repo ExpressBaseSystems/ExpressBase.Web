@@ -32,14 +32,15 @@
                     audioElement.src = URL.createObjectURL(dataArray[dataArray.length - 1]);
                     var clipContainerElement = document.createElement('div');
                     clipContainerElement.appendChild(audioElement);
-                    clipContainerElement.setAttribute('class', dataArray.length - 1);
+                    clipContainerElement.setAttribute('class', "aud-data");
+                    clipContainerElement.setAttribute('data-id', dataArray.length - 1);
                     clipContainerElement.setAttribute('style', 'display:flex;');
                     var dltElement = document.createElement('i');
-                    dltElement.setAttribute('class', 'fa fa-times-circle');
+                    dltElement.setAttribute('class', 'fa fa-times-circle aud-close');
                     dltElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
                     clipContainerElement.appendChild(dltElement);
                     $('.AudioColl').append(clipContainerElement);
-
+                    this.Conver2file(dataArray[dataArray.length - 1]);
                     $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
                     //dataArray = [];
                     //const audio = new Audio(audioUrl);
@@ -49,8 +50,18 @@
 
     };
 
-    this.DeleteAudio = function () {
+    this.Conver2file = function (blob) {
+        var file = new File([blob], `my_image${new Date()}.mp3`, {
+            type: "Audio/mp3",
+            lastModified: new Date(),
+            size: 2,
+        });
 
+        return file;
+    };
+    this.DeleteAudio = function (e) {
+        var target = $(e.target);
+        $()
     };
     this.StopRec = function () {
         if (mediaRecorder) {
@@ -58,28 +69,32 @@
         }
     };
     this.UploadAudio = function () {
-        let audioData = new Blob(dataArray, { 'type': 'audio/mp3;','name': 'tets1.mp3' });
-        var arrayBuffer;
-        var fileReader = new FileReader();
-        fileReader.onload = function (event) {
-            arrayBuffer = event.target.result;  
-        };
-        fileReader.readAsArrayBuffer(audioData);
-        let formData = new FormData();
-        formData.append("File", audioData);
-        $.ajax({
-            url: "../StaticFile/UploadAudioAsync",
-            type: "POST",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            beforeSend: function (evt) {
-                //EbLoader("show");
-            }.bind(this)
-        }).done(function (refid) {
-            //EbLoader("hide");            
-        }.bind(this)); 
+        $.each($(".aud-data"), function (i, obj) {
+            let _id = obj.getAttribute("data-id");
+            let audioData = new Blob(dataArray, { 'type': 'audio/mp3;', 'name': 'tets1.mp3' });
+            var arrayBuffer;
+            var file = this.Conver2file(dataArray[_id]);
+            //var fileReader = new FileReader();
+            //fileReader.onload = function (event) {
+            //    arrayBuffer = event.target.result;
+            //};
+            //fileReader.readAsArrayBuffer(audioData);
+            let formData = new FormData();
+            formData.append("File", file);
+            $.ajax({
+                url: "../StaticFile/UploadAudioAsync",
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (evt) {
+                    //EbLoader("show");
+                }.bind(this)
+            }).done(function (refid) {
+                //EbLoader("hide");            
+            }.bind(this));
+        }.bind(this));
     };
     this.init = function () {
         $('#btnStart').on('click', this.StartRec.bind(this));

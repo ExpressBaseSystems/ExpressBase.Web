@@ -1480,11 +1480,21 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         border-bottom: solid 1px #ffffff00;
     }
 
+.RenderAsWizard > ul > li > a > .ebtab-close-btn {
+    margin-left: unset;
+    margin-right: -24px;
+    z-index: 3;
+}
+
 .ebtab-close-btn {
-    display: inline-block;
+    display: inline-flex;
     margin-left: 3px;
     font-size: 11px;
 }
+
+    .ebtab-close-btn .fa {
+        margin: auto;
+    }
 
     .ebtab-close-btn:hover {
         color: #d80505c4;
@@ -2023,7 +2033,7 @@ input.locinp {
             border-bottom-width: 0px;
         }
 
-.Eb-ctrlContainer[ctype="DataGrid"] > .ctrl-cover{
+.Eb-ctrlContainer[ctype="DataGrid"] > .ctrl-cover {
     border-width: 0 0 1px 0;
     border-bottom: 1px solid rgb(227, 227, 227);
 }

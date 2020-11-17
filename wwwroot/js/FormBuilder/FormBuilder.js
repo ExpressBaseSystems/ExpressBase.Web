@@ -395,6 +395,46 @@
         this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 
+    this.wizStepDelValidationOK = function (Obj) {
+        if ((Obj.ObjType === "WizardControl" || Obj.ObjType === "TabControl") && Obj.Controls.$values.length === 1) {
+            this.EbAlert.alert({
+                id: Obj.EbSid + 'tabremove',
+                head: Obj.ObjType + " need atleast a single step.",
+                body: "Try removing control",
+                type: "warning",
+                delay: 2500
+            });
+            return false;
+        }
+        return true;
+    }.bind(this);
+
+
+    this.contTabDelClick = function (e) {/////////////////////////
+        let $e = $(e.target).closest("li");
+        let PaneEbsid = $e.attr("ebsid");
+
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+        let PaneObj = this.rootContainerObj.Controls.GetByName(PaneEbsid);
+        let ctrlMeta = AllMetas["EbTabControl"];
+        this.PGobj.setObject(TabObj, ctrlMeta);
+
+        let index = TabObj.Controls.$values.indexOf(PaneObj);
+        if (!this.wizStepDelValidationOK(TabObj))
+            return;
+
+        let delobj = TabObj.Controls.$values.splice(index, 1)[0];
+        if (TabObj.ObjType === "WizardControl") {
+            this.RemoveWizardStep(this.PGobj.PropsObj, "Controls", "val", delobj);
+        }
+        else {
+            this.RemoveTabPane(this.PGobj.PropsObj, "Controls", "val", delobj);
+        }
+    }.bind(this);
+
     this.initWizard = function (ctrl) {
         let $Tab = $(`#cont_${ctrl.EbSid_CtxId}>.RenderAsWizard`);
         if ($Tab.length === 0)
@@ -408,14 +448,17 @@
                 easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
             },
             toolbarSettings: {
-                toolbarPosition: 'bottom', // none, top, bottom, both
-                toolbarButtonPosition: 'center', // left, right, center
-                showNextButton: true, // show/hide a Next button
-                showPreviousButton: true, // show/hide a Previous button
+                showNextButton: false, // show/hide a Next button
+                showPreviousButton: false, // show/hide a Previous button
+            },
+            anchorSettings: {
+                anchorClickable: true, // Enable/Disable anchor navigation
+                enableAllAnchors: true, // Activates all anchors clickable all times
+                markDoneStep: false, // Add done state on navigation
             }
         });
-
-    }
+        $Tab.off("click").on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
+    }.bind(this);
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
         if (type === "TabControl")
@@ -467,6 +510,8 @@
         $extCont: $(".property-grid-cont"),
         isDraggable: true
     });
+
+    this.PGobj.CXVE.onRemoveCEValidationOK = this.wizStepDelValidationOK;
 
     //Edit mode
     if (this.EbObject) {
@@ -806,7 +851,7 @@
                             <a data-toggle="tab" class="ppbtn-cont" href="#${addedObj.EbSid}">
                                 <span class='eb-label-editable'>${addedObj.Name}</span>
                                 <input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/>
-                                <div class='ebtab-close-btn eb-fb-icon'><i class='fa fa-times' aria-hidden='true'></i></div>
+                                <div class='ebtab-close-btn eb-fb-icon' title='Remove'><i class='fa fa-times' aria-hidden='true'></i></div>
                                 <div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div>
                             </a>
                             <div class='ebtab-add-btn eb-fb-icon'><i class='fa fa-plus' aria-hidden='true'></i></div>
@@ -817,11 +862,37 @@
         this.drake.containers.push($tabPane[0]);
     };
 
+    this.addWizardStep = function (SelectedCtrl, prop, val, addedObj) {
+        let id = SelectedCtrl.EbSid;
+        let $wizard = $("#cont_" + id + ">.RenderAsWizard");
+        let $wizMenu = $wizard.closestInner('ul>li[li-of]:first').clone();
+        $wizMenu.children('a').attr('href', '#' + addedObj.EbSid_CtxId).removeClass('active');
+        let $tabPane = $wizard.closestInner('.tab-content>[ctype="WizardStep"]:first').clone().empty();
+        $tabPane.attr('id', addedObj.EbSid_CtxId).attr('ebsid', addedObj.EbSid_CtxId);
+        $wizard.closestInner(".nav").append($wizMenu);
+        $tabPane.hide();
+        $wizard.closestInner(".tab-content").append($tabPane);
+        let smartWizardObj = $wizard.data('smartWizard')
+        smartWizardObj.steps.push($wizMenu.children('a')[0]);
+        $wizMenu.children('a').on("click", smartWizardObj.nextButtonEventFun)
+        this.drake.containers.push($tabPane[0]);
+    };
+
     this.RemoveTabPane = function (SelectedCtrl, prop, val, delobj) {
         let id = SelectedCtrl.EbSid;
         let $ctrl = $("#cont_" + id);
         let $tabMenu = $ctrl.find(`[li-of=${delobj.EbSid}]`).remove();
-        let $tabPane = $(`#${delobj.Name}`).remove();
+        let $tabPane = $(`#${delobj.EbSid_CtxId}`).remove();
+    };
+
+    this.RemoveWizardStep = function (SelectedCtrl, prop, val, delobj) {
+        let id = SelectedCtrl.EbSid;
+        let $wizard = $("#cont_" + id + ">.RenderAsWizard");
+        let smartWizardObj = $wizard.data('smartWizard')
+        let $wizMenu = $wizard.find(`[li-of=${delobj.EbSid}]`).remove();
+        let $wizPane = $(`#${delobj.EbSid_CtxId}`).remove();
+
+        smartWizardObj.steps.splice(smartWizardObj.steps.toArray().indexOf($wizMenu.children('a')[0]), 1);
     };
 
     this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
@@ -838,6 +909,11 @@
             //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
             addedObj.Name = addedObj.Name.substr(-5);//furthure shorten name 
             this.addTabPane(this.PGobj.PropsObj, prop, val, addedObj);
+        }
+        else if (this.PGobj.PropsObj.ObjType === "WizardControl" && prop === "Controls") {
+            //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
+            addedObj.Name = addedObj.Name.substr(-5);//furthure shorten name 
+            this.addWizardStep(this.PGobj.PropsObj, prop, val, addedObj);
         }
     }.bind(this);
 
@@ -978,25 +1054,11 @@
         this.PGobj.setObject(TabObj, ctrlMeta);
 
         TabObj.Controls.$values.push(newObj);
-        this.addTabPane(this.PGobj.PropsObj, "Controls", "val", newObj);
+        if (newObj.ObjType === 'WizardControl')
+            this.addWizardStep(this.PGobj.PropsObj, "Controls", "val", newObj);
+        else
+            this.addTabPane(this.PGobj.PropsObj, "Controls", "val", newObj);
 
-    }.bind(this);
-
-    this.contTabDelClick = function (e) {/////////////////////////
-        let $e = $(e.target).closest("li");
-        let PaneEbsid = $e.attr("ebsid");
-
-        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
-        let TabEdsid = $ControlTile.attr("ebsid");
-
-        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
-        let PaneObj = this.rootContainerObj.Controls.GetByName(PaneEbsid);
-        let ctrlMeta = AllMetas["EbTabControl"];
-        this.PGobj.setObject(TabObj, ctrlMeta);
-
-        let index = TabObj.Controls.$values.indexOf(PaneObj);
-        let delobj = TabObj.Controls.$values.splice(index, 1)[0];
-        this.RemoveTabPane(this.PGobj.PropsObj, "Controls", "val", delobj);
     }.bind(this);
 
     this.ctrlLblDblClick = function (e) {
@@ -1034,6 +1096,8 @@
             alert();
         else if (this.PGobj.PropsObj.ObjType === "TabControl" && prop === "Controls")
             this.RemoveTabPane(this.PGobj.PropsObj, prop, val, delobj);
+        else if (this.PGobj.PropsObj.ObjType === "WizardControl" && prop === "Controls")
+            this.RemoveWizardStep(this.PGobj.PropsObj, prop, val, delobj);
     }.bind(this);
 
     this.keyUp = function (e) {

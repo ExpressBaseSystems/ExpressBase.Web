@@ -13,6 +13,7 @@
     this.OSE_curTypeObj = null;
     this.onAddToCE = function () { };
     this.onRemoveFromCE = function () { };
+    this.onRemoveCEValidationOK = function (obj) { return true; };
     this.CElist = [];
     this.editor = null;
 
@@ -60,7 +61,7 @@
                 $(`#${this.PGobj.wraperId}${_CurProp}`).val(unicode);
             }
             else {
-                PropsObj[_CurProp] = icon; 
+                PropsObj[_CurProp] = icon;
                 $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
             }
         }
@@ -1359,6 +1360,8 @@
     this.colTileLeftArrow = function (e) {
         e.stopPropagation();
         let $tile = $(e.target).closest(".colTile").remove();
+        if (!this.onRemoveCEValidationOK(this.PGobj.PropsObj))
+            return;
         if (this.selectedCols)// temp condition
             var tileObj = getObjByval(this.selectedCols, "name", $tile.attr("id"));
         if (this.editor === 7) {

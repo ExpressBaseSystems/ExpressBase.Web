@@ -61,7 +61,6 @@
     };
     this.DeleteAudio = function (e) {
         var target = $(e.target);
-        $()
     };
     this.StopRec = function () {
         if (mediaRecorder) {

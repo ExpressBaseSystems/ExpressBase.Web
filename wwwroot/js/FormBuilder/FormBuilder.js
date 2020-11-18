@@ -409,6 +409,26 @@
         return true;
     }.bind(this);
 
+    this.wizAddClick = function (e) {////////////////////////////////
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+        let numStr = this.PGobj.CXVE.getMaxNumberFromItemName($ControlTile.find(".RenderAsWizard > ul > li"));//PrevObjEbsid.substr(PrevObjEbsid.length - 3).replace(/[^0-9]/g, '');
+
+        let lastNum = parseInt(numStr) || 0;
+        let ShortName = "Step" + (lastNum + 1);
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+        let ebsid = TabEdsid + "_" + ShortName;
+        let newObj = new EbObjects["EbWizardStep"](ebsid);
+        newObj.Name = ShortName;
+        newObj.Title = ShortName;
+
+        this.PGobj.setObject(TabObj, AllMetas["EbWizardControl"]);
+
+        TabObj.Controls.$values.push(newObj);
+        this.addWizardStep(this.PGobj.PropsObj, "Controls", "val", newObj);
+
+    }.bind(this);
+
 
     this.contTabDelClick = function (e) {/////////////////////////
         let $e = $(e.target).closest("li");
@@ -458,6 +478,7 @@
             }
         });
         $Tab.off("click").on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
+        $Tab.children(".wiz-addbtn").on("click", this.wizAddClick.bind(this));
     }.bind(this);
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -867,6 +888,8 @@
         let $wizard = $("#cont_" + id + ">.RenderAsWizard");
         let $wizMenu = $wizard.closestInner('ul>li[li-of]:first').clone();
         $wizMenu.children('a').attr('href', '#' + addedObj.EbSid_CtxId).removeClass('active');
+        $wizMenu.find('.eb-label-editable').text(addedObj.Title);
+        $wizMenu.attr('li-of', addedObj.EbSid_CtxId).attr('ebsid', addedObj.EbSid_CtxId);
         let $tabPane = $wizard.closestInner('.tab-content>[ctype="WizardStep"]:first').clone().empty();
         $tabPane.attr('id', addedObj.EbSid_CtxId).attr('ebsid', addedObj.EbSid_CtxId);
         $wizard.closestInner(".nav").append($wizMenu);
@@ -983,7 +1006,7 @@
         let ebsid = $colTile.attr("ebsid");
         let ctrlType = $colTile.attr("eb-type");
         let ctrlMeta = AllMetas["Eb" + ctrlType];
-        if (ctrlType === "TabControl") {
+        if (ctrlType === "TabControl" || ctrlType === "WizardControl") {
             ebsid = $e.closest("li").attr("ebsid");
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
             let paneMeta = AllMetas["Eb" + ctrl.ObjType];
@@ -1055,17 +1078,15 @@
         this.PGobj.setObject(TabObj, ctrlMeta);
 
         TabObj.Controls.$values.push(newObj);
-        if (newObj.ObjType === 'WizardControl')
-            this.addWizardStep(this.PGobj.PropsObj, "Controls", "val", newObj);
-        else
-            this.addTabPane(this.PGobj.PropsObj, "Controls", "val", newObj);
+
+        this.addTabPane(this.PGobj.PropsObj, "Controls", "val", newObj);
 
     }.bind(this);
 
     this.ctrlLblDblClick = function (e) {
         let $e = $(event.target);
         $e.hide();
-        if ($e.parent().attr("data-toggle") === "tab") {
+        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
             $e.closest("li").find(".ebtab-close-btn").hide();
             $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
         }
@@ -1081,7 +1102,7 @@
         $e = $(event.target);
         $e.hide();
 
-        if ($e.parent().attr("data-toggle") === "tab") {
+        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
             $e.closest('li').find(".eb-label-editable").show();
             $e.siblings(".ebtab-close-btn").show();
         }

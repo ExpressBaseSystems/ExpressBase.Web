@@ -540,7 +540,27 @@ body {
         min-height: 39px;
     }
 
-[ctype="TabControl"] .nav-tabs {
+[eb-form="true"][isrendermode="false"] .RenderAsWizard > ul {
+    width: calc(100% - 31px);
+}
+
+.RenderAsWizard .wiz-addbtn {
+    display:none;
+}
+
+[eb-form="true"][isrendermode="false"] .RenderAsWizard>.wiz-addbtn {
+    position: absolute;
+    display: inline-flex;
+    top: 0;
+    right: 0;
+    background-color: #3888b7;
+    width: 31px;
+    height: 31px;
+    padding: 9px 9.5px;
+    color: white;
+    border-radius: 50%;
+}
+    [ctype="TabControl"] .nav-tabs {
     border-bottom: 1px solid #ddd0;
 }
 

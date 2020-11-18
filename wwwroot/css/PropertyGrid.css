@@ -39,6 +39,7 @@
 [dragging=true] .outer-pg > .pgHead {
     background: none;
     background-color: rgba(0, 0, 0, 0.73);
+    cursor: move;
 }
 
 .pg-wraper {
@@ -790,6 +791,7 @@
     width: 20.99px;
     border-radius: 1px;
     text-align: center;
+    cursor: pointer;
 }
 
     .icon-cont:hover {

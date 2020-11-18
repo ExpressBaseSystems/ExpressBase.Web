@@ -58,10 +58,10 @@
     };
 
     this.Conver2file = function (blob) {
-        var file = new File([blob], `my_image${new Date()}.mp3`, {
-            type: "Audio/mp3",
+        var file = new File([blob], `aud_`+ Date.now().toString(36)+`.mp3`, {
+            type: "audio/mp3",
             lastModified: new Date(),
-            size: 2,
+            size: 2
         });
 
         return file;
@@ -101,9 +101,9 @@
     this.UploadAudio = function () {
         $.each($(".aud-data"), function (i, obj) {
             let _id = obj.getAttribute("data-id");
-            let audioData = new Blob(dataArray, { 'type': 'audio/mp3;', 'name': 'tets1.mp3' });
-            var arrayBuffer;
             var file = this.Conver2file(dataArray[_id]);
+            //let audioData = new Blob(dataArray, { 'type': 'audio/mp3;', 'name': 'tets1.mp3' });
+            //var arrayBuffer;
             //var fileReader = new FileReader();
             //fileReader.onload = function (event) {
             //    arrayBuffer = event.target.result;

@@ -20,7 +20,7 @@
     }.bind(this);
 
     this.ctrl.bindOnChange = function (p1) {
-        this.ctrl.DataVals.Value = this.ctrl.getValueFromDOM().toString();
+        this.ctrl.DataVals.Value = this.audioRefids.toString();
     }.bind(this);
 
     this.ctrl.clear = function () {
@@ -35,22 +35,25 @@
 
     this.EditMode = function () {
         $.each(audioRefids, function (i, id) {
-            var audioElement = document.createElement('audio');
+            let audioElement = document.createElement('audio');
             audioElement.setAttribute('controls', '');
             audioElement.setAttribute('style', 'padding: 10px 0px;');
             audioElement.setAttribute('id', id);
-            audioElement.src = "audio/" + id + ".mp3";
-            var clipContainerElement = document.createElement('div');
+            audioElement.src = "/audio/" + id + ".mp3";
+            let clipContainerElement = document.createElement('div');
             clipContainerElement.appendChild(audioElement);
             clipContainerElement.setAttribute('class', "aud-data");
             clipContainerElement.setAttribute('refid', id);
             clipContainerElement.setAttribute('style', 'display:flex;');
-            var dltElement = document.createElement('i');
+            let dltElement = document.createElement('i');
             dltElement.setAttribute('class', 'fa fa-trash aud-close');
             dltElement.setAttribute('refid', id);
             dltElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
             clipContainerElement.appendChild(dltElement);
-            $('.AudioColl').empty().append(clipContainerElement);
+            if (this.ctrl.IsMultipleUpload)
+                $('.AudioColl').append(clipContainerElement);
+            else
+                $('.AudioColl').empty().append(clipContainerElement);
             $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
         }.bind(this));
     };
@@ -83,12 +86,18 @@
                     dltElement.setAttribute('data-id', dataArray.length - 1);
                     dltElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
                     clipContainerElement.appendChild(dltElement);
+                    let uploadElement = document.createElement('i');
+                    uploadElement.setAttribute('class', 'fa fa-upload aud-upload');
+                    uploadElement.setAttribute('audio-id', dataArray.length - 1);
+                    uploadElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
+                    clipContainerElement.appendChild(uploadElement);
                     if (this.ctrl.IsMultipleUpload)
                         $('.AudioColl').append(clipContainerElement);
                     else
                         $('.AudioColl').empty().append(clipContainerElement);
                     this.Conver2file(dataArray[dataArray.length - 1]);
                     $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
+                    $('.aud-upload').off('click').on('click', this.UploadAudio.bind(this));
                     //dataArray = [];
                     //const audio = new Audio(audioUrl);
                     //audio.play();
@@ -147,34 +156,28 @@
         }
     };
 
-    this.UploadAudio = function () {
-        $.each($(".aud-data"), function (i, obj) {
-            let _id = obj.getAttribute("data-id");
-            if (obj.getAttribute("data-id") !== null) {
-                var file = this.Conver2file(dataArray[_id]);
-                //var fileReader = new FileReader();
-                //fileReader.onload = function (event) {
-                //    arrayBuffer = event.target.result;
-                //};
-                //fileReader.readAsArrayBuffer(audioData);
-                let formData = new FormData();
-                formData.append("File", file);
-                $.ajax({
-                    url: "../StaticFile/UploadAudioAsync",
-                    type: "POST",
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    beforeSend: function (evt) {
-                        //EbLoader("show");
-                    }.bind(this)
-                }).done(function (refid) {
-                    audioRefids.push(refid);
-                    this.ctrl.bindOnChange();
-                }.bind(this));
-            }
-        }.bind(this));
+    this.UploadAudio = function (e) {
+        let _id = e.target.getAttribute("audio-id");
+        if (_id !== null) {
+            var file = this.Conver2file(dataArray[_id]);
+            let formData = new FormData();
+            formData.append("File", file);
+            $.ajax({
+                url: "../StaticFile/UploadAudioAsync",
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (evt) {
+                    //EbLoader("show");
+                }.bind(this)
+            }).done(function (refid) {
+                audioRefids.push(refid);
+                $(`[audio-id=${_id}]`).remove();
+                this.ctrl.bindOnChange();
+            }.bind(this));
+        }
     };
 
     this.init = function () {

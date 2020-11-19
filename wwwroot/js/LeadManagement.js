@@ -48,6 +48,7 @@
     this.$HtPreviously = $("#selHtPreviously");
     this.$CountryCode = $("#selCountryCode");
     this.$CustomerCategory = $("#selCustomerCategory");
+    this.$LastModifiedBy = $("#txtLastModifiedBy");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -886,6 +887,7 @@
         this.$HtPreviously.val(this.CustomerInfo["htpreviously"]);
         this.$CountryCode.val(this.CustomerInfo["country_code"]);
         this.$CustomerCategory.val(this.CustomerInfo["cust_category"]);
+        this.$LastModifiedBy.val(this.CustomerInfo["eb_modifiedby"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
             $("#divCustomerDp").children().remove();

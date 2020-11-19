@@ -1104,34 +1104,34 @@
         }
     };
 
-    let fupTriggerRecentCallBack = function (gallName, imgup, name, obj) {
-        let refids = obj.$trigger.attr('original_refid');
-        let filref = [];
-        filref.push(obj.$trigger.attr('filref'));
-        debugger;
-        if (name === "delete") {
-            EbDialog("show",
-            {
-                Message: "Are you sure? Changes Affect only if Form is Saved.",
-                Buttons: {
-                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
-                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
-                },
-                CallBack: function (name) {
-                    if (name === "Yes") {
-                        let index = uploadedFileRefList[gallName + '_add'].indexOf(eval(refids));
-                        if (index !== -1) {
-                            uploadedFileRefList[gallName + '_add'].splice(index, 1);
-                        }
-                        obj.$trigger.remove();
-                        let indx = imgup.FileList.findIndex(item => item.FileRefId == refids);
-                        imgup.FileList.splice(indx, 1);
-                        imgup.customMenuCompleted("Delete", filref);
-                    }
-                }
-            });
-        }
-    };
+    //let fupTriggerRecentCallBack = function (gallName, imgup, name, obj) {
+    //    let refids = obj.$trigger.attr('original_refid');
+    //    let filref = [];
+    //    filref.push(obj.$trigger.attr('filref'));
+    //    debugger;
+    //    if (name === "delete") {
+    //        EbDialog("show",
+    //        {
+    //            Message: "Are you sure? Changes Affect only if Form is Saved.",
+    //            Buttons: {
+    //                "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+    //                "No": { Background: "violet", Align: "right", FontColor: "white;" }
+    //            },
+    //            CallBack: function (name) {
+    //                if (name === "Yes") {
+    //                    let index = uploadedFileRefList[gallName + '_add'].indexOf(eval(refids));
+    //                    if (index !== -1) {
+    //                        uploadedFileRefList[gallName + '_add'].splice(index, 1);
+    //                    }
+    //                    obj.$trigger.remove();
+    //                    let indx = imgup.FileList.findIndex(item => item.FileRefId == refids);
+    //                    imgup.FileList.splice(indx, 1);
+    //                    imgup.customMenuCompleted("Delete", filref);
+    //                }
+    //            }
+    //        });
+    //    }
+    //};
 
     //uploadedFileRefList['attachImg'] = getInitFileIds(files1);
 
@@ -1144,7 +1144,7 @@
 
     imgup1.customTrigger = fupTriggerCallBack.bind('<this>', 'attachImg', imgup1);
 
-    imgup1.contextM_REcallback = fupTriggerRecentCallBack.bind('<this>', 'attachImg', imgup1);
+    //imgup1.contextM_REcallback = fupTriggerRecentCallBack.bind('<this>', 'attachImg', imgup1);
 
 
     let files2 = @Html.Raw(ViewBag.PrpImgInfo);
@@ -1178,7 +1178,7 @@
 
     imgup2.customTrigger = fupTriggerCallBack.bind('<this>', 'prpImg', imgup2);
 
-    imgup2.contextM_REcallback = fupTriggerRecentCallBack.bind('<this>', 'prpImg', imgup2);
+    //imgup2.contextM_REcallback = fupTriggerRecentCallBack.bind('<this>', 'prpImg', imgup2);
 
     @*var imgup = new EbFileUpload({
         Type: "image",

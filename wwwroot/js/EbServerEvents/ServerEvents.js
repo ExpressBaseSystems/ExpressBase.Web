@@ -17,7 +17,9 @@
 
 
     this.onConnect = function (sub) {
-        console.log("You've connected!SSE welcome " + sub.displayName, sub.id);
+        console.log("sse connected! " + sub.displayName, sub.id);
+       // document.cookie = `eb_sse_subid=${sub.id}; path=/`;
+        //document.cookie = `eb_sse_subid=${sub.id}; Secure;path=/`;
         //if (sub) {
         //    window.ebcontext.subscription_id = sub.id;
         //}
@@ -33,7 +35,7 @@
 
     this.onHeartbeat = function (msg, e) {
         //if (console)
-        console.log("onHeartbeat", msg, e);
+      //  console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
@@ -42,7 +44,7 @@
 
 
     this.mybroadcast = function (msg, e) {
-        console.log("mybroadcast", msg, e);
+      //  console.log("mybroadcast", msg, e);
         //alert(213);
     }
 

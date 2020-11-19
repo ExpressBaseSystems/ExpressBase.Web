@@ -540,7 +540,27 @@ body {
         min-height: 39px;
     }
 
-[ctype="TabControl"] .nav-tabs {
+[eb-form="true"][isrendermode="false"] .RenderAsWizard > ul {
+    width: calc(100% - 31px);
+}
+
+.RenderAsWizard .wiz-addbtn {
+    display:none;
+}
+
+[eb-form="true"][isrendermode="false"] .RenderAsWizard>.wiz-addbtn {
+    position: absolute;
+    display: inline-flex;
+    top: 0;
+    right: 0;
+    background-color: #3888b7;
+    width: 31px;
+    height: 31px;
+    padding: 9px 9.5px;
+    color: white;
+    border-radius: 50%;
+}
+    [ctype="TabControl"] .nav-tabs {
     border-bottom: 1px solid #ddd0;
 }
 
@@ -1480,11 +1500,21 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         border-bottom: solid 1px #ffffff00;
     }
 
+.RenderAsWizard > ul > li > a > .ebtab-close-btn {
+    margin-left: unset;
+    margin-right: -24px;
+    z-index: 3;
+}
+
 .ebtab-close-btn {
-    display: inline-block;
+    display: inline-flex;
     margin-left: 3px;
     font-size: 11px;
 }
+
+    .ebtab-close-btn .fa {
+        margin: auto;
+    }
 
     .ebtab-close-btn:hover {
         color: #d80505c4;
@@ -3399,3 +3429,13 @@ input.locinp {
         box-shadow: 1px 1px 6px 2px #bbb;
     }
 /*#endregion EbProvisionUser*/
+
+/*#startregion EbAudioInput*/
+.audio-input-container button {
+    font-size: 20px;
+    padding: 5px 15px;
+    border: solid 1px #ccc;
+    background-color: #efefef;
+    margin: 5px 5px;
+}
+/*#sendregion EbAudioInput*/

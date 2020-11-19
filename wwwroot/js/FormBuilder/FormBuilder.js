@@ -477,8 +477,8 @@
                 markDoneStep: false, // Add done state on navigation
             }
         });
-        $Tab.off("click").on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
-        $Tab.children(".wiz-addbtn").on("click", this.wizAddClick.bind(this));
+        $Tab.off("click.wiz").on("click.wiz", ".ebtab-close-btn", this.contTabDelClick.bind(this));
+        $Tab.children(".wiz-addbtn").on("click.wiz", this.wizAddClick.bind(this));
     }.bind(this);
 
     this.ctrlOnClickBinder = function ($ctrl, type) {

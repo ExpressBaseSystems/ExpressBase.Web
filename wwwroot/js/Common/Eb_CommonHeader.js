@@ -4,6 +4,87 @@
     var _layout = $("#layout_div");
     var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
+    this.insertGlobalSearch = function () {
+
+        $('body').prepend(`
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class='srch-hdr-cont'>
+            <div class='srch-hdr-wrpr'>
+                <input type='text' tabindex="1" class='srch-bx'/>
+                <div tabindex='1' class="srch-btn"><i class="fa fa-search"></i></div>
+            </div>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class='srch-body-cont'>
+            The Kerala excise department has ordered to immediately freeze the sale of three batches of 'Jawan XXX Rum', manufactured on July 20, after a chemical test found the alcohol content to be high. In the sample test, the alcohol by volume was found to be 39.09% v/v, 38.31% v/v, and 39.14% v/v. Hence, the order was issued to freeze the sale of liquor batches 245, 246, and 247. The Excise Commissioner has issued notices to Deputy Excise Commissioners in all divisions in this regard. Some people, who had consumed alcohol from a bar hotel at Mukkam in Kozhikode last week, had complained of uneasiness. A complaint was also filed with the excise
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>`);
+        $(window).off("keydown.ebsearch").on("keydown.ebsearch", function () {
+            if (event.ctrlKey || event.metaKey) {// ctrl + s - save form
+                if (event.which === 81) {
+                    $('#exampleModalCenter').modal('show');
+                }
+            }
+        })
+        window.ebcontext.header.insertButton(`<button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>`)
+
+        $('#exampleModalCenter').on('shown.bs.modal', function (e) {
+            $('#exampleModalCenter .srch-bx').focus();
+        })
+        $('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
+        $('#exampleModalCenter .srch-bx').on('keyup', function () {
+            if (event.keyCode === 13)
+                this.platformSearch();
+        }.bind(this));
+    }.bind(this);
+
+    this.platformSearch = function () {
+        let $srch = $('#exampleModalCenter .srch-bx');
+        let searchkey = $srch.val();
+        if (searchkey.trim() !== '') {
+            //do ajax call
+            this.drawResultList();
+        }
+    };
+    this.drawResultList = function (
+        data = [
+            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
+            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
+            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212345", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
+            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969987456", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
+            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969222222", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
+        ]
+    ) {
+        $('.srch-body-cont').empty();
+        let html = '<ul style="list-style-type:none;">';
+        $.each(data, function (i, obj) {
+            html += '<li class="srch-li">'
+            html += `
+<div>
+    <h4><a class='srch-res-fn'>${obj.displayName}</a></h4>
+    <p>${obj.controlName} : ${obj.matchedValue}</p>
+    <span>Created at : </span><span>${obj.createdAt}</span>
+</div>`;
+            html += '</li>'
+        });
+        html += '</ul>'
+
+        $('.srch-body-cont').append(html);
+    };
+
     this.addRootObjectHelp = function (obj) {
         let AvailableDocs = { isPdf: (obj.Info && (!!obj.Info.trim())), isVideo: (obj.InfoVideoURLs && obj.InfoVideoURLs.$values.length > 0) };
 

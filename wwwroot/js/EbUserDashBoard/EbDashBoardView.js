@@ -191,7 +191,8 @@
             this.DashboardDropdown();
         }
         else if (this.EbObject !== null) {
-            ebcontext.header.setName(this.EbObject.DisplayName);
+            //ebcontext.header.setName(this.EbObject.DisplayName);
+            $("#objname").append(this.EbObject.DisplayName);
         }
         else {
             this.loader.EbLoader("hide");

@@ -1,11 +1,31 @@
 ﻿var AudioInput = function (ctrl, ctrlopts) {
     this.ctrl = ctrl;
     this.ctrlopts = ctrlopts;
-
+    this.audioRefids = [];
+    if (this.ctrl.DataVals.Value == null) { this.ctrl.DataVals.Value = ''; }
+    if (this.ctrl.DataVals.Value !== "") { this.audioRefids = this.ctrl.DataVals.Value.split(','); }
     let audioIN = { audio: true };
     let dataArray = [];
     var mediaRecorder;
     let playAudio = document.getElementById('adioPlay');
+
+
+    this.ctrl.getValueFromDOM = function (p1) {
+        return this.ctrl.DataVals.Value;
+    }.bind(this);
+
+    this.ctrl.setValue = function (p1) {
+        if (this.ctrl.DataVals.Value !== "") { this.audioRefids = this.ctrl.DataVals.Value.split(','); }
+        this.EditMode();
+    }.bind(this);
+
+    this.ctrl.bindOnChange = function (p1) {
+        this.ctrl.DataVals.Value = this.audioRefids.toString();
+    }.bind(this);
+
+    this.ctrl.clear = function () {
+
+    }.bind(this);
     // audio is true, for recording 
 
     // Access the permission for use 
@@ -13,7 +33,30 @@
     let _StartBtn = $('#btnStart');
     let _StopBtn = $('#btnStop');
 
-
+    this.EditMode = function () {
+        $.each(audioRefids, function (i, id) {
+            let audioElement = document.createElement('audio');
+            audioElement.setAttribute('controls', '');
+            audioElement.setAttribute('style', 'padding: 10px 0px;');
+            audioElement.setAttribute('id', id);
+            audioElement.src = "/audio/" + id + ".mp3";
+            let clipContainerElement = document.createElement('div');
+            clipContainerElement.appendChild(audioElement);
+            clipContainerElement.setAttribute('class', "aud-data");
+            clipContainerElement.setAttribute('refid', id);
+            clipContainerElement.setAttribute('style', 'display:flex;');
+            let dltElement = document.createElement('i');
+            dltElement.setAttribute('class', 'fa fa-trash aud-close');
+            dltElement.setAttribute('refid', id);
+            dltElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
+            clipContainerElement.appendChild(dltElement);
+            if (this.ctrl.IsMultipleUpload)
+                $('.AudioColl').append(clipContainerElement);
+            else
+                $('.AudioColl').empty().append(clipContainerElement);
+            $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
+        }.bind(this));
+    };
     this.StartRec = function () {
         _StartBtn.css("color", "#03af03");
         _StopBtn.css("color", "#ff0000");
@@ -43,12 +86,18 @@
                     dltElement.setAttribute('data-id', dataArray.length - 1);
                     dltElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
                     clipContainerElement.appendChild(dltElement);
+                    let uploadElement = document.createElement('i');
+                    uploadElement.setAttribute('class', 'fa fa-upload aud-upload');
+                    uploadElement.setAttribute('audio-id', dataArray.length - 1);
+                    uploadElement.setAttribute('style', 'padding: 17px 30px;font-size: 20px;');
+                    clipContainerElement.appendChild(uploadElement);
                     if (this.ctrl.IsMultipleUpload)
                         $('.AudioColl').append(clipContainerElement);
                     else
                         $('.AudioColl').empty().append(clipContainerElement);
                     this.Conver2file(dataArray[dataArray.length - 1]);
                     $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
+                    $('.aud-upload').off('click').on('click', this.UploadAudio.bind(this));
                     //dataArray = [];
                     //const audio = new Audio(audioUrl);
                     //audio.play();
@@ -58,12 +107,11 @@
     };
 
     this.Conver2file = function (blob) {
-        var file = new File([blob], `aud_`+ Date.now().toString(36)+`.mp3`, {
+        var file = new File([blob], `aud_` + Date.now().toString(36) + `.mp3`, {
             type: "audio/mp3",
             lastModified: new Date(),
             size: 2
         });
-
         return file;
     };
     this.DeleteAudio = function (e) {
@@ -83,11 +131,20 @@
             },
             CallBack: this.confirmBoxCallBack.bind(this, e)
         });
-
     };
+
     this.confirmBoxCallBack = function (e, cur) {
         if (cur == "Yes") {
-            $(`[data-id=${e.target.getAttribute('data-id')}]`).remove();
+            let ref = e.target.getAttribute('refid');
+            let _did = e.target.getAttribute('data-id');
+            if (_did !== null || _did !== "")
+                $(`[data-id=${_did}]`).remove();
+            else if (ref !== null || ref !== "") {
+                $(`[refid=${ref}]`).remove();
+                for (var i = audioRefids.length - 1; i >= 0; i--) {
+                    if (audioRefids[i] == ref) myArray.splice(i, 1);
+                }
+            }
         }
     };
 
@@ -98,17 +155,11 @@
             mediaRecorder.stop();
         }
     };
-    this.UploadAudio = function () {
-        $.each($(".aud-data"), function (i, obj) {
-            let _id = obj.getAttribute("data-id");
+
+    this.UploadAudio = function (e) {
+        let _id = e.target.getAttribute("audio-id");
+        if (_id !== null) {
             var file = this.Conver2file(dataArray[_id]);
-            //let audioData = new Blob(dataArray, { 'type': 'audio/mp3;', 'name': 'tets1.mp3' });
-            //var arrayBuffer;
-            //var fileReader = new FileReader();
-            //fileReader.onload = function (event) {
-            //    arrayBuffer = event.target.result;
-            //};
-            //fileReader.readAsArrayBuffer(audioData);
             let formData = new FormData();
             formData.append("File", file);
             $.ajax({
@@ -122,9 +173,11 @@
                     //EbLoader("show");
                 }.bind(this)
             }).done(function (refid) {
-                //EbLoader("hide");            
+                audioRefids.push(refid);
+                $(`[audio-id=${_id}]`).remove();
+                this.ctrl.bindOnChange();
             }.bind(this));
-        }.bind(this));
+        }
     };
 
     this.init = function () {
@@ -136,3 +189,4 @@
     this.init();
 
 }
+

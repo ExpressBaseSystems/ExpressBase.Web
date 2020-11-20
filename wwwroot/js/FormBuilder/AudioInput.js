@@ -2,34 +2,39 @@
     this.ctrl = ctrl;
     this.ctrlopts = ctrlopts;
     this.audioRefids = [];
-    if (this.ctrl.DataVals.Value == null) { this.ctrl.DataVals.Value = ''; }
-    if (this.ctrl.DataVals.Value !== "") { this.audioRefids = this.ctrl.DataVals.Value.split(','); }
-    let audioIN = { audio: true };
+    this._onChangeFunctions = [];
+    //if (this.ctrl.DataVals.Value == null) { this.ctrl.DataVals.Value = ''; }
+    //if (this.ctrl.DataVals.Value !== "") { this.audioRefids = this.ctrl.DataVals.Value.split(','); }
     let dataArray = [];
-    var mediaRecorder;
-    let playAudio = document.getElementById('adioPlay');
+    let mediaRecorder;
 
-
-    this.ctrl.getValueFromDOM = function (p1) {
-        return this.ctrl.DataVals.Value;
+    this.ctrl.getValueFromDOM = function () {
+        //return this.ctrl.DataVals.Value;
+        //if (this.audioRefids.length !== 0)
+        return this.audioRefids.toString();
     }.bind(this);
 
     this.ctrl.setValue = function (p1) {
-        if (this.ctrl.DataVals.Value !== "") { this.audioRefids = this.ctrl.DataVals.Value.split(','); }
+        if (p1 == null) {
+            this.audioRefids = [];
+        }
+        else {
+            this.audioRefids = p1.split(',').map(Number);
+        }
+        //if (this.ctrl.DataVals.Value !== "") { this.audioRefids = this.ctrl.DataVals.Value.split(','); }
         this.EditMode();
     }.bind(this);
 
     this.ctrl.bindOnChange = function (p1) {
-        this.ctrl.DataVals.Value = this.audioRefids.toString();
+        if (!this._onChangeFunctions.includes(p1))
+            this._onChangeFunctions.push(p1);
+        //this.ctrl.DataVals.Value = this.audioRefids.toString();
     }.bind(this);
 
     this.ctrl.clear = function () {
 
     }.bind(this);
-    // audio is true, for recording 
 
-    // Access the permission for use 
-    // the microphone 
     let _StartBtn = $('#btnStart');
     let _StopBtn = $('#btnStop');
 
@@ -98,9 +103,6 @@
                     this.Conver2file(dataArray[dataArray.length - 1]);
                     $('.aud-close').off('click').on('click', this.DeleteAudio.bind(this));
                     $('.aud-upload').off('click').on('click', this.UploadAudio.bind(this));
-                    //dataArray = [];
-                    //const audio = new Audio(audioUrl);
-                    //audio.play();
                 });
             });
 
@@ -175,7 +177,8 @@
             }).done(function (refid) {
                 audioRefids.push(refid);
                 $(`[audio-id=${_id}]`).remove();
-                this.ctrl.bindOnChange();
+                for (let j = 0; j < this._onChangeFunctions.length; j++)
+                    this._onChangeFunctions[j]();
             }.bind(this));
         }
     };

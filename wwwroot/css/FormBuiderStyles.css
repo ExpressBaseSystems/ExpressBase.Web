@@ -1,7 +1,8 @@
 ﻿/*CRChng - 'check new DG row for every row' related change*/
 
 :root {
-    --eb-bluishgray: rgba(36, 36, 42, 0.13);
+    /*--eb-bluishgray: rgba(36, 36, 42, 0.13);*/
+    --eb-bluishgray: rgb(226 226 230 / 80%);
 }
 
 html {
@@ -1127,6 +1128,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .Dg_body {
     display: flex;
+    box-shadow: -1px 0px 0px 0px #f6f6ff;
 }
 
 .check-wraper {

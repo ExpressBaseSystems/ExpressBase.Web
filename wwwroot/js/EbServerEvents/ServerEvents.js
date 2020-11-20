@@ -18,11 +18,16 @@
 
     this.onConnect = function (sub) {
         console.log("sse connected! " + sub.displayName, sub.id);
+
        // document.cookie = `eb_sse_subid=${sub.id}; path=/`;
         //document.cookie = `eb_sse_subid=${sub.id}; Secure;path=/`;
-        //if (sub) {
-        //    window.ebcontext.subscription_id = sub.id;
-        //}
+        if (sub) {
+            ebcontext.subscription_id = sub.id;
+            //$.ajaxSetup({
+            //    headers: { 'eb_sse_subid': sub.id }
+            //});
+        }
+        
     };
 
     this.onJoin = function (user) {

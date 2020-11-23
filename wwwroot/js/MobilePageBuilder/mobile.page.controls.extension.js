@@ -412,6 +412,54 @@
                 }
                 setFontCss(this.Font, $(`#${this.EbSid}`));
             }
+        },
+        EbMobileDataLink: {
+            trigger: function (root) {
+                this.tab = "Tab" + root.Conf.TabNum;
+                $(`#${this.EbSid} .eb_mob_datalink_layout`).append(this.getHtml());
+                this.droppable();
+                this.resizable();
+            },
+            getHtml: function () {
+                let html = [];
+                html.push(`<table class='eb_datalink_table'>`);
+                for (let i = 0; i < this.RowCount; i++) {
+                    html.push(`<tr class='eb_datalink_tr'>`);
+                    for (let k = 0; k < this.ColumCount; k++) {
+                        html.push('<td class="eb_datalink_td"></td>');
+                    }
+                    html.push(`</tr>`);
+                }
+                html.push(`</table>`);
+                return html.join("");
+            },
+            droppable: function () {
+                $(`#${this.EbSid} .eb_datalink_td`).droppable({
+                    accept: ".mdash-control",
+                    hoverClass: "drop-hover-td",
+                    tolerance: "fit",
+                    greedy: true,
+                    drop: this.onDrop.bind(this)
+                });
+            },
+            onDrop: function (event, ui) {
+                let $dragged = $(ui.draggable);
+                let ebtype = $dragged.attr("eb-type");
+                let ctrlname = $dragged.attr("ctrname");
+                let root = window.MobilePage[this.tab].Creator;
+                let o = root.makeElement(ebtype, ctrlname);
+                o.trigger(root);
+                $(event.target).append(o.$Control.outerHTML());
+
+
+                root.refreshControl(o);
+            },
+            resizable: function () {
+                $(`#${this.EbSid} .eb_datalink_tr:first-child .eb_datalink_td:not(:last-child)`).resizable({
+                    handles: "e",
+                    stop: function () { }.bind(this)
+                });
+            },
         }
     };
 })(jQuery);

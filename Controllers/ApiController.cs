@@ -730,12 +730,9 @@ namespace ExpressBase.Web.Controllers
         {
             string ext = FileName.SplitOnLast(CharConstants.DOT).Last();
 
-            List<string> imageTypes = new List<string> { "jpg", "jpeg", "bmp", "gif", "png" };
-            List<string> audioTypes = new List<string> { "mpeg4", "mp3", "wave", "aac", "flac", "m4a", "amr", "opus" };
-
-            if (imageTypes.Contains(ext))
+            if (StaticFileConstants.ImageTypes.Contains(ext))
                 return EbFileCategory.Images;
-            else if (audioTypes.Contains(ext))
+            else if (StaticFileConstants.AudioTypes.Contains(ext))
                 return EbFileCategory.Audio;
             else
                 return EbFileCategory.File;

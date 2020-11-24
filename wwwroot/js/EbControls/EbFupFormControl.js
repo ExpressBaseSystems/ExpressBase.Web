@@ -738,6 +738,7 @@
             url: _url,
             type: "POST",
             data: formData,
+            headers: { 'eb_sse_subid': ebcontext.subscription_id },
             cache: false,
             contentType: false,
             processData: false,

@@ -743,5 +743,18 @@ div[iblock] .selected-tag:empty::before {
     display: flex;
 }
     .srch-body-cont .srch-li {
-        border-bottom: 1px solid #e5e5e5;
+        border-bottom: 1px dotted #e5e5e580;
+        padding: 5px 0 2px 0;
+    }
+    .srch-body-cont .srch-li-block {
+        color: #555;
+    }
+        .srch-body-cont .srch-li-block span {
+            color: #777;
+            font-size: 13.2px;
+        }
+    .srch-body-cont .srch-ul {
+        width: 100%;
+        padding-right:40px;
+        list-style-type: none;
     }

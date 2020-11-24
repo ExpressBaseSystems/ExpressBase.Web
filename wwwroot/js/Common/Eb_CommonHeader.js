@@ -54,12 +54,13 @@
     this.platformSearch = function () {
         let $srch = $('#exampleModalCenter .srch-bx');
         let searchkey = $srch.val();
-        if (searchkey.trim() !== '') {
+        if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
             //do ajax call
-            this.drawResultList();
+            this.drawResultList(searchkey);
+            $srch.data('lastKey', searchkey);
         }
     };
-    this.drawResultList = function (
+    this.drawResultList = function (searchkey,
         data = [
             { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
             { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
@@ -69,13 +70,16 @@
         ]
     ) {
         $('.srch-body-cont').empty();
-        let html = '<ul style="list-style-type:none;">';
+        let html = '<ul class="srch-ul">';
         $.each(data, function (i, obj) {
             html += '<li class="srch-li">'
             html += `
-<div>
+<div class='srch-li-block'>
     <h4><a class='srch-res-fn'>${obj.displayName}</a></h4>
-    <p>${obj.controlName} : ${obj.matchedValue}</p>
+    <p>
+        <key>${obj.controlName}</key> : <value>${obj.matchedValue}</value></br>
+        <key>${obj.controlName}</key> : <value>${obj.matchedValue}</value>
+    </p>
     <span>Created at : </span><span>${obj.createdAt}</span>
 </div>`;
             html += '</li>'
@@ -83,6 +87,8 @@
         html += '</ul>'
 
         $('.srch-body-cont').append(html);
+        modifyTextStyle('.srch-body-cont value', RegExp(searchkey, 'g'), 'background-color:yellow;');
+        //$(".srch-body-cont value:contains('9969')").css("background-color", "yellow");
     };
 
     this.addRootObjectHelp = function (obj) {

@@ -475,6 +475,9 @@
                 anchorClickable: true, // Enable/Disable anchor navigation
                 enableAllAnchors: true, // Activates all anchors clickable all times
                 markDoneStep: false, // Add done state on navigation
+            },
+            keyboardSettings: {
+                keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
             }
         });
         $Tab.off("click.wiz").on("click.wiz", ".ebtab-close-btn", this.contTabDelClick.bind(this));
@@ -1094,7 +1097,7 @@
             $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
         }
         else {
-            $e.parent(".eb-label-editable").siblings(".eb-lbltxtb").val($e.text()).show().select();
+            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
         }
     };
 
@@ -1110,7 +1113,7 @@
             $e.siblings('.grid-col-title').text($e.val()).show().select();
         }
         else
-            $e.prev(".eb-label-editable").children("[ui-label]").show();
+            $e.siblings("[ui-label]").show();
     };
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {

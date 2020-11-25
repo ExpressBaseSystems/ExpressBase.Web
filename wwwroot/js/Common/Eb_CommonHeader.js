@@ -5,6 +5,7 @@
     var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
     this.insertGlobalSearch = function () {
+        $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD
 
         $('body').prepend(`
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -38,51 +39,143 @@
                     $('#exampleModalCenter').modal('show');
                 }
             }
-        })
-        window.ebcontext.header.insertButton(`<button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>`)
+        });
+
+        window.ebcontext.header.insertButton(`
+<div class='toolb-srchbx-wrpr'>
+    <input type='text' class='toolb-srchbx'/>
+    <button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter__" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>
+    <div class="search-dd">
+
+<div class="srch-body-cont"></div>
+
+
+    </div>
+</div>`);
+
+        this.$toolbSrchBx = $('.toolb-srchbx');
+        this.$srchWrap = $('.toolb-srchbx-wrpr');
 
         $('#exampleModalCenter').on('shown.bs.modal', function (e) {
             $('#exampleModalCenter .srch-bx').focus();
-        })
-        $('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
-        $('#exampleModalCenter .srch-bx').on('keyup', function () {
+        });
+
+        //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
+
+        this.$toolbSrchBx.on('focus', function () {
+            $('.search-dd').slideDown(100);
+        }.bind(this));
+
+        this.$toolbSrchBx.on('keyup', function () {
+            this.isSimpleSearch = true;
             if (event.keyCode === 13)
                 this.platformSearch();
         }.bind(this));
+
+        $('.srch-li').on('keyup', function () {
+            if (event.keyCode === 13)
+                this.platformSearch();
+        }.bind(this));
+
+        //$('#exampleModalCenter .srch-bx').on('keyup', function () {
+        //this.isSimpleSearch = false;
+        //    if (event.keyCode === 13)
+        //        this.platformSearch();
+        //}.bind(this));
     }.bind(this);
 
-    this.platformSearch = function () {
-        let $srch = $('#exampleModalCenter .srch-bx');
-        let searchkey = $srch.val();
-        if (searchkey.trim() !== '') {
-            //do ajax call
-            this.drawResultList();
+    this.scrollList = function () {
+        var list = document.querySelector('.srch-ul'); // targets the <ul>
+        var first = list.firstChild; // targets the first <li>
+        var maininput = this.$toolbSrchBx[0];  // targets the input, which triggers the functions populating the list
+        document.onkeydown = function (e) { // listen to keyboard events
+            switch (e.keyCode) {
+                case 38: // if the UP key is pressed
+                    if (document.activeElement == maininput) {
+                        break;
+                    } // stop the script if the focus is on the input or first element
+                    else if (document.activeElement == first.querySelector('a')) {
+                        maininput.focus();
+                    } // stop the script if the focus is on the input or first element
+                    else {
+                        document.activeElement.parentNode.parentNode.parentNode.previousSibling.querySelector('a').focus();
+                    } // select the element before the current, and focus it
+                    break;
+                case 40: // if the DOWN key is pressed
+                    if (document.activeElement == maininput) {
+                        first.querySelector('a').focus();
+                    } // if the currently focused element is the main input --> focus the first <li>
+                    else {
+                        document.activeElement.parentNode.parentNode.parentNode.nextSibling.querySelector('a').focus();
+                    } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
+                    break;
+            }
         }
-    };
-    this.drawResultList = function (
-        data = [
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212345", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969987456", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969222222", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-        ]
-    ) {
+    }
+
+    this.platformSearch = function () {
+        let $srch = this.isSimpleSearch ? this.$toolbSrchBx : $('#exampleModalCenter .srch-bx');
+        let searchkey = $srch.val();
+        if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
+            //do ajax call
+            $('.search-dd').slideUp(100);
+            this.getSearchResult(searchkey);
+            $srch.data('lastKey', searchkey);
+        }
+    }.bind(this);
+
+    this.getSearchResult = function (searchkey) {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/SearchInPlatform4FormData",
+            data: {
+                key: searchkey
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            success: this.drawResultList.bind(this, searchkey)
+        });
+    }.bind(this);
+
+    this.drawResultList = function (searchkey, data) {
+        data = JSON.parse(data);
+        let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
+        debugger;
         $('.srch-body-cont').empty();
-        let html = '<ul style="list-style-type:none;">';
+        let html = '<ul class="srch-ul">';
         $.each(data, function (i, obj) {
             html += '<li class="srch-li">'
             html += `
-<div>
-    <h4><a class='srch-res-fn'>${obj.displayName}</a></h4>
-    <p>${obj.controlName} : ${obj.matchedValue}</p>
-    <span>Created at : </span><span>${obj.createdAt}</span>
+<div class='srch-li-block'>
+    <h4><a class='srch-res-fn' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
+    <p>`;
+            $.each(obj.Data, function (name, val) {
+                html += `<key>${name}</key> : <value>${val}</value></br>`
+            });
+            html += `
+    </p>
+            <span> ⚬ Created at : </span><span>${obj.CreatedAt} </span>
+            <span>&nbsp;&nbsp;&nbsp; ⚬ Created by : </span><span>${obj.CreatedBy} </span>
 </div>`;
             html += '</li>'
         });
         html += '</ul>'
 
-        $('.srch-body-cont').append(html);
+        //$('.srch-body-cont').append(html);
+        $cont.append(html);
+        $('.search-dd').slideDown(100);
+        modifyTextStyle('.srch-body-cont value', RegExp(searchkey, 'g'), 'background-color:yellow;');
+        $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+        this.scrollList();
+    };
+
+    this.hideDDclickOutside = function (e) {
+        if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
+            $('.search-dd').slideUp(100);
+        }
     };
 
     this.addRootObjectHelp = function (obj) {

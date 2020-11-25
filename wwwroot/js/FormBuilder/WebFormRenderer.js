@@ -81,6 +81,9 @@ const WebFormRender = function (option) {
                     toolbarButtonPosition: 'center', // left, right, center
                     showNextButton: true, // show/hide a Next button
                     showPreviousButton: true, // show/hide a Previous button
+                },
+                keyboardSettings: {
+                    keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
                 }
             });
 

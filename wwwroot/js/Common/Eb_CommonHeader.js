@@ -61,6 +61,7 @@
         });
 
         //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
+        $('#platformsearch').on('click', this.platformSearch);
 
         this.$toolbSrchBx.on('focus', function () {
             $('.search-dd').slideDown(100);
@@ -120,12 +121,13 @@
             //do ajax call
             $('.search-dd').slideUp(100);
             this.getSearchResult(searchkey);
+            //this.drawResultList.bind(this, searchkey)();
             $srch.data('lastKey', searchkey);
         }
     }.bind(this);
 
     this.getSearchResult = function (searchkey) {
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
         $.ajax({
             type: "POST",
             url: "/WebForm/SearchInPlatform4FormData",
@@ -133,32 +135,66 @@
                 key: searchkey
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
                 EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
             }.bind(this),
             success: this.drawResultList.bind(this, searchkey)
         });
     }.bind(this);
 
-    this.drawResultList = function (searchkey, data) {
+    this.drawResultList = function (searchkey, data = `[{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]`) {
         data = JSON.parse(data);
         let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
-        debugger;
         $('.srch-body-cont').empty();
         let html = '<ul class="srch-ul">';
         $.each(data, function (i, obj) {
+            let j = 0;
             html += '<li class="srch-li">'
             html += `
 <div class='srch-li-block'>
     <h4><a class='srch-res-fn' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
-    <p>`;
+        <div class="ctrldtlsWrap">`;
             $.each(obj.Data, function (name, val) {
-                html += `<key>${name}</key> : <value>${val}</value></br>`
+                if (j++ % 3 === 0) {
+                    html += `
+                        <table class='ctrldtls'>
+                            <tbody>`;
+                }
+                html += `<tr><td><key>${name}</key></td> <td><value>${val}</value></td></tr>`
+                if (j % 3 === 0) {
+                    html += `
+                            </tbody>
+                        </table>`;
+                }
+                if (j === 9)
+                    return false;
             });
             html += `
-    </p>
-            <span> ⚬ Created at : </span><span>${obj.CreatedAt} </span>
-            <span>&nbsp;&nbsp;&nbsp; ⚬ Created by : </span><span>${obj.CreatedBy} </span>
+                </tbody>
+            </table>
+        </div>
+        <div class="metadtlsWrap">
+            <table class='metadtls'>
+                <tbody>
+                    <tr>
+                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedAt} </span></td>
+                    <tr>
+                    </tr>
+                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedBy} </span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class='metadtls'>
+                <tbody>
+                    <tr>
+                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedAt} </span></td>
+                    <tr>
+                    </tr>
+                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedBy} </span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 </div>`;
             html += '</li>'
         });
@@ -167,7 +203,7 @@
         //$('.srch-body-cont').append(html);
         $cont.append(html);
         $('.search-dd').slideDown(100);
-        modifyTextStyle('.srch-body-cont value', RegExp(searchkey, 'g'), 'background-color:yellow;');
+        modifyTextStyle('.srch-body-cont value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
         $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
         this.scrollList();
     };

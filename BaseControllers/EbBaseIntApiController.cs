@@ -37,6 +37,12 @@ namespace ExpressBase.Web.BaseControllers
             string sBToken = context.HttpContext.Request.Headers[RoutingConstants.BEARER_TOKEN];
             string sRToken = context.HttpContext.Request.Headers[RoutingConstants.REFRESH_TOKEN];
 
+            if (sBToken == null && sRToken == null)
+            {
+                sBToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+                sRToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+            }
+
             string authHeader = context.HttpContext.Request.Headers["Authorization"];
             string sAPIKey = string.Empty;
 

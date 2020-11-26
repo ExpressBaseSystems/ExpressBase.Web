@@ -1,4 +1,8 @@
-﻿using ExpressBase.Common.Objects;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Connections;
+using ExpressBase.Common.Constants;
+using ExpressBase.Common.Data;
+using ExpressBase.Common.Objects;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -14,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Components
 {
-    public class CodeEditorViewComponent: ViewComponent
+    public class CodeEditorViewComponent : ViewComponent
     {
         protected JsonServiceClient ServiceClient { get; set; }
 
@@ -37,8 +41,18 @@ namespace ExpressBase.Web.Components
             //ViewBag.TableSchema = GetTableSchemaRequest();
             ViewBag.EbDbType = Enum.GetValues(typeof(EbDbTypes))
                .Cast<EbDbTypes>()
-               .ToDictionary(t => t.ToString(), t =>(int)t );
+               .ToDictionary(t => t.ToString(), t => (int)t);
+            Dictionary<int, string> d = new Dictionary<int, string>();
 
+            EbConnectionsConfig _connections = this.Redis.Get<EbConnectionsConfig>(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.cid));
+            if (_connections != null)
+            {
+                d.Add(_connections.DataDbConfig.Id, _connections.DataDbConfig.NickName);
+                if (_connections.SupportingDataDbConfig != null)
+                    foreach (EbDbConfig c in _connections.SupportingDataDbConfig)
+                        d.Add(c.Id, c.NickName);
+            }
+            ViewBag.SupportingDataDB = JsonConvert.SerializeObject(d);
             return View("codeEditor");
         }
         public List<string> Getsqlfns(int obj_type)

@@ -122,6 +122,14 @@
 
 .eb_mobpage_tbxbdy {
 }
+
+.draggable_style {
+    background: white;
+    border: 1px dotted black;
+    width: auto;
+    padding: 15px;
+    border-radius: 4px;
+}
 /*ctrl layout*/
 .eb_stacklayout {
     margin: 10px 0;
@@ -328,6 +336,24 @@
     height: 25px;
     padding: 0 5px;
 }
+
+.eb_stacklayout .eb_mob_audinput_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ddd;
+    padding: 5px !important;
+    border-radius: 6px;
+}
+
+.eb_stacklayout .eb_mob_audinputbtn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #16a716;
+    color: #16a716;
+}
 /*table layout*/
 .eb_mob_tablelayout {
     display: flex;
@@ -449,6 +475,7 @@
         flex: 1;
         display: flex;
         flex-flow: column;
+        position: relative;
     }
 
         .eb_mob_vis_container .eb_mob_container_inner .filter_sort-tab .nav > li > a {
@@ -489,6 +516,18 @@
     left: 50%;
     transform: translateX(-50%);
 }
+
+.eb_mob_vis_container .fst-fade-mask {
+    border: none !important;
+}
+
+    .eb_mob_vis_container .fst-fade-mask:after {
+        content: "";
+        position: absolute;
+        background: white;
+        width: 100%;
+        height: 100%;
+    }
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {
     width: 100%;
@@ -510,6 +549,8 @@
     background: white;
     /* box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2); */
     margin: 10px 0;
+    border: 1px solid;
+    border-color: #ccc;
 }
 
     .mob_dash_control .eb_dash_ctrlhtml {
@@ -620,8 +661,43 @@
 
 /*Dashboard StackLayout*/
 .eb_mob_dashboard_container .control_container {
-    min-height: 50px;
+    min-height: 100px;
     border: 2px dashed #ccc;
     padding: 10px;
     width: 100%;
+}
+/*datalink*/
+.eb_mob_datalink_layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+    .eb_mob_datalink_layout .eb_datalink_table td {
+        height: 30px;
+        border: 1px dashed #a5a4a4;
+        position: relative;
+    }
+
+    .eb_mob_datalink_layout .eb_datalink_table table {
+        width: 100%;
+    }
+
+.eb_mob_dashboard_container div[eb-type='EbMobileDataLabel'] {
+    box-shadow: none !important;
+    border: none !important;
+    min-height: 20px;
+}
+
+.eb_mob_dashboard_container .eb_mob_datalink_layout .mob_dash_control {
+    margin: 0 !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }

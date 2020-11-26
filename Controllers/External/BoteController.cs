@@ -325,8 +325,40 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 				Bot_Obj.Status = false;
 				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
 			}
-			if (Recap.Success)
+			if (!Recap.Success && ViewBag.Env == "Production")
 			{
+				Console.WriteLine("captcha error in bot");
+				Bot_Obj.Status = false;
+				if (Recap.ErrorCodes.Count <= 0)
+				{
+					Bot_Obj.ErrorMsg = "The captcha input is invalid or malformed.";
+				}
+
+				var error = Recap.ErrorCodes[0].ToLower();
+				switch (error)
+				{
+					case ("missing-input-secret"):
+						Bot_Obj.ErrorMsg = "The secret parameter is missing.";
+						break;
+					case ("invalid-input-secret"):
+						Bot_Obj.ErrorMsg = "The secret parameter is invalid or malformed.";
+						break;
+
+					case ("missing-input-response"):
+						Bot_Obj.ErrorMsg = "The captcha input is missing.";
+						break;
+					case ("invalid-input-response"):
+						Bot_Obj.ErrorMsg = "The captcha input is invalid or malformed.";
+						break;
+
+					default:
+						Bot_Obj.ErrorMsg = "Error occured. Please try again";
+						break;
+				}
+				return Bot_Obj;
+			}
+			else
+			{			
 				HttpClient client = new HttpClient();
 				string result = await client.GetStringAsync("http://ip-api.com/json/" + this.RequestSourceIp);
 				IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
@@ -378,12 +410,12 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 					return null;
 				}
 			}
-			else
-			{
-				Bot_Obj.Status = false;
-				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
-				return Bot_Obj;
-			}
+			//else
+			//{
+			//	Bot_Obj.Status = false;
+			//	Bot_Obj.ErrorMsg = "Recaptcha error, try again";
+			//	return Bot_Obj;
+			//}
 			
 		}
 
@@ -405,7 +437,39 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 				Bot_Obj.Status = false;
 				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
 			}
-			if (Recap.Success)
+			if (!Recap.Success && ViewBag.Env == "Production")
+			{
+				Console.WriteLine("captcha error in bot");
+				Bot_Obj.Status = false;
+				if (Recap.ErrorCodes.Count <= 0)
+				{
+					Bot_Obj.ErrorMsg = "The captcha input is invalid or malformed.";
+				}
+
+				var error = Recap.ErrorCodes[0].ToLower();
+				switch (error)
+				{
+					case ("missing-input-secret"):
+						Bot_Obj.ErrorMsg = "The secret parameter is missing.";
+						break;
+					case ("invalid-input-secret"):
+						Bot_Obj.ErrorMsg = "The secret parameter is invalid or malformed.";
+						break;
+
+					case ("missing-input-response"):
+						Bot_Obj.ErrorMsg = "The captcha input is missing.";
+						break;
+					case ("invalid-input-response"):
+						Bot_Obj.ErrorMsg = "The captcha input is invalid or malformed.";
+						break;
+
+					default:
+						Bot_Obj.ErrorMsg = "Error occured. Please try again";
+						break;
+				}
+				return Bot_Obj;
+			}
+			else
 			{
 				HttpClient client = new HttpClient();
 				IFormCollection req = this.HttpContext.Request.Form;
@@ -514,12 +578,12 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 					return Bot_Obj;
 				}
 			}
-			else
-			{
-				Bot_Obj.Status = false;
-				Bot_Obj.ErrorMsg = "Recaptcha error, try again";
-				return Bot_Obj;
-			}
+			//else
+			//{
+			//	Bot_Obj.Status = false;
+			//	Bot_Obj.ErrorMsg = "Recaptcha error, try again";
+			//	return Bot_Obj;
+			//}
 
 		}
 		public BotAuth_andFormList GetBotformlist(MyAuthenticateResponse authResponse,string cid,string wc,string appid)
@@ -677,7 +741,39 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 				authresp.AuthStatus = false;
 				authresp.ErrorMessage = "Recaptcha error, try again";
 			}
-			if (Recap.Success){				
+			if (!Recap.Success && ViewBag.Env == "Production")
+			{
+				Console.WriteLine("captcha error in bot");
+				authresp.AuthStatus = false;
+				if (Recap.ErrorCodes.Count <= 0)
+				{
+					authresp.ErrorMessage = "The captcha input is invalid or malformed.";
+				}
+
+				var error = Recap.ErrorCodes[0].ToLower();
+				switch (error)
+				{
+					case ("missing-input-secret"):
+						authresp.ErrorMessage = "The secret parameter is missing.";
+						break;
+					case ("invalid-input-secret"):
+						authresp.ErrorMessage = "The secret parameter is invalid or malformed.";
+						break;
+
+					case ("missing-input-response"):
+						authresp.ErrorMessage = "The captcha input is missing.";
+						break;
+					case ("invalid-input-response"):
+						authresp.ErrorMessage = "The captcha input is invalid or malformed.";
+						break;
+
+					default:
+						authresp.ErrorMessage = "Error occured. Please try again";
+						break;
+				}
+			}
+			else
+			{				
 				string tenantid = ViewBag.SolutionId;
 				string uname = req["uname"];
 				bool is_email = Convert.ToBoolean(req["is_email"]);
@@ -704,11 +800,11 @@ d.botProp={8}", ExtSolutionId, appid, settings.Name, settings.ThemeColor, settin
 				}
 
 			}
-			else
-			{
-				authresp.AuthStatus = false;
-				authresp.ErrorMessage = "Recaptcha error, try again";
-			}
+			//else
+			//{
+			//	authresp.AuthStatus = false;
+			//	authresp.ErrorMessage = "Recaptcha error, try again";
+			//}
 
 			return authresp;
 

@@ -12,14 +12,14 @@
     this.DashBoardList = options.AllDashBoards || null;
     this.stickBtn;
     this.filtervalues = [];
-    this.TabNum = options.tabNum;
+    this.TabNum = options.tabNum ? options.tabNum : 0;
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.FilterVal = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     this.Procs = {};
     this.Rowdata = {};
     this.loader = $("#eb_common_loader");
-
+    this.IsRendered = false;
     this.GridStackInit = function () {
         grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
         grid.on('gsresizestop', this.Redrawfn.bind(this));
@@ -111,7 +111,7 @@
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
             if (this.FilterObj.FormObj.AutoRun) {
-                $("#btnGo").trigger("click");
+                if (!this.IsRendered) $("#btnGo").trigger("click");
                 this.CloseParamDiv();
             }
             $("#filter-dg").off("click").on("click", this.toggleFilter.bind(this));
@@ -191,7 +191,8 @@
             this.DashboardDropdown();
         }
         else if (this.EbObject !== null) {
-            ebcontext.header.setName(this.EbObject.DisplayName);
+            //ebcontext.header.setName(this.EbObject.DisplayName);
+            $("#objname").append(this.EbObject.DisplayName);
         }
         else {
             this.loader.EbLoader("hide");
@@ -223,6 +224,7 @@
         //$(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
     }
     this.DashBoardRefresh = function () {
+        this.IsRendered = false;
         grid.removeAll();
         this.init();
     };
@@ -248,6 +250,7 @@
     };
     this.DrawTiles = function () {
         grid.removeAll();
+        this.Procs = {};
         //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         Eb_Dashboard_Bg(this.EbObject);
         if (this.EbObject.Tiles.$values.length > 0) {
@@ -294,7 +297,7 @@
                                         }
                                     }
                                 });
-                            },
+                            }.bind(this),
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
                 }
@@ -547,7 +550,7 @@
                         }
                     }
                 });
-            },
+            }.bind(this),
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
@@ -590,7 +593,7 @@
                                 }
                             }
                         });
-                    },
+                    }.bind(this),
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
@@ -737,6 +740,7 @@
 
 
     this.GetFilterValues = function () {
+        this.IsRendered = true;
         this.loader.EbLoader("show");
         this.filtervalues = [];
         //if (this.stickBtn) { this.stickBtn.minimise(); }
@@ -856,7 +860,7 @@
 
         else {
             this.DvExternalLinkTrigger();
-        } 
+        }
     }
 
     this.placefiltervalues = function () {

@@ -305,9 +305,9 @@ function EbMakeValid(contSel, _ctrlCont, ctrl) {
         $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
 }
 
-function EbBlink(ctrl) {
-    $(`#${ctrl.EbSid_CtxId}Wraper`).addClass("ebblink");
-    setTimeout(function () { $(`#${ctrl.EbSid_CtxId}Wraper`).removeClass("ebblink"); }, 700);
+function EbBlink(ctrl, selector = `#${ctrl.EbSid_CtxId}Wraper`) {
+    $(selector).addClass("ebblink");
+    setTimeout(function () { $(selector).removeClass("ebblink"); }, 700);
 }
 
 
@@ -357,6 +357,85 @@ function EbBlink(ctrl) {
 //    //},400);
 //}
 
+//#region Test4ProvUserCtrl
+function EbMakeInvalid_Test(ctrl, contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+    let borderColor = "rgb(242 5 0)";
+    if (type === "warning")
+        borderColor = "rgb(236, 151, 31)";
+
+    if ($(`${contSel} .req-cont`).length !== 0)
+        return;
+
+    let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
+    if ($ctrlCont.children(".ebctrl-msg-cont").length !== 1)
+        $ctrlCont.append(`<div class="ebctrl-msg-cont"></div>`);
+
+    if ($ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).length === 1)
+        $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).remove();
+
+    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span' style='margin: auto auto auto -25px; padding: 2px 5px 2px 2px; outline: none;'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
+    $ctrlCont.css("border", `1px solid ${borderColor}`);
+
+    let timer1;
+    let $poTrig = $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
+        trigger: 'manual',
+        html: true,
+        container: "body",
+        placement: function (context, source) {
+            if (($(source).offset().left + 700) > document.body.clientWidth)
+                return "left";
+            else {
+                return "right";
+            }
+        },
+        content: msg,
+        delay: { "hide": 100 }
+    });
+
+    let OnMouseEnter = function () {
+        clearTimeout(timer1);
+        let _this = this;
+        let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+        if (!$poDiv.length) {
+            $(_this).popover("show");
+            $poDiv = $('#' + $(_this).attr('aria-describedby'));
+        }
+        $poDiv.off("mouseleave").on("mouseleave", function () {
+            timer1 = setTimeout(function () { $(_this).popover('hide'); }, 300);
+        });
+
+        $poDiv.off("mouseenter").on("mouseenter", function () {
+            clearTimeout(timer1);
+        });
+    };
+
+    let OnMouseLeave = function () {
+        let _this = this;
+        timer1 = setTimeout(function () {
+            if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+                $(_this).popover("hide");
+            }
+        }, 300);
+    };
+
+    $poTrig.on('mouseenter click', OnMouseEnter.bind($poTrig));
+    $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
+}
+
+function EbMakeValid_Test(contSel, _ctrlCont, ctrl) {
+    $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)");
+    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    if (ctrl)
+        $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
+    $(`${contSel} ${_ctrlCont}:first`).find(`.ebctrl-msg-cont .text-warning`).popover("hide");
+    $(`${contSel} .ebctrl-msg-cont:first`).empty();
+
+    //setTimeout(function () {
+    //$(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+    //
+    //},400);
+}
+//#endregion Test4ProvUserCtrl
 
 function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     if ($(`${contSel} .ctrl-info-msg-cont`).length !== 0)
@@ -758,6 +837,10 @@ function getSingleColumn(obj) {
         return $found.first(); // Return first match of the collection
     }
 })(jQuery);
+
+$.fn.closestInners = function (selector) {
+    return (this.is(selector) ? this.filter(selector).first() : $()).add(this.find(selector));
+};
 
 //JQuery extends ends
 
@@ -1404,4 +1487,12 @@ function sleep(milliseconds) {
     do {
         currentDate = Date.now();
     } while (currentDate - date < milliseconds);
+}
+function modifyTextStyle(contSelector, regex, styleStr) {
+    $(contSelector).each(function (i, el) {
+        let text = el.innerHTML;
+        if (text.match(regex) === null)
+            return;
+        el.innerHTML = text.replace(regex, "<font style='" + styleStr + "'>" + text.match(regex)[0] + "</font>")
+    });
 }

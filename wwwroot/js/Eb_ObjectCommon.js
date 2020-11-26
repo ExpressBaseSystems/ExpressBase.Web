@@ -14,7 +14,7 @@
     this.alertBgColor = null;
     this.flagRun = false;
     this.FlagSave = false;
-    this.saveOrCommitSuccess = function (refif) { };//edit by amal
+    this.saveOrCommitSuccess = function (refid) { };//edit by amal
     this.PreviewObject = function () { };//edits by amal
     this.RedColor = "#aa0000";
     this.GreenColor = "#00AD6E";
@@ -203,7 +203,7 @@
             $('#save').show();
             $('#commit_outer').show();
         }
-        // only for form autosave
+        //  for form autosave
         if (this.ObjectType === 0)
             this.UpdateBuilder();
 
@@ -516,8 +516,8 @@
             }, function (result) {
                 if (callback)
                     callback(result);
-                    this.UpdateTab(result);
-                    $.LoadingOverlay("hide");
+                this.UpdateTab(result);
+                $.LoadingOverlay("hide");
             }.bind(this));
         }
         else

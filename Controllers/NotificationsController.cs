@@ -14,6 +14,7 @@ using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common;
 using ExpressBase.Common.Objects;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -22,9 +23,10 @@ namespace ExpressBase.Web.Controllers
         public NotificationsController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
         [HttpGet]
-        public GetNotificationsResponse GetNotifications()
+        public string GetNotifications()
         {
-            return this.ServiceClient.Post(new GetNotificationsRequest { user = this.LoggedInUser });
+			GetNotificationsResponse GetNf= this.ServiceClient.Post(new GetNotificationsRequest { user = this.LoggedInUser });
+            return JsonConvert.SerializeObject(GetNf);
         }
 
         public void NotifyLogOut()
@@ -64,9 +66,16 @@ namespace ExpressBase.Web.Controllers
             });
             return res;
         }
-
-              
-
+		
+        public int ClearAllNotifications(List<string> notificationLst)
+        {
+			for(var i=0;i< notificationLst.Count; i++)
+			{
+				GetNotificationFromDB(notificationLst[i]);
+			}
+			return 1;
+        }
+		
         public IActionResult GetAllActions()
         {
             ListSqlJobsResponse resp = new ListSqlJobsResponse();

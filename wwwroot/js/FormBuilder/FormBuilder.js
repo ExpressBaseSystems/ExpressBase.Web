@@ -27,12 +27,6 @@
                 if (ctrl.Url.includes('?'))
                     ctrl.Url = ctrl.Url.substring(0, ctrl.Url.indexOf('?'));
             }
-
-            if (ctrl.ObjType === "WebForm" && ctrl.InfoVideoURL) {
-                if (EbIsValidURL(ctrl.InfoVideoURL)) {
-                    this.PGobj.setSimpleProperty('InfoVideoURL', ctrl.InfoVideoURL.replace('.youtube.com/watch?v=', '.youtube.com/embed/').replace(/\?rel=0?$/, '') + '?rel=0')
-                }
-            }
         }
 
         this.PGobj.getvaluesFromPG();
@@ -130,59 +124,63 @@
 
         delete clonedCtrl["$Control"];
         delete clonedCtrl["__oldValues"];
-        this.ctxClipboard.ctrl = JSON.parse(JSON.stringify(clonedCtrl));
-
-        navigator.clipboard.writeText('@#%ebcontrolclip@#%' + JSON.stringify(this.ctxClipboard.ctrl));
-        this.isCtrlInClipboard = true;
+        localStorage.eb_form_control = JSON.stringify(clonedCtrl);
+        localStorage.eb_form_$control = $(`[ebsid='${JSON.parse(localStorage.eb_form_control).EbSid_CtxId}']`)[0].outerHTML;
     }.bind(this);
 
     this.paste = function (eType, selector, action, originalEvent) {
-        let $e = $(event.target);
-        navigator.clipboard.readText().then(function (text) { // need optimize
-            if (text.startsWith('@#%ebcontrolclip@#%')) {
-                let ctrl = JSON.parse(text.replace('@#%ebcontrolclip@#%', ''));
-                let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
-                let copiedCtrl = this.getCopiedCtrl(ctrl);
-                let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl);
-                let offset = $e.closest('.context-menu-list').offset();
-                $('#context-menu-layer').css('z-index', 0);
-                let $clickedEl = $(document.elementFromPoint(offset.left, offset.top - 1));
-                let $clickedColTile = $clickedEl.closest('[ebsid]');
-                let clickedCtrl = this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
+        let $e = $(event.target); // need optimize
+        if (localStorage.eb_form_control) {
+            let ctrl = JSON.parse(localStorage.eb_form_control);
+            let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
+            let copiedCtrl = this.getCopiedCtrl(ctrl);
+            let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl);
+            let offset = $e.closest('.context-menu-list').offset();
+            $('#context-menu-layer').css('z-index', 0);
+            $('.context-menu-list.context-menu-root').css('z-index', 0);
+            let $clickedEl = $(document.elementFromPoint(offset.left, offset.top));//$('.context-menu-active');//
+            let $clickedColTile = $clickedEl.closest('[ebsid]');
+            let clickedCtrl = $clickedColTile[0].hasAttribute('eb-root-obj-container') ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
 
-                if (clickedCtrl.IsContainer) {
-                    clickedCtrl.Controls.$values.push(copiedCtrl);
-                    ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
-                }
-                else {
-                    if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
-                        this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
-                        $copiedCtrl.insertAfter($clickedColTile);
-                    }
-                }
-
-                let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
-                for (let i = 0; i < flatControlsModified.length; i++) {
-                    this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
-                }
-
-
-                this.isCtrlInClipboard = true;
+            if (clickedCtrl.IsContainer) {
+                clickedCtrl.Controls.$values.push(copiedCtrl);
+                ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
             }
             else {
-                this.isCtrlInClipboard = false;
-                this.EbAlert.clearAlert("pasteError");
-                this.EbAlert.alert({
-                    id: "pasteError",
-                    head: "Copy again and try.",
-                    body: "Try after copying",
-                    type: "info",
-                    delay: 2100
-                });
+                if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
+                    this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
+                    $copiedCtrl.insertAfter($clickedColTile);
+                }
             }
-        }.bind(this));
+
+            let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
+            for (let i = 0; i < flatControlsModified.length; i++) {
+                this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
+            }
+            this.pushElmsToDraggable($copiedCtrl);
+            EbBlink(copiedCtrl, `[ebsid='${copiedCtrl.EbSid_CtxId}']`);
+        }
+        else {
+            this.EbAlert.clearAlert("pasteError");
+            this.EbAlert.alert({
+                id: "pasteError",
+                head: "Copy again and try.",
+                body: "Try after copying",
+                type: "info",
+                delay: 2100
+            });
+        }
     }.bind(this);
 
+    this.pushElmsToDraggable = function ($copiedCtrl) {
+        $copiedCtrl.closestInners('.ebcont-inner').each(function (i, el) {
+            if (this.DraggableConts.contains(el))
+                console.eb_log('already contains')
+            else
+                this.DraggableConts.push(el);
+        }.bind(this));
+
+    };
 
     this.dropedCtrlInit = function ($ctrl, type, id) {
         $ctrl.attr("tabindex", "1");
@@ -195,7 +193,7 @@
     this.getCopied$Ctrl = function (ModifiedCtrl, OriginalCtrl) {
         let flatControlsModified = getAllctrlsFrom(ModifiedCtrl);
         let flatControlsOriginal = [...getAllctrlsFrom(OriginalCtrl)];
-        let $ctrl = $(`[ebsid='${OriginalCtrl.EbSid_CtxId}']`).clone();
+        let $ctrl = $(localStorage.eb_form_$control).removeClass('context-menu-active').clone();
         for (let i = 0; i < flatControlsModified.length; i++) {
             let ctrlModified = flatControlsModified[i];
             let $_ctrl = (i === 0) ? $ctrl : $ctrl.find(`[ebsid='${flatControlsOriginal[i].EbSid_CtxId}']`);
@@ -361,6 +359,11 @@
                 return true;
             this.initCtrl(el);
         }.bind(this));
+        $(".form-render-table-Td").each(function (i, el) {// td styles seprately
+            if (el.getAttribute("childOf") === 'EbUserControl')
+                return true;
+            this.updateControlUI(el.getAttribute("ebsid"));
+        }.bind(this));
         $("#" + this.rootContainerObj.EbSid).focus();
     };
 
@@ -385,8 +388,101 @@
             let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
             var blueprintModaledt = new blueprintModalfn(ctrlobjt);
         }
+        else if (type == "WizardControl") {
+            let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
+            this.initWizard(ctrlobjt);
+        }
         this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
+
+    this.wizStepDelValidationOK = function (Obj) {
+        if ((Obj.ObjType === "WizardControl" || Obj.ObjType === "TabControl") && Obj.Controls.$values.length === 1) {
+            this.EbAlert.alert({
+                id: Obj.EbSid + 'tabremove',
+                head: Obj.ObjType + " need atleast a single step.",
+                body: "Try removing control",
+                type: "warning",
+                delay: 2500
+            });
+            return false;
+        }
+        return true;
+    }.bind(this);
+
+    this.wizAddClick = function (e) {////////////////////////////////
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+        let numStr = this.PGobj.CXVE.getMaxNumberFromItemName($ControlTile.find(".RenderAsWizard > ul > li"));//PrevObjEbsid.substr(PrevObjEbsid.length - 3).replace(/[^0-9]/g, '');
+
+        let lastNum = parseInt(numStr) || 0;
+        let ShortName = "Step" + (lastNum + 1);
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+        let ebsid = TabEdsid + "_" + ShortName;
+        let newObj = new EbObjects["EbWizardStep"](ebsid);
+        newObj.Name = ShortName;
+        newObj.Title = ShortName;
+
+        this.PGobj.setObject(TabObj, AllMetas["EbWizardControl"]);
+
+        TabObj.Controls.$values.push(newObj);
+        this.addWizardStep(this.PGobj.PropsObj, "Controls", "val", newObj);
+
+    }.bind(this);
+
+
+    this.contTabDelClick = function (e) {/////////////////////////
+        let $e = $(e.target).closest("li");
+        let PaneEbsid = $e.attr("ebsid");
+
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+        let PaneObj = this.rootContainerObj.Controls.GetByName(PaneEbsid);
+        let ctrlMeta = AllMetas["EbTabControl"];
+        this.PGobj.setObject(TabObj, ctrlMeta);
+
+        let index = TabObj.Controls.$values.indexOf(PaneObj);
+        if (!this.wizStepDelValidationOK(TabObj))
+            return;
+
+        let delobj = TabObj.Controls.$values.splice(index, 1)[0];
+        if (TabObj.ObjType === "WizardControl") {
+            this.RemoveWizardStep(this.PGobj.PropsObj, "Controls", "val", delobj);
+        }
+        else {
+            this.RemoveTabPane(this.PGobj.PropsObj, "Controls", "val", delobj);
+        }
+    }.bind(this);
+
+    this.initWizard = function (ctrl) {
+        let $Tab = $(`#cont_${ctrl.EbSid_CtxId}>.RenderAsWizard`);
+        if ($Tab.length === 0)
+            return false;
+        $Tab.smartWizard({
+            theme: 'arrows',
+            enableURLhash: false, // Enable selection of the step based on url hash
+            transition: {
+                animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                speed: '400', // Transion animation speed
+                easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
+            },
+            toolbarSettings: {
+                showNextButton: false, // show/hide a Next button
+                showPreviousButton: false, // show/hide a Previous button
+            },
+            anchorSettings: {
+                anchorClickable: true, // Enable/Disable anchor navigation
+                enableAllAnchors: true, // Activates all anchors clickable all times
+                markDoneStep: false, // Add done state on navigation
+            },
+            keyboardSettings: {
+                keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+            }
+        });
+        $Tab.off("click.wiz").on("click.wiz", ".ebtab-close-btn", this.contTabDelClick.bind(this));
+        $Tab.children(".wiz-addbtn").on("click.wiz", this.wizAddClick.bind(this));
+    }.bind(this);
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
         if (type === "TabControl")
@@ -438,6 +534,8 @@
         $extCont: $(".property-grid-cont"),
         isDraggable: true
     });
+
+    this.PGobj.CXVE.onRemoveCEValidationOK = this.wizStepDelValidationOK;
 
     //Edit mode
     if (this.EbObject) {
@@ -547,11 +645,13 @@
                     this.DraggableConts.push($(`#cont_${ctrlObj.EbSid_CtxId} .Dt-Rdr-col-cont`)[0]);
 
                 }
-                else
-                    if (type === "BluePrint") {
-                        var blueprintModal = new blueprintModalfn(ctrlObj);
+                else if (type === "BluePrint") {
+                    var blueprintModal = new blueprintModalfn(ctrlObj);
 
-                    }
+                }
+                else if (type == "WizardControl") {
+                    this.initWizard(ctrlObj);
+                }
 
                 $ctrl.focus();
                 ctrlObj.Label = ebsid;
@@ -775,7 +875,7 @@
                             <a data-toggle="tab" class="ppbtn-cont" href="#${addedObj.EbSid}">
                                 <span class='eb-label-editable'>${addedObj.Name}</span>
                                 <input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/>
-                                <div class='ebtab-close-btn eb-fb-icon'><i class='fa fa-times' aria-hidden='true'></i></div>
+                                <div class='ebtab-close-btn eb-fb-icon' title='Remove'><i class='fa fa-times' aria-hidden='true'></i></div>
                                 <div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div>
                             </a>
                             <div class='ebtab-add-btn eb-fb-icon'><i class='fa fa-plus' aria-hidden='true'></i></div>
@@ -786,11 +886,40 @@
         this.drake.containers.push($tabPane[0]);
     };
 
+    this.addWizardStep = function (SelectedCtrl, prop, val, addedObj) {
+        let id = SelectedCtrl.EbSid;
+        let $wizard = $("#cont_" + id + ">.RenderAsWizard");
+        let $wizMenu = $wizard.closestInner('ul>li[li-of]:first').clone();
+        $wizMenu.children('a').attr('href', '#' + addedObj.EbSid_CtxId).removeClass('active');
+        $wizMenu.find('.eb-label-editable').text(addedObj.Title);
+        $wizMenu.attr('li-of', addedObj.EbSid_CtxId).attr('ebsid', addedObj.EbSid_CtxId);
+        let $tabPane = $wizard.closestInner('.tab-content>[ctype="WizardStep"]:first').clone().empty();
+        $tabPane.attr('id', addedObj.EbSid_CtxId).attr('ebsid', addedObj.EbSid_CtxId);
+        $wizard.closestInner(".nav").append($wizMenu);
+        $tabPane.hide();
+        $wizard.closestInner(".tab-content").append($tabPane);
+        let smartWizardObj = $wizard.data('smartWizard')
+        smartWizardObj.steps.push($wizMenu.children('a')[0]);
+        $wizMenu.children('a').on("click", smartWizardObj.nextButtonEventFun)
+        this.drake.containers.push($tabPane[0]);
+    };
+
     this.RemoveTabPane = function (SelectedCtrl, prop, val, delobj) {
         let id = SelectedCtrl.EbSid;
         let $ctrl = $("#cont_" + id);
         let $tabMenu = $ctrl.find(`[li-of=${delobj.EbSid}]`).remove();
-        let $tabPane = $(`#${delobj.Name}`).remove();
+        let $tabPane = $(`#${delobj.EbSid_CtxId}`).remove();
+    };
+
+    this.RemoveWizardStep = function (SelectedCtrl, prop, val, delobj) {
+        let id = SelectedCtrl.EbSid;
+        let $wizard = $("#cont_" + id + ">.RenderAsWizard");
+        let smartWizardObj = $wizard.data('smartWizard')
+        let $wizMenu = $wizard.find(`[li-of=${delobj.EbSid}]`);
+        $wizMenu.siblings(':first').children('a').trigger('click');
+        $wizMenu.remove();
+        $(`#${delobj.EbSid_CtxId}`).remove();
+        smartWizardObj.steps.splice(smartWizardObj.steps.toArray().indexOf($wizMenu.children('a')[0]), 1);
     };
 
     this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
@@ -807,6 +936,11 @@
             //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
             addedObj.Name = addedObj.Name.substr(-5);//furthure shorten name 
             this.addTabPane(this.PGobj.PropsObj, prop, val, addedObj);
+        }
+        else if (this.PGobj.PropsObj.ObjType === "WizardControl" && prop === "Controls") {
+            //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
+            addedObj.Name = addedObj.Name.substr(-5);//furthure shorten name 
+            this.addWizardStep(this.PGobj.PropsObj, prop, val, addedObj);
         }
     }.bind(this);
 
@@ -864,18 +998,18 @@
 
         let $e = $(event.target);
         let count = $e.val().length;
-        let width = "10px";
-        if (count !== 0)
-            width = (count * 6.4 + 8) + "px";
+        let width = "15px";
+        //if (count !== 0)
+        //    width = (count * 6.4 + 8) + "px";
 
-        $e.css("width", width);
+        //$e.css("width", width);
 
         let val = $e.val();
         let $colTile = $e.closest(".Eb-ctrlContainer");
         let ebsid = $colTile.attr("ebsid");
         let ctrlType = $colTile.attr("eb-type");
         let ctrlMeta = AllMetas["Eb" + ctrlType];
-        if (ctrlType === "TabControl") {
+        if (ctrlType === "TabControl" || ctrlType === "WizardControl") {
             ebsid = $e.closest("li").attr("ebsid");
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
             let paneMeta = AllMetas["Eb" + ctrl.ObjType];
@@ -947,36 +1081,23 @@
         this.PGobj.setObject(TabObj, ctrlMeta);
 
         TabObj.Controls.$values.push(newObj);
+
         this.addTabPane(this.PGobj.PropsObj, "Controls", "val", newObj);
 
-    }.bind(this);
-
-    this.contTabDelClick = function (e) {/////////////////////////
-        let $e = $(e.target).closest("li");
-        let PaneEbsid = $e.attr("ebsid");
-
-        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
-        let TabEdsid = $ControlTile.attr("ebsid");
-
-        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
-        let PaneObj = this.rootContainerObj.Controls.GetByName(PaneEbsid);
-        let ctrlMeta = AllMetas["EbTabControl"];
-        this.PGobj.setObject(TabObj, ctrlMeta);
-
-        let index = TabObj.Controls.$values.indexOf(PaneObj);
-        let delobj = TabObj.Controls.$values.splice(index, 1)[0];
-        this.RemoveTabPane(this.PGobj.PropsObj, "Controls", "val", delobj);
     }.bind(this);
 
     this.ctrlLblDblClick = function (e) {
         let $e = $(event.target);
         $e.hide();
-        if ($e.parent().attr("data-toggle") === "tab") {
+        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
             $e.closest("li").find(".ebtab-close-btn").hide();
             $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
         }
+        else if ($e.hasClass('grid-col-title')) {
+            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+        }
         else {
-            $e.parent(".eb-label-editable").siblings(".eb-lbltxtb").val($e.text()).show().select();
+            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
         }
     };
 
@@ -984,12 +1105,15 @@
         $e = $(event.target);
         $e.hide();
 
-        if ($e.parent().attr("data-toggle") === "tab") {
-            $e.prev(".eb-label-editable").show();
+        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
+            $e.closest('li').find(".eb-label-editable").show();
             $e.siblings(".ebtab-close-btn").show();
         }
+        else if ($e.siblings('.grid-col-title').length === 1) {
+            $e.siblings('.grid-col-title').text($e.val()).show().select();
+        }
         else
-            $e.prev(".eb-label-editable").children("[ui-label]").show();
+            $e.siblings("[ui-label]").show();
     };
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
@@ -997,6 +1121,8 @@
             alert();
         else if (this.PGobj.PropsObj.ObjType === "TabControl" && prop === "Controls")
             this.RemoveTabPane(this.PGobj.PropsObj, prop, val, delobj);
+        else if (this.PGobj.PropsObj.ObjType === "WizardControl" && prop === "Controls")
+            this.RemoveWizardStep(this.PGobj.PropsObj, prop, val, delobj);
     }.bind(this);
 
     this.keyUp = function (e) {
@@ -1028,33 +1154,42 @@
                 "Delete": {
                     name: "Remove",
                     icon: "fa-trash",
-                    callback: this.del
+                    callback: this.del,
+                    visible: this.cpyVisible
                 },
                 "Cut": {
                     name: "Cut",
                     icon: "fa-scissors",
-                    callback: this.cut
+                    callback: this.cut,
+                    visible: this.cpyVisible
                 },
                 "Copy": {
                     name: "Copy",
                     icon: "fa-clone",
-                    callback: this.copy
+                    callback: this.copy,
+                    visible: this.cpyVisible
                 },
                 "Paste": {
                     name: "Paste",
                     icon: "fa-clipboard",
                     callback: this.paste,
-                    visible: function (key, opt) { return this.isCtrlInClipboard; }.bind(this)
+                    visible: function (key, opt) {
+                        return localStorage.eb_form_control;
+                    }.bind(this)
                 }
             }
         };
     }.bind(this);
 
     this.CtxSettingsObj = {
-        selector: '.Eb-ctrlContainer',
+        selector: '.Eb-ctrlContainer,[eb-form="true"]',
         autoHide: true,
         build: this.ctxBuildFn.bind(this)
     };
+
+    this.cpyVisible = function (key, opt) {
+        return !opt.$trigger[0].hasAttribute('eb-root-obj-container');
+    }.bind(this);
 
     this.Init = function () {
         $.contextMenu(this.CtxSettingsObj);
@@ -1070,7 +1205,6 @@
         this.$form.on("click", ".ebtab-add-btn", this.contTabAddClick.bind(this));
         this.$form.on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
         this.$form.on("keyup", this.keyUp.bind(this));
-        $("body").on('copy', function () { this.isCtrlInClipboard = false; }.bind(this));
         this.ctxClipboard = {};
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";

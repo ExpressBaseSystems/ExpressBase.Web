@@ -109,6 +109,7 @@
     <script type="text/javascript" src="~/js/simTree.js"></script>
     <script src="~/js/FormBuilder/MeetingScheduler.js" asp-append-version=@bApnd></script>
     <script src="~/js/EbUserDashBoard/Combodate.js" asp-append-version=@bApnd></script>
+    <script src="~/js/FormBuilder/AudioInput.js" asp-append-version=@bApnd></script>
 
     @if (ViewBag.wc == "uc")
     {
@@ -176,8 +177,9 @@
                                             <span><i class="fa fa-check-circle-o "></i></span>  <span id="current_loc" loc_id="" style="font-size: 12px; cursor:pointer"> </span>
                                         </div>
                                     </div>
-                                    <div class="locs_bdy"></div>
+                                    <div class="locs_bdy treeviewMdlBody"></div>
                                     <div class="locs_foot">
+                                        <span id="loc_tot_count" class=" loc_count pull-left"></span>
                                         <button class="btn btn-sm loc-switchbtn pull-right" id="setLocSub">Switch</button>
                                     </div>
                                     <div class="no_loc_config">No Locations.</div>

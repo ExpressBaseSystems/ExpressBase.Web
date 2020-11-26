@@ -20,6 +20,7 @@
             branch.addClass('branch');
             branch.off("click").on('click', function (e) {
                 if (this === e.target) {
+                    $(this).toggleClass("in");
                     var icon = $(this).children('i:first');
                     icon.toggleClass(openedClass + " " + closedClass);
                     $(this).children().children().toggle();
@@ -44,6 +45,7 @@
                 e.preventDefault();
             });
         });
+        return tree;
     }
 });
 $.fn.extend({
@@ -57,5 +59,6 @@ $.fn.extend({
             branch.removeClass('branch');
             branch.off("click");
         });
+        return tree;
     }
 });

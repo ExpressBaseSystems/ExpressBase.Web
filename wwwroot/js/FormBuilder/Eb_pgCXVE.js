@@ -13,6 +13,7 @@
     this.OSE_curTypeObj = null;
     this.onAddToCE = function () { };
     this.onRemoveFromCE = function () { };
+    this.onRemoveCEValidationOK = function (obj) { return true; };
     this.CElist = [];
     this.editor = null;
 
@@ -53,8 +54,16 @@
         }
         else if (this.editor === 37) {
             let icon = $("#icon_picker .form-control.search-control").val();
-            PropsObj[_CurProp] = icon;
-            $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+            let unicode = FontAwsomeUnicode(icon);
+            //PropsObj[_CurProp] = icon; 
+            if ($('input[name="unicode"]:checked').length === 1) {
+                PropsObj[_CurProp] = unicode;
+                $(`#${this.PGobj.wraperId}${_CurProp}`).val(unicode);
+            }
+            else {
+                PropsObj[_CurProp] = icon;
+                $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+            }
         }
         else if (this.editor === 38) {
             let shadowVal = $("#shadow_editor_val").val();
@@ -161,14 +170,14 @@
         this.curCXEbtn = $(e.target);
         let _meta = null;
         let visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
-        let right = (this.modalRight + -visibleModalLength * 10) + "px";
+        //let right = (this.modalRight + -visibleModalLength * 10) + "px";
         if ($(e.target).closest("tr").attr("tr-for") === "23")
             _meta = this.PGobj.getDictMeta(this.PGobj.PropsObj[this.PGobj.CurProp]);
         else
             _meta = this.PGobj.Metas;
 
-        $(this.pgCXE_Cont_Slctr).css("right", right);
-        $(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
+        //$(this.pgCXE_Cont_Slctr).css("right", right);
+        //$(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
         //this.CurProplabel = this.CurMeta.alias || this.PGobj.CurProp;
@@ -255,7 +264,7 @@
     this.initStr64E = function () {
         this.curEditorLabel = "String Editor";
         let PropsObj = this.getPropsObj();
-        let HtmlEbody = '<textarea id="Str64E_txtEdtr' + this.PGobj.wraperId + '" class="str64E-texarea" rows="15" cols="85">' + decodeURIComponent(escape(window.atob(PropsObj[this.PGobj.CurProp])) || "") + '</textarea>';
+        let HtmlEbody = '<textarea id="Str64E_txtEdtr' + this.PGobj.wraperId + '" class="str64E-texarea" rows="15" cols="85">' + decodeURIComponent(escape(window.atob(PropsObj[this.PGobj.CurProp] || ""))) + '</textarea>';
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(HtmlEbody);
     };
 
@@ -337,20 +346,39 @@
     };
 
     this.refreshCEFromSrc = function () {
-        this.PGobj.PGHelper.dataSourceReInit(this.setOldSelection)
+        if (this.PGobj.PropsObj.IsDataFromApi) {
+            let opt = {
+                url: "../DS/GetColumnsFromApi",
+                apiUrl: this.PGobj.PropsObj.Url,
+                headers: this.PGobj.PropsObj.Headers,
+                //parameters: this.PGobj.PropsObj.Parameters,
+                method: this.PGobj.PropsObj.Method
+            }
+            this.PGobj.PGHelper.UrlReInit(opt, this.setOldSelectionByResettingProp);
+        }
+        else
+            this.PGobj.PGHelper.dataSourceReInit(this.setOldSelectionByResettingProp);
     }.bind(this);
 
-    this.setOldSelection = function (allCols) {
+    this.setOldSelectionByResettingProp = function (allCols) {
         this.CElistFromSrc = this.getCElistFromSrc(this.CurMeta.source);
         if (this.editor === 24 || this.editor === 27 || this.editor === 35) {
-            let selectedCols = [... this.getSelectedColsByProp(this.CElistFromSrc)];
+            let Dprop = this.Dprop;
+            if (this.editor === 27)
+                Dprop = getObjByval(this.PGobj.Metas, "name", this.CurMeta.source).Dprop;
+            let selectedCols = [... this.getSelectedColsByProp(this.CElistFromSrc, Dprop)];
             if (selectedCols && selectedCols.length !== 0) {
                 $.each(allCols, function (i, obj) {
-                    if (getObjByval(selectedCols, "name", obj.name)) {
-                        obj[this.Dprop] = true;
+                    let prevSelectedObj = getObjByval(selectedCols, "name", obj.name);
+                    if (prevSelectedObj && obj.$type === prevSelectedObj.$type) {
+                        $.extend(true, obj, prevSelectedObj);
                     }
-                    else
-                        obj[this.Dprop] = false;
+                    else {
+                        let listFromSrcObj = getObjByval(this.CElistFromSrc, "name", obj.name);
+                        if (listFromSrcObj && obj.$type === listFromSrcObj.$type) {
+                            $.extend(true, obj, listFromSrcObj);
+                        }
+                    }
                 }.bind(this));
             }
         }
@@ -400,17 +428,20 @@
         if (this.CurMeta.source.trimStart().startsWith("return "))
             this.CElistFromSrc = this.getCElistFromFn(sourceProp);
         else {
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").show();
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").off('click').on('click', this.refreshCEFromSrc);
-            if (!this.CurMeta.__isReloadedAfterInit) {
-                this.refreshCEFromSrc();
-                return;
+
+            if (this.CurMeta.Dprop2 === "True") {
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").show();
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0) .CE-controls-head .ose-refresh").off('click').on('click', this.refreshCEFromSrc);
+                if (!getObjByval(this.PGobj.Metas, "name", this.CurMeta.source).__isReloadedAfterInit) {
+                    this.refreshCEFromSrc();
+                    return;
+                }
             }
             this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
         }
 
         if (this.editor === 8 || this.editor === 27 || this.editor === 35) {
-            this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+            this.selectedCols = this.getAvailableSelectedFromSource();
             this.changeCopyToRef();
             if (this.editor === 8)
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
@@ -456,10 +487,10 @@
         }
     }.bind(this);
 
-    this.getSelectedColsByProp = function (allCols) {
+    this.getSelectedColsByProp = function (allCols, Dprop = this.Dprop) {
         let res = [];
         $.each(allCols, function (i, obj) {
-            if (obj[this.Dprop] === true)// hard code
+            if (obj[Dprop] === true)// hard code
                 res.push(obj);
         }.bind(this));
         return res;
@@ -861,7 +892,7 @@
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
             $.each(data[ObjName], function (i, obj) {
                 if (obj.versionNumber) {
-                    let $verTile = $('<div class="colTile" style="display:none"  objurl="' + btoa(unescape(encodeURIComponent('http://' + ebcontext.sid + '-dev.localhost:41500/Eb_Object/Index?objid=' + obj.refId.split("-")[3] + '&objtype=' + obj.refId.split("-")[2])))
+                    let $verTile = $('<div class="colTile" style="display:none"  objurl="' + btoa(unescape(encodeURIComponent('/Eb_Object/Index?objid=' + obj.refId.split("-")[3] + '&objtype=' + obj.refId.split("-")[2])))
                         + '"is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
                         + '<div class="oseobjgo2icon"><i class="fa fa-external-link" aria-hidden="true"></i></div>'
                         + '<i class="fa fa-check-circle pull-right vercheck" aria-hidden="true"></i></div>');
@@ -910,7 +941,9 @@
 
         let value = this.PGobj.PropsObj[this.PGobj.CurProp];
 
-        let IPbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
+        let IPbody = `<div><input type="checkbox" id="unicode" name="unicode" value="unicod">
+                    <label for="unicode"> Unicode </label><br> </div>
+                    <div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(IPbody);
         $("#icon_picker").iconpicker({
             placement: 'bottom',
@@ -1327,6 +1360,8 @@
     this.colTileLeftArrow = function (e) {
         e.stopPropagation();
         let $tile = $(e.target).closest(".colTile").remove();
+        if (!this.onRemoveCEValidationOK(this.PGobj.PropsObj))
+            return;
         if (this.selectedCols)// temp condition
             var tileObj = getObjByval(this.selectedCols, "name", $tile.attr("id"));
         if (this.editor === 7) {
@@ -1519,14 +1554,36 @@
         }.bind(this));
     };
 
+    this.getAvailableSelectedFromSource = function () {
+        let res = [];
+        let idField = "name";//////////////////////
+        if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && (Object.keys(this.CElistFromSrc[0]).includes("ColumnName")))//////////////////
+            idField = "ColumnName";////////////////////////
+        else if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && Object.keys(this.CElistFromSrc[0]).includes("Name"))//////////////////
+            idField = "Name";////////////////////////
+
+        $.each(this.PGobj.PropsObj[this.PGobj.CurProp].$values, function (i, colObj) {
+            let RObj = getObjByval(this.CElistFromSrc, idField, colObj[idField]);
+            if (!RObj)
+                RObj = getObjByval(this.selectedCols, "name", colObj.Name);
+            if (RObj) {
+                res.push(colObj);
+            }
+        }.bind(this));
+        this.PGobj.PropsObj[this.PGobj.CurProp].$values = res;
+        return this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+    };
+
     this.Init = function () {
-        let modalSizePercent = 65;
-        let modalWidth = window.screen.availWidth * (modalSizePercent / 100);
-        let modalHeight = modalWidth / 1.574;
-        this.modalRight = window.screen.availWidth * ((1 - (modalSizePercent / 100)) / 2);
-        this.modalTop = ((window.screen.availHeight - modalHeight) / 2) - 15;
+        //let modalSizePercent = 65;
+        //let modalWidth = window.screen.availWidth * (modalSizePercent / 100);
+        //let modalHeight = modalWidth / 1.574;
+        //this.modalRight = window.screen.availWidth * ((1 - (modalSizePercent / 100)) / 2);
+        //this.modalTop = ((window.screen.availHeight - modalHeight) / 2) - 15;
+        //style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;"//
+
         let CXVE_html = '<div class="pgCXEditor-bg">'
-            + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
+            + `<div class="pgCXEditor-Cont">`
 
             + '<div class="modal-header">'
             + '<button type="button" class="close">&times;</button>'

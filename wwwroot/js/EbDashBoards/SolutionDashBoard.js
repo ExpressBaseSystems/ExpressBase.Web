@@ -14,7 +14,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         "PGSQL": "<img class='img-responsive' src='../images/postgre.png' align='middle' style='height:50px' />",
         "MSSQL": "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />",
         "MYSQL": "<img class='img-responsive' src='../images/mysql.png' align='middle' style='height:35px' />",
-        "ORACLE": "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />",
+        "ORACLE": "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 30px;margin-top: -15px;' />",
         "MongoDB": "<img class='img-responsive' src='../images/mongo_db.png' align='middle' style='height:40px' />",
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/expert_texting.png' align='middle' style='height:26px' />",
@@ -44,6 +44,12 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         "MSSQL": `<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>Microsoft SQL Server is a relational database management system developed by Microsoft. As a database server, it is a software product with the primary function of storing and retrieving data as requested by other software applications—which may run either on the same computer or on another computer across a network.</span>
+                        </div>` ,
+        "ORACLE": `<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>
+                            Oracle Database is a multi-model database management system produced and marketed by Oracle Corporation. It is a database commonly used for running online 
+                            transaction processing, data warehousing and mixed database workloads.</span>
                         </div>`
     };
 

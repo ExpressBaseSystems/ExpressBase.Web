@@ -405,45 +405,48 @@
 
     this.listKeyControl = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         //$(".active_link").removeClass("active_link");
-        if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
-            $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();
-        }
-        else {
-            let $current = $(".EbQuickMoverlaySideWRpr").find(":focus");
-            if (e.which === 40) {
-                if ($current.nextAll('[klink="true"]:visible').length > 0) {
-                    $current.nextAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
-                }
-                else {
-                    let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
-                    let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
-                    $(domArray[filter[0] + 1]).attr("tabindex", "1").focus();
-                }
+        if ($(".EbQuickMoverlaySideWRpr").is(":visible")) {
+            if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
+                $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();
             }
-            else if (e.which === 38) {
-                if ($current.prev('[klink="true"]:visible').length > 0) {
-                    $current.prevAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+            else {
+                let $current = $(".EbQuickMoverlaySideWRpr").find(":focus");
+                if (e.which === 40) {
+                    if ($current.nextAll('[klink="true"]:visible').length > 0) {
+                        $current.nextAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+                    }
+                    else {
+                        let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
+                        let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
+                        $(domArray[filter[0] + 1]).attr("tabindex", "1").focus();
+                    }
                 }
-                else {
-                    let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
-                    let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
-                    $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
+                else if (e.which === 38) {
+                    if ($current.prev('[klink="true"]:visible').length > 0) {
+                        $current.prevAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+                    }
+                    else {
+                        let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
+                        let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
+                        $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
+                    }
                 }
-            }
-            else if (e.which === 13) {
-                if ($current.find("a").length > 0) {
-                    $current.find("a")[0].click();
+                else if (e.which === 13) {
+                    if ($current.find("a").length > 0) {
+                        $current.find("a")[0].click();
+                    }
+                    else {
+                        $current[0].click();
+                    }
                 }
-                else {
-                    $current[0].click();
+                else if (e.which === 39) {
+                    $current.closest("[slider='true']").nextAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
                 }
-            }
-            else if (e.which === 39) {
-                $current.closest("[slider='true']").nextAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
-            }
-            else if (e.which === 37) {
-                $current.closest("[slider='true']").prevAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
+                else if (e.which === 37) {
+                    $current.closest("[slider='true']").prevAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
+                }
             }
         }
     };

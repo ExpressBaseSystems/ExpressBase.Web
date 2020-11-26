@@ -185,7 +185,13 @@
 </div>
 <script>
         $("#obj_icons").append(`<button id='btnGo0' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>`);
-        $("#obj_icons").after(`<div id="Common_obj_icons" style="display:inline"></div>`);
+    $("#obj_icons").after(`<div id="Common_obj_icons" style="display:inline"></div>`);
+
+    let _TableVisualization = @Html.Raw(dvobj);
+    let header = new EbHeader();
+    header.addRootObjectHelp(_TableVisualization);
+    debugger;
+
         var counter = 0;
         @Html.Raw(ViewBag.EbObjectType)
         @Html.Raw(ViewBag.Meta)
@@ -196,7 +202,7 @@
             refid: '@ViewBag.dvRefId',
             ver_num: '@ViewBag.VersionNumber',
             type: '@ViewBag.ObjType',
-            dsobj:@Html.Raw(dvobj),
+            dsobj: _TableVisualization,
             cur_status:'@ViewBag.Status',
             ss_url: '@ViewBag.ServiceUrl',
             wc: '@ViewBag.wc',

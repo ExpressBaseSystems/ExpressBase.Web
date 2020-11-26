@@ -40,6 +40,7 @@
     this.$SourceCategory = $("#selSourceCategory");
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
+    this.$OnlineConsultation = $("#selOnlineConsultation");
     this.$PicReceived = $("#selPicReceived");
     this.$BaldnessGrade = $("#selBaldnessGrade");
     this.$DiffusePattern = $("#selDiffusePattern");
@@ -47,6 +48,7 @@
     this.$HtPreviously = $("#selHtPreviously");
     this.$CountryCode = $("#selCountryCode");
     this.$CustomerCategory = $("#selCustomerCategory");
+    this.$LastModifiedBy = $("#txtLastModifiedBy");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -811,7 +813,7 @@
             //obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]) || this.getKeyByValue(this.NurseInfo, obj["Anaesthesia_By"] - 1000);
             obj["Consent_By"] = this.getKeyByValue(this.DoctorInfo, obj["Consent_By"]) || this.getKeyByValue(this.NurseInfo, obj["Consent_By"]);
             obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]) || this.getKeyByValue(this.NurseInfo, obj["Anaesthesia_By"]);
-            obj["Post_Brief_By"] = this.getKeyByValue(this.NurseInfo, obj["Post_Brief_By"]);
+            obj["Post_Brief_By"] = this.getKeyByValue(this.DoctorInfo, obj["Post_Brief_By"]) || this.getKeyByValue(this.NurseInfo, obj["Post_Brief_By"]);
             obj["Nurse"] = this.getKeyByValue(this.NurseInfo, obj["Nurse"]);
         }.bind(this));
 
@@ -877,6 +879,7 @@
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
+        this.$OnlineConsultation.val(this.CustomerInfo["online_consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
         this.$BaldnessGrade.val(this.CustomerInfo["baldnessgrade"]);
         this.$DiffusePattern.val(this.CustomerInfo["diffusepattern"]);
@@ -884,6 +887,7 @@
         this.$HtPreviously.val(this.CustomerInfo["htpreviously"]);
         this.$CountryCode.val(this.CustomerInfo["country_code"]);
         this.$CustomerCategory.val(this.CustomerInfo["cust_category"]);
+        this.$LastModifiedBy.val(this.CustomerInfo["eb_modifiedby"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
             $("#divCustomerDp").children().remove();
@@ -975,6 +979,7 @@
         this.pushToList("sourcecategory", this.$SourceCategory.val());
         this.pushToList("subcategory", this.$SubCategory.val());
         this.pushToList("consultation", this.$Consultation.val());
+        this.pushToList("online_consultation", this.$OnlineConsultation.val());
         this.pushToList("picsrcvd", this.$PicReceived.val());
         this.pushToList("baldnessgrade", this.$BaldnessGrade.val());
         this.pushToList("diffusepattern", this.$DiffusePattern.val());

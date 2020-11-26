@@ -175,6 +175,7 @@
                 },
                 doRender: function (e, t, s) {
                     var n, r, h, c, l, u = this, f = this.options, p = f.response, m = t.length, g = 0, v = p.id, k = p.name, s = s || 1, C = '<i data-type="{{asy}}" class="sim-tree-spread {{spreadIcon}}"></i><a href="javascript:;"><i class="sim-tree-checkbox"></i>{{text}}</a>', b = e === this.$el, y = $(i.createElement("ul")), w = f.childNodeAsy ? "asy" : "";
+                    var d = [];//vrgs
                     for (f.check || (C = C.replace('<i class="sim-tree-checkbox"></i>', "")); g < m; g++)
                         n = t[g],
                             r = i.createElement("li"),

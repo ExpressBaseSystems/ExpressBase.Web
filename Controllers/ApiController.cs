@@ -25,6 +25,8 @@ using ExpressBase.Common.Connections;
 using System.Net;
 using ExpressBase.Common.NotificationHubs;
 using ExpressBase.Security;
+using ExpressBase.Objects;
+using ExpressBase.Common.Security;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -254,9 +256,9 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/auth")]
         [HttpPost("/api/auth")]
-        public ApiAuthResponse ApiLoginByMd5(string username, string password, bool sso = false)
+        public ApiAuthResponse ApiLoginByMd5(string username, string password, bool anonymous = false)
         {
-            ApiAuthResponse response = new ApiAuthResponse();
+            ApiAuthResponse response = null;
             try
             {
                 Authenticate authRequest = new Authenticate
@@ -273,32 +275,31 @@ namespace ExpressBase.Web.Controllers
                     RememberMe = true
                 };
 
-                if (sso) authRequest.Meta.Add("sso", "true");
-
-                MyAuthenticateResponse authResponse = this.AuthClient.Get<MyAuthenticateResponse>(authRequest);
-
-                if (authResponse != null && authResponse.User != null)
+                if (anonymous)
                 {
-                    response.IsValid = true;
-                    response.BToken = authResponse.BearerToken;
-                    response.RToken = authResponse.RefreshToken;
-                    response.UserId = authResponse.User.UserId;
-                    response.DisplayName = authResponse.User.FullName;
-                    response.User = authResponse.User;
+                    authRequest.Meta.Add("anonymous", "true");
+                    authRequest.Meta.Add("emailId", Guid.NewGuid().ToString("N") + "@rmad.com");
+                }
 
+                response = this.Authenticate(authRequest, out MyAuthenticateResponse myAuthResponse);
+                response.Message = "authentication success";
+
+                if (response != null && response.IsValid)
+                {
                     try
                     {
-                        Eb_Solution s_obj = GetSolutionObject(this.IntSolutionId);
+                        Eb_Solution solutionObject = GetSolutionObject(this.IntSolutionId);
 
-                        if (s_obj != null && s_obj.Is2faEnabled)
+                        if (solutionObject != null && solutionObject.Is2faEnabled)
                         {
-                            response.Is2FEnabled = s_obj.Is2faEnabled;
-                            this.ServiceClient.BearerToken = authResponse.BearerToken;
-                            this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                            response.Is2FEnabled = solutionObject.Is2faEnabled;
+
+                            this.ServiceClient.BearerToken = myAuthResponse.BearerToken;
+                            this.ServiceClient.RefreshToken = myAuthResponse.RefreshToken;
 
                             Authenticate2FAResponse resp = this.ServiceClient.Post(new Authenticate2FARequest
                             {
-                                MyAuthenticateResponse = authResponse,
+                                MyAuthenticateResponse = myAuthResponse,
                                 SolnId = ViewBag.SolutionId,
                             });
 
@@ -314,17 +315,45 @@ namespace ExpressBase.Web.Controllers
                     {
                         Console.WriteLine("2FA failed :: " + ex.Message);
                     }
-
-                    //set user dp to the authresponse
-                    SetUserDp(response);
                 }
-                else
-                    response.IsValid = false;
             }
             catch (Exception e)
             {
-                response.IsValid = false;
                 Console.WriteLine("api auth request failed: " + e.Message);
+            }
+            return response ?? new ApiAuthResponse();
+        }
+
+        private ApiAuthResponse Authenticate(Authenticate authRequest, out MyAuthenticateResponse myAuthResponse)
+        {
+            ApiAuthResponse response = new ApiAuthResponse();
+            myAuthResponse = null;
+            try
+            {
+                MyAuthenticateResponse authResponse = this.AuthClient.Get<MyAuthenticateResponse>(authRequest);
+
+                myAuthResponse = authResponse;
+
+                if (authResponse != null && authResponse.User != null)
+                {
+                    response.IsValid = true;
+                    response.BToken = authResponse.BearerToken;
+                    response.RToken = authResponse.RefreshToken;
+                    response.UserId = authResponse.User.UserId;
+                    response.DisplayName = authResponse.User.FullName;
+                    response.User = authResponse.User;
+                    SetUserDp(response);
+                }
+                else
+                {
+                    response.Message = "authentication failed, user object null, user does not exist";
+                    response.IsValid = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Authenticate internal error");
+                Console.WriteLine(ex.Message);
             }
             return response;
         }
@@ -354,15 +383,61 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        [HttpPost("/api/auth_sso")]
-        public ApiAuthResponse ApiLoginBySSO(string username, OtpType type)
+        [HttpGet("/api/auth/sso")]
+        public ApiAuthResponse ApiLoginBySingleSignOn(string username, string authid, string token)
+        {
+            ApiAuthResponse response = null;
+
+            if (this.IsValidSolution)
+            {
+                username = username?.Trim();
+
+                if (!string.IsNullOrEmpty(token) && EbTokenGenerator.ValidateToken(token, authid))
+                {
+                    try
+                    {
+                        Authenticate authRequest = new Authenticate
+                        {
+                            provider = CredentialsAuthProvider.Name,
+                            UserName = username,
+                            Password = "NIL",
+                            Meta = new Dictionary<string, string> {
+                                    { RoutingConstants.WC, RoutingConstants.MC },
+                                    { TokenConstants.CID, this.IntSolutionId },
+                                    { TokenConstants.IP, this.RequestSourceIp},
+                                    { RoutingConstants.USER_AGENT, this.UserAgent},
+                                    { "sso", "true" }
+                                },
+                            RememberMe = true
+                        };
+                        response = this.Authenticate(authRequest, out _);
+                        response.Message = "authentication success";
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("sso authentication failed");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                else
+                {
+                    response = new ApiAuthResponse
+                    {
+                        Message = "security token missing for sso"
+                    };
+                }
+            }
+            return response ?? new ApiAuthResponse();
+        }
+
+        [HttpPost("/api/send_authentication_otp")]
+        public ApiAuthResponse SendAuthenticationOTP(string username, OtpType type)
         {
             ApiAuthResponse response = new ApiAuthResponse();
 
             if (this.IsValidSolution)
             {
                 username = username?.Trim();
-
                 try
                 {
                     Authenticate2FAResponse resp = this.ServiceClient.Post(new SendSignInOtpRequest
@@ -373,7 +448,45 @@ namespace ExpressBase.Web.Controllers
                         WhichConsole = TokenConstants.MC
                     });
 
-                    response.IsValid = resp == null ? false : resp.AuthStatus;
+                    response.IsValid = resp != null && resp.AuthStatus;
+
+                    if (response.IsValid)
+                    {
+                        response.Is2FEnabled = resp.Is2fa;
+                        response.TwoFAToAddress = resp.OtpTo;
+                        response.TwoFAToken = resp.TwoFAToken;
+                        response.UserAuthId = resp.UserAuthId;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("failed to send authentication otp");
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            return response;
+        }
+
+        //remove after next live
+        [HttpPost("/api/auth_sso")]
+        public ApiAuthResponse ApiLoginBySSO(string username, OtpType type)
+        {
+            ApiAuthResponse response = new ApiAuthResponse();
+
+            if (this.IsValidSolution)
+            {
+                username = username?.Trim();
+                try
+                {
+                    Authenticate2FAResponse resp = this.ServiceClient.Post(new SendSignInOtpRequest
+                    {
+                        UName = username,
+                        SignInOtpType = type,
+                        SolutionId = this.IntSolutionId,
+                        WhichConsole = TokenConstants.MC
+                    });
+
+                    response.IsValid = resp != null && resp.AuthStatus;
 
                     if (response.IsValid)
                     {
@@ -388,12 +501,12 @@ namespace ExpressBase.Web.Controllers
                     Console.WriteLine("Api Autheticate SSO failed");
                 }
             }
-
             return response;
         }
 
         [HttpPost("/api/verify_otp")]
-        public ApiAuthResponse VerifyOTP(string token, string authid, string otp)
+        [HttpGet("/api/verify_otp")]
+        public ApiAuthResponse VerifyOTP(string token, string authid, string otp, bool user_verification)
         {
             ApiAuthResponse resp = new ApiAuthResponse();
 
@@ -404,41 +517,50 @@ namespace ExpressBase.Web.Controllers
                 Authenticate2FAResponse validateResp = null;
                 try
                 {
-                    validateResp = this.ServiceClient.Post(new ValidateTokenRequest
+                    if (user_verification)
                     {
-                        Token = token,
-                        UserAuthId = authid
-                    });
+                        validateResp = this.ServiceClient.Post(new VerifyUserConfirmationRequest
+                        {
+                            UserAuthId = authid,
+                            VerificationCode = otp
+                        });
+                    }
+                    else
+                    {
+                        validateResp = this.ServiceClient.Post(new ValidateTokenRequest
+                        {
+                            Token = token,
+                            UserAuthId = authid
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("OTP validation failed" + ex.Message);
+                    Console.WriteLine("OTP validation failed, " + ex.Message);
                 }
 
                 if (validateResp != null && validateResp.AuthStatus)
                 {
-                    if (otp == user.Otp)
+                    Console.WriteLine("Auth response message" + validateResp.Message);
+
+                    resp.IsValid = user_verification ? validateResp.AuthStatus : (otp == user.Otp);
+
+                    if (resp.IsValid && !this.Authenticated)
                     {
-                        resp.IsValid = true;
-
-                        if (!this.Authenticated)
+                        string username = string.IsNullOrEmpty(user.Email) ? user.PhoneNumber : user.Email;
+                        try
                         {
-                            string username = string.IsNullOrEmpty(user.Email) ? user.PhoneNumber : user.Email;
-
-                            try
-                            {
-                                ApiAuthResponse authresp = this.ApiLoginByMd5(username, "NIL", true);
-                                resp.BToken = authresp.BToken;
-                                resp.RToken = authresp.RToken;
-                                resp.UserId = authresp.User.UserId;
-                                resp.DisplayName = authresp.User.FullName;
-                                resp.User = authresp.User;
-                                resp.DisplayPicture = authresp.DisplayPicture;
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine("Api auth failed to internaly" + ex.Message);
-                            }
+                            ApiAuthResponse authresp = this.ApiLoginBySingleSignOn(username, authid, token);
+                            resp.BToken = authresp.BToken;
+                            resp.RToken = authresp.RToken;
+                            resp.UserId = authresp.User.UserId;
+                            resp.DisplayName = authresp.User.FullName;
+                            resp.User = authresp.User;
+                            resp.DisplayPicture = authresp.DisplayPicture;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Api auth failed to internaly" + ex.Message);
                         }
                     }
                 }
@@ -544,26 +666,23 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("/api/files/upload")]
-        public async Task<List<ApiFileData>> UploadFiles()
+        public async Task<ActionResult<List<ApiFileData>>> UploadFiles()
         {
+            if (!Authenticated) return Unauthorized();
+
             List<ApiFileData> ApiFiles = new List<ApiFileData>();
 
-            var req = this.HttpContext.Request.Form;
-            string _filename = string.Empty;
-
-            if (!ViewBag.IsValid)
-                throw new Exception();
-
+            IFormCollection req = this.HttpContext.Request.Form;
             try
             {
-                FileUploadRequest fileRequest = new FileUploadRequest();
+                FileUploadRequest request = new FileUploadRequest();
+
                 foreach (IFormFile formFile in req.Files)
                 {
-                    if (formFile.Length <= 0)
-                        return ApiFiles;
+                    if (formFile.Length <= 0) return ApiFiles;
 
-                    _filename = formFile.FileName.ToLower();
-                    fileRequest.FileCategory = this.GetFileType(_filename);
+                    string fileName = formFile.FileName.ToLower();
+                    request.FileCategory = this.GetFileType(fileName);
 
                     byte[] myFileContent;
                     using (var memoryStream = new MemoryStream())
@@ -572,30 +691,30 @@ namespace ExpressBase.Web.Controllers
                         memoryStream.Seek(0, SeekOrigin.Begin);
                         myFileContent = new byte[memoryStream.Length];
                         await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-                        fileRequest.FileByte = myFileContent;
+                        request.FileByte = myFileContent;
                     }
 
-                    fileRequest.FileDetails.FileName = _filename;
-                    fileRequest.FileDetails.FileType = _filename.SplitOnLast(CharConstants.DOT).Last();
-                    fileRequest.FileDetails.Length = fileRequest.FileByte.Length;
-                    fileRequest.FileDetails.FileCategory = fileRequest.FileCategory;
-                    fileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
+                    request.FileDetails.FileName = fileName;
+                    request.FileDetails.FileType = fileName.SplitOnLast(CharConstants.DOT).Last();
+                    request.FileDetails.Length = request.FileByte.Length;
+                    request.FileDetails.FileCategory = request.FileCategory;
+                    request.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
 
                     if (req.ContainsKey("context") && !string.IsNullOrEmpty(req["context"]))
-                        fileRequest.FileDetails.Context = req["context"];
+                        request.FileDetails.Context = req["context"];
 
                     if (req.ContainsKey("categories") && !string.IsNullOrEmpty(req["categories"]))
-                        fileRequest.FileDetails.MetaDataDictionary.Add("Category", req["categories"].ToString().Split(CharConstants.COMMA).ToList());
+                        request.FileDetails.MetaDataDictionary.Add("Category", req["categories"].ToString().Split(CharConstants.COMMA).ToList());
 
                     if (req.ContainsKey("tags") && !string.IsNullOrEmpty(req["tags"]))
-                        fileRequest.FileDetails.MetaDataDictionary.Add("Tags", req["tags"].ToString().Split(CharConstants.COMMA).ToList());
+                        request.FileDetails.MetaDataDictionary.Add("Tags", req["tags"].ToString().Split(CharConstants.COMMA).ToList());
 
-                    var res = this.FileClient.Post<UploadAsyncResponse>(fileRequest);
+                    UploadAsyncResponse res = this.FileClient.Post<UploadAsyncResponse>(request);
 
                     ApiFiles.Add(new ApiFileData
                     {
-                        FileName = _filename,
-                        FileType = _filename.SplitOnLast(CharConstants.DOT).Last(),
+                        FileName = fileName,
+                        FileType = fileName.SplitOnLast(CharConstants.DOT).Last(),
                         FileRefId = res.FileRefId
                     });
                 }
@@ -611,10 +730,10 @@ namespace ExpressBase.Web.Controllers
         {
             string ext = FileName.SplitOnLast(CharConstants.DOT).Last();
 
-            List<string> imageTypes = new List<string> { "jpg", "jpeg", "bmp", "gif", "png" };
-
-            if (imageTypes.Contains(ext))
+            if (StaticFileConstants.ImageTypes.Contains(ext))
                 return EbFileCategory.Images;
+            else if (StaticFileConstants.AudioTypes.Contains(ext))
+                return EbFileCategory.Audio;
             else
                 return EbFileCategory.File;
         }
@@ -646,57 +765,54 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/get_file")]
-        public ApiFileResponse GetStaticFiles(EbFileCategory category, string filename)
+        public ActionResult<ApiFileResponse> GetStaticFiles(EbFileCategory category, string filename)
         {
+            if (!Authenticated) return Unauthorized();
+
             ApiFileResponse response = new ApiFileResponse();
 
-            if (this.Authenticated)
+            try
             {
-                try
+                int id = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First());
+                DownloadFileResponse dfs = null;
+
+                if (category == EbFileCategory.File || category == EbFileCategory.Audio)
                 {
-                    int id = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First());
-                    DownloadFileResponse dfs = null;
-
-                    if (category == EbFileCategory.File)
+                    dfs = this.FileClient.Get(new DownloadFileByIdRequest
                     {
-                        dfs = this.FileClient.Get(new DownloadFileByIdRequest
+                        FileDetails = new FileMeta
                         {
-                            FileDetails = new FileMeta
-                            {
-                                FileRefId = id,
-                                FileCategory = EbFileCategory.File
-                            }
-                        });
-                    }
-                    else if (category == EbFileCategory.Images)
-                    {
-                        dfs = this.FileClient.Get(new DownloadImageByIdRequest
-                        {
-                            ImageInfo = new ImageMeta
-                            {
-                                FileRefId = id,
-                                FileCategory = EbFileCategory.Images,
-                                ImageQuality = ImageQuality.original
-                            }
-                        });
-                    }
-
-                    if (dfs.StreamWrapper != null)
-                    {
-                        response.StatusCode = HttpStatusCode.OK;
-
-                        //Read the File into a Byte Array.
-                        response.Bytea = dfs.StreamWrapper.Memorystream.ToArray();
-                        response.ContentType = this.GetMime(filename);
-                    }
-                    else
-                        response.StatusCode = HttpStatusCode.NotFound;
+                            FileRefId = id,
+                            FileCategory = category
+                        }
+                    });
                 }
-                catch (Exception ex)
+                else if (category == EbFileCategory.Images)
                 {
-                    Console.WriteLine(ex.Message);
-                    response.StatusCode = HttpStatusCode.NotFound;
+                    dfs = this.FileClient.Get(new DownloadImageByIdRequest
+                    {
+                        ImageInfo = new ImageMeta
+                        {
+                            FileRefId = id,
+                            FileCategory = EbFileCategory.Images,
+                            ImageQuality = ImageQuality.original
+                        }
+                    });
                 }
+
+                if (dfs.StreamWrapper != null)
+                {
+                    response.Bytea = dfs.StreamWrapper.Memorystream.ToArray();
+                    response.ContentType = this.GetMime(filename);
+                }
+                else
+                    throw new Exception("file not found");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound(ex.Message);
             }
             return response;
         }
@@ -726,33 +842,48 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/validate_solution")]
-        public ValidateSidResponse ValidateSolution()
+        public ActionResult<ValidateSidResponse> ValidateSolution()
         {
+            if (!IsValidSolution)
+                return BadRequest($"invalid solution url '{ExtSolutionId}'");
+
             ValidateSidResponse resp = new ValidateSidResponse { Message = "Success" };
             try
             {
                 resp.IsValid = this.IsValidSolution;
-                if (resp.IsValid)
+                try
                 {
-                    try
+                    DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
                     {
-                        DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
-                        {
-                            SolnId = this.IntSolutionId,
-                        });
-                        resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
-                    }
-                    catch (Exception ex)
-                    {
-                        resp.Message = "Solution is valid. Failed to fetch logo";
-                        Console.WriteLine(ex.Message);
-                    }
+                        SolnId = this.IntSolutionId,
+                    });
+                    resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
+                }
+                catch (Exception ex)
+                {
+                    resp.Message = "Solution is valid. Failed to fetch logo";
+                    Console.WriteLine(ex.Message);
                 }
 
                 resp.SolutionObj = this.GetSolutionObject(this.IntSolutionId);
 
-                if (resp.SolutionObj == null)
-                    throw new Exception("Solution is valid. Solution object null");
+                if (resp.SolutionObj != null)
+                {
+                    try
+                    {
+                        if (resp.SolutionObj.GetMobileSettings(out var settings) && settings.IsSignupEnabled())
+                        {
+                            EbMobilePage mobilePage = this.Redis.Get<EbMobilePage>(settings.SignUpPageRefId);
+                            resp.SignUpPage = EbSerializers.Json_Serialize(mobilePage);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        resp.Message += ", Redis exception while getting signup page";
+                        Console.WriteLine("Redis exception while getting mobile page");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -763,55 +894,23 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_solution_data")]
-        public EbMobileSolutionData GetSolutionDataForMobile(bool export = true)
+        public ActionResult<EbMobileSolutionData> GetSolutionDataForMobile(bool export = true)
         {
-            if (Authenticated)
+            if (!Authenticated) return Unauthorized();
+
+            EbMobileSolutionData data = this.ServiceClient.Get(new MobileSolutionDataRequest()
             {
-                EbMobileSolutionData data = this.ServiceClient.Get(new MobileSolutionDataRequest()
-                {
-                    Export = export
-                });
+                Export = export
+            });
 
-                data.StatusCode = HttpStatusCode.OK;
-
-                try
-                {
-                    Eb_Solution s_obj = GetSolutionObject(this.IntSolutionId);
-
-                    if (s_obj == null) throw new Exception("Solution object null");
-
-                    var locations = s_obj.Locations ?? new Dictionary<int, EbLocation>();
-
-                    if (this.LoggedInUser.IsAdmin())
-                    {
-                        data.Locations.AddRange(locations.Select(kvp => kvp.Value).ToList());
-                    }
-                    else if (this.LoggedInUser.LocationIds != null)
-                    {
-                        if (this.LoggedInUser.LocationIds.Contains(-1))
-                            data.Locations.AddRange(locations.Select(kvp => kvp.Value).ToList());
-                        else
-                        {
-                            foreach (int _locid in this.LoggedInUser.LocationIds)
-                            {
-                                if (locations.ContainsKey(_locid))
-                                    data.Locations.Add(locations[_locid]);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Exception at Solution data api,locations :: " + ex.Message);
-                }
-
-                return data;
+            if (data == null)
+            {
+                return NotFound();
             }
-
-            return new EbMobileSolutionData { StatusCode = HttpStatusCode.Unauthorized };
+            return data;
         }
 
-        [HttpPost("/api/push_data")]
+        [HttpPost("api/push_data")]
         public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm] Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;
@@ -824,13 +923,6 @@ namespace ExpressBase.Web.Controllers
                     int RowId = Convert.ToInt32(form["rowid"]);
                     string RefId = form["refid"];
                     int LocId = Convert.ToInt32(form["locid"]);
-
-                    //string Operation = OperationConstants.NEW;
-                    //if (RowId > 0)
-                    //    Operation = OperationConstants.EDIT;
-
-                    //if (!this.LoggedInUser.HasFormPermission(RefId, Operation, LocId))
-                    //    return new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 };
 
                     Resp = ServiceClient.Post(new InsertDataFromWebformRequest
                     {
@@ -849,87 +941,45 @@ namespace ExpressBase.Web.Controllers
             return Resp;
         }
 
-        [HttpGet("api/get_data")]
-        public MobileVisDataResponse GetMobileVisData(string refid, string param, string sort_order, int limit, int offset, bool is_powerselect)
-        {
-            MobileVisDataResponse resp = null;
-            try
-            {
-                if (Authenticated)
-                {
-                    MobileVisDataRequest request = new MobileVisDataRequest()
-                    {
-                        DataSourceRefId = refid,
-                        Limit = limit,
-                        Offset = offset,
-                        IsPowerSelect = is_powerselect
-                    };
-
-                    if (param != null)
-                        request.Params.AddRange(JsonConvert.DeserializeObject<List<Param>>(param));
-
-                    if (sort_order != null)
-                        request.SortOrder.AddRange(JsonConvert.DeserializeObject<List<SortColumn>>(sort_order));
-
-                    resp = this.ServiceClient.Get(request);
-                }
-                else
-                    resp = new MobileVisDataResponse { Message = ViewBag.Message };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
-            return resp;
-        }
-
         [HttpPost("api/get_data")]
-        public MobileVisDataResponse GetData(string refid, int limit, int offset, string param, string sort_order, string search, bool is_powerselect)
+        public ActionResult<MobileVisDataResponse> GetData(string refid, int limit, int offset, string param, string sort_order, string search, bool is_powerselect)
         {
-            MobileVisDataResponse data = new MobileVisDataResponse();
+            if (!Authenticated) return Unauthorized();
+
+            if (string.IsNullOrEmpty(refid)) return BadRequest();
+
+            MobileVisDataResponse response = null;
             try
             {
-                if (Authenticated)
+                MobileVisDataRequest request = new MobileVisDataRequest()
                 {
-                    if (string.IsNullOrEmpty(refid))
-                    {
-                        data.Message = "Data source refid must be set";
-                        return data;
-                    }
+                    DataSourceRefId = refid,
+                    Limit = limit,
+                    Offset = offset,
+                    IsPowerSelect = is_powerselect
+                };
 
-                    MobileVisDataRequest request = new MobileVisDataRequest()
-                    {
-                        DataSourceRefId = refid,
-                        Limit = limit,
-                        Offset = offset,
-                        IsPowerSelect = is_powerselect
-                    };
+                if (param != null)
+                    request.Params.AddRange(JsonConvert.DeserializeObject<List<Param>>(param));
 
-                    if (param != null)
-                        request.Params.AddRange(JsonConvert.DeserializeObject<List<Param>>(param));
+                if (sort_order != null)
+                    request.SortOrder.AddRange(JsonConvert.DeserializeObject<List<SortColumn>>(sort_order));
 
-                    if (sort_order != null)
-                        request.SortOrder.AddRange(JsonConvert.DeserializeObject<List<SortColumn>>(sort_order));
+                if (search != null)
+                    request.SearchColumns.AddRange(JsonConvert.DeserializeObject<List<Param>>(search));
 
-                    if (search != null)
-                        request.SearchColumns.AddRange(JsonConvert.DeserializeObject<List<Param>>(search));
-
-                    var response = this.ServiceClient.Get(request);
-                    data.Data = response?.Data;
-                    data.Message = "Success";
-                }
-                else
-                    data.Message = ViewBag.Message;
+                response = this.ServiceClient.Get(request);
+                response.Message = "Success";
             }
             catch (Exception ex)
             {
-                data.Message = ex.Message;
+                response = response ?? new MobileVisDataResponse();
+                response.Message = ex.Message;
 
                 Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-            return data;
+            return response;
         }
 
         [HttpGet("api/get_formdata")] //refid = mobileform
@@ -1064,32 +1114,6 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(ex.StackTrace);
             }
             return new MyActionInfoResponse();
-        }
-
-        [HttpPost("api/init_device")]
-        public EbDeviceRegistration InitializeDevice(string registration)
-        {
-            EbDeviceRegistration response = null;
-            try
-            {
-                if (Authenticated)
-                {
-                    var req = JsonConvert.DeserializeObject<EbDeviceRegistrationRequest>(registration);
-
-                    if (req != null)
-                    {
-                        response = this.ServiceClient.Post(req);
-                    }
-                }
-                else
-                    response = new EbDeviceRegistration { StatusCode = HttpStatusCode.Unauthorized };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("EXCEPTION AT init_device API" + ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
-            return response;
         }
 
         [HttpGet("api/notifications/get_registration_id")]

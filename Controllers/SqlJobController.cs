@@ -83,7 +83,7 @@ namespace ExpressBase.Web.Controllers
             List<Param> _params = new List<Param>();
             _params.Add(new Param { Name = "date",Type = ((int)EbDbTypes.String).ToString() , Value = Date });
             _params.Add(new Param { Name = "refid", Type = ((int)EbDbTypes.String).ToString(), Value = Refid });
-            string[] arrayy = new string[] { "logmaster_id", "message", "executed_by", "executed_at", "status", "id", "keyvalues" };
+            string[] arrayy = new string[] { "logmaster_id", "Message", "Executed By", "Execution Time", "Status", "id", "keyvalues" };
             DVColumnCollection DVColumnCollection = GetColumnsForSqlJob(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params,  Columns = DVColumnCollection, AutoGen = false, IsPaging=true };
             List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("logmaster_id") };
@@ -104,17 +104,17 @@ namespace ExpressBase.Web.Controllers
                     DVBaseColumn _col = null;
                     if (str == "logmaster_id")
                         _col = new DVNumericColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };                   
-                   if (str == "executed_by")
+                   if (str == "Executed By")
                         _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
-                   if (str == "executed_at")
+                   if (str == "Execution Time")
                         _col = new DVDateTimeColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.Date, bVisible = true,Format = DateFormat.DateTime };
-                   if (str == "status")
+                   if (str == "Status")
                         _col = new DVStringColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                    if (str == "id")
                         _col = new DVNumericColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
                    if (str == "keyvalues")
                         _col = new DVStringColumn { Data = 6,  sTitle = str, Type = EbDbTypes.String, bVisible = false };
-                    if (str == "message")
+                    if (str == "Message")
                         _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
                     _col.Name = str;
                     _col.RenderType = _col.Type;

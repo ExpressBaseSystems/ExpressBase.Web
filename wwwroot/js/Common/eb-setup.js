@@ -66,116 +66,183 @@ class Setup {
     }
 
     notified(msg) {
-        var o = JSON.parse(msg);
-        this.notification_count = this.notification_count + 1;
-        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
-        //start again
+        var o = JSON.parse(msg);       
+        //start again       
+        this.onGetNotificationsSuccess(o,false);
     }
 
     getNotifications() {
         $.ajax({
             type: "GET",
             url: "../Notifications/GetNotifications",
-            success: this.onGetNotificationsSuccess.bind(this)
+            success: function (getNF) {
+                var data = JSON.parse(getNF);
+                this.onGetNotificationsSuccess(data, true);
+            }.bind(this)
+                
         });
     }
 
-    onGetNotificationsSuccess(data) {
+    onGetNotificationsSuccess(data,onload) {
+       
         if (data === null || data === undefined) return;
         else {
-            if ("notifications" in data && Array.isArray(data.notifications)) {
-                this.drawNotifications(data.notifications);
+            if ("Notification" in data && Array.isArray(data.Notification)) {
+                this.drawNotifications(data.Notification, onload);
             }
-            if ("pendingActions" in data && Array.isArray(data.pendingActions)) {
-                this.drawActions(data.pendingActions);
+            if ("PendingActions" in data && Array.isArray(data.PendingActions)) {
+                this.drawActions(data.PendingActions, onload);
             }
-            if ("myMeetings" in data && Array.isArray(data.myMeetings)) {
-                this.drawMeetings(data.myMeetings);
+            if ("MyMeetings" in data && Array.isArray(data.MyMeetings)) {
+                this.drawMeetings(data.MyMeetings, onload);
             }
         }
-        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+      //  ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
         $('.status-time').tooltip({
             placement: 'top'
         });
     }
 
-    drawNotifications(nf) {
+    drawNotifications(nf, onload) {
         let plc = "Untitled...";
-        this.nf_container.empty();
-        if (nf.length > 0) {
-            for (let i = 0; i < nf.length; i++) {
-                this.nf_container.append(`
-                <li class="nf-tile" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
+        if (onload) {
+            this.nf_container.empty();
+            if (nf.length > 0) {
+                for (let i = 0; i < nf.length; i++) {
+                    this.nf_container.append(`
+                <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
                     <i class="fa fa-times notification-close" style="float: right;"></i>
                     <div class="notification-inner">
-                        <h5>${nf[i].title || plc}</h5>
-                        <span class='pending_date status-time' title='${nf[i].createdDate}'>${nf[i].duration}</span>
+                        <h5>${nf[i].Title || plc}</h5>
+                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
                     </div>
                 </li>`);
+                }
             }
+            else {
+                this.nf_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            }
+            $("#nf-window #nf-notification-count").text(`(${nf.length})`);
+            this.notification_count = nf.length;
         }
         else {
-            this.nf_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            if (nf.length > 0) {
+                for (let i = 0; i < nf.length; i++) {
+                    this.nf_container.prepend(`
+                <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
+                    <i class="fa fa-times notification-close" style="float: right;"></i>
+                    <div class="notification-inner">
+                        <h5>${nf[i].Title || plc}</h5>
+                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
+                    </div>
+                </li>`);
+                    this.notification_count += 1;
+                }
+
+                $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);                
+            }
+            
         }
-        $("#nf-window #nf-notification-count").text(`(${nf.length})`);
-        this.notification_count = nf.length;
-        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
+       
+        if (nf.length > 0) {
+            $('#closeAll_nf').prop("disabled", false);
+            $('#closeAll_nf').off("click").on('click', this.ClearAll_NF.bind(this));
+        }
+        $('.notification-close,.nf-lst').off("click").on('click', this.CloseNotification.bind(this));
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
     }
 
-    drawActions(pa) {
-        this.actn_container.empty();
+    drawActions(pa, onload) {
+        if (onload) {
+            this.actn_container.empty();
+        }
         if (pa.length > 0) {
             for (let i = 0; i < pa.length; i++) {
-                let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].dataId)]))));
+                let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].DataId)]))));
                 let locid = this.getCurrentLocation();
-                let Id = pa[i].myActionId;
-                let url = `href='../webform/index?refid=${pa[i].link}&_params=${params}&_mode=1&_locId=${locid}' target='_blank'`;
+                let Id = pa[i].MyActionId;
+                let url = `href='../webform/index?refid=${pa[i].Link}&_params=${params}&_mode=1&_locId=${locid}' target='_blank'`;
                 let _label = "";
-                if (pa[i].actionType === "Approval")
+                if (pa[i].ActionType === "Approval")
                     _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";
                 else
                     url = 'href="#" onclick="MeetingRequestView(this); return false;"';
-                this.actn_container.append(`
+                var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
                             <div class='pending_action_inner'>
-                                <h5>${pa[i].description}</h5>
-                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].dateInString}</span></div>
+                                <h5>${pa[i].Description}</h5>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].CreatedDate}'>${pa[i].DateInString}</span></div>
                             </div>
                         </a>
-                </li>`);
+                </li>`;
+                if (onload) {
+                    this.actn_container.append(_htm);
+                } else {
+                    this.actn_container.prepend(_htm);
+                    this.actions_count += 1;
+                }
+                
             }
         }
         else {
-            this.actn_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            if (onload) {
+                this.actn_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            }
+            
         }
-        $("#nf-window #nf-pendingact-count").text(`(${pa.length})`);
-        this.actions_count = pa.length;
+        if (onload) {
+            $("#nf-window #nf-pendingact-count").text(`(${pa.length})`);
+            this.actions_count = pa.length;
+        }
+        else {
+            $("#nf-window #nf-pendingact-count").text(`(${this.actions_count})`);
+        }
+       
+
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
     }
 
-    drawMeetings(pa) {
-        this.meeting_container.empty();
+    drawMeetings(pa, onload) {
+        if (onload) {
+            this.meeting_container.empty();
+        }
         if (pa.length > 0) {
             for (let i = 0; i < pa.length; i++) {
                 let _label = "";
-                let Id = pa[i].myActionId;
+                let Id = pa[i].MyActionId;
                 let url = 'href="#" onclick="haaaa(this); return false;"';
-                this.meeting_container.append(`
+                var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
                             <div class='mymeeting_inner'>
-                                <h5>${pa[i].description}</h5>
-                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].createdDate}</span></div>
+                                <h5>${pa[i].Description}</h5>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].CreatedDate}'>${pa[i].CreatedDate}</span></div>
                             </div>
                         </a>
-                </li>`);
+                </li>`;
+                if (onload) {
+                    this.meeting_container.append(_htm);
+                }
+                else {
+                    this.meeting_container.prepend(_htm);
+                    this.meetings_count += 1;
+                }
             }
         }
         else {
-            this.meeting_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Meeting</p>`);
+            if (onload) {
+                this.meeting_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Meeting</p>`);
+            }
         }
-        $("#nf-window #nf-mymeeting-count").text(`(${pa.length})`);
-        this.meetings_count = pa.length;
+        if (onload) {
+            $("#nf-window #nf-mymeeting-count").text(`(${pa.length})`);
+            this.meetings_count = pa.length;
+        }
+        else {
+            $("#nf-window #nf-mymeeting-count").text(`(${this.meetings_count})`);
+        }
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
     }
 
     userNotification() {
@@ -247,6 +314,35 @@ class Setup {
         }
 
         $('#notification-count').attr("count", x);
+    }
+
+    ClearAll_NF = function () {
+        var nf = $(".nf-lst");
+        var nfArray = [];
+        if (nf.length > 0) {
+            nf.each(function (i,ob) {
+                nfArray.push($(ob).attr("notification-id"));
+            })           
+            $.ajax({
+                type: "POST",
+                url: "../Notifications/ClearAllNotifications",
+                data: { notificationLst: nfArray },
+                success: function () {
+                    nf.each(function (j, obj) {
+                        $(obj).closest("li").detach();
+                    })
+
+                    this.notification_count = 0;
+                    $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);
+                    ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+                    if (this.notification_count === 0) {
+                        this.nf_container.html(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+                    }
+                    $('#closeAll_nf').prop("disabled", true);
+                }.bind(this)
+            });
+           
+        }
     }
 
     CloseNotification = function (e) {

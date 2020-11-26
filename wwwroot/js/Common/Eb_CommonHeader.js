@@ -71,6 +71,8 @@
             this.isSimpleSearch = true;
             if (event.keyCode === 13)
                 this.platformSearch();
+            else if (event.keyCode === 27)
+                $('.search-dd').slideUp(50);
         }.bind(this));
 
         $('.srch-li').on('keyup', function () {
@@ -107,7 +109,9 @@
                         first.querySelector('a').focus();
                     } // if the currently focused element is the main input --> focus the first <li>
                     else {
-                        document.activeElement.parentNode.parentNode.parentNode.nextSibling.querySelector('a').focus();
+                        let nextSibling = document.activeElement.parentNode.parentNode.parentNode.nextSibling;
+                        if (nextSibling)
+                            nextSibling.querySelector('a').focus();
                     } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
                     break;
             }
@@ -152,7 +156,7 @@
             html += '<li class="srch-li">'
             html += `
 <div class='srch-li-block'>
-    <h4><a class='srch-res-fn' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
+    <h4><a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
         <div class="ctrldtlsWrap">`;
             $.each(obj.Data, function (name, val) {
                 if (j++ % 3 === 0) {
@@ -160,13 +164,13 @@
                         <table class='ctrldtls'>
                             <tbody>`;
                 }
-                html += `<tr><td><key>${name}</key></td> <td><value>${val}</value></td></tr>`
+                html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
                 if (j % 3 === 0) {
                     html += `
                             </tbody>
                         </table>`;
                 }
-                if (j === 9)
+                if (j === 6)
                     return false;
             });
             html += `
@@ -203,9 +207,11 @@
         //$('.srch-body-cont').append(html);
         $cont.append(html);
         $('.search-dd').slideDown(100);
-        modifyTextStyle('.srch-body-cont value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
+        modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
         $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
         this.scrollList();
+        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').focus() });
+        $('.srch-li').on('dblclick', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').click() });
     };
 
     this.hideDDclickOutside = function (e) {

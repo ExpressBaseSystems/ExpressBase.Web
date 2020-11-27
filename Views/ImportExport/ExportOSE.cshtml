@@ -1,5 +1,6 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @using ExpressBase.Web.Controllers;
+@using ExpressBase.Common.Structures;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     Dictionary<int, ObjectVersionsDictionary> AppObjMap = ViewBag.AppObjMap;
@@ -13,6 +14,7 @@
             border-radius: 4px;
             border: 1px solid #ccc;
             background-color: white;
+            margin-top: 3%;
         }
 
         .eb-exprt-container {
@@ -35,7 +37,7 @@
                 margin-bottom: 20px;
             }
 
-        .page-header input, .input-group {
+        input, .input-group {
             width: 50%;
         }
 
@@ -49,24 +51,36 @@
     </style>
 }
 @section JavaScript{
-
-
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>*@
     <script src="~/js/LayoutCommon/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
     @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>*@
     <script type="text/javascript" src="~/js/LayoutCommon/bootstrap-iconpicker.min.js"></script>
 }
 <div class="container-fluid list_cont">
-    <div class="page-header eb-exprt-container">
+    <div class="eb-exprt-container">
         <h4>Export Objects</h4>
-        <div class="">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="Packagedetail-tab" data-toggle="tab" href="#nav-Packagedetail" role="tab" aria-controls="home" aria-selected="true">Package Details</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="apps-tab" data-toggle="tab" href="#nav-apps" role="tab" aria-controls="profile" aria-selected="false">Applications</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane active" id="nav-Packagedetail" role="tabpanel" aria-labelledby="Packagedetail-tab">
             <div class="form-group ">
                 Package Name
                 <input type="text" class="form-control" id="packname" placeholder="Package Name" style="height:40px" />
             </div>
             <div class="form-group ">
-                package Description
+                Package Description
                 <input type="text" class="form-control" id="packdesc" placeholder="package Description" style="height:40px" />
+            </div>
+            <div class="form-group ">
+                Master Solution
+                <input type="text" class="form-control" id="mastersoln" placeholder="Select Master solution" style="height:40px" />
             </div>
             <div class="form-group appicon_box">
                 Icon
@@ -78,44 +92,48 @@
                 </div>
             </div>
         </div>
-        Please select versions of each objects to be exported.
-    </div>
-    <div class="eb-exprt-container">
-        <div class="eb-exprt-body">
-            @foreach (KeyValuePair<int, ObjectVersionsDictionary> app in AppObjMap)
-            {
-                <div class="app_container col-md-12">
-                    <div class="app-name">
-                        <span class="col-md-12 appkey" value="@app.Key"> @appNameCollection[app.Key]</span>
-                    </div>
-                    @foreach (KeyValuePair<int, List<EbObjectWrapper>> obj in app.Value)
+        <div class="tab-pane fade nav-apps" id="nav-apps" role="tabpanel" aria-labelledby="apps-tab">
+            Please select versions of each objects to be exported.
+            <div class="eb-exprt-container">
+                <div class="eb-exprt-body">
+                    @foreach (KeyValuePair<int, ObjectVersionsDictionary> app in AppObjMap)
                     {
-                        <div class="objContainer_f_app">
-                            <span class="col-md-10 pd-0 objkey"> @obj.Value[0].DisplayName</span>
-                            <select class="selectpicker show-tick version_dd col-md-2" style="border:none;">
-                                @foreach (EbObjectWrapper ver in obj.Value)
-                                {
-                                    <option value="@ver.RefId">@ver.VersionNumber</option>
-                                }
-                            </select>
+                        <div class="app_container col-md-12">
+                            <div class="app-name">
+                                <span class="col-md-12 appkey" value="@app.Key">Application : @appNameCollection[app.Key] - (@app.Value.Count)</span>
+                            </div>
+                            @foreach (KeyValuePair<int, List<EbObjectWrapper>> obj in app.Value)
+                            {
+                                <div class="objContainer_f_app">
+                                    <span class="col-md-6 pd-0 objkey"> @obj.Value[0].DisplayName</span>
+                                    <span class="col-md-4 pd-0 objkey"> @((EbObjectType)obj.Value[0].EbObjectType)</span>
+                                    <select class="selectpicker show-tick version_dd col-md-2" style="border:none;">
+                                        @foreach (EbObjectWrapper ver in obj.Value)
+                                        {
+                                            <option value="@ver.RefId">@ver.VersionNumber</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
-            }
-        </div>
-        <div class="eb-exprt-footer">
-            <a id="goto_store" class="ebbtn" href="/AppStore" style="        background: #f58a8a;
-        color: white;
-">Back to App Store</a>
-            <button id="commit_export" class="pull-right ebbtn eb_btngreen">Export</button>
+            </div>
         </div>
     </div>
+   
+    <div class="eb-exprt-footer">
+        <a id="goto_store" class="ebbtn" href="/AppStore" style="background: #f58a8a;color: white;">Back to App Store</a>
+        <button id="commit_export" class="pull-right ebbtn eb_btngreen">Export</button>
+    </div>
 </div>
+
+
 @section JsCode{
     <script>
         window.ebcontext.header.setName("Export objects");
 
-         $("#packIcon").iconpicker({
+        $("#packIcon").iconpicker({
             placement: 'top',
             iconset: 'fontawesome',
             icon: 'fa-home'
@@ -125,21 +143,20 @@
 
         $('#commit_export').on('click', function () {
             let appdict = {};
-            $('.list_cont').find('.app_container').each(function (j, obj)
-            {
+            $('.list_cont').find('.app_container').each(function (j, obj) {
                 var refids = [];
-                $(this).find('.selectpicker').each(function (i, o)
-                {
+                $(this).find('.selectpicker').each(function (i, o) {
                     refids.push($(this).find("option:selected").val());
                 });
                 appdict[parseInt($(obj).children(".app-name").children(".appkey").attr("value"))] = refids;
             });
             let App = {
-                packName:$('#packname').val(),
-                packDesc:$('#packdesc').val(),
-                packIcon:$("input[name='packIcon']").val(),
+                packName: $('#packname').val(),
+                packDesc: $('#packdesc').val(),
+                packIcon: $("input[name='packIcon']").val(),
+                MasterSoln: $('#mastersoln').val(),
                 appColl: appdict
-                };
+            };
             let po = {
                 Message: "Exporting objects...",
                 Html: function ($selector) {
@@ -158,7 +175,7 @@
             $.ajax({
                 url: "../ImportExport/Export",
                 type: "POST",
-                data: {App :App },
+                data: { App: App },
                 beforeSend: function () {
                     self.EbPopBox("show", po);
                 },

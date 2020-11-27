@@ -19,7 +19,7 @@
     this.Procs = {};
     this.Rowdata = {};
     this.loader = $("#eb_common_loader");
-
+    this.IsRendered = false;
     this.GridStackInit = function () {
         grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
         grid.on('gsresizestop', this.Redrawfn.bind(this));
@@ -111,7 +111,7 @@
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
             if (this.FilterObj.FormObj.AutoRun) {
-                $("#btnGo").trigger("click");
+                if (!this.IsRendered) $("#btnGo").trigger("click");
                 this.CloseParamDiv();
             }
             $("#filter-dg").off("click").on("click", this.toggleFilter.bind(this));
@@ -224,6 +224,7 @@
         //$(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
     }
     this.DashBoardRefresh = function () {
+        this.IsRendered = false;
         grid.removeAll();
         this.init();
     };
@@ -739,6 +740,7 @@
 
 
     this.GetFilterValues = function () {
+        this.IsRendered = true;
         this.loader.EbLoader("show");
         this.filtervalues = [];
         //if (this.stickBtn) { this.stickBtn.minimise(); }
@@ -858,7 +860,7 @@
 
         else {
             this.DvExternalLinkTrigger();
-        } 
+        }
     }
 
     this.placefiltervalues = function () {

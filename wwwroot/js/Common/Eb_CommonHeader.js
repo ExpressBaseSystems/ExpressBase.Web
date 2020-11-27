@@ -5,6 +5,7 @@
     var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
     this.insertGlobalSearch = function () {
+        $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD
 
         $('body').prepend(`
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -38,57 +39,185 @@
                     $('#exampleModalCenter').modal('show');
                 }
             }
-        })
-        window.ebcontext.header.insertButton(`<button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>`)
+        });
+
+        window.ebcontext.header.insertButton(`
+<div class='toolb-srchbx-wrpr'>
+    <input type='text' class='toolb-srchbx'/>
+    <button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter__" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>
+    <div class="search-dd">
+
+<div class="srch-body-cont"></div>
+
+
+    </div>
+</div>`);
+
+        this.$toolbSrchBx = $('.toolb-srchbx');
+        this.$srchWrap = $('.toolb-srchbx-wrpr');
 
         $('#exampleModalCenter').on('shown.bs.modal', function (e) {
             $('#exampleModalCenter .srch-bx').focus();
-        })
-        $('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
-        $('#exampleModalCenter .srch-bx').on('keyup', function () {
+        });
+
+        //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
+        $('#platformsearch').on('click', this.platformSearch);
+
+        this.$toolbSrchBx.on('focus', function () {
+            $('.search-dd').slideDown(100);
+        }.bind(this));
+
+        this.$toolbSrchBx.on('keyup', function () {
+            this.isSimpleSearch = true;
+            if (event.keyCode === 13)
+                this.platformSearch();
+            else if (event.keyCode === 27)
+                $('.search-dd').slideUp(50);
+        }.bind(this));
+
+        $('.srch-li').on('keyup', function () {
             if (event.keyCode === 13)
                 this.platformSearch();
         }.bind(this));
+
+        //$('#exampleModalCenter .srch-bx').on('keyup', function () {
+        //this.isSimpleSearch = false;
+        //    if (event.keyCode === 13)
+        //        this.platformSearch();
+        //}.bind(this));
     }.bind(this);
 
+    this.scrollList = function () {
+        var list = document.querySelector('.srch-ul'); // targets the <ul>
+        var first = list.firstChild; // targets the first <li>
+        var maininput = this.$toolbSrchBx[0];  // targets the input, which triggers the functions populating the list
+        document.onkeydown = function (e) { // listen to keyboard events
+            switch (e.keyCode) {
+                case 38: // if the UP key is pressed
+                    if (document.activeElement == maininput) {
+                        break;
+                    } // stop the script if the focus is on the input or first element
+                    else if (document.activeElement == first.querySelector('a')) {
+                        maininput.focus();
+                    } // stop the script if the focus is on the input or first element
+                    else {
+                        document.activeElement.parentNode.parentNode.parentNode.previousSibling.querySelector('a').focus();
+                    } // select the element before the current, and focus it
+                    break;
+                case 40: // if the DOWN key is pressed
+                    if (document.activeElement == maininput) {
+                        first.querySelector('a').focus();
+                    } // if the currently focused element is the main input --> focus the first <li>
+                    else {
+                        let nextSibling = document.activeElement.parentNode.parentNode.parentNode.nextSibling;
+                        if (nextSibling)
+                            nextSibling.querySelector('a').focus();
+                    } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
+                    break;
+            }
+        }
+    }
+
     this.platformSearch = function () {
-        let $srch = $('#exampleModalCenter .srch-bx');
+        let $srch = this.isSimpleSearch ? this.$toolbSrchBx : $('#exampleModalCenter .srch-bx');
         let searchkey = $srch.val();
         if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
             //do ajax call
-            this.drawResultList(searchkey);
+            $('.search-dd').slideUp(100);
+            this.getSearchResult(searchkey);
+            //this.drawResultList.bind(this, searchkey)();
             $srch.data('lastKey', searchkey);
         }
-    };
-    this.drawResultList = function (searchkey,
-        data = [
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212934", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969212345", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969987456", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-            { displayName: "customer form", controlName: 'phone number', matchedValue: "9969222222", modifiedAt: '31-12-2009, 10.30am', createdAt: '31-11-2009, 12.30am' },
-        ]
-    ) {
+    }.bind(this);
+
+    this.getSearchResult = function (searchkey) {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/SearchInPlatform4FormData",
+            data: {
+                key: searchkey
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
+                EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            success: this.drawResultList.bind(this, searchkey)
+        });
+    }.bind(this);
+
+    this.drawResultList = function (searchkey, data = `[{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]`) {
+        data = JSON.parse(data);
+        let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
         $('.srch-body-cont').empty();
         let html = '<ul class="srch-ul">';
         $.each(data, function (i, obj) {
+            let j = 0;
             html += '<li class="srch-li">'
             html += `
 <div class='srch-li-block'>
-    <h4><a class='srch-res-fn'>${obj.displayName}</a></h4>
-    <p>
-        <key>${obj.controlName}</key> : <value>${obj.matchedValue}</value></br>
-        <key>${obj.controlName}</key> : <value>${obj.matchedValue}</value>
-    </p>
-    <span>Created at : </span><span>${obj.createdAt}</span>
+    <h4><a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
+        <div class="ctrldtlsWrap">`;
+            $.each(obj.Data, function (name, val) {
+                if (j++ % 3 === 0) {
+                    html += `
+                        <table class='ctrldtls'>
+                            <tbody>`;
+                }
+                html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
+                if (j % 3 === 0) {
+                    html += `
+                            </tbody>
+                        </table>`;
+                }
+                if (j === 6)
+                    return false;
+            });
+            html += `
+                </tbody>
+            </table>
+        </div>
+        <div class="metadtlsWrap">
+            <table class='metadtls'>
+                <tbody>
+                    <tr>
+                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedAt} </span></td>
+                    <tr>
+                    </tr>
+                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedBy} </span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class='metadtls'>
+                <tbody>
+                    <tr>
+                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedAt} </span></td>
+                    <tr>
+                    </tr>
+                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedBy} </span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 </div>`;
             html += '</li>'
         });
         html += '</ul>'
 
-        $('.srch-body-cont').append(html);
-        modifyTextStyle('.srch-body-cont value', RegExp(searchkey, 'g'), 'background-color:yellow;');
-        //$(".srch-body-cont value:contains('9969')").css("background-color", "yellow");
+        //$('.srch-body-cont').append(html);
+        $cont.append(html);
+        $('.search-dd').slideDown(100);
+        modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
+        $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+        this.scrollList();
+        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').focus() });
+        $('.srch-li').on('dblclick', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').click() });
+    };
+
+    this.hideDDclickOutside = function (e) {
+        if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
+            $('.search-dd').slideUp(100);
+        }
     };
 
     this.addRootObjectHelp = function (obj) {

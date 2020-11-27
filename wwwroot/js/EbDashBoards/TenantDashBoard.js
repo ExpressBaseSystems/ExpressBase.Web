@@ -58,8 +58,7 @@
         }
     };
 
-    this.ns = function (e) {
-        scount = 2;
+    this.ns = function (e) { 
         if (scount <= 3) {
             this.ncs();
             this.cs(function (res) {

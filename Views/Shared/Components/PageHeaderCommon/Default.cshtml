@@ -164,7 +164,6 @@
     window.ebcontext.wc = '@Html.Raw(ViewBag.wc)';
     window.ebcontext.header = new EbHeader();
     $(document).ready(function () {
-        debugger;
         if (window.ebcontext.wc === 'uc')
             window.ebcontext.header.insertGlobalSearch();
     });

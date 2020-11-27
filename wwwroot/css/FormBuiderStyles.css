@@ -255,11 +255,11 @@ body {
         box-shadow: none;
     }
 
-    .form-buider-form table {
-        width: 100%;
-        position: relative;
-        /*table-layout: fixed;*/
-    }
+.form-buider-form table {
+    width: 100%;
+    position: relative;
+    /*table-layout: fixed;*/
+}
 
     .form-buider-form .btn-group {
         width: 100% !important;
@@ -1096,6 +1096,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: flex;
     flex-flow: column;
     position: relative;
+}
+
+[tdcoltype="DGStringColumn"] > .ctrl-cover {
+    position: unset;
 }
 
 .dgtbl .ctrl-cover {

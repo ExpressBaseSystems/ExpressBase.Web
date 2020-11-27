@@ -51,6 +51,7 @@
 
 
     </div>
+<div class="eb_common_loader" id="srch_loader"></div>
 </div>`);
 
         this.$toolbSrchBx = $('.toolb-srchbx');
@@ -131,7 +132,7 @@
     }.bind(this);
 
     this.getSearchResult = function (searchkey) {
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
+        $("#srch_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
         $.ajax({
             type: "POST",
             url: "/WebForm/SearchInPlatform4FormData",
@@ -139,7 +140,7 @@
                 key: searchkey
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
+                $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
                 EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
             }.bind(this),
             success: this.drawResultList.bind(this, searchkey)
@@ -151,29 +152,29 @@
         let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
         $('.srch-body-cont').empty();
         let html = '<ul class="srch-ul">';
-        $.each(data, function (i, obj) {
-            let j = 0;
-            html += '<li class="srch-li">'
-            html += `
+        if (data.length > 0) {
+            $.each(data, function (i, obj) {
+                let j = 0;
+                html += `<li class="srch-li">
 <div class='srch-li-block'>
     <h4><a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
         <div class="ctrldtlsWrap">`;
-            $.each(obj.Data, function (name, val) {
-                if (j++ % 3 === 0) {
-                    html += `
+                $.each(obj.Data, function (name, val) {
+                    if (j++ % 3 === 0) {
+                        html += `
                         <table class='ctrldtls'>
                             <tbody>`;
-                }
-                html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
-                if (j % 3 === 0) {
-                    html += `
+                    }
+                    html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
+                    if (j % 3 === 0) {
+                        html += `
                             </tbody>
                         </table>`;
-                }
-                if (j === 6)
-                    return false;
-            });
-            html += `
+                    }
+                    if (j === 6)
+                        return false;
+                });
+                html += `
                 </tbody>
             </table>
         </div>
@@ -200,15 +201,24 @@
             </table>
         </div>
 </div>`;
-            html += '</li>'
-        });
-        html += '</ul>'
+                html += '</li>'
+            });
+        }
+        else {
+
+            html += `<li class="srch-li">
+                        <div class='srch-li-block'>
+                            <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
+                            <div class="ctrldtlsWrap">Try some other keyword</div>
+                        </li>
+                </ul>`;
+        }
 
         //$('.srch-body-cont').append(html);
         $cont.append(html);
         $('.search-dd').slideDown(100);
         modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
-        $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+        $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
         this.scrollList();
         $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').focus() });
         $('.srch-li').on('dblclick', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').click() });

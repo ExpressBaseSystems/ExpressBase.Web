@@ -144,26 +144,19 @@
                 Message: "Exporting objects...",
                 Html: function ($selector) {
                     $selector.html(`<span>Exporting objects...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
-                },
-                ButtonStyle: {
-                    Text: "Go to App Store",
-                    Color: "white",
-                    Background: "#508bf9",
-                    Callback: function () {
-                        location.href = "/AppStore";
-                    }
-                }
+                }  
             };
 
             $.ajax({
                 url: "../ImportExport/Export",
                 type: "POST",
-                data: {App :App },
+                data: { App: App },
+                headers: { 'eb_sse_subid': ebcontext.subscription_id },
                 beforeSend: function () {
                     self.EbPopBox("show", po);
                 },
                 success: function (data) {
-                    self.EbPopBox("show", { Message: "Exported Successfully. Go to App Store to view the package :)" });
+                    self.EbPopBox("show", { Message: "Exported has started. Will notify you once complete.)" });
                 },
                 error: function () {
                     self.EbPopBox("show", { Title: "Oops!", Message: "Unable to export objects!" });

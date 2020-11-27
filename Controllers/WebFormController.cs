@@ -750,7 +750,11 @@ namespace ExpressBase.Web.Controllers
             else
                 return ViewBag.wc;
         }
-
+        public string SearchInPlatform4FormData(string key)
+        {
+            GetGlobalSrchRsltsResp Resp = ServiceClient.Post<GetGlobalSrchRsltsResp>(new GetGlobalSrchRsltsReq { SrchText = key });
+            return Resp.Data;
+        }
 
 
         //for ebblueprint (save bg img,svg)

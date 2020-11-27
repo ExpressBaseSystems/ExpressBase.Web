@@ -19,8 +19,6 @@
     this.onConnect = function (sub) {
         console.log("sse connected! " + sub.displayName, sub.id);
 
-       // document.cookie = `eb_sse_subid=${sub.id}; path=/`;
-        //document.cookie = `eb_sse_subid=${sub.id}; Secure;path=/`;
         if (sub) {
             ebcontext.subscription_id = sub.id;
             //$.ajaxSetup({
@@ -49,8 +47,8 @@
 
 
     this.mybroadcast = function (msg, e) {
-      //  console.log("mybroadcast", msg, e);
-        //alert(213);
+       //  console.log("mybroadcast", msg, e);
+      //  alert(213);
     }
 
 
@@ -79,6 +77,24 @@
     this.onExportToExcel = function (m, e) {
         this.onExcelExportSuccess(m);
     };
+
+    this.exportApplication = function (m, e) {
+        console.log(m);
+        self.EbPopBox("hide");
+        let pop = {
+            Message: "Exported Successfully. Go to App Store to view the package :"
+        };
+        self.EbPopBox("show", pop);      
+    }
+
+    this.importApplication = function (m, e) {
+        console.log(m);
+        self.EbPopBox("hide");
+        let pop = {
+            Message: "Application imported Successfully."
+        };
+        self.EbPopBox("show", pop);      
+    }
 
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
@@ -124,6 +140,10 @@
             onMsgSuccess: this.onMsgSuccess.bind(this),
             onLogOut: this.onLogOutMsg.bind(this),
             onNotification: this.onNotifyMsg.bind(this),
+            exportApplication: this.exportApplication.bind(this),
+            importApplication: this.importApplication.bind(this),
+
+
             mybroadcast: this.mybroadcast.bind(this)
         }
     });

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ExpressBase.Common;
@@ -49,13 +50,15 @@ namespace ExpressBase.Web.Controllers
             using (SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false))
             {
                 WorkbookPart workbookPart = doc.WorkbookPart;
-                WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+                WorksheetPart worksheetPart =(WorksheetPart) workbookPart.GetPartById("rId1");
                 Worksheet sheet = worksheetPart.Worksheet;
                 SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0 ?
                     workbookPart.GetPartsOfType<SharedStringTablePart>().First() : null;
                 SharedStringTable sst = sstpart != null ? sstpart.SharedStringTable : null;
+                var Cols = sheet.Descendants<Columns>().First();
                 var rows = sheet.Descendants<SheetData>().First().Elements<Row>();
-                if (rows.Count() > 1)
+                var rowss = rows.Where(row => row.Elements<Cell>().Any(ce => ce.CellValue != null && (ce.CellValue.Text != "" || ce.CellValue.InnerText != "")));
+                if (rowss != null && rowss.Count() > 1)
                 {
                     EbDataTable tbl = new EbDataTable();
                     int colIndex = 0;
@@ -72,61 +75,74 @@ namespace ExpressBase.Web.Controllers
                         colIndex++;
                     }
                     var startRow = 0;
-                    foreach (Row row in rows)
+                    var powerselectCols = _colInfo.FindAll(col => col.ControlType == "PowerSelect" || col.ControlType == "SimpleSelect");
+                    foreach (Row row in rowss)
                     {
                         if (startRow > 0)
                         {
                             EbDataRow rr = tbl.NewDataRow2();
                             int colIndex1 = 0;
-                            foreach (Cell cell in row.Elements<Cell>())
+                            for (var i = 0; i < row.Elements<Cell>().Count(); i++ )
                             {
+                                Cell cell = row.Elements<Cell>().ToList()[i];
                                 string cellref = cell.CellReference.ToString();
                                 colIndex1 = GetColumnIndex(cellref);
                                 if (colIndex1 < tbl.Columns.Count)
                                 {
-                                    if (tbl.Columns[colIndex1].Type == EbDbTypes.DateTime)
+                                    if (_colInfo[colIndex1].ControlType == "PowerSelect" || _colInfo[colIndex1].ControlType == "SimpleSelect")
                                     {
-                                        DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText));
-                                        rr[colIndex1] = dt.ToString("yyyy-MM-dd HH:mm:ss");
-                                    }
-                                    else if (tbl.Columns[colIndex1].Type == EbDbTypes.Date)
-                                    {
-                                        DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText));
-                                        rr[colIndex1] = dt.ToString("yyyy-MM-dd");
-                                    }
-                                    else if (tbl.Columns[colIndex1].Type == EbDbTypes.Time)
-                                    {
-                                        rr[colIndex1] = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText)).ToString("HH:mm:ss");
-                                    }
-                                    else if (cell.DataType != null && cell.DataType == "s")
-                                    {
-                                        int ssid = int.Parse(cell.CellValue.Text);
-                                        string str = sst.ChildElements[ssid].InnerText;
-                                        if (tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
-                                        {
-                                            var val = "false";
-                                            if (str == "Yes")
-                                                val = "true";
-                                            rr[colIndex1] = val;
-                                        }
-                                        else if (tbl.Columns[colIndex1].Type == EbDbTypes.BooleanOriginal)
-                                        {
-                                            var val = false;
-                                            if (str == "Yes")
-                                                val = true;
-                                            rr[colIndex1] = val;
-                                        }
-                                        else if (tbl.Columns[colIndex1].Type == EbDbTypes.String)
-                                            rr[colIndex1] = str;
-                                    }
-                                    else if (cell.DataType != null && cell.DataType == CellValues.SharedString)
-                                    {
-                                        int ssid = int.Parse(cell.CellValue.Text);
-                                        string str = sst.ChildElements[ssid].InnerText;
-                                        rr[colIndex1] = str;
+                                        int powerselectCount = powerselectCols.IndexOf(_colInfo[colIndex1]) + 1;
+                                        uint rowIndex = uint.Parse(Regex.Match(cell.CellReference, @"[0-9]+").Value);
+                                        string cellAddress = GetExcelColumnName(tbl.Columns.Count + powerselectCount) + rowIndex;
+                                        rr[colIndex1] = row.Descendants<Cell>().FirstOrDefault(p => p.CellReference == cellAddress).CellValue.InnerText;
+                                        continue;
                                     }
                                     else
-                                        rr[colIndex1] = cell.CellValue.Text;
+                                    {
+                                        if (tbl.Columns[colIndex1].Type == EbDbTypes.DateTime)
+                                        {
+                                            DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText));
+                                            rr[colIndex1] = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                        }
+                                        else if (tbl.Columns[colIndex1].Type == EbDbTypes.Date)
+                                        {
+                                            DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText));
+                                            rr[colIndex1] = dt.ToString("yyyy-MM-dd");
+                                        }
+                                        else if (tbl.Columns[colIndex1].Type == EbDbTypes.Time)
+                                        {
+                                            rr[colIndex1] = DateTime.FromOADate(Convert.ToDouble(cell.CellValue.InnerText)).ToString("HH:mm:ss");
+                                        }
+                                        else if (cell.DataType != null && cell.DataType == "s")
+                                        {
+                                            int ssid = int.Parse(cell.CellValue.Text);
+                                            string str = sst.ChildElements[ssid].InnerText;
+                                            if (tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
+                                            {
+                                                var val = "false";
+                                                if (str == "Yes")
+                                                    val = "true";
+                                                rr[colIndex1] = val;
+                                            }
+                                            else if (tbl.Columns[colIndex1].Type == EbDbTypes.BooleanOriginal)
+                                            {
+                                                var val = false;
+                                                if (str == "Yes")
+                                                    val = true;
+                                                rr[colIndex1] = val;
+                                            }
+                                            else if (tbl.Columns[colIndex1].Type == EbDbTypes.String)
+                                                rr[colIndex1] = str;
+                                        }
+                                        else if (cell.DataType != null && cell.DataType == CellValues.SharedString)
+                                        {
+                                            int ssid = int.Parse(cell.CellValue.Text);
+                                            string str = sst.ChildElements[ssid].InnerText;
+                                            rr[colIndex1] = str;
+                                        }
+                                        else
+                                            rr[colIndex1] = cell.CellValue.Text;
+                                    }
                                 }
                             }
 
@@ -145,6 +161,22 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
+        }
+
+        private string GetExcelColumnName(int columnNumber)
+        {
+            int dividend = columnNumber;
+            string columnName = String.Empty;
+            int modulo;
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                dividend = (int)((dividend - modulo) / 26);
+            }
+
+            return columnName;
         }
 
         private int GetColumnIndex(string cellReference)
@@ -176,7 +208,7 @@ namespace ExpressBase.Web.Controllers
             if (!string.IsNullOrEmpty(refid))
             {
                 ExcelDownloadResponse response = this.ServiceClient.Get<ExcelDownloadResponse>(new ExcelDownloadRequest { _refid = refid });
-                return File(response.stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", str);
+                return File(response.stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.fileName);
             }
             return null;
         }

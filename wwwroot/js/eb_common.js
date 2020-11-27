@@ -1493,6 +1493,6 @@ function modifyTextStyle(contSelector, regex, styleStr) {
         let text = el.innerHTML;
         if (text.match(regex) === null)
             return;
-        el.innerHTML = text.replace(regex, "<font style=" + styleStr + ">" + text.match(regex)[0] + "</font>")
+        el.innerHTML = text.replace(regex, "<font style='" + styleStr + "'>" + text.match(regex)[0] + "</font>")
     });
 }

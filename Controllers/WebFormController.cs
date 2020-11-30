@@ -634,6 +634,17 @@ namespace ExpressBase.Web.Controllers
             return Resp.Data;
         }
 
+        public string UpdateIndexes(string refid)
+        {
+            if ((this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || 
+                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) && ViewBag.wc == RoutingConstants.DC)
+            {
+                UpdateIndexesRespone Resp = ServiceClient.Post(new UpdateIndexesRequest { RefId = refid });
+                return Resp.Message;
+            }
+            return "Access denied. Must be a SolutionOwner/Admin in DevConsole.";
+        }
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try

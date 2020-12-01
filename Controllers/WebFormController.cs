@@ -144,7 +144,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
                     bool neglectLocId = WebForm.IsLocIndependent;
-                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId)))
+                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId) || 
+                        (this.HasPermission(RefId, OperationConstants.OWN_DATA, LocId, neglectLocId) && this.LoggedInUser.UserId == wfd.FormData.CreatedBy)))
                     {
                         TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: View/Edit`";
                         return "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
@@ -448,7 +449,7 @@ namespace ExpressBase.Web.Controllers
                     Operation = OperationConstants.EDIT;
                 EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
                 bool neglectLocId = WebForm.IsLocIndependent;
-                if (!this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId))
+                if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
@@ -513,38 +514,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (ViewBag.wc != RoutingConstants.UC)
                 return false;
-            if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
-                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) ||
-                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionPM.ToString()))
-                return true;
-
-            EbOperation Op = EbWebForm.Operations.Get(ForWhat);
-            EbObjectType EbType = RefId.GetEbObjectType();
-            if (EbType.IntCode == EbObjectTypes.Report)
-                Op = EbReport.Operations.Get(ForWhat);
-
-            if (!Op.IsAvailableInWeb)
-                return false;
-
-            try
-            {
-                //Permission string format => 020-00-00982-02:5
-                string[] refidParts = RefId.Split("-");
-                string objType = refidParts[2].PadLeft(2, '0');
-                string objId = refidParts[3].PadLeft(5, '0');
-                string operation = Op.IntCode.ToString().PadLeft(2, '0');
-                string pWithLoc = objType + '-' + objId + '-' + operation + (NeglectLocId ? "" : (":" + LocId));///////////
-                string pGlobalLoc = objType + '-' + objId + '-' + operation + ":-1";
-                string temp = this.LoggedInUser.Permissions.Find(p => p.Contains(pWithLoc) || p.Contains(pGlobalLoc));
-                if (temp != null)
-                    return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(string.Format("Exception when checking user permission: {0}\nRefId = {1}\nOperation = {2}\nLocId = {3}", e.Message, RefId, ForWhat, LocId));
-            }
-
-            return false;
+            return EbFormHelper.HasPermission(this.LoggedInUser, RefId, ForWhat, LocId, NeglectLocId, RoutingConstants.UC);
         }
 
         public string DoUniqueCheck(UniqCheckParam[] uniqCheckParams)

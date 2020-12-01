@@ -3,6 +3,7 @@
 :root {
     /*--eb-bluishgray: rgba(36, 36, 42, 0.13);*/
     --eb-bluishgray: rgb(226 226 230 / 80%);
+    --eb-disablegray: #f3f3f5;
 }
 
 html {
@@ -255,11 +256,11 @@ body {
         box-shadow: none;
     }
 
-    .form-buider-form table {
-        width: 100%;
-        position: relative;
-        /*table-layout: fixed;*/
-    }
+.form-buider-form table {
+    width: 100%;
+    position: relative;
+    /*table-layout: fixed;*/
+}
 
     .form-buider-form .btn-group {
         width: 100% !important;
@@ -636,7 +637,7 @@ eb-disable {
         border: none !important;
         padding: 0 !important;
         border-right: dotted 1px rgb(241, 241, 241) !important;
-        height: 27px;
+        height: 35px;
         vertical-align: middle;
     }
 
@@ -1096,6 +1097,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: flex;
     flex-flow: column;
     position: relative;
+}
+
+[tdcoltype="DGStringColumn"] > .ctrl-cover {
+    position: unset;
+    height: 100%;
+}
+
+.Eb-ctrlContainer[ctype="InputGeoLocation"] > .ctrl-cover {
+    border: none;
 }
 
 .dgtbl .ctrl-cover {
@@ -1850,9 +1860,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     position: relative;
     /*padding: 5px 5px 0px 5px;*/
     background-color: white;
-    border-radius: 3px;
+    border-radius: 4px;
     width: 100%;
-    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
+    box-shadow: 0 10px 10px 0px rgb(0 0 0 / 6%);
 }
 
 .picker-box {
@@ -2046,8 +2056,8 @@ input.locinp {
 }
 
     .grid-cont .Dg_head > table > thead {
-        background-color: #dddddd;
-        background: linear-gradient(45deg, #dddddd 0%,#ececec 50%,#dddddd 100%);
+        background-color: #dddddf;
+        background: linear-gradient(45deg, #dddddf 0%,#ececee 50%,#dddddf 100%);
         color: black;
     }
 
@@ -2224,7 +2234,7 @@ input.locinp {
 }
 
 [eb-form="true"][mode="view"] .ctrl-cover .dropdown-toggle[data-toggle="dropdown"], [eb-form="true"][mode="view"] .v-select.searchable > .dropdown-toggle {
-    background-color: rgb(243, 243, 243);
+    background-color: rgb(243, 243, 245);
 }
 
 [eb-form="true"][mode="view"] .v-select .selected-tag {

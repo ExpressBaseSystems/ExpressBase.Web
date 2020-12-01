@@ -951,8 +951,9 @@ namespace ExpressBase.Web.Controllers
             ViewBag.objlist = public_res.Data;
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
-            ViewBag.MobileSettings = solutionObj.SolutionSettings.MobileAppSettings;
-            if (solutionObj.SolutionSettings.MobileAppSettings == null)
+            ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
+
+            if (solutionObj.SolutionSettings?.MobileAppSettings == null)
             {
                 ViewBag.MobileSettings = new MobileAppSettings();
             }

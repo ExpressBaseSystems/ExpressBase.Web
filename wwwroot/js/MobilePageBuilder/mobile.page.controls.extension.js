@@ -186,8 +186,9 @@
 
                 let tobj = root.makeElement("EbMobileTableLayout", "TableLayout");
                 $(`#${this.EbSid} .ctrl_as_container .data_layout`).append(tobj.$Control.outerHTML());
-                if (root.Mode === "edit") {
-                    $.extend(tobj, this.DataLayout || {});
+                if (root.Mode === "edit" && this.DataLayout) {
+                    this.DataLayout.RowCount = this.DataLayout.RowCount === 0 ? 1 : this.DataLayout.RowCount;
+                    this.DataLayout.ColumCount = this.DataLayout.ColumCount === 0 ? 2 : this.DataLayout.ColumCount;
                 }
                 tobj.trigger(root);
                 return tobj;

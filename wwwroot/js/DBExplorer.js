@@ -16,45 +16,101 @@
         let $e = $(e.target);
         $e.children('div').toggle();
         $e.filter('.parent').toggleClass('expanded');
+        $(".parent").focusin(function () {
+            $(".parent").css("border-color", "red");
+        });
+        $(".parent").focusout(function () {
+            $(".parent").css("border-color", "none");
+        });
         return false;
     };
 
     this.ajax_call = function (e) {
         e.preventDefault();
         $(".show_loader").EbLoader("show");
-        var exe_window = $("#TabAdderMain li.active").attr("id");
-        exe_window = exe_window[exe_window.length - 1];
+        let data = "";
+        let exe_window = $("#TabAdderMain li.active").attr("id");
+        if (exe_window !== undefined) {
+            exe_window = exe_window[exe_window.length - 1];
+            data = this.editor[exe_window].getValue();
+        }
         var dt = $('.dbTyper').attr("dt");
         var down = $('.dbTyper').attr("dOwn");
         if (down == 'dOwn')
             down = true;
-        var data = this.editor[exe_window].getValue();
-        $.ajax({
-            type: "POST",
-            url: "../DbClient/ExecuteQuery",
-            content: "application/json; charset=utf-8",
-            dataType: "json",
-            data: { Query: data, solution: dt, Isadmin: down },
-            traditional: true,
-            success: function (result) {
-                if (result.length != 0) {
-                    if (result[0].columnCollection != null) {
-                        this.query_result(result);
-                        $('#t' + (res - 1) + ' a').trigger('click');
-                    } else if (result[0].message != "") {
-                        alert(result[0].message);
-                    } else if (result[0].Result === 0) {
-                        alert('Oh Yes success :(  : ' + result);
+        if (data !== "" && exe_window !== undefined) {
+            $.ajax({
+                type: "POST",
+                url: "../DbClient/ExecuteQuery",
+                content: "application/json; charset=utf-8",
+                dataType: "json",
+                data: { Query: data, solution: dt, Isadmin: down },
+                traditional: true,
+                success: function (result) {
+                    if (result.length != 0) {
+                        if (result[0].columnCollection != null) {
+                            this.query_result(result);
+                            $('#t' + (res - 1) + ' a').trigger('click');
+                        } else if (result[0].message != "") {
+                            //alert(result[0].message);
+                            EbPopBox("show", {
+                                Message: "Failed : " + result[0].message,
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                        //$(".dash-loader").hide();
+                                    }
+                                }
+                            });
+                        } else if (result[0].Result === 0) {
+                            EbPopBox("show", {
+                                Message: "Failed :" + result,
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                        //$(".dash-loader").hide();
+                                    }
+                                }
+                            });
+                            //alert('Oh Yes success :(  : ' + result);
+                        }
+                    }
+                    $(".show_loader").EbLoader("hide");
+                }.bind(this),
+                error: function (result) {
+                    EbPopBox("show", {
+                        Message: "Failed : " + result.statusText,
+                        ButtonStyle: {
+                            Text: "Ok",
+                            Color: "white",
+                            Background: "#508bf9",
+                            Callback: function () {
+                                //$(".dash-loader").hide();
+                            }
+                        }
+                    });
+                    $(".show_loader").EbLoader("hide");
+                }
+            });
+        }
+        else {
+            EbPopBox("show", {
+                Message: "Empty Query !!!",
+                ButtonStyle: {
+                    Text: "Ok",
+                    Color: "white",
+                    Background: "#508bf9",
+                    Callback: function () {
+                        //$(".dash-loader").hide();
                     }
                 }
-                $(".show_loader").EbLoader("hide");
-            }.bind(this),
-            error: function (result) {
-                alert('Oh no :(  : ' + "result");
-                $(".show_loader").EbLoader("hide");
-            }
-        });
-
+            });
+            $(".show_loader").EbLoader("hide");
+        }
     }.bind(this);
 
     this.searchSolution = function (e) {
@@ -91,7 +147,7 @@
         exe_window = exe_window[exe_window.length - 1];
         for (var Result_ in result) {
             $.each(result[Result_].columnCollection, function (i, columns) {
-                $(`#Result_Tab${exe_window}`).append(' <li id="t' + res + '"><a data-toggle="tab" class="cetab" href="#tab' + tab + 'R' + res + '" style="margin: 18px 0px 0px 0px; padding :0%">Result ' + res + ' <button class="btn" id="Result_' + res + '" data-toggle="modal" data-target="#myModal' + res + '"><i class="fa fa-expand"></i></button><i class="fa fa-window-close fa-1x Result_close" style="padding: 4px; " id="Resultclose"></i></a></li>')
+                $(`#Result_Tab${exe_window}`).append(' <li id="t' + res + '"><a data-toggle="tab" class="cetab" href="#tab' + tab + 'R' + res + '" style=""> <p>Result ' + res + '</p> <i style="padding: 2px;" class="btn fa fa-expand" id="Result_' + res + '" data-toggle="modal" data-target="#myModal' + res + '"></i><i class="fa fa-window-close fa-1x Result_close" style="" id="Resultclose"></i></a></li>')
                 $("#resulttab" + exe_window).append("<div id='tab" + tab + "R" + res + "' class='Result_Cont tab-pane fade'><table id='tableid" + res + "'></table></div>")
                 $("#resulttab" + exe_window).append(`<!-- Modal -->
                                                     <div class="modal fade" id="myModal${res}" role="dialog">
@@ -297,7 +353,7 @@
 
 
     this.codemirrorloader = function () {
-        let $TabHtml = $(`<li id="query_li${++quer}"><a data-toggle="tab" class="cetab" href="#result_set${++tab}">QUERY ${quer}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; "  onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
+        let $TabHtml = $(`<li id="query_li${++quer}"><a data-toggle="tab" class="cetab" href="#result_set${++tab}"><p>QUERY ${quer}</p><i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; "  onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
         $('#pannel #TabAdderMain').append($TabHtml);
         $(`body`).off("click").on("click", ".Tabclose", this.Tab_Closer.bind(this));
         let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><textarea id="coder' + quer + '" class="coder" name="coder" /*style="visibility:hidden"*/></textarea><div class="tttab-session"><ul class="nav nav-tabs tab-section" id="Result_Tab' + tab + '"></ul></div><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
@@ -538,7 +594,6 @@
 
 
     this.init = function () {
-
         $('#myInput').keyup(this.SearchTool.bind(this));
         $(".DbClient_toolbox").resizable();
         $('[data-toggle="tooltip"]').tooltip();

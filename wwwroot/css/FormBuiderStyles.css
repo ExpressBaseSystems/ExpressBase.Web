@@ -1101,7 +1101,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [tdcoltype="DGStringColumn"] > .ctrl-cover {
     position: unset;
-    height: 100%;
+    height: calc(100% - 2px);
 }
 
 .Eb-ctrlContainer[ctype="InputGeoLocation"] > .ctrl-cover {
@@ -1466,7 +1466,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [eb-form="true"] [ctype="ChartControl"] .ctrl-cover {
     padding: 10px !important;
-    border: 1px dotted rgba(34, 36, 38, 0.05);
+    border: 1px dotted var(--eb-bluishgray);
 }
 
 [ctype="RadioButton"] > .eb-ctrl-label {
@@ -1668,7 +1668,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ctrl-cover[eb-readonly="true"] .input-group-addon,
 .ctrl-cover[eb-readonly="true"] .dropdown-toggle,
 .ctrl-cover[eb-readonly="true"] {
-    background-color: #f3f3f3 !important;
+    background-color: var(--eb-disablegray) !important;
     pointer-events: none !important;
 }
 

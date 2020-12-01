@@ -341,8 +341,10 @@
 
 .DDdiv div.dataTables_wrapper div.dataTables_info {
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
     left: -10px;
+    color: #585868;
+    font-size: 12px;
 }
 
 .DDdiv div.dataTables_wrapper div.dataTables_paginate {

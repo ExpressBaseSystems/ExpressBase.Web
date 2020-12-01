@@ -1496,3 +1496,10 @@ function modifyTextStyle(contSelector, regex, styleStr) {
         el.innerHTML = text.replace(regex, "<font style='" + styleStr + "'>" + text.match(regex)[0] + "</font>")
     });
 }
+
+function groupBy(arr, property) {
+    return arr.reduce((acc, cur) => {
+        acc[cur[property]] = [...acc[cur[property]] || [], cur];
+        return acc;
+    }, {});
+}

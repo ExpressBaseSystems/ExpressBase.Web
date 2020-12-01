@@ -125,7 +125,7 @@
         if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
             //do ajax call
             $('.search-dd').slideUp(100);
-            this.getSearchResult(searchkey);
+                this.getSearchResult(searchkey);
             //this.drawResultList.bind(this, searchkey)();
             $srch.data('lastKey', searchkey);
         }
@@ -147,63 +147,22 @@
         });
     }.bind(this);
 
-    this.drawResultList = function (searchkey, data = `{ "RowCount": 12, "Data": [{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]}`) {
+    this.drawResultList = function (searchkey, data = `{ "RowCount": 12, "Data": [{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]}`) {
         data = JSON.parse(data);
-        data = data.Data;
+        let dataItems = data.Data;
+        let DataItemsG = groupBy(data.Data.sort((a, b) => (a.DisplayName > b.DisplayName) ? 1 : ((b.DisplayName > a.DisplayName) ? -1 : 0)), 'DisplayName');
         let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
         $('.srch-body-cont').empty();
-        let html = '<ul class="srch-ul">';
-        if (data.length > 0) {
-            $.each(data, function (i, obj) {
-                let j = 0;
-                html += `<li class="srch-li">
-<div class='srch-li-block'>
-    <h4><a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
-        <div class="ctrldtlsWrap">`;
-                $.each(obj.Data, function (name, val) {
-                    if (j++ % 3 === 0) {
-                        html += `
-                        <table class='ctrldtls'>
-                            <tbody>`;
-                    }
-                    html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
-                    if (j % 3 === 0) {
-                        html += `
-                            </tbody>
-                        </table>`;
-                    }
-                    if (j === 6)
-                        return false;
-                });
-                html += `
-                </tbody>
-            </table>
-        </div>
-        <div class="metadtlsWrap">
-            <table class='metadtls'>
-                <tbody>
-                    <tr>
-                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedAt} </span></td>
-                    <tr>
-                    </tr>
-                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedBy} </span></td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class='metadtls'>
-                <tbody>
-                    <tr>
-                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedAt} </span></td>
-                    <tr>
-                    </tr>
-                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedBy} </span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-</div>`;
-                html += '</li>'
-            });
+
+
+        let html = `<ul class="srch-ul-outer">
+                        <li class="li-summary">
+                            <div class='srch-summary-text'>Showing recent <b>${dataItems.length}</b> of total <b>${data.RowCount} matches</b></div>
+                        </li>`;
+        if (dataItems.length > 0) {
+            $.each(DataItemsG, function (formName, items) {
+                    html += this.getUlHtml(items, true);
+            }.bind(this));
         }
         else {
 
@@ -211,9 +170,11 @@
                         <div class='srch-li-block'>
                             <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
                             <div class="ctrldtlsWrap">Try some other keyword</div>
-                        </li>
-                </ul>`;
+                        </div>
+                    </li>`;
         }
+
+        html += `</ul>`;
 
         //$('.srch-body-cont').append(html);
         $cont.append(html);
@@ -223,6 +184,71 @@
         this.scrollList();
         $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').focus() });
         $('.srch-li').on('dblclick', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').click() });
+    };
+
+    this.getUlHtml = function (dataItems, hideHead) {
+        let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
+        let html =
+            `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="false" aria-controls="${idfromDN}">
+                <h4><a class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</a></h4>
+            </li>
+            <li id='${idfromDN}'>
+                <ul class="srch-ul">`;
+        $.each(dataItems, function (i, obj) {
+            let j = 0;
+            html += `
+                    <li class="srch-li">
+                        <div class='srch-li-block'>
+                            <a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1"><i class="fa fa-link" aria-hidden="true"></i></a>
+                            <div class="ctrldtlsWrap">`;
+                            $.each(obj.Data, function (name, val) {
+                                if (j++ % 3 === 0) {
+                                    html += `
+                                <table class='ctrldtls'>
+                                    <tbody>`;
+                                }
+                                html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
+                                if (j % 3 === 0) {
+                                    html += `
+                                    </tbody>
+                                </table>`;
+                                }
+                                if (j === 6)
+                                    return false;
+                            });
+                            html += `
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="metadtlsWrap">
+                                <table class='metadtls'>
+                                    <tbody>
+                                        <tr>
+                                            <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedAt} </span></td>
+                                        <tr>    
+                                        </tr>
+                                            <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedBy} </span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class='metadtls'>
+                                    <tbody>
+                                        <tr>
+                                            <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedAt} </span></td>
+                                        <tr>
+                                        </tr>
+                                            <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedBy} </span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>`;
+        html += '   </li>'
+        });
+        return `${html}
+                </ul>
+            </li>`;
     };
 
     this.hideDDclickOutside = function (e) {

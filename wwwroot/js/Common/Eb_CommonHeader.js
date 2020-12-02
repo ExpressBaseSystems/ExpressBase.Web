@@ -89,8 +89,8 @@
     }.bind(this);
 
     this.scrollList = function () {
-        var list = document.querySelector('.srch-ul'); // targets the <ul>
-        var first = list.firstChild; // targets the first <li>
+        var list = document.querySelector('.srch-ul-outer'); // targets the <ul>
+        var first = list.querySelector('.srch-li'); // targets the first <li>
         var maininput = this.$toolbSrchBx[0];  // targets the input, which triggers the functions populating the list
         document.onkeydown = function (e) { // listen to keyboard events
             switch (e.keyCode) {
@@ -102,7 +102,9 @@
                         maininput.focus();
                     } // stop the script if the focus is on the input or first element
                     else {
-                        document.activeElement.parentNode.parentNode.parentNode.previousSibling.querySelector('a').focus();
+                        let prevSibling = $(document.activeElement).closest('.srch-li').prev()[0] || $(document.activeElement).closest('.collapse').prev().prev().find('.srch-li:last')[0];
+                        if (prevSibling)
+                            prevSibling.querySelector('a').focus();
                     } // select the element before the current, and focus it
                     break;
                 case 40: // if the DOWN key is pressed
@@ -110,7 +112,7 @@
                         first.querySelector('a').focus();
                     } // if the currently focused element is the main input --> focus the first <li>
                     else {
-                        let nextSibling = document.activeElement.parentNode.parentNode.parentNode.nextSibling;
+                        let nextSibling = $(document.activeElement).closest('.srch-li').next()[0] || $(document.activeElement).closest('.collapse').next().next().find('.srch-li:first')[0];
                         if (nextSibling)
                             nextSibling.querySelector('a').focus();
                     } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
@@ -207,7 +209,7 @@
                                 <table class='ctrldtls'>
                                     <tbody>`;
                                 }
-                                html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
+                                html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
                                 if (j % 3 === 0) {
                                     html += `
                                     </tbody>
@@ -225,20 +227,20 @@
                                 <table class='metadtls'>
                                     <tbody>
                                         <tr>
-                                            <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedAt} </span></td>
+                                            <td class='metalbl'><i class="fa fa-clock-o" aria-hidden="true"></i> Created</td><td class='metaval'> : ${obj.CreatedAt} </td>
                                         <tr>    
                                         </tr>
-                                            <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedBy} </span></td>
+                                            <td class='metalbl'><i class="fa fa-user" aria-hidden="true"></i> Created</td><td class='metaval'> : ${obj.CreatedBy} </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <table class='metadtls'>
                                     <tbody>
                                         <tr>
-                                            <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedAt} </span></td>
+                                            <td class='metalbl'> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</td><td class='metaval'> : ${obj.ModifiedAt} </td>
                                         <tr>
                                         </tr>
-                                            <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedBy} </span></td>
+                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i> Modified</td><td class='metaval'> : ${obj.ModifiedBy} </td>
                                         </tr>
                                     </tbody>
                                 </table>

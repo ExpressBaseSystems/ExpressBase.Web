@@ -886,7 +886,6 @@ input:checked + .proslider:before {
 
     .search-dd .ctrldtls td {
         padding: 0px 7px;
-        font-size: 14px;
         letter-spacing: 0.25px;
     }
 
@@ -894,7 +893,7 @@ input:checked + .proslider:before {
         font-size: 12.5px;
         color: #757b7a;
         font-weight: 500;
-        max-width: 100px;
+        max-width: 108px;
     }
 
     .search-dd .value, .search-dd .key {
@@ -905,8 +904,9 @@ input:checked + .proslider:before {
 
     .search-dd .value {
         color: #150741;
+        font-size: 14px;
         border-bottom: solid 1px #d9cdcd;
-        max-width: 160px !important;
+        max-width: 170px !important;
     }
 
 .srch-hdr-cont .srch-hdr-wrpr:focus-within, .toolb-srchbx-wrpr:focus-within {

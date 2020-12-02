@@ -982,6 +982,41 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
+        [HttpPost("api/get_query_data")]
+        public ActionResult<MobileVisDataResponse> GetQueryData(string query, int limit, int offset, string param)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            MobileVisDataResponse response = null;
+
+            try
+            {
+                MobileQueryDataRequest request = new MobileQueryDataRequest
+                {
+                    Query = query,
+                    Limit = limit,
+                    Offset = offset
+                };
+
+                if (param != null)
+                {
+                    request.Params.AddRange(JsonConvert.DeserializeObject<List<Param>>(param));
+                }
+
+                response = this.ServiceClient.Get(request);
+                response.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                response = response ?? new MobileVisDataResponse();
+                response.Message = ex.Message;
+
+                Console.WriteLine("EXCEPTION AT get_query_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return response;
+        }
+
         [HttpGet("api/get_formdata")] //refid = mobileform
         public MobileFormDataResponse GetMobileFormData(string refid, int row_id, int loc_id)
         {

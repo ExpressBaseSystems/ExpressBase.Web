@@ -189,17 +189,17 @@
     this.getUlHtml = function (dataItems, hideHead) {
         let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
         let html =
-            `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="false" aria-controls="${idfromDN}">
+            `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
                 <h4><a class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</a></h4>
             </li>
-            <li id='${idfromDN}'>
+            <li id='${idfromDN}' class='collapse in'>
                 <ul class="srch-ul">`;
         $.each(dataItems, function (i, obj) {
             let j = 0;
             html += `
                     <li class="srch-li">
                         <div class='srch-li-block'>
-                            <a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1"><i class="fa fa-link" aria-hidden="true"></i></a>
+                            <a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1"><i class="fa fa-external-link" aria-hidden="true"></i></a>
                             <div class="ctrldtlsWrap">`;
                             $.each(obj.Data, function (name, val) {
                                 if (j++ % 3 === 0) {

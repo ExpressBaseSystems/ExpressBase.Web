@@ -1488,6 +1488,7 @@ function sleep(milliseconds) {
         currentDate = Date.now();
     } while (currentDate - date < milliseconds);
 }
+
 function modifyTextStyle(contSelector, regex, styleStr) {
     $(contSelector).each(function (i, el) {
         let text = el.innerHTML;

@@ -892,8 +892,8 @@ input:checked + .proslider:before {
     .search-dd .key {
         font-size: 12.5px;
         color: #757b7a;
-        font-weight: 500;
         max-width: 108px;
+        font-family: sans-serif;
     }
 
     .search-dd .value, .search-dd .key {
@@ -905,7 +905,6 @@ input:checked + .proslider:before {
     .search-dd .value {
         color: #150741;
         font-size: 14px;
-        border-bottom: solid 1px #d9cdcd;
         max-width: 170px !important;
     }
 
@@ -981,14 +980,23 @@ input:checked + .proslider:before {
 
 .search-dd .srch-res-a {
     padding-left: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.1;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #337ab7;
+    text-decoration: none;
 }
 
-.search-dd .srch-li-block .srch-res-a {
-    /*position: absolute;
-    right: -14px;
-    top: -13px;*/ 
-    opacity: 0.9;
-    font-size: 13px;
+.search-dd li[aria-expanded] .srch-res-a .fa {
+    transition-duration: 0.3s;
+    margin-right: 2px;
+    font-size: 17px;
+}
+
+.search-dd li[aria-expanded="true"] .srch-res-a .fa {
+    transform: rotateZ(90deg);
 }
 
 .search-dd h4 {
@@ -1021,13 +1029,37 @@ input:checked + .proslider:before {
         color: #555;
     }
 
-    .srch-body-cont table.metadtls {    
+    .srch-body-cont table.metadtls {
         color: #7f8283;
         font-size: 12.2px;
     }
 
+        .srch-body-cont table.metadtls .am_pm {
+            font-size: 10.4px;
+        }
+
+
+
+.search-dd .li-summary {
+    display: flex;
+}
+
 .search-dd .metalbl {
     font-size: 11px;
+    padding-right: 4px;
+    font-style: italic;
+}
+
+.search-dd .metaval {
+    padding-right: 4px;
+}
+
+.search-dd .metauname {
+    padding-right: 4px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 82px;
+    overflow: hidden;
 }
 
 .search-dd .srch-body-cont .srch-ul {
@@ -1072,7 +1104,6 @@ input:checked + .proslider:before {
 }
 
 .srch-summary-text {
-    text-align: end;
-    padding-right: 10px;
     color: #445;
+    margin: auto 10px auto auto;
 }

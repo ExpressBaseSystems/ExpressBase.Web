@@ -127,7 +127,7 @@
         if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
             //do ajax call
             $('.search-dd').slideUp(100);
-                this.getSearchResult(searchkey);
+            this.getSearchResult(searchkey);
             //this.drawResultList.bind(this, searchkey)();
             $srch.data('lastKey', searchkey);
         }
@@ -159,11 +159,11 @@
 
         let html = `<ul class="srch-ul-outer">
                         <li class="li-summary">
-                            <div class='srch-summary-text'>Showing recent <b>${dataItems.length}</b> of total <b>${data.RowCount} matches</b></div>
+                            <div class='srch-summary-text'><b>${dataItems.length}</b> / <b>${data.RowCount}</b> matches</div>
                         </li>`;
         if (dataItems.length > 0) {
             $.each(DataItemsG, function (formName, items) {
-                    html += this.getUlHtml(items, true);
+                html += this.getUlHtml(items, true);
             }.bind(this));
         }
         else {
@@ -184,41 +184,41 @@
         modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
         $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
         this.scrollList();
-        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').focus() });
-        $('.srch-li').on('dblclick', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').click() });
+        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.ctrldtlsWrap').focus() });
     };
 
     this.getUlHtml = function (dataItems, hideHead) {
         let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
         let html =
             `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
-                <h4><a class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</a></h4>
+                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</h5>
             </li>
             <li id='${idfromDN}' class='collapse in'>
                 <ul class="srch-ul">`;
         $.each(dataItems, function (i, obj) {
             let j = 0;
+            let modifiedAtarr = obj.ModifiedAt.split(' ');
+            let createdAtArr = obj.CreatedAt.split(' ');
             html += `
-                    <li class="srch-li">
+                    <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
                         <div class='srch-li-block'>
-                            <a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1"><i class="fa fa-external-link" aria-hidden="true"></i></a>
-                            <div class="ctrldtlsWrap">`;
-                            $.each(obj.Data, function (name, val) {
-                                if (j++ % 3 === 0) {
-                                    html += `
+                            <div class="ctrldtlsWrap" onclick="window.open('${obj.Link}', '_blank')">`;
+            $.each(obj.Data, function (name, val) {
+                if (j++ % 3 === 0) {
+                    html += `
                                 <table class='ctrldtls'>
                                     <tbody>`;
-                                }
-                                html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
-                                if (j % 3 === 0) {
-                                    html += `
+                }
+                html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
+                if (j % 3 === 0) {
+                    html += `
                                     </tbody>
                                 </table>`;
-                                }
-                                if (j === 6)
-                                    return false;
-                            });
-                            html += `
+                }
+                if (j === 6)
+                    return false;
+            });
+            html += `
                                     </tbody>
                                 </table>
                             </div>
@@ -227,26 +227,22 @@
                                 <table class='metadtls'>
                                     <tbody>
                                         <tr>
-                                            <td class='metalbl'><i class="fa fa-clock-o" aria-hidden="true"></i> Created</td><td class='metaval'> : ${obj.CreatedAt} </td>
+                                            <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
+                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
                                         <tr>    
-                                        </tr>
-                                            <td class='metalbl'><i class="fa fa-user" aria-hidden="true"></i> Created</td><td class='metaval'> : ${obj.CreatedBy} </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                                 <table class='metadtls'>
                                     <tbody>
                                         <tr>
-                                            <td class='metalbl'> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</td><td class='metaval'> : ${obj.ModifiedAt} </td>
-                                        <tr>
-                                        </tr>
-                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i> Modified</td><td class='metaval'> : ${obj.ModifiedBy} </td>
+                                            <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
+                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>`;
-        html += '   </li>'
+            html += '   </li>'
         });
         return `${html}
                 </ul>

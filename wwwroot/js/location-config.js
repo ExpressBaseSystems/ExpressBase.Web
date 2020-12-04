@@ -119,7 +119,7 @@
             SolutionId: "",
             Container: container,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.cloud',
+            ServerEventUrl: 'https://se.eb-test.site',
             EnableTag: false,
             MaxSize: 1,
             EnableCrop: true,

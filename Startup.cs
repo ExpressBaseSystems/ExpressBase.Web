@@ -53,7 +53,7 @@ namespace ExpressBase.Web2
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder
                      .SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins("https://*.eb-test.cloud", "https://*.expressbase.com")
+                    .WithOrigins("https://*.eb-test.site", "https://*.expressbase.com")
                     .AllowAnyMethod());
             });
 
@@ -192,8 +192,8 @@ namespace ExpressBase.Web2
                 context.Response.Headers.Remove("X-Frame-Options");
                 if (env.IsStaging())
                 {
-                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.eb-test.cloud");
-                    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.cloud *.eb-test.cloud;");
+                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.eb-test.site");
+                    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.site *.eb-test.site;");
                 }
                 if (env.IsProduction())
                     context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN");

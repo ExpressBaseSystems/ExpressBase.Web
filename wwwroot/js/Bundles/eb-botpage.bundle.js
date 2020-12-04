@@ -23,13 +23,23 @@ var InitControls = function (option) {
             $(el).popover({
                 trigger: 'focus',
                 html: true,
-                container: "body [eb-root-obj-container]:first",
+                container: "body",
                 placement: this.PopoverPlacement,
                 content: decodeURIComponent(escape(window.atob(ctrl.Info)))
             });
         }
         else {
             el.remove();
+        }
+
+        // hide popover on scroll
+        let scrollableContSelectors = this.scrollableContSelectors.concat('[eb-root-obj-container]');
+        for (let i = 0; i < scrollableContSelectors.length; i++) {
+            let $containers = $(el).parents(scrollableContSelectors[i]).filter(':not([onscroll-hide-info="true"])');
+            $containers.scroll(function (event) {
+                $(event.target).find('.label-infoCont:focus').blur();
+            }.bind(this));
+            $containers.attr('onscroll-hide-info', 'true');
         }
     };
 
@@ -69,24 +79,28 @@ var InitControls = function (option) {
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.cloud',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.site',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
-            HideEmptyCategory: ctrl.HideEmptyCategory
+            HideEmptyCategory: ctrl.HideEmptyCategory,
+            ShowUploadDate: ctrl.ShowUploadDate,
+            ViewByCategory: ctrl.ViewByCategory
         });
 
-        uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
+        //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
+        uploadedFileRefList[ctrl.Name + '_add'] = [];
+        uploadedFileRefList[ctrl.Name + '_del'] = [];
 
         imgup.uploadSuccess = function (fileid) {
-            if (uploadedFileRefList[ctrl.Name].indexOf(fileid) === -1)
-                uploadedFileRefList[ctrl.Name].push(fileid);
+            if (uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
+                uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
         };
 
         imgup.windowClose = function () {
-            if (uploadedFileRefList[ctrl.Name].length > 0)
+            if (uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
         };
 
@@ -94,71 +108,60 @@ var InitControls = function (option) {
             if (name === "Delete") {
                 if (name === "Delete") {
                     EbDialog("show",
-                        {
-                            Message: "Are you sure? Changes Affect only if Form is Saved.",
-                            Buttons: {
-                                "Yes": {
-                                    Background: "green",
-                                    Align: "left",
-                                    FontColor: "white;"
-                                },
-                                "No": {
-                                    Background: "violet",
-                                    Align: "right",
-                                    FontColor: "white;"
-                                }
-                            },
-                            CallBack: function (name) {
-                                if (name === "Yes") {
-                                    let initLen = uploadedFileRefList[ctrl.Name].length;
-                                    for (let i = 0; i < refids.length; i++) {
-                                        let index = uploadedFileRefList[ctrl.Name].indexOf(refids[i]);
-                                        if (index !== -1) {
-                                            uploadedFileRefList[ctrl.Name].splice(index, 1);
-                                        }
+                    {
+                        Message: "Are you sure? Changes Affect only if Form is Saved.",
+                        Buttons: {
+                            "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                            "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                        },
+                        CallBack: function (name) {
+                            if (name === "Yes" && refids.length > 0) {
+                                let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
+
+                                for (let i = 0; i < refids.length; i++) {
+                                    let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
+                                    if (index !== -1) {
+                                        uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
                                     }
-                                    if (initLen > uploadedFileRefList[ctrl.Name].length) {
-                                        imgup.deleteFromGallery(refids);
-                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                    else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
+                                        uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
                                     }
-                                    imgup.customMenuCompleted("Delete", refids);
                                 }
+                                if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
+                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                }
+                                imgup.deleteFromGallery(refids);
+                                imgup.customMenuCompleted("Delete", refids);
                             }
-                        });
+                        }
+                    });
                 }
             }
             else {
                 $.each(DpControlsList, function (i, dpObj) {
                     if (name === 'Set as ' + dpObj.Label) {
                         EbDialog("show",
-                            {
-                                Message: "Are you sure? Changes Affect only if Form is Saved.",
-                                Buttons: {
-                                    "Yes": {
-                                        Background: "green",
-                                        Align: "left",
-                                        FontColor: "white;"
-                                    },
-                                    "No": {
-                                        Background: "violet",
-                                        Align: "right",
-                                        FontColor: "white;"
+                        {
+                            Message: "Are you sure? Changes Affect only if Form is Saved.",
+                            Buttons: {
+                                "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                                "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                            },
+                            CallBack: function (name) {
+                                if (name === "Yes") {
+                                    if (refids.length > 0) {
+                                        dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
                                     }
-                                },
-                                CallBack: function (name) {
-                                    if (name === "Yes") {
-                                        if (refids.length > 0) {
-                                            dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
-                                        }
-                                    }
-                                }.bind()
-                            });
+                                }
+                            }.bind()
+                        });
                     }
                 });
             }
 
         }.bind(this, ctrlOpts.DpControlsList);
 
+        
     };
 
     //edit by amal for signature pad
@@ -172,12 +175,12 @@ var InitControls = function (option) {
         };
     };
 
-    this.getInitFileIds = function (files) {
-        let ids = [];
-        for (let i = 0; i < files.length; i++)
-            ids.push(files[i].FileRefId);
-        return ids;
-    };
+    //this.getInitFileIds = function (files) {
+    //    let ids = [];
+    //    for (let i = 0; i < files.length; i++)
+    //        ids.push(files[i].FileRefId);
+    //    return ids;
+    //};
 
     this.DGUserControlColumn = function (ctrl, ctrlOpts) {
         ctrl.__Col.__DGUCC.initForctrl(ctrl);
@@ -287,7 +290,7 @@ var InitControls = function (option) {
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none').css('color', '#999');
         }
-        else if (ctrl.ShowDateAs_ !== 2)
+        else if (ctrl.ShowDateAs_ !== 2 && this.rendererName !== "WebForm")
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
@@ -652,6 +655,10 @@ var InitControls = function (option) {
                         val = this.Renderer.rowId;
                         name = "id";
                     }
+                    else if (this.Renderer.FormObj && depCtrl_s == `form.${this.Renderer.FormObj.TableName}_id`) {// in bot FormObj=undefined
+                        val = this.Renderer.rowId;
+                        name = this.Renderer.FormObj.TableName + "_id";
+                    }
                     else {
                         val = depCtrl.getValue();
                         name = depCtrl.Name;
@@ -679,7 +686,7 @@ var InitControls = function (option) {
 
         $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
             if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
-                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted) {
+                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted && ctrl.initializer.isSecondTime) {
                     ctrl.initializer.Api.columns.adjust();
                     ctrl.initializer.__ColAdjusted = true;
                 }
@@ -772,18 +779,137 @@ var InitControls = function (option) {
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 0, long: 0 };
-        if (typeof _rowId === 'undefined' || _rowId === 0) {
+        if (!ctrl.DefaultApikey && this.Renderer.rendererName === 'WebForm')// WebForm - restricted other renderers for testing purpose.
+            this.initOSM(ctrl);
+        else {
+            ebcontext.userLoc = { lat: 0, long: 0 };
+            this.InitMap4inpG(ctrl);
+            if (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    $('#' + ctrl.EbSid_CtxId).locationpicker('location', {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    });
+                    if (ctrl.DataVals)
+                        ctrl.DataVals.Value = position.coords.latitude + ',' + position.coords.longitude;
+                }.bind(this));
+            }
+            $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) => $(event.target).closest('.locinp-cont').find('.locinp').val(''));
+            $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
+        }
+    };
+
+    this.initOSM = function (ctrl) {
+        $(`#${ctrl.EbSid_CtxId}_Cont`).find('.locinp-wraper-address').hide();//temp
+        ctrl.__mapVendor = "osm";//
+        let lat = 0, lon = 0;
+        let map, marker;
+
+        try {
+            map = new L.Map(ctrl.EbSid_CtxId);
+        }
+        catch (e) {
+            console.log(e);
+        }
+
+        var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osmAttrib = 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
+        var osm = new L.TileLayer(osmUrl, { minZoom: 1, maxZoom: 18, attribution: osmAttrib });
+        map.setView([lat, lon], 14);
+        map.addLayer(osm);
+        if (!marker)
+            marker = new L.marker([lat, lon], { draggable: 'true' });
+        else
+            marker.setLatLng([lat, lon]);
+        ctrl.__map = map;//
+        ctrl.__mapMarker = marker;//
+
+        marker.on('dragend', function (e) {
+            map.setView(e.target.getLatLng());
+            $(`#${ctrl.EbSid_CtxId}lat`).val(e.target.getLatLng().lat);
+            $(`#${ctrl.EbSid_CtxId}long`).val(e.target.getLatLng().lng);
+            this.OSM_Call_OnChangeFns(ctrl);
+        }.bind(this));
+
+        map.addLayer(marker);
+
+        $(`#${ctrl.EbSid_CtxId}lat`).on('change', function () {
+            let val = parseFloat($(`#${ctrl.EbSid_CtxId}lat`).val());
+            if (isNaN(val)) {
+                let Value = ctrl.DataVals.Value;
+                let tmp = Value.includes(',') ? Value.split(',') : Value.split('/');
+                val = tmp[0];
+                $(`#${ctrl.EbSid_CtxId}lat`).val(val);
+                return;
+            }
+            marker.setLatLng([val, marker.getLatLng().lng]);
+            map.setView(marker.getLatLng());
+            this.OSM_Call_OnChangeFns(ctrl);
+        }.bind(this));
+
+        $(`#${ctrl.EbSid_CtxId}long`).on('change', function () {
+            let val = parseFloat($(`#${ctrl.EbSid_CtxId}long`).val());
+            if (isNaN(val)) {
+                let Value = ctrl.DataVals.Value;
+                let tmp = Value.includes(',') ? Value.split(',') : Value.split('/');
+                val = tmp[1];
+                $(`#${ctrl.EbSid_CtxId}long`).val(val);
+                return;
+            }
+            marker.setLatLng([marker.getLatLng().lat, val]);
+            map.setView(marker.getLatLng());
+            this.OSM_Call_OnChangeFns(ctrl);
+        }.bind(this));
+
+        //$(`#${ctrl.EbSid_CtxId}address`).on('change', function () {
+        //    let text = $(this).val();
+        //    var requestUrl = "http://nominatim.openstreetmap.org/search?format=json&q=" + text;
+        //    $.ajax({
+        //        url: requestUrl,
+        //        type: "GET",
+        //        dataType: 'json',
+        //        error: function (err) {
+        //            console.log(err);
+        //        },
+        //        success: function (data) {
+        //            console.log(data);
+        //            var item = data[0];
+        //            $(`#${ctrl.EbSid_CtxId}lat`).val(item.lat);
+        //            $(`#${ctrl.EbSid_CtxId}long`).val(item.lon);
+        //            marker.setLatLng([item.lat, item.lon]);
+        //            map.setView([item.lat, item.lon]);
+        //        }
+        //    });
+        //});
+
+        if ((typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0) && !this.Renderer.__fromImport) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                $('#' + ctrl.EbSid_CtxId).locationpicker('location', {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                });
+                $("#" + ctrl.EbSid_CtxId + "lat").val(position.coords.latitude);
+                $("#" + ctrl.EbSid_CtxId + "long").val(position.coords.longitude);
+                marker.setLatLng([position.coords.latitude, position.coords.longitude]);
+                map.setView({ lat: position.coords.latitude, lng: position.coords.longitude });
+                if (ctrl.DataVals)
+                    ctrl.DataVals.Value = position.coords.latitude + ',' + position.coords.longitude;
             }.bind(this));
         }
-        this.InitMap4inpG(ctrl);
-        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) => $(event.target).closest('.locinp-cont').find('.locinp').val(''));
-        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
+
+        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
+            if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
+                map.invalidateSize();
+            }
+        });
+    };
+
+    this.OSM_Call_OnChangeFns = function (ctrl) {
+        if (!ctrl.__isJustSetValue) {
+            if (ctrl.__ebonchangeFns) {
+                for (let i = 0; i < ctrl.__ebonchangeFns.length; i++) {
+                    ctrl.__ebonchangeFns[i]();
+                }
+            }
+        }
+        else
+            ctrl.__isJustSetValue = false;
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -944,7 +1070,7 @@ var InitControls = function (option) {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
             rendererName: this.Renderer.rendererName,
             renderer: this.Renderer,
-            scrollableContSelectors: this.scrollableContSelectors
+            scrollableContSelectors: this.Renderer.rendererName === "WebForm" ? this.scrollableContSelectors : []
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
@@ -1135,14 +1261,46 @@ var InitControls = function (option) {
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
+        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts});        
+        //$('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
+        //    trigger: 'hover',
+        //    html: true,
+        //    container: "body",
+        //    placement: "right",
+        //    content: "<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>Created/Linked user</div>- Not assigned yet -",
+        //    delay: { "show": 500, "hide": 100 }
+        //});
 
-        $.each(ctrl.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
-                if (c)
-                    obj.Control = c;
-            }
-        }.bind(this));
+        //ctrl.setValue = function () {
+        //    if (!this.DataVals)
+        //        return;
+        //    this._finalObj = JSON.parse(this.DataVals.F);
+        //    let _d = this._finalObj;
+        //    let $img = $('#' + this.EbSid_CtxId + '_usrimg');
+        //    if (_d['map_id']) {
+        //        $img.off('error').on('error', function () { $(this).attr('src', '/images/nulldp.png'); }).attr('src', '/images/dp/' + _d['map_id'] + '.png');
+        //        let dispText = _d['map_fullname'] ? _d['map_fullname'] : (_d['map_email'] ? _d['map_email'] : (_d['map_phprimary'] ? _d['map_phprimary'] : ''));
+        //        $('#' + this.EbSid_CtxId).text(dispText);
+        //        let popoverText = 'Name: ' + (_d['map_fullname'] ? _d['map_fullname'] : '---') + '<br/>';
+        //        popoverText += 'Email: ' + (_d['map_email'] ? _d['map_email'] : '---') + '<br/>';
+        //        popoverText += 'Phone: ' + (_d['map_phprimary'] ? _d['map_phprimary'] : '---');
+        //        let title = `<div style='font-weight: 500;; color: #656565; border-bottom: 1px solid #ccc; margin-bottom: 5px;'>${(_d['id'] ? 'Created user' : 'Linked user')}</div>`;
+        //        popoverText = title + popoverText;
+        //        $img.attr('data-content', popoverText);
+        //    }
+        //    else {
+        //        $img.attr('src', '/images/nulldp.png');
+        //        $('#' + this.EbSid_CtxId).text('---');
+        //    }
+        //}.bind(ctrl);
+
+        //$.each(ctrl.Fields.$values, function (i, obj) {
+        //    if (obj.ControlName !== '') {
+        //        let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
+        //        if (c)
+        //            obj.Control = c;
+        //    }
+        //}.bind(this));
     };
 
     this.ProvisionLocation = function (ctrl, ctrlopts) {
@@ -1224,6 +1382,9 @@ var InitControls = function (option) {
         else if (ctrl.TextMode === 2) {
             $ctrl.on('input', this.checkEmail.bind(this, ctrl));
         }
+    };
+    this.AudioInput = function (ctrl, ctrlopts) {
+        AudioInput(ctrl, ctrlopts);
     };
 
     this.EmailControl = function (ctrl) {
@@ -1414,75 +1575,75 @@ var InitControls = function (option) {
         }
     };
 
-    this.BluePrint = function (ctrl, ctrlopts) {
-        console.log("view mode bp");
-        var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
-                        <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
-                           <div class='vertical-align_tlbr' >
-                                
-                                    <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Mark">
-                                        <i class="fa fa-object-ungroup "></i>   
-                                    </div>
+    //this.BluePrint = function (ctrl, ctrlopts) {
+    //    console.log("view mode bp");
+    //    var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
+    //                    <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
+    //                       <div class='vertical-align_tlbr' >
 
-                                    <div  id='bg_image_BP' class='bp_toolbarproperties 'title="Image upload">
-                                        <label for="bg_image">
-                                           <i class='fa fa-picture-o'></i>
-                                        </label>
-                                         <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
-                                    </div> 
+    //                                <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Mark">
+    //                                    <i class="fa fa-object-ungroup "></i>   
+    //                                </div>
 
-                                    <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
-                                        <i class='fa fa-minus-circle'></i>
-                                    </div>
+    //                                <div  id='bg_image_BP' class='bp_toolbarproperties 'title="Image upload">
+    //                                    <label for="bg_image">
+    //                                       <i class='fa fa-picture-o'></i>
+    //                                    </label>
+    //                                     <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
+    //                                </div> 
 
-                                     <div id='resetsvg_BP' class='bp_toolbarproperties 'title="Reset position">
-                                        <i class='fa fa-refresh'></i>
-                                    </div>
+    //                                <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
+    //                                    <i class='fa fa-minus-circle'></i>
+    //                                </div>
 
-                                    <div id='clearsvg_BP' class='bp_toolbarproperties 'title="Clear layers">
-                                        <i class='fa fa-eraser '></i>
-                                    </div>
+    //                                 <div id='resetsvg_BP' class='bp_toolbarproperties 'title="Reset position">
+    //                                    <i class='fa fa-refresh'></i>
+    //                                </div>
 
-                                    <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
-                                        <i class='fa fa-stop-circle-o '></i>
-                                    </div>
+    //                                <div id='clearsvg_BP' class='bp_toolbarproperties 'title="Clear layers">
+    //                                    <i class='fa fa-eraser '></i>
+    //                                </div>
 
-                                    <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
-                                        <i class='fa fa-search  '></i>
-                                    </div>
-                            </div>
-                        </div>
-                        <div class="col-md-11 col-lg-11 col-sm-11 svgcntnrBP_usr">
+    //                                <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
+    //                                    <i class='fa fa-stop-circle-o '></i>
+    //                                </div>
 
-                            <div id="svgContainer"></div>
-                        </div>
-                    </div>`;
-        $('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid).addClass('bpdiv_retrive').html(bphtml);
-        $('#cont_' + ctrl.EbSid).css('height', '100%');
-        $('#bpdiv_' + ctrl.EbSid).css('height', '100%');
-        $('#' + ctrl.EbSid + 'Wraper').css('height', '100%');
+    //                                <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
+    //                                    <i class='fa fa-search  '></i>
+    //                                </div>
+    //                        </div>
+    //                    </div>
+    //                    <div class="col-md-11 col-lg-11 col-sm-11 svgcntnrBP_usr">
+
+    //                        <div id="svgContainer"></div>
+    //                    </div>
+    //                </div>`;
+    //    $('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid).addClass('bpdiv_retrive').html(bphtml);
+    //    $('#cont_' + ctrl.EbSid).css('height', '100%');
+    //    $('#bpdiv_' + ctrl.EbSid).css('height', '100%');
+    //    $('#' + ctrl.EbSid + 'Wraper').css('height', '100%');
 
 
-        var drawBP = new drawBluePrintfn(ctrl);
+    //    var drawBP = new drawBluePrintfn(ctrl);
 
-        drawBP.redrawSVGelements_usr();
+    //    drawBP.redrawSVGelements_usr();
 
-        ctrl.getValueFromDOM = drawBP.getvalueSelected;
-        ctrl.setValue = drawBP.setvalueSelected;
-        ctrl._onChangeFunctions = [];
-        ctrl.bindOnChange = function (p1) {
-            if (!this._onChangeFunctions.includes(p1))
-                this._onChangeFunctions.push(p1);
-        };
-        ctrl.clear = drawBP.clear_ctrlAftrsave;
-        //display
-        //ctrl.setValue = dgbf;
-        ////store
-        // ctrl.getValueFromDOM = drawBP.getvalueSelected();
-        ////call fn onchange
-        //ctrl.bindOnChange = asgd;
+    //    ctrl.getValueFromDOM = drawBP.getvalueSelected;
+    //    ctrl.setValue = drawBP.setvalueSelected;
+    //    ctrl._onChangeFunctions = [];
+    //    ctrl.bindOnChange = function (p1) {
+    //        if (!this._onChangeFunctions.includes(p1))
+    //            this._onChangeFunctions.push(p1);
+    //    };
+    //    ctrl.clear = drawBP.clear_ctrlAftrsave;
+    //    //display
+    //    //ctrl.setValue = dgbf;
+    //    ////store
+    //    // ctrl.getValueFromDOM = drawBP.getvalueSelected();
+    //    ////call fn onchange
+    //    //ctrl.bindOnChange = asgd;
 
-    }
+    //}
 
     this.Rating = function (ctrl) {
         if ((ebcontext.user.wc == 'uc') || this.Renderer.rendererName === "Bot") {
@@ -1511,6 +1672,21 @@ var InitControls = function (option) {
     }
 
     this.TagInput = function (ctrl) {
+        var $ctrl = $("#" + ctrl.EbSid_CtxId +'_tagId');
+        if (ctrl.AutoSuggestion === true) {           
+            var BloodhoundEngine = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                local: ctrl.Suggestions.$values                    
+            });
+            BloodhoundEngine.initialize();
+            $ctrl.tagsinput({
+                typeaheadjs: {
+                    source: BloodhoundEngine.ttAdapter()
+                }
+            });
+
+        }
         //$('#' + ctrl.EbSid).find('.bootstrap-tagsinput').find('.tag');
         //$('input[name = ' + ctrl.EbSid_CtxId + '_tags]').css("font-size", ctrl.FontSizes + 'px')
         //ctrl.clear = function (p1) {
@@ -1546,11 +1722,12 @@ var InitControls = function (option) {
     };
 
     this.SimpleFileUploader = function (ctrl) {
+        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
             renderer: this.Renderer.rendererName,
             maxSize: ctrl.MaxSize,
-            fileTypes: ctrl.FileTypes,
+            fileTypes: fileType,
             maxFiles: ctrl.MaxFiles
 
         });
@@ -1813,7 +1990,7 @@ var InitControls = function (option) {
                 }
                 var paramString = btoa(unescape(encodeURIComponent(JSON.stringify(paramArray))));
             }
-            $(`#icon_${ctrl.EbSid}`).click(function () {
+            $(`#img_${ctrl.EbSid}, #spn_${ctrl.EbSid} `).click(function () {
                 if (this.Renderer.rendererName === "WebForm") {
                     if (confirm(`Download ${ctrl.PdfRefid}.pdf?`)) {
                         let link = document.createElement('a');
@@ -1870,7 +2047,7 @@ function createValidator(element) {
 }
 //import { Array, Object } from "core-js/library/web/timers";
 
-var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl) {
+var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, ebENV,_serverEventUrl) {
     console.log("chatbot.js loaded for bot " + _appid);
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
@@ -1878,8 +2055,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.ebbotThemeColor = settings.ThemeColor || "#055c9b";
     this.welcomeMessage = settings.WelcomeMessage || "Hi, I am EBbot from EXPRESSbase!";
     this.ServerEventUrl = _serverEventUrl;
-    this.botdpURL = 'url(' + (settings.DpUrl || ('../images/businessmantest.png')) + ')center center no-repeat';
-    //this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('../images/businessmantest.png')) + ')center center no-repeat';
+    let dpurl = (/^\d+$/.test(settings.DpUrl)) ? (`../botExt/images/original/${settings.DpUrl}.png`) : (settings.DpUrl || '../images/demobotdp4.png');
+    this.botdpURL = 'url(' + dpurl + ')center center no-repeat';
     this.$chatCont = $(`<div class="eb-chat-cont" eb-form='true'  eb-root-obj-container isrendermode='true'></div>`);
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$frameHeader = $('<div class="eb-FrameHeader"></div>');
@@ -1905,6 +2082,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.formsDict = {};
     this.formNames = [];
     this.formIcons = [];
+    this.tile_BG = [];
+    this.tile_TxtClr = [];
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
@@ -1920,12 +2099,13 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.ssurl = ssurl;
     this.userLoc = {};
     this.botQueue = [];
+    this.recaptcha_tkn = "";
     this.botflg = {};
     this.botflg.loadFormlist = false;
     this.botflg.singleBotApp = false;
-    this.botflg.startover = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
+    this.botflg.login_call_to = "";
     this.formObject = {};// for passing to user defined functions
     this.CurFormflatControls = [];// for passing to user defined functions
 
@@ -1935,17 +2115,18 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
         this.$chatCont.append(this.$renderAtBottom);
+        this.FRC = new FormRenderCommon({ FO: this });
         if (settings.BotProp.EbTag) {
             this.$chatCont.append(this.$poweredby);
         }
-        this.$TypeAnim = $(`<div><svg class="lds-typing" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-                    <circle cx="27.5" cy="40.9532" r="5" fill="#999">
+        this.$TypeAnim = $(`<div><svg class="lds-typing" width="50px" height="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                    <circle cx="0" cy="0" r="12" fill="#999">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.5s"></animate>
                     </circle>
-                    <circle cx="42.5" cy="56.4907" r="5" fill="#aaa">
+                    <circle cx="40" cy="0" r="12" fill="#aaa">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.375s"></animate>
                     </circle>
-                    <circle cx="57.5" cy="62.5" r="5" fill="#bbb">
+                    <circle cx="80" cy="0" r="12" fill="#bbb">
                         <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="62.5;37.5;62.5;62.5" keyTimes="0;0.25;0.5;1" dur="1s" begin="-0.25s"></animate>
                     </circle>
                 </svg><div>`);
@@ -1966,12 +2147,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", ".eb-chatBox [name=formcancel_fm]", this.formCancel_fm);
         $("body").on("click", "[for=loginOptions]", this.loginSelectedOpn);
-        $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
+        //$("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", "[name=contactSubmitMail]", this.contactSubmitMail);
         $("body").on("click", "[name=contactSubmitPhn]", this.contactSubmitPhn);
         $("body").on("click", "[name=contactSubmitName]", this.contactSubmitName);
-        $("body").on("click", "[name=passwordSubmitBtn]", this.passwordLoginFn);
-        $("body").on("click", "[name=otpUserSubmitBtn]", this.otpLoginFn);
+        $("body").on("click", "[name=passwordSubmitBtn]", this.submitpasswordLogin);
+        $("body").on("click", "[name=otpUserSubmitBtn]", this.submitotpLoginFn);
         $("body").on("click", "[name=otpvalidateBtn]", this.otpvalidate);
         $("body").on("click", "#resendOTP", this.otpResendFn);
         $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
@@ -2001,27 +2182,27 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     //if anonimous user /not loggegin using fb
-    this.contactSubmit = function (e) {
-        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
-        let email = "";
-        let phone = "";
-        let username = "";
-        if (settings.Authoptions.Fblogin) {
-            email = $("#anon_mail").val().trim();
-            phone = $("#anon_phno").val().trim();
-            if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-                //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
-                this.msgFromBot("Please enter valid email/phone");
-                return;
-            }
-            this.msgFromBot("Thank you.");
-            this.authenticateAnon(email, phone);
-            $(e.target).closest('.msg-cont').remove();
-        }
+    //this.contactSubmit = function (e) {
+    //    let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    //    let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+    //    let email = "";
+    //    let phone = "";
+    //    let username = "";
+    //    if (settings.Authoptions.Fblogin) {
+    //        email = $("#anon_mail").val().trim();
+    //        phone = $("#anon_phno").val().trim();
+    //        if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
+    //            //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+    //            this.msgFromBot("Please enter valid email/phone");
+    //            return;
+    //        }
+    //        this.msgFromBot("Thank you.");
+    //        this.authenticateAnon(email, phone);
+    //        $(e.target).closest('.msg-cont').remove();
+    //    }
 
 
-    }.bind(this);
+    //}.bind(this);
 
     this.contactSubmitMail = function (e) {
         let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -2086,18 +2267,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     }.bind(this);
 
-    this.submitAnonymous = function () {
-        this.msgFromBot("Thank you.");
-        //let mail = this.userDtls.email || "";
-        //let phn = this.userDtls.phone || "";
-        //let nme = this.userDtls.name || "";
-        let mail = this.userDtls.email;
-        let phn = this.userDtls.phone;
-        let nme = this.userDtls.name;
-        this.authenticateAnon(mail, phn, nme);
-        //  $(e.target).closest('.msg-cont').remove();
-    };
-
     //check user is valid / is user authenticated
     this.ajaxSetup4Future = function () {
         //$.ajaxSetup({
@@ -2107,22 +2276,21 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         //});
     };
 
-    this.authenticateAnon = function (email, phno, name) {
-
+    this.authenticateAnon = function () {
         setTimeout(function () {
             this.showTypingAnim();
         }.bind(this), this.typeDelay);
         $.post("../bote/AuthAndGetformlist",
             {
-                "cid": this.EXPRESSbase_SOLUTION_ID,
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": null,
                 "wc": "bc",
-                "anon_email": email,
-                "anon_phno": phno,
+                "anon_email": this.userDtls.email,
+                "anon_phno": this.userDtls.phone,
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
-                "user_name": this.userDtls.name || null
+                "user_name": this.userDtls.name || null,
+                "token": this.recaptcha_tkn || "nhjsnbnby-edrjewrh"
             }, function (result) {
                 this.hideTypingAnim();
                 if (result.status === false) {
@@ -2130,7 +2298,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 }
                 else {
                     if (!$.isEmptyObject(result.botFormDict)) {
-                        console.log(1231);
                         //this.bearerToken = result.bearerToken;
                         //this.refreshToken = result.refreshToken;
                         document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
@@ -2140,6 +2307,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         //this.formNames = Object.values(this.formsDict);
                         this.formNames = Object.values(result.botFormNames);
                         this.formIcons = result.botFormIcons;
+                        this.tile_BG = result.tileBG_color;
+                        this.tile_TxtClr = result.tileText_color;
                         $('.eb-chatBox').empty();
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
@@ -2176,7 +2345,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 type: "POST",
                 url: "../Boti/GetBotformlist",
                 data: {
-                    cid: this.EXPRESSbase_SOLUTION_ID, appid: this.EXPRESSbase_APP_ID
+                    appid: this.EXPRESSbase_APP_ID
                 },
                 success: function (result) {
                     this.botflg.loadFormlist = false;
@@ -2190,6 +2359,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             window.ebcontext.user = JSON.parse(result[1]);
                             this.formNames = Object.values(result[2]);
                             this.formIcons = result[3];
+                            this.tile_BG = result[4];
+                            this.tile_TxtClr = result[5];
                             if (Object.keys(this.formsDict).length == 1) {
                                 this.botflg.singleBotApp = true;
                                 this.curRefid = Object.keys(this.formsDict)[0];
@@ -2290,22 +2461,22 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.getForm = function (RefId) {
         this.showTypingAnim();
-        if (!this.formsList[RefId]) {
-            $.ajax({
-                type: "POST",
-                //url: "../Boti/GetCurForm",
-                url: "../Boti/GetCurForm_New",
-                data: { refid: RefId },
+        //if (!this.formsList[RefId]) {
+        $.ajax({
+            type: "POST",
+            //url: "../Boti/GetCurForm",
+            url: "../Boti/GetCurForm_New",
+            data: { refid: RefId },
 
-                success: this.getFormSuccess.bind(this, RefId)
+            success: this.getFormSuccess.bind(this, RefId)
 
-            });
-        }
-        else {
-            this.hideTypingAnim();
-            this.curForm = this.formsList[RefId];
-            this.setFormControls();
-        }
+        });
+        //}
+        //else {
+        //    this.hideTypingAnim();
+        //    this.curForm = this.formsList[RefId];
+        //    this.setFormControls();
+        //}
     };
 
     this.txtboxKeyup = function (e) {
@@ -2382,16 +2553,21 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         return Html;
     };
 
-    this.Query_botformlist = function (msg, OptArr, For, ids, icns) {
+    this.Query_botformlist = function (msg, OptArr, For, ids, icns, tileBG, tileTxtClr) {
         this.msgFromBot(msg);
-        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, icns);
+        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, icns, tileBG, tileTxtClr);
         this.msgFromBot($('<div class="btn-box_botformlist" >' + Options + '</div>'));
     };
 
-    this.getButtons_botformlist = function (OptArr, For, ids, icns) {
+    this.getButtons_botformlist = function (OptArr, For, ids, icns, tileBG, tileTxtClr) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
-            Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px;" class="fa ${icns[i]}"></i>${opt} </button>`;
+            if ((tileBG[i] || tileTxtClr[i]) && (tileBG[i] === tileTxtClr[i])) {
+                Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px;" class="fa ${icns[i]}"></i>${opt} </button>`;
+            }
+            else {
+                Html += `<button for="${For}" class="btn formname-btn_botformlist" style=" color:${tileTxtClr[i]}; background-color:${tileBG[i]}" class="fa ${icns[i]} idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px; " class="fa ${icns[i]}"></i>${opt} </button>`;
+            }
         });
         return Html;
     };
@@ -2406,7 +2582,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.makeReqFm = function (control) {
         var $ctrl = $("#" + control.Name);
         if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "")
-            EbMakeInvalid(`[for=${control.Name}]`, '.ctrl-wraper');
+            EbMakeInvalid(control, `[for=${control.Name}]`, '.ctrl-wraper');
     };
 
     this.removeReqFm = function (control) {
@@ -2526,7 +2702,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.checkRequired = function () {
         if (this.curCtrl.Required && !this.curVal) {
-            EbMakeInvalid(`[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
+            EbMakeInvalid(this.curCtrl, `[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
             return false;
         }
         else {
@@ -2732,6 +2908,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
         }
+        if (this.curCtrl.ObjType === 'PowerSelect')
+            this.curCtrl.initializer.destroy();
         this.callGetControl(this.controlHideDelay);
 
         if ($('[saveprompt]').length === 1) {
@@ -3123,6 +3301,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.msgFromBot = function (msg, callbackFn, ctrlname) {
         this.hideTypingAnim();
+        $("#eb_botStartover").hide();
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
@@ -3168,7 +3347,10 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
                     if (this.curCtrl && this.curCtrl.IsFullViewContol) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
-                        $msg.find(".msg-wraper-bot").css("margin-left", "12px");
+                        $msg.find(".msg-wraper-bot").css("margin-left", "12px")
+                        if ((this.curCtrl.ObjType === "TVcontrol")) {
+                            $msg.find(".msg-wraper-bot").css({ "margin-left": "0px", "width": "100%", "padding-right": "0px" });
+                        }
                     }
 
                     if (this.curCtrl && ($msg.find(".ctrl-wraper").length === 1)) {
@@ -3186,6 +3368,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 if (callbackFn && typeof callbackFn === typeof function () { })
                     callbackFn();
                 this.scrollToBottom();
+                $("#eb_botStartover").show();
             }.bind(this), this.typeDelay);
             this.ready = false;
         }
@@ -3221,6 +3404,11 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             else {
                 let btnhtml = this.proceedBtnHtml('mrg_tp_10');
                 //remove from getcontrols itself
+                if ((this.curCtrl.ObjType === "TVcontrol")) {
+                    $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').removeClass("ctrl-cont-bot");
+                    $('#' + this.curCtrl.EbSid).closest('.msg-wraper-bot').removeClass("msg-wraper-bot");
+                    $('#' + this.curCtrl.EbSid).closest('.msg-cont-bot').removeClass("msg-cont-bot");
+                }
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').find('.ctrl-wraper').addClass('w-100');
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').addClass('flxdirctn_col');
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').append(btnhtml);
@@ -3409,7 +3597,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.AskWhatU = function () {
         //this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
-        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict), this.formIcons);
+        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict), this.formIcons, this.tile_BG, this.tile_TxtClr);
     };
 
     this.showDate = function () {
@@ -3428,7 +3616,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.setStartOver = function () {
-        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="display:none" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };
@@ -3467,12 +3655,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $('[name="ctrledit"]').hide(200);
     };
 
+    //login with fb
     this.authenticate = function () {
         this.showTypingAnim();
 
         $.post("../bote/AuthAndGetformlist",
             {
-                "cid": this.EXPRESSbase_SOLUTION_ID,
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": this.FBResponse.id,
                 "wc": "bc",
@@ -3497,6 +3685,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         //this.formNames = Object.values(this.formsDict);
                         this.formNames = Object.values(result.botFormNames);
                         this.formIcons = result.botFormIcons;
+                        this.tile_BG = result.tileBG_color;
+                        this.tile_TxtClr = result.tileText_color;
                         $('.eb-chatBox').empty();
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
@@ -3528,6 +3718,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
     this.login2FB = function () {
+        console.log("fblogin");
         this.FB.login(function (response) {
             if (response.authResponse) {
                 // statusChangeCallback(response);
@@ -3761,7 +3952,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 type: "POST",
                 data: {
                     "uname": this.botflg.uname_otp,
-                    "cid": this.EXPRESSbase_SOLUTION_ID,
                     "appid": this.EXPRESSbase_APP_ID,
                     "wc": "bc",
                     "user_ip": this.userDtls.ip,
@@ -3785,6 +3975,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             //this.formNames = Object.values(this.formsDict);
                             this.formNames = Object.values(result.botFormNames);
                             this.formIcons = result.botFormIcons;
+                            this.tile_BG = result.tileBG_color;
+                            this.tile_TxtClr = result.tileText_color;
                             $('.eb-chatBox').empty();
                             this.showDate();
                             if (Object.keys(this.formsDict).length == 1) {
@@ -3823,6 +4015,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             //this.formNames = Object.values(this.formsDict);
                             this.formNames = Object.values(result.botFormNames);
                             this.formIcons = result.botFormIcons;
+                            this.tile_BG = result.tileBG_color;
+                            this.tile_TxtClr = result.tileText_color;
                             $('.eb-chatBox').empty();
                             this.showDate();
                             if (Object.keys(this.formsDict).length == 1) {
@@ -3851,547 +4045,609 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     }.bind(this);
 
 
-this.otpResendFn = function () {
-    this.resendOTP = true;
-    $.post("../bote/ResendOtp",
-        { otptype: this.botflg.otptype },
-        function (auth) {
-            if (auth.authStatus) {
-                $("[for=otpvalidate]").remove();
-                $("[lbl_for=otpvalidate]").remove();
-                this.msgFromBot("OTP has been sent again");
-                this.twoFactorAuthLogin(auth)
-            }
-            else {
-                this.msgFromBot(auth.errorMessage);
-            }
-        }.bind(this));
-}.bind(this);
+    this.otpResendFn = function () {
+        this.resendOTP = true;
+        $.post("../bote/ResendOtp",
+            { otptype: this.botflg.otptype },
+            function (auth) {
+                if (auth.authStatus) {
+                    $("[for=otpvalidate]").remove();
+                    $("[lbl_for=otpvalidate]").remove();
+                    this.msgFromBot("OTP has been sent again");
+                    this.twoFactorAuthLogin(auth)
+                }
+                else {
+                    this.msgFromBot(auth.errorMessage);
+                }
+            }.bind(this));
+    }.bind(this);
 
 
-this.validateEmail = function (email) {
-    //  var re = /\S+@\S+\.\S+/;
-    let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    return emailReg.test(email);
-}
+    this.validateEmail = function (email) {
+        //  var re = /\S+@\S+\.\S+/;
+        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return emailReg.test(email);
+    }
 
-this.validateMobile = function (mobile) {
-    // var phoneReg = /^(\+91-|\+91|0)?\d{10}$/;
-    let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
-    return phoneReg.test(mobile);
-}
+    this.validateMobile = function (mobile) {
+        // var phoneReg = /^(\+91-|\+91|0)?\d{10}$/;
+        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+        return phoneReg.test(mobile);
+    }
 
-this.otpLoginFn = function (e) {
-    $(e.target).closest('button').attr('disabled', true);
-    this.showTypingAnim();
-    let uname = $("#otp_login_id").val();
-    //let emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    let is_email = this.validateEmail(uname);
-    //let phoneRegex = /^(\+91-|\+91|0)?\d{10}$/;
-    let is_mobile = this.validateMobile(uname);
-    if (is_email || is_mobile) {
+    this.otpLoginFn = function (e) {
+        this.showTypingAnim();
+        let uname = $("#otp_login_id").val();
+        //let emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        let is_email = this.validateEmail(uname);
+        //let phoneRegex = /^(\+91-|\+91|0)?\d{10}$/;
+        let is_mobile = this.validateMobile(uname);
+        if (is_email || is_mobile) {
+            $.ajax({
+                url: "../bote/SendSignInOtp",
+                type: "POST",
+                data: {
+                    "uname": uname,
+                    "is_email": is_email,
+                    "is_mobile": is_mobile,
+                    "token": this.recaptcha_tkn || "nhjsnbnby-edrjewrh"
+                },
+                success: function (result) {
+                    this.hideTypingAnim();
+
+                    if (result.authStatus) {
+                        $("[for=otpUserLogin]").remove();
+                        $("[lbl_for=otpUserLogin]").remove();
+                        this.botflg.otptype = "signinotp";
+                        this.botflg.uname_otp = uname;
+                        this.twoFactorAuthLogin(result)
+                    }
+                    else if (result.authStatus === false) {
+                        this.msgFromBot(result.errorMessage);
+                    }
+
+                }.bind(this)
+            });
+        }
+
+    }.bind(this);
+
+    this.passwordLoginFn = function (e) {
+        this.showTypingAnim();
         $.ajax({
-            url: "../bote/SendSignInOtp",
+            url: "../bote/PasswordAuthAndGetformlist",
             type: "POST",
             data: {
-                "uname": uname,
-                "is_email": is_email,
-                "is_mobile": is_mobile
+                "uname": $("#username_id").val().trim(),
+                "pass": $("#password_id").val().trim(),
+                "appid": this.EXPRESSbase_APP_ID,
+                "wc": "bc",
+                "user_ip": this.userDtls.ip,
+                "user_browser": this.userDtls.browser,
+                "otptype": this.botflg.otptype,
+                "token": this.recaptcha_tkn || "nhjsnbnby-edrjewrh"
             },
             success: function (result) {
                 this.hideTypingAnim();
-
-                if (result.authStatus) {
-                    $("[for=otpUserLogin]").remove();
-                    $("[lbl_for=otpUserLogin]").remove();
-                    this.botflg.otptype = "signinotp";
-                    this.botflg.uname_otp = uname;
-                    this.twoFactorAuthLogin(result)
+                if (result.status === false) {
+                    this.msgFromBot(result.errorMsg);
                 }
-                else if (result.authStatus === false) {
-                    this.msgFromBot(result.errorMessage);
+                else {
+                    if (result.is2Factor) {
+                        $("[for=pswdbasedLogin]").remove();
+                        $("[lbl_for=pswdbasedLogin]").remove();
+                        this.botflg.otptype = "2faotp";
+                        this.twoFactorAuthLogin(result);
+                    }
+                    else {
+                        if (!$.isEmptyObject(result.botFormDict)) {
+                            document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
+                            document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
+                            this.formsDict = result.botFormDict;
+                            window.ebcontext.user = JSON.parse(result.user);
+                            //this.formNames = Object.values(this.formsDict);
+                            this.formNames = Object.values(result.botFormNames);
+                            this.formIcons = result.botFormIcons;
+                            this.tile_BG = result.tileBG_color;
+                            this.tile_TxtClr = result.tileText_color;
+                            $('.eb-chatBox').empty();
+                            this.showDate();
+                            if (Object.keys(this.formsDict).length == 1) {
+                                this.botflg.singleBotApp = true;
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
+                            }
+                            else {
+                                this.AskWhatU();
+                            }
+                        }
+                        else {
+                            this.msgFromBot("Permission is not set for current user");
+                        }
+                    }
+
                 }
 
             }.bind(this)
         });
-    }
+    }.bind(this);
 
-}.bind(this);
 
-this.passwordLoginFn = function (e) {
-    $(e.target).closest('button').attr('disabled', true);
-    this.showTypingAnim();
-    $.ajax({
-        url: "../bote/PasswordAuthAndGetformlist",
-        type: "POST",
-        data: {
-            "uname": $("#username_id").val().trim(),
-            "pass": $("#password_id").val().trim(),
-            "cid": this.EXPRESSbase_SOLUTION_ID,
-            "appid": this.EXPRESSbase_APP_ID,
-            "wc": "bc",
-            "user_ip": this.userDtls.ip,
-            "user_browser": this.userDtls.browser,
-            "otptype": this.botflg.otptype
-        },
-        success: function (result) {
-            this.hideTypingAnim();
-            if (result.status === false) {
-                this.msgFromBot(result.errorMsg);
+    this.AnonymousLoginOptions = function () {
+        this.hideTypingAnim();
+
+        //ASK FOR USER NAME
+        if (settings.Authoptions.UserName) {
+            this.userNameFn();
+        }
+        //use seperate function for else part to replace collectContacts
+        else {
+            if (settings.Authoptions.LoginOpnCount > 1) {
+                this.loginList();
             }
             else {
-                if (result.is2Factor) {
-                    $("[for=pswdbasedLogin]").remove();
-                    $("[lbl_for=pswdbasedLogin]").remove();
-                    this.botflg.otptype = "2faotp";
-                    this.twoFactorAuthLogin(result);
+                this.LoginOpnDirectly();
+            }
+
+        }
+        // this.isAlreadylogined = false;
+
+    }.bind(this);
+
+    this.loginList = function () {
+        this.Query(`Please select a login method`, [`Guest login`, `Login with facebook`], "loginOptions");
+
+        //// this.isAlreadylogined = false;
+        //let btnhtml = `<div class="loginOptnCont">
+        //                <div class="lgnBtnCont" >
+        //                    <button class="ebbtn loginOptnBtn" name="loginOptions" optn="guestlogin" ><i class="fa fa-user" style="padding-right:10px"></i>Guest login</button>
+        //                </div>`;
+
+        //if (settings.Authoptions.Fblogin) {
+        //    this.FB.getLoginStatus(function (response) {
+        //        if (response.status === 'connected') {
+        //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
+        //        } else {
+        //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
+        //        }
+        //    });
+
+        //}
+
+        //btnhtml += "</div>";
+        //this.msgFromBot($(btnhtml));
+    }.bind(this);
+
+    this.loginSelectedOpn = function (e) {
+        this.postmenuClick(e)
+        if (this.CurFormIdx === 0)
+            this.AnonymousUserLogin();
+        else {
+            this.login2FB();
+
+        }
+
+        //let optnTxt = $(e.target).closest('button').text();
+        //this.postmenuClick(e, optnTxt);
+        //let optn = $(e.target).closest('button').attr('optn');
+        //if (optn === 'guestlogin') {
+        //    this.AnonymousUserLogin();
+        //}
+        //else if (optn === 'btnFacebook') {
+        //    this.login2FB();
+        //}
+    }.bind(this);
+
+    this.AnonymousUserLogin = function () {
+        this.hideTypingAnim();
+        this.isAlreadylogined = false;
+        if (settings.Authoptions.EmailAuth) {
+            this.botQueue.push(this.emailauthFn);
+        }
+        if (settings.Authoptions.PhoneAuth) {
+            this.botQueue.push(this.phoneauthFn);
+        }
+        if (this.botQueue.length > 0)
+            (this.botQueue.shift())();
+
+    }.bind(this);
+
+    this.LoginOpnDirectly = function () {
+        this.hideTypingAnim();
+        // this.isAlreadylogined = false;
+
+        if (settings.Authoptions.EmailAuth || settings.Authoptions.PhoneAuth) {
+            this.AnonymousUserLogin()
+        }
+
+        else if (settings.Authoptions.Fblogin) {
+            if (this.FB != null) {
+                this.FB.getLoginStatus(function (response) {
+                    if (response.status === 'connected') {
+                        this.FBLogined();
+                    } else {
+                        this.FBNotLogined();
+                    }
+                }.bind(this));
+            }
+            else {
+                this.FBLogined();
+            }
+
+        }
+
+    }.bind(this);
+
+
+    this.botStartoverfn = function () {
+
+        if (this.botflg.loadFormlist === false) {
+            this.ClearFormVariables();
+            this.botflg.otptype = "";//clear flags
+            this.botflg.uname_otp = "";
+            this.$renderAtBottom.empty();
+            this.curCtrl = null;
+            this.$renderAtBottom.hide();
+            $('.eb-chatBox').empty();
+            this.showDate();
+            this.botUserLogin();
+        }
+
+    }.bind(this);
+
+    this.botUserLogin = function () {
+        this.msgFromBot(this.welcomeMessage);
+        $('#eb_botStartover').hide();
+        if (!settings.UserType_Internal) {
+            if (settings.Authoptions.Fblogin) {
+                // This is called with the results from from FB.getLoginStatus().
+                statusChangeCallback = function (response) {
+                    console.log('statusChangeCallback');
+                    this.FB = FB;
+
+                    if (response.status === 'connected') {
+                        this.FBLogined();
+                    } else {
+                        this.FBNotLogined();
+                    }
+                }.bind(this);
+
+                // This function is called when someone finishes with the Login
+                function checkLoginState() {
+                    FB.getLoginStatus(function (response) {
+                        statusChangeCallback(response);
+                    });
+                };
+                window.fbAsyncInit = function () {
+                    console.log("bot" + settings.Authoptions.FbAppVer);
+                    FB.init({
+                        appId: settings.Authoptions.FbAppID,
+                        //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
+                        cookie: true,  // enable cookies to allow the server to access
+                        // the session
+                        xfbml: true,  // parse social plugins on this page
+                        version: settings.Authoptions.FbAppVer
+                        //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
+                    });
+
+                    FB.getLoginStatus(function (response) {
+                        statusChangeCallback(response);
+                    });
+
+                };
+
+                // Load the SDK asynchronously
+                (function (d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;
+                    js.src = "//connect.facebook.net/en_US/sdk.js";
+                    fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));
+
+
+
+            }
+        }
+        if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {
+            this.getBotformList();
+        }
+        else {
+            if (settings.UserType_Internal) {
+                if (settings.Authoptions.OTP_based) {
+                    this.OTP_BasedLogin();
+                } else if (settings.Authoptions.Password_based) {
+                    this.Password_basedLogin();
                 }
-                else {
-                    if (!$.isEmptyObject(result.botFormDict)) {
-                        document.cookie = `bot_bToken=${result.bearerToken}; SameSite=None; Secure;path=/`;
-                        document.cookie = `bot_rToken=${result.refreshToken}; SameSite=None; Secure;path=/`;
-                        this.formsDict = result.botFormDict;
-                        window.ebcontext.user = JSON.parse(result.user);
-                        //this.formNames = Object.values(this.formsDict);
-                        this.formNames = Object.values(result.botFormNames);
-                        this.formIcons = result.botFormIcons;
-                        $('.eb-chatBox').empty();
-                        this.showDate();
-                        if (Object.keys(this.formsDict).length == 1) {
-                            this.botflg.singleBotApp = true;
-                            this.curRefid = Object.keys(this.formsDict)[0];
-                            this.getForm(this.curRefid);
-                        }
-                        else {
-                            this.AskWhatU();
-                        }
+            } else {
+                this.AnonymousLoginOptions();
+            }
+        }
+
+    }.bind(this);
+
+    this.submitAnonymous = function (e) {
+        this.botflg.login_call_to = "authenticateAnon";
+        if (ebENV == "Production") {
+            grecaptcha.execute();
+        }
+        else {
+            this.authenticateAnon();
+        }
+       
+    }.bind(this);
+
+    this.submitpasswordLogin = function (e) {
+        $(e.target).closest('button').attr('disabled', true);
+        this.botflg.login_call_to = "passwordLoginFn";
+        if (ebENV == "Production") {
+            grecaptcha.execute();
+        }
+        else {
+            this.passwordLoginFn();
+        }
+    }.bind(this);
+
+    this.submitotpLoginFn = function (e) {
+        $(e.target).closest('button').attr('disabled', true);
+        this.botflg.login_call_to = "otpLoginFn";
+        if (ebENV == "Production") {
+            grecaptcha.execute();
+        }
+        else {
+            this.otpLoginFn();
+        }
+    }.bind(this);
+
+    window.RecaptchaCallback = function (token) {
+        return new Promise(function (resolve, reject) {
+
+            if (grecaptcha === undefined) {
+                this.msgFromBot('Recaptcha not defined');
+                return;
+            }
+            if (token) {
+                this.recaptcha_tkn = token;
+                if (this.botflg.login_call_to === "authenticateAnon") {
+                    this.msgFromBot("Thank you.");
+                    this.authenticateAnon();
+                }
+                else if (this.botflg.login_call_to === "passwordLoginFn") {
+                    this.passwordLoginFn();
+                }
+                else if (this.botflg.login_call_to === "otpLoginFn") {
+                    this.otpLoginFn();
+                }
+            }
+            else {
+                this.msgFromBot('Could not get recaptcha response');
+                return;
+            }
+            grecaptcha.reset();
+
+        }.bind(this));
+        
+    }.bind(this);
+
+    this.initConnectionCheck = function () {
+        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
+        setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////
+    };
+
+    this.connectionPing = function () {
+        Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
+        if (Offline.state === 'up')
+            Offline.check();
+        console.log(Offline.state);
+    };
+
+    //==========================================
+
+
+
+    this.showTblViz = function (e) {
+        var $tableCont = $('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>');
+        this.$chatBox.append($tableCont);
+        this.showTypingAnim();
+        //$(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
+        //    processing: true,
+        //    serverSide: false,
+        //    dom: 'rt',
+        //    columns: this.curTblViz.BotCols,
+        //    data: this.curTblViz.BotData,
+        //    initComplete: function () {
+        //        this.hideTypingAnim();
+        //        this.AskWhatU();
+        //        $tableCont.show(100);
+        //    }.bind(this)
+        //dom: "rt",
+        //ajax: {
+        //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
+        //    type: 'POST',
+        //    timeout: 180000,
+        //    data: function (dq) {
+        //        delete dq.columns; delete dq.order; delete dq.search;
+        //        dq.RefId = this.curTblViz.DataSourceRefId;
+        //        return dq;
+        //    }.bind(this),
+        //    dataSrc: function (dd) {
+        //        return dd.data;
+        //    },
+        //    beforeSend: function (xhr) {
+        //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+        //    }.bind(this),
+        //    crossDomain: true
+        //}
+        //});
+
+        var o = new Object();
+        o.containerId = this.curTblViz.name + "Container";
+        o.dsid = this.curTblViz.dataSourceRefId;
+        o.tableId = this.curTblViz.name + "tbl";
+        o.showSerialColumn = true;
+        o.showCheckboxColumn = false;
+        o.showFilterRow = false;
+        o.IsPaging = false;
+        o.rendererName = 'Bot';
+        //o.scrollHeight = this.scrollHeight + "px";
+        //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
+        //o.fnKeyUpCallback = this.xxx.bind(this);
+        //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
+        //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
+        //o.fninitComplete = this.initDTpost.bind(this);
+        //o.hiddenFieldName = this.vmName;
+        //o.showFilterRow = true;
+        //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
+        o.columns = this.curTblViz.columns;//////////////////////////////////////////////////////
+        this.datatable = new EbBasicDataTable(o);
+
+        this.hideTypingAnim();
+        this.AskWhatU();
+    }.bind(this);
+
+    this.showChartViz = function (e) {
+        this.showTypingAnim();
+        $.ajax({
+            type: 'POST',
+            url: '../boti/getData',
+            data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.getDataSuccess.bind(this),
+            error: function () { }
+        });
+    }.bind(this);
+
+    this.getDataSuccess = function (result) {
+        this.Gdata = result.data;
+        $canvasDiv = $('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>');
+        $canvasDiv.find("canvas").attr("id", $canvasDiv.find("canvas").attr("id") + ++this.ChartCounter);
+        this.$chatBox.append($canvasDiv);
+        this.drawGeneralGraph();
+        this.hideTypingAnim();
+        this.AskWhatU();
+    };
+
+    this.drawGeneralGraph = function () {
+        this.getBarData();
+        this.gdata = {
+            labels: this.XLabel,
+            datasets: this.dataset
+        };
+        this.animateOPtions = this.curChartViz.ShowValue ? new animateObj(0) : false;
+        this.goptions = {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.curChartViz.YaxisTitle !== "") ? this.curChartViz.YaxisTitle : "YLabel",
+                        fontColor: (this.curChartViz.YaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisTitleColor : "#000000"
+                    },
+                    stacked: false,
+                    gridLines: {
+                        display: (this.curChartViz.Type !== "pie") ? true : false
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.curChartViz.YaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisLabelColor : "#000000"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.curChartViz.XaxisTitle !== "") ? this.curChartViz.XaxisTitle : "XLabel",
+                        fontColor: (this.curChartViz.XaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisTitleColor : "#000000"
+                    },
+                    gridLines: {
+                        display: this.type !== "pie" ? true : false
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.curChartViz.XaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisLabelColor : "#000000"
+                    }
+                }]
+            },
+            zoom: {
+                // Boolean to enable zooming
+                enabled: true,
+
+                // Zooming directions. Remove the appropriate direction to disable 
+                // Eg. 'y' would only allow zooming in the y direction
+                mode: 'x'
+            },
+            pan: {
+                enabled: true,
+                mode: 'x'
+            },
+            legend: {
+                //onClick: this.legendClick.bind(this)
+            },
+
+            tooltips: {
+                enabled: this.curChartViz.ShowTooltip
+            },
+            animation: this.animateOPtions
+
+        };
+        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Xaxis.$values.length > 0)
+            this.drawGraph();
+
+    };
+
+    this.getBarData = function () {
+        this.Xindx = [];
+        this.Yindx = [];
+        this.dataset = [];
+        this.XLabel = [];
+        this.YLabel = [];
+        var xdx = [], ydx = [];
+        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Yaxis.$values.length > 0) {
+
+            $.each(this.curChartViz.Xaxis.$values, function (i, obj) {
+                xdx.push(obj.data);
+            });
+
+            $.each(this.curChartViz.Yaxis.$values, function (i, obj) {
+                ydx.push(obj.data);
+            });
+
+            $.each(this.Gdata, this.getBarDataLabel.bind(this, xdx));
+
+            for (k = 0; k < ydx.length; k++) {
+                this.YLabel = [];
+                for (j = 0; j < this.Gdata.length; j++)
+                    this.YLabel.push(this.Gdata[j][ydx[k]]);
+                if (this.curChartViz.Type !== "googlemap") {
+                    if (this.curChartViz.Type !== "pie") {
+                        this.piedataFlag = false;
+                        this.dataset.push(new datasetObj(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
                     }
                     else {
-                        this.msgFromBot("Permission is not set for current user");
+                        this.dataset.push(new datasetObj4Pie(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
+                        this.piedataFlag = true;
                     }
                 }
-
             }
-
-        }.bind(this)
-    });
-}.bind(this);
-
-
-this.AnonymousLoginOptions = function () {
-    this.hideTypingAnim();
-
-    //ASK FOR USER NAME
-    if (settings.Authoptions.UserName) {
-        this.userNameFn();
-    }
-    //use seperate function for else part to replace collectContacts
-    else {
-        if (settings.Authoptions.LoginOpnCount > 1) {
-            this.loginList();
         }
-        else {
-            this.LoginOpnDirectly();
-        }
-
-    }
-    // this.isAlreadylogined = false;
-
-}.bind(this);
-
-this.loginList = function () {
-    this.Query(`Please select a login method`, [`Guest login`, `Login with facebook`], "loginOptions");
-
-    //// this.isAlreadylogined = false;
-    //let btnhtml = `<div class="loginOptnCont">
-    //                <div class="lgnBtnCont" >
-    //                    <button class="ebbtn loginOptnBtn" name="loginOptions" optn="guestlogin" ><i class="fa fa-user" style="padding-right:10px"></i>Guest login</button>
-    //                </div>`;
-
-    //if (settings.Authoptions.Fblogin) {
-    //    this.FB.getLoginStatus(function (response) {
-    //        if (response.status === 'connected') {
-    //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
-    //        } else {
-    //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
-    //        }
-    //    });
-
-    //}
-
-    //btnhtml += "</div>";
-    //this.msgFromBot($(btnhtml));
-}.bind(this);
-
-this.loginSelectedOpn = function (e) {
-    this.postmenuClick(e)
-    if (this.CurFormIdx === 0)
-        this.AnonymousUserLogin();
-    else {
-        this.login2FB();
-
-    }
-
-    //let optnTxt = $(e.target).closest('button').text();
-    //this.postmenuClick(e, optnTxt);
-    //let optn = $(e.target).closest('button').attr('optn');
-    //if (optn === 'guestlogin') {
-    //    this.AnonymousUserLogin();
-    //}
-    //else if (optn === 'btnFacebook') {
-    //    this.login2FB();
-    //}
-}.bind(this);
-
-this.AnonymousUserLogin = function () {
-    this.hideTypingAnim();
-    this.isAlreadylogined = false;
-    if (settings.Authoptions.EmailAuth) {
-        this.botQueue.push(this.emailauthFn);
-    }
-    if (settings.Authoptions.PhoneAuth) {
-        this.botQueue.push(this.phoneauthFn);
-    }
-    if (this.botQueue.length > 0)
-        (this.botQueue.shift())();
-
-}.bind(this);
-
-this.LoginOpnDirectly = function () {
-    this.hideTypingAnim();
-    // this.isAlreadylogined = false;
-
-    if (settings.Authoptions.EmailAuth || settings.Authoptions.PhoneAuth) {
-        this.AnonymousUserLogin()
-    }
-
-    else if (settings.Authoptions.Fblogin) {
-        if (this.FB != null) {
-            this.FB.getLoginStatus(function (response) {
-                if (response.status === 'connected') {
-                    this.FBLogined();
-                } else {
-                    this.FBNotLogined();
-                }
-            }.bind(this));
-        }
-        else {
-            this.FBLogined();
-        }
-
-    }
-
-}.bind(this);
-
-
-this.botStartoverfn = function () {
-
-    if (this.botflg.loadFormlist === false) {
-        this.botflg.startover = false;
-        this.ClearFormVariables();
-        this.botflg.otptype = "";//clear flags
-        this.botflg.uname_otp = "";
-        this.$renderAtBottom.empty();
-        this.curCtrl = null;
-        this.$renderAtBottom.hide();
-        $('.eb-chatBox').empty();
-        this.showDate();
-        this.botUserLogin();
-    }
-
-}.bind(this);
-
-this.botUserLogin = function () {
-    this.msgFromBot(this.welcomeMessage);
-
-    if (!settings.UserType_Internal) {
-        if (settings.Authoptions.Fblogin) {
-            // This is called with the results from from FB.getLoginStatus().
-
-            window.fbAsyncInit = function () {
-                console.log("bot" + settings.Authoptions.FbAppVer);
-                FB.init({
-                    appId: settings.Authoptions.FbAppID,
-                    //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
-                    cookie: true,  // enable cookies to allow the server to access
-                    // the session
-                    xfbml: true,  // parse social plugins on this page
-                    version: settings.Authoptions.FbAppVer
-                    //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
-                });
-
-                FB.getLoginStatus(function (response) {
-                    statusChangeCallback(response);
-                });
-
-            };
-
-            // Load the SDK asynchronously
-            (function (d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)) return;
-                js = d.createElement(s); js.id = id;
-                js.src = "//connect.facebook.net/en_US/sdk.js";
-                fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
-
-
-            function statusChangeCallback(response) {
-                console.log('statusChangeCallback');
-                this.FB = FB;
-                //if (response.status === 'connected') {
-                //    this.FBLogined();
-                //} else {
-                //    this.FBNotLogined();
-                //}
-            }
-
-            // This function is called when someone finishes with the Login
-            function checkLoginState() {
-                FB.getLoginStatus(function (response) {
-                    statusChangeCallback(response);
-                });
-            };
-        }
-    }
-    if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {
-        this.getBotformList();
-    }
-    else {
-        if (settings.UserType_Internal) {
-            if (settings.Authoptions.OTP_based) {
-                this.OTP_BasedLogin();
-            } else if (settings.Authoptions.Password_based) {
-                this.Password_basedLogin();
-            }
-        } else {
-            this.AnonymousLoginOptions();
-        }
-    }
-
-}.bind(this);
-
-
-
-this.initConnectionCheck = function () {
-    Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
-    setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////
-};
-
-this.connectionPing = function () {
-    Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
-    if (Offline.state === 'up')
-        Offline.check();
-    console.log(Offline.state);
-};
-
-//==========================================
-
-
-
-this.showTblViz = function (e) {
-    var $tableCont = $('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>');
-    this.$chatBox.append($tableCont);
-    this.showTypingAnim();
-    //$(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
-    //    processing: true,
-    //    serverSide: false,
-    //    dom: 'rt',
-    //    columns: this.curTblViz.BotCols,
-    //    data: this.curTblViz.BotData,
-    //    initComplete: function () {
-    //        this.hideTypingAnim();
-    //        this.AskWhatU();
-    //        $tableCont.show(100);
-    //    }.bind(this)
-    //dom: "rt",
-    //ajax: {
-    //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
-    //    type: 'POST',
-    //    timeout: 180000,
-    //    data: function (dq) {
-    //        delete dq.columns; delete dq.order; delete dq.search;
-    //        dq.RefId = this.curTblViz.DataSourceRefId;
-    //        return dq;
-    //    }.bind(this),
-    //    dataSrc: function (dd) {
-    //        return dd.data;
-    //    },
-    //    beforeSend: function (xhr) {
-    //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-    //    }.bind(this),
-    //    crossDomain: true
-    //}
-    //});
-
-    var o = new Object();
-    o.containerId = this.curTblViz.name + "Container";
-    o.dsid = this.curTblViz.dataSourceRefId;
-    o.tableId = this.curTblViz.name + "tbl";
-    o.showSerialColumn = true;
-    o.showCheckboxColumn = false;
-    o.showFilterRow = false;
-    o.IsPaging = false;
-    o.rendererName = 'Bot';
-    //o.scrollHeight = this.scrollHeight + "px";
-    //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
-    //o.fnKeyUpCallback = this.xxx.bind(this);
-    //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
-    //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
-    //o.fninitComplete = this.initDTpost.bind(this);
-    //o.hiddenFieldName = this.vmName;
-    //o.showFilterRow = true;
-    //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
-    o.columns = this.curTblViz.columns;//////////////////////////////////////////////////////
-    this.datatable = new EbBasicDataTable(o);
-
-    this.hideTypingAnim();
-    this.AskWhatU();
-}.bind(this);
-
-this.showChartViz = function (e) {
-    this.showTypingAnim();
-    $.ajax({
-        type: 'POST',
-        url: '../boti/getData',
-        data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
-        //beforeSend: function (xhr) {
-        //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-        //}.bind(this),
-        success: this.getDataSuccess.bind(this),
-        error: function () { }
-    });
-}.bind(this);
-
-this.getDataSuccess = function (result) {
-    this.Gdata = result.data;
-    $canvasDiv = $('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>');
-    $canvasDiv.find("canvas").attr("id", $canvasDiv.find("canvas").attr("id") + ++this.ChartCounter);
-    this.$chatBox.append($canvasDiv);
-    this.drawGeneralGraph();
-    this.hideTypingAnim();
-    this.AskWhatU();
-};
-
-this.drawGeneralGraph = function () {
-    this.getBarData();
-    this.gdata = {
-        labels: this.XLabel,
-        datasets: this.dataset
     };
-    this.animateOPtions = this.curChartViz.ShowValue ? new animateObj(0) : false;
-    this.goptions = {
-        scales: {
-            yAxes: [{
-                scaleLabel: {
-                    display: (this.type !== "pie") ? true : false,
-                    labelString: (this.curChartViz.YaxisTitle !== "") ? this.curChartViz.YaxisTitle : "YLabel",
-                    fontColor: (this.curChartViz.YaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisTitleColor : "#000000"
-                },
-                stacked: false,
-                gridLines: {
-                    display: (this.curChartViz.Type !== "pie") ? true : false
-                },
-                ticks: {
-                    fontSize: 10,
-                    fontColor: (this.curChartViz.YaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisLabelColor : "#000000"
-                }
-            }],
-            xAxes: [{
-                scaleLabel: {
-                    display: (this.type !== "pie") ? true : false,
-                    labelString: (this.curChartViz.XaxisTitle !== "") ? this.curChartViz.XaxisTitle : "XLabel",
-                    fontColor: (this.curChartViz.XaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisTitleColor : "#000000"
-                },
-                gridLines: {
-                    display: this.type !== "pie" ? true : false
-                },
-                ticks: {
-                    fontSize: 10,
-                    fontColor: (this.curChartViz.XaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisLabelColor : "#000000"
-                }
-            }]
-        },
-        zoom: {
-            // Boolean to enable zooming
-            enabled: true,
 
-            // Zooming directions. Remove the appropriate direction to disable 
-            // Eg. 'y' would only allow zooming in the y direction
-            mode: 'x'
-        },
-        pan: {
-            enabled: true,
-            mode: 'x'
-        },
-        legend: {
-            //onClick: this.legendClick.bind(this)
-        },
-
-        tooltips: {
-            enabled: this.curChartViz.ShowTooltip
-        },
-        animation: this.animateOPtions
-
+    this.getBarDataLabel = function (xdx, i, value) {
+        for (k = 0; k < xdx.length; k++)
+            this.XLabel.push(value[xdx[k]]);
     };
-    if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Xaxis.$values.length > 0)
-        this.drawGraph();
 
-};
-
-this.getBarData = function () {
-    this.Xindx = [];
-    this.Yindx = [];
-    this.dataset = [];
-    this.XLabel = [];
-    this.YLabel = [];
-    var xdx = [], ydx = [];
-    if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Yaxis.$values.length > 0) {
-
-        $.each(this.curChartViz.Xaxis.$values, function (i, obj) {
-            xdx.push(obj.data);
+    this.drawGraph = function () {
+        var canvas = document.getElementById(this.curChartViz.EbSid + this.ChartCounter);//change ebsid to name
+        this.chartApi = new Chart(canvas, {
+            type: this.curChartViz.Type,
+            data: this.gdata,
+            options: this.goptions,
         });
+    };
 
-        $.each(this.curChartViz.Yaxis.$values, function (i, obj) {
-            ydx.push(obj.data);
-        });
-
-        $.each(this.Gdata, this.getBarDataLabel.bind(this, xdx));
-
-        for (k = 0; k < ydx.length; k++) {
-            this.YLabel = [];
-            for (j = 0; j < this.Gdata.length; j++)
-                this.YLabel.push(this.Gdata[j][ydx[k]]);
-            if (this.curChartViz.Type !== "googlemap") {
-                if (this.curChartViz.Type !== "pie") {
-                    this.piedataFlag = false;
-                    this.dataset.push(new datasetObj(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
-                }
-                else {
-                    this.dataset.push(new datasetObj4Pie(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
-                    this.piedataFlag = true;
-                }
-            }
-        }
-    }
-};
-
-this.getBarDataLabel = function (xdx, i, value) {
-    for (k = 0; k < xdx.length; k++)
-        this.XLabel.push(value[xdx[k]]);
-};
-
-this.drawGraph = function () {
-    var canvas = document.getElementById(this.curChartViz.EbSid + this.ChartCounter);//change ebsid to name
-    this.chartApi = new Chart(canvas, {
-        type: this.curChartViz.Type,
-        data: this.gdata,
-        options: this.goptions,
-    });
-};
-
-//==========================================
-this.init();
+    //==========================================
+    this.init();
 };
 
 var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
@@ -5026,45 +5282,63 @@ var EbServerEvents = function (options) {
     this.rTok = options.Rtoken || getrToken();
     this.ServerEventUrl = options.ServerEventUrl;
     this.Channels = options.Channels.join();
-    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
+    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();    
     this.sEvent = $.ss;
 
-    this.onUploadSuccess = function (m, e) { };
+    this.onUploadSuccess = function (m, e) {
+        $(`[sse_Refid=${m}]`).find(".success").hide();
+        $(`[sse_Refid=${m}]`).find(".sse_success").show();
+    };
     this.onShowMsg = function (m, e) { };
     this.onLogOut = function (m, e) { };
     this.onNotification = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
 
+
+
     this.onConnect = function (sub) {
-        //console.log("You've connected! welcome " + sub.displayName);
+        console.log("sse connected! " + sub.displayName, sub.id);
+
         if (sub) {
-            window.ebcontext.subscription_id = sub.id;
+            ebcontext.subscription_id = sub.id;
+            //$.ajaxSetup({
+            //    headers: { 'eb_sse_subid': sub.id }
+            //});
         }
+        
     };
 
     this.onJoin = function (user) {
-        //console.log("Welcome, " + user.displayName);
+     //   console.log("onJoin Welcome, " + user.displayName);
     };
 
     this.onLeave = function (user) {
-        //console.log(user.displayName + " has left the building");
+      //  console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
-        //if (console) console.log("onHeartbeat", msg, e);
+        //if (console)
+      //  console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
-        this.onUploadSuccess(m,e);
+        this.onUploadSuccess(m, e);
     };
 
+
+    this.mybroadcast = function (msg, e) {
+       //  console.log("mybroadcast", msg, e);
+      //  alert(213);
+    }
+
+
     this.onMsgSuccess = function (m, e) {
-        //console.log(m);
-        this.onShowMsg(m, e);
+        //console.log("onMsgSuccess, " + m);
+        //this.onShowMsg(m, e);
     };
 
     this.onLogOutMsg = function (m, e) {
-        //console.log(m);
+      //  console.log(m);
         location.href = "../Tenantuser/Logout";
         this.onLogOut(m, e);
     };
@@ -5077,24 +5351,42 @@ var EbServerEvents = function (options) {
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-        //console.log("stopped listening");
+       // console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
         this.onExcelExportSuccess(m);
     };
 
+    this.exportApplication = function (m, e) {
+        console.log(m);
+        self.EbPopBox("hide");
+        let pop = {
+            Message: "Exported Successfully. Go to App Store to view the package :"
+        };
+        self.EbPopBox("show", pop);      
+    }
+
+    this.importApplication = function (m, e) {
+        console.log(m);
+        self.EbPopBox("hide");
+        let pop = {
+            Message: "Application imported Successfully."
+        };
+        self.EbPopBox("show", pop);      
+    }
+
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
         }
-    });   
+    });
 
     this.ES.addEventListener('error', function (e) {
         console.log("ERROR!", e);
-    }, false);
+    }, false);    
 
-    this.sEvent.eventReceivers = { "document": document }; 
+    this.sEvent.eventReceivers = { "document": document };
 
     $(document).bindHandlers({
         announce: function (msg) {
@@ -5127,7 +5419,12 @@ var EbServerEvents = function (options) {
             onExportToExcel: this.onExportToExcel.bind(this),
             onMsgSuccess: this.onMsgSuccess.bind(this),
             onLogOut: this.onLogOutMsg.bind(this),
-            onNotification: this.onNotifyMsg.bind(this)
+            onNotification: this.onNotifyMsg.bind(this),
+            exportApplication: this.exportApplication.bind(this),
+            importApplication: this.importApplication.bind(this),
+
+
+            mybroadcast: this.mybroadcast.bind(this)
         }
     });
 };
@@ -5397,25 +5694,25 @@ function getEbObjectTypes() {
 
 function EbAddInvalidStyle(msg, type) {
     if (this.ObjType === "PowerSelect" && !this.RenderAsSimpleSelect)
-        EbMakeInvalid(`#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
+        EbMakeInvalid(this, `#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
     else
-        EbMakeInvalid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+        EbMakeInvalid(this, `#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
 }
 
 function EbRemoveInvalidStyle() {
-    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`);
+    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, this);
 }
 
 function DGaddInvalidStyle(msg, type) {
-    EbMakeInvalid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+    EbMakeInvalid(this, `#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
 }
 
 function DGremoveInvalidStyle() {
-    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`);
+    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, this);
 }
 
 
-function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+function EbMakeInvalid(ctrl, contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     let shadowColor = "rgb(255 0 0)";
     if (type === "warning")
         shadowColor = "rgb(236, 151, 31)";
@@ -5426,13 +5723,23 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
     $ctrlCont.css("border", `1px solid ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
     $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
+
+    if (ctrl)
+        $(`[ebinval-ctrls*=' invalid-by-${'ctrl.EbSid_CtxId}'}']`).addClass(`invalid-by-${ctrl.EbSid_CtxId}`);
 }
 
-function EbMakeValid(contSel, _ctrlCont) {
+function EbMakeValid(contSel, _ctrlCont, ctrl) {
     //setTimeout(function () {
     $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
+    if (ctrl)
+        $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
+}
+
+function EbBlink(ctrl, selector = `#${ctrl.EbSid_CtxId}Wraper`) {
+    $(selector).addClass("ebblink");
+    setTimeout(function () { $(selector).removeClass("ebblink"); }, 700);
 }
 
 
@@ -5482,6 +5789,85 @@ function EbMakeValid(contSel, _ctrlCont) {
 //    //},400);
 //}
 
+//#region Test4ProvUserCtrl
+function EbMakeInvalid_Test(ctrl, contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+    let borderColor = "rgb(242 5 0)";
+    if (type === "warning")
+        borderColor = "rgb(236, 151, 31)";
+
+    if ($(`${contSel} .req-cont`).length !== 0)
+        return;
+
+    let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
+    if ($ctrlCont.children(".ebctrl-msg-cont").length !== 1)
+        $ctrlCont.append(`<div class="ebctrl-msg-cont"></div>`);
+
+    if ($ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).length === 1)
+        $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).remove();
+
+    $ctrlCont.find('.ebctrl-msg-cont').append(`<span id='@name@errormsg' tabindex="0" class='text-${type} ebctrl-msg-span' style='margin: auto auto auto -25px; padding: 2px 5px 2px 2px; outline: none;'><i class="fa fa-info-circle" aria-hidden="true"></i></span>`);
+    $ctrlCont.css("border", `1px solid ${borderColor}`);
+
+    let timer1;
+    let $poTrig = $ctrlCont.find(`.ebctrl-msg-cont .text-${type}`).popover({
+        trigger: 'manual',
+        html: true,
+        container: "body",
+        placement: function (context, source) {
+            if (($(source).offset().left + 700) > document.body.clientWidth)
+                return "left";
+            else {
+                return "right";
+            }
+        },
+        content: msg,
+        delay: { "hide": 100 }
+    });
+
+    let OnMouseEnter = function () {
+        clearTimeout(timer1);
+        let _this = this;
+        let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+        if (!$poDiv.length) {
+            $(_this).popover("show");
+            $poDiv = $('#' + $(_this).attr('aria-describedby'));
+        }
+        $poDiv.off("mouseleave").on("mouseleave", function () {
+            timer1 = setTimeout(function () { $(_this).popover('hide'); }, 300);
+        });
+
+        $poDiv.off("mouseenter").on("mouseenter", function () {
+            clearTimeout(timer1);
+        });
+    };
+
+    let OnMouseLeave = function () {
+        let _this = this;
+        timer1 = setTimeout(function () {
+            if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+                $(_this).popover("hide");
+            }
+        }, 300);
+    };
+
+    $poTrig.on('mouseenter click', OnMouseEnter.bind($poTrig));
+    $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
+}
+
+function EbMakeValid_Test(contSel, _ctrlCont, ctrl) {
+    $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)");
+    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    if (ctrl)
+        $(`.invalid-by-${ctrl.EbSid_CtxId}`).removeClass(`invalid-by-${ctrl.EbSid_CtxId}`);
+    $(`${contSel} ${_ctrlCont}:first`).find(`.ebctrl-msg-cont .text-warning`).popover("hide");
+    $(`${contSel} .ebctrl-msg-cont:first`).empty();
+
+    //setTimeout(function () {
+    //$(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+    //
+    //},400);
+}
+//#endregion Test4ProvUserCtrl
 
 function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     if ($(`${contSel} .ctrl-info-msg-cont`).length !== 0)
@@ -5637,6 +6023,44 @@ function RecurGetControlsUnderTable(src_obj, dest_coll, tableName) {
     });
 }
 
+function RecurSetParentsEbSid_CtxId(container, ctrl, flagObj) {
+    if (flagObj.done)
+        return;
+    for (var i = 0; i < container.Controls.$values.length; i++) {
+        let obj = container.Controls.$values[i];
+        obj.parentEbSid = container.EbSid_CtxId;
+        if (obj.IsContainer) {
+            RecurSetParentsEbSid_CtxId(obj, ctrl, flagObj);
+        }
+        else {
+            if (obj.EbSid_CtxId === ctrl.EbSid_CtxId) {
+                flagObj.done = true;
+                return false;
+            }
+        }
+
+    }
+}
+
+function RecurGetParentsOfType(parents, ctrlType, ctrl, flatCtrls) {
+    if (!ctrl.parentEbSid)
+        return;
+    let parentObj = getObjByval(flatCtrls, "EbSid_CtxId", ctrl.parentEbSid)
+    if (parentObj.ObjType === ctrlType) {
+        parents.push(parentObj);
+    }
+    RecurGetParentsOfType(parents, ctrlType, parentObj, flatCtrls);
+}
+
+function getParentsOfType(ctrlType, ctrl, container) {
+    let parents = [];
+    let flagObj = { done: false };
+    RecurSetParentsEbSid_CtxId(container, ctrl, flagObj);
+    let flatCtrls = getAllctrlsFrom(container);
+    RecurGetParentsOfType(parents, ctrlType, ctrl, flatCtrls);
+    return parents;
+}
+
 //function getTableNames(container, dest_coll) {
 //    let tableNames = [];
 //    if (container.TableName)
@@ -5688,10 +6112,11 @@ function RecurFlatContControls(src_obj, dest_coll) {
 }
 
 
-function getAllctrlsFrom(formObj) {
+function getAllctrlsFrom(container) {
     let coll = [];
-    coll.push(formObj);
-    RecurgetAllctrlsFrom(formObj, coll);
+    coll.push(container);
+    if (container.IsContainer)
+        RecurgetAllctrlsFrom(container, coll);
     return coll;
 }
 
@@ -5818,7 +6243,7 @@ function getSingleColumn(obj) {
     let SingleColumn = {};
     SingleColumn.Name = obj.Name;
     SingleColumn.Type = obj.EbDbType;
-    SingleColumn.Value = "";
+    SingleColumn.Value = (obj.ObjType === "PowerSelect" && obj.__isFDcontrol) ? -1 : "";
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;
@@ -5844,6 +6269,10 @@ function getSingleColumn(obj) {
         return $found.first(); // Return first match of the collection
     }
 })(jQuery);
+
+$.fn.closestInners = function (selector) {
+    return (this.is(selector) ? this.filter(selector).first() : $()).add(this.find(selector));
+};
 
 //JQuery extends ends
 
@@ -5894,6 +6323,9 @@ function EbConvertValue(val, type) {
     if (type === 11) {
         val = val.replace(/,/g, "");//  temporary fix
         return parseInt(val);
+    }
+    else if (type === 3) {
+        return val === "true";
     }
     return val;
 }
@@ -6054,7 +6486,7 @@ function dgEBOnChangeBind() {
 
 }
 
-function justSetDate_EB(p1, p2) {
+function SetDisplayMemberDate_EB(p1, p2) {
     if (this.IsNullable && p1 !== null)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
     if (p1 !== null && p1 !== undefined) {
@@ -6066,17 +6498,9 @@ function justSetDate_EB(p1, p2) {
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
         else if (this.EbDateType === 17) //Time
             $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
-        $('#' + this.EbSid_CtxId).trigger('change');
     }
     else
         $('#' + this.EbSid_CtxId).val('');
-}
-
-function setDate_EB(p1, p2) {
-    justSetDate_EB.bind(this)(p1, p2);
-    if (p1 !== null && p1 !== undefined) {
-        $('#' + this.EbSid_CtxId).trigger('change');
-    }
 }
 
 function removePropsOfType(Obj, type = "function") {
@@ -6222,6 +6646,7 @@ function EBPSSetDisplayMember(p1, p2) {
     if (p1 === '')
         return;
     let VMs = this.initializer.Vobj.valueMembers || [];
+    let tempVMs = [];
     let DMs = this.initializer.Vobj.displayMembers || [];
     let columnVals = this.initializer.columnVals || {};
 
@@ -6232,9 +6657,7 @@ function EBPSSetDisplayMember(p1, p2) {
 
     for (let i = 0; i < valMsArr.length; i++) {
         let vm = valMsArr[i];
-        setTimeout(function () {
-            VMs.push(vm);
-        });
+        tempVMs.push(vm);
         for (let j = 0; j < this.initializer.dmNames.length; j++) {
             let dmName = this.initializer.dmNames[j];
             if (!DMs[dmName])
@@ -6242,6 +6665,12 @@ function EBPSSetDisplayMember(p1, p2) {
             DMs[dmName].push(this.DataVals.D[vm][dmName]);
         }
     }
+
+
+    setTimeout(function () {//to catch by watcher one time (even if multiple value members are pushed)
+        this.initializer.Vobj.valueMembers.push(...tempVMs);
+    }.bind(this));
+
 
     if (this.initializer.datatable === null) {//for aftersave actions
         let colNames = Object.keys(this.DataVals.R);
@@ -6257,7 +6686,7 @@ function EBPSSetDisplayMember(p1, p2) {
         }
     }
 
-    $("#" + this.EbSid_CtxId).val(p1);
+    //$("#" + this.EbSid_CtxId).val(p1);
     //this.initializer.V_watchVMembers(VMs);
 }
 
@@ -6482,6 +6911,22 @@ function timeDifference(current, previous) {
     else {
         return Math.round(elapsed / msPerYear) + ' years ago';
     }
+}
+
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+}
+function modifyTextStyle(contSelector, regex, styleStr) {
+    $(contSelector).each(function (i, el) {
+        let text = el.innerHTML;
+        if (text.match(regex) === null)
+            return;
+        el.innerHTML = text.replace(regex, "<font style='" + styleStr + "'>" + text.match(regex)[0] + "</font>")
+    });
 }
 var DateFormatter; !function () { "use strict"; var e, t, a, r, n, o; n = 864e5, o = 3600, e = function (e, t) { return "string" == typeof e && "string" == typeof t && e.toLowerCase() === t.toLowerCase() }, t = function (e, a, r) { var n = r || "0", o = e.toString(); return o.length < a ? t(n + o, a) : o }, a = function (e) { var t, r; for (e = e || {}, t = 1; t < arguments.length; t++) if (r = arguments[t]) for (var n in r) r.hasOwnProperty(n) && ("object" == typeof r[n] ? a(e[n], r[n]) : e[n] = r[n]); return e }, r = { dateSettings: { days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], meridiem: ["AM", "PM"], ordinal: function (e) { var t = e % 10, a = { 1: "st", 2: "nd", 3: "rd" }; return 1 !== Math.floor(e % 100 / 10) && a[t] ? a[t] : "th" } }, separators: /[ \-+\/\.T:@]/g, validParts: /[dDjlNSwzWFmMntLoYyaABgGhHisueTIOPZcrU]/g, intParts: /[djwNzmnyYhHgGis]/g, tzParts: /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g, tzClip: /[^-+\dA-Z]/g }, DateFormatter = function (e) { var t = this, n = a(r, e); t.dateSettings = n.dateSettings, t.separators = n.separators, t.validParts = n.validParts, t.intParts = n.intParts, t.tzParts = n.tzParts, t.tzClip = n.tzClip }, DateFormatter.prototype = { constructor: DateFormatter, parseDate: function (t, a) { var r, n, o, i, s, d, u, l, f, c, m = this, h = !1, g = !1, p = m.dateSettings, y = { date: null, year: null, month: null, day: null, hour: 0, min: 0, sec: 0 }; if (!t) return void 0; if (t instanceof Date) return t; if ("number" == typeof t) return new Date(t); if ("U" === a) return o = parseInt(t), o ? new Date(1e3 * o) : t; if ("string" != typeof t) return ""; if (r = a.match(m.validParts), !r || 0 === r.length) throw new Error("Invalid date format definition."); for (n = t.replace(m.separators, "\x00").split("\x00"), o = 0; o < n.length; o++) switch (i = n[o], s = parseInt(i), r[o]) { case "y": case "Y": f = i.length, 2 === f ? y.year = parseInt((70 > s ? "20" : "19") + i) : 4 === f && (y.year = s), h = !0; break; case "m": case "n": case "M": case "F": isNaN(i) ? (d = p.monthsShort.indexOf(i), d > -1 && (y.month = d + 1), d = p.months.indexOf(i), d > -1 && (y.month = d + 1)) : s >= 1 && 12 >= s && (y.month = s), h = !0; break; case "d": case "j": s >= 1 && 31 >= s && (y.day = s), h = !0; break; case "g": case "h": u = r.indexOf("a") > -1 ? r.indexOf("a") : r.indexOf("A") > -1 ? r.indexOf("A") : -1, c = n[u], u > -1 ? (l = e(c, p.meridiem[0]) ? 0 : e(c, p.meridiem[1]) ? 12 : -1, s >= 1 && 12 >= s && l > -1 ? y.hour = s + l : s >= 0 && 23 >= s && (y.hour = s)) : s >= 0 && 23 >= s && (y.hour = s), g = !0; break; case "G": case "H": s >= 0 && 23 >= s && (y.hour = s), g = !0; break; case "i": s >= 0 && 59 >= s && (y.min = s), g = !0; break; case "s": s >= 0 && 59 >= s && (y.sec = s), g = !0 } if (h === !0 && y.year && y.month && y.day) y.date = new Date(y.year, y.month - 1, y.day, y.hour, y.min, y.sec, 0); else { if (g !== !0) return !1; y.date = new Date(0, 0, 0, y.hour, y.min, y.sec, 0) } return y.date }, guessDate: function (e, t) { if ("string" != typeof e) return e; var a, r, n, o, i = this, s = e.replace(i.separators, "\x00").split("\x00"), d = /^[djmn]/g, u = t.match(i.validParts), l = new Date, f = 0; if (!d.test(u[0])) return e; for (r = 0; r < s.length; r++) { switch (f = 2, n = s[r], o = parseInt(n.substr(0, 2)), r) { case 0: "m" === u[0] || "n" === u[0] ? l.setMonth(o - 1) : l.setDate(o); break; case 1: "m" === u[0] || "n" === u[0] ? l.setDate(o) : l.setMonth(o - 1); break; case 2: a = l.getFullYear(), n.length < 4 ? (l.setFullYear(parseInt(a.toString().substr(0, 4 - n.length) + n)), f = n.length) : (l.setFullYear = parseInt(n.substr(0, 4)), f = 4); break; case 3: l.setHours(o); break; case 4: l.setMinutes(o); break; case 5: l.setSeconds(o) } n.substr(f).length > 0 && s.splice(r + 1, 0, n.substr(f)) } return l }, parseFormat: function (e, a) { var r, i = this, s = i.dateSettings, d = /\\?(.?)/gi, u = function (e, t) { return r[e] ? r[e]() : t }; return r = { d: function () { return t(r.j(), 2) }, D: function () { return s.daysShort[r.w()] }, j: function () { return a.getDate() }, l: function () { return s.days[r.w()] }, N: function () { return r.w() || 7 }, w: function () { return a.getDay() }, z: function () { var e = new Date(r.Y(), r.n() - 1, r.j()), t = new Date(r.Y(), 0, 1); return Math.round((e - t) / n) }, W: function () { var e = new Date(r.Y(), r.n() - 1, r.j() - r.N() + 3), a = new Date(e.getFullYear(), 0, 4); return t(1 + Math.round((e - a) / n / 7), 2) }, F: function () { return s.months[a.getMonth()] }, m: function () { return t(r.n(), 2) }, M: function () { return s.monthsShort[a.getMonth()] }, n: function () { return a.getMonth() + 1 }, t: function () { return new Date(r.Y(), r.n(), 0).getDate() }, L: function () { var e = r.Y(); return e % 4 === 0 && e % 100 !== 0 || e % 400 === 0 ? 1 : 0 }, o: function () { var e = r.n(), t = r.W(), a = r.Y(); return a + (12 === e && 9 > t ? 1 : 1 === e && t > 9 ? -1 : 0) }, Y: function () { return a.getFullYear() }, y: function () { return r.Y().toString().slice(-2) }, a: function () { return r.A().toLowerCase() }, A: function () { var e = r.G() < 12 ? 0 : 1; return s.meridiem[e] }, B: function () { var e = a.getUTCHours() * o, r = 60 * a.getUTCMinutes(), n = a.getUTCSeconds(); return t(Math.floor((e + r + n + o) / 86.4) % 1e3, 3) }, g: function () { return r.G() % 12 || 12 }, G: function () { return a.getHours() }, h: function () { return t(r.g(), 2) }, H: function () { return t(r.G(), 2) }, i: function () { return t(a.getMinutes(), 2) }, s: function () { return t(a.getSeconds(), 2) }, u: function () { return t(1e3 * a.getMilliseconds(), 6) }, e: function () { var e = /\((.*)\)/.exec(String(a))[1]; return e || "Coordinated Universal Time" }, T: function () { var e = (String(a).match(i.tzParts) || [""]).pop().replace(i.tzClip, ""); return e || "UTC" }, I: function () { var e = new Date(r.Y(), 0), t = Date.UTC(r.Y(), 0), a = new Date(r.Y(), 6), n = Date.UTC(r.Y(), 6); return e - t !== a - n ? 1 : 0 }, O: function () { var e = a.getTimezoneOffset(), r = Math.abs(e); return (e > 0 ? "-" : "+") + t(100 * Math.floor(r / 60) + r % 60, 4) }, P: function () { var e = r.O(); return e.substr(0, 3) + ":" + e.substr(3, 2) }, Z: function () { return 60 * -a.getTimezoneOffset() }, c: function () { return "Y-m-d\\TH:i:sP".replace(d, u) }, r: function () { return "D, d M Y H:i:s O".replace(d, u) }, U: function () { return a.getTime() / 1e3 || 0 } }, u(e, e) }, formatDate: function (e, t) { var a, r, n, o, i, s = this, d = ""; if ("string" == typeof e && (e = s.parseDate(e, t), e === !1)) return !1; if (e instanceof Date) { for (n = t.length, a = 0; n > a; a++) i = t.charAt(a), "S" !== i && (o = s.parseFormat(i, e), a !== n - 1 && s.intParts.test(i) && "S" === t.charAt(a + 1) && (r = parseInt(o), o += s.dateSettings.ordinal(r)), d += o); return d } return "" } } }(), function (e) { "function" == typeof define && define.amd ? define(["jquery", "jquery-mousewheel"], e) : "object" == typeof exports ? module.exports = e : e(jQuery) }(function (e) {
     "use strict"; function t(e, t, a) { this.date = e, this.desc = t, this.style = a } var a = { i18n: { ar: { months: ["كانون الثاني", "شباط", "آذار", "نيسان", "مايو", "حزيران", "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول"], dayOfWeekShort: ["ن", "ث", "ع", "خ", "ج", "س", "ح"], dayOfWeek: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"] }, ro: { months: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"], dayOfWeekShort: ["Du", "Lu", "Ma", "Mi", "Jo", "Vi", "Sâ"], dayOfWeek: ["Duminică", "Luni", "Marţi", "Miercuri", "Joi", "Vineri", "Sâmbătă"] }, id: { months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], dayOfWeekShort: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"], dayOfWeek: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] }, is: { months: ["Janúar", "Febrúar", "Mars", "Apríl", "Maí", "Júní", "Júlí", "Ágúst", "September", "Október", "Nóvember", "Desember"], dayOfWeekShort: ["Sun", "Mán", "Þrið", "Mið", "Fim", "Fös", "Lau"], dayOfWeek: ["Sunnudagur", "Mánudagur", "Þriðjudagur", "Miðvikudagur", "Fimmtudagur", "Föstudagur", "Laugardagur"] }, bg: { months: ["Януари", "Февруари", "Март", "Април", "Май", "Юни", "Юли", "Август", "Септември", "Октомври", "Ноември", "Декември"], dayOfWeekShort: ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], dayOfWeek: ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"] }, fa: { months: ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"], dayOfWeekShort: ["یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"], dayOfWeek: ["یک‌شنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه", "یک‌شنبه"] }, ru: { months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"], dayOfWeekShort: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], dayOfWeek: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"] }, uk: { months: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"], dayOfWeekShort: ["Ндл", "Пнд", "Втр", "Срд", "Чтв", "Птн", "Сбт"], dayOfWeek: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"] }, en: { months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], dayOfWeekShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] }, el: { months: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάιος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], dayOfWeekShort: ["Κυρ", "Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ"], dayOfWeek: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] }, de: { months: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], dayOfWeekShort: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"], dayOfWeek: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"] }, nl: { months: ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"], dayOfWeekShort: ["zo", "ma", "di", "wo", "do", "vr", "za"], dayOfWeek: ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"] }, tr: { months: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], dayOfWeekShort: ["Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cts"], dayOfWeek: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"] }, fr: { months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], dayOfWeekShort: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"], dayOfWeek: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"] }, es: { months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], dayOfWeekShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"], dayOfWeek: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"] }, th: { months: ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"], dayOfWeekShort: ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."], dayOfWeek: ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัส", "ศุกร์", "เสาร์", "อาทิตย์"] }, pl: { months: ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"], dayOfWeekShort: ["nd", "pn", "wt", "śr", "cz", "pt", "sb"], dayOfWeek: ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"] }, pt: { months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], dayOfWeekShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"], dayOfWeek: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] }, ch: { months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], dayOfWeekShort: ["日", "一", "二", "三", "四", "五", "六"] }, se: { months: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"] }, kr: { months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"], dayOfWeekShort: ["일", "월", "화", "수", "목", "금", "토"], dayOfWeek: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"] }, it: { months: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], dayOfWeekShort: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"], dayOfWeek: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] }, da: { months: ["January", "Februar", "Marts", "April", "Maj", "Juni", "July", "August", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"], dayOfWeek: ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"] }, no: { months: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], dayOfWeekShort: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"], dayOfWeek: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] }, ja: { months: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], dayOfWeekShort: ["日", "月", "火", "水", "木", "金", "土"], dayOfWeek: ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"] }, vi: { months: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"], dayOfWeekShort: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"], dayOfWeek: ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"] }, sl: { months: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"], dayOfWeek: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"] }, cs: { months: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], dayOfWeekShort: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"] }, hu: { months: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], dayOfWeekShort: ["Va", "Hé", "Ke", "Sze", "Cs", "Pé", "Szo"], dayOfWeek: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"] }, az: { months: ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"], dayOfWeekShort: ["B", "Be", "Ça", "Ç", "Ca", "C", "Ş"], dayOfWeek: ["Bazar", "Bazar ertəsi", "Çərşənbə axşamı", "Çərşənbə", "Cümə axşamı", "Cümə", "Şənbə"] }, bs: { months: ["Januar", "Februar", "Mart", "April", "Maj", "Jun", "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"], dayOfWeekShort: ["Ned", "Pon", "Uto", "Sri", "Čet", "Pet", "Sub"], dayOfWeek: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"] }, ca: { months: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], dayOfWeekShort: ["Dg", "Dl", "Dt", "Dc", "Dj", "Dv", "Ds"], dayOfWeek: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"] }, "en-GB": { months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], dayOfWeekShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] }, et: { months: ["Jaanuar", "Veebruar", "Märts", "Aprill", "Mai", "Juuni", "Juuli", "August", "September", "Oktoober", "November", "Detsember"], dayOfWeekShort: ["P", "E", "T", "K", "N", "R", "L"], dayOfWeek: ["Pühapäev", "Esmaspäev", "Teisipäev", "Kolmapäev", "Neljapäev", "Reede", "Laupäev"] }, eu: { months: ["Urtarrila", "Otsaila", "Martxoa", "Apirila", "Maiatza", "Ekaina", "Uztaila", "Abuztua", "Iraila", "Urria", "Azaroa", "Abendua"], dayOfWeekShort: ["Ig.", "Al.", "Ar.", "Az.", "Og.", "Or.", "La."], dayOfWeek: ["Igandea", "Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata"] }, fi: { months: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu", "Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], dayOfWeekShort: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"], dayOfWeek: ["sunnuntai", "maanantai", "tiistai", "keskiviikko", "torstai", "perjantai", "lauantai"] }, gl: { months: ["Xan", "Feb", "Maz", "Abr", "Mai", "Xun", "Xul", "Ago", "Set", "Out", "Nov", "Dec"], dayOfWeekShort: ["Dom", "Lun", "Mar", "Mer", "Xov", "Ven", "Sab"], dayOfWeek: ["Domingo", "Luns", "Martes", "Mércores", "Xoves", "Venres", "Sábado"] }, hr: { months: ["Siječanj", "Veljača", "Ožujak", "Travanj", "Svibanj", "Lipanj", "Srpanj", "Kolovoz", "Rujan", "Listopad", "Studeni", "Prosinac"], dayOfWeekShort: ["Ned", "Pon", "Uto", "Sri", "Čet", "Pet", "Sub"], dayOfWeek: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"] }, ko: { months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"], dayOfWeekShort: ["일", "월", "화", "수", "목", "금", "토"], dayOfWeek: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"] }, lt: { months: ["Sausio", "Vasario", "Kovo", "Balandžio", "Gegužės", "Birželio", "Liepos", "Rugpjūčio", "Rugsėjo", "Spalio", "Lapkričio", "Gruodžio"], dayOfWeekShort: ["Sek", "Pir", "Ant", "Tre", "Ket", "Pen", "Šeš"], dayOfWeek: ["Sekmadienis", "Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis"] }, lv: { months: ["Janvāris", "Februāris", "Marts", "Aprīlis ", "Maijs", "Jūnijs", "Jūlijs", "Augusts", "Septembris", "Oktobris", "Novembris", "Decembris"], dayOfWeekShort: ["Sv", "Pr", "Ot", "Tr", "Ct", "Pk", "St"], dayOfWeek: ["Svētdiena", "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena", "Piektdiena", "Sestdiena"] }, mk: { months: ["јануари", "февруари", "март", "април", "мај", "јуни", "јули", "август", "септември", "октомври", "ноември", "декември"], dayOfWeekShort: ["нед", "пон", "вто", "сре", "чет", "пет", "саб"], dayOfWeek: ["Недела", "Понеделник", "Вторник", "Среда", "Четврток", "Петок", "Сабота"] }, mn: { months: ["1-р сар", "2-р сар", "3-р сар", "4-р сар", "5-р сар", "6-р сар", "7-р сар", "8-р сар", "9-р сар", "10-р сар", "11-р сар", "12-р сар"], dayOfWeekShort: ["Дав", "Мяг", "Лха", "Пүр", "Бсн", "Бям", "Ням"], dayOfWeek: ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан", "Бямба", "Ням"] }, "pt-BR": { months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], dayOfWeekShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], dayOfWeek: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] }, sk: { months: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], dayOfWeekShort: ["Ne", "Po", "Ut", "St", "Št", "Pi", "So"], dayOfWeek: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"] }, sq: { months: ["Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor", "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"], dayOfWeekShort: ["Die", "Hën", "Mar", "Mër", "Enj", "Pre", "Shtu"], dayOfWeek: ["E Diel", "E Hënë", "E Martē", "E Mërkurë", "E Enjte", "E Premte", "E Shtunë"] }, "sr-YU": { months: ["Januar", "Februar", "Mart", "April", "Maj", "Jun", "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"], dayOfWeekShort: ["Ned", "Pon", "Uto", "Sre", "čet", "Pet", "Sub"], dayOfWeek: ["Nedelja", "Ponedeljak", "Utorak", "Sreda", "Četvrtak", "Petak", "Subota"] }, sr: { months: ["јануар", "фебруар", "март", "април", "мај", "јун", "јул", "август", "септембар", "октобар", "новембар", "децембар"], dayOfWeekShort: ["нед", "пон", "уто", "сре", "чет", "пет", "суб"], dayOfWeek: ["Недеља", "Понедељак", "Уторак", "Среда", "Четвртак", "Петак", "Субота"] }, sv: { months: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"], dayOfWeek: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"] }, "zh-TW": { months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], dayOfWeekShort: ["日", "一", "二", "三", "四", "五", "六"], dayOfWeek: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] }, zh: { months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], dayOfWeekShort: ["日", "一", "二", "三", "四", "五", "六"], dayOfWeek: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] }, he: { months: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], dayOfWeekShort: ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "שבת"], dayOfWeek: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת", "ראשון"] }, hy: { months: ["Հունվար", "Փետրվար", "Մարտ", "Ապրիլ", "Մայիս", "Հունիս", "Հուլիս", "Օգոստոս", "Սեպտեմբեր", "Հոկտեմբեր", "Նոյեմբեր", "Դեկտեմբեր"], dayOfWeekShort: ["Կի", "Երկ", "Երք", "Չոր", "Հնգ", "Ուրբ", "Շբթ"], dayOfWeek: ["Կիրակի", "Երկուշաբթի", "Երեքշաբթի", "Չորեքշաբթի", "Հինգշաբթի", "Ուրբաթ", "Շաբաթ"] }, kg: { months: ["Үчтүн айы", "Бирдин айы", "Жалган Куран", "Чын Куран", "Бугу", "Кулжа", "Теке", "Баш Оона", "Аяк Оона", "Тогуздун айы", "Жетинин айы", "Бештин айы"], dayOfWeekShort: ["Жек", "Дүй", "Шей", "Шар", "Бей", "Жум", "Ише"], dayOfWeek: ["Жекшемб", "Дүйшөмб", "Шейшемб", "Шаршемб", "Бейшемби", "Жума", "Ишенб"] }, rm: { months: ["Schaner", "Favrer", "Mars", "Avrigl", "Matg", "Zercladur", "Fanadur", "Avust", "Settember", "October", "November", "December"], dayOfWeekShort: ["Du", "Gli", "Ma", "Me", "Gie", "Ve", "So"], dayOfWeek: ["Dumengia", "Glindesdi", "Mardi", "Mesemna", "Gievgia", "Venderdi", "Sonda"] }, ka: { months: ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"], dayOfWeekShort: ["კვ", "ორშ", "სამშ", "ოთხ", "ხუთ", "პარ", "შაბ"], dayOfWeek: ["კვირა", "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი"] } }, value: "", rtl: !1, format: "Y/m/d H:i", formatTime: "H:i", formatDate: "Y/m/d", startDate: !1, step: 60, monthChangeSpinner: !0, closeOnDateSelect: !1, closeOnTimeSelect: !0, closeOnWithoutClick: !0, closeOnInputClick: !0, timepicker: !0, datepicker: !0, weeks: !1, defaultTime: !1, defaultDate: !1, minDate: !1, maxDate: !1, minTime: !1, maxTime: !1, disabledMinTime: !1, disabledMaxTime: !1, allowTimes: [], opened: !1, initTime: !0, inline: !1, theme: "", onSelectDate: function () { }, onSelectTime: function () { }, onChangeMonth: function () { }, onGetWeekOfYear: function () { }, onChangeYear: function () { }, onChangeDateTime: function () { }, onShow: function () { }, onClose: function () { }, onGenerate: function () { }, withoutCopyright: !0, inverseButton: !1, hours12: !1, next: "xdsoft_next", prev: "xdsoft_prev", dayOfWeekStart: 0, parentID: "body", timeHeightInTimePicker: 25, timepickerScrollbar: !0, todayButton: !0, prevButton: !0, nextButton: !0, defaultSelect: !0, scrollMonth: !0, scrollTime: !0, scrollInput: !0, lazyInit: !1, mask: !1, validateOnBlur: !0, allowBlank: !0, yearStart: 1950, yearEnd: 2050, monthStart: 0, monthEnd: 11, style: "", id: "", fixed: !1, roundTime: "round", className: "", weekends: [], highlightedDates: [], highlightedPeriods: [], allowDates: [], allowDateRe: null, disabledDates: [], disabledWeekDays: [], yearOffset: 0, beforeShowDay: null, enterLikeTab: !0, showApplyButton: !1 }, r = null, n = "en", o = "en", i = { meridiem: ["AM", "PM"] }, s = function () { var t = a.i18n[o], n = { days: t.dayOfWeek, daysShort: t.dayOfWeekShort, months: t.months, monthsShort: e.map(t.months, function (e) { return e.substring(0, 3) }) }; r = new DateFormatter({ dateSettings: e.extend({}, i, n) }) }; e.datetimepicker = { setLocale: function (e) { var t = a.i18n[e] ? e : n; o != t && (o = t, s()) }, setDateFormatter: function (e) { r = e }, RFC_2822: "D, d M Y H:i:s O", ATOM: "Y-m-dTH:i:sP", ISO_8601: "Y-m-dTH:i:sO", RFC_822: "D, d M y H:i:s O", RFC_850: "l, d-M-y H:i:s T", RFC_1036: "D, d M y H:i:s O", RFC_1123: "D, d M Y H:i:s O", RSS: "D, d M Y H:i:s O", W3C: "Y-m-dTH:i:sP" }, s(), window.getComputedStyle || (window.getComputedStyle = function (e) { return this.el = e, this.getPropertyValue = function (t) { var a = /(\-([a-z]){1})/g; return "float" === t && (t = "styleFloat"), a.test(t) && (t = t.replace(a, function (e, t, a) { return a.toUpperCase() })), e.currentStyle[t] || null }, this }), Array.prototype.indexOf || (Array.prototype.indexOf = function (e, t) { var a, r; for (a = t || 0, r = this.length; r > a; a += 1) if (this[a] === e) return a; return -1 }), Date.prototype.countDaysInMonth = function () { return new Date(this.getFullYear(), this.getMonth() + 1, 0).getDate() }, e.fn.xdsoftScroller = function (t) { return this.each(function () { var a, r, n, o, i, s = e(this), d = function (e) { var t, a = { x: 0, y: 0 }; return "touchstart" === e.type || "touchmove" === e.type || "touchend" === e.type || "touchcancel" === e.type ? (t = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0], a.x = t.clientX, a.y = t.clientY) : ("mousedown" === e.type || "mouseup" === e.type || "mousemove" === e.type || "mouseover" === e.type || "mouseout" === e.type || "mouseenter" === e.type || "mouseleave" === e.type) && (a.x = e.clientX, a.y = e.clientY), a }, u = 100, l = !1, f = 0, c = 0, m = 0, h = !1, g = 0, p = function () { }; return "hide" === t ? void s.find(".xdsoft_scrollbar").hide() : (e(this).hasClass("xdsoft_scroller_box") || (a = s.children().eq(0), r = s[0].clientHeight, n = a[0].offsetHeight, o = e('<div class="xdsoft_scrollbar"></div>'), i = e('<div class="xdsoft_scroller"></div>'), o.append(i), s.addClass("xdsoft_scroller_box").append(o), p = function (e) { var t = d(e).y - f + g; 0 > t && (t = 0), t + i[0].offsetHeight > m && (t = m - i[0].offsetHeight), s.trigger("scroll_element.xdsoft_scroller", [u ? t / u : 0]) }, i.on("touchstart.xdsoft_scroller mousedown.xdsoft_scroller", function (a) { r || s.trigger("resize_scroll.xdsoft_scroller", [t]), f = d(a).y, g = parseInt(i.css("margin-top"), 10), m = o[0].offsetHeight, "mousedown" === a.type || "touchstart" === a.type ? (document && e(document.body).addClass("xdsoft_noselect"), e([document.body, window]).on("touchend mouseup.xdsoft_scroller", function n() { e([document.body, window]).off("touchend mouseup.xdsoft_scroller", n).off("mousemove.xdsoft_scroller", p).removeClass("xdsoft_noselect") }), e(document.body).on("mousemove.xdsoft_scroller", p)) : (h = !0, a.stopPropagation(), a.preventDefault()) }).on("touchmove", function (e) { h && (e.preventDefault(), p(e)) }).on("touchend touchcancel", function () { h = !1, g = 0 }), s.on("scroll_element.xdsoft_scroller", function (e, t) { r || s.trigger("resize_scroll.xdsoft_scroller", [t, !0]), t = t > 1 ? 1 : 0 > t || isNaN(t) ? 0 : t, i.css("margin-top", u * t), setTimeout(function () { a.css("marginTop", -parseInt((a[0].offsetHeight - r) * t, 10)) }, 10) }).on("resize_scroll.xdsoft_scroller", function (e, t, d) { var l, f; r = s[0].clientHeight, n = a[0].offsetHeight, l = r / n, f = l * o[0].offsetHeight, l > 1 ? i.hide() : (i.show(), i.css("height", parseInt(f > 10 ? f : 10, 10)), u = o[0].offsetHeight - i[0].offsetHeight, d !== !0 && s.trigger("scroll_element.xdsoft_scroller", [t || Math.abs(parseInt(a.css("marginTop"), 10)) / (n - r)])) }), s.on("mousewheel", function (e) { var t = Math.abs(parseInt(a.css("marginTop"), 10)); return t -= 20 * e.deltaY, 0 > t && (t = 0), s.trigger("scroll_element.xdsoft_scroller", [t / (n - r)]), e.stopPropagation(), !1 }), s.on("touchstart", function (e) { l = d(e), c = Math.abs(parseInt(a.css("marginTop"), 10)) }), s.on("touchmove", function (e) { if (l) { e.preventDefault(); var t = d(e); s.trigger("scroll_element.xdsoft_scroller", [(c - (t.y - l.y)) / (n - r)]) } }), s.on("touchend touchcancel", function () { l = !1, c = 0 })), void s.trigger("resize_scroll.xdsoft_scroller", [t])) }) }, e.fn.datetimepicker = function (n, i) {
@@ -6976,3 +7421,772 @@ function EbPopBox(op,o) {
 	// AMD requirement
 	return $scrollTo;
 });
+
+const FormRenderCommon = function (options) {
+    this.FO = options.FO;
+
+    this.fireInitOnchange = function (inpCtrl) { // FD only
+        if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
+            try {
+                /*console.eb_log(`>> Starting execution of OnChange function of 'form.${inpCtrl.Name}'`);*/
+                inpCtrl.__onChangeFn();
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
+            }
+        }
+    };
+
+    ////////////
+    this.setDefaultValue = function (ctrl) {
+        if (ctrl.DefaultValueExpression && ctrl.DefaultValueExpression.Code) {
+            try {
+                let val = new Function("form", "user", `event`, atob(ctrl.DefaultValueExpression.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+
+                let PSInitCompleteCallBFn = function (select) {
+                    this.FO.IsPSsInitComplete[select.EbSid_CtxId] = true;
+                    if (isAllValuesTrue(this.FO.IsPSsInitComplete))
+                        this.FO._allPSsInit = true;
+                    select.initializer.V_hideDD();
+                }.bind(this);
+
+                if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
+                    ctrl.setValue(val, PSInitCompleteCallBFn.bind(this));
+                else
+                    ctrl.justSetValue(val);
+            } catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'DefaultValueExpression' of : " + ctrl.Name + " - " + e.message);
+            }
+        }
+    };
+
+    this.setDefaultvalsNC = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            this.setDefaultValue(Obj);
+        }.bind(this));
+    };
+
+    this.execDefaultvalsNC = function (defaultValsExecOrder) {
+        if (!defaultValsExecOrder) {//for old forms
+            console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        let defaultValsExecOrderArr = defaultValsExecOrder.$values;
+        for (let i = 0; i < defaultValsExecOrderArr.length; i++) {
+            let ctrlPath = defaultValsExecOrderArr[i];
+            let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
+            ctrl.___DoNotUpdateDrDepCtrls = this.FO.__fromImport;
+            this.setDefaultValue(ctrl);
+        }
+        this.FO.__fromImport = false;
+    };
+
+    this.execValueExpNC = function (DoNotPersistExecOrder) {
+        if (!DoNotPersistExecOrder) {//for old forms
+            console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        let doNotPersistExecOrderArr = DoNotPersistExecOrder.$values;
+        for (let i = 0; i < doNotPersistExecOrderArr.length; i++) {
+            let ctrlPath = doNotPersistExecOrderArr[i];
+            let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
+            EbRunValueExpr_n(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
+        }
+    };
+
+    this.bindFnsToCtrl = function (Obj) {
+        if (Obj.Required)
+            this.bindRequired(Obj);
+        if (Obj.Unique)
+            this.bindUniqueCheck(Obj);
+
+        if (Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId || (Obj.IsImportFromApi && Obj.ImportApiUrl))
+            this.bindValueUpdateFns_OnChange(Obj);
+
+        if (Obj.DrDependents.$values.length > 0)
+            this.bindDrUpdateFns_OnChange(Obj);
+
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") ||
+            Obj.HiddenExpDependants && Obj.HiddenExpDependants.$values.length > 0 ||
+            Obj.DisableExpDependants && Obj.DisableExpDependants.$values.length > 0)
+            this.bindBehaviorFns_OnChange(Obj);
+
+        if (Obj.Validators && Obj.Validators.$values.length > 0)
+            this.bindValidators(Obj);
+    };
+
+    this.bindValidators = function (control) {
+        $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
+    };
+
+    this.setDisabledControls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            if (Obj.IsDisable)
+                Obj.disable();
+        }.bind(this));
+    };
+
+    this.fireInitOnchangeNC = function (flatControls) {
+        for (let i = 0; i < flatControls.length; i++) {
+            let Obj = flatControls[i];
+            if (Obj.ObjType === "ScriptButton")
+                continue;
+            this.fireInitOnchange(Obj);
+        }
+    };
+
+    this.bindFnsToCtrls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            this.bindFnsToCtrl(Obj);
+        }.bind(this));
+    };
+
+    this.bindEbOnChange2Ctrls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            this.bindEbFnOnChange(Obj);
+        }.bind(this));
+    };
+
+    this.wrapInFn = function (fn) { return `(function(){${fn}})();` };
+
+    this.bindValueUpdateFns_OnChange = function (control) {//2nd onchange Fn bind
+        try {
+            let FnString =
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId || (control.IsImportFromApi && control.ImportApiUrl)) ? `
+                if(!this.___isNotUpdateValExpDepCtrls){
+                    form.updateDependentControls(${control.__path}, form);
+                }
+                this.___isNotUpdateValExpDepCtrls = false;` : "");
+            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+            control.bindOnChange(onChangeFn);
+        } catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            alert("error in 'Value expression of' of : " + control.Name + " - " + e.message);
+        }
+    };
+
+    this.bindDrUpdateFns_OnChange = function (control) {//2.5nd onchange Fn bind
+        let FnString =
+            ((control.DrDependents && control.DrDependents.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId || (control.IsImportFromApi && control.ImportApiUrl)) ? `
+                    form.updateDependentCtrlWithDr(${control.__path}, form);` : "");
+        let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+        control.bindOnChange(onChangeFn);
+    };
+
+    this.bindBehaviorFns_OnChange = function (control) {// 3rd onchange Fn bind
+        try {
+            let FnString =
+                this.wrapInFn(atob(control.OnChangeFn.Code)) +
+                ((control.HiddenExpDependants && control.HiddenExpDependants.$values.length !== 0 || control.DisableExpDependants && control.DisableExpDependants.$values.length !== 0) ? ` ;
+                    form.updateDependentControlsBehavior(${control.__path}, form);` : "");
+            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+            control.__onChangeFn = onChangeFn;// for FD only need clenup
+            control.bindOnChange(onChangeFn);
+        } catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            alert("error in 'On Change function or Behaviour Expression' of : " + control.Name + " - " + e.message);
+        }
+    };
+
+    this.populateDateCtrlsWithInitialVal = function (formObj) {
+        let allTypeDateCtrls = getFlatObjOfTypes(formObj, ["Date", "SysModifiedAt", "SysCreatedAt"]);
+        for (let i = 0; i < allTypeDateCtrls.length; i++) {
+            let ctrl = allTypeDateCtrls[i];
+            if (ctrl.DefaultValueExpression && ctrl.DefaultValueExpression.Code)
+                continue;
+            if (!ctrl.IsNullable) {
+                if (ctrl.ShowDateAs_ === 1)
+                    ctrl.DataVals.Value = moment(new Date()).format('MM-YYYY');
+                else
+                    ctrl.DataVals.Value = moment(new Date()).format('YYYY-MM-DD');
+            }
+        }
+    };
+
+    this.populateRGCtrlsWithInitialVal = function (formObj) {
+        let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["RadioGroup"]);
+        for (let i = 0; i < allTypeRGCtrls.length; i++) {
+            let ctrl = allTypeRGCtrls[i];
+            ctrl.setValue(ctrl.getValueFromDOM());
+        }
+    };
+
+    this.populateSSCtrlsWithInitialVal = function (formObj) {
+        let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect", "PowerSelect"]);
+        for (let i = 0; i < allTypeRGCtrls.length; i++) {
+            let ctrl = allTypeRGCtrls[i];
+            if (ctrl.ObjType === "SimpleSelect" || (ctrl.ObjType === "PowerSelect" && ctrl.RenderAsSimpleSelect))
+                ctrl.setValue(ctrl.getValueFromDOM());
+        }
+    };
+
+    this.DataValsUpdate = function (form, user, event) {
+        if (!this.___DoNotUpdateDataVals) {
+            if (this.DataVals) {
+                this.DataVals.Value = this.getValueFromDOM();
+                this.DataVals.D = this.getDisplayMemberFromDOM();
+            }
+        }
+    };
+
+    this.bindEbFnOnChange = function (control) {//1st onchange Fn bind
+        try {
+            control.__onChangeFn = this.DataValsUpdate.bind(control, this.FO.formObject, this.FO.userObject); // takes a copy
+            control.bindOnChange(control.__onChangeFn);// binding to onchange
+        } catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            console.log("error in 'bindEbFnOnChange function' of : " + control.Name + " - " + e.message);
+        }
+    };
+
+    this.setFormObjHelperfns = function () {
+        this.FO.formObject.__getCtrlByPath = function (path) {
+            try {
+                let form = this.FO.formObject;
+                let ctrl = {};
+                let pathArr = path.split(".");
+                if (pathArr.length === 3) {
+                    path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+                    ctrl = eval(path);
+                    ctrl.IsDGCtrl = true;
+                } else {
+                    ctrl = eval(path);
+                }
+                return ctrl;
+            }
+            catch (e) {
+                console.warn("could not find:" + path);
+                return "not found";
+            }
+        }.bind(this);
+    }.bind(this);
+
+    this.UpdateDrDepCtrls = function (curCtrl) {
+        for (let i = 0; i < curCtrl.DrDependents.$values.length; i++) {
+            let depCtrl_s = curCtrl.DrDependents.$values[i];
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl === "not found")
+                return;
+            if (depCtrl.ObjType === "TVcontrol") {
+                depCtrl.reloadWithParam(curCtrl);
+            }
+            else if (depCtrl.ObjType === "PowerSelect") {
+                if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
+                    depCtrl.initializer.reloadWithParams(curCtrl);
+                }
+                else {
+                    curCtrl.__isInitiallyPopulating = false;
+                    curCtrl.___DoNotUpdateDrDepCtrls = false;
+                }
+            }
+        }
+    }.bind(this);
+
+    this.validateCtrl = function (ctrl) {
+        this.isRequiredOK(ctrl);
+        this.isValidationsOK(ctrl);
+        this.sysValidationsOK(ctrl);
+    };
+
+    this.UpdateValExpDepCtrls = function (curCtrl) {
+        $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl === "not found")
+                return;
+            try {
+                if (depCtrl.ObjType === "TVcontrol") {
+                    depCtrl.reloadWithParam(curCtrl);
+                }
+                else {
+                    if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
+                        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                        let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                        if (valExpFnStr) {
+                            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                                // if persist - manual onchange only setValue. DoNotPersist always setValue
+                                depCtrl.justSetValue(ValueExpr_val);
+                                this.validateCtrl(depCtrl);
+                                EbBlink(depCtrl);
+                            }
+                            else {
+                                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                                    row[depCtrl.Name].setValue(ValueExpr_val);
+                                }.bind(this));
+                            }
+                            //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                            //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
+                        }
+                    }
+                    else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+                        let params = [];
+
+                        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                            try {
+                                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                                let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
+                                let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
+                                params.push(param);
+                            }
+                            catch (e) {
+                                console.eb_log("eb error :");
+                                console.eb_log(e);
+                                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                            }
+                        }.bind(this));
+
+                        ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                    }
+                }
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+            }
+        }.bind(this));
+    }.bind(this);
+
+    this.importDGRelatedUpdates = function (curCtrl) {
+        $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
+            try {
+                let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
+                depCtrl.__setSuggestionVals();
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+            }
+        }.bind(this));
+    }.bind(this);
+
+    this.PSImportRelatedUpdates = function (curCtrl) {
+        this.FO.psDataImport(curCtrl);
+    }.bind(this);
+
+    this.UpdateHideExpDepCtrls = function (curCtrl) {
+        let depCtrls_SArr = curCtrl.HiddenExpDependants.$values;
+
+        for (let i = 0; i < depCtrls_SArr.length; i++) {
+            let depCtrl_s = depCtrls_SArr[i];
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl.HiddenExpr) {
+                let hideExpFnStr = atob(depCtrl.HiddenExpr.Code);
+                let hideExpVal = new Function("form", "user", `event`, hideExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (hideExpVal)
+                    depCtrl.hide();
+                else
+                    depCtrl.show();
+            }
+        }
+    }.bind(this);
+
+    this.UpdateDisableExpDepCtrls = function (curCtrl) {
+        let depCtrls_SArr = curCtrl.DisableExpDependants.$values;
+
+        for (let i = 0; i < depCtrls_SArr.length; i++) {
+            let depCtrl_s = depCtrls_SArr[i];
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl.DisableExpr) {
+                let disableExpFnStr = atob(depCtrl.DisableExpr.Code);
+                let disableExpVal = new Function("form", "user", `event`, disableExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (disableExpVal) {
+                    depCtrl.disable();
+                    depCtrl.__IsDisableByExp = true;
+                }
+                else {
+                    if (!this.FO.Mode.isView) {
+                        depCtrl.enable();
+                        depCtrl.__IsDisableByExp = false;
+                    }
+                }
+            }
+        }
+    }.bind(this);
+
+    this.setUpdateDependentControlsFn = function () {
+        this.FO.formObject.updateDependentControls = function (curCtrl) { //calls in onchange
+            if (event && event.type === "blur" && curCtrl.ObjType === "Date") { // to manage unnecessorily change triggering while blur from date pluggin
+                if (curCtrl.getValue() !== curCtrl.__lastval)
+                    curCtrl.__lastval = curCtrl.getValue();
+                else
+                    return;
+            }
+            if (curCtrl.DependedValExp && curCtrl.DependedValExp.$values.length !== 0) {
+                this.UpdateValExpDepCtrls(curCtrl);
+            }
+            if (curCtrl.DependedDG) {
+                this.importDGRelatedUpdates(curCtrl);
+            }
+            if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
+                if (!curCtrl.___DoNotImport)
+                    this.PSImportRelatedUpdates(curCtrl);
+                curCtrl.___DoNotImport = false;
+            }
+        }.bind(this);
+    };
+
+    this.setUpdateDependentCtrlWithDrFn = function () {
+        this.FO.formObject.updateDependentCtrlWithDr = function (curCtrl) { //calls in onchange
+            if (event && event.type === "blur" && curCtrl.ObjType === "Date") // to manage unnecessorily change triggering while blur from date pluggin
+                return;
+            if (curCtrl.DrDependents && curCtrl.DrDependents.$values.length !== 0) {
+                this.UpdateDrDepCtrls(curCtrl);
+            }
+        }.bind(this);
+    };
+
+    this.setUpdateDependentControlsBehaviorFns = function () {
+        this.FO.formObject.updateDependentControlsBehavior = function (curCtrl) { //calls in onchange
+            if (event && event.type === "blur" && curCtrl.ObjType === "Date") // to manage unnecessorily change triggering while blur from date pluggin
+                return;
+            if (curCtrl.HiddenExpDependants && curCtrl.HiddenExpDependants.$values.length !== 0) {
+                this.UpdateHideExpDepCtrls(curCtrl);
+            }
+            if (curCtrl.DisableExpDependants && curCtrl.DisableExpDependants.$values.length !== 0) {
+                this.UpdateDisableExpDepCtrls(curCtrl);
+            }
+        }.bind(this);
+    };
+
+    this.bindRequired = function (control) {
+        if (control.ObjType === "SimpleSelect" || control.RenderAsSimpleSelect)
+            $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
+        else
+            $("#" + control.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
+    };
+
+    this.bindUniqueCheck = function (control) {
+        $("#" + control.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
+        ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+    };
+
+    this.isSameValInUniqCtrl = function (ctrl) {
+        let val = ctrl.getValueFromDOM();
+        return val === this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
+    };
+
+    // checks a control value is emptyString
+    this.sysValidationsOK = function (ctrl) {
+        // email validation
+        if ((ctrl.ObjType === "TextBox" && ctrl.TextMode === 2) || ctrl.ObjType === "Email") {
+            if (EbvalidateEmail(ctrl.getValueFromDOM())) {
+                ctrl.removeInvalidStyle();
+                return true;
+            }
+            else {
+                ctrl.addInvalidStyle("Invalid email");
+                return false;
+            }
+        }
+        return true;
+    };
+
+    /////////////
+    this.AllRequired_valid_Check = function (ctrlsArray = this.FO.flatControlsWithDG) {
+        let required_valid_flag = true;
+        let $notOk1stCtrl = null;
+        let notOk1stCtrl = null;
+        $.each(ctrlsArray, function (i, ctrl) {
+            let $ctrl = $("#" + ctrl.EbSid_CtxId);
+            if (this.FO.EbAlert)
+                this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
+            if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
+                required_valid_flag = false;
+                this.addInvalidStyle2TabPanes(ctrl);
+                if (this.FO.EbAlert) {
+                    this.FO.EbAlert.alert({
+                        id: ctrl.EbSid_CtxId + "-al",
+                        head: "Required",
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
+                            + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                        type: "danger"
+                    });
+                }
+
+                if (!$notOk1stCtrl) {
+                    $notOk1stCtrl = $ctrl;
+                    notOk1stCtrl = ctrl;
+                }
+            }
+        }.bind(this));
+
+        if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
+            this.GoToCtrl(notOk1stCtrl);
+        }
+        required_valid_flag = required_valid_flag && this.runFormValidations();
+        if (this.FO.headerObj && this.FO.EbAlert) {
+            if (!required_valid_flag)
+                this.FO.headerObj.showElement(["webforminvalidmsgs"]);
+            else
+                this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
+        }
+
+        return required_valid_flag;
+    }.bind(this);
+
+    this.invalidBoxOnClose = function () {
+        if ($(event.target).closest('.ebalert-cont').children('.alert').length === 1)
+            $(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).hide();
+    }.bind(this);
+
+    this.GoToCtrl = function (ctrl, parent) {
+        let $inp = (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) ? $(ctrl.initializer.$searchBoxes[0]) : $("#" + ctrl.EbSid_CtxId);
+        this.activateTabHierarchy(ctrl, parent);
+        setTimeout(function () {
+            $inp[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            setTimeout(function () {
+                $inp.select();
+                EbBlink(ctrl);
+            }, 400);
+        }.bind(this), (ctrl.__noOfParentPanes || 0) * 400);
+    };
+
+    this.toggleInvalidMSGs = function () {
+        if ($(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).css('display') === 'none')
+            this.AllRequired_valid_Check();
+        $(`#${this.FO.FormObj.EbSid_CtxId + "_formAlertBox"}`).toggle();
+    };
+
+    this.goToCtrlwithEbSid = function () {
+        let ebSid_CtxId = $(event.target).closest("div").attr("cltrof");
+        let flatCtrls = getAllctrlsFrom(this.FO.FormObj);
+        let ctrl = getObjByval(flatCtrls, "EbSid_CtxId", ebSid_CtxId)
+        this.GoToCtrl(ctrl);
+    };
+
+    this.activateTabHierarchy = function (ctrl, parent) {
+        let TabPaneParents = parent ? getParentsOfType('TabPane', parent, this.FO.FormObj) : getParentsOfType('TabPane', ctrl, this.FO.FormObj);
+        ctrl.__noOfParentPanes = TabPaneParents.length;
+        for (let i = TabPaneParents.length - 1; i >= 0; i--) {
+            let $a = $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']`);
+            if ($a.closest('ul').parent().hasClass('RenderAsWizard'))
+                $a.trigger('click');
+            else
+                $a.tab('show');
+        }
+    };
+
+    this.addInvalidStyle2TabPanes = function (ctrl) {
+        let TabPaneParents = getParentsOfType('TabPane', ctrl, this.FO.FormObj);
+        for (let i = TabPaneParents.length - 1; i >= 0; i--) {
+            let $el = $(`a[href='#${TabPaneParents[i].EbSid_CtxId}']>.eb-tab-warn-icon-cont`);
+            let attrval = 'invalid-by-' + ctrl.EbSid_CtxId;
+            $el.addClass(attrval);
+            let ebinvalCtrls = $el.attr('ebinval-ctrls') || '';
+            ebinvalCtrls = ebinvalCtrls.replaceAll(' ' + attrval, '') + ' ' + attrval;
+            $el.attr('ebinval-ctrls', ebinvalCtrls);
+            let ctrls = $el[0].className.replace('eb-tab-warn-icon-cont ', '').split(' ');
+            let content = 'issues in : ';
+
+            ctrls.every(function (inval_ebSid_CtxId) {
+                let ebSid_CtxId = inval_ebSid_CtxId.replace('invalid-by-', '');
+                let flatCtrls = getAllctrlsFrom(this.FO.FormObj);
+                content += getObjByval(flatCtrls, "EbSid_CtxId", ebSid_CtxId).Label + ', ';
+            }.bind(this))
+
+            $el.attr("data-content", content.replace(/, \s*$/, ""));
+            if ($el.attr('set-hover') !== 'true') {
+                $el.popover({
+                    trigger: 'hover',
+                    html: true,
+                    container: "body [eb-root-obj-container]:first"
+                });
+                $el.attr('set-hover', 'true');
+            }
+        }
+    };
+
+    this.checkUnique4All_save = function (controls, isSaveAfter) {/////////////// move  
+        let isFromCtrl = !isSaveAfter;
+        if (isFromCtrl)
+            var $ctrl_ = $("#" + controls[0].EbSid_CtxId);
+        let UniqObjs = [];
+        let UniqCtrls = {};
+
+        $.each(controls, function (i, ctrl) {
+            if (ctrl.Unique) {
+                let $ctrl = $("#" + ctrl.EbSid_CtxId);
+                let val = ctrl.getValueFromDOM();
+
+                if (isNaNOrEmpty(val) || ctrl.ObjType === "Numeric" && val === 0// avoid check if numeric and value is 0
+                    || Object.entries(this.FO.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl)) {// avoid check if edit mode and value is same as initial
+
+                    $ctrl.attr("uniq-ok", "true");
+                    ctrl.removeInvalidStyle();
+                    hide_inp_loader($ctrl, this.FO.$saveBtn);
+                    return;
+                }
+
+                let tableName = ctrl.TableName || this.FO.FormObj.TableName;
+                let UniqObj = { TableName: tableName, Field: ctrl.Name, Value: val, TypeI: ctrl.EbDbType };
+
+                UniqObjs.push(UniqObj);
+                UniqCtrls[ctrl.Name] = ctrl;
+            }
+        }.bind(this));
+
+        if (UniqObjs.length === 0 && !isSaveAfter)
+            return true;
+
+        if (UniqObjs.length === 0 && isSaveAfter) {
+            this.FO.saveForm_call();
+            return true;
+        }
+
+        if (isFromCtrl) {
+            hide_inp_loader($ctrl_, this.FO.$saveBtn);
+            show_inp_loader($ctrl_, this.FO.$saveBtn);
+        }
+        else {
+            this.FO.hideLoader();
+            this.FO.showLoader();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/DoUniqueCheck",
+            data: { uniqCheckParams: UniqObjs },
+            success: function (resS) {
+                let res = JSON.parse(resS);
+                let unique_flag = true;
+
+
+                if (isFromCtrl)
+                    hide_inp_loader($ctrl_, this.FO.$saveBtn);
+                else
+                    this.FO.hideLoader();
+
+                let ctrlNames = Object.keys(res);
+                for (let i = 0; i < ctrlNames.length; i++) {
+                    let ctrlName = ctrlNames[i];
+                    let ctrl = UniqCtrls[ctrlName];
+                    let $ctrl = $("#" + ctrl.EbSid_CtxId);
+                    let ctrlRes = res[ctrlName];
+
+                    if (!ctrlRes) {
+                        $ctrl.attr("uniq-ok", "false");
+                        ctrl.addInvalidStyle("This field is unique, try another value");
+                        unique_flag = false;
+                    }
+                    else {
+                        $ctrl.attr("uniq-ok", "true");
+                        ctrl.removeInvalidStyle();
+                    }
+                }
+
+                if (isSaveAfter && unique_flag) {
+                    //this.FO.DGsB4SaveActions();
+                    this.FO.saveForm_call();
+                }
+            }.bind(this),
+            error: function (error) {
+                if (isFromCtrl) {
+                    hide_inp_loader($ctrl_, this.FO.$saveBtn);
+                    EbMessage("show", { Message: `Unique check for ${controls[0].Label || controls[0].Name} failed`, AutoHide: true, Background: '#aa0000' });
+                }
+                else {
+                    this.FO.hideLoader();
+                    EbMessage("show", { Message: `Unique check failed`, AutoHide: true, Background: '#aa0000' });
+                }
+            }.bind(this)
+        });
+    };
+
+    this.checkUnique = function (ctrl) {
+        this.checkUnique4All_save([ctrl], false);
+    }
+
+    this.runFormValidations = function () {
+        let ctrl = this.FO.FormObj;
+        if (!ctrl.Validators)
+            return true;
+        let formValidationflag = true;
+        ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
+        $.each(ctrl.Validators.$values, function (i, Validator) {
+            EbMessage("hide", "");// reset EbMakeValid
+            if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
+                return true;
+            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
+            let valRes = func();
+            if (valRes === false) {
+                if (!Validator.IsWarningOnly) {
+                    EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
+                    formValidationflag = false;
+                    return false;// break; from loop if one validation failed
+                }
+                //this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
+                EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: 'rgb(245, 144, 58)' });
+            } else if (valRes !== true && valRes !== undefined) {
+                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+            }
+        }.bind(this));
+        return formValidationflag;
+    };
+
+    this.isValidationsOK = function (ctrl) {
+        if (!ctrl.Validators)
+            return true;
+        let formValidationflag = true;
+        ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
+        $.each(ctrl.Validators.$values, function (i, Validator) {
+            this.removeInvalidStyle(ctrl);// reset EbMakeValid
+            if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
+                return true;
+            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
+            let valRes = func();
+            if (valRes === false) {
+                //EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
+                this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
+                if (!Validator.IsWarningOnly) {
+                    formValidationflag = false;
+                    return false;// break; from loop if one validation failed
+                }
+            } else if (valRes !== true && valRes !== undefined) {
+                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+            }
+        }.bind(this));
+        return formValidationflag;
+    };
+
+    this.removeInvalidStyle = function (ctrl) {
+        let contSel = `#cont_${ctrl.EbSid_CtxId}`;
+        if (ctrl.IsDGCtrl)
+            contSel = '#td_' + ctrl.EbSid_CtxId;
+        EbMakeValid(contSel, `.ctrl-cover`, ctrl);
+    };
+
+    // checks a control value is emptyString
+    this.isRequiredOK = function (ctrl) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        if (ctrl.ObjType === "DataGrid" && !ctrl.rowRequired_valid_Check()) {
+            this.addInvalidStyle(ctrl);
+            return false;
+        }
+        else if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
+            this.addInvalidStyle(ctrl);
+            return false;
+        }
+        else {
+            this.removeInvalidStyle(ctrl);
+            return true;
+        }
+    };
+
+    this.addInvalidStyle = function (ctrl, msg, type) {
+        //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
+        //    EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
+        //else
+        let contSel = '#td_' + ctrl.EbSid_CtxId;
+        if (ctrl.IsDGCtrl)
+            contSel = '#td_' + ctrl.EbSid_CtxId;
+        EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);
+    };
+};

@@ -1191,11 +1191,11 @@ function ExecQuery(refId, ctrlName, params, ctrl) {
 
 function getObjByval(ObjArray, key, val) {
     if (ObjArray === undefined) {
-        console.error("ObjArray undefined");
+        console.eb_log("ObjArray undefined");
         return false;
     }
     if (val === undefined) {
-        console.error("value undefined");
+        console.eb_log("value undefined");
         return false;
     }
     try {
@@ -1321,7 +1321,7 @@ function hide_inp_loader($ctrl, $item) {
     }
 };
 
-function show_inp_loader($ctrl, $item) {
+function show_inp_loader($ctrl, $item = $()) {
     if (!$ctrl.hasClass("inp-inner-loader")) {
         $item.data("_color", $item.css('color'));
         $ctrl.addClass("inp-inner-loader");
@@ -1518,7 +1518,7 @@ const EbTableVisualization = function EbTableVisualization(id, jsonObj) {
 
 const EbPowerSelect = function (ctrl, options) {
     //parameters 
-    this.getFilterValuesFn = options.getFilterValuesFn;
+    this.getFilterValuesFn = options.getFilterValuesFn || function () { return []; };
     this.ComboObj = ctrl;
     //this.ComboObj.__isDGv2Ctrl = true;// hardcoding
     this.renderer = options.renderer;
@@ -1545,7 +1545,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     //local variables
     this.container = this.name + "Container";
-    this.$wraper = $('#' + this.name + 'Wraper');
+    this.$container = $('#' + this.name + "Container");
     this.DTSelector = '#' + this.name + 'tbl';
     this.DT_tbodySelector = "#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody';
     this.NoOfFields = this.dmNames.length;
@@ -1582,8 +1582,8 @@ const EbPowerSelect = function (ctrl, options) {
     //init() for event binding....
     this.init = function () {
         try {
-            $('#' + this.name + 'Wraper [class=open-indicator]').hide();
-            this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]');
+            $('#' + this.name + 'Container [class=open-indicator]').hide();
+            this.$searchBoxes = $('#' + this.name + 'Container [type=search]');
             this.lastFocusedDMsearchBox = $(this.$searchBoxes[0]);
             this.$searchBoxes.on("click", function () { $(this).focus(); });
             this.$searchBoxes.keyup(this.searchboxKeyup);
@@ -1593,17 +1593,17 @@ const EbPowerSelect = function (ctrl, options) {
             this.isDGps = this.ComboObj.constructor.name === "DGPowerSelectColumn" || this.ComboObj.isDGCtrl;
 
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit)
-            $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
-            $('#' + this.name + 'Wraper .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
+            $('#' + this.name + 'Container .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
+            $('#' + this.name + 'Container .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
             $('#' + this.name + 'tbl').keydown(function (e) {
                 if (e.which === 27) {
                     this.lastFocusedDMsearchBox.focus();
                     this.Vobj.hideDD();
                 }
             }.bind(this));//hide DD on esc when focused in DD
-            $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+            $('#' + this.name + 'Container').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-            $('#' + this.name + 'Wraper' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
+            $('#' + this.name + 'Container' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
             this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 600)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
@@ -1626,11 +1626,11 @@ const EbPowerSelect = function (ctrl, options) {
             }
 
             //set id for searchBox
-            $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
+            $('#' + this.name + 'Container  [type=search]').each(this.srchBoxIdSetter.bind(this));
 
 
             if (!this.ComboObj.MultiSelect)
-                $('#' + this.name + 'Wraper').attr("singleselect", "true");
+                $('#' + this.name + 'Container').attr("singleselect", "true");
 
             this.$searchBoxes.attr("autocomplete", "off");
 
@@ -1756,10 +1756,10 @@ const EbPowerSelect = function (ctrl, options) {
         }
         else {
             this.V_showDD();
+            $filterInp.val($e.val());
             if (this.ComboObj.IsPreload) {
-                $filterInp.val($e.val());
                 this.Vobj.DDstate = true;
-                EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+                EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, this.ComboObj);
                 if (this.ComboObj.MinSearchLength > searchVal.length)
                     return;
 
@@ -1804,7 +1804,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
-        this.clearValues();
+        //this.clearValues();
+        let triggerChange = (StrValues === "" || StrValues === undefined);// trigger if set with nothing
+        this.clearValues(triggerChange);
         if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
@@ -1890,7 +1892,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.srchBoxIdSetter = function (i) {
-        $('#' + this.name + 'Wraper  [type=search]:eq(' + i + ')').attr('id', this.dmNames[i]);
+        $('#' + this.name + 'Container  [type=search]:eq(' + i + ')').attr('id', this.dmNames[i]);
     };
 
     //enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
@@ -1943,6 +1945,10 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getData = function () {
+        if (Offline.state !== 'up') {
+            this.V_hideDD();
+            return;
+        }
         this.showLoader();
         if (this.ComboObj.__isDGv2Ctrl && this.ComboObj.__bkpData) {
             this.getDataSuccess(this.ComboObj.__bkpData);
@@ -1951,7 +1957,7 @@ const EbPowerSelect = function (ctrl, options) {
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         let params = this.ajaxData();
-        let url = "../dv/getData4PowerSelect";
+        let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect" : "../dv/getData4PowerSelect";
         $.ajax({
             url: url,
             type: 'POST',
@@ -1966,10 +1972,14 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getDataSuccess = function (result) {
-        if (result === undefined) {
+        if (result === undefined || result.data === null) {
             this.hideLoader();
             this.V_hideDD();
-            console.warn("PS: getData4PowerSelect ajax call returned undefined");
+            if (result === undefined)
+                console.warn("PS: getData4PowerSelect ajax call returned undefined");
+            else if (result.data === null) {
+                console.warn("PS: " + result.error);
+            }
             return;
         }
         this.data = result;
@@ -2098,7 +2108,12 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.AddUserAndLcation = function () {
-        this.filterValues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        if (this.renderer.rendererName === 'Bot') // no store available in bot
+            var defaultLocId = 1;
+        else
+            var defaultLocId = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+
+        this.filterValues.push(new fltr_obj(11, "eb_loc_id", defaultLocId));
         this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     };
 
@@ -2113,15 +2128,15 @@ const EbPowerSelect = function (ctrl, options) {
         if (this.IsFromReloadWithParams2setOldval)
             this.ComboObj.___DoNotImport = true;
         try {
-            let VMs = this.Vobj.valueMembers || [];
+            let tempVMs = [];
+
             let DMs = this.Vobj.displayMembers || [];
 
-            if (VMs.length > 0)// clear if already values there
+            if (this.Vobj.valueMembers.length > 0)// clear if already values there
                 this.clearValues();
 
             let valMsArr = setvaluesColl;
             let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
-
             for (let i = 0; i < valMsArr.length; i++) {
                 let vm = valMsArr[i].trim();
                 let unformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === vm);
@@ -2133,7 +2148,7 @@ const EbPowerSelect = function (ctrl, options) {
                     return;
                 }
 
-                VMs.push(vm);
+                tempVMs.push(vm);
                 this.addColVals(vm);
                 let unFormattedRowIdx = this.unformattedData.indexOf(unformattedDataARR[0]);
 
@@ -2145,6 +2160,16 @@ const EbPowerSelect = function (ctrl, options) {
                     DMs[dmName].push(this.formattedData[unFormattedRowIdx][DMidx]);
                 }
             }
+            setTimeout(function () {//to catch by watcher
+
+                try {
+                    this.Vobj.valueMembers.push(...tempVMs);
+                }
+                catch (e) {
+                    console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
+                }
+            }.bind(this));
+
         }
         catch (e) {
             console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
@@ -2173,7 +2198,7 @@ const EbPowerSelect = function (ctrl, options) {
             let ColIdx = this.getColumnIdx(this.ComboObj.Columns.$values, colName);
 
             let cellData;
-            if (type === 5 || type === 11)
+            if (type === 11)
                 cellData = this.formattedData[unFormattedRowIdx][ColIdx];// unformatted data for date or integer
             else
                 cellData = RowUnformattedData[ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
@@ -2183,27 +2208,6 @@ const EbPowerSelect = function (ctrl, options) {
             this.columnVals[colName].push(fval);
         }
     };
-
-
-
-    //this.addColVals = function (val = this.lastAddedOrDeletedVal) {
-    //    $.each(this.ColNames, function (i, name) {
-    //        let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
-    //        let type = obj.Type;
-    //        let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
-    //        let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
-    //        let vmindex = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-    //        let cellData;
-    //        if (type === 5 || type === 11)
-    //            cellData = this.datatable.data.filter(ro => ro[vmindex] === val)[0][idx];// unformatted data for date or integer
-    //        else
-    //            cellData = this.datatable.Api.row($rowEl).data()[idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
-    //        if (type === 11 && cellData === null)///////////
-    //            cellData = "0";
-    //        let fval = EbConvertValue(cellData, type);
-    //        this.columnVals[name].push(fval);
-    //    }.bind(this));
-    //};
 
     this.initDataTable = function () {
         this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
@@ -2220,7 +2224,7 @@ const EbPowerSelect = function (ctrl, options) {
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         //o.columnSearch = this.filterArray;
-        o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
+        o.showHeader = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
         o.nextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
@@ -2286,6 +2290,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
     this.searchCallBack = function () {
         setTimeout(function () {
+            //console.log('V_updateCk called from : searchCallBack');
             this.V_updateCk();
         }.bind(this), 30);
     }.bind(this);
@@ -2367,6 +2372,12 @@ const EbPowerSelect = function (ctrl, options) {
         for (let i = 0; i < this.Vobj.valueMembers.length; i++) {
             this.addColVals(this.Vobj.valueMembers[i]);
         }
+    };
+
+    this.removeClosedColVals = function () {
+        $.each(this.ColNames, function (i, name) {
+            this.columnVals[name].splice(this.ClosedItemIdx, 1);
+        }.bind(this));
     };
 
     this.removeColVals = function (vmValue) {
@@ -2493,6 +2504,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     //single select & max limit
     this.V_watchVMembers = function (VMs, a, b, c) {
+        //let t0 = performance.now();
         this.setLastmodfiedVal();
         this.Values = [...this.Vobj.valueMembers];
 
@@ -2514,23 +2526,24 @@ const EbPowerSelect = function (ctrl, options) {
         //setTimeout(function () {// to adjust search-block
         //    let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
         //    $(".search-block .input-group").css("height", maxHeight + "px");
-        //    $('#' + this.name + 'Wraper [type=search]').val("");
+        //    $('#' + this.name + 'Container [type=search]').val("");
         //}.bind(this), 10);
 
-        if (this.datatable === null) {
-            if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
+
+        if (this.Changed) {
+            if (this.datatable === null) {
+                if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
+                    this.removeClosedColVals();
+
+            }
+            else
                 this.reSetColumnvals_();
 
-        }
-        else
-            this.reSetColumnvals_();
-
-        if (this.Changed)
             this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            this.required_min_valid_Check();
+            this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
+        }
 
-        this.required_min_Check();
-
-        this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
@@ -2538,11 +2551,12 @@ const EbPowerSelect = function (ctrl, options) {
         //console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
         setTimeout(function () {
             this.adjustTag_closeHeight();
-            this.$wraper.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
+            this.$container.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
         }.bind(this), 5);
         //this.scrollIf();
         this.adjustDDposition();
         this.adjust$searchBoxAppearance(VMs);
+        //console.dev_log("V_watchVMembers took :" + (performance.now() - t0) + " milliseconds.");
     };
 
     this.adjust$searchBoxAppearance = function myfunction(VMs) {
@@ -2558,15 +2572,15 @@ const EbPowerSelect = function (ctrl, options) {
     }
 
     this.adjustTag_closeHeight = function () {
-        if (this.ComboObj.Padding && this.$wraper.find(".selected-tag").length > 0) {
+        if (this.ComboObj.Padding && this.$container.find(".selected-tag").length > 0) {
             if (this.ComboObj.Padding.Top >= 7) {
-                this.$wraper.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 5)}px`);
-                this.$wraper.find(".v-select input[type=search]").css("padding-top", `${(this.ComboObj.Padding.Top - 2)}px`);
-                this.$wraper.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 3.5)}px`);
+                this.$container.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 5)}px`);
+                this.$container.find(".v-select input[type=search]").css("padding-top", `${(this.ComboObj.Padding.Top - 2)}px`);
+                this.$container.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 3.5)}px`);
             }
             if (this.ComboObj.Padding.Bottom >= 7) {
-                this.$wraper.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 5)}px`);
-                this.$wraper.find(".v-select input[type=search]").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 2)}px`);
+                this.$container.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 5)}px`);
+                this.$container.find(".v-select input[type=search]").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 2)}px`);
             }
         }
     };
@@ -2647,9 +2661,10 @@ const EbPowerSelect = function (ctrl, options) {
         if (!this.IsDatatableInit)
             this.DDopenInitDT();
         else {
-            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, this.ComboObj);
         }
 
+        //console.log('V_updateCk called from : V_showDD');
         this.V_updateCk();
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         this.colAdjust();
@@ -2675,6 +2690,10 @@ const EbPowerSelect = function (ctrl, options) {
             this.$DDdiv.find(".dataTables_paginate.paging_simple").hide(50);
         else
             this.$DDdiv.find(".dataTables_paginate.paging_simple").show(50);
+        if (this.OnInitialDraw) {
+            this.OnInitialDraw();
+            this.OnInitialDraw = null;
+        }
     }.bind(this);
 
     this.colAdjust = function () {
@@ -2684,15 +2703,24 @@ const EbPowerSelect = function (ctrl, options) {
         }.bind(this), 10);
     }.bind(this);
 
+    //this.fnCallCounter = 0;
+
     this.V_updateCk = function () {// API..............
-        $("#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
-            let $row = $(chkbx).closest('tr');
-            let datas = this.getRowUnformattedData($row);
-            if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
-                $(chkbx).prop('checked', true);
-            else
-                $(chkbx).prop('checked', false);
-        }.bind(this));
+        //let t0 = performance.now();
+        //console.log('V_updateCk called :' + ++this.fnCallCounter);
+        if (!this.IsDatatableInit)
+            return;
+        $("#" + this.ComboObj.EbSid_CtxId + 'DDdiv .dataTables_scrollBody tbody [type=checkbox]:checked').prop('checked', false);
+        if (this.Vobj.valueMembers.length === 0)
+            return;
+        let ValueMembers = this.Vobj.valueMembers.toString().split(",");
+        for (var i = 0; i < ValueMembers.length; i++) {
+            let chkbx = document.querySelector(`#${this.ComboObj.EbSid_CtxId}DDdiv .dataTables_scrollBody tbody [type=checkbox][value="${ValueMembers[i]}"]`)
+            if (chkbx)
+                chkbx.checked = true;
+        }
+        //console.dev_log("V_updateCk took :" + (performance.now() - t0) + " milliseconds.");
+
         // raise error msg
         setTimeout(this.RaiseErrIf.bind(this), 30);
     };
@@ -2737,7 +2765,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.tagCloseBtnHand = function (e) {
-        this.ClosedItem = this.Vobj.valueMembers.splice(delid(), 1)[0];
+        this.ClosedItemIdx = delid();
+        this.ClosedItem = this.Vobj.valueMembers.splice(this.ClosedItemIdx, 1)[0];
         if (this.ComboObj.MultiSelect)
             $(this.DTSelector + " [type=checkbox][value='" + this.ClosedItem + "']").prop("checked", false);
         //else
@@ -2799,11 +2828,11 @@ const EbPowerSelect = function (ctrl, options) {
         let _name = this.ComboObj.EbSid_CtxId;
         if (this.Vobj.DDstate === true && (!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
-            this.required_min_Check();
+            this.required_min_valid_Check();
         }
     };
 
-    this.required_min_Check = function () {
+    this.required_min_valid_Check = function () {
         let reqNotOK = false;
         let minLimitNotOk = false;
         let contId = this.isDGps ? `#td_${this.ComboObj.EbSid_CtxId}` : `#cont_${this.ComboObj.EbSid_CtxId}`;// to handle special case of DG powerselect
@@ -2820,15 +2849,18 @@ const EbPowerSelect = function (ctrl, options) {
 
         if (reqNotOK || minLimitNotOk) {
             //if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
-            EbMakeInvalid(contId, wraperId, msg);
+            EbMakeInvalid(this.ComboObj, contId, wraperId, msg);
         }
         else {
-            EbMakeValid(contId, wraperId);
+            EbMakeValid(contId, wraperId, this.ComboObj);
+            this.renderer.FRC.isValidationsOK(this.ComboObj);
         }
     }.bind(this);
 
     this.getDisplayMemberModel = function () {
         let newDMs = {};
+        if (this.Vobj.valueMembers.length === 0)
+            return newDMs;
         let DmClone = removePropsOfType($.extend(true, {}, this.Vobj.displayMembers), 'function');
         let ValueMembers = this.Vobj.valueMembers.toString().split(",");
         for (var i = 0; i < ValueMembers.length; i++) {
@@ -2897,6 +2929,7 @@ const EbPowerSelect = function (ctrl, options) {
         //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
         let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
         let $form_div = $(document).find("[eb-root-obj-container]:first");
+        let $scrollBody = this.$DDdiv.find('.dataTables_scrollBody');
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 
         let ctrlContOffset = $ctrlCont.offset();
@@ -2912,8 +2945,8 @@ const EbPowerSelect = function (ctrl, options) {
         let windowWidth = $(window).width();
         let windowHeight = $(window).height();
 
-        //if (WIDTH !== ctrlWidth)
-        //    LEFT = DDoffset.left - ((WIDTH - ctrlWidth) / 2);
+        let topDist = ctrlContOffset.top - formTopOffset;
+        let bottomDist = windowHeight - ctrlBottom;
 
         if (WIDTH > windowWidth) {
             WIDTH = windowWidth - 20;
@@ -2925,33 +2958,34 @@ const EbPowerSelect = function (ctrl, options) {
             LEFT = 10;
 
 
-
-        if (ctrlBottom + DD_height > windowHeight) {
+        if (ctrlBottom + DD_height > windowHeight && topDist < DD_height && topDist > bottomDist) {
             this.$DDdiv.addClass("dd-ctrl-top");
-
-            let pageHeight = $form_div.outerHeight() + formTopOffset;
-            let cotrolTop = $ctrl.offset().top + formScrollTop;
-            let BOTTOM = (pageHeight - cotrolTop) + 1;
-            console.log("scrollTop :" + formScrollTop);
-            console.log("cotrolTop :" + cotrolTop);
-            this.$DDdiv.css("top", "unset");
-            this.$DDdiv.css("bottom", BOTTOM);
-            console.log("dd offset top :" + this.$DDdiv.offset().top);
+            let pageHeight = $form_div.outerHeight() + formTopOffset,
+                cotrolTop = $ctrl.offset().top + formScrollTop,
+                BOTTOM = (pageHeight - cotrolTop) + 1;
+            this.$DDdiv.css("top", "unset").css("bottom", BOTTOM);
+            if (topDist < DD_height) {
+                this.$DDdiv.css("height", topDist + 'px').css("top", formScrollTop + 'px').css("bottom", "unset");
+                if ($scrollBody.length === 0)
+                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(topDist - 32); }.bind(this);
+                else
+                    $scrollBody.height(topDist - 32);
+            }
 
         }
         else {
-            //let Hdiff = $ctrl.offset().bottom - ctrlHeight - formTopOffset;
-            //if (Hdiff >)
-            //    this.$DDdiv.find("dataTables_scrollBody").css("height", this.$DDdiv.height() - )
+            this.$DDdiv.css("bottom", "unset").css("top", TOP).removeClass("dd-ctrl-top");
 
-
-            this.$DDdiv.css("bottom", "unset");
-            this.$DDdiv.css("top", TOP);
-            this.$DDdiv.removeClass("dd-ctrl-top");
+            if (bottomDist < DD_height) {
+                this.$DDdiv.css("height", bottomDist + 'px');
+                if ($scrollBody.length === 0)
+                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(bottomDist - 32); }.bind(this);
+                else
+                    $scrollBody.height(bottomDist - 32);
+            }
         }
 
-        this.$DDdiv.css("left", LEFT);
-        this.$DDdiv.width(WIDTH);
+        this.$DDdiv.css("left", LEFT).width(WIDTH);
     };
 
     this.appendDD2Body = function () {
@@ -6538,7 +6572,7 @@ prashanth pamidi (https://github.com/prrashi)*/
             preloaded: [],
             maxSize: 2,
             maxFiles: 1,
-            fileTypes: 'image/jpeg,image/png,image/jpg'
+            fileTypes: 'image/*'
         };
 
         // Get instance
@@ -6618,7 +6652,7 @@ prashanth pamidi (https://github.com/prrashi)*/
         //   let dataTransfer = new DataTransfer();
 
         let createContainer = function () {
-
+            let fileType = (plugin.settings.fileTypes == "image") ? "image/*" : "";
             // Create the image uploader container
             let $flcontainer = $("#" + plugin.settings.fileCtrl.EbSid + "_SFUP"),
 
@@ -6626,7 +6660,7 @@ prashanth pamidi (https://github.com/prrashi)*/
                 $input = $('<input>', {
                     type: 'file',
                     id: `${plugin.settings.fileCtrl.EbSid}_inputID`,
-                    accept: plugin.settings.fileTypes,
+                    accept: fileType,
                     name: "fileInputnm",
                     multiple: plugin.settings.maxFiles
                 }).appendTo($flcontainer),
@@ -6681,13 +6715,13 @@ prashanth pamidi (https://github.com/prrashi)*/
                     } else {
                         filelurl = '/images/file-image.png';
                     }
-                   
+
                 }
                 file.name = file.name;
             } else {
                 if (cntype == 1) {
                     filelurl = URL.createObjectURL(file);
-                } else  {
+                } else {
                     let arr = file.name.split('.');
                     let exten = arr[arr.length - 1];
                     if (exten === 'pdf') {
@@ -6790,14 +6824,14 @@ prashanth pamidi (https://github.com/prrashi)*/
                 if (plugin.settings.renderer === "Bot") {
                     f_refid = $(e.target).closest('.botfilethumb').attr('filrefid');
                     $(e.target).closest('.botfilethumb').remove();
-                } 
+                }
                 else {
                     f_refid = $(e.target).closest('.filethumb').attr('filrefid');
                     $(e.target).closest('.filethumb').remove();
 
                 }
-               
-                                
+
+
                 filedel.push(f_refid);
                 let del_indx = refidArr.indexOf(f_refid);
                 refidArr.splice(del_indx, 1);
@@ -6851,7 +6885,7 @@ prashanth pamidi (https://github.com/prrashi)*/
                 // Makes the upload
                 setPreview($container, fileArr);
             }
-           
+
         };
 
         let setPreview = function ($container, files) {
@@ -6866,64 +6900,66 @@ prashanth pamidi (https://github.com/prrashi)*/
                 $input = $container.find('input[type="file"]');
 
             // Run through the files
+            var t = (plugin.settings.fileTypes == 'image') ? 1 : 0;
             $(files).each(function (i, file) {
                 let url = "";
-                // if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
-                if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
-                    //if (((preloadedfile - filedel.length) + newfilearray.length) < plugin.settings.maxFiles) {
-                    if (((preloadedfile + newfilearray.length)  - filedel.length) < plugin.settings.maxFiles) {
-                  //  if (newfilearray.length< plugin.settings.maxFiles) {
+                let filetype = (t == 1) ? getFileType(files[i]) : 1;
+                if (filetype==1) {
+                    if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
+                        //if (((preloadedfile - filedel.length) + newfilearray.length) < plugin.settings.maxFiles) {
+                        if (((preloadedfile + newfilearray.length) - filedel.length) < plugin.settings.maxFiles) {
+                            //  if (newfilearray.length< plugin.settings.maxFiles) {
 
 
 
-                        // Add it to data transfer
-                        //   dataTransfer.items.add(file);
+                            // Add it to data transfer
+                            //   dataTransfer.items.add(file);
 
-                        // Set preview
+                            // Set preview
 
-                        //if (files[i].type == "application/pdf") {
+                            //if (files[i].type == "application/pdf") {
 
-                        //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
-                        //}
-                        //else
-                        let type = getFileType(file);
-                        {
-                            $uploadedContainer.append(createImg(file, newfilearray.length, type), false);
-                           // $(".trggrpreview").on("click", viewFilesFn);
-                            // let createImg = function (file, id, cntype, prelod, fileno, refid) {
-                        }
+                            //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
+                            //}
+                            //else
+                            let type = getFileType(file);
+                            {
+                                $uploadedContainer.append(createImg(file, newfilearray.length, type), false);
+                                // $(".trggrpreview").on("click", viewFilesFn);
+                                // let createImg = function (file, id, cntype, prelod, fileno, refid) {
+                            }
 
 
-                        if (plugin.settings.renderer === "Bot") {
-                            if (type === 1)
-                                url = "../Boti/UploadImageAsync";
-                            else
-                                url = "../Boti/UploadFileAsync";
+                            if (plugin.settings.renderer === "Bot") {
+                                if (type === 1)
+                                    url = "../Boti/UploadImageAsync";
+                                else
+                                    url = "../Boti/UploadFileAsync";
+                            }
+                            else {
+
+                                if (type === 1)
+                                    url = "../StaticFile/UploadImageAsync";
+                                else
+                                    url = "../StaticFile/UploadFileAsync";
+                            }
+
+
+                            uploadItem(url, file);
+
+
                         }
                         else {
-
-                            if (type === 1)
-                                url = "../StaticFile/UploadImageAsync";
-                            else
-                                url = "../StaticFile/UploadFileAsync";
+                            EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
                         }
-
-
-                        uploadItem(url, file);
-
-
                     }
                     else {
-                        EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
+                        EbMessage("show", { Message: `Maximum file size is ${plugin.settings.maxSize}MB`, Background: 'red' });
                     }
                 }
                 else {
-                    EbMessage("show", { Message: `Maximum file size is ${plugin.settings.MaxSize}MB`, Background: 'red' });
+                    EbMessage("show", { Message: "Only images are allowed", Background: 'red' });
                 }
-                //}
-                //else {
-                //    EbMessage("show", { Message: "Only image and pdf are allowed", Background: 'red' });
-                //}
 
 
 

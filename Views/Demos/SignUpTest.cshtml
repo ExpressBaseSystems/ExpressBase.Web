@@ -46,6 +46,23 @@
         });
     }
 
+    function GetQueryData() {
+        $.ajax({
+            url: "/api/get_query_data",
+            type: "POST",
+            data: {
+                query: "select * from user_master where id = :rowid ;",
+                param: JSON.stringify([{ Name: "rowid", Type: "11", Value: "1" }])
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("bToken", getTok());
+                xhr.setRequestHeader("rToken", getrToken());
+            }
+        }).done(function (data) {
+
+        });
+    }
+
 
     function testAjax() {
         $.ajax({

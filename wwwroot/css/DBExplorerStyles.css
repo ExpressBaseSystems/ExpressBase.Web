@@ -10,7 +10,10 @@
 
 #myInput {
     width: 100%;
-    padding: 1%;
+    padding: 2px 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: solid 1px #b7b7b7;
 }
 
 div .mytree div {
@@ -19,7 +22,7 @@ div .mytree div {
     background-image: url('data:image/gif;base64,R0lGODlhEwATAIABAAAAAO7u7iH5BAEAAAEALAAAAAATABMAAAIVjI+py+0Po5y0LoApBjrbD4biSEIFADs=');*/
 }
     div.mytree div.parent:hover {
-        background-color: #b0bed9;
+        background-color: transparent;
         /*cursor:move;*/
     }
     div.mytree div.child:hover {
@@ -28,8 +31,11 @@ div .mytree div {
 
     div.mytree div.parent div {
         display: none;
-        cursor: default;
+        cursor: pointer;
     }
+    .treecontextmenu:hover {
+        border: solid 1px #d5d5d5;
+    } 
 
         div.mytree div.parent {
             cursor: pointer;
@@ -47,7 +53,7 @@ div .mytree div {
         }
 
     div.mytree div.selected{
-        background-color:#aee5fb;
+        background-color:#ffff;
     }
 
     .db_client_toolbox {
@@ -159,16 +165,17 @@ div .mytree div {
     border: 1px solid #ccc;
     border-top: 0;
     padding: 2px;
-    cursor:auto;
+    cursor: auto;
+    height: 34rem;
 }
 
 .Result_Cont {
-    margin-right: 50px;
-    /*margin-top: 20px;*/
-    padding: 10px;
-    max-height: 170px;
+    margin-top:10px;
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
+    height: 26rem;
+    overflow: hidden;
+    border: solid 1px #b6b6b6;
 }
 
 .Result_Cont_modal {
@@ -244,3 +251,197 @@ color: white;
     background: white;
     color: #316396;
 }*/
+
+.tttab-session ul {
+    height: 5vh;
+}
+    .tttab-session ul li {
+        margin-top: 5px;
+        margin-bottom: -7px;
+        background: #b3b3b3;
+        height: 100%;
+        width: 200px;
+    }
+        .tttab-session ul li a {
+            display: flex;
+            width: 200px;
+            height: 100%;
+            padding: 6px;
+        }
+            .tttab-session ul li a p {
+                font-size: 14px;
+                width: 55%;
+                text-align: left;
+                padding-left: 15px;
+            }
+        .tttab-session ul li a button {
+            padding: 6px;
+            height: 100%;
+            background: #fff;
+            border: solid 1px #c7c7c7;
+        }
+            .tttab-session ul li a i {
+                padding: 5px;
+                font-size: 14px;
+                padding-left: 10px;
+            }
+
+/*query tabs*/
+.tab-section ul {
+    height: 5vh;
+}
+
+    .tab-section ul li {
+        margin-top: 5px;
+        margin-bottom: -7px;
+        background: #b3b3b3;
+        height: 100%;
+        width: 160px;
+    }
+
+        .tab-section ul li a {
+            display: flex;
+            width: 160px;
+            height: 100%;
+            padding: 6px;
+        }
+
+            .tab-section ul li a p {
+                font-size: 14px;
+                width: 65%;
+                text-align: left;
+                padding-left: 15px;
+            }
+
+            .tab-section ul li a button {
+                padding: 6px;
+                height: 100%;
+                background: #fff;
+                border: solid 1px #c7c7c7;
+            }
+
+            .tab-section ul li a i {
+                padding: 5px;
+                font-size: 14px;
+                padding-left: 10px;
+            }
+
+.tab-content{
+
+}
+    .Result_Cont{
+        width:100%;
+    }
+    .tab-content .dataTables_wrapper, .tab-content .dataTables_scroll {
+        height: 100%;
+    }
+
+    .tab-content .dataTables_scrollBody {
+        height: calc(74%) !important;
+    }
+
+
+    .tab-content .dataTables_scrollHeadInner .table {
+        margin-top: 0px !important;
+    }
+
+
+.tab-content .dataTables_scrollBody::-webkit-scrollbar {
+    width: 1.5vh;
+    height: 1.5vh;
+}
+
+    .tab-content .dataTables_scrollBody:hover::-webkit-scrollbar {
+        width: 1.5vh;
+        height: 1.5vh;
+    }
+
+    /* Track */
+    .tab-content .dataTables_scrollBody::-webkit-scrollbar-track {
+        background: #f1f1f1 !important;
+    }
+
+    /* Handle */
+    .tab-content .dataTables_scrollBody::-webkit-scrollbar-thumb {
+        background: #888 !important;
+    }
+
+        /* Handle on hover */
+        .tab-content .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+            background: #555 !important;
+        }
+
+
+.tab-content th {
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+    .tab-content .group td b {
+        font-weight: 400;
+    }
+
+    .tab-content td {
+        font-size: 16px;
+        text-overflow: ellipsis !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        font-size: 14px;
+        height: 5vh !important;
+    }
+
+    .tab-content tr:hover {
+        background-color: #00000040 !important;
+    }
+
+    .tab-content .group {
+        border-top: solid 1px #f1f1f1 !important;
+        background-color: #00000029 !important;
+    }
+
+        .tab-content .group:hover {
+            border-top: solid 1px #f1f1f1 !important;
+            /*background-color: #00000029 !important;*/
+        }
+
+        .tab-content .group tr td {
+            background-color: #00000029 !important;
+        }
+
+    .tab-content .group-sum td {
+        background-color: #00000029 !important;
+        /*border-bottom: solid 3px #ffffff14 !important;*/
+    }
+
+    .tab-content tr {
+        background-color: transparent !important;
+        border-bottom: 1px !important;
+        border-bottom: solid #dcdcdc !important;
+        border-bottom-width: 1px !important;
+        height: 4vh !important;
+    }
+
+    .tab-content table.dataTable thead .sorting:after {
+        opacity: 0.2;
+        content: "\e150";
+        font-size: 12px;
+    }
+
+    .tab-content .dataTables_scrollBody thead:first-child tr {
+        height: 0vh !important;
+    }
+
+    .tab-content .odd {
+        background: rgba(0, 0, 0, 0.09) !important;
+    }
+
+.red-tooltip + .tooltip > .tooltip-inner {
+    background-color: #f00;
+}
+
+.red-tooltip + .tooltip > .tooltip-arrow {
+    border-bottom-color: #f00;
+}

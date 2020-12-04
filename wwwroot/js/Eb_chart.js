@@ -351,7 +351,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 $(ctrl).css("border-color", "red");
             }
             else
-                $(ctrl).css("border-color", "rgba(34, 36, 38, .15)");
+                $(ctrl).css("border-color", "var(--eb-bluishgray)");
         });
         return isValid;
     };

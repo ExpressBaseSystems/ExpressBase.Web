@@ -318,7 +318,7 @@ function MobileMenu(option) {
     };
 
     this.ContextLinks = {
-        "TableLayout": {
+        "EbMobileTableLayout": {
             "add_row": { name: "Add Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "add_column": { name: "Add Column", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "delete_row": { name: "Delete Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
@@ -339,8 +339,9 @@ function MobileMenu(option) {
     this.getMenu = function ($trigger, e) {
         let m = $.extend({}, this.options);
         let ebtype = $trigger.attr("eb-type");
-        if (ebtype === "EbMobileTableLayout") {
-            $.extend(m, this.ContextLinks["TableLayout"]);
+
+        if (this.ContextLinks.hasOwnProperty(ebtype)) {
+            $.extend(m, this.ContextLinks[ebtype]);
         }
         return m;
     };

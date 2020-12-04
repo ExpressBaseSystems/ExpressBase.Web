@@ -802,7 +802,7 @@ namespace ExpressBase.Web.Controllers
             UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
             return UpResp;
         }
-        public IActionResult GetProfile(string r, int l)
+        public IActionResult GetProfile(int l)
         {
             GetMyProfileEntryResponse resp = this.ServiceClient.Get(new GetMyProfileEntryRequest());
             if (resp != null)

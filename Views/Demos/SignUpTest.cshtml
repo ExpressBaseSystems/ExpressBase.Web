@@ -46,13 +46,13 @@
         });
     }
 
-    function GetQueryData() {
+    function GetProfile() {
         $.ajax({
-            url: "/api/get_query_data",
-            type: "POST",
+            url: "/api/get_profile",
+            type: "GET",
             data: {
-                query: "select * from user_master where id = :rowid ;",
-                param: JSON.stringify([{ Name: "rowid", Type: "11", Value: "1" }])
+                refid: "ebdb09y5foo8dp20201201082533-ebdb09y5foo8dp20201201082533-13-3-3-3-3",
+                loc_id: 1
             },
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("bToken", getTok());
@@ -62,7 +62,6 @@
 
         });
     }
-
 
     function testAjax() {
         $.ajax({

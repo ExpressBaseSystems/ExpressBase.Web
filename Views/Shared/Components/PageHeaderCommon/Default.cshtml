@@ -163,8 +163,8 @@
 <script>
     window.ebcontext.wc = '@Html.Raw(ViewBag.wc)';
     window.ebcontext.header = new EbHeader();
-    $(document).ready(function () {
+    //$(document).ready(function () {
         if (window.ebcontext.wc === 'uc')
             window.ebcontext.header.insertGlobalSearch();
-    });
+    //});
 </script>

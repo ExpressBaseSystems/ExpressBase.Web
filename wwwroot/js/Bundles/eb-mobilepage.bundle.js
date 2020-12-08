@@ -895,7 +895,7 @@ function MobileMenu(option) {
     };
 
     this.ContextLinks = {
-        "TableLayout": {
+        "EbMobileTableLayout": {
             "add_row": { name: "Add Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "add_column": { name: "Add Column", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "delete_row": { name: "Delete Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
@@ -916,8 +916,9 @@ function MobileMenu(option) {
     this.getMenu = function ($trigger, e) {
         let m = $.extend({}, this.options);
         let ebtype = $trigger.attr("eb-type");
-        if (ebtype === "EbMobileTableLayout") {
-            $.extend(m, this.ContextLinks["TableLayout"]);
+
+        if (this.ContextLinks.hasOwnProperty(ebtype)) {
+            $.extend(m, this.ContextLinks[ebtype]);
         }
         return m;
     };
@@ -1112,8 +1113,9 @@ function MobileMenu(option) {
 
                 let tobj = root.makeElement("EbMobileTableLayout", "TableLayout");
                 $(`#${this.EbSid} .ctrl_as_container .data_layout`).append(tobj.$Control.outerHTML());
-                if (root.Mode === "edit") {
-                    $.extend(tobj, this.DataLayout || {});
+                if (root.Mode === "edit" && this.DataLayout) {
+                    this.DataLayout.RowCount = this.DataLayout.RowCount === 0 ? 1 : this.DataLayout.RowCount;
+                    this.DataLayout.ColumCount = this.DataLayout.ColumCount === 0 ? 2 : this.DataLayout.ColumCount;
                 }
                 tobj.trigger(root);
                 return tobj;
@@ -1336,7 +1338,11 @@ function MobileMenu(option) {
                 if (root.ContainerType === "EbMobileVisualization") {
                     this.BindableParams.$values = root.ContainerObject.StaticParameters.$values;
                 }
-                setFontCss(this.Font, $(`#${this.EbSid}`));
+            },
+            propertyChanged: function (propname) {
+                if (propname === "HorrizontalAlign") {
+                    window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
+                }
             }
         },
         EbMobileDataLink: {

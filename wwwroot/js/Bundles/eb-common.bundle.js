@@ -54,6 +54,7 @@ var EbHeader = function () {
 
 
     </div>
+<div class="eb_common_loader" id="srch_loader"></div>
 </div>`);
 
         this.$toolbSrchBx = $('.toolb-srchbx');
@@ -91,8 +92,8 @@ var EbHeader = function () {
     }.bind(this);
 
     this.scrollList = function () {
-        var list = document.querySelector('.srch-ul'); // targets the <ul>
-        var first = list.firstChild; // targets the first <li>
+        var list = document.querySelector('.srch-ul-outer'); // targets the <ul>
+        var first = list.querySelector('.srch-li'); // targets the first <li>
         var maininput = this.$toolbSrchBx[0];  // targets the input, which triggers the functions populating the list
         document.onkeydown = function (e) { // listen to keyboard events
             switch (e.keyCode) {
@@ -104,7 +105,9 @@ var EbHeader = function () {
                         maininput.focus();
                     } // stop the script if the focus is on the input or first element
                     else {
-                        document.activeElement.parentNode.parentNode.parentNode.previousSibling.querySelector('a').focus();
+                        let prevSibling = $(document.activeElement).closest('.srch-li').prev()[0] || $(document.activeElement).closest('.collapse').prev().prev().find('.srch-li:last')[0];
+                        if (prevSibling)
+                            prevSibling.querySelector('a').focus();
                     } // select the element before the current, and focus it
                     break;
                 case 40: // if the DOWN key is pressed
@@ -112,7 +115,7 @@ var EbHeader = function () {
                         first.querySelector('a').focus();
                     } // if the currently focused element is the main input --> focus the first <li>
                     else {
-                        let nextSibling = document.activeElement.parentNode.parentNode.parentNode.nextSibling;
+                        let nextSibling = $(document.activeElement).closest('.srch-li').next()[0] || $(document.activeElement).closest('.collapse').next().next().find('.srch-li:first')[0];
                         if (nextSibling)
                             nextSibling.querySelector('a').focus();
                     } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
@@ -134,7 +137,7 @@ var EbHeader = function () {
     }.bind(this);
 
     this.getSearchResult = function (searchkey) {
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
+        $("#srch_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
         $.ajax({
             type: "POST",
             url: "/WebForm/SearchInPlatform4FormData",
@@ -142,79 +145,111 @@ var EbHeader = function () {
                 key: searchkey
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
+                $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
                 EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
             }.bind(this),
             success: this.drawResultList.bind(this, searchkey)
         });
     }.bind(this);
 
-    this.drawResultList = function (searchkey, data = `[{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]`) {
+    this.drawResultList = function (searchkey, data = `{ "RowCount": 12, "Data": [{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]}`) {
         data = JSON.parse(data);
+        let dataItems = data.Data;
+        let DataItemsG = groupBy(data.Data.sort((a, b) => (a.DisplayName > b.DisplayName) ? 1 : ((b.DisplayName > a.DisplayName) ? -1 : 0)), 'DisplayName');
         let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
         $('.srch-body-cont').empty();
-        let html = '<ul class="srch-ul">';
-        $.each(data, function (i, obj) {
-            let j = 0;
-            html += '<li class="srch-li">'
-            html += `
-<div class='srch-li-block'>
-    <h4><a class='srch-res-a' target="_blank" href='${obj.Link}'  tabindex="1">${obj.DisplayName}</a></h4>
-        <div class="ctrldtlsWrap">`;
-            $.each(obj.Data, function (name, val) {
-                if (j++ % 3 === 0) {
-                    html += `
-                        <table class='ctrldtls'>
-                            <tbody>`;
-                }
-                html += `<tr><td><div class='key'>${name}</div></td> <td><div class='value'>${val}</div></td></tr>`
-                if (j % 3 === 0) {
-                    html += `
-                            </tbody>
-                        </table>`;
-                }
-                if (j === 6)
-                    return false;
-            });
-            html += `
-                </tbody>
-            </table>
-        </div>
-        <div class="metadtlsWrap">
-            <table class='metadtls'>
-                <tbody>
-                    <tr>
-                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedAt} </span></td>
-                    <tr>
-                    </tr>
-                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Created</span></td><td class='metaval'><span> : ${obj.CreatedBy} </span></td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class='metadtls'>
-                <tbody>
-                    <tr>
-                        <td class='metalbl'><span> <i class="fa fa-clock-o" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedAt} </span></td>
-                    <tr>
-                    </tr>
-                        <td class='metalbl'><span> <i class="fa fa-user" aria-hidden="true"></i> Modified</span></td><td class='metaval'><span> : ${obj.ModifiedBy} </span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-</div>`;
-            html += '</li>'
-        });
-        html += '</ul>'
+
+
+        let html = `<ul class="srch-ul-outer">
+                        <li class="li-summary">
+                            <div class='srch-summary-text'><b>${dataItems.length}</b> / <b>${data.RowCount}</b> matches</div>
+                        </li>`;
+        if (dataItems.length > 0) {
+            $.each(DataItemsG, function (formName, items) {
+                html += this.getUlHtml(items, true);
+            }.bind(this));
+        }
+        else {
+
+            html += `<li class="srch-li">
+                        <div class='srch-li-block'>
+                            <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
+                            <div class="ctrldtlsWrap">Try some other keyword</div>
+                        </div>
+                    </li>`;
+        }
+
+        html += `</ul>`;
 
         //$('.srch-body-cont').append(html);
         $cont.append(html);
         $('.search-dd').slideDown(100);
         modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
-        $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+        $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
         this.scrollList();
-        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').focus() });
-        $('.srch-li').on('dblclick', function () { event.target.closest('.srch-li').querySelector('.srch-res-a').click() });
+        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.ctrldtlsWrap').focus() });
+    };
+
+    this.getUlHtml = function (dataItems, hideHead) {
+        let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
+        let html =
+            `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
+                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</h5>
+            </li>
+            <li id='${idfromDN}' class='collapse in'>
+                <ul class="srch-ul">`;
+        $.each(dataItems, function (i, obj) {
+            let j = 0;
+            let modifiedAtarr = obj.ModifiedAt.split(' ');
+            let createdAtArr = obj.CreatedAt.split(' ');
+            html += `
+                    <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
+                        <div class='srch-li-block'>
+                            <div class="ctrldtlsWrap" onclick="window.open('${obj.Link}', '_blank')">`;
+            $.each(obj.Data, function (name, val) {
+                if (j++ % 3 === 0) {
+                    html += `
+                                <table class='ctrldtls'>
+                                    <tbody>`;
+                }
+                html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
+                if (j % 3 === 0) {
+                    html += `
+                                    </tbody>
+                                </table>`;
+                }
+                if (j === 6)
+                    return false;
+            });
+            html += `
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="metadtlsWrap">
+                                <table class='metadtls'>
+                                    <tbody>
+                                        <tr>
+                                            <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
+                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
+                                        <tr>    
+                                    </tbody>
+                                </table>
+                                <table class='metadtls'>
+                                    <tbody>
+                                        <tr>
+                                            <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
+                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>`;
+            html += '   </li>'
+        });
+        return `${html}
+                </ul>
+            </li>`;
     };
 
     this.hideDDclickOutside = function (e) {
@@ -2197,7 +2232,6 @@ var EbServerEvents = function (options) {
     };
 
     this.exportApplication = function (m, e) {
-        console.log(m);
         self.EbPopBox("hide");
         let pop = {
             Message: "Exported Successfully. Go to App Store to view the package :"
@@ -2206,12 +2240,39 @@ var EbServerEvents = function (options) {
     }
 
     this.importApplication = function (m, e) {
-        console.log(m);
         self.EbPopBox("hide");
         let pop = {
             Message: "Application imported Successfully."
         };
         self.EbPopBox("show", pop);      
+    }
+
+    this.userRoleChanged = function (m, e) {
+        alert("userRoleChanged");
+        console.log(m);
+        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
+        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+       // $('#menu_refresh').click();
+    }
+    this.userDisabled = function (m) {
+      
+        var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
+                                    <div class="cw">
+                                        <div class="msgbdy">${m}</div>
+                                        <div id="cntTimer">You will be logged out in <span id="counterSpn"></span> seconds</div>
+                                    </div>
+                                </div>`;
+        $('body').append(html);
+        var count = 5;
+        var countdown = setInterval(function () {
+            $("#counterSpn").html(count);
+            if (count == 0) {
+                clearInterval(countdown);
+                $("#cntTimer").hide();
+                window.location = "/Tenantuser/Logout";
+            }
+            count--;
+        }, 1000);
     }
 
     this.ES = new EventSourcePolyfill(this.Url, {
@@ -2260,7 +2321,8 @@ var EbServerEvents = function (options) {
             onNotification: this.onNotifyMsg.bind(this),
             exportApplication: this.exportApplication.bind(this),
             importApplication: this.importApplication.bind(this),
-
+            userRoleChanged: this.userRoleChanged.bind(this),
+            userDisabled: this.userDisabled.bind(this),
 
             mybroadcast: this.mybroadcast.bind(this)
         }

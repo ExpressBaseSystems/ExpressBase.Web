@@ -79,7 +79,6 @@
     };
 
     this.exportApplication = function (m, e) {
-        console.log(m);
         self.EbPopBox("hide");
         let pop = {
             Message: "Exported Successfully. Go to App Store to view the package :"
@@ -88,12 +87,39 @@
     }
 
     this.importApplication = function (m, e) {
-        console.log(m);
         self.EbPopBox("hide");
         let pop = {
             Message: "Application imported Successfully."
         };
         self.EbPopBox("show", pop);      
+    }
+
+    this.userRoleChanged = function (m, e) {
+        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
+        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+       // $('#menu_refresh').click();
+    }
+    this.userDisabled = function (m) {
+      
+        var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
+                                    <div class="cw" style="align-items: center;">
+
+                                        <i class="fa fa-warning" style="font-size: 35px;color:red;padding: 10px;"></i>
+                                        <div class="msgbdy">${m}</div>
+                                        <div id="cntTimer">You will be logged out in <span id="counterSpn"></span> seconds</div>
+                                    </div>
+                                </div>`;
+        $('body').append(html);
+        var count = 5;
+        var countdown = setInterval(function () {
+            $("#counterSpn").html(count);
+            if (count == 0) {
+                clearInterval(countdown);
+                $("#cntTimer").hide();
+                window.location = "/Tenantuser/Logout";
+            }
+            count--;
+        }, 1000);
     }
 
     this.ES = new EventSourcePolyfill(this.Url, {
@@ -142,9 +168,9 @@
             onNotification: this.onNotifyMsg.bind(this),
             exportApplication: this.exportApplication.bind(this),
             importApplication: this.importApplication.bind(this),
+            userRoleChanged: this.userRoleChanged.bind(this),
+            userDisabled: this.userDisabled.bind(this),
 
-
-            mybroadcast: this.mybroadcast.bind(this)
         }
     });
 };

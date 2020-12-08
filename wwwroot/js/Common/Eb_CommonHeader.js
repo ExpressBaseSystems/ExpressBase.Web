@@ -98,23 +98,23 @@
                     if (document.activeElement == maininput) {
                         break;
                     } // stop the script if the focus is on the input or first element
-                    else if (document.activeElement == first.querySelector('a')) {
+                    else if (document.activeElement == first.querySelector('.ctrldtlsWrap')) {
                         maininput.focus();
                     } // stop the script if the focus is on the input or first element
                     else {
                         let prevSibling = $(document.activeElement).closest('.srch-li').prev()[0] || $(document.activeElement).closest('.collapse').prev().prev().find('.srch-li:last')[0];
                         if (prevSibling)
-                            prevSibling.querySelector('a').focus();
+                            prevSibling.querySelector('.ctrldtlsWrap').focus();
                     } // select the element before the current, and focus it
                     break;
                 case 40: // if the DOWN key is pressed
                     if (document.activeElement == maininput) {
-                        first.querySelector('a').focus();
+                        first.querySelector('.ctrldtlsWrap').focus();
                     } // if the currently focused element is the main input --> focus the first <li>
                     else {
                         let nextSibling = $(document.activeElement).closest('.srch-li').next()[0] || $(document.activeElement).closest('.collapse').next().next().find('.srch-li:first')[0];
                         if (nextSibling)
-                            nextSibling.querySelector('a').focus();
+                            nextSibling.querySelector('.ctrldtlsWrap').focus();
                     } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
                     break;
             }
@@ -181,7 +181,7 @@
         //$('.srch-body-cont').append(html);
         $cont.append(html);
         $('.search-dd').slideDown(100);
-        modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
+        modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'gi'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
         $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
         this.scrollList();
         $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.ctrldtlsWrap').focus() });
@@ -202,7 +202,7 @@
             html += `
                     <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
                         <div class='srch-li-block'>
-                            <div class="ctrldtlsWrap" onclick="window.open('${obj.Link}', '_blank')">`;
+                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">`;
             $.each(obj.Data, function (name, val) {
                 if (j++ % 3 === 0) {
                     html += `
@@ -228,7 +228,7 @@
                                     <tbody>
                                         <tr>
                                             <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
-                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
+                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
                                         <tr>    
                                     </tbody>
                                 </table>
@@ -236,7 +236,7 @@
                                     <tbody>
                                         <tr>
                                             <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
-                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
+                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
                                         </tr>
                                     </tbody>
                                 </table>

@@ -79,7 +79,7 @@
                                             <i class='fa fa-eye' aria-hidden='true'></i>
                                         </button>
                                         <button class='btn' id= 'form_update_index' data-toggle='tooltip' data-placement='bottom' title= 'Update index table'>
-                                            <i class='fa fa-list-alt' aria-hidden='true'></i>
+                                            <i class='fa fa-pencil-square-o' aria-hidden='true'></i>
                                         </button>`);
             $("#form_preview").tooltip().off("click").on("click", function () {
                 if (this.EbObject.RefId === null || this.EbObject.RefId === "")

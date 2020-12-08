@@ -144,7 +144,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
                     bool neglectLocId = WebForm.IsLocIndependent;
-                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId) || 
+                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId) ||
                         (this.HasPermission(RefId, OperationConstants.OWN_DATA, LocId, neglectLocId) && this.LoggedInUser.UserId == wfd.FormData.CreatedBy)))
                     {
                         TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: View/Edit`";
@@ -606,13 +606,20 @@ namespace ExpressBase.Web.Controllers
 
         public string UpdateIndexes(string refid)
         {
-            if ((this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || 
-                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) && ViewBag.wc == RoutingConstants.DC)
+            try
             {
-                UpdateIndexesRespone Resp = ServiceClient.Post(new UpdateIndexesRequest { RefId = refid });
-                return Resp.Message;
+                if ((this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
+                    this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) && ViewBag.wc == RoutingConstants.DC)
+                {
+                    UpdateIndexesRespone Resp = ServiceClient.Post(new UpdateIndexesRequest { RefId = refid });
+                    return Resp.Message;
+                }
+                return "Access denied. Must be a SolutionOwner/Admin in DevConsole.";
             }
-            return "Access denied. Must be a SolutionOwner/Admin in DevConsole.";
+            catch (Exception e)
+            {
+                return "ERROR : " + e.Message;
+            }
         }
 
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
@@ -802,7 +809,7 @@ namespace ExpressBase.Web.Controllers
             UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
             return UpResp;
         }
-        public IActionResult GetProfile(string r, int l)
+        public IActionResult GetProfile(int l)
         {
             GetMyProfileEntryResponse resp = this.ServiceClient.Get(new GetMyProfileEntryRequest());
             if (resp != null)
@@ -814,8 +821,8 @@ namespace ExpressBase.Web.Controllers
                     p = JsonConvert.SerializeObject(new List<Param> { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = resp.RowId.ToString() } }).ToBase64();
                     _mode = (int)WebFormModes.View_Mode;
                 }
-                else 
-                    _mode = (int)WebFormModes.New_Mode; 
+                else
+                    _mode = (int)WebFormModes.New_Mode;
                 return RedirectToAction("WebFormRender", new
                 {
                     refId = resp.Refid,

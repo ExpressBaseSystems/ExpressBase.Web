@@ -967,11 +967,12 @@ namespace ExpressBase.Web.Controllers
                 SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
                 if (solutionsettings != null)
                 {
-                    if(solutionsettings.UserTypeForms != null)
+                    if(solutionsettings.UserTypeForms != null  || solutionsettings.MobileAppSettings?.UserTypeForms != null)
                     {
                         CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
                         {
-                            UserTypeForms = solutionsettings.UserTypeForms
+                            UserTypeForms = solutionsettings.UserTypeForms,
+                            UserTypeMobPages = solutionsettings.MobileAppSettings?.UserTypeForms
                         });
                     }
                     SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });

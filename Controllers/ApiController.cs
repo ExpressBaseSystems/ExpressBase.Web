@@ -911,34 +911,35 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("api/push_data")]
-        public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm] Dictionary<string, string> form)
+        public ActionResult<InsertDataFromWebformResponse> WebFormSaveCommonApi([FromForm] Dictionary<string, string> form)
         {
-            InsertDataFromWebformResponse Resp = null;
+            if (!Authenticated) return Unauthorized();
 
-            if (Authenticated)
+            InsertDataFromWebformResponse response;
+            try
             {
-                try
+                InsertDataFromWebformRequest request = new InsertDataFromWebformRequest
                 {
-                    WebformData FormData = JsonConvert.DeserializeObject<WebformData>(form["webform_data"]);
-                    int RowId = Convert.ToInt32(form["rowid"]);
-                    string RefId = form["refid"];
-                    int LocId = Convert.ToInt32(form["locid"]);
+                    RefId = form["refid"],
+                    FormData = JsonConvert.DeserializeObject<WebformData>(form["webform_data"]),
+                    RowId = Convert.ToInt32(form["rowid"]),
+                    CurrentLoc = Convert.ToInt32(form["locid"])
+                };
 
-                    Resp = ServiceClient.Post(new InsertDataFromWebformRequest
-                    {
-                        RefId = RefId,
-                        FormData = FormData,
-                        RowId = RowId,
-                        CurrentLoc = LocId
-                    });
-                }
-                catch (Exception ex)
+                if (form.TryGetValue("mobile_refid", out string mobileRefId))
                 {
-                    Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
-                    Console.WriteLine(ex.StackTrace);
+                    request.MobilePageRefId = mobileRefId;
                 }
+                response = ServiceClient.Post(request);
             }
-            return Resp;
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+
+                return BadRequest(ex.Message);
+            }
+            return response;
         }
 
         [HttpPost("api/get_data")]
@@ -980,6 +981,43 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(ex.StackTrace);
             }
             return response;
+        }
+
+        [HttpGet("api/get_profile")] //refid = mobileform
+        public ActionResult<MobileProfileData> GetProfile(string refid, int loc_id)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            MobileProfileData profileData = new MobileProfileData();
+            try
+            {
+                GetMyProfileEntryResponse response = this.ServiceClient.Get(new GetMyProfileEntryRequest());
+
+                if (response != null && response.RowId > 0)
+                {
+                    profileData.RowId = response.RowId;
+
+                    MobileFormDataResponse formData = GetMobileFormData(refid, response.RowId, loc_id);
+
+                    if (formData != null)
+                    {
+                        profileData.Data = formData.Data;
+                        profileData.Message = $"returned record for [rowid] '{response.RowId}'";
+                    }
+                }
+                else
+                {
+                    profileData.Message = $"[ProfileEntryResponse] null or [rowid] zero, profile record empty";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_profile API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+
+                return NotFound(ex.Message);
+            }
+            return profileData;
         }
 
         [HttpGet("api/get_formdata")] //refid = mobileform

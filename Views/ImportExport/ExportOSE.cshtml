@@ -8,46 +8,47 @@
 }
 @section StyleSheet{
     <style>
-        .list_cont {
-            display: flex;
-            flex-direction: column;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            background-color: white;
-            margin-top: 3%;
-        }
+                .list_cont {
+                    display: flex;
+                    flex-direction: column;
+                    border-radius: 4px;
+                    border: 1px solid #ccc;
+                    background-color: white;
+                    margin-top: 3%;
+                    padding-bottom: 10px;
+                }
 
-        .eb-exprt-container {
-            display: flex;
-            flex-direction: column;
-            width: 60%;
-            margin-bottom: 20px;
-        }
+                .eb-exprt-container {
+                    display: flex;
+                    flex-direction: column;
+                    /*width: 60%;*/
+                    margin-bottom: 20px;
+                }
 
-        .objContainer_f_app {
-            background: white;
-            display: flex;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
+                .objContainer_f_app {
+                    background: white;
+                    display: flex;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    border-radius: 4px;
+                    border: 1px solid #ccc;
+                }
 
-            .objContainer_f_app:last-child {
-                margin-bottom: 20px;
-            }
+                    .objContainer_f_app:last-child {
+                        margin-bottom: 20px;
+                    }
 
-        input, .input-group {
-            width: 50%;
-        }
-
-        .app-name {
-            height: 25px;
-            background-color: #75a8f5;
-            padding: 3px;
-            margin-bottom: 10px;
-            color: white;
-        }
+                /*input, .input-group, select {
+                    width: 50% !important;
+                }
+        */
+                .app-name {
+                    height: 25px;
+                    background-color: #75a8f5;
+                    padding: 3px;
+                    margin-bottom: 10px;
+                    color: white;
+                }
     </style>
 }
 @section JavaScript{
@@ -57,7 +58,7 @@
     <script type="text/javascript" src="~/js/LayoutCommon/bootstrap-iconpicker.min.js"></script>
 }
 <div class="container-fluid list_cont">
-    <div class="eb-exprt-container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light eb-exprt-container">
         <h4>Export Objects</h4>
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
@@ -67,28 +68,39 @@
                 <a class="nav-link" id="apps-tab" data-toggle="tab" href="#nav-apps" role="tab" aria-controls="profile" aria-selected="false">Applications</a>
             </li>
         </ul>
-    </div>
+    </nav>
+
     <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane active" id="nav-Packagedetail" role="tabpanel" aria-labelledby="Packagedetail-tab">
-            <div class="form-group ">
-                Package Name
-                <input type="text" class="form-control" id="packname" placeholder="Package Name" style="height:40px" />
+
+        <div class="tab-pane active col-md-12" id="nav-Packagedetail" role="tabpanel" aria-labelledby="Packagedetail-tab">
+            <div class="row col-md-5">
+                <div class="form-group">
+                    Package Name
+                    <input type="text" class="form-control" id="packname" placeholder="Package Name" style="height:40px" />
+                </div>
+                <div class="form-group ">
+                    Package Description
+                    <input type="text" class="form-control" id="packdesc" placeholder="package Description" style="height:40px" />
+                </div>
             </div>
-            <div class="form-group ">
-                Package Description
-                <input type="text" class="form-control" id="packdesc" placeholder="package Description" style="height:40px" />
-            </div>
-            <div class="form-group ">
-                Master Solution
-                <input type="text" class="form-control" id="mastersoln" placeholder="Select Master solution" style="height:40px" />
-            </div>
-            <div class="form-group appicon_box">
-                Icon
-                <div class="input-group iconpicker-container" style="height:40px">
-                    <input type="text" class="form-control" name="packIcon" value="fa-home" style="height:100%" />
-                    <span class="input-group-btn" style="height:100%">
-                        <button class="btn btn-default appicon_btn" style="height:100%" id="packIcon"></button>
-                    </span>
+            <div class="row col-md-5 col-md-offset-1">
+                <div class="form-group ">
+                    Master Solution
+                    <select class="selectpicker show-tick form-control" id="mastersoln" placeholder="Select Master solution" style="height:40px;">
+                        @foreach (EbSolutionsWrapper s in ViewBag.PrimarySolutions)
+                        {
+                            <option value="@s.IsolutionId">@s.SolutionName </option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group appicon_box">
+                    Icon
+                    <div class="input-group iconpicker-container" style="height:40px">
+                        <input type="text" class="form-control" name="packIcon" value="fa-home" style="height:100%" />
+                        <span class="input-group-btn" style="height:100%">
+                            <button class="btn btn-default appicon_btn" style="height:100%" id="packIcon"></button>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -121,10 +133,10 @@
             </div>
         </div>
     </div>
-   
+
     <div class="eb-exprt-footer">
-        <a id="goto_store" class="ebbtn" href="/AppStore" style="background: #f58a8a;color: white;">Back to App Store</a>
-        <button id="commit_export" class="pull-right ebbtn eb_btngreen">Export</button>
+        <a id="goto_store" class="ebbtn" href="/AppStore" style="background: #f58a8a;color: white; height:10px;">Back to App Store</a>
+        <button id="commit_export" class="pull-right ebbtn eb_btngreen" style="height:10px;">Export</button>
     </div>
 </div>
 
@@ -161,7 +173,7 @@
                 Message: "Exporting objects...",
                 Html: function ($selector) {
                     $selector.html(`<span>Exporting objects...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
-                }  
+                }
             };
 
             $.ajax({

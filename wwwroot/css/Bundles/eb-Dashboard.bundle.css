@@ -1779,9 +1779,9 @@ canvas:visited {
     height: .9vh;
 }
 
-    .grid-stack .dataTables_scrollBody::-webkit-scrollbar:hover {
-        width: 1.3vh;
-        height: 1.3vh;
+    .grid-stack .dataTables_scrollBody:hover::-webkit-scrollbar {
+        width: 1.5vh;
+        height: 1.5vh;
     }
 
 /* Track */

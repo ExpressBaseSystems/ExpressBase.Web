@@ -951,8 +951,9 @@ namespace ExpressBase.Web.Controllers
             ViewBag.objlist = public_res.Data;
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
-            ViewBag.MobileSettings = solutionObj.SolutionSettings.MobileAppSettings;
-            if (solutionObj.SolutionSettings.MobileAppSettings == null)
+            ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
+
+            if (solutionObj.SolutionSettings?.MobileAppSettings == null)
             {
                 ViewBag.MobileSettings = new MobileAppSettings();
             }
@@ -966,11 +967,12 @@ namespace ExpressBase.Web.Controllers
                 SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
                 if (solutionsettings != null)
                 {
-                    if(solutionsettings.UserTypeForms != null)
+                    if(solutionsettings.UserTypeForms != null  || solutionsettings.MobileAppSettings?.UserTypeForms != null)
                     {
                         CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
                         {
-                            UserTypeForms = solutionsettings.UserTypeForms
+                            UserTypeForms = solutionsettings.UserTypeForms,
+                            UserTypeMobPages = solutionsettings.MobileAppSettings?.UserTypeForms
                         });
                     }
                     SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });

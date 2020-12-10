@@ -164,12 +164,10 @@ namespace ExpressBase.Web.Controllers
             String ids = String.Join(", ", appIdObjIdCollection.Select(x => String.Join(", ", x.Value)));
 
             EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
-
             Dictionary<int, ObjectVersionsDictionary> AppObjMap = new Dictionary<int, ObjectVersionsDictionary>();
             ObjectVersionsDictionary objdict = null;
             foreach (var app in appIdObjIdCollection)
             {
-
                 if (!AppObjMap.ContainsKey(app.Key))
                 {
                     objdict = new ObjectVersionsDictionary();
@@ -183,6 +181,8 @@ namespace ExpressBase.Web.Controllers
             }
             ViewBag.AppObjMap = AppObjMap;
             ViewBag.appNameCollection = appNameCollection;
+            GetPrimarySolutionsResponse result = this.ServiceClient.Get<GetPrimarySolutionsResponse>(new GetPrimarySolutionsRequest());
+            ViewBag.PrimarySolutions = result.PrimarySolutions;
             return View();
         }
 

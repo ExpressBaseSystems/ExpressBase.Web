@@ -1442,13 +1442,13 @@ const WebFormRender = function (option) {
                 r.push('webformedit');
         }
         else {
-            let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7 };
+            let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8 };
             for (let i = 0; i < btns.length; i++) {
                 if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].includes(op.New) && (mode === 'New Mode'))
                     r.push(btns[i]);
-                else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].includes(op.Edit) && mode === 'Edit Mode')
+                else if (btns[i] === "webformsave-selbtn" && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)) && mode === 'Edit Mode')
                     r.push(btns[i]);
-                else if (btns[i] === "webformedit" && this.formPermissions[loc].includes(op.Edit))
+                else if (btns[i] === "webformedit" && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)))
                     r.push(btns[i]);
                 else if (btns[i] === "webformdelete" && this.formPermissions[loc].includes(op.Delete))
                     r.push(btns[i]);

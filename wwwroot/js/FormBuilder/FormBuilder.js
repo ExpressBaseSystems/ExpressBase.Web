@@ -77,13 +77,22 @@
         if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
             $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
                                             <i class='fa fa-eye' aria-hidden='true'></i>
+                                        </button>
+                                        <button class='btn' id= 'form_update_index' data-toggle='tooltip' data-placement='bottom' title= 'Update index table'>
+                                            <i class='fa fa-pencil-square-o' aria-hidden='true'></i>
                                         </button>`);
-            $("#form_preview").off("click").on("click", function () {
+            $("#form_preview").tooltip().off("click").on("click", function () {
                 if (this.EbObject.RefId === null || this.EbObject.RefId === "")
                     EbMessage("show", { Message: 'Refresh page then Try again', AutoHide: true, Background: '#1e1ebf' });
                 else
                     window.open("../WebForm/Index?refid=" + this.EbObject.RefId, '_blank');
             }.bind(this));
+            $("#form_update_index").tooltip().off("click").on("click", function () {
+                if (this.EbObject.RefId === null || this.EbObject.RefId === "")
+                    EbMessage("show", { Message: 'Refresh page then Try again', AutoHide: true, Background: '#1e1ebf' });
+                else
+                    window.open("../WebForm/UpdateIndexes?refid=" + this.EbObject.RefId, '_blank');
+            }.bind(this));           
         }
     }.bind(this);
 

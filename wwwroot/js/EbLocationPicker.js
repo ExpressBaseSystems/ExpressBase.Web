@@ -493,6 +493,14 @@
         }
 
         else if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname !=  ("/SupportTicket/EditTicket")) {
+           
+            $.ajax({
+                url: "../Security/BrowserExceptions",
+                data: { errorMsg: er },
+                cache: false,
+                type: "POST"
+            });
+
             if (confirm("An error occured while selecting location, do you want to report it?")) {
                 window.location = '/SupportTicket/bugsupport';
             } else {

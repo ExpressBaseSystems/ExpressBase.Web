@@ -739,9 +739,9 @@ const EbPowerSelect = function (ctrl, options) {
 
             let cellData;
             if (type === 11)
-                cellData = this.formattedData[unFormattedRowIdx][ColIdx];// unformatted data for date or integer
+                cellData = RowUnformattedData[ColIdx];// unformatted data for date or integer
             else
-                cellData = RowUnformattedData[ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
+                cellData = this.formattedData[unFormattedRowIdx][ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
             if (type === 11 && cellData === null)///////////
                 cellData = "0";
             let fval = EbConvertValue(cellData, type);

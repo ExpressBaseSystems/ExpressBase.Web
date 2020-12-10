@@ -995,7 +995,7 @@ namespace ExpressBase.Web.Controllers
 
                 if (response != null && response.RowId > 0)
                 {
-                    response.RowId = response.RowId;
+                    profileData.RowId = response.RowId;
 
                     MobileFormDataResponse formData = GetMobileFormData(refid, response.RowId, loc_id);
 

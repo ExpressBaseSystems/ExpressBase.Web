@@ -873,7 +873,8 @@ input:checked + .proslider:before {
         background: #c7cfd514;
         padding: 5px 16px;
         border-radius: 4px;
-        outline:none;
+        outline: none;
+        cursor: alias;
     }
 
     .search-dd .metadtlsWrap {

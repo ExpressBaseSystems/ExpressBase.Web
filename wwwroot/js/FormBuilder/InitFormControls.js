@@ -1420,14 +1420,31 @@
         if (ctrl.HideInputIcon)
             $input.siblings(".input-group-addon").hide();
 
-        $input.inputmask("currency", {
-            radixPoint: ".",
-            allowMinus: ctrl.AllowNegative,
-            groupSeparator: "",
-            digits: ctrl.DecimalPlaces,
-            prefix: '',
-            autoGroup: true
-        });
+       
+
+        if (ctrl.InputMode == 1) {
+            $input.inputmask({
+                alias: "numeric",
+                _mask: function _mask(opts) {
+                    return _userObject.Preference.CurrencyPattern;
+                },
+                groupSeparator: _userObject.Preference.CurrencyGroupSeperator,
+                radixPoint: _userObject.Preference.CurrencyDecimalSeperator,
+                placeholder: "0",
+                digits: _userObject.Preference.CurrencyDecimalDigits,
+                digitsOptional: !1
+            });
+        }
+        else {
+            $input.inputmask("currency", {
+                radixPoint: _userObject.Preference.CurrencyDecimalSeperator,
+                allowMinus: ctrl.AllowNegative,
+                groupSeparator: "",
+                digits: ctrl.DecimalPlaces,
+                prefix: '',
+                autoGroup: true
+            });
+        }
 
         $input.focus(function () { $(this).select(); });
 

@@ -144,7 +144,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
                     bool neglectLocId = WebForm.IsLocIndependent;
-                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId)))
+                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId) ||
+                        (this.HasPermission(RefId, OperationConstants.OWN_DATA, LocId, neglectLocId) && this.LoggedInUser.UserId == wfd.FormData.CreatedBy)))
                     {
                         TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: View/Edit`";
                         return "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
@@ -267,7 +268,7 @@ namespace ExpressBase.Web.Controllers
                 _col.ClassName = "tdheight";
                 _col.Font = null;
                 _col.Align = Align.Left;
-                if(_col.Name == "display_name")
+                if (_col.Name == "display_name")
                 {
                     _col.RefidColumn = DVColumnCollection.Get("form_ref_id");
                     _col.IdColumn = DVColumnCollection.Get("id");
@@ -448,7 +449,7 @@ namespace ExpressBase.Web.Controllers
                     Operation = OperationConstants.EDIT;
                 EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
                 bool neglectLocId = WebForm.IsLocIndependent;
-                if (!this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId))
+                if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
@@ -513,38 +514,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (ViewBag.wc != RoutingConstants.UC)
                 return false;
-            if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
-                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) ||
-                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionPM.ToString()))
-                return true;
-
-            EbOperation Op = EbWebForm.Operations.Get(ForWhat);
-            EbObjectType EbType = RefId.GetEbObjectType();
-            if (EbType.IntCode == EbObjectTypes.Report)
-                Op = EbReport.Operations.Get(ForWhat);
-
-            if (!Op.IsAvailableInWeb)
-                return false;
-
-            try
-            {
-                //Permission string format => 020-00-00982-02:5
-                string[] refidParts = RefId.Split("-");
-                string objType = refidParts[2].PadLeft(2, '0');
-                string objId = refidParts[3].PadLeft(5, '0');
-                string operation = Op.IntCode.ToString().PadLeft(2, '0');
-                string pWithLoc = objType + '-' + objId + '-' + operation + (NeglectLocId ? "" : (":" + LocId));///////////
-                string pGlobalLoc = objType + '-' + objId + '-' + operation + ":-1";
-                string temp = this.LoggedInUser.Permissions.Find(p => p.Contains(pWithLoc) || p.Contains(pGlobalLoc));
-                if (temp != null)
-                    return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(string.Format("Exception when checking user permission: {0}\nRefId = {1}\nOperation = {2}\nLocId = {3}", e.Message, RefId, ForWhat, LocId));
-            }
-
-            return false;
+            return EbFormHelper.HasPermission(this.LoggedInUser, RefId, ForWhat, LocId, NeglectLocId, RoutingConstants.UC);
         }
 
         public string DoUniqueCheck(UniqCheckParam[] uniqCheckParams)
@@ -636,13 +606,20 @@ namespace ExpressBase.Web.Controllers
 
         public string UpdateIndexes(string refid)
         {
-            if ((this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || 
-                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) && ViewBag.wc == RoutingConstants.DC)
+            try
             {
-                UpdateIndexesRespone Resp = ServiceClient.Post(new UpdateIndexesRequest { RefId = refid });
-                return Resp.Message;
+                if ((this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
+                    this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) && ViewBag.wc == RoutingConstants.DC)
+                {
+                    UpdateIndexesRespone Resp = ServiceClient.Post(new UpdateIndexesRequest { RefId = refid });
+                    return Resp.Message;
+                }
+                return "Access denied. Must be a SolutionOwner/Admin in DevConsole.";
             }
-            return "Access denied. Must be a SolutionOwner/Admin in DevConsole.";
+            catch (Exception e)
+            {
+                return "ERROR : " + e.Message;
+            }
         }
 
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
@@ -832,38 +809,28 @@ namespace ExpressBase.Web.Controllers
             UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
             return UpResp;
         }
-        public IActionResult GetProfile(string r, int l)
+        public IActionResult GetProfile(int l)
         {
-            int _mode = 0;
-            string p = string.Empty;
-            EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = r });
-            if (verResp != null)
+            GetMyProfileEntryResponse resp = this.ServiceClient.Get(new GetMyProfileEntryRequest());
+            if (resp != null)
             {
-                EbWebForm form = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
-                if (form != null)
+                int _mode;
+                string p = string.Empty;
+                if (resp.RowId > 0)
                 {
-                    GetMyProfileEntryResponse resp = this.ServiceClient.Get(new GetMyProfileEntryRequest { TableName = form.TableName });
-                    if (resp != null)
-                    {
-                        if (resp.RowId > 0)
-                        {
-                            p = JsonConvert.SerializeObject(new List<Param> { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = resp.RowId.ToString() } }).ToBase64();
-                            _mode = (int)WebFormModes.View_Mode;
-                        }
-                        else
-                        {
-                            _mode = (int)WebFormModes.New_Mode;
-                        }
-                        return RedirectToAction("WebFormRender", new
-                        {
-                            refId = r,
-                            _locId = l,
-                            _mode = _mode,
-                            _params = p,
-                            renderMode = 4
-                        });
-                    }
+                    p = JsonConvert.SerializeObject(new List<Param> { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = resp.RowId.ToString() } }).ToBase64();
+                    _mode = (int)WebFormModes.View_Mode;
                 }
+                else
+                    _mode = (int)WebFormModes.New_Mode;
+                return RedirectToAction("WebFormRender", new
+                {
+                    refId = resp.Refid,
+                    _locId = l,
+                    _mode = _mode,
+                    _params = p,
+                    renderMode = 4
+                });
             }
             return Redirect("/StatusCode/404");
         }

@@ -1911,7 +1911,7 @@
                 colobj.bVisible = false;
         }.bind(this));
 
-    }
+    };
 
     this.doRowgrouping = function () {
         if (this.Api === null)
@@ -1947,8 +1947,9 @@
             $(`#rowgroupDD_${this.tableId} [value=None`).attr("selected", "selected");
             $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups `);
         }
-        $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
+        $("#" + this.tableId + " tbody").off("click", "tr.group td:not('.rowgroupheadercheckboxtd')").on("click", "tr.group td:not('.rowgroupheadercheckboxtd')", this.collapseGroup);
         $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
+        $("." + this.tableId + "_rowgroupheadercheckbox").off("change").on("change", this.ModifyRowgroupCheckbox.bind(this));
     };
 
     this.singlelevelRowgrouping = function () {
@@ -2082,14 +2083,9 @@
     this.collapseAllGroup = function (e) {
         if (!$(e.target).is("select")) {
             var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
-            var $Groups = $(e.target).parents().closest(".group-All").nextAll(".group")
-            var $target = $(e.target);
-            if ($target.is("td")) {
-                if ($target.children().is("I"))
-                    $target = $target.children("I");
-                else if ($target.siblings().children().is("I"))
-                    $target = $target.siblings().children("I");
-            }
+            var $Groups = $(e.target).parents().closest(".group-All").nextAll(".group");
+            var $target = $(e.target).closest("tr").find("i");
+            
             if ($target.hasClass("fa-plus-square-o")) {
                 $elems.show();
                 $(".group").show();
@@ -2117,12 +2113,12 @@
 
         if ($elems.css("display") === "none") {
             $elems.show();
-            this.collapseRelated($(e.target), "show");
+            this.collapseRelated($group.find("i"), "show");
             $elems.filter(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
         }
         else {
             $elems.hide();
-            this.collapseRelated($(e.target), "hide");
+            this.collapseRelated($group.find("i"), "hide");
             $elems.filter(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
         }
         this.checkHeaderCollapse($group, groupnum);
@@ -2135,16 +2131,7 @@
     }.bind(this);
 
     this.collapseRelated = function ($elem, type) {
-        if ($elem.is("td")) {
-            if ($elem.children().is("I"))
-                $elem = $elem.children("I");
-            else if ($elem.siblings().children().is("I"))
-                $elem = $elem.siblings().children("I");
-        }
-        else if ($elem.is("b")) {
-            $elem = $elem.closest("td").prev().children("I");
-        }
-
+       
         if (type === "show") {
             $elem.removeClass("fa-plus-square-o");
             $elem.addClass("fa-minus-square-o");
@@ -2154,7 +2141,7 @@
             $elem.addClass("fa-plus-square-o");
         }
 
-    }
+    };
 
     this.checkHeaderCollapse = function ($group, groupnum) {
         var headergroup = parseInt(groupnum) - 1;
@@ -2181,6 +2168,25 @@
         }
         else
             $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
+    };
+
+    this.ModifyRowgroupCheckbox = function (e) {
+        var $group = $(e.target).parents().closest(".group");
+        var groupnum = $group.attr("group");
+        var $elems = $group.nextUntil("[group=" + groupnum + "]");
+        let checkbox = $(e.target).closest("." + this.tableId + "_rowgroupheadercheckbox");
+        if (checkbox[0].checked) {
+            $elems.find("." + this.tableId + "_select").prop('checked', true);
+            $elems.filter(".group").find("." + this.tableId + "_rowgroupheadercheckbox").prop('checked', true);
+            //$group.find(".rowgrouprowcount").html("&nbsp;" + $elems.filter(".odd,.even").length + " rows selected");
+        }
+        else {
+            $elems.find("." + this.tableId + "_select").prop('checked', false);
+            $elems.filter(".group").find("." + this.tableId + "_rowgroupheadercheckbox").prop('checked', false);
+            $group.find(".rowgrouprowcount").empty();
+        }
+        $elems.find("." + this.tableId + "_select").trigger("change");
+        $elems.filter(".group").find("." + this.tableId + "_rowgroupheadercheckbox").trigger("change");
     };
 
     this.multiplelevelRowgrouping = function () {
@@ -3946,6 +3952,7 @@
 
     this.updateAlSlct = function (e) {
         var idx = this.Api.row($(e.target).parent().parent()).index();
+        let $group = $(e.target).closest("tr").prevAll(".group").eq(0);
         if (e.target.checked) {
             this.Api.rows(idx).select();
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
@@ -3954,6 +3961,8 @@
             this.Api.rows(idx).deselect();
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", true);
         }
+        $group.find('.' + this.tableId + '_rowgroupheadercheckbox').prop("indeterminate", true);
+
         var CheckedCount = $('.' + this.tableId + '_select:checked').length;
         var UncheckedCount = this.Api.rows().count() - CheckedCount;
         if (CheckedCount === this.Api.rows().count()) {
@@ -3963,6 +3972,25 @@
         else if (UncheckedCount === this.Api.rows().count()) {
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop("indeterminate", false);
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
+        }
+        if ($group.length === 1) {
+            let groupnum = $group.attr("group");
+            for (let i = parseInt(groupnum); i >= 1; i--) {
+                let $elems = $group.nextUntil("[group=" + i + "]").filter(".odd,.even");
+                let checkCount = $elems.find('.' + this.tableId + '_select:checked').length;
+                $group.find(".rowgrouprowcount").empty();
+                if (checkCount > 0)
+                    $group.find(".rowgrouprowcount").html("&nbsp;" + checkCount + " rows selected");
+                if ($elems.length === checkCount) {
+                    $group.find('.' + this.tableId + '_rowgroupheadercheckbox').prop("indeterminate", false);
+                    $group.find('.' + this.tableId + '_rowgroupheadercheckbox').prop("checked", true);
+                }
+                else {
+                    $group.find('.' + this.tableId + '_rowgroupheadercheckbox').prop("indeterminate", false);
+                    $group.find('.' + this.tableId + '_rowgroupheadercheckbox').prop("checked", false);
+                }
+                $group = $group.prevAll(".group[group="+(i-1)+"]").eq(0);
+            }
         }
         let rowdata = this.unformatedData[idx];
         if (Option.CheckboxClickCallback)

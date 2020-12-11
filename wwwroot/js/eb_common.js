@@ -1488,6 +1488,7 @@ function sleep(milliseconds) {
         currentDate = Date.now();
     } while (currentDate - date < milliseconds);
 }
+
 function modifyTextStyle(contSelector, regex, styleStr) {
     $(contSelector).each(function (i, el) {
         let text = el.innerHTML;
@@ -1495,4 +1496,11 @@ function modifyTextStyle(contSelector, regex, styleStr) {
             return;
         el.innerHTML = text.replace(regex, "<font style='" + styleStr + "'>" + text.match(regex)[0] + "</font>")
     });
+}
+
+function groupBy(arr, property) {
+    return arr.reduce((acc, cur) => {
+        acc[cur[property]] = [...acc[cur[property]] || [], cur];
+        return acc;
+    }, {});
 }

@@ -411,7 +411,11 @@
                 if (root.ContainerType === "EbMobileVisualization") {
                     this.BindableParams.$values = root.ContainerObject.StaticParameters.$values;
                 }
-                setFontCss(this.Font, $(`#${this.EbSid}`));
+            },
+            propertyChanged: function (propname) {
+                if (propname === "HorrizontalAlign") {
+                    window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
+                }
             }
         },
         EbMobileDataLink: {

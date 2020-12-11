@@ -46,6 +46,22 @@
         });
     }
 
+    function GetProfile() {
+        $.ajax({
+            url: "/api/get_profile",
+            type: "GET",
+            data: {
+                refid: "ebdb09y5foo8dp20201201082533-ebdb09y5foo8dp20201201082533-13-3-3-3-3",
+                loc_id: 1
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("bToken", getTok());
+                xhr.setRequestHeader("rToken", getrToken());
+            }
+        }).done(function (data) {
+
+        });
+    }
 
     function testAjax() {
         $.ajax({

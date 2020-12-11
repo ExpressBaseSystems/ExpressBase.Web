@@ -477,7 +477,7 @@
             Container: "container",
             MaxSize: 1,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.cloud',
+            ServerEventUrl: 'https://se.eb-test.site',
             EnableTag: false,
             //EnableCrop: true,
             ResizeViewPort: false //if single and crop
@@ -504,7 +504,7 @@
             Container: "onboarding_logo",
             MaxSize: 1,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.cloud',
+            ServerEventUrl: 'https://se.eb-test.site',
             EnableTag: false,
             //EnableCrop: true,
             ResizeViewPort: false //if single and crop

@@ -7,15 +7,266 @@ var EbHeader = function () {
     var _layout = $("#layout_div");
     var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
+    this.insertGlobalSearch = function () {
+        $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD
+
+        $('body').prepend(`
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class='srch-hdr-cont'>
+            <div class='srch-hdr-wrpr'>
+                <input type='text' tabindex="1" class='srch-bx'/>
+                <div tabindex='1' class="srch-btn"><i class="fa fa-search"></i></div>
+            </div>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class='srch-body-cont'>
+            The Kerala excise department has ordered to immediately freeze the sale of three batches of 'Jawan XXX Rum', manufactured on July 20, after a chemical test found the alcohol content to be high. In the sample test, the alcohol by volume was found to be 39.09% v/v, 38.31% v/v, and 39.14% v/v. Hence, the order was issued to freeze the sale of liquor batches 245, 246, and 247. The Excise Commissioner has issued notices to Deputy Excise Commissioners in all divisions in this regard. Some people, who had consumed alcohol from a bar hotel at Mukkam in Kozhikode last week, had complained of uneasiness. A complaint was also filed with the excise
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>`);
+        $(window).off("keydown.ebsearch").on("keydown.ebsearch", function () {
+            if (event.ctrlKey || event.metaKey) {// ctrl + s - save form
+                if (event.which === 81) {
+                    $('#exampleModalCenter').modal('show');
+                }
+            }
+        });
+
+        window.ebcontext.header.insertButton(`
+<div class='toolb-srchbx-wrpr'>
+    <input type='text' class='toolb-srchbx'/>
+    <button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter__" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>
+    <div class="search-dd">
+
+<div class="srch-body-cont"></div>
+
+
+    </div>
+<div class="eb_common_loader" id="srch_loader"></div>
+</div>`);
+
+        this.$toolbSrchBx = $('.toolb-srchbx');
+        this.$srchWrap = $('.toolb-srchbx-wrpr');
+
+        $('#exampleModalCenter').on('shown.bs.modal', function (e) {
+            $('#exampleModalCenter .srch-bx').focus();
+        });
+
+        //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
+        $('#platformsearch').on('click', this.platformSearch);
+
+        this.$toolbSrchBx.on('focus', function () {
+            $('.search-dd').slideDown(100);
+        }.bind(this));
+
+        this.$toolbSrchBx.on('keyup', function () {
+            this.isSimpleSearch = true;
+            if (event.keyCode === 13)
+                this.platformSearch();
+            else if (event.keyCode === 27)
+                $('.search-dd').slideUp(50);
+        }.bind(this));
+
+        $('.srch-li').on('keyup', function () {
+            if (event.keyCode === 13)
+                this.platformSearch();
+        }.bind(this));
+
+        //$('#exampleModalCenter .srch-bx').on('keyup', function () {
+        //this.isSimpleSearch = false;
+        //    if (event.keyCode === 13)
+        //        this.platformSearch();
+        //}.bind(this));
+    }.bind(this);
+
+    this.scrollList = function () {
+        var list = document.querySelector('.srch-ul-outer'); // targets the <ul>
+        var first = list.querySelector('.srch-li'); // targets the first <li>
+        var maininput = this.$toolbSrchBx[0];  // targets the input, which triggers the functions populating the list
+        document.onkeydown = function (e) { // listen to keyboard events
+            switch (e.keyCode) {
+                case 38: // if the UP key is pressed
+                    if (document.activeElement == maininput) {
+                        break;
+                    } // stop the script if the focus is on the input or first element
+                    else if (document.activeElement == first.querySelector('a')) {
+                        maininput.focus();
+                    } // stop the script if the focus is on the input or first element
+                    else {
+                        let prevSibling = $(document.activeElement).closest('.srch-li').prev()[0] || $(document.activeElement).closest('.collapse').prev().prev().find('.srch-li:last')[0];
+                        if (prevSibling)
+                            prevSibling.querySelector('a').focus();
+                    } // select the element before the current, and focus it
+                    break;
+                case 40: // if the DOWN key is pressed
+                    if (document.activeElement == maininput) {
+                        first.querySelector('a').focus();
+                    } // if the currently focused element is the main input --> focus the first <li>
+                    else {
+                        let nextSibling = $(document.activeElement).closest('.srch-li').next()[0] || $(document.activeElement).closest('.collapse').next().next().find('.srch-li:first')[0];
+                        if (nextSibling)
+                            nextSibling.querySelector('a').focus();
+                    } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
+                    break;
+            }
+        }
+    }
+
+    this.platformSearch = function () {
+        let $srch = this.isSimpleSearch ? this.$toolbSrchBx : $('#exampleModalCenter .srch-bx');
+        let searchkey = $srch.val();
+        if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
+            //do ajax call
+            $('.search-dd').slideUp(100);
+            this.getSearchResult(searchkey);
+            //this.drawResultList.bind(this, searchkey)();
+            $srch.data('lastKey', searchkey);
+        }
+    }.bind(this);
+
+    this.getSearchResult = function (searchkey) {
+        $("#srch_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/SearchInPlatform4FormData",
+            data: {
+                key: searchkey
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
+                EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            success: this.drawResultList.bind(this, searchkey)
+        });
+    }.bind(this);
+
+    this.drawResultList = function (searchkey, data = `{ "RowCount": 12, "Data": [{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]}`) {
+        data = JSON.parse(data);
+        let dataItems = data.Data;
+        let DataItemsG = groupBy(data.Data.sort((a, b) => (a.DisplayName > b.DisplayName) ? 1 : ((b.DisplayName > a.DisplayName) ? -1 : 0)), 'DisplayName');
+        let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
+        $('.srch-body-cont').empty();
+
+
+        let html = `<ul class="srch-ul-outer">
+                        <li class="li-summary">
+                            <div class='srch-summary-text'><b>${dataItems.length}</b> / <b>${data.RowCount}</b> matches</div>
+                        </li>`;
+        if (dataItems.length > 0) {
+            $.each(DataItemsG, function (formName, items) {
+                html += this.getUlHtml(items, true);
+            }.bind(this));
+        }
+        else {
+
+            html += `<li class="srch-li">
+                        <div class='srch-li-block'>
+                            <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
+                            <div class="ctrldtlsWrap">Try some other keyword</div>
+                        </div>
+                    </li>`;
+        }
+
+        html += `</ul>`;
+
+        //$('.srch-body-cont').append(html);
+        $cont.append(html);
+        $('.search-dd').slideDown(100);
+        modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
+        $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
+        this.scrollList();
+        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.ctrldtlsWrap').focus() });
+    };
+
+    this.getUlHtml = function (dataItems, hideHead) {
+        let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
+        let html =
+            `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
+                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</h5>
+            </li>
+            <li id='${idfromDN}' class='collapse in'>
+                <ul class="srch-ul">`;
+        $.each(dataItems, function (i, obj) {
+            let j = 0;
+            let modifiedAtarr = obj.ModifiedAt.split(' ');
+            let createdAtArr = obj.CreatedAt.split(' ');
+            html += `
+                    <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
+                        <div class='srch-li-block'>
+                            <div class="ctrldtlsWrap" onclick="window.open('${obj.Link}', '_blank')">`;
+            $.each(obj.Data, function (name, val) {
+                if (j++ % 3 === 0) {
+                    html += `
+                                <table class='ctrldtls'>
+                                    <tbody>`;
+                }
+                html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
+                if (j % 3 === 0) {
+                    html += `
+                                    </tbody>
+                                </table>`;
+                }
+                if (j === 6)
+                    return false;
+            });
+            html += `
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="metadtlsWrap">
+                                <table class='metadtls'>
+                                    <tbody>
+                                        <tr>
+                                            <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
+                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
+                                        <tr>    
+                                    </tbody>
+                                </table>
+                                <table class='metadtls'>
+                                    <tbody>
+                                        <tr>
+                                            <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
+                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>`;
+            html += '   </li>'
+        });
+        return `${html}
+                </ul>
+            </li>`;
+    };
+
+    this.hideDDclickOutside = function (e) {
+        if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
+            $('.search-dd').slideUp(100);
+        }
+    };
+
     this.addRootObjectHelp = function (obj) {
-        if (obj.Info && obj.Info.trim() !== "") {
-            let html = `<button id="${obj.EbSid}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
+        let AvailableDocs = { isPdf: (obj.Info && (!!obj.Info.trim())), isVideo: (obj.InfoVideoURLs && obj.InfoVideoURLs.$values.length > 0) };
+
+        if (AvailableDocs.isPdf || AvailableDocs.isVideo) {
+            let html = `<button id="${obj.EbSid_CtxId}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
             this.insertButton(html);
 
-            $(`<div class="icon-cont  pull-right pgcorner"><i class="fa fa-angle-double-right"></i></div>`)
-
-            $("body").append(`
-            <div id='${obj.EbSid}infoCont' class='eb-popup-cont'>
+            let HelpHtml = `
+            <div id='${obj.EbSid_CtxId}infoCont' class='eb-popup-cont'>
                 <div class='eb-popup-head'>
                     <span>Help</span>
                     <div class="icon-cont  pull-right hclose">
@@ -26,14 +277,61 @@ var EbHeader = function () {
                     </div>
                 </div>
                 <div class='eb-popup-body'>
-                    <iframe id='${obj.EbSid}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      @pdfBtn@
+                      @vidbtn@
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        @pdfContent@
+                        @vidContent@
+                    </div>
                 </div>
                 <div class='hhandpad-r'></div>
                 <div class='hhandpad-l'></div>
             </div>
-            `);
+            `;
 
-            this.$infoModal = $(`#${obj.EbSid}infoCont`);
+            if (AvailableDocs.isPdf) {
+                let docbtn = `
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
+                <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
+                </a>
+              </li>`;
+
+                let docContent = `
+              <div class="tab-pane fade @activein@"  id="${obj.EbSid_CtxId}doc" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-doctab">
+                <iframe id='${obj.EbSid_CtxId}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
+              </div>`;
+                HelpHtml = HelpHtml.replace('@pdfBtn@', docbtn).replace('@pdfContent@', docContent)
+            }
+            else {
+                HelpHtml = HelpHtml.replace('@pdfBtn@', '').replace('@pdfContent@', '')
+            }
+
+            if (AvailableDocs.isVideo) {
+                let vidbtn = `
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" vid-tab data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
+                    <i class="icofont-ui-video-play"></i> Video
+                </a>
+              </li>`;
+                let vidContent = `
+              <div class="tab-pane fade @activein@" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
+                ${this.getVidTabsHtml(obj)}
+              </div>`;
+                HelpHtml = HelpHtml.replace('@vidbtn@', vidbtn).replace('@vidContent@', vidContent)
+            }
+            else {
+                HelpHtml = HelpHtml.replace('@vidbtn@', '').replace('@vidContent@', '')
+            }
+
+            HelpHtml = HelpHtml.replace('@activein@', 'active in').replace('@activein@', '')
+                .replace('@active@', 'active').replace('@active@', '');
+
+            $("body").append(HelpHtml);
+
+            this.$infoModal = $(`#${obj.EbSid_CtxId}infoCont`);
 
             this.$infoModal.draggable({
                 handle: ".eb-popup-head",
@@ -50,37 +348,75 @@ var EbHeader = function () {
                 this.$infoModal.toggle();
             }.bind(this));
 
+            $('a[data-toggle="tab"][vid-tab]').on('shown.bs.tab', function (e) {
+                let $e = $(e.target); // newly activated tab
+                $activetab = $('.info-tab-body li.active > a');
+                $($activetab.attr("href")).addClass('active').addClass('in');
+            });
 
-            $(`#${obj.EbSid}infoCont .hclose`).on("click",this.objhelpHide);
-            $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick",this.objhelpHide);
+
+            $(`#${obj.EbSid}infoCont .hclose`).on("click", this.objhelpHide);
+            $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick", this.objhelpHide);
 
 
             $(`#${obj.EbSid}infoCont .hnewt`).on("click", function () {
-                window.open(`/files/${obj.Info}.pdf`, '_blank');
+                let extURL;
+                if ($(`#${obj.EbSid}infoCont .tab-pane.active`).attr('is-video') === "true") {
+                    extURL = getObjByval(obj.InfoVideoURLs.$values, "EbSid", $('.info-tab-body .nav-item.active a').attr('id').replace(/\-vidtab$/, '')).URL
+                }
+                else {
+                    extURL = `/files/${obj.Info}.pdf`;
+                }
+                window.open(extURL, '_blank');
             }.bind(this));
-
-            //new jBox('Modal', {
-            //    attach: `#${obj.EbSid}HelperBtn`,
-            //    width: 'auto',
-            //    Height: 'auto',
-            //    title: 'Help',
-            //    overlay: false,
-            //    content: `<iframe class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>`,
-            //    draggable: 'title',
-            //    repositionOnOpen: false,
-            //    repositionOnContent: false
-            //});
-
-            //$(".jBox-wrapper").resizable({
-            //    aspectRatio: true,
-            //    alsoResize: '.jBox-content'
-            //});
         }
     };
 
     this.objhelpHide = function () {
         this.$infoModal.hide();
     }.bind(this)
+
+    this.getVidTabsHtml = function (obj) {
+        let vidbtn = "";
+        let vidContents = "";
+        for (let i = 0; i < obj.InfoVideoURLs.$values.length; i++) {
+            let URL = obj.InfoVideoURLs.$values[i];
+
+            if (URL.Hide)
+                continue;
+            let vidId = URL.URL.substring(URL.URL.lastIndexOf("/embed/") + 7, URL.URL.length);
+
+            if (vidId.includes('?'))
+                vidId = vidId.substring(0, vidId.indexOf('?'));
+            vidbtn += `
+              <li class="nav-item @active@">
+                <a class="nav-link" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">
+                    <img src='https://img.youtube.com/vi/` + vidId + `/hqdefault.jpg' alt=" ${URL.Title}" height="80"></br>
+                    <div class='btn-title'>${URL.Title}</div>
+                </a>
+              </li>`;
+
+            vidContents += `
+              <div class="tab-pane fade @activein@" id="${URL.EbSid}video" is-video="true" role="tabpanel" aria-labelledby="${URL.EbSid}-tab">
+                <iframe src="${URL.URL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>`;
+        }
+
+
+        let tabBody = `
+                <div class='info-tab-body v-tab'>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      ${vidbtn}
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        ${vidContents}
+                    </div>
+                </div>
+            `.replace('@activein@', 'active in').replace(/@activein@/g, '')
+            .replace('@active@', 'active').replace('@active@', '');
+
+        return tabBody;
+    }
 
     this.infoModalStop = function () {
         this.$infoModal.attr("dragging", "true");
@@ -109,6 +445,11 @@ var EbHeader = function () {
     };
 
     this.setMode = function (html) {
+        _objName.append(`${html}`);
+    };
+
+    this.setFormMode = function (html) {
+        _objName.find("span").remove();
         _objName.append(`${html}`);
     };
 
@@ -553,45 +894,48 @@ var EbMenu = function (option) {
 
     this.listKeyControl = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         //$(".active_link").removeClass("active_link");
-        if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
-            $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();
-        }
-        else {
-            let $current = $(".EbQuickMoverlaySideWRpr").find(":focus");
-            if (e.which === 40) {
-                if ($current.nextAll('[klink="true"]:visible').length > 0) {
-                    $current.nextAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
-                }
-                else {
-                    let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
-                    let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
-                    $(domArray[filter[0] + 1]).attr("tabindex", "1").focus();
-                }
+        if ($(".EbQuickMoverlaySideWRpr").is(":visible")) {
+            if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
+                $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();
             }
-            else if (e.which === 38) {
-                if ($current.prev('[klink="true"]:visible').length > 0) {
-                    $current.prevAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+            else {
+                let $current = $(".EbQuickMoverlaySideWRpr").find(":focus");
+                if (e.which === 40) {
+                    if ($current.nextAll('[klink="true"]:visible').length > 0) {
+                        $current.nextAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+                    }
+                    else {
+                        let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
+                        let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
+                        $(domArray[filter[0] + 1]).attr("tabindex", "1").focus();
+                    }
                 }
-                else {
-                    let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
-                    let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
-                    $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
+                else if (e.which === 38) {
+                    if ($current.prev('[klink="true"]:visible').length > 0) {
+                        $current.prevAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+                    }
+                    else {
+                        let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
+                        let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
+                        $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
+                    }
                 }
-            }
-            else if (e.which === 13) {
-                if ($current.find("a").length > 0) {
-                    $current.find("a")[0].click();
+                else if (e.which === 13) {
+                    if ($current.find("a").length > 0) {
+                        $current.find("a")[0].click();
+                    }
+                    else {
+                        $current[0].click();
+                    }
                 }
-                else {
-                    $current[0].click();
+                else if (e.which === 39) {
+                    $current.closest("[slider='true']").nextAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
                 }
-            }
-            else if (e.which === 39) {
-                $current.closest("[slider='true']").nextAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
-            }
-            else if (e.which === 37) {
-                $current.closest("[slider='true']").prevAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
+                else if (e.which === 37) {
+                    $current.closest("[slider='true']").prevAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
+                }
             }
         }
     };
@@ -671,116 +1015,183 @@ class Setup {
     }
 
     notified(msg) {
-        var o = JSON.parse(msg);
-        this.notification_count = this.notification_count + 1;
-        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
-        //start again
+        var o = JSON.parse(msg);       
+        //start again       
+        this.onGetNotificationsSuccess(o,false);
     }
 
     getNotifications() {
         $.ajax({
             type: "GET",
             url: "../Notifications/GetNotifications",
-            success: this.onGetNotificationsSuccess.bind(this)
+            success: function (getNF) {
+                var data = JSON.parse(getNF);
+                this.onGetNotificationsSuccess(data, true);
+            }.bind(this)
+                
         });
     }
 
-    onGetNotificationsSuccess(data) {
+    onGetNotificationsSuccess(data,onload) {
+       
         if (data === null || data === undefined) return;
         else {
-            if ("notifications" in data && Array.isArray(data.notifications)) {
-                this.drawNotifications(data.notifications);
+            if ("Notification" in data && Array.isArray(data.Notification)) {
+                this.drawNotifications(data.Notification, onload);
             }
-            if ("pendingActions" in data && Array.isArray(data.pendingActions)) {
-                this.drawActions(data.pendingActions);
+            if ("PendingActions" in data && Array.isArray(data.PendingActions)) {
+                this.drawActions(data.PendingActions, onload);
             }
-            if ("myMeetings" in data && Array.isArray(data.myMeetings)) {
-                this.drawMeetings(data.myMeetings);
+            if ("MyMeetings" in data && Array.isArray(data.MyMeetings)) {
+                this.drawMeetings(data.MyMeetings, onload);
             }
         }
-        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+      //  ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
         $('.status-time').tooltip({
             placement: 'top'
         });
     }
 
-    drawNotifications(nf) {
+    drawNotifications(nf, onload) {
         let plc = "Untitled...";
-        this.nf_container.empty();
-        if (nf.length > 0) {
-            for (let i = 0; i < nf.length; i++) {
-                this.nf_container.append(`
-                <li class="nf-tile" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
+        if (onload) {
+            this.nf_container.empty();
+            if (nf.length > 0) {
+                for (let i = 0; i < nf.length; i++) {
+                    this.nf_container.append(`
+                <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
                     <i class="fa fa-times notification-close" style="float: right;"></i>
                     <div class="notification-inner">
-                        <h5>${nf[i].title || plc}</h5>
-                        <span class='pending_date status-time' title='${nf[i].createdDate}'>${nf[i].duration}</span>
+                        <h5>${nf[i].Title || plc}</h5>
+                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
                     </div>
                 </li>`);
+                }
             }
+            else {
+                this.nf_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            }
+            $("#nf-window #nf-notification-count").text(`(${nf.length})`);
+            this.notification_count = nf.length;
         }
         else {
-            this.nf_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            if (nf.length > 0) {
+                for (let i = 0; i < nf.length; i++) {
+                    this.nf_container.prepend(`
+                <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
+                    <i class="fa fa-times notification-close" style="float: right;"></i>
+                    <div class="notification-inner">
+                        <h5>${nf[i].Title || plc}</h5>
+                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
+                    </div>
+                </li>`);
+                    this.notification_count += 1;
+                }
+
+                $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);                
+            }
+            
         }
-        $("#nf-window #nf-notification-count").text(`(${nf.length})`);
-        this.notification_count = nf.length;
-        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
+       
+        if (nf.length > 0) {
+            $('#closeAll_nf').prop("disabled", false);
+            $('#closeAll_nf').off("click").on('click', this.ClearAll_NF.bind(this));
+        }
+        $('.notification-close,.nf-lst').off("click").on('click', this.CloseNotification.bind(this));
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
     }
 
-    drawActions(pa) {
-        this.actn_container.empty();
+    drawActions(pa, onload) {
+        if (onload) {
+            this.actn_container.empty();
+        }
         if (pa.length > 0) {
             for (let i = 0; i < pa.length; i++) {
-                let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].dataId)]))));
+                let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].DataId)]))));
                 let locid = this.getCurrentLocation();
-                let Id = pa[i].myActionId;
-                let url = `href='../webform/index?refid=${pa[i].link}&_params=${params}&_mode=1&_locId=${locid}' target='_blank'`;
+                let Id = pa[i].MyActionId;
+                let url = `href='../webform/index?refid=${pa[i].Link}&_params=${params}&_mode=1&_locId=${locid}' target='_blank'`;
                 let _label = "";
-                if (pa[i].actionType === "Approval")
+                if (pa[i].ActionType === "Approval")
                     _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";
                 else
                     url = 'href="#" onclick="MeetingRequestView(this); return false;"';
-                this.actn_container.append(`
+                var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
                             <div class='pending_action_inner'>
-                                <h5>${pa[i].description}</h5>
-                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].dateInString}</span></div>
+                                <h5>${pa[i].Description}</h5>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].CreatedDate}'>${pa[i].DateInString}</span></div>
                             </div>
                         </a>
-                </li>`);
+                </li>`;
+                if (onload) {
+                    this.actn_container.append(_htm);
+                } else {
+                    this.actn_container.prepend(_htm);
+                    this.actions_count += 1;
+                }
+                
             }
         }
         else {
-            this.actn_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            if (onload) {
+                this.actn_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+            }
+            
         }
-        $("#nf-window #nf-pendingact-count").text(`(${pa.length})`);
-        this.actions_count = pa.length;
+        if (onload) {
+            $("#nf-window #nf-pendingact-count").text(`(${pa.length})`);
+            this.actions_count = pa.length;
+        }
+        else {
+            $("#nf-window #nf-pendingact-count").text(`(${this.actions_count})`);
+        }
+       
+
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
     }
 
-    drawMeetings(pa) {
-        this.meeting_container.empty();
+    drawMeetings(pa, onload) {
+        if (onload) {
+            this.meeting_container.empty();
+        }
         if (pa.length > 0) {
             for (let i = 0; i < pa.length; i++) {
                 let _label = "";
-                let Id = pa[i].myActionId;
+                let Id = pa[i].MyActionId;
                 let url = 'href="#" onclick="haaaa(this); return false;"';
-                this.meeting_container.append(`
+                var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
                             <div class='mymeeting_inner'>
-                                <h5>${pa[i].description}</h5>
-                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].createdDate}</span></div>
+                                <h5>${pa[i].Description}</h5>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].CreatedDate}'>${pa[i].CreatedDate}</span></div>
                             </div>
                         </a>
-                </li>`);
+                </li>`;
+                if (onload) {
+                    this.meeting_container.append(_htm);
+                }
+                else {
+                    this.meeting_container.prepend(_htm);
+                    this.meetings_count += 1;
+                }
             }
         }
         else {
-            this.meeting_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Meeting</p>`);
+            if (onload) {
+                this.meeting_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Meeting</p>`);
+            }
         }
-        $("#nf-window #nf-mymeeting-count").text(`(${pa.length})`);
-        this.meetings_count = pa.length;
+        if (onload) {
+            $("#nf-window #nf-mymeeting-count").text(`(${pa.length})`);
+            this.meetings_count = pa.length;
+        }
+        else {
+            $("#nf-window #nf-mymeeting-count").text(`(${this.meetings_count})`);
+        }
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
     }
 
     userNotification() {
@@ -852,6 +1263,35 @@ class Setup {
         }
 
         $('#notification-count').attr("count", x);
+    }
+
+    ClearAll_NF = function () {
+        var nf = $(".nf-lst");
+        var nfArray = [];
+        if (nf.length > 0) {
+            nf.each(function (i,ob) {
+                nfArray.push($(ob).attr("notification-id"));
+            })           
+            $.ajax({
+                type: "POST",
+                url: "../Notifications/ClearAllNotifications",
+                data: { notificationLst: nfArray },
+                success: function () {
+                    nf.each(function (j, obj) {
+                        $(obj).closest("li").detach();
+                    })
+
+                    this.notification_count = 0;
+                    $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);
+                    ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+                    if (this.notification_count === 0) {
+                        this.nf_container.html(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+                    }
+                    $('#closeAll_nf').prop("disabled", true);
+                }.bind(this)
+            });
+           
+        }
     }
 
     CloseNotification = function (e) {
@@ -1715,45 +2155,63 @@ var EbServerEvents = function (options) {
     this.rTok = options.Rtoken || getrToken();
     this.ServerEventUrl = options.ServerEventUrl;
     this.Channels = options.Channels.join();
-    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
+    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();    
     this.sEvent = $.ss;
 
-    this.onUploadSuccess = function (m, e) { };
+    this.onUploadSuccess = function (m, e) {
+        $(`[sse_Refid=${m}]`).find(".success").hide();
+        $(`[sse_Refid=${m}]`).find(".sse_success").show();
+    };
     this.onShowMsg = function (m, e) { };
     this.onLogOut = function (m, e) { };
     this.onNotification = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
 
+
+
     this.onConnect = function (sub) {
-        //console.log("You've connected! welcome " + sub.displayName);
+        console.log("sse connected! " + sub.displayName, sub.id);
+
         if (sub) {
-            window.ebcontext.subscription_id = sub.id;
+            ebcontext.subscription_id = sub.id;
+            //$.ajaxSetup({
+            //    headers: { 'eb_sse_subid': sub.id }
+            //});
         }
+        
     };
 
     this.onJoin = function (user) {
-        //console.log("Welcome, " + user.displayName);
+     //   console.log("onJoin Welcome, " + user.displayName);
     };
 
     this.onLeave = function (user) {
-        //console.log(user.displayName + " has left the building");
+      //  console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
-        //if (console) console.log("onHeartbeat", msg, e);
+        //if (console)
+      //  console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
-        this.onUploadSuccess(m,e);
+        this.onUploadSuccess(m, e);
     };
 
+
+    this.mybroadcast = function (msg, e) {
+       //  console.log("mybroadcast", msg, e);
+      //  alert(213);
+    }
+
+
     this.onMsgSuccess = function (m, e) {
-        //console.log(m);
-        this.onShowMsg(m, e);
+        //console.log("onMsgSuccess, " + m);
+        //this.onShowMsg(m, e);
     };
 
     this.onLogOutMsg = function (m, e) {
-        //console.log(m);
+      //  console.log(m);
         location.href = "../Tenantuser/Logout";
         this.onLogOut(m, e);
     };
@@ -1766,24 +2224,68 @@ var EbServerEvents = function (options) {
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-        //console.log("stopped listening");
+       // console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
         this.onExcelExportSuccess(m);
     };
 
+    this.exportApplication = function (m, e) {
+        self.EbPopBox("hide");
+        let pop = {
+            Message: "Exported Successfully. Go to App Store to view the package :"
+        };
+        self.EbPopBox("show", pop);      
+    }
+
+    this.importApplication = function (m, e) {
+        self.EbPopBox("hide");
+        let pop = {
+            Message: "Application imported Successfully."
+        };
+        self.EbPopBox("show", pop);      
+    }
+
+    this.userRoleChanged = function (m, e) {
+        alert("userRoleChanged");
+        console.log(m);
+        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
+        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+       // $('#menu_refresh').click();
+    }
+    this.userDisabled = function (m) {
+      
+        var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
+                                    <div class="cw">
+                                        <div class="msgbdy">${m}</div>
+                                        <div id="cntTimer">You will be logged out in <span id="counterSpn"></span> seconds</div>
+                                    </div>
+                                </div>`;
+        $('body').append(html);
+        var count = 5;
+        var countdown = setInterval(function () {
+            $("#counterSpn").html(count);
+            if (count == 0) {
+                clearInterval(countdown);
+                $("#cntTimer").hide();
+                window.location = "/Tenantuser/Logout";
+            }
+            count--;
+        }, 1000);
+    }
+
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
         }
-    });   
+    });
 
     this.ES.addEventListener('error', function (e) {
         console.log("ERROR!", e);
-    }, false);
+    }, false);    
 
-    this.sEvent.eventReceivers = { "document": document }; 
+    this.sEvent.eventReceivers = { "document": document };
 
     $(document).bindHandlers({
         announce: function (msg) {
@@ -1816,7 +2318,13 @@ var EbServerEvents = function (options) {
             onExportToExcel: this.onExportToExcel.bind(this),
             onMsgSuccess: this.onMsgSuccess.bind(this),
             onLogOut: this.onLogOutMsg.bind(this),
-            onNotification: this.onNotifyMsg.bind(this)
+            onNotification: this.onNotifyMsg.bind(this),
+            exportApplication: this.exportApplication.bind(this),
+            importApplication: this.importApplication.bind(this),
+            userRoleChanged: this.userRoleChanged.bind(this),
+            userDisabled: this.userDisabled.bind(this),
+
+            mybroadcast: this.mybroadcast.bind(this)
         }
     });
 };

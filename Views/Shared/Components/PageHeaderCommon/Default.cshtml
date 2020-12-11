@@ -126,7 +126,7 @@
                                                             EbProfileUserType p = Solution.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == u.UserType);
                                                             if (p != null && !string.IsNullOrEmpty(p.RefId))
                                                             {
-                                                                <li class="drp_item"><a href="../WebForm/GetProfile?r=@p.RefId&l=@u.Preference.DefaultLocation"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                                                <li class="drp_item"><a href="../WebForm/GetProfile?l=@u.Preference.DefaultLocation"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
                                                             }
                                                         }
                                                     }
@@ -163,8 +163,8 @@
 <script>
     window.ebcontext.wc = '@Html.Raw(ViewBag.wc)';
     window.ebcontext.header = new EbHeader();
-    $(document).ready(function () {
+    //$(document).ready(function () {
         if (window.ebcontext.wc === 'uc')
             window.ebcontext.header.insertGlobalSearch();
-    });
+    //});
 </script>

@@ -131,7 +131,7 @@
     padding-left: 0px;
 }
 
-.q-pg-cont, .qust-cont-r-col-3, .qust-cont-col-6 {
+.q-pg-cont, .qust-cont-r-col-3, .qs-cont {
     height: 100%;
     padding-right: 0px;
     padding-left: 0px;
@@ -293,8 +293,9 @@
     flex-direction: column;
     outline: none;
     margin: 8px;
-    box-shadow: 0 0 13px 0px #3738472e;
+    /* box-shadow: 0 0 13px 0px #3738472e; */
     border-radius: 6px;
+    border: solid 1px #eceef4;
 }
 
     .qs-inner-cont:focus, .qst-ansctrl-cont:focus-within, .qs-inner-wrap:focus-within {

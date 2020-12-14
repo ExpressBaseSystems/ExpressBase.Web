@@ -476,7 +476,7 @@
 .tabcontent {
     float: left;
     padding: 0px 12px;
-     /*border: 1px solid #ccc;*/
+    /*border: 1px solid #ccc;*/
     width: 80%;
     border-left: none;
     height: 100%;
@@ -671,31 +671,32 @@
         float: right;
     }
 
-        .loc_switchModal_box .locs_head  .loc_searchInput:before {
+        .loc_switchModal_box .locs_head .loc_searchInput:before {
             content: "\f002";
             font-family: FontAwesome;
             position: absolute;
             margin-left: 10px;
         }
 
-        .loc_switchModal_box .locs_head  .loc_searchInput input {
+        .loc_switchModal_box .locs_head .loc_searchInput input {
             height: 30px;
             padding-left: 35px;
         }
-      
-   
 
-        .loc_switchModal_box .locs_head  .loc_current_wrp {
-            padding-top: 3px;
+
+
+    .loc_switchModal_box .locs_head .loc_current_wrp {
+        padding-top: 3px;
+    }
+
+        .loc_switchModal_box .locs_head .loc_current_wrp span {
+            font-weight: 500;
         }
 
-            .loc_switchModal_box .locs_head .loc_current_wrp span {
-                font-weight: 500;
+            .loc_switchModal_box .locs_head .loc_current_wrp span i {
+                font-size: 16px;
+                color: green;
             }
-                .loc_switchModal_box .locs_head .loc_current_wrp span i {
-                    font-size: 16px;
-                    color:green;
-                }
 
 .loc_switchModal_close {
     float: right;
@@ -798,13 +799,16 @@
 .loc_switchModal_box .locs_foot {
     padding: 7px 20px 7px 10px
 }
-.loc_switchModal_box .locs_foot .loc_count{
-   padding:2px 5px;
-}
+
+    .loc_switchModal_box .locs_foot .loc_count {
+        padding: 2px 5px;
+    }
+
     .loc_switchModal_box .locs_foot .loc-switchbtn {
         letter-spacing: 0.1em;
         font-weight: 500;
     }
+
         .loc_switchModal_box .locs_foot .loc-switchbtn[disabled] {
             cursor: no-drop !important;
             background: #8a8a8a;

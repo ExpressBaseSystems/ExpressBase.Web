@@ -27,7 +27,7 @@
                     {
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
                             <a class="appcontainer_inner query_tile" questype="@qry.Value.QuesType" queryid="@qry.Value.QuesId">
-                                <div class="col-md-12 pd-0">
+                                <div class="col-md-12 pd-0 qs-cont">
                                     <h5 class="txtdecor_none ellipsis-text">@qry.Value.Question</h5>
                                     <p class="small txtdecor_none">@((SurveyQTypes)qry.Value.QuesType)</p>
                                 </div>
@@ -52,72 +52,29 @@
             </div>
             <div class="modal-body">
                 <div class="row qust-cont">
-                    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 qust-cont-l-col-3">
-                        <div class="q-type-container">
-                            <div class="qst-type-label-cont">
-                                <div class="question-label">Question Type</div>
-                                <div class="qst-types-cont pd-5">
-                                    <div class="qst-type" qtype="1"><i class="fa fa-dot-circle-o"></i> Multiple choice(Single-Select)</div>
-                                    <div class="qst-type" qtype="2"><i class="fa fa-check-square-o"></i> Multiple choice(Multiple-Select)</div>
-                                    <div class="qst-type" qtype="3"><i class="fa fa-star-o"></i>Rating</div>
-                                    <div class="qst-type" qtype="4"><i class="fa fa-toggle-down"></i>User Input</div>
+                    <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qs-cont pd-l-0">
+                        <div class="q-container">
+                            <div tabindex="1" class="qs-inner-cont">
+                                <div class="qs-inner-wrap col-md-12 pd-0">
+                                    <div class="qst-inp" contenteditable="true">question section</div>
+                                    <div class="ansctrl-menu"><div class="q-menu-add"><i class="fa fa-plus" aria-hidden="true"></i></div></div>
                                 </div>
-                            </div>
-                            <div class="qst-set-label-cont">
-                                <div class="question-label">Settings</div>
-                                <div class="qst-set-cont pd-5">
-                                    <div class="q-set-item" setup="required">
-                                        <div class="q-set-input">
-                                            <input type="checkbox" id="requiredCheck" />
-                                        </div>
-                                        <div class="q-set-text">
-                                            Required
-                                        </div>
+                                <div class="qst-ansctrl-cont col-md-12 pd-0">
+                                    <div class="qst-ansctrl-wrap">
+                                        <div class="ansctrl-inner">answer control section</div>
+                                        <div class="ansctrl-menu">controls here...</div>
                                     </div>
-                                    <div class="q-set-item" setup="Randomize">
-                                        <div class="q-set-input">
-                                            <input type="checkbox" id="randomizeCheck" />
-                                        </div>
-                                        <div class="q-set-text">
-                                            Randomize
-                                        </div>
-                                    </div>
-                                    <div class="q-set-item" setup="Score" style="display:none">
-                                        <div class="q-set-input">
-                                            <input type="checkbox" id="scoreCheck" />
-                                        </div>
-                                        <div class="q-set-text">
-                                            Score
-                                        </div>
-                                    </div>
-                                    <div class="q-set-item" setup="InputType" style="display:none">
-                                        <div class="q-set-text">
-                                            Type :
-                                        </div>
-                                        <div class="q-set-input">
-                                            <select class="q-set-select form-control" id="userInputType">
-                                                <option value="Text">Text</option>
-                                                <option value="MultiText">Multi Text</option>
-                                                <option value="Date">Date</option>
-                                                @*<option value="Time">Time</option>*@
-                                            </select>
-                                        </div>
-                                    </div>
+                                    <div class="ansctrl-menu"><div class="q-menu-add"><i class="fa fa-plus" aria-hidden="true"></i></div></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qust-cont-col-6 pd-l-0">
-                        <div class="q-container">
-                            <div class="qst-text-opt-cont">
-                                <div class="qst-text-cont col-md-12 pd-0">
-                                    <div class="input-group">
-                                        <span class="input-group-addon q-label"> Q<span class="q-label-requird" style="display:none;">&nbsp;*</span></span>
-                                        <textarea placeholder="Enter New Question" name="Question" class="qst-text form-control"></textarea>
-                                    </div>
-                                </div>
-                                <div class="qst-opt-cont col-md-12 pd-0">
-
+                    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 q-pg-cont">
+                        <div class="q-type-container">
+                            <div class="qst-set-label-cont">
+                                <div class="question-label">Settings</div>
+                                <div class="qst-set-cont pd-5">
+                                    PG
                                 </div>
                             </div>
                         </div>

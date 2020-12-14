@@ -10,26 +10,34 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    /*background-color: rgba(0, 0, 0, 0.5);*/
     opacity: 1;
     z-index: 2015;
+    padding-top: 38px;
 }
+
     .eb_fileview-Cont .ebclx_fileview-Cont {
         float: right;
         border-radius: 50%;
         background-color: #aaaaad;
         color: white;
     }
+
     .eb_fileview-Cont .eb_iframe-Cont {
         height: 100%;
         width: 100%;
         background-color: rgba(0, 0, 0, 0.5);
     }
-        .eb_fileview-Cont .eb_iframe-Cont .ebfileview_Iframe {
-            height: 95%;
-            width: 100%;
-            border: 1px solid #666464;
-        }
+
+button.btn.close-ebfileview_Cont.ebclx_fileview-Cont:hover {
+    cursor: pointer;
+}
+
+.eb_fileview-Cont .eb_iframe-Cont .ebfileview_Iframe {
+    height: 95%;
+    width: 100%;
+    border: 1px solid #666464;
+}
 
 /**/
 /**/
@@ -85,6 +93,7 @@
     line-height: 3.1rem;
     text-align: center;
 }
+
 .viewer-close {
     color: #fff;
     font-family: FontAwesome, serif;
@@ -92,73 +101,74 @@
     line-height: 2.1rem;
     text-align: center;
 }
-    .viewer-zoom-in::before {
-        content: "\f00e";
-    }
 
-    .viewer-zoom-out::before {
-        content: "\f010";
-    }
+.viewer-zoom-in::before {
+    content: "\f00e";
+}
 
-    .viewer-one-to-one::before {
-        content: "\f079";
-    }
+.viewer-zoom-out::before {
+    content: "\f010";
+}
+
+.viewer-one-to-one::before {
+    content: "\f079";
+}
 
 .viewer-reset::before {
     content: "\f021";
 }
 
-    .viewer-prev::before {
-        content: "\f060";
-    }
+.viewer-prev::before {
+    content: "\f060";
+}
 
-    .viewer-play::before {
-        content: "\f04b";
-    }
+.viewer-play::before {
+    content: "\f04b";
+}
 
-    .viewer-next::before {
-        content: "\f061";
-    }
+.viewer-next::before {
+    content: "\f061";
+}
 
-    .viewer-rotate-left::before {
-        content: "\f0e2";
-    }
+.viewer-rotate-left::before {
+    content: "\f0e2";
+}
 
-    .viewer-rotate-right::before {
-        content: "\f01e ";
-    }
+.viewer-rotate-right::before {
+    content: "\f01e ";
+}
 
-    .viewer-flip-horizontal::before {
-        content: "\f07e";
-    }
+.viewer-flip-horizontal::before {
+    content: "\f07e";
+}
 
-    .viewer-flip-vertical::before {
-        content: "\f07d";
-    }
+.viewer-flip-vertical::before {
+    content: "\f07d";
+}
 
-    .viewer-fullscreen::before {
-        content: "\f065";
-    }
+.viewer-fullscreen::before {
+    content: "\f065";
+}
 
-    .viewer-fullscreen-exit::before {
-        content: "\f066";
-    }
+.viewer-fullscreen-exit::before {
+    content: "\f066";
+}
 
-    .viewer-close::before {
-        content: "\f00d";
-    }
+.viewer-close::before {
+    content: "\f00d";
+}
 
-    .viewer-download::before {
-        content: "\f019";
-    }
+.viewer-download::before {
+    content: "\f019";
+}
 
-    .viewer-print::before {
-        content: "\f02f ";
-    }
+.viewer-print::before {
+    content: "\f02f ";
+}
 
-    .viewer-info::before {
-        content: "\f129 ";
-    }
+.viewer-info::before {
+    content: "\f129 ";
+}
 
 
 
@@ -424,7 +434,7 @@
         }
 
 
-    /*.viewer-toolbar > ul > li > .viewer-download {
+/*.viewer-toolbar > ul > li > .viewer-download {
         background-color: red;
         border-radius: 10%;
         cursor: pointer;

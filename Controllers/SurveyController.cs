@@ -22,6 +22,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [EbBreadCrumbFilter("QuestionBank")]
+        public IActionResult question_bank()
+        {
+            GetSurveyQueriesResponse resp = this.ServiceClient.Get(new GetSurveyQueriesRequest());
+            ViewBag.Queries = resp.Data;
+            return View();
+        }
+
         public IActionResult SurveyHome()
         {
             GetSurveysByAppResponse resp = this.ServiceClient.Get(new GetSurveysByAppRequest { });

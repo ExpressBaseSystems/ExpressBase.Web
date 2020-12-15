@@ -25,7 +25,8 @@ const Constants = {
     FORM_CONTROL: ".mform-control",
     LIST_CONTROL: ".mlist-control",
     DASH_CONTROL: ".mdash-control",
-    DS_COLUMN: ".ds-column"
+    DS_COLUMN: ".ds-column",
+    DATA_LABEL: ".data-label"
 };
 
 $.fn.visibility = function (flag) {

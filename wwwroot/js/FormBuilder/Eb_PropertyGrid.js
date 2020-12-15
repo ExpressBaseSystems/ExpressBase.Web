@@ -895,8 +895,11 @@
             }
             if (meta.MaskPattern && $inp.length) {
                 $inp.val($inp.val().toLowerCase());
+                //$inp.inputmask({
+                //    alias: "Regex",
+                //    regex: meta.MaskPattern
+                //});
                 $inp.inputmask({
-                    alias: "Regex",
                     regex: meta.MaskPattern
                 });
             }

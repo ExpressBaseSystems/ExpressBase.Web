@@ -143,7 +143,7 @@
 }
 
 .q-pg-cont {
-    background-color: #fafafa;
+    /*background-color: #fafafa;*/
 }
 
 .qust-cont-col-6 {/*old*/
@@ -255,14 +255,20 @@
     width: calc(100% - 50px);
 }
 
+
 .q-menu-add {
     font-size: 18px;
     margin-top: 12px;
     text-align: center;
     margin: 7px;
     height: 33px;
+    border-radius: 50%;
     display: flex;
 }
+
+    .q-menu-add:hover {
+        background-color: #fefeff;
+    }
 
     .q-menu-add .fa {
         margin: auto;

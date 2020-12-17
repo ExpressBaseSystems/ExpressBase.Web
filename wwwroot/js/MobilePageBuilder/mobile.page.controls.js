@@ -138,9 +138,9 @@
         this.Root.makeDragable($(`${Constants.FORM_CONTROL}`));
     };
 
-    this.drawDsColTree = function (colList) {
+    this.drawDsColTree = function (colList, ebtype) {
         var $columnContainer = this.Root.$Selectors.columnTree.empty();
-        var type = "EbMobileDataColumn";
+        var type = ebtype || "EbMobileDataColumn";
         $.each(colList, function (i, columnCollection) {
             $columnContainer.append("<li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
@@ -149,6 +149,7 @@
                 $div.append(`<li class='styl'>
                                 <span eb-type='${type}'
                                     ctrname="DataColumn"
+                                    TableIndex="${i}"
                                     index='${obj.columnIndex}'
                                     DbType='${obj.type}'
                                     ColName='${obj.columnName}'
@@ -241,7 +242,6 @@ function MobileMenu(option) {
     this.contextMenudelete = function (eType, selector, action, originalEvent) {
         let id = selector.$trigger.attr("id");
         let o = this.Root.Procs[id];
-        let eb_type = this.Root.getType(o.$type);
 
         delete this.Root.Procs[id];
         this.Root.pg.removeFromDD(id);
@@ -318,7 +318,7 @@ function MobileMenu(option) {
     };
 
     this.ContextLinks = {
-        "EbMobileTableLayout": {
+        EbMobileTableLayout: {
             "add_row": { name: "Add Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "add_column": { name: "Add Column", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "delete_row": { name: "Delete Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },

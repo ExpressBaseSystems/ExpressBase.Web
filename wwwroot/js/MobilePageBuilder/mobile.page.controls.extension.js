@@ -246,6 +246,7 @@
             }
         },
         EbMobileVisualization: {
+            LinkSettingsProps: ["FormMode", "RenderAsPopup", "FormId", "LinkFormParameters", "ContextToControlMap"],
             propertyChanged: function (propname, root) {
                 if (propname == "DataSourceRefId") {
                     if (!this.DataSourceRefId) {
@@ -419,6 +420,7 @@
             }
         },
         EbMobileDataLink: {
+            DsColumns: null,
             trigger: function (root) {
                 this.tab = "Tab" + root.Conf.TabNum;
                 $(`#${this.EbSid} .eb_mob_datalink_layout`).append(this.getHtml());
@@ -440,7 +442,7 @@
             },
             droppable: function () {
                 $(`#${this.EbSid} .eb_datalink_td`).droppable({
-                    accept: ".mdash-control",
+                    accept: Constants.DS_COLUMN + "," + Constants.DATA_LABEL,
                     hoverClass: "drop-hover-td",
                     tolerance: "fit",
                     greedy: true,
@@ -455,8 +457,10 @@
                 let o = root.makeElement(ebtype, ctrlname);
                 o.trigger(root);
                 $(event.target).append(o.$Control.outerHTML());
-
-
+                if ($dragged.hasClass("ds-column")) {
+                    o.BindingParam = `T${$dragged.attr("tableindex")}.${$dragged.attr("colname")}`;
+                    o.Text = $dragged.attr("colname");
+                }
                 root.refreshControl(o);
             },
             resizable: function () {
@@ -464,6 +468,19 @@
                     handles: "e",
                     stop: function () { }.bind(this)
                 });
+            }
+        },
+        EbMobileDashBoard: {
+            propertyChanged: function (propname, root) {
+                if (propname == "DataSourceRefId") {
+                    if (!this.DataSourceRefId) return;
+                    EbCommonLoader.EbLoader("show");
+                    getDSColums(this.DataSourceRefId).done(function (response) {
+                        root.Controls.drawDsColTree(response.columns, "EbMobileDataLabel");
+                        root.showTreeContainer();
+                        EbCommonLoader.EbLoader("hide");
+                    }.bind(this));
+                }
             },
         }
     };

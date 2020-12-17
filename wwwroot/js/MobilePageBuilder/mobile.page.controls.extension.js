@@ -420,12 +420,15 @@
             }
         },
         EbMobileDataLink: {
-            DsColumns: null,
             trigger: function (root) {
                 this.tab = "Tab" + root.Conf.TabNum;
                 $(`#${this.EbSid} .eb_mob_datalink_layout`).append(this.getHtml());
                 this.droppable();
                 this.resizable();
+
+                if (root.Mode == "edit") {
+                    this.fillControls(root);
+                }
             },
             getHtml: function () {
                 let html = [];
@@ -444,7 +447,6 @@
                 $(`#${this.EbSid} .eb_datalink_td`).droppable({
                     accept: Constants.DS_COLUMN + "," + Constants.DATA_LABEL,
                     hoverClass: "drop-hover-td",
-                    tolerance: "fit",
                     greedy: true,
                     drop: this.onDrop.bind(this)
                 });
@@ -468,6 +470,49 @@
                     handles: "e",
                     stop: function () { }.bind(this)
                 });
+            },
+            fillControls: function (root) {
+                let cells = this.CellCollection.$values || [];
+                for (let i = 0; i < cells.length; i++) {
+                    let ctrls = cells[i].Childrens.$values;
+
+                    for (let k = 0; k < ctrls.length; k++) {
+                        let ebtype = root.getType(ctrls[k].$type);
+                        let o = root.makeElement(ebtype, ebtype);
+                        $.extend(o, ctrls[k]);
+
+                        $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).append(o.$Control.outerHTML());
+                        let $tr = $(`#${this.EbSid} tr:eq(${cells[i].RowIndex})`);
+                        if ($tr.is(":first-child")) {
+                            $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).not(":last-child").css("width", `${cells[i].Width}%`);
+                        }
+
+                        root.refreshControl(o);
+                        o.trigger(root);
+                    }
+                }
+            },
+            setObject: function () {
+                this.CellCollection.$values.length = 0;
+                this.RowCount = $(`#${this.EbSid} .eb_datalink_tr`).length;
+                this.ColumCount = $(`#${this.EbSid} .eb_datalink_tr:first-child .eb_datalink_td`).length;
+
+                $(`#${this.EbSid} .eb_datalink_td`).each(function (i, td) {
+                    let rowindex = $(td).closest(".eb_datalink_tr").index();
+                    let colindex = $(td).index();
+
+                    let cell = new EbObjects.EbMobileDataCell(`DataCell_${rowindex}_${colindex}`);
+                    cell.RowIndex = rowindex;
+                    cell.ColIndex = colindex;
+                    cell.Width = parseFloat($(td).width() / $(`#${this.EbSid}`).width() * 100);
+
+                    $(td).find(".mob_dash_control").each(function (i, ctrl) {
+                        let ebo = window.MobilePage[this.tab].Creator.Procs[ctrl.id];
+                        cell.Childrens.$values.push(ebo);
+                    }.bind(this));
+
+                    this.CellCollection.$values.push(cell);
+                }.bind(this));
             }
         },
         EbMobileDashBoard: {

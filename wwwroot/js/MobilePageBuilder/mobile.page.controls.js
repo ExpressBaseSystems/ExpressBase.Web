@@ -55,10 +55,15 @@
             }.bind(this));
     };
 
-    this.initDashBoard = function (o) {
-        this.Root.makeDropable(o.EbSid, "EbMobileDashBoard");
+    this.initDashBoard = function (dashboard) {
+        this.Root.$Selectors.pageWrapper.find(`.emulator_f`).css("display", "none");
+        this.Root.makeDropable(dashboard.EbSid, "EbMobileDashBoard");
         if (this.Root.Mode === "edit" && this.Root.EditObj !== null) {
-            this.Root.setCtrls($(`#${o.EbSid} .eb_mob_container_inner`), o.ChildControls.$values);
+            this.Root.setCtrls($(`#${dashboard.EbSid} .eb_mob_container_inner`), dashboard.ChildControls.$values);
+
+            if (dashboard.DataSourceRefId) {
+                dashboard.propertyChanged("DataSourceRefId", this.Root);
+            }
         }
     };
 
@@ -293,6 +298,42 @@ function MobileMenu(option) {
         }
     };
 
+    this.dataLayoutTableOperation = function (eType, selector, action, originalEvent) {
+        let $dataLink = selector.$trigger.closest("div[eb-type='EbMobileDataLink']");
+        let obj = this.Root.Procs[$dataLink.attr("id")];
+        let $table = $dataLink.find(".eb_datalink_table");
+        if (eType === "add_row") {
+            let colcount = $table.find("tr:first-child td").length;
+
+            let html = ["<tr class='eb_datalink_tr'>"];
+            for (let i = 0; i < colcount; i++) {
+                html.push(`<td class="eb_datalink_td"></td>`);
+            }
+            html.push("</tr>");
+            $table.find("tbody").append(html.join(""));
+            obj.droppable();
+        }
+        else if (eType === "add_column") {
+            $table.find("tr").each(function (i, o) {
+                $(o).append(`<td class="eb_datalink_td"></td>`);
+            });
+            obj.droppable();
+            obj.resizable();
+        }
+        else if (eType === "delete_row") {
+            let $row = selector.$trigger.find(".eb_datalink_tr:last-child");
+            let rowcount = $table.find(".eb_datalink_tr").length;
+            if (rowcount > 2) {
+                $row.remove();
+            }
+        }
+        else if (eType === "delete_column") {
+            let $cols = selector.$trigger.find(".eb_datalink_td:last-child");
+            if ($cols.length > 1)
+                $cols.remove();
+        }
+    }
+
     this.disableMenuItem = function (key, opt) {
         let flag = opt.$trigger.data('cutDisabled');
         let ebtype = opt.$trigger.attr("eb-type");
@@ -323,6 +364,12 @@ function MobileMenu(option) {
             "add_column": { name: "Add Column", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "delete_row": { name: "Delete Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "delete_column": { name: "Delete Column", icon: "plus", callback: this.tableLayoutLinks.bind(this) }
+        },
+        EbMobileDataLink: {
+            "add_row": { name: "Add Row", icon: "plus", callback: this.dataLayoutTableOperation.bind(this) },
+            "add_column": { name: "Add Column", icon: "plus", callback: this.dataLayoutTableOperation.bind(this) },
+            "delete_row": { name: "Delete Row", icon: "plus", callback: this.dataLayoutTableOperation.bind(this) },
+            "delete_column": { name: "Delete Column", icon: "plus", callback: this.dataLayoutTableOperation.bind(this) }
         }
     };
 

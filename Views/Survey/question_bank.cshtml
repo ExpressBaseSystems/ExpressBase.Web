@@ -6,6 +6,8 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <link href="~/css/Survey/EbSurvey.css" rel="stylesheet" />
+<link href="~/css/FormBuiderStyles.css" rel="stylesheet" />
+<link href="~/css/Eb.css" rel="stylesheet" />
 <script src="~/js/Survey/survey.js" type="text/javascript"></script>
 <script>var cm = new EbHeader().setName("Question Bank");</script>
 @{
@@ -58,58 +60,61 @@
 <!-- Modal -->
 <div class="modal fade open-sans" id="questionModal" role="dialog">
     <div class="modal-dialog modal-lg" style="width:70%">
-        <div class="modal-content">
-            <div class="modal-header eb_modalheader relative">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">New Question</h4>
-                <div class="survey_menu_load" id="survey_menu_load"></div>
-            </div>
-            <div class="modal-body">
-                <div class="row qust-cont">
-                    <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qs-cont pd-l-0">
-                        <div class="q-container">
-                            <div tabindex="1" class="qs-inner-cont">
-                                <div class="qs-inner-wrap col-md-12 pd-0">
-                                    <div class="qst-inp" contenteditable="true">question section</div>
-                                    <div class="ansctrl-menu">
-                                        <div class="q-menu-add"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                                        <div class="q-menu-add"><i class="fa fa-refresh" aria-hidden="true"></i></div>
-                                        <div class="q-menu-add"><i class="fa fa-trash" aria-hidden="true"></i></div>
+        <div class="modal-dialog modal-lg" style="width:70%">
+            <div class="modal-content">
+                <div class="popmenu">
+                </div>
+                <div class="modal-header eb_modalheader relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">New Question</h4>
+                    <div class="survey_menu_load" id="survey_menu_load"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="row qust-cont">
+                        <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qs-cont pd-l-0">
+                            <div class="q-container">
+                                <div tabindex="1" class="qs-inner-cont">
+                                    <div class="qs-inner-wrap col-md-12 pd-0">
+                                        <div class="qst-inp" contenteditable="true">question section</div>
+                                        <div class="ansctrl-menu">
+                                            <div class="q-menu-item qm-add"><i class="fa fa-plus" aria-hidden="true"></i></div>
+                                            <div class="q-menu-item qm-clear"><i class="fa fa-refresh" aria-hidden="true"></i></div>
+                                            <div class="q-menu-item qm-empty"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="qst-ansctrl-cont col-md-12 pd-0">
-                                    <div class="qst-ansctrl-wrap">
-                                        <div class="ansctrl-inner">answer control section</div>
-                                        <div class="ansctrl-menu">controls here...</div>
-                                    </div>
-                                    <div class="ansctrl-menu">
-                                        <div class="q-menu-add"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                                        <div class="q-menu-add"><i class="fa fa-refresh" aria-hidden="true"></i></div>
-                                        <div class="q-menu-add"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                                    <div tabindex="1" class="qst-ansctrl-cont col-md-12 pd-0">
+                                        <div class="qst-ansctrl-wrap">
+                                            <div class="ansctrl-inner">answer control section</div>
+                                            <div class="ansctrl-menu">controls here...</div>
+                                        </div>
+                                        <div class="ansctrl-menu">
+                                            <div tabindex="1" class="q-menu-item  qm-add-ans"><i class="fa fa-plus" aria-hidden="true"></i></div>
+                                            <div class="q-menu-item qm-clear-ans"><i class="fa fa-refresh" aria-hidden="true"></i></div>
+                                            <div class="q-menu-item qm-empty-ans"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 q-pg-cont">
-                        <div class="q-type-container">
-                            <div class="qst-set-label-cont">
-                                <div class="question-label">Settings</div>
-                                <div class="qst-set-cont pd-5">
-                                    PG
+                        <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 q-pg-cont">
+                            <div class="q-type-container">
+                                <div class="qst-set-label-cont">
+                                    <div class="question-label">Settings</div>
+                                    <div class="qst-set-cont pd-5">
+                                        PG
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer pd-5">
-                <button type="button" id="submit_question" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
+                <div class="modal-footer pd-5">
+                    <button type="button" id="submit_question" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
+    <script>
     var survey = new SurveyQuestionBank(`@Html.Raw(JsonConvert.SerializeObject(Queries))`,"QuestionBank");
-</script>
+    </script>

@@ -28,7 +28,53 @@
         $(`body`).off("change").on("change", ".qst-choice-number", this.ScoreChanged.bind(this));
         $("#userInputType").off("change").on("change", this.changeUIType.bind(this));
         $(".qst-types-cont div[qtype='1']").click();
+        $('#questionModal').off("click", '.qm-add-ans').on('click', '.qm-add-ans', this.addPMAns);
+        $('#questionModal').off("hover", '.qm-add-ans').on('hover', '.qm-add-ans', this.addPMAns);
+        $('#questionModal').off("blur", '.qm-add-ans').on('blur', '.qm-add-ans', this.pmHide);
+        $('#questionModal').off("click", '.pmenu-icon-cont').on('click', '.pmenu-icon-cont', this.AddAnsCtrl);
+
+
+        this.controlCounters = CtrlCounters;//Global
+        this.addAnsPopMenu();
     };
+
+    this.AddAnsCtrl = function () {
+        let $el = $(event.target).closest('.pmenu-icon-cont');
+
+        let type = $el.attr("eb-type").trim();
+        let ebsid = type + ++(this.controlCounters[type + "Counter"]);
+        let ctrlObj = new EbObjects["Eb" + type](ebsid);
+        let $ctrl = ctrlObj.$Control;
+        $('.ansctrl-inner').append($ctrl);
+    }.bind(this);
+
+    this.pmHide = function () {
+        setTimeout(function () {
+            $('.popmenu').hide(100);
+        },50);
+    }
+
+    this.addPMAns = function () {
+        let $e = $(event.target).closest('.qm-add-ans');
+        $('.popmenu').show(100);
+        let TOP = $e.offset().top;
+        let LEFT = $e.offset().left + $e.width() + 15;
+        $('.popmenu').css('right', 'unset');
+        $('.popmenu').offset({ top: TOP, left: LEFT });
+    }
+
+    this.addAnsPopMenu = function () {
+        let menuHTML = '';
+        let ansCtrls = Object.keys(EbObjects);
+        for (let i = 0; i < ansCtrls.length; i++) {
+            let obj = new EbObjects[ansCtrls[i]](i);
+            if (obj.ObjType === "RadioOption")
+                continue;
+            menuHTML += `<div class="pmenu-icon-cont" eb-type="${obj.ObjType}" title="${obj.ToolNameAlias}">${obj.ToolIconHtml}</div>`;
+        };
+        $('.popmenu').append(`<div class='pm-arrow'></div>`);
+        $('.popmenu').append(menuHTML);
+    }.bind(this);
 
     this.ScoreChanged = function (e) {
         $(e.target).siblings(`input[name='Choices']`).attr("Score", e.target.value);

@@ -125,7 +125,7 @@
     margin-left: 0px;
 }
 
-.qust-cont-l-col-3, .qust-cont-r-col-3, .qust-cont-col-6 {/*old*/
+.qust-cont-l-col-3, .qust-cont-r-col-3, .qust-cont-col-6 { /*old*/
     height: 100%;
     padding-right: 0px;
     padding-left: 0px;
@@ -146,7 +146,7 @@
     /*background-color: #fafafa;*/
 }
 
-.qust-cont-col-6 {/*old*/
+.qust-cont-col-6 { /*old*/
     background-color: #eeeeee;
 }
 
@@ -248,15 +248,15 @@
 
 .qst-ansctrl-wrap {
     padding: 12px;
-    width: calc(100% - 50px);
+    width: calc(100% - 47px);
 }
 
 .qst-ansctrl-wrap, .qst-inp {
-    width: calc(100% - 50px);
+    width: calc(100% - 47px);
 }
 
 
-.q-menu-add {
+.q-menu-item {
     font-size: 18px;
     margin-top: 12px;
     text-align: center;
@@ -264,19 +264,25 @@
     height: 33px;
     border-radius: 50%;
     display: flex;
+    outline: none;
 }
 
-    .q-menu-add:hover {
-        background-color: #fefeff;
+    .q-menu-item:focus {
+        outline: 1px solid #0075FF !important;
+        outline-offset: -1px;
     }
 
-    .q-menu-add .fa {
+    .q-menu-item:hover, .q-menu-item:focus {
+        background-color: #fdfdfe;
+    }
+
+    .q-menu-item .fa {
         margin: auto;
     }
 
 .ansctrl-menu {
-    width: 50px;
-    background: #f8f8f9;
+    width: 47px;
+    background: #efeff2;
 }
 
 .qst-opt-cont {
@@ -509,4 +515,40 @@
     right: 10px;
     color: #b13109;
     cursor: pointer;
+}
+
+.popmenu {
+    display: none;
+    background-color: #f8f8f9;
+    position: absolute;
+    right: -30px;
+    z-index: 99;
+    border-radius: 6px;
+    width: 36px;
+    box-shadow: 0 0 10px 0px #c0c1c9;
+    padding: 5px 0px;
+}
+
+.pmenu-icon-cont {
+    width: 100%;
+    padding: 8px 0;
+    display: inline-flex;
+}
+.pmenu-icon-cont:hover {
+    background-color:#fefefe;
+}
+
+    .pmenu-icon-cont .fa {
+        margin: auto;
+    }
+.pm-arrow {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background: #f8f8f9;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    transform: rotate(29deg);
+    top: 2px;
+    left: -14px;
+    box-shadow: 0 0 10px 0px #c0c1c9;
 }

@@ -73,27 +73,53 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         });
         $('.tb-host').on('itemAdded', function (event) {
             let pos = event.target.closest('tr').getAttribute("data-id");
-            this.SlotList[pos].Hosts.push(event.item);
+            //this.SlotList[pos].Hosts.push(event.item);
+            for (i = 0; i < this.SlotList.length; i++) {
+                if (pos != undefined && this.SlotList[i].Position == pos) {
+                    this.SlotList[i].Hosts.push(event.item);
+                }
+            }
+            this.MeetingScheduleObj.SlotList = this.SlotList;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $('.tb-attendee').on('itemAdded', function (event) {
             let pos = event.target.closest('tr').getAttribute("data-id");
-            this.SlotList[pos].Attendees.push(event.item);
+            //this.SlotList[pos].Attendees.push(event.item);
+            for (i = 0; i < this.SlotList.length; i++) {
+                if (pos != undefined && this.SlotList[i].Position == pos) {
+                    this.SlotList[i].Attendees.push(event.item);
+                }
+            }
+            this.MeetingScheduleObj.SlotList = this.SlotList;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $('.tb-attendee').on('itemRemoved', function (event) {
             // event.item: contains the item
-            let pos = event.target.closest('tr').getAttribute("data-id");
+            let pos ;
+            let _dataid = event.target.closest('tr').getAttribute("data-id");
+            for (i = 0; i < this.SlotList.length; i++) {
+                if (_dataid != undefined && this.SlotList[i].Position == _dataid) {
+                    pos = i;
+                }
+            }
             const index = this.SlotList[pos].Attendees.indexOf(event.item);
             if (index > -1) {
-                this.SlotList[pos].attendees.splice(index, 1);
+                this.SlotList[pos].Attendees.splice(index, 1);
             }
+            this.MeetingScheduleObj.SlotList = this.SlotList;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
         $('.tb-host').on('itemRemoved', function (event) {
             // event.item: contains the item
-            let pos = event.target.closest('tr').getAttribute("data-id");
+            //let pos = event.target.closest('tr').getAttribute("data-id");
+            let pos;
+            let _dataid = event.target.closest('tr').getAttribute("data-id");
+            for (i = 0; i < this.SlotList.length; i++) {
+                if (_dataid != undefined && this.SlotList[i].Position == _dataid) {
+                    pos = i;
+                }
+            }
             const index = this.SlotList[pos].Hosts.indexOf(event.item);
             if (index > -1) {
                 this.SlotList[pos].Hosts.splice(index, 1);
@@ -103,6 +129,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             //        obj.Hosts = this.SlotList[pos].Hosts;
             //    }.bind(this));
             //}
+            this.MeetingScheduleObj.SlotList = this.SlotList;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
     };
@@ -253,15 +280,24 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         this.TimeFrom.off('change').on("change", function (e) {
-            let pos = e.target.closest('tr').getAttribute("data-id");
-            this.SlotList[pos].TimeFrom = e.target.value;
+            let pos = e.target.closest('tr').getAttribute("data-id");            
+            for (i = 0; i < this.SlotList.length; i++) {
+                if (pos != undefined && this.SlotList[i].Position == pos) {
+                    this.SlotList[i].TimeFrom = e.target.value;
+                }
+            }
             //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj));
             // this.UpdateParticipantList(pos);
         }.bind(this));
         this.TimeTo.off('change').on("change", function (e) {
             let pos = e.target.closest('tr').getAttribute("data-id");
-            this.SlotList[pos].TimeTo = e.target.value;
+            //this.SlotList[pos].TimeTo = e.target.value;
+            for (i = 0; i < this.SlotList.length; i++) {
+                if (pos != undefined && this.SlotList[i].Position == pos) {
+                    this.SlotList[i].TimeTo = e.target.value;
+                }
+            }
             //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
             //this.UpdateParticipantList(pos);
@@ -393,7 +429,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             Obj.FixedAttendee = this.FixedAttendee.val();
             Obj.FixedHost = this.FixedHost.val();
             this.SlotList.push(Obj);
-            this.MeetingScheduleObj.SlotList = this.SlotList;
+          
         }
         else if (this.MeetingScheduleObj.IsSingleMeeting == 'F' && this.MeetingScheduleObj.TimeFrom != '' && this.MeetingScheduleObj.TimeTo !== '' && !this.Ctrl.SameHost) {
             let slotNum = 60;
@@ -425,7 +461,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
                     <td><input type='text'  id='${this.Ctrl.EbSid}_attendee_0' class='mc-input tb-slots tb-attendee'/></td>
                     </tr>`;
             }
-            this.MeetingScheduleObj.SlotList = this.SlotList;
+          
             $(`#${this.Ctrl.EbSid}_slots tbody`).empty().append(html);
         }
         else if (this.MeetingScheduleObj.IsSingleMeeting == 'F' && this.MeetingScheduleObj.TimeFrom != '' && this.MeetingScheduleObj.TimeTo !== '' && this.Ctrl.SameHost) {
@@ -458,7 +494,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
                     <td><input type='text'  id='${this.Ctrl.EbSid}_attendee_0' class='mc-input tb-slots tb-attendee'/></td>
                     </tr>`;
             }
-            this.MeetingScheduleObj.SlotList = this.SlotList;
+           
             $(`#${this.Ctrl.EbSid}_slots tbody`).empty().append(html);
         }
         this.tagsinputFn();
@@ -500,10 +536,15 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.RemoveSlotFromTable = function (e) {
         let index = e.target.closest('tr').getAttribute("data-id");
         e.target.closest('tr').remove();
-        if (index != undefined) {
-            this.SlotList.splice(index, 1);
+        //if (index != undefined) {
+        //    this.SlotList.splice(index, 1);
+        //}
+        for (i = 0; i < this.SlotList.length; i++) {
+            if (index != undefined && this.SlotList[i].Position == index) {
+                this.SlotList.splice(i, 1);
+            }
         }
-        this.UpdateDataIds();
+        //this.UpdateDataIds();
     };
 
     this.addSlot2Table = function () {

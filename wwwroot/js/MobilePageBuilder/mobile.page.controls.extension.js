@@ -403,8 +403,32 @@
         },
         EbMobileStackLayout: {
             trigger: function (root) {
+                this.tab = "Tab" + root.Conf.TabNum;
                 root.makeDropable(this.EbSid, "EbMobileDashBoard");
                 root.makeSortable(this.EbSid);
+
+                if (root.Mode == "edit") {
+                    this.fillControls(root);
+                }
+            },
+            fillControls: function (root) {
+                let controls = this.ChildControls.$values || [];
+                for (let i = 0; i < controls.length; i++) {
+                    let ebtype = root.getType(controls[i].$type);
+                    let o = root.makeElement(ebtype, ebtype);
+                    $(`#${this.EbSid} .control_container`).append(o.$Control.outerHTML());
+                    $.extend(o, controls[i]);
+                    root.refreshControl(o);
+                    o.trigger(root);
+                }
+            },
+            setObject: function () {
+                this.ChildControls.$values.length = 0;
+                $(`#${this.EbSid} .control_container`).children(".mob_dash_control ").each(function (i, ctrl) {
+                    let ebo = window.MobilePage[this.tab].Creator.Procs[ctrl.id];
+                    ebo.setObject();
+                    this.ChildControls.$values.push(ebo);
+                }.bind(this));
             }
         },
         EbMobileLabel: {
@@ -474,7 +498,7 @@
             fillControls: function (root) {
                 let cells = this.CellCollection.$values || [];
                 for (let i = 0; i < cells.length; i++) {
-                    let ctrls = cells[i].Childrens.$values;
+                    let ctrls = cells[i].ControlCollection.$values || [];
 
                     for (let k = 0; k < ctrls.length; k++) {
                         let ebtype = root.getType(ctrls[k].$type);
@@ -508,7 +532,7 @@
 
                     $(td).find(".mob_dash_control").each(function (i, ctrl) {
                         let ebo = window.MobilePage[this.tab].Creator.Procs[ctrl.id];
-                        cell.Childrens.$values.push(ebo);
+                        cell.ControlCollection.$values.push(ebo);
                     }.bind(this));
 
                     this.CellCollection.$values.push(cell);

@@ -1797,6 +1797,7 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            onlyCountries: (ctrl.CountriesList.length>0)?ctrl.CountriesList.split(","):[],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,

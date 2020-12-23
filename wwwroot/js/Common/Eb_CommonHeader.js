@@ -41,7 +41,7 @@
             }
         });
 
-        window.ebcontext.header.insertButton(`
+        $('#notificaionandprofile').prepend(`
 <div class='toolb-srchbx-wrpr'>
     <input type='text' class='toolb-srchbx'/>
     <button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter__" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>

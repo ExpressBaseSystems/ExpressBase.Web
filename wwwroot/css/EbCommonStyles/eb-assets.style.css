@@ -1130,6 +1130,7 @@ pd-10 {
         border: 1px solid #ccc;
         flex: 1;
         padding: 5px;
+        overflow-y:auto;
     }
 
     .import_data_mdl_mdlbdy .import_data_cols {

@@ -8,7 +8,7 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     string domurl = string.Empty;
     string jssrc = string.Empty;
-    var sol_cid=ViewBag.cid;
+    var sol_cid = ViewBag.cid;
     var solutionid = ViewBag.cide;
     if (ViewBag.Env == "Development")
     {
@@ -248,7 +248,7 @@
                                                 <div class="input-group-btn">
                                                     <button id="btnSelectDpClipart" class="btn btn-info" title="Select from Clipart" onclick="$('#AppDB_BotDemoDp').modal('show');">Select</button>
                                                 </div>
-                                            </div>                                            
+                                            </div>
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <div class="form-check mrg10btm">
@@ -697,6 +697,35 @@
                             </div>
                         </div>
 
+                        <div class="appdash-mobile-menuvalidator">
+                            <h4>DashBoard</h4>
+                            <div class="menuvalidator-inner">
+                                <div class="meta" id="mobile-dash-refid">
+                                    @{
+                                        string dashboardText = "Not selected";
+
+                                        if (!string.IsNullOrEmpty(MobSettings.DashBoardRefId))
+                                        {
+                                            dashboardText = MobSettings.DashBoardRefId;
+
+                                            if (list.TryGetValue(13, out var collection) && collection.Objects != null)
+                                            {
+                                                ObjWrap obj = collection.Objects.Find(x => x.Refid == MobSettings.DashBoardRefId);
+                                                if (obj != null)
+                                                {
+                                                    dashboardText = obj.DisplayName + " (" + MobSettings.DashBoardRefId + ")";
+                                                }
+                                            }
+                                        }
+                                        <span>@dashboardText</span>
+                                    }
+                                </div>
+                                <a class="obj-selector-btn" data-target="#mobile-dashboard_mdl" data-toggle="modal">
+                                    ...
+                                </a>
+                            </div>
+                        </div>
+
                         <div class="appseting-footer" style="margin-top:2em;width:50%">
                             <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="save-appsettings-btn">
                                 <i class="fa fa-floppy-o" style="margin-right:5px;"></i> Save App Settings
@@ -707,6 +736,7 @@
             </div>
         </div>
     </div>
+
     <div id="newObjectmdl" class="modal fade newObjectmdl" role="dialog">
         <div class="modal-dialog h-100 w-100" style="margin:0;display: flex;justify-content: center;align-items: center;">
             <div class="modal-content" style="width:90%;height:90%;display: flex;flex-direction: column;">
@@ -841,6 +871,63 @@
                                                             EbMobileSettings settings = (EbMobileSettings)ViewBag.AppSettings;
 
                                                             if (settings.MenuApi != null && settings.MenuApi.RefId == oball.Refid)
+                                                            {
+                                                                selected = "selected";
+                                                            }
+
+                                                            <div class="import_obj_expand_objlinks @selected" version="@oball.VersionNumber" display-name="@oball.DisplayName" refid="@oball.Refid" name="@oball.ObjName">
+                                                                @oball.DisplayName
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mobile-dashboard_mdl" class="modal fade import_data_mdl" role="dialog">
+        <div class="modal-dialog h-100 w-100" style="margin:0;display: flex;justify-content: center;align-items: center;">
+            <div class="modal-content" style="min-width:40%;height:70%;display: flex;flex-direction: column;">
+                <div class="modal-header" style="border-style:none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">DashBoard</h4>
+                </div>
+                <div class="modal-body" style="flex:1;overflow-y:auto;">
+                    @{
+                        if (appinfo.AppType == 2)
+                        {
+                            <div class="import_data_mdl_mdlbdy">
+                                <div class="import_data_cols import_data_objects w-100">
+                                    <div style="display:flex;justify-content:space-between;">
+                                        <label>DashBoard</label> <a id="mobiledashboard-reset">Clear Selection</a>
+                                    </div>
+                                    <div class="import_data_cols_inner">
+                                        @{
+                                            if (list.ContainsKey(13))
+                                            {
+                                                <div class="import_obj_expand">
+                                                    @if (!list[13].Objects.Any())
+                                                    {
+                                                        <div class="empty_list">empty</div>
+                                                    }
+
+                                                    @foreach (ObjWrap oball in list[13].Objects)
+                                                    {
+                                                        if (oball.IsCommitted)
+                                                        {
+                                                            string selected = string.Empty;
+
+                                                            EbMobileSettings settings = (EbMobileSettings)ViewBag.AppSettings;
+
+                                                            if (settings.DashBoardRefId == oball.Refid)
                                                             {
                                                                 selected = "selected";
                                                             }

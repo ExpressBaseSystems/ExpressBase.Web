@@ -1347,7 +1347,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [Route("PublicForm")]
-        public IActionResult PublicForm(string id)
+        public IActionResult PublicForm(string id, string p, int m)
         {
             MyAuthenticateResponse authResponse = null;
             User usr = null;
@@ -1409,7 +1409,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         if (s.Contains("000-00-" + id.Split("-")[3].PadLeft(5, '0')))
                         {
-                            return RedirectToAction("WebFormRender", "WebForm", new { refId = id, _locId = usr.Preference.DefaultLocation, renderMode = 5 });
+                            return RedirectToAction("WebFormRender", "WebForm", new { refId = id, _params = p, _mode = m, _locId = usr.Preference.DefaultLocation, renderMode = 5 });
                         }
                     }
                 }

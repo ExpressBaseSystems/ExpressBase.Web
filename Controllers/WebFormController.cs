@@ -604,14 +604,14 @@ namespace ExpressBase.Web.Controllers
             return Resp.Data;
         }
 
-        public string UpdateIndexes(string refid)
+        public string UpdateIndexes(string refid, int limit, int offset)
         {
             try
             {
                 if ((this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
                     this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) && ViewBag.wc == RoutingConstants.DC)
                 {
-                    UpdateIndexesRespone Resp = ServiceClient.Post(new UpdateIndexesRequest { RefId = refid });
+                    UpdateIndexesRespone Resp = ServiceClient.Post(new UpdateIndexesRequest { RefId = refid, Limit = limit, Offset = offset });
                     return Resp.Message;
                 }
                 return "Access denied. Must be a SolutionOwner/Admin in DevConsole.";

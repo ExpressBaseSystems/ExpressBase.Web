@@ -26,6 +26,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult question_bank()
         {
             GetSurveyQueriesResponse resp = this.ServiceClient.Get(new GetSurveyQueriesRequest());
+            //_object = EbSerializers.Json_Deserialize(element.Json_lc);
+            //ViewBag.dsObj = _object;
             ViewBag.Queries = resp.Data;
             return View();
         }

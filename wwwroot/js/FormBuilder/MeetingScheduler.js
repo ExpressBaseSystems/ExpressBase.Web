@@ -369,6 +369,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
 
         }
     };
+
     //this.UpdateParticipantList = function (pos) {
     //    //if ($(`[data-id=${pos}] .time-from`).val() != "" && $(`[data-id=${pos}] .time-to`).val() != "") {
     //    //    let list =[]

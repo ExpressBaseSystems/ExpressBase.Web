@@ -447,6 +447,39 @@ class Setup {
                         }
                     });
                 });
+                $('#pick-multiple-slot').off('click').on('click', function () {
+                    let slots = $('#pick-slot').attr('data-id');
+                    $.post("../EbMeeting/PickSlot", { Slots: slot, myactionid: id }, function (data) {
+                        let sts = JSON.parse(data);
+                        if (sts.ResponseStatus) {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Success...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
+                                }
+                            });
+                            $(`#accept-meeting`).attr('disabled', 'disabled');
+                        }
+                        else {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Failed. Some Error Found...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
             }
             else {
                 EbPopBox("show", {

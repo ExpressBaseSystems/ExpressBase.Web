@@ -112,10 +112,12 @@ class Setup {
                     this.nf_container.append(`
                 <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
                     <i class="fa fa-times notification-close" style="float: right;"></i>
-                    <div class="notification-inner">
-                        <h5>${nf[i].Title || plc}</h5>
-                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
-                    </div>
+                    <a target="_blank" href="${nf[i].Link}">
+                        <div class="notification-inner">
+                            <h5>${nf[i].Title || plc}</h5>
+                            <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
+                        </div>
+                    </a>
                 </li>`);
                 }
             }
@@ -131,10 +133,12 @@ class Setup {
                     this.nf_container.prepend(`
                 <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
                     <i class="fa fa-times notification-close" style="float: right;"></i>
-                    <div class="notification-inner">
-                        <h5>${nf[i].Title || plc}</h5>
-                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
-                    </div>
+                    <a target="_blank" href="${nf[i].Link}">
+                        <div class="notification-inner">
+                            <h5>${nf[i].Title || plc}</h5>
+                            <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
+                        </div>
+                    </a>
                 </li>`);
                     this.notification_count += 1;
                 }

@@ -197,17 +197,20 @@
             }
             @RenderBody()
         </div>
-        <div class="eb-expndLinkswrpr hidden-xs" id="eb-expndLinkswrprWdgt">
-            <button id="eb-expandbutton" onclick="$('.eb-expndLinkswrpr-body').toggle();" class="eb-expand-link"><i class="fa fa-cog"></i></button>
-            <div class="eb-expndLinkswrpr-body" style="display:none;">
-                <div class="eb-expndLinkswrpr-inner">
-                    <button class="eb-expand-innerbtn" onclick="if (window.tour) {window.tour.start();} $('.eb-expndLinkswrpr-body').toggle();" title="Walk through">
-                        <i class="fa fa-plane"></i>
-                    </button>
-                    @*<button class="eb-expand-innerbtn" title="Shortcuts"><i class="fa fa-random"></i></button>*@
+        @if (ViewBag.UId > 1 || ViewBag.cide == "demo")// check for PublicForm. Can rewite this check if required. 
+        {
+            <div class="eb-expndLinkswrpr hidden-xs" id="eb-expndLinkswrprWdgt">
+                <button id="eb-expandbutton" onclick="$('.eb-expndLinkswrpr-body').toggle();" class="eb-expand-link"><i class="fa fa-cog"></i></button>
+                <div class="eb-expndLinkswrpr-body" style="display:none;">
+                    <div class="eb-expndLinkswrpr-inner">
+                        <button class="eb-expand-innerbtn" onclick="if (window.tour) {window.tour.start();} $('.eb-expndLinkswrpr-body').toggle();" title="Walk through">
+                            <i class="fa fa-plane"></i>
+                        </button>
+                        @*<button class="eb-expand-innerbtn" title="Shortcuts"><i class="fa fa-random"></i></button>*@
+                    </div>
                 </div>
             </div>
-        </div>
+        }
 
         <div class="modal fade eb-common-popup" id="eb-common-popup" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">

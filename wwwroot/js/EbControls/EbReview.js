@@ -247,18 +247,20 @@
                         html = html.replace("@action@", `(${getObjByval(stage.StageActions.$values, "EbSid", column.Value).Name})`);
                 }
                 else if (column.Name === "eb_created_at") {
-                    let dateString = column.Value,
-                        dateTimeParts = dateString.split(' '),
-                        timeParts = dateTimeParts[1].split(':'),
-                        dateParts = dateTimeParts[0].split('-'),
-                        date;
-
-                    date = new Date(dateParts[0], parseInt(dateParts[1], 10) - 1, dateParts[2], timeParts[0], timeParts[1], timeParts[2]);
-
-                    if (row.RowId === 0)
+                    
+                    if (row.RowId === 0 || column.Value === null)
                         html = html.replace("@timeTitle@", "").replace("@time@", '<i class="fa fa-clock-o" aria-hidden="true" style="font-size: 14px;"></i>');
-                    else
+                    else {
+                        let dateString = column.Value,
+                            dateTimeParts = dateString.split(' '),
+                            timeParts = dateTimeParts[1].split(':'),
+                            dateParts = dateTimeParts[0].split('-'),
+                            date;
+
+                        date = new Date(dateParts[0], parseInt(dateParts[1], 10) - 1, dateParts[2], timeParts[0], timeParts[1], timeParts[2]);
+
                         html = html.replace("@timeTitle@", column.Value).replace("@time@", timeDifference(Date.now(), date.getTime()));
+                    }
                 }
                 else if (column.Name === "comments") {
                     if (row.RowId === 0)

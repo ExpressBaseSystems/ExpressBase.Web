@@ -118,6 +118,11 @@
     overflow: auto;
     height: calc( 100% - 30px);
 }
+
+.QpgWrap {
+    overflow: auto;
+    height: calc( 100% - 30px);
+}
 /*latest*/
 .qust-cont {
     height: 60vh;
@@ -280,7 +285,7 @@
         margin: auto;
     }
 
-.ansctrl-menu {
+.ansctrl-menu { /*old*/
     width: 47px;
     background: #efeff2;
 }

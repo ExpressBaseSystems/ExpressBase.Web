@@ -519,7 +519,8 @@ const WebFormRender = function (option) {
                 return;
             }
             if (_renderMode === 5) {
-                EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
+                this.$formCont.html(`<div id="" style="height:calc(100vh - 38px);"> <div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> <i class="fa fa-check" aria-hidden="true" style="color: green;"></i>&nbsp;Submitted successfully </div></div>`);
+                //EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
                 return;
             }
 

@@ -1150,13 +1150,15 @@
             event.preventDefault();
             if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
                 if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
-                    $('#webformsave').trigger('click');
+                    //$('#webformsave').trigger('click');
+                    this.Renderer.saveForm();
                 } else {
                     EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
                     this.CreateCaptcha(ctrlOpts);
                 }
             } else {
-                $('#webformsave').trigger('click');
+                //$('#webformsave').trigger('click');
+                this.Renderer.saveForm();
             }
         }.bind(this));
     }.bind(this);
@@ -1797,6 +1799,7 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            onlyCountries: (ctrl.CountriesList.length>0)?ctrl.CountriesList.split(","):[],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,

@@ -26,16 +26,16 @@
 
     function GetData() {
         $.ajax({
-            url: "/api/get_data",
-            type: "POST",
+            url: "/api/get_data_flat",
+            type: "GET",
             data: {
-                refid: datao.DataSourceRefId,
-                limit: datao.Limit,
-                offset: datao.Offset,
-                param: JSON.stringify(datao.Params),
-                sort_order: JSON.stringify(datao.SortOrder),
-                search: JSON.stringify(datao.SearchColumns),
-                is_powerselect: datao.IsPowerSelect,
+                refid: "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2824-3685-2824-3685"//datao.DataSourceRefId,
+                //limit: datao.Limit,
+                //offset: datao.Offset,
+                //param: JSON.stringify(datao.Params),
+                //sort_order: JSON.stringify(datao.SortOrder),
+                //search: JSON.stringify(datao.SearchColumns),
+                //is_powerselect: datao.IsPowerSelect,
             },
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("bToken", getTok());

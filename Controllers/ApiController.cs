@@ -943,13 +943,14 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("api/get_data")]
-        public ActionResult<MobileVisDataResponse> GetData(string refid, int limit, int offset, string param, string sort_order, string search, bool is_powerselect)
+        [HttpGet("api/get_data")]
+        public ActionResult<MobileDataResponse> GetData(string refid, int limit, int offset, string param, string sort_order, string search, bool is_powerselect)
         {
             if (!Authenticated) return Unauthorized();
 
             if (string.IsNullOrEmpty(refid)) return BadRequest();
 
-            MobileVisDataResponse response = null;
+            MobileDataResponse response = null;
             try
             {
                 MobileVisDataRequest request = new MobileVisDataRequest()
@@ -974,7 +975,31 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception ex)
             {
-                response = response ?? new MobileVisDataResponse();
+                response = response ?? new MobileDataResponse();
+                response.Message = ex.Message;
+
+                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return response;
+        }
+
+        [HttpGet("api/get_data_flat")]
+        public ActionResult<MobileDataResponse> GetDataFlat(string refid)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            if (string.IsNullOrEmpty(refid)) return BadRequest();
+
+            MobileDataResponse response = null;
+            try
+            {
+                response = this.ServiceClient.Get(new MobileDataRequest(refid));
+                response.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                response = response ?? new MobileDataResponse();
                 response.Message = ex.Message;
 
                 Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);

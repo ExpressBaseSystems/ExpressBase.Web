@@ -108,39 +108,6 @@
             if (name === "Delete") {
                 if (name === "Delete") {
                     EbDialog("show",
-                    {
-                        Message: "Are you sure? Changes Affect only if Form is Saved.",
-                        Buttons: {
-                            "Yes": { Background: "green", Align: "left", FontColor: "white;" },
-                            "No": { Background: "violet", Align: "right", FontColor: "white;" }
-                        },
-                        CallBack: function (name) {
-                            if (name === "Yes" && refids.length > 0) {
-                                let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
-
-                                for (let i = 0; i < refids.length; i++) {
-                                    let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
-                                    if (index !== -1) {
-                                        uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
-                                    }
-                                    else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
-                                        uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
-                                    }
-                                }
-                                if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
-                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-                                }
-                                imgup.deleteFromGallery(refids);
-                                imgup.customMenuCompleted("Delete", refids);
-                            }
-                        }
-                    });
-                }
-            }
-            else {
-                $.each(DpControlsList, function (i, dpObj) {
-                    if (name === 'Set as ' + dpObj.Label) {
-                        EbDialog("show",
                         {
                             Message: "Are you sure? Changes Affect only if Form is Saved.",
                             Buttons: {
@@ -148,20 +115,53 @@
                                 "No": { Background: "violet", Align: "right", FontColor: "white;" }
                             },
                             CallBack: function (name) {
-                                if (name === "Yes") {
-                                    if (refids.length > 0) {
-                                        dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
+                                if (name === "Yes" && refids.length > 0) {
+                                    let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
+
+                                    for (let i = 0; i < refids.length; i++) {
+                                        let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
+                                        if (index !== -1) {
+                                            uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
+                                        }
+                                        else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
+                                            uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
+                                        }
                                     }
+                                    if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
+                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                    }
+                                    imgup.deleteFromGallery(refids);
+                                    imgup.customMenuCompleted("Delete", refids);
                                 }
-                            }.bind()
+                            }
                         });
+                }
+            }
+            else {
+                $.each(DpControlsList, function (i, dpObj) {
+                    if (name === 'Set as ' + dpObj.Label) {
+                        EbDialog("show",
+                            {
+                                Message: "Are you sure? Changes Affect only if Form is Saved.",
+                                Buttons: {
+                                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                                },
+                                CallBack: function (name) {
+                                    if (name === "Yes") {
+                                        if (refids.length > 0) {
+                                            dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
+                                        }
+                                    }
+                                }.bind()
+                            });
                     }
                 });
             }
 
         }.bind(this, ctrlOpts.DpControlsList);
 
-        
+
     };
 
     //edit by amal for signature pad
@@ -1263,7 +1263,7 @@
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
-        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts});        
+        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts });
         //$('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
         //    trigger: 'hover',
         //    html: true,
@@ -1308,13 +1308,13 @@
     this.ProvisionLocation = function (ctrl, ctrlopts) {
         console.log('init ProvisionLocation');
 
-        $.each(ctrl.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
-                if (c)
-                    obj.Control = c;
-            }
-        }.bind(this));
+        //$.each(ctrl.Fields.$values, function (i, obj) {
+        //    if (obj.ControlName !== '') {
+        //        let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
+        //        if (c)
+        //            obj.Control = c;
+        //    }
+        //}.bind(this));
     };
 
     this.DisplayPicture = function (ctrl, ctrlopts) {
@@ -1422,7 +1422,7 @@
         if (ctrl.HideInputIcon)
             $input.siblings(".input-group-addon").hide();
 
-       
+
 
         if (ctrl.InputMode == 1) {
             $input.inputmask({
@@ -1691,12 +1691,12 @@
     }
 
     this.TagInput = function (ctrl) {
-        var $ctrl = $("#" + ctrl.EbSid_CtxId +'_tagId');
-        if (ctrl.AutoSuggestion === true) {           
+        var $ctrl = $("#" + ctrl.EbSid_CtxId + '_tagId');
+        if (ctrl.AutoSuggestion === true) {
             var BloodhoundEngine = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.whitespace,
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
-                local: ctrl.Suggestions.$values                    
+                local: ctrl.Suggestions.$values
             });
             BloodhoundEngine.initialize();
             $ctrl.tagsinput({
@@ -1799,7 +1799,7 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            onlyCountries: (ctrl.CountriesList.length>0)?ctrl.CountriesList.split(","):[],
+            onlyCountries: (ctrl.CountriesList.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,

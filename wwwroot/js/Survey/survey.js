@@ -382,7 +382,7 @@
     };
 
     this.PGobj = new Eb_PropertyGrid({
-        id: "pgWraper",
+        id: "Qpgdiv",
         wc: this.wc,
         cid: this.cid,
         $extCont: $(".QpgWrap"),
@@ -391,10 +391,10 @@
     });
 
 
-    this.pmHide = function () {
-        //setTimeout(function () {
-        //    $('.popmenu').hide(100);
-        //}, 50);
+    this.pmHide = function (e) {
+        setTimeout(function () {
+                $('.popmenu').hide(100);
+        }, 100);
     }
 
     this.addPMAns = function () {
@@ -408,11 +408,9 @@
 
     this.addAnsPopMenu = function () {
         let menuHTML = '';
-        let ansCtrls = Object.keys(EbObjects);
+        let ansCtrls = eb_ACtrlsNames;
         for (let i = 0; i < ansCtrls.length; i++) {
             let obj = new EbObjects[ansCtrls[i]](i);
-            if (obj.ObjType === "RadioOption" || obj.ObjType === "Questionnaire" )
-                continue;
             menuHTML += `<div class="pmenu-icon-cont" eb-type="${obj.ObjType}" title="${obj.ToolNameAlias}">${obj.ToolIconHtml}</div>`;
         };
         $('.popmenu').append(`<div class='pm-arrow'></div>`);

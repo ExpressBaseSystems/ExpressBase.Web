@@ -770,7 +770,7 @@
                     newo.Type = config.Type;
                     ctrl.Fields.$values.push(newo);
                 });
-                EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
+                //EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
             }.bind(this, _ctrl)
         });
     };

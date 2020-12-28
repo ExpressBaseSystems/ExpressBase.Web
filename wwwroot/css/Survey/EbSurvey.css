@@ -158,12 +158,17 @@
 .qs-cont {
 }
 
-.q-type-container, .q-container {
+.q-container {
     height: 100%;
     /*border: 1px solid #ccc;*/
 }
 
-.q-type-container {
+.q-type-container { /*old*/
+    height: 100%;
+    /*border: 1px solid #ccc;*/
+}
+
+.q-type-container { /*old*/
     height: calc(100% - 16px);
     display: flex;
     flex-direction: column;
@@ -174,7 +179,7 @@
     overflow: hidden;
 }
 
-.question-label {
+.question-label { /*old*/
     padding: 5px;
     background-color: #e2e2e2;
 }
@@ -254,6 +259,7 @@
 .qst-ansctrl-wrap {
     padding: 12px;
     width: calc(100% - 47px);
+    overflow-y: auto;
 }
 
 .qst-ansctrl-wrap, .qst-inp {
@@ -357,7 +363,7 @@
     font-weight: 600;
 }
 
-.qst-type-label-cont, .qst-set-label-cont {
+.qst-type-label-cont, .qst-set-label-cont {/*old*/
     height: 50%;
 }
 

@@ -259,6 +259,7 @@
 .qst-ansctrl-wrap {
     padding: 12px;
     width: calc(100% - 47px);
+    overflow-y: auto;
 }
 
 .qst-ansctrl-wrap, .qst-inp {

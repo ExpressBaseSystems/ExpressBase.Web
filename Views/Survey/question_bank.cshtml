@@ -48,12 +48,15 @@
 @{
 
     EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.SurveyControl);
+    _toolBox.SetSuveyControlsRoles();
 
     <script>
     @Html.Raw(_toolBox.EbOnChangeUIfns);
     @Html.Raw(_toolBox.AllMetas);
     @Html.Raw(_toolBox.AllControlls);
     @Html.Raw(_toolBox.EbObjectTypes);
+    @Html.Raw(_toolBox.QCtrlsNames);
+    @Html.Raw(_toolBox.ACtrlsNames);
     </script>
 }
 
@@ -109,7 +112,6 @@
                                         <div class="qst-inp" contenteditable="true">question section</div>
                                         <div class="ansctrl-menu">
                                             <div class="q-menu-item qm-add"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                                            <div class="q-menu-item qm-clear"><i class="fa fa-refresh" aria-hidden="true"></i></div>
                                             <div class="q-menu-item qm-empty"><i class="fa fa-trash" aria-hidden="true"></i></div>
                                         </div>
                                     </div>
@@ -119,7 +121,6 @@
                                         </div>
                                         <div class="ansctrl-menu">
                                             <div tabindex="1" class="q-menu-item  qm-add-ans"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                                            <div class="q-menu-item qm-clear-ans"><i class="fa fa-refresh" aria-hidden="true"></i></div>
                                             <div class="q-menu-item qm-empty-ans"><i class="fa fa-trash" aria-hidden="true"></i></div>
                                         </div>
                                     </div>

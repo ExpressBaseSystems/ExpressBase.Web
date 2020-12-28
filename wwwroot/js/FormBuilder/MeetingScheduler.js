@@ -71,7 +71,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             }.bind(this),
             freeInput: false
         });
-        $('.tb-host').on('itemAdded', function (event) {
+        $('.tb-host').off('itemAdded').on('itemAdded', function (event) {
             let pos = event.target.closest('tr').getAttribute("data-id");
             //this.SlotList[pos].Hosts.push(event.item);
             for (i = 0; i < this.SlotList.length; i++) {
@@ -82,7 +82,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             this.MeetingScheduleObj.SlotList = this.SlotList;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $('.tb-attendee').on('itemAdded', function (event) {
+        $('.tb-attendee').off('itemAdded').on('itemAdded', function (event) {
             let pos = event.target.closest('tr').getAttribute("data-id");
             //this.SlotList[pos].Attendees.push(event.item);
             for (i = 0; i < this.SlotList.length; i++) {
@@ -93,7 +93,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             this.MeetingScheduleObj.SlotList = this.SlotList;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $('.tb-attendee').on('itemRemoved', function (event) {
+        $('.tb-attendee').off('itemRemoved').on('itemRemoved', function (event) {
             // event.item: contains the item
             let pos ;
             let _dataid = event.target.closest('tr').getAttribute("data-id");
@@ -110,7 +110,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
-        $('.tb-host').on('itemRemoved', function (event) {
+        $('.tb-host').off('itemRemoved').on('itemRemoved', function (event) {
             // event.item: contains the item
             //let pos = event.target.closest('tr').getAttribute("data-id");
             let pos;
@@ -200,6 +200,9 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         this.SlotList.push(SlotObj);
         if (this.Ctrl.SameHost) {
             this.SlotList[this.SlotList.length - 1].Hosts = this.SlotList[0].Hosts;
+        }
+        if (this.Ctrl.SameAttendee) {
+            this.SlotList[this.SlotList.length - 1].Attendees = this.SlotList[0].Attendees;
         }
     };
     this.AddSlotList();

@@ -452,8 +452,9 @@ class Setup {
                     });
                 });
                 $('#pick-multiple-slot').off('click').on('click', function () {
-                    let slots = $('#pick-slot').attr('data-id');
-                    $.post("../EbMeeting/PickSlot", { Slots: slot, myactionid: id }, function (data) {
+                    let SlotStr = $('#pick-slot').attr('data-id');
+                    var SlotsArr = SlotStr.split(',');
+                    $.post("../EbMeeting/PickMultipleSlot", { Slots: SlotsArr, myactionid: id }, function (data) {
                         let sts = JSON.parse(data);
                         if (sts.ResponseStatus) {
                             ebcontext.setup.modal.hide();

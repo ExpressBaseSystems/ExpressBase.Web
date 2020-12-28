@@ -382,7 +382,7 @@
     };
 
     this.PGobj = new Eb_PropertyGrid({
-        id: "pgWraper",
+        id: "Qpgdiv",
         wc: this.wc,
         cid: this.cid,
         $extCont: $(".QpgWrap"),

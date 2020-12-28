@@ -158,12 +158,17 @@
 .qs-cont {
 }
 
-.q-type-container, .q-container {
+.q-container {
     height: 100%;
     /*border: 1px solid #ccc;*/
 }
 
-.q-type-container {
+.q-type-container { /*old*/
+    height: 100%;
+    /*border: 1px solid #ccc;*/
+}
+
+.q-type-container { /*old*/
     height: calc(100% - 16px);
     display: flex;
     flex-direction: column;
@@ -174,7 +179,7 @@
     overflow: hidden;
 }
 
-.question-label {
+.question-label { /*old*/
     padding: 5px;
     background-color: #e2e2e2;
 }
@@ -357,7 +362,7 @@
     font-weight: 600;
 }
 
-.qst-type-label-cont, .qst-set-label-cont {
+.qst-type-label-cont, .qst-set-label-cont {/*old*/
     height: 50%;
 }
 

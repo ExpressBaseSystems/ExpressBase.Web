@@ -10,6 +10,12 @@
         bApnd = false;
     }
 }
+
+
+@*jith*@
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />
+
+
 <link href="~/css/Survey/EbSurvey.css" rel="stylesheet" />
 <link href="~/css/FormBuiderStyles.css" rel="stylesheet" />
 <link href="~/css/Eb.css" rel="stylesheet" />
@@ -18,14 +24,12 @@
 <link rel="stylesheet" type="text/css" href="~/css/LayoutCommon/bootstrap-datetimepicker.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/LayoutCommon/dragula.min.css" />
 <link rel="stylesheet" href="~/css/Bundles/codemirror.bundle.min.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/Eb.css" asp-append-version=@bApnd />
 <link href="~/css/EbControls/EbFupFormControl.css" asp-append-version=@bApnd rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
 
 
 <script src="~/js/Survey/survey.js" type="text/javascript"></script>
-<script type="text/javascript" src="~/js/FormBuilder/bootstrap-select.js " asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>
 @*<script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>*@
 <script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>
@@ -34,12 +38,13 @@
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.5/jquery.inputmask.min.js"></script>
+<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-select.min.js" asp-append-version=@bApnd></script>
 
 <script>var cm = new EbHeader().setName("Question Bank");</script>
 @{
     var Queries = ViewBag.Queries;
 }
-
+    
 @{
 
     EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.SurveyControl);
@@ -85,8 +90,8 @@
 
 <!-- Modal -->
 <div class="modal fade open-sans" id="questionModal" role="dialog">
-    <div class="modal-dialog modal-lg" style="width:70%">
-        <div class="modal-dialog modal-lg" style="width:70%">
+    <div class="modal-dialog modal-lg" style="width:85%">
+        <div class="modal-dialog modal-lg" style="width:95%">
             <div class="modal-content">
                 <div class="popmenu">
                 </div>
@@ -122,13 +127,8 @@
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 q-pg-cont">
-                            <div class="q-type-container">
-                                <div class="qst-set-label-cont">
-                                    <div class="question-label">Settings</div>
-                                    <div class="QpgWrap pd-5">
-                                        <div id="pgWraper"></div>
-                                    </div>
-                                </div>
+                            <div class="QpgWrap">
+                                <div id="Qpgdiv"></div>
                             </div>
                         </div>
                     </div>

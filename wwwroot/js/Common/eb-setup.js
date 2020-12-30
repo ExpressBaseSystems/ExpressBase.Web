@@ -452,7 +452,7 @@ class Setup {
                     });
                 });
                 $('#pick-multiple-slot').off('click').on('click', function () {
-                    let SlotStr = $('#pick-slot').attr('data-id');
+                    let SlotStr = $('#pick-multiple-slot').attr('data-id');
                     var SlotsArr = SlotStr.split(',');
                     $.post("../EbMeeting/PickMultipleSlot", { Slots: SlotsArr, myactionid: id }, function (data) {
                         let sts = JSON.parse(data);

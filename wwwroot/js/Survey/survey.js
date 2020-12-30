@@ -2,7 +2,8 @@
 
     this.rootContainerObj = null;
     this.formId = options.formId;
-    this.$QCtrlsCont = $('.ansctrl-inner');
+    this.$AnsCtrlsCont = $('.ansctrl-inner');
+    this.$QCtrlsCont = $('.qctrl-inner');
     this.$propGrid = $("#" + options.PGId);
 
 
@@ -17,7 +18,7 @@
     }
     if (this.EbObject === null) {
         this.rootContainerObj = new EbObjects["EbQuestionnaire"](this.formId);
-        this.$QCtrlsCont.attr('ebsid', this.rootContainerObj.EbSid);
+        this.$AnsCtrlsCont.attr('ebsid', this.rootContainerObj.EbSid);
         this.EbObject = this.rootContainerObj;
     }
 
@@ -52,11 +53,12 @@
         $(".qst-types-cont div[qtype='1']").click();
 
         this.addAnsPopMenu();
+        this.addQPopMenu();
 
-        $('#questionModal').off("click", '.qm-add-ans').on('click', '.qm-add-ans', this.addPMAns);
-        $('#questionModal').off("hover", '.qm-add-ans').on('hover', '.qm-add-ans', this.addPMAns);
-        $('#questionModal').off("blur", '.qm-add-ans').on('blur', '.qm-add-ans', this.pmHide);
-        $('#questionModal').off("click", '.pmenu-icon-cont').on('click', '.pmenu-icon-cont', this.AddAnsCtrl);
+        $('#questionModal').off("click", '.qm-add').on('click', '.qm-add', this.addPMAns);
+        $('#questionModal').off("blur", '.qm-add').on('blur', '.qm-add', this.pmHide);
+        $('#questionModal').off("click", '.apopmenu .pmenu-icon-cont').on('click', '.apopmenu .pmenu-icon-cont', this.AddAnsCtrl);
+        $('#questionModal').off("click", '.qpopmenu .pmenu-icon-cont').on('click', '.qpopmenu .pmenu-icon-cont', this.AddQCtrl);
     };
 
     this.AddAnsCtrl = function () {
@@ -66,7 +68,22 @@
         let ebsid = type + ++(this.controlCounters[type + "Counter"]);
         let ctrlObj = new EbObjects["Eb" + type](ebsid);
         let $ctrl = ctrlObj.$Control;
-        $('.ansctrl-inner').append($ctrl);
+        this.$AnsCtrlsCont.append($ctrl);
+        this.dropedCtrlInit($ctrl, type, ebsid);
+        ctrlObj.Label = ebsid + " Label";
+        ctrlObj.HelpText = "";
+        this.rootContainerObj.Controls.$values.push(ctrlObj);
+        $ctrl.focus();
+    }.bind(this);
+
+    this.AddQCtrl = function () {
+        let $el = $(event.target).closest('.pmenu-icon-cont');
+
+        let type = $el.attr("eb-type").trim();
+        let ebsid = type + ++(this.controlCounters[type + "Counter"]);
+        let ctrlObj = new EbObjects["Eb" + type](ebsid);
+        let $ctrl = ctrlObj.$Control;
+        this.$QCtrlsCont.append($ctrl);
         this.dropedCtrlInit($ctrl, type, ebsid);
         ctrlObj.Label = ebsid + " Label";
         ctrlObj.HelpText = "";
@@ -392,18 +409,21 @@
 
 
     this.pmHide = function (e) {
+        let $e = $(event.target).closest('.qm-add');
+        let $pm = $($e.attr('pmtarget'));
         setTimeout(function () {
-                $('.popmenu').hide(100);
+            $pm.hide(100);
         }, 100);
     }
 
     this.addPMAns = function () {
-        let $e = $(event.target).closest('.qm-add-ans');
-        $('.popmenu').show(100);
+        let $e = $(event.target).closest('.qm-add');
+        let $pm = $($e.attr('pmtarget'));
+        $pm.show(100);
         let TOP = $e.offset().top;
         let LEFT = $e.offset().left + $e.width() + 15;
-        $('.popmenu').css('right', 'unset');
-        $('.popmenu').offset({ top: TOP, left: LEFT });
+        $pm.css('right', 'unset');
+        $pm.offset({ top: TOP, left: LEFT });
     }
 
     this.addAnsPopMenu = function () {
@@ -413,8 +433,19 @@
             let obj = new EbObjects[ansCtrls[i]](i);
             menuHTML += `<div class="pmenu-icon-cont" eb-type="${obj.ObjType}" title="${obj.ToolNameAlias}">${obj.ToolIconHtml}</div>`;
         };
-        $('.popmenu').append(`<div class='pm-arrow'></div>`);
-        $('.popmenu').append(menuHTML);
+        $('.apopmenu').append(`<div class='pm-arrow'></div>`);
+        $('.apopmenu').append(menuHTML);
+    }.bind(this);
+
+    this.addQPopMenu = function () {
+        let menuHTML = '';
+        let ansCtrls = eb_QCtrlsNames;
+        for (let i = 0; i < ansCtrls.length; i++) {
+            let obj = new EbObjects[ansCtrls[i]](i);
+            menuHTML += `<div class="pmenu-icon-cont" eb-type="${obj.ObjType}" title="${obj.ToolNameAlias}">${obj.ToolIconHtml}</div>`;
+        };
+        $('.qpopmenu').append(`<div class='pm-arrow'></div>`);
+        $('.qpopmenu').append(menuHTML);
     }.bind(this);
 
     this.ScoreChanged = function (e) {

@@ -44,7 +44,7 @@
 @{
     var Queries = ViewBag.Queries;
 }
-    
+
 @{
 
     EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.SurveyControl);
@@ -96,8 +96,8 @@
     <div class="modal-dialog modal-lg" style="width:85%">
         <div class="modal-dialog modal-lg" style="width:95%">
             <div class="modal-content">
-                <div class="popmenu">
-                </div>
+                <div class="apopmenu popmenu"></div>
+                <div class="qpopmenu popmenu"></div>
                 <div class="modal-header eb_modalheader relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">New Question</h4>
@@ -109,18 +109,22 @@
                             <div class="q-container">
                                 <div tabindex="1" class="qs-inner-cont">
                                     <div class="qs-inner-wrap col-md-12 pd-0">
-                                        <div class="qst-inp" contenteditable="true">question section</div>
+                                        <div class="qst-qctrl-wrap">
+                                            <div class="qst-inp" contenteditable="true">question section</div>
+                                            <div class="qctrl-inner ebcont-ctrl"></div>
+                                        </div>
+
                                         <div class="ansctrl-menu">
-                                            <div class="q-menu-item qm-add"><i class="fa fa-plus" aria-hidden="true"></i></div>
+                                            <div tabindex="1" class="q-menu-item qm-add qm-add-q" pmtarget=".qpopmenu"><i class="fa fa-plus" aria-hidden="true"></i></div>
                                             <div class="q-menu-item qm-empty"><i class="fa fa-trash" aria-hidden="true"></i></div>
                                         </div>
                                     </div>
                                     <div tabindex="1" class="qst-ansctrl-cont col-md-12 pd-0">
                                         <div class="qst-ansctrl-wrap">
-                                            <div class="ansctrl-inner ebcont-ctrl">answer control section</div>
+                                            <div class="ansctrl-inner ebcont-ctrl"></div>
                                         </div>
                                         <div class="ansctrl-menu">
-                                            <div tabindex="1" class="q-menu-item  qm-add-ans"><i class="fa fa-plus" aria-hidden="true"></i></div>
+                                            <div tabindex="1" class="q-menu-item qm-add qm-add-ans" pmtarget=".apopmenu"><i class="fa fa-plus" aria-hidden="true"></i></div>
                                             <div class="q-menu-item qm-empty-ans"><i class="fa fa-trash" aria-hidden="true"></i></div>
                                         </div>
                                     </div>

@@ -1042,8 +1042,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 
 
-.Eb-ctrlContainer[eb-readonly="true"] .dg-th {
-    background-color: #fafafa;
+
+.Eb-ctrlContainer[eb-readonly="true"] .Dg_head th,
+.Eb-ctrlContainer[eb-readonly="true"] .dgtr > td,
+[eb-form="true"][mode="view"] .Dg_head th,
+[eb-form="true"][mode="view"] .dgtr > td {
     color: #555;
 }
 

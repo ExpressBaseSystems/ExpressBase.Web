@@ -485,6 +485,12 @@ class Setup {
                         }
                     });
                 });
+                $(".unblocked-slot").off('click').on('click', function (e   ) {
+                    let _id = e.target.getAttribute('id');
+                    $('#pick-slot').attr("data-id", _id);
+                    $(".unblocked-slot").removeClass('selected');
+                    $(e.target).addClass('selected');
+                });
             }
             else {
                 EbPopBox("show", {

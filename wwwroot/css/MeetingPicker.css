@@ -431,6 +431,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
 
     .mr .slots .slots-div {
         padding: 5px 11px;
+        margin: 5px;
         border: solid 1px #c1c1c1;
         border-radius: 3px;
     }
@@ -440,9 +441,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
         }
 
     .mr .slots .unblocked-slot:hover {
-        background-color: #00e0ea;
+        background-color: #00ff437a;
         cursor: pointer;
-        border: solid 1px #00e0ea;
+        border: solid 1px #00ff437a;
     }
 
     .mr .slots .blocked-slot {
@@ -451,9 +452,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     }
 
     .mr .slots .selected {
-        background-color: #6fa9d2;
+        background-color: #18ca03;
         cursor: pointer;
-        border: solid 1px #6fa9d2;
+        border: solid 1px #18ca03;
         color: white;
     }
 

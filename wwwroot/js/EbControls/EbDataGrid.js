@@ -850,7 +850,7 @@
         {
             $.each(this.objectMODEL[rowid], function (i, ctrl) {
                 let $ctrl = $("#" + ctrl.EbSid_CtxId);
-                if (!this.isRequiredOK(ctrl) || !this.formRenderer.FRC.sysValidationsOK(ctrl)) {
+                if (!this.isRequiredOK(ctrl) || !this.formRenderer.FRC.isValidationsOK(ctrl)|| !this.formRenderer.FRC.sysValidationsOK(ctrl)) {
                     required_valid_flag = false;
                     if (!$notOk1stCtrl)
                         $notOk1stCtrl = $ctrl;

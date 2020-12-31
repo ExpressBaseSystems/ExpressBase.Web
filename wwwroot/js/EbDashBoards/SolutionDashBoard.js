@@ -19,6 +19,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/expert_texting.png' align='middle' style='height:26px' />",
         "TextLocal": "<img class='img- responsive image-vender' src='../images/textlocal_logo.png' style='width:65%' />",
+        "SmsBuddy": "<img class='img- responsive image-vender' src='../images/smsbuddy.png' style='width:75%' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio_l.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
@@ -351,6 +352,24 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             $("#textLocalConnection_loder").EbLoader("hide");
             EbMessage("show", { Message: "Connection Changed Successfully" });
             $("#TextLocalConnectionEdit").modal("toggle");
+        }.bind(this));
+    };
+
+    this.smsBuddyAccountSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddSmsBuddy",
+            data: postData,
+            beforeSend: function () {
+                $("#smsBuddyConnection_loder").EbLoader("show", { maskItem: { Id: "#smsbuddy_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#smsBuddyConnection_loder").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Changed Successfully" });
+            $("#SmsBuddyConnectionEdit").modal("toggle");
         }.bind(this));
     };
 
@@ -888,6 +907,20 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+    this.SmsBuddyinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#SmsBuddyConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#SmsBuddyInputNickname').val(temp[obj].NickName);
+                $('#SmsBuddyInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#SmsBuddyInputApi').val(temp1["ApiKey"]);
+                $('#SmsBuddyInputFrom').val(temp1["From"]);
+                $('#IsSSL').prop('checked', temp1["IsSSL"]);
+            }
+        }
+    };
     this.GoogleMapinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#MapConnectionEdit').modal('toggle');
@@ -1108,7 +1141,8 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 var SMS = [
                     "ExpertTexting",
                     "Twilio",
-                    "TextLocal"
+                    "TextLocal",
+                    "SmsBuddy"
                 ];
                 for (let j = 0; j < SMS.length; j++)
                     if (temp[SMS[j]] !== undefined) {
@@ -1194,6 +1228,8 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             html.push('<img class="img-responsive" src="../images/expert_exting.png" style="height: 35px;" />');
         } else if (type === "TextLocal") {
             html.push('<img class="img-responsive" src="../images/textlocal_logo.png" style="height: 35px;" />');
+        } else if (type === "SmsBuddy") {
+            html.push('<img class="img-responsive" src="../images/smsbuddy.png" style="height: 35px;" />');
         }
         return html.join("");
     };
@@ -1215,6 +1251,8 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             $('#ExpertTextingConnectionEdit').modal('toggle');
         } else if (which === "TextLocal") {
             $('#TextLocalConnectionEdit').modal('toggle');
+        } else if (which === "SmsBuddy") {
+            $('#SmsBuddyConnectionEdit').modal('toggle');
         }
     };
 
@@ -1417,6 +1455,11 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('TextLocaledit')) {
+                    options.items.SMS = { name: "Set as SMS" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('SmsBuddyedit')) {
                     options.items.SMS = { name: "Set as SMS" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
@@ -2254,6 +2297,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         $("#UnifonicConnectionSubmit").on("submit", this.UnifonicAccountSubmit.bind(this));
         $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
         $("#TextLocalConnectionSubmit").on("submit", this.textLocalAccountSubmit.bind(this));
+        $("#SmsBuddyConnectionSubmit").on("submit", this.smsBuddyAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));

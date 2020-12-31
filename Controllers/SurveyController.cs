@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;
@@ -46,6 +47,13 @@ namespace ExpressBase.Web.Controllers
             SurveyQuesResponse resp = this.ServiceClient.Post(new SurveyQuesRequest {
                 Query = o
             });
+            return resp;
+        }
+
+        public SaveQuestionResponse SaveQuestion(string EbQuestion)
+        {
+            var o = JsonConvert.DeserializeObject<EbQuestion>(EbQuestion);
+            SaveQuestionResponse resp = this.ServiceClient.Post(new SaveQuestionRequest { Query = o });
             return resp;
         }
 

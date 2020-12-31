@@ -17,7 +17,10 @@
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
-        this.rootContainerObj = new EbObjects["EbQuestionnaire"](this.formId);
+        this.rootContainerObj = new EbObjects["EbQuestion"](this.formId);
+
+        Proc(this.rootContainerObj.QSec, this.rootContainerObj.QSec);
+        Proc(this.rootContainerObj.ASec, this.rootContainerObj.ASec);
         this.$AnsCtrlsCont.attr('ebsid', this.rootContainerObj.EbSid);
         this.EbObject = this.rootContainerObj;
     }
@@ -61,21 +64,6 @@
         $('#questionModal').off("click", '.qpopmenu .pmenu-icon-cont').on('click', '.qpopmenu .pmenu-icon-cont', this.AddQCtrl);
     };
 
-    this.AddAnsCtrl = function () {
-        let $el = $(event.target).closest('.pmenu-icon-cont');
-
-        let type = $el.attr("eb-type").trim();
-        let ebsid = type + ++(this.controlCounters[type + "Counter"]);
-        let ctrlObj = new EbObjects["Eb" + type](ebsid);
-        let $ctrl = ctrlObj.$Control;
-        this.$AnsCtrlsCont.append($ctrl);
-        this.dropedCtrlInit($ctrl, type, ebsid);
-        ctrlObj.Label = ebsid + " Label";
-        ctrlObj.HelpText = "";
-        this.rootContainerObj.Controls.$values.push(ctrlObj);
-        $ctrl.focus();
-    }.bind(this);
-
     this.AddQCtrl = function () {
         let $el = $(event.target).closest('.pmenu-icon-cont');
 
@@ -83,12 +71,33 @@
         let ebsid = type + ++(this.controlCounters[type + "Counter"]);
         let ctrlObj = new EbObjects["Eb" + type](ebsid);
         let $ctrl = ctrlObj.$Control;
+        $ctrl.attr("childof", "QSec");
+        ctrlObj.childof = "QSec";
         this.$QCtrlsCont.append($ctrl);
         this.dropedCtrlInit($ctrl, type, ebsid);
         ctrlObj.Label = ebsid + " Label";
         ctrlObj.HelpText = "";
-        this.rootContainerObj.Controls.$values.push(ctrlObj);
+        this.rootContainerObj.QSec.Controls.$values.push(ctrlObj);
         $ctrl.focus();
+        this.updateControlUI(ebsid);
+    }.bind(this);
+
+    this.AddAnsCtrl = function () {
+        let $el = $(event.target).closest('.pmenu-icon-cont');
+
+        let type = $el.attr("eb-type").trim();
+        let ebsid = type + ++(this.controlCounters[type + "Counter"]);
+        let ctrlObj = new EbObjects["Eb" + type](ebsid);
+        let $ctrl = ctrlObj.$Control;
+        $ctrl.attr("childof", "ASec");
+        ctrlObj.childof = "ASec";
+        this.$AnsCtrlsCont.append($ctrl);
+        this.dropedCtrlInit($ctrl, type, ebsid);
+        ctrlObj.Label = ebsid + " Label";
+        ctrlObj.HelpText = "";
+        this.rootContainerObj.ASec.Controls.$values.push(ctrlObj);
+        $ctrl.focus();
+        this.updateControlUI(ebsid);
     }.bind(this);
 
     this.dropedCtrlInit = function ($ctrl, type, id) {
@@ -112,7 +121,8 @@
         else
             this.curControl = $e.closest(".Eb-ctrlContainer");
         let ebsid = this.curControl.attr("ebsid");
-        this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
+        let ctrl = ($e.attr("childof") === "QSec") ? this.rootContainerObj.QSec.Controls.GetByName(ebsid) : this.rootContainerObj.ASec.Controls.GetByName(ebsid);
+        this.CreatePG(ctrl);
         //  this.PGobj.ReadOnly();
     }.bind(this);
 
@@ -379,7 +389,7 @@
     };
 
     this.updateControlUI = function (ebsid, type) {
-        let obj = this.rootContainerObj.Controls.GetByName(ebsid);
+        let obj = ($(`#cont_${ebsid}`).attr("childof") === "QSec") ? this.rootContainerObj.QSec.Controls.GetByName(ebsid) : this.rootContainerObj.ASec.Controls.GetByName(ebsid);
         let _type = obj.ObjType;
         $.each(obj, function (propName, propVal) {
             let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
@@ -388,13 +398,13 @@
         }.bind(this));
     };
 
-    this.updateUIProp = function (propName, id, type) {
-        let obj = this.rootContainerObj.Controls.GetByName(id);
+    this.updateUIProp = function (propName, ebsid, type) {
+        let obj = ($(`#cont_${ebsid}`).attr("childof") === "QSec") ? this.rootContainerObj.QSec.Controls.GetByName(ebsid) : this.rootContainerObj.ASec.Controls.GetByName(ebsid);
         let NSS = getObjByval(AllMetas["Eb" + type], "name", propName).UIChangefn;
         if (NSS) {
             let NS1 = NSS.split(".")[0];
             let NS2 = NSS.split(".")[1];
-            EbOnChangeUIfns[NS1][NS2](id, obj);
+            EbOnChangeUIfns[NS1][NS2](ebsid, obj);
         }
     };
 
@@ -406,6 +416,30 @@
         noStickButton: true,
         isDraggable: true
     });
+
+    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
+        if (CurProp === "TableName" && PropsObj.IsContainer) {
+            let TblName = PropsObj.TableName;
+            PropsObj.isTableNameFromParent = false;
+            this.updateChildTablesName(PropsObj, TblName);
+        }
+        let Refid = PropsObj[CurProp];
+        let ObjType = PropsObj.ObjType;
+        if (ObjType === "DataObject" && CurProp === "DataSource") {
+            $.LoadingOverlay('show');
+            $.ajax({
+                type: "POST",
+                url: "../DS/GetColumns4Control",
+                data: { DataSourceRefId: Refid },
+                success: function (Columns) {
+                    PropsObj["Columns"] = JSON.parse(Columns);
+                    $.LoadingOverlay('hide');
+                    this.updateControlUI(PropsObj.EbSid_CtxId);
+                }.bind(this)
+            });
+        }
+
+    }.bind(this);
 
 
     this.pmHide = function (e) {
@@ -730,6 +764,27 @@
                 }
             }.bind(this));
         }
+    };
+
+    this.saveQuestion = function () {
+        $.ajax({
+            url: "../Survey/SaveQues",
+            type: "POST",
+            data: { survey: JSON.stringify(this.rootContainerObj) },
+            beforeSend: function () {
+                $("#survey_menu_load").EbLoader("show");
+            }
+        }).done(function (result) {
+            if (result.status) {
+                $("#survey_menu_load").EbLoader("hide");
+                if (context === "QuestionBank")
+                    location.reload();
+                else
+                    this.appendQues(result.quesid);
+
+                $("#questionModal").modal("toggle");
+            }
+        }.bind(this));
     };
 
     this.appendQues = function (qid) {

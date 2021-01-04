@@ -16,7 +16,7 @@
     //{ Name: "email", Type: "16", Value: "amalkdevs1355@gmail.com" }, { Name: "emirates", Type: "16", Value: "Fujairah" }
     var datao = {
         DataSourceRefId: "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3569-2662-3569",
-        Params: [{ Name: "eb_loc_id", Type: "11", Value: "1" }],
+        Params: [{ Name: "id", Type: "11", Value: "1" }],
         SortOrder: [{ Name: "eb_created_at", Order: 0 }],
         SearchColumns: [{ Name: "emirates", Type: "16", Value: "Fujairah" }],
         Limit: 30,
@@ -29,13 +29,13 @@
             url: "/api/v2/data/visualization",
             type: "GET",
             data: {
-                refid: datao.DataSourceRefId,
-                limit: datao.Limit,
-                offset: datao.Offset,
-                parameters: datao.Params,
-                sort: datao.SortOrder,
-                search: datao.SearchColumns,
-                is_powerselect: datao.IsPowerSelect,
+                refid: "ebdb09y5foo8dp20201201082533-ebdb09y5foo8dp20201201082533-13-17-17-17-17",//datao.DataSourceRefId,
+                //limit: datao.Limit,
+                //offset: datao.Offset,
+                param: datao.Params,
+                //sort_order: datao.SortOrder,
+                //search: datao.SearchColumns,
+                //is_powerselect: datao.IsPowerSelect,
             },
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("bToken", getTok());

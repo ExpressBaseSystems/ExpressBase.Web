@@ -38,7 +38,8 @@
     this.Queries = JSON.parse(ques) || null;
 
     this.init = function () {
-        $("#questionModal").on('show.bs.modal', function () {
+        this.$Qmodal = $("#questionModal");
+        this.$Qmodal.on('show.bs.modal', function () {
             $(`textarea[name="Question"]`).val("");
             $(".qst-opt-cont").empty();
         });
@@ -54,6 +55,11 @@
         $(`body`).off("change").on("change", ".qst-choice-number", this.ScoreChanged.bind(this));
         $("#userInputType").off("change").on("change", this.changeUIType.bind(this));
         $(".qst-types-cont div[qtype='1']").click();
+
+
+        this.$Qmodal.on("dblclick", ".eb-label-editable", this.ctrlLblDblClick.bind(this));
+        this.$Qmodal.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
+        this.$Qmodal.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));
 
         this.addAnsPopMenu();
         this.addQPopMenu();
@@ -493,7 +499,7 @@
 
         if (this.Survey.Choices[0].Score > 0)
             this.scoreCheckbox = true;
-        $("#questionModal").modal("show");
+        this.$Qmodal.modal("show");
         $(`textarea[name="Question"]`).val(this.Survey.Question);
         $(".qst-opt-cont").empty();
         if (this.qstType === 1 || this.qstType === 2) {
@@ -613,6 +619,81 @@
                 $(e.target).closest(".rating_input").find(".rating_star_control span:last-child").remove();
         }
         this.RatingC = e.target.value;
+    };
+
+    this.ctrlLblDblClick = function (e) {
+        let $e = $(event.target);
+        $e.hide();
+        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
+            $e.closest("li").find(".ebtab-close-btn").hide();
+            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+        }
+        else if ($e.hasClass('grid-col-title')) {
+            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+        }
+        else {
+            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+        }
+    };
+
+    this.lbltxtbBlur = function (e) {
+        $e = $(event.target);
+        $e.hide();
+
+        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
+            $e.closest('li').find(".eb-label-editable").show();
+            $e.siblings(".ebtab-close-btn").show();
+        }
+        else if ($e.siblings('.grid-col-title').length === 1) {
+            $e.siblings('.grid-col-title').text($e.val()).show().select();
+        }
+        else
+            $e.siblings("[ui-label]").show();
+    };
+
+    this.lbltxtbKeyUp = function (e) {
+
+        let $e = $(event.target);
+        let count = $e.val().length;
+        let width = "15px";
+        //if (count !== 0)
+        //    width = (count * 6.4 + 8) + "px";
+
+        //$e.css("width", width);
+
+        let val = $e.val();
+        let $colTile = $e.closest(".Eb-ctrlContainer");
+        let ebsid = $colTile.attr("ebsid");
+        let ctrlType = $colTile.attr("eb-type");
+        let ctrlMeta = AllMetas["Eb" + ctrlType];
+        if (ctrlType === "TabControl" || ctrlType === "WizardControl") {
+            ebsid = $e.closest("li").attr("ebsid");
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            let paneMeta = AllMetas["Eb" + ctrl.ObjType];
+            ctrl["Title"] = val;
+            this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
+        }
+        if (ctrlType === "DataGrid") {
+            if ($e.closest("th").length === 1)
+                ebsid = $e.closest("th").attr("ebsid");// for TH label
+            else
+                ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");// for DG label
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            let ColMeta = AllMetas["Eb" + ctrl.ObjType];
+            ctrl["Title"] = val;
+
+            if ($e.closest("th").length === 1)
+                this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);// for TH label
+            else
+                this.PGobj.changePropertyValue("Label", val);// for DG label
+        }
+        else {
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            if (this.PGobj.CurObj !== ctrl)
+                this.PGobj.setObject(ctrl, ctrlMeta);
+            this.PGobj.changePropertyValue("Label", val);
+        }
+
     };
 
     this.appendUserInput = function (chid) {
@@ -760,7 +841,7 @@
                     else
                         this.appendQues(result.quesid);
 
-                    $("#questionModal").modal("toggle");
+                    this.$Qmodal.modal("toggle");
                 }
             }.bind(this));
         }
@@ -782,7 +863,7 @@
                 else
                     this.appendQues(result.quesid);
 
-                $("#questionModal").modal("toggle");
+                this.$Qmodal.modal("toggle");
             }
         }.bind(this));
     };

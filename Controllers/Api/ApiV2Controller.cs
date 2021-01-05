@@ -5,6 +5,7 @@ using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
+using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
@@ -14,7 +15,7 @@ namespace ExpressBase.Web.Controllers
     [Route("api/v2")]
     public class ApiV2Controller : EbBaseIntApiController
     {
-        public ApiV2Controller(IServiceClient _client) : base(_client) { }
+        public ApiV2Controller(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         [Route("data/visualization")]
         [EbApiAuthGaurd]

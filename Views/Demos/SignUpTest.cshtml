@@ -16,7 +16,7 @@
     //{ Name: "email", Type: "16", Value: "amalkdevs1355@gmail.com" }, { Name: "emirates", Type: "16", Value: "Fujairah" }
     var datao = {
         DataSourceRefId: "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3569-2662-3569",
-        Params: [{ Name: "id", Type: "11", Value: "1" }],
+        Params: [{ Name: "id", Type: "11", Value: "10" }],
         SortOrder: [{ Name: "eb_created_at", Order: 0 }],
         SearchColumns: [{ Name: "emirates", Type: "16", Value: "Fujairah" }],
         Limit: 30,
@@ -32,7 +32,7 @@
                 refid: "ebdb09y5foo8dp20201201082533-ebdb09y5foo8dp20201201082533-13-17-17-17-17",//datao.DataSourceRefId,
                 //limit: datao.Limit,
                 //offset: datao.Offset,
-                param: datao.Params,
+                param: JSON.stringify(datao.Params),
                 //sort_order: datao.SortOrder,
                 //search: datao.SearchColumns,
                 //is_powerselect: datao.IsPowerSelect,
@@ -42,7 +42,7 @@
                 xhr.setRequestHeader("rToken", getrToken());
             }
         }).done(function (data) {
-
+            console.log(data);
         });
     }
 

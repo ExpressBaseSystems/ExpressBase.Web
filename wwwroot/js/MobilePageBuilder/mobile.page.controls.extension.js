@@ -551,6 +551,12 @@
                     }.bind(this));
                 }
             },
+            sortable: function () {
+                $(`#${this.EbSid} .eb_mob_container_inner`).sortable({
+                    axis: "y",
+                    appendTo: document.body
+                });
+            }
         },
         EbMobileApprovalButton: {
             __FormIdCopy: null,

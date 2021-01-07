@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
 
         public SaveQuestionResponse SaveQuestion(string EbQuestion)
         {
-            var o = JsonConvert.DeserializeObject<EbQuestion>(EbQuestion);
+            EbQuestion o = JsonConvert.DeserializeObject<EbQuestion>(EbQuestion);
             SaveQuestionResponse resp = this.ServiceClient.Post(new SaveQuestionRequest { Query = o });
             return resp;
         }

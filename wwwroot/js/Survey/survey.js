@@ -51,7 +51,7 @@
         this.scoreCheckbox = $("#scoreCheck").prop("checked");
 
         $(`textarea[name="Question"]`).on("change", function (e) { this.Survey.Question = e.target.value; }.bind(this));
-        $("#submit_question").off("click").on("click", this.newQuesSubmit.bind(this));
+        $("#submit_question").off("click").on("click", this.saveQuestion.bind(this));
         $(`body`).off("change").on("change", ".qst-choice-number", this.ScoreChanged.bind(this));
         $("#userInputType").off("change").on("change", this.changeUIType.bind(this));
         $(".qst-types-cont div[qtype='1']").click();
@@ -68,6 +68,20 @@
         $('#questionModal').off("blur", '.qm-add').on('blur', '.qm-add', this.pmHide);
         $('#questionModal').off("click", '.apopmenu .pmenu-icon-cont').on('click', '.apopmenu .pmenu-icon-cont', this.AddAnsCtrl);
         $('#questionModal').off("click", '.qpopmenu .pmenu-icon-cont').on('click', '.qpopmenu .pmenu-icon-cont', this.AddQCtrl);
+        this.InitDragula();
+    };
+    this.InitDragula = function () {
+        this.DraggableConts = [document.querySelectorAll('.ansctrl-inner')[0], document.querySelectorAll('.qctrl-inner')[0]];
+        this.drake = new dragula(this.DraggableConts, {
+            revertOnSpill: true,
+            copy: function (el, source) { return (source.className.includes('tool-sec-cont') || source.className.includes('Dt-Rdr-col-cont')); },
+            copySortSource: true,
+            moves: this.movesfn.bind(this),
+            accepts: this.acceptFn.bind(this)
+        });
+        this.drake.on("drop", this.onDropFn.bind(this));
+        this.drake.on("drag", this.onDragFn.bind(this));
+        this.drake.on("dragend", this.onDragendFn.bind(this));
     };
 
     this.AddQCtrl = function () {
@@ -106,11 +120,11 @@
         this.updateControlUI(ebsid);
     }.bind(this);
 
-    this.dropedCtrlInit = function ($ctrl, type, id) {
+    this.dropedCtrlInit = function ($ctrl, type, ebSid) {
         $ctrl.attr("tabindex", "1");
         this.ctrlOnClickBinder($ctrl, type);
         $ctrl.on("focus", this.controlOnFocus.bind(this));
-        $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
+        $ctrl.attr("id", "cont_" + ebSid).attr("ebsid", ebSid);
         $ctrl.attr("eb-type", type);
     };
 
@@ -362,14 +376,6 @@
         //}
 
     };
-
-    this.drake = new dragula(this.DraggableConts, {
-        revertOnSpill: true,
-        copy: function (el, source) { return (source.className.includes('tool-sec-cont') || source.className.includes('Dt-Rdr-col-cont')); },
-        copySortSource: true,
-        moves: this.movesfn.bind(this),
-        accepts: this.acceptFn.bind(this)
-    });
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
         if (type === "TabControl")
@@ -771,87 +777,13 @@
                     $(obj).append(`<div class="col-md-1 pd-0 q-opt-input-cont"><input type="checkbox" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
             });
         }
-    }
-
-    this.newQuesSubmit = function (e) {
-        this.Survey.Choices.length = 0;
-        if (this.qstType === 1 || this.qstType === 2) {
-            $(".qst-opt-cont").find(`input[name='Choices']`).each(function (i, ob) {
-                var o = new Object();
-                o.EbDel = eval($(ob).attr("ebdel"));
-                o.ChoiceId = $(ob).attr("choiceid");
-                o.Choice = ob.value;
-                o.Score = $(ob).attr("Score");
-                o.IsNew = eval($(ob).attr("isnew"));
-                this.Survey.Choices.push(o);
-            }.bind(this));
-        }
-        else if (this.qstType === 3) {
-            let rating = $(".qst-opt-cont .rating_input").find(`input[name='RatingCount']`);
-            var o = new Object();
-            o.ChoiceId = eval(rating.attr("choiceid"));
-            o.Choice = rating.val();
-            o.Score = 0;
-            o.IsNew = eval(rating.attr("isnew"));
-            this.Survey.Choices.push(o);
-        }
-        else if (this.qstType === 4) {
-            let Ui = $(".qst-opt-cont .user-input-cont");
-            var o = new Object();
-            o.ChoiceId = eval(Ui.attr("choiceid"));
-            o.Choice = this.UIType;
-            o.Score = 0;
-            o.IsNew = true;
-            this.Survey.Choices.push(o);
-        }
-
-        this.send();
-    };
-
-    this.ValidateQues = function () {
-        let f = true;
-        if (this.Survey.Choices.length > 0) {
-            for (let k = 0; k < this.Survey.Choices.length; k++) {
-                if (this.Survey.Choices[k].Choice.length <= 0 || this.Survey.Choices[k].Choice === "") {
-                    f = false;
-                    break;
-                }
-            }
-        }
-        else
-            f = false;
-
-        return f;
-    };
-
-    this.send = function () {
-        if (this.ValidateQues()) {
-            $.ajax({
-                url: "../Survey/SaveQues",
-                type: "POST",
-                data: { survey: JSON.stringify(this.Survey) },
-                beforeSend: function () {
-                    $("#survey_menu_load").EbLoader("show");
-                }
-            }).done(function (result) {
-                if (result.status) {
-                    $("#survey_menu_load").EbLoader("hide");
-                    if (context === "QuestionBank")
-                        location.reload();
-                    else
-                        this.appendQues(result.quesid);
-
-                    this.$Qmodal.modal("toggle");
-                }
-            }.bind(this));
-        }
     };
 
     this.saveQuestion = function () {
         $.ajax({
-            url: "../Survey/SaveQues",
+            url: "../Survey/SaveQuestion",
             type: "POST",
-            data: { survey: JSON.stringify(this.rootContainerObj) },
+            data: { EbQuestion: JSON.stringify(this.rootContainerObj) },
             beforeSend: function () {
                 $("#survey_menu_load").EbLoader("show");
             }

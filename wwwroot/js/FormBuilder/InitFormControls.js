@@ -748,6 +748,10 @@
 
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
+        $input.find("select").selectpicker({///////////////////////////////////////////////////////////
+            dropupAuto: false,
+        });
+
         $input.find("select option[value='Hourly']").attr("selected", "selected");
         $input.find("select").trigger("change");
     };

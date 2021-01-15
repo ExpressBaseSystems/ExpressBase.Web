@@ -39,6 +39,8 @@
 <script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.5/jquery.inputmask.min.js"></script>
 <script type="text/javascript" src="~/js/LayoutCommon/bootstrap-select.min.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/MultiLanguage.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/Bundles/codemirror.bundle.js" asp-append-version=@bApnd></script>
 
 <script>var cm = new EbHeader().setName("Question Bank");</script>
 @{
@@ -57,6 +59,7 @@
     @Html.Raw(_toolBox.EbObjectTypes);
     @Html.Raw(_toolBox.QCtrlsNames);
     @Html.Raw(_toolBox.ACtrlsNames);
+    @Html.Raw(_toolBox.JsonToJsObjectFuncs);
     </script>
 }
 
@@ -110,7 +113,7 @@
                                 <div tabindex="1" class="qs-inner-cont">
                                     <div class="qs-inner-wrap col-md-12 pd-0">
                                         <div class="qst-qctrl-wrap">
-                                            <div class="qst-inp" contenteditable="true">question section</div>
+                                            <textarea type="text" rows="3" placeholder="Enter question ?" class="qst-inp" onfocus="$(this).select();"></textarea>
                                             <div class="qctrl-inner ebcont-ctrl"></div>
                                         </div>
 

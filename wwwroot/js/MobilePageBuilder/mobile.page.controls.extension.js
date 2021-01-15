@@ -551,6 +551,34 @@
                     }.bind(this));
                 }
             },
+            sortable: function () {
+                $(`#${this.EbSid} .eb_mob_container_inner`).sortable({
+                    axis: "y",
+                    appendTo: document.body
+                });
+            }
+        },
+        EbMobileApprovalButton: {
+            __FormIdCopy: null,
+            trigger: function (root) {
+                this.propertyChanged("HorrizontalAlign");
+                this.__FormIdCopy = this.FormId;
+            },
+            propertyChanged: function (propname, root) {
+                if (propname === "HorrizontalAlign") {
+                    window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
+                }
+            },
+            pgSetObject: function (root) {
+                if (this.DataColumns == null || this.DataColumns.$values.length <= 0) {
+                    let ds_cols = root.DSColumnsJSON || [];
+                    if (ds_cols.length >= 1) {
+                        this.DataColumns.$values = window.dataColToMobileCol(ds_cols[0]);
+                    }
+                }
+                this.FormId = this.__FormIdCopy;
+                root.pg.refresh();
+            }
         }
     };
 })(jQuery);

@@ -748,6 +748,10 @@
 
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
+        $input.find("select").selectpicker({///////////////////////////////////////////////////////////
+            dropupAuto: false,
+        });
+
         $input.find("select option[value='Hourly']").attr("selected", "selected");
         $input.find("select").trigger("change");
     };
@@ -1433,18 +1437,18 @@
             $input.inputmask({
                 alias: "numeric",
                 _mask: function _mask(opts) {
-                    return _userObject.Preference.CurrencyPattern;
+                    return ebcontext.user.Preference.CurrencyPattern;
                 },
-                groupSeparator: _userObject.Preference.CurrencyGroupSeperator,
-                radixPoint: _userObject.Preference.CurrencyDecimalSeperator,
+                groupSeparator: ebcontext.user.Preference.CurrencyGroupSeperator,
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
                 placeholder: "0",
-                digits: _userObject.Preference.CurrencyDecimalDigits,
+                digits: ebcontext.user.Preference.CurrencyDecimalDigits,
                 digitsOptional: !1
             });
         }
         else {
             $input.inputmask("currency", {
-                radixPoint: _userObject.Preference.CurrencyDecimalSeperator,
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
                 allowMinus: ctrl.AllowNegative,
                 groupSeparator: "",
                 digits: ctrl.DecimalPlaces,
@@ -1804,7 +1808,7 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            onlyCountries: (ctrl.CountriesList.length > 0) ? ctrl.CountriesList.split(",") : [],
+            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,

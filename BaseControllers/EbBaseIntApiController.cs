@@ -127,5 +127,10 @@ namespace ExpressBase.Web.BaseControllers
             }
             return ObjIds;
         }
+
+        public bool IsAuthenticated()
+        {
+            return Authenticated;
+        }
     }
 }

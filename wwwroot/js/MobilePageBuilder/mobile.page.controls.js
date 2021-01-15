@@ -58,6 +58,7 @@
     this.initDashBoard = function (dashboard) {
         this.Root.$Selectors.pageWrapper.find(`.emulator_f`).css("display", "none");
         this.Root.makeDropable(dashboard.EbSid, "EbMobileDashBoard");
+        dashboard.sortable();
         if (this.Root.Mode === "edit" && this.Root.EditObj !== null) {
             this.Root.setCtrls($(`#${dashboard.EbSid} .eb_mob_container_inner`), dashboard.ChildControls.$values);
 

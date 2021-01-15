@@ -802,6 +802,31 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        public string AddSmsBuddy()
+        {
+            AddSBResponse res = new AddSBResponse();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+
+                EbSmsBuddyConfig con = new EbSmsBuddyConfig
+                {
+                    From = req["From"],
+                    ApiKey = req["ApiKey"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    NickName = req["nickname"]
+                };
+                res = this.ServiceClient.Post<AddSBResponse>(new AddSBRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+
         public string AddMongo()
         {
             AddMongoResponse res = new AddMongoResponse();

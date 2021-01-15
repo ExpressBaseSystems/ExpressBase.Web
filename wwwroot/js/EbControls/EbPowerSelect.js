@@ -439,6 +439,8 @@ const EbPowerSelect = function (ctrl, options) {
     this.SearchBoxEveHandler = function (e) {
         let $e = $(e.target);
         let search = $e.val().toString();
+        if (mobileAndTabletCheck())
+            alert(e.which);
         if (e.which === 13)
             this.Vobj.showDD();
         if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {

@@ -494,9 +494,16 @@
 
         else if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname !=  ("/SupportTicket/EditTicket")) {
            
+            var message = {
+                'Error_Message': er.stack,
+                'URL': "",
+                'Line': "",
+                'Column': "",
+                'Error_object': ""
+            }
             $.ajax({
                 url: "../Security/BrowserExceptions",
-                data: { errorMsg: er },
+                data: { errorMsg: JSON.stringify(message) },
                 cache: false,
                 type: "POST"
             });

@@ -1,4 +1,5 @@
-﻿var EbHeader = function () {
+﻿try {
+    var EbHeader = function () {
         var _objName = $(".EbHeadTitle #objname");
         var _btnContainer = $(".comon_header_dy #obj_icons");
         var _layout = $("#layout_div");
@@ -475,38 +476,64 @@
         };
 
         this.updateNCount = function (count) {
-                _nCounter.text(count);
-                if (count > 0)
-                    _nCounter.show();
-                else
-                    _nCounter.hide();
+            _nCounter.text(count);
+            if (count > 0)
+                _nCounter.show();
+            else
+                _nCounter.hide();
         };
 
         _layout.data("EbHeader", this);
 
 
-        window.onerror = function (msg, url, lineNo, columnNo, error) {
-            var string = msg.toLowerCase();//script error--When an error occurs in a script, loaded from a different origin, 
-            var message = {
-                'Error_Message': msg,
-                'URL': url,
-                'Line': lineNo,
-                'Column': columnNo,
-                'Error_object': error
-            }
-             
-            if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname != ("/SupportTicket/EditTicket")) {
+        //window.onerror = function (msg, url, lineNo, columnNo, error) {
+        //    var string = msg.toLowerCase();//script error--When an error occurs in a script, loaded from a different origin, 
+        //    var message = {
+        //        'Error_Message': msg,
+        //        'URL': url,
+        //        'Line': lineNo,
+        //        'Column': columnNo,
+        //        'Error_object': error
+        //    }
 
-                $.ajax({
-                    url: "../Security/BrowserExceptions",
-                    data: { errorMsg: JSON.stringify(message) },
-                    cache: false,
-                    type: "POST"
-                });
+        //    if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname != ("/SupportTicket/EditTicket")) {
 
-            }
-            return false;
-        };
-   
-   
-};
+        //        $.ajax({
+        //            url: "../Security/BrowserExceptions",
+        //            data: { errorMsg: JSON.stringify(message) },
+        //            cache: false,
+        //            type: "POST"
+        //        });
+
+        //    }
+        //    return false;
+        //};
+
+
+    };
+}
+catch (er) {
+    if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname != ("/SupportTicket/EditTicket")) {
+
+        var message = {
+            'Error_Message': er.stack,
+            'URL': "",
+            'Line': "",
+            'Column': "",
+            'Error_object': ""
+        }
+        $.ajax({
+            url: "../Security/BrowserExceptions",
+            data: { errorMsg: JSON.stringify(message) },
+            cache: false,
+            type: "POST"
+        });
+
+        if (confirm("An error occured while setting headers, do you want to report it?")) {
+            window.location = '/SupportTicket/bugsupport';
+        } else {
+            window.location = "/Tenantuser/Logout"
+        }
+
+    }
+}

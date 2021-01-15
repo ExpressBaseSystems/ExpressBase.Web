@@ -1360,7 +1360,12 @@
 
     this.TextBox = function (ctrl, ctrlopts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.TextMode === 0) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        ctrl.__EbAlert = this.Renderer.EbAlert;
+        if (ctrl.MaskPattern !== "" && ctrl.TextMode == 0 || ctrl.MaskPattern !== null) {
+            $input.inputmask({ mask: ctrl.MaskPattern });
+        }
+        else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {
                 $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
             }

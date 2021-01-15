@@ -507,7 +507,6 @@
                 window.location = "/Tenantuser/Logout"
             }
 
-            console.error(er);
         }
        
         

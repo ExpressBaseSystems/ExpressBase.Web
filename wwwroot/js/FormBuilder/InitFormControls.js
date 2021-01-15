@@ -748,6 +748,10 @@
 
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
+        $input.find("select").selectpicker({///////////////////////////////////////////////////////////
+            dropupAuto: false,
+        });
+
         $input.find("select option[value='Hourly']").attr("selected", "selected");
         $input.find("select").trigger("change");
     };
@@ -1799,7 +1803,7 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            onlyCountries: (ctrl.CountriesList.length > 0) ? ctrl.CountriesList.split(",") : [],
+            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,

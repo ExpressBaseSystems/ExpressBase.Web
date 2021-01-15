@@ -272,6 +272,12 @@
 .qst-ansctrl-wrap, .qst-qctrl-wrap {
     width: calc(100% - 47px);
 }
+.qst-inp {
+    width: 100%;
+    border-bottom: none;
+    resize: none;
+    border: solid 1px var(--bluishgray);
+}
 
 
 
@@ -572,4 +578,23 @@
     top: 2px;
     left: -14px;
     box-shadow: 0 0 10px 0px #c0c1c9;
+}
+
+
+
+.q-container ::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+    background-color: rgba(214, 214, 214, 0.52);
+    border-radius: 10px;
+}
+
+.q-container ::-webkit-scrollbar {
+    width: 4px;
+    background-color: #F5F5F5;
+}
+
+.q-container ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    /*background-image: var(--gbm);*/
+    background-color: rgb(199, 199, 199);
 }

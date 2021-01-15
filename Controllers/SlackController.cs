@@ -40,29 +40,26 @@ namespace ExpressBase.Web.Controllers
             request.AddParameter("redirect_uri", RedirectUri);
 
             //Execute the request
-            var res = client.ExecuteAsyncGet(request, SlackTokenCallBack, "GET");
+            IRestResponse response = client.Execute(request);
+
+            if (response.IsSuccessful)
+            {
+                string sToken = response.Content;
+                //string Token = "{\"ok\":true,\"access_token\":\"xoxp-108334113943-221049390612-246282639767-2e5c136f20e80573ca7ac3c00ee07606\",\"scope\":\"identify,files:write:user\",\"user_id\":\"U6H1FBGJ0\",\"team_name\":\"ExpressBase Systems\",\"team_id\":\"T369U3BTR\"}";
+
+                string jsonToken = sToken.Replace("\\", string.Empty);
+                SlackJson slackToken = JsonConvert.DeserializeObject<SlackJson>(jsonToken);
+                bool res = this.MqClient.Post<bool>(new SlackAuthAsyncRequest { IsNew = true, SlackJson = slackToken });
+            }
             
             return View();
         }
-
-        private void SlackTokenCallBack(IRestResponse restResponse, RestRequestAsyncHandle arg2)
-        {
-            string sToken = restResponse.Content;
-            //string Token = "{\"ok\":true,\"access_token\":\"xoxp-108334113943-221049390612-246282639767-2e5c136f20e80573ca7ac3c00ee07606\",\"scope\":\"identify,files:write:user\",\"user_id\":\"U6H1FBGJ0\",\"team_name\":\"ExpressBase Systems\",\"team_id\":\"T369U3BTR\"}";
-
-            string jsonToken = sToken.Replace("\\", string.Empty);
-            SlackJson slackToken = JsonConvert.DeserializeObject<SlackJson>(jsonToken);
-            bool res = this.MqClient.Post<bool>(new SlackAuthAsyncRequest { IsNew = true, SlackJson = slackToken });
-
-        }
-
         
         [HttpGet]
         public IActionResult SlackTextPost()
         {
             return View();
         }
-
 
         [HttpPost]
         public IActionResult SlackTextPost(int i)

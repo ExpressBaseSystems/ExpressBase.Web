@@ -7,15 +7,9 @@
     this.$propGrid = $("#" + options.PGId);
 
 
-    this.EbObject = options.objInEditMode;
     this.controlCounters = CtrlCounters;//Global
     this.isEditMode = false;
 
-    //Edit mode
-    if (this.EbObject) {
-        this.isEditMode = true;
-        this.InitEditModeCtrls(this.EbObject);
-    }
     if (this.EbObject === null) {
         this.rootContainerObj = new EbObjects["EbQuestion"](this.formId);
 
@@ -499,29 +493,41 @@
     };
 
     this.quesEdit = function (e) {
-        let quesid = $(e.target).closest(".query_tile").attr("queryid");
-        $.extend(this.Survey, this.Queries[quesid]);
-        this.qstType = this.Survey.QuesType;
+        //Edit mode
+        let ebsid = $(e.target).closest(".query_tile").attr("ebsid");
+        let qid = $(e.target).closest(".query_tile").attr("qid");
+        this.EbObject = options.objInEditMode[qid];
+        if (this.EbObject) {
+            this.isEditMode = true;
+            this.InitEditModeCtrls(this.EbObject);
+        }
 
-        if (this.Survey.Choices[0].Score > 0)
-            this.scoreCheckbox = true;
         this.$Qmodal.modal("show");
-        $(`textarea[name="Question"]`).val(this.Survey.Question);
-        $(".qst-opt-cont").empty();
-        if (this.qstType === 1 || this.qstType === 2) {
-            for (let i = 0; i < this.Survey.Choices.length; i++) {
-                this.appendChoice("", this.Survey.Choices[i].Choice, this.Survey.Choices[i].ChoiceId, this.Survey.Choices[i].Score, false);
-            }
-            $("#userInputType").closest(".q-set-item").hide();
-            $("#scoreCheck").closest(".q-set-item").show();
-        }
-        else if (this.qstType === 3) {
-            this.appendRatingCtrl({ value: eval(this.Survey.Choices[0].Choice), isEdit: true, choiceId: this.Survey.Choices[0].ChoiceId });
-        }
-        else if (this.qstType === 4) {
-            this.UIType = this.Survey.Choices[0].Choice;
-            this.appendUserInput(this.Survey.Choices[0].ChoiceId);
-        }
+    };
+
+    this.InitEditModeCtrls = function (editModeObj) {
+        let ObjCopy = { ...editModeObj };
+        let newObj = new EbObjects["EbQuestion"](editModeObj.EbSid, editModeObj);
+        this.rootContainerObj = newObj;
+        this.rootContainerObj.Name = ObjCopy.Name;
+        this.rootContainerObj.EbSid_CtxId = ObjCopy.EbSid_CtxId;
+
+        commonO.Current_obj = this.rootContainerObj;
+        this.EbObject = this.rootContainerObj;
+
+        // convert json to ebobjects
+        Proc(editModeObj, this.rootContainerObj);
+        $(".Eb-ctrlContainer").each(function (i, el) {
+            if (el.getAttribute("childOf") === 'EbUserControl')
+                return true;
+            this.initCtrl(el);
+        }.bind(this));
+        $(".form-render-table-Td").each(function (i, el) {// td styles seprately
+            if (el.getAttribute("childOf") === 'EbUserControl')
+                return true;
+            this.updateControlUI(el.getAttribute("ebsid"));
+        }.bind(this));
+        $("#" + this.rootContainerObj.EbSid).focus();
     };
 
     this.changeQuestionType = function (e) {

@@ -44,7 +44,7 @@
 
 <script>var cm = new EbHeader().setName("Question Bank");</script>
 @{
-    var Queries = ViewBag.Queries;
+    var Queries = ViewBag.Questions;
 }
 
 @{
@@ -76,13 +76,13 @@
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <div class="survey_container w-100" id="surveyques_wrapper">
                 @{
-                    foreach (KeyValuePair<int, EbSurveyQuery> qry in Queries)
+                    foreach (KeyValuePair<int, EbQuestion> qry in Queries)
                     {
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                            <a class="appcontainer_inner query_tile" questype="@qry.Value.QuesType" queryid="@qry.Value.QuesId">
+                            <a class="appcontainer_inner query_tile" ebsid="@qry.Value.EbSid" qid="@qry.Value.QId">
                                 <div class="col-md-12 pd-0 qs-cont">
-                                    <h5 class="txtdecor_none ellipsis-text">@qry.Value.Question</h5>
-                                    <p class="small txtdecor_none">@((SurveyQTypes)qry.Value.QuesType)</p>
+                                    <h5 class="txtdecor_none ellipsis-text">@qry.Value.Name</h5>
+                                    <p class="small txtdecor_none">ooooo</p>
                                 </div>
                             </a>
                         </div>
@@ -152,7 +152,7 @@
         //let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
         let FBid =  "WebForm_" + Date.now().toString(36);
         //let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
-        let editModeFormObj =  null;
+        let editModeFormObj =  @Html.Raw(JsonConvert.SerializeObject(Queries));
         var survey = new SurveyQuestionBank(`@Html.Raw(JsonConvert.SerializeObject(Queries))`, "QuestionBank",{
             formId: FBid,
             PGId: "QBpg",

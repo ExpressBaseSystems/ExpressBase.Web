@@ -760,7 +760,7 @@
         //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
         //    EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         //else
-        let contSel = '#td_' + ctrl.EbSid_CtxId;
+        let contSel = '#cont_' + ctrl.EbSid_CtxId;
         if (ctrl.IsDGCtrl)
             contSel = '#td_' + ctrl.EbSid_CtxId;
         EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);

@@ -439,6 +439,8 @@ const EbPowerSelect = function (ctrl, options) {
     this.SearchBoxEveHandler = function (e) {
         let $e = $(e.target);
         let search = $e.val().toString();
+        //if (mobileAndTabletCheck())
+        //    alert(e.which);
         if (e.which === 13)
             this.Vobj.showDD();
         if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
@@ -739,9 +741,9 @@ const EbPowerSelect = function (ctrl, options) {
 
             let cellData;
             if (type === 11)
-                cellData = RowUnformattedData[ColIdx];// unformatted data for date or integer
+                cellData = this.formattedData[unFormattedRowIdx][ColIdx];// unformatted data for date or integer
             else
-                cellData = this.formattedData[unFormattedRowIdx][ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
+                cellData = RowUnformattedData[ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
             if (type === 11 && cellData === null)///////////
                 cellData = "0";
             let fval = EbConvertValue(cellData, type);

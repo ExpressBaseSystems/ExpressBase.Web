@@ -44,11 +44,22 @@
     };
 
     this.PopoverPlacement = function (context, source) {
-        if (($(source).offset().left + 700) > document.body.clientWidth)
-            return "left";
-        else {
-            return "right";
-        }
+        let left = $(source).offset().left, dwidth = document.body.clientWidth, pos;
+
+        if (left < (dwidth - 700) || (dwidth / 2) > left)
+            pos = "right";
+        else if (left > 700 || (dwidth / 2) < left)
+            pos = "left";
+        else
+            pos = "right";
+
+        return pos;
+
+        //if (($(source).offset().left + 700) > document.body.clientWidth)
+        //    return "left";
+        //else {
+        //    return "right";
+        //}
     };
 
     this.FileUploader = function (ctrl, ctrlOpts) {

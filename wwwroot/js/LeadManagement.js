@@ -656,7 +656,7 @@
                 Id: id,
                 Date: this.$BlngDate.val(),
                 Total_Amount: this.$BlngTotal.val(),
-                Amount_Received: this.$BlngRcvd.val(),
+                Total_Received: this.$BlngRcvd.val(),
                 Balance_Amount: this.$BlngBal.val(),
                 Cash_Paid: this.$BlngPaid.val(),
                 Payment_Mode: this.$BlngMode.val(),
@@ -694,8 +694,8 @@
             this.$MdlBilling.attr("data-id", id);
             this.$BlngDate.val(tempObj.Date);
             this.$BlngTotal.val(tempObj.Total_Amount);
-            this.$BlngRcvd.val(tempObj.Amount_Received);
-            this.$BlngBal.val(tempObj.Balance_Amount);
+            this.$BlngRcvd.val((parseInt(tempObj.Total_Received) - parseInt(tempObj.Cash_Paid)));
+            this.$BlngBal.val((parseInt(tempObj.Balance_Amount) + parseInt(tempObj.Cash_Paid)));
             this.$BlngPaid.val(tempObj.Cash_Paid);
             this.$BlngMode.val(tempObj.Payment_Mode);
             this.$BlngBank.val(tempObj.Bank);
@@ -725,12 +725,12 @@
             }
             if (this.BillingList.length !== 0) {
                 let total = parseInt(this.BillingList[0]["Total_Amount"]);
-                let received = parseInt(this.BillingList[0]["Amount_Received"]);
-                let paid = parseInt(this.BillingList[0]["Cash_Paid"]);
+                let received = parseInt(this.BillingList[0]["Total_Received"]);
+                //let paid = parseInt(this.BillingList[0]["Cash_Paid"]);
 
                 this.$BlngTotal.val(total);
-                this.$BlngRcvd.val(received + paid);
-                this.$BlngBal.val(total - (received + paid));
+                this.$BlngRcvd.val(received);
+                this.$BlngBal.val(total - received);
                 this.$BlngTotal.prop("disabled", true);
                 this.$BlngRcvd.prop("disabled", true);
                 this.$BlngBal.prop("disabled", true);
@@ -1036,7 +1036,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
             this.metadata = ["8", "Id", "Created_Date", "Date", "Status", "Fup_Date", "Is_Picked_Up", "Comments", "Created_By", "_feedback"];
         }
         else if (this.ParentDivId === "divBilling") {
-            this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];
+            this.metadata = ["9", "Id", "Date", "Total_Amount", "Cash_Paid", "Total_Received", "Balance_Amount", "Payment_Mode", "Narration", "Created_By", "_billing"];
         }
         else if (this.ParentDivId === "divSrgy") {
             this.metadata = ["13", "Id", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Complimentary", "Method", "Comment", "Created_By", "_surgery"];

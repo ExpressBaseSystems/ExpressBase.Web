@@ -358,7 +358,7 @@
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = 0;
             this.EbObject.RowHeight = this.RowHeight;
-            this.MainData = null;
+            //this.MainData = null;
         }
         else if (this.Source === "datagrid") {
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;

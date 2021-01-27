@@ -1,6 +1,4 @@
-﻿var MeetingRequestView;
-var haaaa;
-class Setup {
+﻿class Setup {
 
     constructor(option) {
         this.option = {};
@@ -15,9 +13,6 @@ class Setup {
         this.getNotifications();
         //this.userNotification();aler
         this.modal = new EbCommonModal();
-
-        MeetingRequestView = this.MeetingRequestView.bind(this);
-        haaaa = this.haaaa.bind(this);
     }
 
     getCurrentLocation() {
@@ -171,7 +166,7 @@ class Setup {
                 if (pa[i].ActionType === "Approval")
                     _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";
                 else
-                    url = 'href="#" onclick="MeetingRequestView(this); return false;"';
+                    url = 'href="#" class="MeetingRequestViewCls"';
                 var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
@@ -206,6 +201,8 @@ class Setup {
        
 
         ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+
+        $('.MeetingRequestViewCls').off("click").on('click', this.MeetingRequestView.bind(this));
     }
 
     drawMeetings(pa, onload) {
@@ -216,7 +213,7 @@ class Setup {
             for (let i = 0; i < pa.length; i++) {
                 let _label = "";
                 let Id = pa[i].MyActionId;
-                let url = 'href="#" onclick="haaaa(this); return false;"';
+                let url = 'href="#" class="GetMeetingsDetailsCls"';
                 var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
@@ -248,6 +245,7 @@ class Setup {
             $("#nf-window #nf-mymeeting-count").text(`(${this.meetings_count})`);
         }
         ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+        $('.GetMeetingsDetailsCls').off("click").on('click', this.GetMeetingsDetails.bind(this));
     }
 
     userNotification() {
@@ -295,7 +293,7 @@ class Setup {
         }.bind(this);
     }
 
-    UpdateNotification = function (e) {
+    UpdateNotification (e) {
         let notification_id = $(e.target).closest("div").attr("notification-id");
         let link_url = $(e.target).closest("div").attr("link-url");
         $.ajax({
@@ -321,7 +319,7 @@ class Setup {
         $('#notification-count').attr("count", x);
     }
 
-    ClearAll_NF = function () {
+    ClearAll_NF() {
         var nf = $(".nf-lst");
         var nfArray = [];
         if (nf.length > 0) {
@@ -350,7 +348,7 @@ class Setup {
         }
     }
 
-    CloseNotification = function (e) {
+    CloseNotification (e) {
         let notification_id = $(e.target).closest('li').attr("notification-id");
         $.ajax({
             type: "POST",
@@ -367,8 +365,8 @@ class Setup {
         e.stopPropagation();
     }
 
-    MeetingRequestView = function (e) {
-        let id = $(e).closest("a").attr("data-id");
+    MeetingRequestView (e) {
+        let id = $(e.target).closest("a").attr("data-id");
         //alert(id);
         $.post("../EbMeeting/GetSlotDetails", { id: id }, function (data) {
             let Resp = JSON.parse(data);
@@ -509,8 +507,8 @@ class Setup {
 
     };
 
-    haaaa = function (e) {
-        let id = $(e).closest("a").attr("data-id");
+    GetMeetingsDetails (e) {
+        let id = $(e.target).closest("a").attr("data-id");
         //alert(id);
         $.post("../EbMeeting/GetMeetingsDetails", { meetingid: id }, function (data) {
             let html = JSON.parse(data);

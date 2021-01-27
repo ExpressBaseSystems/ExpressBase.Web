@@ -399,6 +399,19 @@ const WebFormRender = function (option) {
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
                 ctrl.setDisplayMember(val);
             }
+            if (ctrl.ObjType === "TextBox") {
+                ctrl.justSetValue(val);
+                if (ctrl.getValueFromDOM() !== val) {
+                    ctrl.__EbAlert.alert({
+                        id: ctrl.EbSid_CtxId + "-al",
+                        head: "Value Trimmed by mistake(Old Value : " + val + ", New Value:" + ctrl.getValueFromDOM() + " ) - contact Support" ,
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
+                            + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
+                        type: "danger"
+                    });
+                    $("#webformedit").attr("disabled" , true);
+                }
+            }
             else {
                 ctrl.justSetValue(val);
             }
@@ -1828,6 +1841,13 @@ const WebFormRender = function (option) {
         this.bindEventFns();
         a___MT = this.DataMODEL; // debugg helper
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
+        this.EbAlert = new EbAlert({
+            id: this.FormObj.EbSid_CtxId + "_formAlertBox",
+            class: 'webform-alert-box',
+            top: 60,
+            right: 24,
+            onClose: this.FRC.invalidBoxOnClose
+        });
         this.initWebFormCtrls();
         this.initPrintMenu();
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
@@ -1869,13 +1889,13 @@ const WebFormRender = function (option) {
 
 
 
-        this.EbAlert = new EbAlert({
-            id: this.FormObj.EbSid_CtxId + "_formAlertBox",
-            class: 'webform-alert-box',
-            top: 60,
-            right: 24,
-            onClose: this.FRC.invalidBoxOnClose
-        });
+        //this.EbAlert = new EbAlert({
+        //    id: this.FormObj.EbSid_CtxId + "_formAlertBox",
+        //    class: 'webform-alert-box',
+        //    top: 60,
+        //    right: 24,
+        //    onClose: this.FRC.invalidBoxOnClose
+        //});
         this.initConnectionCheck();
 
         //window.onbeforeunload = function (m, e) {

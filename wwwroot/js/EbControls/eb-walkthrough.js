@@ -135,7 +135,7 @@ class Tour {
         }
     }
 
-    getLinks = function (tc) {
+    getLinks(tc) {
         let html = [];
         if (tc != 0)
             html.push(`<button id="stack_el_${tc}_prev" class="TourTileBtn TourTilePrevBtn">&#8592; Prev</button>`);

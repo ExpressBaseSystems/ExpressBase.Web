@@ -26,10 +26,10 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("QuestionBank")]
         public IActionResult question_bank()
         {
-            GetSurveyQueriesResponse resp = this.ServiceClient.Get(new GetSurveyQueriesRequest());
+            GetSurveyQuestionsResponse resp  = this.ServiceClient.Get(new GetSurveyQuestionsRequest());
             //_object = EbSerializers.Json_Deserialize(element.Json_lc);
             //ViewBag.dsObj = _object;
-            ViewBag.Queries = resp.Data;
+            ViewBag.Questions = resp.Data;
             return View();
         }
 
@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
 
         public SaveQuestionResponse SaveQuestion(string EbQuestion)
         {
-            var o = JsonConvert.DeserializeObject<EbQuestion>(EbQuestion);
+            EbQuestion o = JsonConvert.DeserializeObject<EbQuestion>(EbQuestion);
             SaveQuestionResponse resp = this.ServiceClient.Post(new SaveQuestionRequest { Query = o });
             return resp;
         }

@@ -44,11 +44,22 @@
     };
 
     this.PopoverPlacement = function (context, source) {
-        if (($(source).offset().left + 700) > document.body.clientWidth)
-            return "left";
-        else {
-            return "right";
-        }
+        let left = $(source).offset().left, dwidth = document.body.clientWidth, pos;
+
+        if (left < (dwidth - 700) || (dwidth / 2) > left)
+            pos = "right";
+        else if (left > 700 || (dwidth / 2) < left)
+            pos = "left";
+        else
+            pos = "right";
+
+        return pos;
+
+        //if (($(source).offset().left + 700) > document.body.clientWidth)
+        //    return "left";
+        //else {
+        //    return "right";
+        //}
     };
 
     this.FileUploader = function (ctrl, ctrlOpts) {
@@ -748,6 +759,10 @@
 
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
+        $input.find("select").selectpicker({///////////////////////////////////////////////////////////
+            dropupAuto: false,
+        });
+
         $input.find("select option[value='Hourly']").attr("selected", "selected");
         $input.find("select").trigger("change");
     };
@@ -1360,7 +1375,12 @@
 
     this.TextBox = function (ctrl, ctrlopts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.TextMode === 0) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        ctrl.__EbAlert = this.Renderer.EbAlert;
+        if (ctrl.MaskPattern !== "" && ctrl.TextMode == 0 || ctrl.MaskPattern !== null) {
+            $input.inputmask({ mask: ctrl.MaskPattern });
+        }
+        else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {
                 $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
             }

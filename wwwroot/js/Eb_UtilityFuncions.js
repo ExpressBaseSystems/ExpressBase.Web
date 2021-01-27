@@ -373,6 +373,7 @@ function getEbFontStyleObject(font) {
     //}
     let fontObj = {};
     let Abc = { 0: "normal", 1: "bold", 2: "italic", 3: "bold-italic" };
+    if (font === undefined) font = null;
     if (font !== null) {
         fontObj['font-family'] = font.FontName;
         fontObj['font-size'] = font.Size;

@@ -3044,6 +3044,40 @@ input.locinp {
     .phnContextBtn:hover {
         cursor: pointer;
     }
+
+.phoneOTPinput {
+    padding-left: 15px;
+    letter-spacing: 42px;
+    border: 0;
+    background-image: linear-gradient(to left, #0371f9cc 70%, rgba(255, 255, 255, 0) 0%);
+    background-position: bottom;
+    background-size: 50px 1px;
+    background-repeat: repeat-x;
+    background-position-x: 35px;
+    width: 330px;
+    min-width: 330px;
+}
+
+#phnOTPdivOuter {
+    width: 305px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+#phnOTPdivInner {
+    left: 0;
+    position: sticky;
+}
+
+.phoneOTPinput {
+    outline: none;
+}
+
+#resend {
+    outline: none;
+}
+
 /*ebEmail control*/
 .emailCtrl_invalid {
     background: #ffb2b24f;

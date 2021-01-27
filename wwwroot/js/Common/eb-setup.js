@@ -52,11 +52,12 @@ class Setup {
             this.nf_window.hide();
         }
     }
-
+    
     initServerEvents() {
+        window.ebcontext.sse_channels.push("file-upload");
         this.se = new EbServerEvents({
             ServerEventUrl: this.option.se_url,
-            Channels: ["file-upload"]
+            Channels: ebcontext.sse_channels
         });
 
         this.se.onNotification = function (msg) {

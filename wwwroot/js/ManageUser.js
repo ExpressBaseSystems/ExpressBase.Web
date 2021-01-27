@@ -873,7 +873,10 @@
         $.ajax({
             type: "POST",
             url: "../Security/SaveUser",
-            data: { userid: this.itemId, usrinfo: JSON.stringify(dict) },
+            data: {
+                userid: this.itemId,
+                usrinfo: JSON.stringify(dict)
+            },
             error: function (xhr, ajaxOptions, thrownError) {
                 EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
                 $("#btnCreateUser").removeAttr("disabled");

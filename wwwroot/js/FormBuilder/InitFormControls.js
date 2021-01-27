@@ -44,11 +44,22 @@
     };
 
     this.PopoverPlacement = function (context, source) {
-        if (($(source).offset().left + 700) > document.body.clientWidth)
-            return "left";
-        else {
-            return "right";
-        }
+        let left = $(source).offset().left, dwidth = document.body.clientWidth, pos;
+
+        if (left < (dwidth - 700) || (dwidth / 2) > left)
+            pos = "right";
+        else if (left > 700 || (dwidth / 2) < left)
+            pos = "left";
+        else
+            pos = "right";
+
+        return pos;
+
+        //if (($(source).offset().left + 700) > document.body.clientWidth)
+        //    return "left";
+        //else {
+        //    return "right";
+        //}
     };
 
     this.FileUploader = function (ctrl, ctrlOpts) {
@@ -1850,16 +1861,31 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
+           // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
+            onlyCountries: (ctrl.CountriesList ?.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,
             dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px",
             utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
         });
+
+        if (ctrl.Sendotp) {
+            var btnHtml = ` <button type="button" id="${ctrl.EbSid}_sendOTP" class="ebbtn eb_btn-sm eb_btnblue pull-left" style="margin-top:10px" >Send OTP</button>
+                            <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p>`;
+            $('#cont_' + ctrl.EbSid).append(btnHtml);
+            $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
+        }
+
         ctrl.getValueFromDOM = function (p1) {
-            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();           
-            return iti.getNumber();;
+            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();      
+            if (ctrl.DisableCountryCode) {
+               return $(`#${ctrl.EbSid}`).val(); 
+            }
+            else {
+                return iti.getNumber();
+            }
+           
         };
         ctrl.bindOnChange = function (p1) {
             $(phninput).on("change", p1);
@@ -1870,6 +1896,8 @@
         };
 
         $(`#${ctrl.EbSid}`).attr("maxlength", "18");
+
+
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {
@@ -2022,6 +2050,134 @@
         EbPopBox("show", { Message: "Message sent", Title: "Success" });
     };
 
+    //Send OTP...for phone,email control
+
+    this.SendOTP_modal = function (ctrl) {
+        $("#eb_common_loader").EbLoader("show");
+        $(`#${ctrl.EbSid}_otpModal`).remove();
+        var otpRecever = $(`#${ctrl.EbSid}`).val();
+        $.ajax({
+            url: "../WebForm/SendOTP_Contol",
+            data: { formRefid: this.Renderer.formRefId, ctrlId: ctrl.EbSid, sendOTPto: otpRecever },
+            cache: false,
+            type: "POST",
+            success: function (verifyKey) {
+                console.log(verifyKey);
+                var html = `<div id="${ctrl.EbSid}_otpModal" class="modal fade" role="dialog">
+                      <div class="modal-dialog modal-dialog-centered" style="margin-top:15%;width:30%;">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="text-align: center;">Please enter the OTP to verify your phone number</h4>
+                          </div>
+                          <div class="modal-body">
+                            <p style="text-align: center;">An OTP has been sent to ${otpRecever}</p>
+                            <div style="justify-content: center;display: flex;">
+                                <div id="phnOTPdivOuter" class="col-md-12">
+                                    <div id="phnOTPdivInner">
+                                        <input id="${ctrl.EbSid}_otpValue" class="phoneOTPinput" tabindex="1" type="text" maxlength="6" />
+                                    </div>
+                                <div style="text-align: center;margin-top: 20px;">
+                                    <span id="OTPtimer" style="font-weight:bold"></span>
+                                </div>
+                                </div>
+                            </div>
+                          </div>
+                           <div class="modal-footer">
+                                <div tabindex="2" id="${ctrl.EbSid}_verifyotp" verifyKey="${verifyKey}" class="ebbtn eb_btn-sm eb_btnblue pull-left">
+                                  Verify OTP
+                                </div>
+                                <div class="pull-right ">
+                                     <button class="btn-link" hidden id="${ctrl.EbSid}_resendOTP">Resend</button>
+                                </div>
+                         </div>
+                        </div>
+
+                      </div>
+                    </div>`;
+
+                // $("#"+this.Renderer.FormObj.EbSid).append(html);
+                $('body').append(html);
+                $(`#${ctrl.EbSid}_otpModal`).modal("show");
+                this.ShowOtpTimer();
+                $(`#${ctrl.EbSid}_verifyotp`).on('click', this.VerifyOTP_control.bind(this, ctrl));
+                $(`#${ctrl.EbSid}_resendOTP`).on('click', this.ResendOTP_control.bind(this, ctrl));
+                $("#eb_common_loader").EbLoader("hide");
+
+
+            }.bind(this)
+        });
+    }
+
+    var resend_otp = false;
+
+    this.ShowOtpTimer = function() {
+        resend_otp = false;
+        document.getElementById('OTPtimer').innerHTML = 00 + ":" + 10;
+        startTimer_otp();
+    };
+
+    this.startTimer_otp = function() {
+        if (resend_otp)
+            return;
+        var presentTime = document.getElementById('OTPtimer').innerHTML;
+        var timeArray = presentTime.split(/[:]+/);
+        var m = timeArray[0];
+        var s = checkSecond_otp((timeArray[1] - 1));
+        if (s == 59) { m = m - 1 }
+        if (m < 0) {
+            OtpTimeOut();
+            return;
+        }
+        document.getElementById('OTPtimer').innerHTML =
+            m + ":" + s;
+        setTimeout(startTimer_otp, 1000);
+    };
+
+    this.OtpTimeOut = function() {
+        EbMessage("show", { Background: "red", Message: "Time out" });
+        $(`#${ctrl.EbSid}_resendOTP`).show();
+    };
+
+    this.checkSecond_otp = function(sec) {
+        if (sec < 10 && sec >= 0) { sec = "0" + sec; } // add zero in front of numbers < 10
+        if (sec < 0) { sec = "59"; }
+        return sec;
+    }
+
+    this.VerifyOTP_control = function (ctrl) {
+
+        $("#eb_common_loader").EbLoader("show");
+        $.ajax({
+            url: "../WebForm/VerifyOTP_control",
+            data: { otpValue: $(`#${ctrl.EbSid}_otpValue`).val(), verifyKey: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey')},
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    $(`#${ctrl.EbSid}_sendOTP`).hide();
+                    $(`#${ctrl.EbSid}_OTPverified`).show();
+                    $(`#${ctrl.EbSid}_otpModal`).modal('hide');
+                }
+            }
+        });
+    }
+
+    this.ResendOTP_control = function (ctrl) {
+        $.ajax({
+            url: "../WebForm/ResendOTP_control",
+            data: { sendOTPto: $(`#${ctrl.EbSid}`).val(), verifyKey: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey') },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    this.ShowOtpTimer();
+                }
+            }.bind(this)
+        });
+    }
     //phonecontrol ends 
 
     this.PdfControl = function (ctrl) {

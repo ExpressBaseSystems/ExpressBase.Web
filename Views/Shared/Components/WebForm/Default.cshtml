@@ -515,6 +515,8 @@
     let _renderMode = @ViewBag.renderMode;
     let _formHTML = `@Html.Raw(ViewBag.WebFormHtml)`;
 
+    let _disableEditButton= @Html.Raw(ViewBag.disableEditButton);
+
     header.addRootObjectHelp(_formObj);
 
     //to store refids of uploaded files via all fileuploader ctrls
@@ -542,7 +544,8 @@
              isPartial: _ispartial,
              formPermissions: _formPermissions,
              headerObj: header,
-             formHTML: _formHTML
+             formHTML: _formHTML,
+             disableEditBtn: _disableEditButton
          });
 
     </script>

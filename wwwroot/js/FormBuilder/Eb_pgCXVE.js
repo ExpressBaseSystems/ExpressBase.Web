@@ -907,7 +907,12 @@
     };
 
     this.VTileClick = function () {
-        let $e = $(event.target).closest(".colTile");
+        let $tgt = $(event.target);
+
+        if ($tgt.hasClass('oseobjgo2icon') || $tgt.hasClass('fa-external-link'))
+            return;
+
+        let $e = $tgt.closest(".colTile");
 
         if ($e.attr("is-selected") === "false") {
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check-circle").hide();

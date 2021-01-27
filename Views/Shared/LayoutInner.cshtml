@@ -141,7 +141,8 @@
             env:'@ViewBag.Env',
             se_url: '@ViewBag.ServerEventUrl',
             setup: {},
-            subscription_id: null
+            subscription_id: null,
+            sse_channels: []
         }
     </script>
 </head>
@@ -197,7 +198,7 @@
             }
             @RenderBody()
         </div>
-        @if (ViewBag.UId > 1 || ViewBag.cide == "demo")// check for PublicForm. Can rewite this check if required. 
+        @if (ViewBag.UId > 1 || ViewBag.cide == "demo")// check for PublicForm. Can rewite this check if required.
         {
             <div class="eb-expndLinkswrpr hidden-xs" id="eb-expndLinkswrprWdgt">
                 <button id="eb-expandbutton" onclick="$('.eb-expndLinkswrpr-body').toggle();" class="eb-expand-link"><i class="fa fa-cog"></i></button>

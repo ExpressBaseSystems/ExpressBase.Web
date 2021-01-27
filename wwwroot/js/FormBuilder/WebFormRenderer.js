@@ -773,7 +773,7 @@ const WebFormRender = function (option) {
     };
 
     this.openSourceForm = function () {
-        if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+        if (this.formData.SrcDataId > 0 && this.formData.SrcRefId ?.length > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.formData.SrcDataId));
             let url = `../WebForm/Index?refid=${this.formData.SrcRefId}&_params=${btoa(JSON.stringify(params))}&_mode=1&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
@@ -844,7 +844,9 @@ const WebFormRender = function (option) {
                 RefId: this.formRefId,
                 RowId: this.rowId,
                 DraftId: this.draftId,
-                CurrentLoc: currentLoc
+                CurrentLoc: currentLoc,
+                sseChannel: this.sseChannel,
+                sse_subscrId: ebcontext.subscription_id
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
@@ -931,6 +933,37 @@ const WebFormRender = function (option) {
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
         }.bind(this));
     };
+
+    //this.CheckToAllowEditMode = function () {
+    //    this.showLoader();
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/WebForm/EnableEditMode_SSE",
+    //        data: {
+    //            formId: option.formRefId,
+    //            dataId: option.rowId,
+    //            sseChannel: this.sseChannel,
+    //            sse_subscrId: ebcontext.subscription_id
+    //        },
+    //        headers: { 'eb_sse_subid': ebcontext.subscription_id },
+    //        error: function (xhr, ajaxOptions, thrownError) {
+    //            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: 'aa0000' });
+    //            this.hideLoader();
+    //        }.bind(this),
+    //        success: function (result) {
+    //            this.hideLoader();
+    //            if (result) {
+    //                this.SwitchToEditMode();
+    //            }
+    //            else {
+    //                ($(`.objectDashB-toolbar #webformedit`).attr("disabled", true));
+    //                EbMessage("show", { Message: "Another user is currently editing the same form", AutoHide: true, Background: 'blue' });
+
+    //            }
+    //        }.bind(this)
+    //    });
+    //};
+
 
     this.SwitchToEditMode = function () {
         this.formObject.__mode = "edit";
@@ -1411,7 +1444,7 @@ const WebFormRender = function (option) {
                 btnsArr.splice(3, 1);//
                 console.warn("Cancelled record!.............");
             }
-            if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+            if (this.formData.SrcDataId > 0 && this.formData.SrcRefId ?.length > 0) {
                 btnsArr.push("webformopensrc");
             }
             this.headerObj.showElement(this.filterHeaderBtns(btnsArr, currentLoc, reqstMode));
@@ -1592,6 +1625,7 @@ const WebFormRender = function (option) {
         this.$deleteBtn.off("click").on("click", this.deleteForm.bind(this));
         this.$cancelBtn.off("click").on("click", this.cancelForm.bind(this));
         this.$editBtn.off("click").on("click", this.SwitchToEditMode.bind(this));
+        ////this.$editBtn.off("click").on("click", this.CheckToAllowEditMode.bind(this));
         this.$auditBtn.off("click").on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.off("click").on("click", function () { window.parent.closeModal(); });// for iframe
         this.$cloneBtn.off("click").on("click", this.cloneForm.bind(this));
@@ -1751,6 +1785,9 @@ const WebFormRender = function (option) {
         this.$formCont.empty();
         this.$formCont.append(this.formHTML);
 
+        this.sseChannel = option.formRefId + "_" + option.rowId;
+        ebcontext.sse_channels.push(this.sseChannel);
+
         ebcontext.renderContext = "WebForm";
         this.FormObj = JSON.parse(JSON.stringify(option.formObj));
         this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
@@ -1798,6 +1835,9 @@ const WebFormRender = function (option) {
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
         this.setHeader(this.mode);// contains a hack for preview mode(set as newmode)
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
+        if (parseInt(option.disableEditBtn.disableEditButton)) {
+            ($(`.objectDashB-toolbar #webformedit`).attr("disabled", true))
+        }
         this.bindEventFns();
         a___MT = this.DataMODEL; // debugg helper
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
@@ -1857,6 +1897,22 @@ const WebFormRender = function (option) {
         //    onClose: this.FRC.invalidBoxOnClose
         //});
         this.initConnectionCheck();
+
+        //window.onbeforeunload = function (m, e) {
+        //    if (this.Mode.isEdit) {
+        //        $.ajax({
+        //            type: "POST",
+        //            url: "/WebForm/FormEdit_TabClosed",
+        //            data: {
+        //                formId: option.formRefId,
+        //                dataId: option.rowId,
+        //                sseChannel: this.sseChannel,
+        //                sse_subscrId: ebcontext.subscription_id
+        //            },
+        //            headers: { 'eb_sse_subid': ebcontext.subscription_id }
+        //        });
+        //    }
+        //}.bind(this);
     };
 
     this.init(option);

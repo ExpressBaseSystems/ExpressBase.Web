@@ -3,7 +3,7 @@
     this.ToggleId = params.ToggleId;
     var _font = {
         FontName: "Roboto",
-        CSSFontName: "Roboto",
+        CSSFontName: "Roboto (Default)",
         Size: 14,
         Style: 0,
         color: "#333333",
@@ -88,7 +88,6 @@
 
     this.loadFontFamily = function () {
         var pos = 0;
-        $('#googleFont').append(`<option tabindex='1' sys-name='Roboto' value='Roboto'>Roboto (Default)</option>`);
         for (let i = 0; i < this.ItextFonts.length; i++) {
             $('#googleFont').append(`<option tabindex='1' sys-name='${this.ItextFonts[i].SystemFontName}' value='${this.ItextFonts[i].CSSFontName}'>${this.ItextFonts[i].SystemFontName}</option>`);
         }

@@ -1614,6 +1614,48 @@
         }
     };
 
+    this.DataLabel = function (ctrl) {
+        let Refid = ctrl.DataSourceId;
+        //this.GetFilterValuesForDataSource();
+        this.Rowdata = null;
+        //this.GetFilterValuesForDataSource();
+        $(`#${ctrl.EbSid}_icon i`).addClass("fa " + ctrl.Icon);
+        $(`#${ctrl.EbSid}_icon`).css("color", ctrl.IconColor);
+        if (ctrl.StaticLabelFont !== null)
+            GetFontCss(Label.StaticLabelFont, $(`#cont_${ctrl.EbSid} .eb-ctrl-label`));
+        if (ctrl.DynamicLabelFont !== null)
+            GetFontCss(ctrl.DynamicLabelFont, $(`#cont_${ctrl.EbSid} .data-dynamic-label`));
+        this.DataLabelRefresh(ctrl);
+    };
+
+    this.DataLabelRefresh = function (ctrl) {
+        let Refid = ctrl.DataSourceId;
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetData4DashboardControl",
+            data: { DataSourceRefId: Refid, param: this.filtervalues },
+            async: false,
+            error: function (request, error) {
+                EbPopBox("show", {
+                    Message: "Failed to get data from DataSourse",
+                    ButtonStyle: {
+                        Text: "Ok",
+                        Color: "white",
+                        Background: "#508bf9",
+                        Callback: function () {
+                            //$(".dash-loader").hide();
+                        }
+                    }
+                });
+            },
+            success: function (resp) {
+                ctrl["Columns"] = JSON.parse(resp.columns);
+                this.Rowdata = resp.row;
+                $(`#cont_${ctrl.EbSid} .data-dynamic-label`).empty().append(this.Rowdata[ctrl.ValueMember.data]);
+                setTimeout(this.DataLabelRefresh.bind(this, ctrl), ctrl.RefreshTime > 1000 ? ctrl.RefreshTime : 3000);
+            }.bind(this)
+        });
+    }
     //this.BluePrint = function (ctrl, ctrlopts) {
     //    console.log("view mode bp");
     //    var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >

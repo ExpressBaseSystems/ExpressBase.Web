@@ -76,12 +76,12 @@
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <div class="survey_container w-100" id="surveyques_wrapper">
                 @{
-                    foreach (KeyValuePair<int, EbQuestion> qry in Queries)
+                    foreach (EbQuestion qry in Queries)
                     {
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                            <a class="appcontainer_inner query_tile" ebsid="@qry.Value.EbSid" qid="@qry.Value.QId">
+                            <a class="appcontainer_inner query_tile" ebsid="@qry.EbSid" qid="@qry.QId">
                                 <div class="col-md-12 pd-0 qs-cont">
-                                    <h5 class="txtdecor_none ellipsis-text">@qry.Value.Name</h5>
+                                    <h5 class="txtdecor_none ellipsis-text">@qry.Name</h5>
                                     <p class="small txtdecor_none">ooooo</p>
                                 </div>
                             </a>
@@ -150,10 +150,10 @@
 
     <script>
         //let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
-        let FBid =  "WebForm_" + Date.now().toString(36);
+        let FBid =  "Qstn_" + Date.now().toString(36);
         //let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
         let editModeFormObj =  @Html.Raw(JsonConvert.SerializeObject(Queries));
-        var survey = new SurveyQuestionBank(`@Html.Raw(JsonConvert.SerializeObject(Queries))`, "QuestionBank",{
+        var survey = new SurveyQuestionBank("QuestionBank",{
             formId: FBid,
             PGId: "QBpg",
             objInEditMode: editModeFormObj

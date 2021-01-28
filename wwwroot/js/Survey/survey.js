@@ -1,4 +1,4 @@
-﻿const SurveyQuestionBank = function (ques, context, options) {
+﻿const SurveyQuestionBank = function (context, options) {
 
     this.rootContainerObj = null;
     this.formId = options.formId;
@@ -10,7 +10,7 @@
     this.controlCounters = CtrlCounters;//Global
     this.isEditMode = false;
 
-    if (this.EbObject === null) {
+    if (this.EbObject === null || this.EbObject === undefined) {
         this.rootContainerObj = new EbObjects["EbQuestion"](this.formId);
 
         Proc(this.rootContainerObj.QSec, this.rootContainerObj.QSec);
@@ -28,8 +28,6 @@
     };
     this.RatingC = 1;
     this.UIType = "Text";
-
-    this.Queries = JSON.parse(ques) || null;
 
     this.init = function () {
         this.$Qmodal = $("#questionModal");
@@ -110,6 +108,18 @@
         ctrlObj.Label = ebsid + " Label";
         ctrlObj.HelpText = "";
         this.rootContainerObj.ASec.Controls.$values.push(ctrlObj);
+        $ctrl.focus();
+        this.updateControlUI(ebsid);
+    }.bind(this);
+
+    this.AppendAnsCtrlInEditMode = function (ctrlObj) {
+        let type = ctrlObj.ObjType;
+        let ebsid = ctrlObj.EbSid;
+        let $ctrl = ctrlObj.$Control;
+        $ctrl.attr("childof", "ASec");
+        ctrlObj.childof = "ASec";
+        this.$AnsCtrlsCont.append($ctrl);
+        this.dropedCtrlInit($ctrl, type, ebsid);
         $ctrl.focus();
         this.updateControlUI(ebsid);
     }.bind(this);
@@ -495,8 +505,7 @@
     this.quesEdit = function (e) {
         //Edit mode
         let ebsid = $(e.target).closest(".query_tile").attr("ebsid");
-        let qid = $(e.target).closest(".query_tile").attr("qid");
-        this.EbObject = options.objInEditMode[qid];
+        this.EbObject = options.objInEditMode[ebsid];
         if (this.EbObject) {
             this.isEditMode = true;
             this.InitEditModeCtrls(this.EbObject);
@@ -511,22 +520,15 @@
         this.rootContainerObj = newObj;
         this.rootContainerObj.Name = ObjCopy.Name;
         this.rootContainerObj.EbSid_CtxId = ObjCopy.EbSid_CtxId;
-
-        commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
 
         // convert json to ebobjects
         Proc(editModeObj, this.rootContainerObj);
-        $(".Eb-ctrlContainer").each(function (i, el) {
-            if (el.getAttribute("childOf") === 'EbUserControl')
-                return true;
-            this.initCtrl(el);
+        $.each(this.rootContainerObj.ASec.Controls, function (i, ctrl) {
+            this.AppendAnsCtrlInEditMode(ctrl);
         }.bind(this));
-        $(".form-render-table-Td").each(function (i, el) {// td styles seprately
-            if (el.getAttribute("childOf") === 'EbUserControl')
-                return true;
-            this.updateControlUI(el.getAttribute("ebsid"));
-        }.bind(this));
+
+        
         $("#" + this.rootContainerObj.EbSid).focus();
     };
 

@@ -964,8 +964,9 @@ namespace ExpressBase.Web.Controllers
 
 		public string SendOTP_Contol(string formRefid, string ctrlId, string sendOTPto)
 		{
-			return "";
-			string otpRedisKey = string.Concat(formRefid, ctrlId, this.LoggedInUser.UserId, DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+			return "";/////////////////////////
+			string Tstamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+			string otpRedisKey = string.Concat(formRefid, ctrlId, this.LoggedInUser.UserId,Tstamp );
 
 			GetOTPResponse resp = this.ServiceClient.Post(new GetOTPRequest());
 			this.Redis.SetValue(otpRedisKey, resp.OTP,new TimeSpan(1,0,0,0));////////////////
@@ -981,12 +982,13 @@ namespace ExpressBase.Web.Controllers
 				WhichConsole= this.LoggedInUser.wc
 			});
 			//var klq = this.Redis.Remove(otpRedisKey);///////////////////////
-			return otpRedisKey;
+			return Tstamp;
 		}
 
-		public bool VerifyOTP_control(string verifyKey, string otpValue)
+		public bool VerifyOTP_control(string formRefid, string ctrlId, string tstamp, string otpValue)
 		{
 			bool b = false;
+			string verifyKey= string.Concat(formRefid, ctrlId, this.LoggedInUser.UserId, tstamp);
 			string otpRedisValue = this.Redis.GetValue(verifyKey);
 			if (Int32.Parse(otpValue) == Int32.Parse(otpRedisValue))
 			{
@@ -994,10 +996,11 @@ namespace ExpressBase.Web.Controllers
 			}
 			return b;
 		}
-		public bool ResendOTP_control(string verifyKey, string sendOTPto)
+		public bool ResendOTP_control(string formRefid, string ctrlId, string tstamp, string sendOTPto)
 		{
-			return true;
+			return true;//////////////////
 			bool b = false;
+			string verifyKey = string.Concat(formRefid, ctrlId, this.LoggedInUser.UserId, tstamp);
 			string otpRedisValue = this.Redis.GetValue(verifyKey);
 			if (Int32.Parse(sendOTPto) == Int32.Parse(otpRedisValue))
 			{

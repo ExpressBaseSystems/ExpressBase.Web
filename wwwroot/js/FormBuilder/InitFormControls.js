@@ -1861,7 +1861,7 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-           // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
+            // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
             onlyCountries: (ctrl.CountriesList ?.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
@@ -1871,8 +1871,8 @@
         });
 
         if (ctrl.Sendotp) {
-            var btnHtml = ` <button type="button" id="${ctrl.EbSid}_sendOTP" class="ebbtn eb_btn-sm eb_btnblue pull-left" style="margin-top:10px" >Send OTP</button>
-                            <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p>`;
+            var btnHtml = `<div style="display: flex;"> <button type="button" id="${ctrl.EbSid}_sendOTP" class="ebbtn eb_btn-sm eb_btnblue pull-left" style="margin-top:10px" >Send OTP</button>
+                            <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p></div>`;
             $('#cont_' + ctrl.EbSid).append(btnHtml);
             $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
         }
@@ -1880,12 +1880,12 @@
         ctrl.getValueFromDOM = function (p1) {
             //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();      
             if (ctrl.DisableCountryCode) {
-               return $(`#${ctrl.EbSid}`).val(); 
+                return $(`#${ctrl.EbSid}`).val();
             }
             else {
                 return iti.getNumber();
             }
-           
+
         };
         ctrl.bindOnChange = function (p1) {
             $(phninput).on("change", p1);
@@ -2099,7 +2099,7 @@
                 // $("#"+this.Renderer.FormObj.EbSid).append(html);
                 $('body').append(html);
                 $(`#${ctrl.EbSid}_otpModal`).modal("show");
-                this.ShowOtpTimer();
+                this.ShowOtpTimer(ctrl);
                 $(`#${ctrl.EbSid}_verifyotp`).on('click', this.VerifyOTP_control.bind(this, ctrl));
                 $(`#${ctrl.EbSid}_resendOTP`).on('click', this.ResendOTP_control.bind(this, ctrl));
                 $("#eb_common_loader").EbLoader("hide");
@@ -2111,46 +2111,51 @@
 
     var resend_otp = false;
 
-    this.ShowOtpTimer = function() {
+    this.ShowOtpTimer = function (ctrl) {
         resend_otp = false;
-        document.getElementById('OTPtimer').innerHTML = 00 + ":" + 10;
-        startTimer_otp();
-    };
+        document.getElementById('OTPtimer').innerHTML = 03 + ":" + 00;
+        this.startTimer_otp(ctrl);
+    }.bind(this);
 
-    this.startTimer_otp = function() {
+    this.startTimer_otp = function (ctrl) {
         if (resend_otp)
             return;
         var presentTime = document.getElementById('OTPtimer').innerHTML;
         var timeArray = presentTime.split(/[:]+/);
         var m = timeArray[0];
-        var s = checkSecond_otp((timeArray[1] - 1));
+        var s = this.checkSecond_otp((timeArray[1] - 1));
         if (s == 59) { m = m - 1 }
         if (m < 0) {
-            OtpTimeOut();
+            this.OtpTimeOut(ctrl);
             return;
         }
         document.getElementById('OTPtimer').innerHTML =
             m + ":" + s;
-        setTimeout(startTimer_otp, 1000);
-    };
+        setTimeout(this.startTimer_otp, 1000);
+    }.bind(this);
 
-    this.OtpTimeOut = function() {
+    this.OtpTimeOut = function (ctrl) {
         EbMessage("show", { Background: "red", Message: "Time out" });
         $(`#${ctrl.EbSid}_resendOTP`).show();
-    };
+    }.bind(this);
 
-    this.checkSecond_otp = function(sec) {
+    this.checkSecond_otp = function (sec) {
         if (sec < 10 && sec >= 0) { sec = "0" + sec; } // add zero in front of numbers < 10
         if (sec < 0) { sec = "59"; }
         return sec;
-    }
+    }.bind(this);
 
     this.VerifyOTP_control = function (ctrl) {
 
         $("#eb_common_loader").EbLoader("show");
         $.ajax({
             url: "../WebForm/VerifyOTP_control",
-            data: { otpValue: $(`#${ctrl.EbSid}_otpValue`).val(), verifyKey: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey')},
+            data: {
+                formRefid: this.Renderer.formRefId,
+                ctrlId: ctrl.EbSid,
+                otpValue: $(`#${ctrl.EbSid}_otpValue`).val(),
+                tstamp: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey')
+            },
             cache: false,
             type: "POST",
             success: function (data) {
@@ -2167,13 +2172,18 @@
     this.ResendOTP_control = function (ctrl) {
         $.ajax({
             url: "../WebForm/ResendOTP_control",
-            data: { sendOTPto: $(`#${ctrl.EbSid}`).val(), verifyKey: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey') },
+            data: {
+                formRefid: this.Renderer.formRefId,
+                ctrlId: ctrl.EbSid,
+                sendOTPto: $(`#${ctrl.EbSid}`).val(),
+                tstamp: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey')
+            },
             cache: false,
             type: "POST",
             success: function (data) {
                 if (data) {
                     $("#eb_common_loader").EbLoader("hide");
-                    this.ShowOtpTimer();
+                    this.ShowOtpTimer(ctrl);
                 }
             }.bind(this)
         });

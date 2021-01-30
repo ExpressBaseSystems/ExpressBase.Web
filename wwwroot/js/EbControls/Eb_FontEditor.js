@@ -2,8 +2,8 @@
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId;
     var _font = {
-        FontName: "Roboto",
-        CSSFontName: "Roboto (Default)",
+        FontName: "Roboto (Default)",
+        CSSFontName: "Roboto",
         Size: 14,
         Style: 0,
         color: "#333333",

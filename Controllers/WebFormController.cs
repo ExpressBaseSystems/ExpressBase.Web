@@ -205,6 +205,10 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
 			ViewBag.IsPartial = _mode > 10;
 			_mode = _mode > 0 ? _mode % 10 : _mode;
+
+			Dictionary<string, string> EnableEditBtn = new Dictionary<string, string>() { { "disableEditButton", "0"} };
+			ViewBag.disableEditButton = JsonConvert.SerializeObject(EnableEditBtn);
+
 			if (_params != null)
 			{
 				List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());

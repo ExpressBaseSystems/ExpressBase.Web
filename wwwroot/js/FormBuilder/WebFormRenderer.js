@@ -534,6 +534,8 @@ const WebFormRender = function (option) {
             if (_renderMode === 5) {
                 this.$formCont.html(`<div id="" style="height:calc(100vh - 38px);"> <div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> <i class="fa fa-check" aria-hidden="true" style="color: green;"></i>&nbsp;Submitted successfully </div></div>`);
                 //EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
+                $(`#eb_messageBox_container`).children().hide();//// temp fix to avoid SE message (FormEdit btn enabled....)
+                $(`#eb_messageBox_container`).css("padding", "0");////
                 return;
             }
 

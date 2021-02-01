@@ -496,7 +496,7 @@ namespace ExpressBase.Web.Controllers
 					});
 				Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
 				//////using server events enable other opened form edit buttons
-				FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
+				//FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
 
 				return JsonConvert.SerializeObject(Resp);
 			}
@@ -964,7 +964,7 @@ namespace ExpressBase.Web.Controllers
 
 		public string SendOTP_Contol(string formRefid, string ctrlId, string sendOTPto)
 		{
-			return "";/////////////////////////
+			
 			string Tstamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 			string otpRedisKey = string.Concat(formRefid, ctrlId, this.LoggedInUser.UserId,Tstamp );
 

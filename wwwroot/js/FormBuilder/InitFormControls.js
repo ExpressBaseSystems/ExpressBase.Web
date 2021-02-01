@@ -1871,19 +1871,45 @@
         });
 
         if (ctrl.Sendotp) {
-            var btnHtml = `<div style="display: flex;"> <button type="button" id="${ctrl.EbSid}_sendOTP" class="ebbtn eb_btn-sm eb_btnblue pull-left" style="margin-top:10px" >Send OTP</button>
+            var btnHtml = `<div style="display: flex;"> <button type="button" id="${ctrl.EbSid}_sendOTP" class="ebbtn eb_btn-sm eb_btnblue pull-left" style="margin-top:10px;display:none" >Send OTP</button>
                             <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p></div>`;
             $('#cont_' + ctrl.EbSid).append(btnHtml);
             $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
+            var vtemp=JSON.parse(ctrl.DataVals.M);
+            if (vtemp.is_verified==='true') {
+                $(`#${ctrl.EbSid}_OTPverified`).show();
+                $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum', vtemp.phone_no);
+            }
+            else {
+                $(`#${ctrl.EbSid}_sendOTP`).show();
+            }
         }
 
         ctrl.getValueFromDOM = function (p1) {
-            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();      
+            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();   
+           
             if (ctrl.DisableCountryCode) {
-                return $(`#${ctrl.EbSid}`).val();
+                let num = $(`#${ctrl.EbSid}`).val();
+                if (ctrl.Sendotp) {
+                    checkNumChange(num);                   
+                }
+                return num;
             }
             else {
-                return iti.getNumber();
+                let num = iti.getNumber();
+                if (ctrl.Sendotp) {
+                    checkNumChange(num);                  
+                }
+                return num;
+            }
+            
+            function checkNumChange(num) {
+                var vNum = $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum');
+                if (num !== vNum) {
+                    $(`#${ctrl.EbSid}_sendOTP`).show();
+                    $(`#${ctrl.EbSid}_OTPverified`).hide();
+                    ctrl.DataVals.M = {};
+                }
             }
 
         };
@@ -2148,18 +2174,21 @@
     this.VerifyOTP_control = function (ctrl) {
 
         $("#eb_common_loader").EbLoader("show");
-        $.ajax({
+        var otpval = $(`#${ctrl.EbSid}_otpValue`).val();
+        var tstamp = $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey');
+        $.ajax({            
             url: "../WebForm/VerifyOTP_control",
             data: {
                 formRefid: this.Renderer.formRefId,
                 ctrlId: ctrl.EbSid,
-                otpValue: $(`#${ctrl.EbSid}_otpValue`).val(),
-                tstamp: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey')
+                otpValue: otpval,
+                tstamp: tstamp
             },
             cache: false,
             type: "POST",
             success: function (data) {
                 if (data) {
+                    ctrl.DataVals.M = JSON.stringify({ otp: otpval, timestamp: tstamp });
                     $("#eb_common_loader").EbLoader("hide");
                     $(`#${ctrl.EbSid}_sendOTP`).hide();
                     $(`#${ctrl.EbSid}_OTPverified`).show();

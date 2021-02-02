@@ -1725,8 +1725,12 @@ const WebFormRender = function (option) {
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
 
-        if (this.mode === "View Mode")
-            this.Mode.isView = true;
+        if (this.mode === "View Mode") {
+            if (_renderMode === 5 && this.FormObj.FormModeAfterSave === 2)//public form and after save mode is edit
+                this.Mode.isEdit = true;
+            else
+                this.Mode.isView = true;
+        }
         else if (this.mode === "New Mode" || this.mode === "Export Mode" || this.mode === "Draft Mode" || this.mode === "Prefill Mode" || this.mode === "Preview Mode")
             this.Mode.isNew = true;
         else if (this.mode === "Edit Mode")

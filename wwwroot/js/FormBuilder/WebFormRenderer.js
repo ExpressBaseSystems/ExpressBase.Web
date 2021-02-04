@@ -1027,6 +1027,13 @@ const WebFormRender = function (option) {
                     }
                 }
             }.bind(this));
+
+            $.each(this.formData.DisableEdit, function (k, status) {
+                if (status) {
+                    this.$editBtn.prop("disabled", true);
+                    return;
+                }
+            }.bind(this));
         }
         else {
             this.$saveBtn.prop("disabled", false);

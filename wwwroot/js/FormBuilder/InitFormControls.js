@@ -1377,7 +1377,7 @@
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         let $input = $("#" + ctrl.EbSid_CtxId);
         ctrl.__EbAlert = this.Renderer.EbAlert;
-        if (ctrl.MaskPattern !== "" && ctrl.TextMode == 0 || ctrl.MaskPattern !== null) {
+        if (ctrl.MaskPattern !== null && ctrl.MaskPattern !== "" && ctrl.TextMode == 0) {
             $input.inputmask({ mask: ctrl.MaskPattern });
         }
         else if (ctrl.TextMode === 0) {

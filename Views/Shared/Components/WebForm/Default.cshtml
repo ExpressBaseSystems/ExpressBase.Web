@@ -368,12 +368,15 @@
 
 @{
     string str = "<style>";
-    for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
-    {
-        for (int j = 0; j < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj.Count; j++)
+    if (ViewBag.__Solution.SolutionSettings.WebSettings != null) {
+
+        for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
         {
-            str += "." + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Selector + "{" +
-            ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Css + "}";
+            for (int j = 0; j < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj.Count; j++)
+            {
+                str += "." + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Selector + "{" +
+                ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Css + "}";
+            }
         }
     }
     str += "<style>";

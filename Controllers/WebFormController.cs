@@ -148,6 +148,10 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
 
 			ViewBag.__Solution = GetSolutionObject(ViewBag.cid);
+			if (ViewBag.__Solution.SolutionSettings.WebSettings == null)
+			{
+				ViewBag.__Solution.SolutionSettings.WebSettings = new EbWebFormSettings(true);
+			}
 			ViewBag.__User = this.LoggedInUser;
 
 			return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });

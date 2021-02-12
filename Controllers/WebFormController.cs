@@ -205,6 +205,10 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
 			ViewBag.IsPartial = _mode > 10;
 			_mode = _mode > 0 ? _mode % 10 : _mode;
+
+			Dictionary<string, string> EnableEditBtn = new Dictionary<string, string>() { { "disableEditButton", "0"} };
+			ViewBag.disableEditButton = JsonConvert.SerializeObject(EnableEditBtn);
+
 			if (_params != null)
 			{
 				List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
@@ -496,7 +500,7 @@ namespace ExpressBase.Web.Controllers
 					});
 				Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
 				//////using server events enable other opened form edit buttons
-				FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
+				//FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
 
 				return JsonConvert.SerializeObject(Resp);
 			}
@@ -964,7 +968,7 @@ namespace ExpressBase.Web.Controllers
 
 		public string SendOTP_Contol(string formRefid, string ctrlId, string sendOTPto)
 		{
-			return "";/////////////////////////
+			
 			string Tstamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 			string otpRedisKey = string.Concat(formRefid, ctrlId, this.LoggedInUser.UserId,Tstamp );
 

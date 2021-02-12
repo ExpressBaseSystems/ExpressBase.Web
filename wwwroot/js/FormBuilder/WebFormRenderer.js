@@ -534,6 +534,8 @@ const WebFormRender = function (option) {
             if (_renderMode === 5) {
                 this.$formCont.html(`<div id="" style="height:calc(100vh - 38px);"> <div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> <i class="fa fa-check" aria-hidden="true" style="color: green;"></i>&nbsp;Submitted successfully </div></div>`);
                 //EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
+                $(`#eb_messageBox_container`).children().hide();//// temp fix to avoid SE message (FormEdit btn enabled....)
+                $(`#eb_messageBox_container`).css("padding", "0");////
                 return;
             }
 
@@ -1023,6 +1025,13 @@ const WebFormRender = function (option) {
                         this.$cancelBtn.prop("disabled", true);
                         return;
                     }
+                }
+            }.bind(this));
+
+            $.each(this.formData.DisableEdit, function (k, status) {
+                if (status) {
+                    this.$editBtn.prop("disabled", true);
+                    return;
                 }
             }.bind(this));
         }
@@ -1723,8 +1732,12 @@ const WebFormRender = function (option) {
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
 
-        if (this.mode === "View Mode")
-            this.Mode.isView = true;
+        if (this.mode === "View Mode") {
+            if (_renderMode === 5 && this.FormObj.FormModeAfterSave === 2)//public form and after save mode is edit
+                this.Mode.isEdit = true;
+            else
+                this.Mode.isView = true;
+        }
         else if (this.mode === "New Mode" || this.mode === "Export Mode" || this.mode === "Draft Mode" || this.mode === "Prefill Mode" || this.mode === "Preview Mode")
             this.Mode.isNew = true;
         else if (this.mode === "Edit Mode")

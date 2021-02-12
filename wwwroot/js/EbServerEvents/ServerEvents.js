@@ -175,8 +175,8 @@
             importApplication: this.importApplication.bind(this),
             UpdateUserMenu: this.updateUserMenu.bind(this),
             userDisabled: this.userDisabled.bind(this),
-            WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
-            WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
+          //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
+          //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
 
         }
     });

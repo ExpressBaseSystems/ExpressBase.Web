@@ -363,11 +363,24 @@
     div[ctype="DataGrid_New"] table.dataTable tbody tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody th.selected, div[ctype="DataGrid_New"] table.dataTable tbody td.selected {
         color: black !important;
     }
-
-
     /*DataGridNew related styles - End*/
 </style>
 
+@{
+    string str = "<style>";
+    for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
+    {
+        for (int j = 0; j < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj.Count; j++)
+        {
+            str += "." + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Selector + "{" +
+            ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Css + "}";
+        }
+    }
+    str += "<style>";
+    <script>
+        $("head").append(`@Html.Raw(str)`);
+    </script>
+}
 <div id='WebForm-cont' class="webform-cont">
 
 </div>

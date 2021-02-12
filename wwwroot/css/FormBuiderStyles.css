@@ -3495,3 +3495,13 @@ input.locinp {
     margin: 5px 5px;
 }
 /*#sendregion EbAudioInput*/
+
+.webform-cont .ctrl-cover .input-group input, i, span {
+    background-color: transparent;
+}
+.webform-cont .ctrl-cover input {
+    background-color: transparent !important;
+}
+.webform-cont .dg_body input {
+    background-color: white !important;
+}

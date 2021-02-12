@@ -1629,7 +1629,14 @@
     };
 
     this.DataLabelRefresh = function (ctrl) {
+        this.filtervalues = [];
+        let ebDbType = 11;
         let Refid = ctrl.DataSourceId;
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1 ));
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_currentuser_id", ebcontext.user.UserId));
+        this.filtervalues.push(new fltr_obj(ebDbType, "id", this.Renderer.rowId));
+        this.filtervalues.push(new fltr_obj(ebDbType, this.Renderer.FormObj.TableName + "_id", this.Renderer.rowId));
+
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
@@ -1862,7 +1869,7 @@
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
             // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
-            onlyCountries: (ctrl.CountriesList ?.length > 0) ? ctrl.CountriesList.split(",") : [],
+            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,

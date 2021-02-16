@@ -1792,8 +1792,8 @@
 
     this.preInit = function () {
         if (this.ctrl.DataSourceId) {
-            if (this.Mode.isNew || (this.IsLoadDataSourceInEditMode && (this.Mode.isEdit || this.Mode.isView))) {
-                this.isDataImport = true;
+            if (this.Mode.isNew || (this.ctrl.IsLoadDataSourceInEditMode && (this.Mode.isEdit || this.Mode.isView))) {
+                this.isDataImport = true;// is this using??
                 this.setSuggestionVals();
             }
         }

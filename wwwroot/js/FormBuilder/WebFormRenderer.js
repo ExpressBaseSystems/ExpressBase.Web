@@ -399,7 +399,7 @@ const WebFormRender = function (option) {
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
                 ctrl.setDisplayMember(val);
             }
-            if (ctrl.ObjType === "TextBox") {
+            else if (ctrl.ObjType === "TextBox") {
                 ctrl.justSetValue(val);
                 if (ctrl.getValueFromDOM() !== val) {
                     ctrl.__EbAlert.alert({

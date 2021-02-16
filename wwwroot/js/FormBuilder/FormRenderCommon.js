@@ -333,7 +333,8 @@
         $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
             try {
                 let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
-                depCtrl.__setSuggestionVals();
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView))))
+                    depCtrl.__setSuggestionVals();
             }
             catch (e) {
                 console.eb_log("eb error :");

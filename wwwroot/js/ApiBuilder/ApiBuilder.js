@@ -130,7 +130,22 @@ function EbApiBuild(config) {
         var curControl = $(event.target).closest(".apiPrcItem");
         var curObject = this.Procs[curControl.attr("id")];
         var type = curControl.attr('eb-type');
+        if (type === "PivotTable") {
+            if (curObject.Pivotconfig.Reference === null) {
+                let DRObject = this.Procs["tb0SqlReader0"];
+                curObject.Pivotconfig.Reference = DRObject.Reference;
+            }
+        }
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
+    };
+
+    this.getDRResource = function () {
+        let resources = $(`#${this.dropArea}`).find(".apiPrcItem.dropped") || [];
+        if (resources.length <= 0 || index >= resources.length) {
+            return null;
+        }
+        let $res = resources[index];
+        return this.Procs[$res.id];
     };
 
     this.BeforeSave = function () {

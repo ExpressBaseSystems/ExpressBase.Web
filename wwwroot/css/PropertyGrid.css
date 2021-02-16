@@ -643,7 +643,7 @@
     padding: 2px;
 }
 
-.OSE-body, .CE-body {
+.OSE-body, .CE-body, .PE-body {
     height: 100%;
 }
 
@@ -663,7 +663,7 @@
     font-size: 13px;
 }
 
-.CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont, .CE-mapper-ctrlsCont {
+.CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont, .CE-mapper-ctrlsCont, PEColumnCont {
     overflow-y: auto;
     overflow-x: hidden;
     height: calc(100% - 33px);
@@ -1153,3 +1153,13 @@
     .colTile-osce bootstrap-select {
         margin-left: auto;
     }
+
+    /* Pivot Editor*/
+.PEColumnCont{
+    height:25%;
+    overflow:auto;
+}
+#PEDRColumncont_id {
+    overflow: auto;
+    height: 90% !important;
+}

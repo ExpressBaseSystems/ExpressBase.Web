@@ -313,6 +313,10 @@
             valueHTML = '<input type="text" class="pg-inp" for="' + name + '" readonly value="' + ((type === 15) ? this.getExpandedValue(value) : value23) + '" style="width:100%; direction: rtl;" />' +
                 "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
         }// If Dictionary Editor
+        else if (type === 43) {
+            valueHTML = '<span class="cxv-inp">(Collection)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
         else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }

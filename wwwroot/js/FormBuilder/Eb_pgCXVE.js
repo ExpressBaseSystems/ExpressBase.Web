@@ -212,6 +212,8 @@
             this.initShadowEditor();
         else if (this.editor === 40)
             this.initGradientColorPicker();
+        else if (this.editor === 43)
+            this.initPivotEditor();
         else if (this.editor > 63) {
             this.initScrE(e);
         }
@@ -978,6 +980,134 @@
         let gcpBody = `<div id="gradient_editor"> </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(gcpBody);
         GradientColorPicker({ Id: "gradient_editor", Value: value });
+    };
+
+    this.initPivotEditor = function () {
+        this.curEditorLabel = "Pivot Table Configuration";
+        let PEbody = `<div pg-editor-type="${this.editor}" class="PE-body">
+            <table class="table table-bordered editTbl">
+            <tbody>
+            <tr>
+            <td style="padding: 0px;">
+            <div class="CE-controls-head"> DRColumns </div>
+            <div class="PEColumnCont" id="PEDRColumncont_id"> </div>
+            </td>
+            <td style="padding: 0px;">
+            <div class="CE-controls-head"> Columns </div>
+            <div class="PEColumnCont" id="PEColumncont_id"> </div>
+            
+            <div class="CE-controls-head"> Values </div>
+            <div class="PEColumnCont" id="PEValuecont_id"> </div>
+            
+            
+            <div class="CE-controls-head"> Rows </div>
+            <div class="PEColumnCont" id="PERowscont_id"> </div>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </div>`;
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(PEbody);
+        if (this.PGobj.PropsObj[this.PGobj.CurProp].DSColumns === null || this.PGobj.PropsObj[this.PGobj.CurProp].DSColumns.$values.length === 0) {
+            if (this.PGobj.PropsObj[this.PGobj.CurProp].Reference !== null) {
+                $.ajax({
+                    type: "POST",
+                    url: "../DS/GetColumns4Control",
+                    data: { DataSourceRefId: this.PGobj.PropsObj[this.PGobj.CurProp].Reference },
+                    success: this.DRColumnsSuccessfn.bind(this)
+                });
+            }
+        }
+        else
+            this.PEHelper();
+    };
+
+    this.DRColumnsSuccessfn = function (cols) { 
+        this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns = JSON.parse(cols);
+        this.PGobj.PropsObj[this.PGobj.CurProp].DSColumns = JSON.parse(cols);
+        this.PEHelper();
+    };
+
+    this.PEHelper = function () {
+        $.each(this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values, function (i, obj) {
+            let tileHTML = `<div class="colTile" onclick="$(this).focus()" tabindex="1" id="` + obj.name + '" eb-type="' + type + '" setSelColtiles>'
+                + obj.name
+                + '</div>';
+            let $tile = $(tileHTML);
+            $("#PEDRColumncont_id").append($tile);
+        });
+        $.each(this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values, function (i, obj) {
+            let tileHTML = `<div class="colTile" onclick="$(this).focus()" tabindex="1" id="` + obj.name + '" eb-type="' + type + '" setSelColtiles>'
+                + obj.name
+                + '</div>';
+            let $tile = $(tileHTML);
+            $("#PEColumncont_id").append($tile);
+        });
+        $.each(this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values, function (i, obj) {
+            let tileHTML = `<div class="colTile" onclick="$(this).focus()" tabindex="1" id="` + obj.name + '" eb-type="' + type + '" setSelColtiles>'
+                + obj.name
+                + '</div>';
+            let $tile = $(tileHTML);
+            $("#PERowscont_id").append($tile);
+        });
+        $.each(this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values, function (i, obj) {
+            let tileHTML = `<div class="colTile" onclick="$(this).focus()" tabindex="1" id="` + obj.name + '" eb-type="' + type + '" setSelColtiles>'
+                + obj.name
+                + '</div>';
+            let $tile = $(tileHTML);
+            $("#PEValuecont_id").append($tile);
+        });
+        this.DRColumnContId = "PEDRColumncont_id";
+        this.ColumnContId = "PEColumncont_id";
+        this.ValueContId = "PEValuecont_id";
+        this.RowContId = "PERowscont_id";
+        let drake = new dragula([
+            document.getElementById("PEDRColumncont_id"), document.getElementById("PEColumncont_id"),
+            document.getElementById("PEValuecont_id"), document.getElementById("PERowscont_id")],
+            {
+                accepts: function (el, target, source) {
+                    if (target === source)
+                        return false;
+                    else
+                        return true;
+                },
+                moves: function (el, container, handle) { return true; }
+            });
+        drake.on("drop", this.onPEDropFn.bind(this));
+    };
+
+    this.onPEDropFn = function (el, target, source, sibling) {
+        if (source !== target) {
+            let name = $(el).attr("id");
+            let movingobj = this.PGobj.PropsObj[this.PGobj.CurProp].DSColumns.$values.find(obj => obj.name === name);
+            if (target.id === this.ColumnContId) {
+                this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values.push(movingobj);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values = this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values.filter(obj => obj.name !== movingobj.name);
+            }
+            else if (target.id === this.ValueContId) {
+                this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values.push(movingobj);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values = this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values.filter(obj => obj.name !== movingobj.name);
+            }
+            else if (target.id === this.RowContId) {
+                this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values.push(movingobj);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values = this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values.filter(obj => obj.name !== movingobj.name);
+
+            }
+            else if (target.id === this.DRColumnContId) {
+                this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns.$values.push(movingobj);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Columns.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Values.$values.filter(obj => obj.name !== movingobj.name);
+                this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values = this.PGobj.PropsObj[this.PGobj.CurProp].Rows.$values.filter(obj => obj.name !== movingobj.name);
+
+
+            }
+        }
     };
 
     this.initOSCE = function () {

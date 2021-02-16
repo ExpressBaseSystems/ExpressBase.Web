@@ -103,6 +103,20 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.EbFilterDialog, _user = this.LoggedInUser, _sol = s_obj, wc = ViewBag.wc });
         }
 
+        public IActionResult GetFD4Pivot(string dvobj, string contextId)
+        {
+            EbDataVisualization dsObject = EbSerializers.Json_Deserialize(dvobj);
+            EbApi _api = this.Redis.Get<EbApi>(dsObject.ApiRefId);
+            var dsrefid = _api.Resources.First(res => res is EbSqlReader).Reference;
+            dsObject.DataSourceRefId = dsrefid;
+            dsObject.AfterRedisGetforFilter(this.Redis, this.ServiceClient);
+
+            Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+            if (dsObject.EbFilterDialog != null)
+                EbControlContainer.SetContextId(dsObject.EbFilterDialog, contextId);
+            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.EbFilterDialog, _user = this.LoggedInUser, _sol = s_obj, wc = ViewBag.wc });
+        }
+
         public string GetColumns(string dvobjt, bool CustomColumn)
         {
             EbDataVisualization dvobj = EbSerializers.Json_Deserialize(dvobjt);
@@ -213,6 +227,39 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                     returnobj.Message = e.ToString();
+            }
+            //return resultlist1;
+            return EbSerializers.Json_Serialize(returnobj);
+        }
+
+        public string GetColumnsFromOwnApi(string apirefid)
+        {
+            EbApi _api = this.Redis.Get<EbApi>(apirefid);
+            DataSourceColumnsResponse columnresp = new DataSourceColumnsResponse();
+            var dsrefid = _api.Resources.First(res => res is EbSqlReader).Reference;
+            ReturnColumns returnobj = new ReturnColumns();
+            try
+            {
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = dsrefid, SolnId = ViewBag.cid, Params = null });
+                if (columnresp == null || columnresp.Columns.Count == 0)
+                {
+                    Console.WriteLine("Column Object from SS is null or count 0");
+                    throw new Exception("Object Not found(Redis + SS)");
+                }
+                DSController dscont = new DSController(this.ServiceClient, this.Redis);
+                returnobj.ColumnsCollection = dscont.GetDVColumnCollection(columnresp.Columns);
+                returnobj.Paramlist = null;
+                var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                DVColumnCollection Columns = GetDVcolumns(__columns);
+                returnobj.ColumnOrginal = Columns;
+                returnobj.Columns = Columns;
+                returnobj.DsColumns = Columns;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+                this._Responsestatus.Message = e.ToString();
+                returnobj.Message = e.ToString();
             }
             //return resultlist1;
             return EbSerializers.Json_Serialize(returnobj);
@@ -404,7 +451,7 @@ namespace ExpressBase.Web.Controllers
             }
             return res;
         }
-        
+
 
         public void SendSMS(SmsDirectRequest request)
         {

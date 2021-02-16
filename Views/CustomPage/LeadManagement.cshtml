@@ -418,7 +418,10 @@
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#home">Basic Details</a></li>
-            <li><a data-toggle="tab" href="#menuBilling">Billing</a></li>
+            @if (ViewBag.BillPerm)
+            {
+                <li><a data-toggle="tab" href="#menuBilling">Billing</a></li>
+            }
             <li><a data-toggle="tab" href="#menuSurgery">Surgery Details</a></li>
             <li><a data-toggle="tab" href="#menuAttach">Attach</a></li>
             <li><a data-toggle="tab" href="#menuPRP">PRP</a></li>

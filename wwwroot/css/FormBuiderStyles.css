@@ -256,11 +256,11 @@ body {
         box-shadow: none;
     }
 
-.form-buider-form table {
-    width: 100%;
-    position: relative;
-    /*table-layout: fixed;*/
-}
+    .form-buider-form table {
+        width: 100%;
+        position: relative;
+        /*table-layout: fixed;*/
+    }
 
     .form-buider-form .btn-group {
         width: 100% !important;
@@ -307,6 +307,14 @@ body {
 
 [is-editing="false"] .cancel-row {
     display: none;
+}
+
+[is-added="false"] .edit-row.disable-edit {
+    display: none !important;
+}
+
+[is-added="false"] .del-row.disable-del {
+    display: none !important;
 }
 
 .del-row, .edit-row, .cancel-row {
@@ -547,10 +555,10 @@ body {
 }
 
 .RenderAsWizard .wiz-addbtn {
-    display:none;
+    display: none;
 }
 
-[eb-form="true"][isrendermode="false"] .RenderAsWizard>.wiz-addbtn {
+[eb-form="true"][isrendermode="false"] .RenderAsWizard > .wiz-addbtn {
     position: absolute;
     display: inline-flex;
     top: 0;
@@ -562,7 +570,8 @@ body {
     color: white;
     border-radius: 50%;
 }
-    [ctype="TabControl"] .nav-tabs {
+
+[ctype="TabControl"] .nav-tabs {
     border-bottom: 1px solid #ddd0;
 }
 
@@ -1041,8 +1050,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 
 
-.Eb-ctrlContainer[eb-readonly="true"] .dg-th {
-    background-color: #fafafa;
+
+.Eb-ctrlContainer[eb-readonly="true"] .Dg_head th,
+.Eb-ctrlContainer[eb-readonly="true"] .dgtr > td,
+[eb-form="true"][mode="view"] .Dg_head th,
+[eb-form="true"][mode="view"] .dgtr > td {
     color: #555;
 }
 
@@ -2200,13 +2212,20 @@ input.locinp {
     background-color: rgb(199, 199, 199);
 }
 
-.filter-box .input-group-addon, .form-buider-form .input-group-addon, [eb-type="BotForm"] .input-group-addon {
+
+.filter-box .input-group-addon,
+.form-buider-form .input-group-addon,
+[eb-type="BotForm"] .input-group-addon,
+.q-container .input-group-addon {
     padding: 0px !important;
     padding: 0px 2.5px !important;
     background-color: white;
 }
 
-    .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa, [eb-type="BotForm"] .input-group-addon > .fa {
+    .filter-box .input-group-addon > .fa,
+    .form-buider-form .input-group-addon > .fa,
+    [eb-type="BotForm"] .input-group-addon > .fa,
+    .q-container .input-group-addon > .fa {
         padding: 3px 7px !important;
     }
 
@@ -3033,6 +3052,40 @@ input.locinp {
     .phnContextBtn:hover {
         cursor: pointer;
     }
+
+.phoneOTPinput {
+    padding-left: 15px;
+    letter-spacing: 42px;
+    border: 0;
+    background-image: linear-gradient(to left, #0371f9cc 70%, rgba(255, 255, 255, 0) 0%);
+    background-position: bottom;
+    background-size: 50px 1px;
+    background-repeat: repeat-x;
+    background-position-x: 35px;
+    width: 330px;
+    min-width: 330px;
+}
+
+#phnOTPdivOuter {
+    width: 305px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+#phnOTPdivInner {
+    left: 0;
+    position: sticky;
+}
+
+.phoneOTPinput {
+    outline: none;
+}
+
+#resend {
+    outline: none;
+}
+
 /*ebEmail control*/
 .emailCtrl_invalid {
     background: #ffb2b24f;
@@ -3450,3 +3503,13 @@ input.locinp {
     margin: 5px 5px;
 }
 /*#sendregion EbAudioInput*/
+
+.webform-cont .ctrl-cover .input-group input, i, span {
+    background-color: transparent;
+}
+.webform-cont .ctrl-cover input {
+    background-color: transparent !important;
+}
+.webform-cont .dg_body input {
+    background-color: white !important;
+}

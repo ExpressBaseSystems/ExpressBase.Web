@@ -7,6 +7,7 @@
     this.IsInnerCall = options.IsInnerCall || false;
     this.wraperId = options.id;
     this.$scope = options.$scope || $(document.body);
+    this.noStickButton = options.noStickButton || false;
     this.$wraper = $("#" + this.wraperId);
     this.$extCont = options.$extCont;
     this.parentId = null;
@@ -746,13 +747,16 @@
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         if (!this.IsInnerCall) {
-            this.stickBtn = new EbStickButton({
-                $wraper: this.$wraper,
-                $extCont: this.$extCont,
-                label: "Properties",
-                $scope: this.$scope,
-                style: this.style
-            });
+            if (!this.noStickButton) {
+                this.stickBtn = new EbStickButton({
+                    $wraper: this.$wraper,
+                    $extCont: this.$extCont,
+                    label: "Properties",
+                    $scope: this.$scope,
+                    style: this.style
+                });
+            }
+
             this.$wraper.addClass("outer-pg");
             if (this.Isdraggable) {
                 this.$extCont.draggable({
@@ -899,8 +903,11 @@
             }
             if (meta.MaskPattern && $inp.length) {
                 $inp.val($inp.val().toLowerCase());
+                //$inp.inputmask({
+                //    alias: "Regex",
+                //    regex: meta.MaskPattern
+                //});
                 $inp.inputmask({
-                    alias: "Regex",
                     regex: meta.MaskPattern
                 });
             }

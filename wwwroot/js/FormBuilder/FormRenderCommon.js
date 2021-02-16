@@ -333,7 +333,8 @@
         $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
             try {
                 let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
-                depCtrl.__setSuggestionVals();
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView))))
+                    depCtrl.__setSuggestionVals();
             }
             catch (e) {
                 console.eb_log("eb error :");
@@ -760,7 +761,7 @@
         //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
         //    EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         //else
-        let contSel = '#td_' + ctrl.EbSid_CtxId;
+        let contSel = '#cont_' + ctrl.EbSid_CtxId;
         if (ctrl.IsDGCtrl)
             contSel = '#td_' + ctrl.EbSid_CtxId;
         EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);

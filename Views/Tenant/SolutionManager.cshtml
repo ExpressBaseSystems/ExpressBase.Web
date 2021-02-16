@@ -47,6 +47,7 @@
     Image_url.Add("Cloudinary", "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />");
     Image_url.Add("ExpertTexting", "<img class='img-responsive' src='../images/expert_texting.png' align='middle' style='height:26px' />");
     Image_url.Add("TextLocal", "<img class='img-responsive' src='../images/textlocal_logo.png' align='middle' style='height:26px' />");
+    Image_url.Add("SmsBuddy", "<img class='img-responsive' src='../images/smsbuddy.png' align='middle' style='height:26px' />");
     Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
     Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
 
@@ -245,6 +246,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="smsbuddy" class="connection_wrap_outer" data-toggle="modal" data-target="#SmsBuddyConnectionEdit" data-whatever="SmsBuddy">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="SmsBuddyConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/smsbuddy.png" style="width:95%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="maps" class="connection_wrap_outer" data-toggle="modal" data-target="#MapConnectionEdit" data-whatever="Maps">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
@@ -256,15 +267,15 @@
                                         </div>
                                     </div>
                                     @*<div id="OSM" class="connection_wrap_outer" data-toggle="modal" data-target="#OSMConnectionEdit" data-whatever="Maps">
-                                            <div class="connection_wrap w-100">
-                                                <div class="connection_wrap_header w-100 image-hover" id="OSMConnection_config">
-                                                    <img class="img-responsive image-vender" src="~/images/open-street-map-medium-1.png" style="height: 80%; width: 80%;" />
-                                                    <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>*@
+            <div class="connection_wrap w-100">
+                <div class="connection_wrap_header w-100 image-hover" id="OSMConnection_config">
+                    <img class="img-responsive image-vender" src="~/images/open-street-map-medium-1.png" style="height: 80%; width: 80%;" />
+                    <div class="image-add">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+        </div>*@
                                     <div id="MobileConfig" class="connection_wrap_outer" data-toggle="modal" data-target="#MobileConfigEdit" data-whatever="Maps">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="MobileConfig_config">
@@ -335,7 +346,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit"  data-whatever="ORACLE">
+                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
@@ -1123,7 +1134,57 @@
         </div>
     </div>
 </div>
-
+<div id="SmsBuddyConnectionEdit" class="modal fade input-clear" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="smsbuddy_mask">
+            <form id="SmsBuddyConnectionSubmit" method="post" data-toggle="validator">
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Sms Buddy Accounts</h4>
+                    <div id="smsbuddyConnection_loder" class="dbConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:25%;">
+                        <img class='img-responsive' src='~/images/smsbuddy.png' align='middle' style='height: 70px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>SMS buddy is an innovative smart way to send SMS in bulk using templates. It supports adding account details of several popular international SMS gateways.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="SmsBuddyInputNickname" name="NickName" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input name="DatabaseVendor" value="SmsBuddy" class="form-control Vendor " type="hidden" readonly />
+                                <div class="form-group">
+                                    <label>Sender</label>
+                                    <input id="SmsBuddyInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Api Key</label>
+                                    <input id="SmsBuddyInputApi" name="ApiKey" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="SmsBuddyInputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div id="cldnry_conEdit" class="modal fade input-clear" role="dialog">
     <div class="modal-dialog" style="min-width:60%;max-width:100%">
         <div class="modal-content" id="cloudnary_mask">

@@ -218,7 +218,7 @@
             this.initScrE(e);
         }
 
-        if (this.editor < 64 || this.editor === 64 || this.editor === 128 || this.editor === 156)
+        if (this.editor < 64 || this.editor === 64 || this.editor === 128 || this.editor === 256)
             $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
         if (this.editor !== 8)
@@ -623,19 +623,19 @@
         }
         else if (this.editor === 256) {
             this.singleScrType = 2;
-            ;
+            this.initSQLE();
             return;
         }
         let options = "";
         if (this.editor & 64)
-            options += "<option mode='javascript' type='0' hint='javascript' >Javascript</option>";
+            options += "<option mode='javascript' type='0' hint='javascript' >Javascript Editor</option>";
         if (this.editor & 128)
-            options += "<option mode='text/x-csharp' type='1' hint='anyword'>C# Script</option>";
+            options += "<option mode='text/x-csharp' type='1' hint='anyword'>C# Script Editor</option>";
         if (this.editor & 256)
-            options += "<option mode='text/x-plsql'  type='2' hint='sql'>SQL</option>";
+            options += "<option mode='text/x-plsql'  type='2' hint='sql'>SQL Script Editor</option>";
         this.ScrEHelper("Javascript Editor", 'JE_txtEdtr', "javascript", "javascript");
         $("#editorsel").empty();
-        $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<select id='editorsel' class='selectpicker'>" + options + "</select>");
+        $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<div style='width: 200px; display: inline-block;'><select id='editorsel' class='selectpicker'></div>" + options + "</select>");
         $("#editorsel").selectpicker('refresh');
         $("#editorsel").selectpicker().on('changed.bs.select', this.editorSelChange.bind(this));
     };
@@ -684,6 +684,10 @@
         //    foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
         //    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         //});
+    };
+
+    this.initSQLE = function () {
+        this.ScrEHelper("SQL Script Editor", 'SQLE_txtEdtr', "text/x-plsql", "sql");
     };
 
     this.initOSE = function () {
@@ -909,7 +913,12 @@
     };
 
     this.VTileClick = function () {
-        let $e = $(event.target).closest(".colTile");
+        let $tgt = $(event.target);
+
+        if ($tgt.hasClass('oseobjgo2icon') || $tgt.hasClass('fa-external-link'))
+            return;
+
+        let $e = $tgt.closest(".colTile");
 
         if ($e.attr("is-selected") === "false") {
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check-circle").hide();

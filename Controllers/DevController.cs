@@ -259,6 +259,25 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        public UpdateAppSettingsResponse UpdateAppSettingsWebform (string Settings, int appid,EbApplicationTypes type)
+        {
+            UpdateAppSettingsResponse resp = null;
+            try
+            {
+                resp = this.ServiceClient.Post(new UpdateAppSettingsRequest
+                {
+                    Settings = Settings,
+                    AppId = appid,
+                    AppType = type
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return resp;
+        }
+
         [HttpPost]
         public GetBotDetailsResponse GetBotDetails(int _appId)
         {
@@ -952,6 +971,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
             ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
+            ViewBag.WebFormSettings = solutionObj.SolutionSettings.WebSettings != null? solutionObj.SolutionSettings.WebSettings : new EbWebFormSettings(true);
 
             if (solutionObj.SolutionSettings?.MobileAppSettings == null)
             {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExpressBase.Common;
+using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;
@@ -22,6 +24,23 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [EbBreadCrumbFilter("QuestionBank")]
+        public IActionResult question_bank()
+        {
+            List<EbQuestion> Qlist = new List<EbQuestion>();
+            GetSurveyQuestionsResponse resp = this.ServiceClient.Get(new GetSurveyQuestionsRequest());
+
+            foreach (String qs in resp.Data)
+            {
+                EbQuestion qstn = EbSerializers.Json_Deserialize<EbQuestion>(qs);
+                Qlist.Add(qstn);
+            }
+            //_object = EbSerializers.Json_Deserialize(element.Json_lc);
+            //ViewBag.dsObj = _object;
+            ViewBag.Questions = Qlist;
+            return View();
+        }
+
         public IActionResult SurveyHome()
         {
             GetSurveysByAppResponse resp = this.ServiceClient.Get(new GetSurveysByAppRequest { });
@@ -33,32 +52,40 @@ namespace ExpressBase.Web.Controllers
         {
 
             var o = JsonConvert.DeserializeObject<EbSurveyQuery>(survey);
-            SurveyQuesResponse resp = this.ServiceClient.Post(new SurveyQuesRequest {
+            SurveyQuesResponse resp = this.ServiceClient.Post(new SurveyQuesRequest
+            {
                 Query = o
             });
             return resp;
         }
 
-		public IActionResult ManageSurvey(int id)
-		{
-			ManageSurveyResponse resp = this.ServiceClient.Post<ManageSurveyResponse>(new ManageSurveyRequest { Id = id });
-			ViewBag.QuestionList = resp.AllQuestions;
-			ViewBag.SurveyData = JsonConvert.SerializeObject(resp.Obj);
+        public SaveQuestionResponse SaveQuestion(string EbQuestion)
+        {
+            EbQuestion o = ExpressBase.Common.EbSerializers.Json_Deserialize<EbQuestion>(EbQuestion);
+            SaveQuestionResponse resp = this.ServiceClient.Post(new SaveQuestionRequest { Query = o });
+            return resp;
+        }
+
+        public IActionResult ManageSurvey(int id)
+        {
+            ManageSurveyResponse resp = this.ServiceClient.Post<ManageSurveyResponse>(new ManageSurveyRequest { Id = id });
+            ViewBag.QuestionList = resp.AllQuestions;
+            ViewBag.SurveyData = JsonConvert.SerializeObject(resp.Obj);
             ViewBag.SurveyId = id;
-			return View();
-		}
+            return View();
+        }
 
-		public int SaveSurvey(string SurveyInfo)
-		{
-			SaveSurveyResponse resp = this.ServiceClient.Post<SaveSurveyResponse>(new SaveSurveyRequest { Data = SurveyInfo});
-			return resp.Status;
-		}
+        public int SaveSurvey(string SurveyInfo)
+        {
+            SaveSurveyResponse resp = this.ServiceClient.Post<SaveSurveyResponse>(new SaveSurveyRequest { Data = SurveyInfo });
+            return resp.Status;
+        }
 
-		public Dictionary<int, string> GetSurveyNames()
-		{
-			GetSurveyListResponse resp = this.ServiceClient.Post<GetSurveyListResponse>(new GetSurveyListRequest { });
-			return resp.SurveyDict;
-		}
-	}
-			
+        public Dictionary<int, string> GetSurveyNames()
+        {
+            GetSurveyListResponse resp = this.ServiceClient.Post<GetSurveyListResponse>(new GetSurveyListRequest { });
+            return resp.SurveyDict;
+        }
+    }
+
 }

@@ -54,8 +54,12 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.AttachImgInfo = fr.AttachImgInfo;
 			ViewBag.PrpImgInfo = fr.PrpImgInfo;
 
+			ViewBag.BillPerm = true;// permission
+			if (!ViewBag.BillPerm)
+				fr.BillingList.Clear();
+
 			//ViewBag.ImageIdList = fr.ImageIdList;
-			ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
+			ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());			
 
             if (mode == 1)
 			{

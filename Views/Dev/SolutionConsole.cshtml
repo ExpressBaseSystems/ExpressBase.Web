@@ -8,6 +8,7 @@
     Dictionary<string, List<EbObjectWrapper>> mobile_allpages = ViewBag.MobilePages;
     string signupFormRefid = ViewBag.signupFormRefid;
     MobileAppSettings mobile_settings = ViewBag.MobileSettings;
+    EbWebFormSettings Web_settings = ViewBag.WebFormSettings;
 }
 <style>
     .switch {
@@ -88,8 +89,54 @@
         padding: 10px;
         border-radius: 6px;
     }
+
+    .webform_css_parent {
+        height: 35px;
+        border: solid 1px #d2d2d2;
+        padding: 6px 20px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        background: white;
+    }
+
+    .webform_css_child {
+        padding: 0px 5rem;
+        margin-left: 35px;
+        background: white;
+    }
+
+    .css_selector {
+        margin-top: 7px;
+        border: solid 1px #dcdcdc;
+        border-radius: 4px;
+        padding: 0px 30px;
+        margin-left: 44px;
+        cursor: pointer;
+    }
+
+        .css_selector label {
+            font-size: 14px;
+            font-weight: 400;
+            font-family: 'Roboto';
+        }
+
+    #css_cont .webform_css_parent[aria-expanded="true"] {
+        background: #508bf9;
+        border: none;
+        color: white;
+        border-radius: 4px;
+    }
+    .web-settings-container {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: #eee;
+        margin: 10px 15px;
+    }
 </style>
 <script src='~/js/Eb_dragula.js' type="text/javascript"></script>
+<script src="~/js/EbDashBoards/FormStyleHelper.js" type="text/javascript"></script>
 
 <div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
@@ -229,13 +276,27 @@
                 </div>
             </div>
         </div>
+        <div class="web-settings w-100" style="padding:10px 15px">
+            <h5>Webform Style</h5>
+            <div class="web-settings-container display-flex">
+                <div class="col-lg-3" id="css_cont"> </div>
+                <div class="col-lg-6 col-sm-6">
+                    <form>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="5" id="web_css_edit" style="min-height: 32rem; overflow-y: auto; resize: none;"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     var MobileSettings = @Html.Raw(JsonConvert.SerializeObject(mobile_settings));
     var MobPageColl = [];
-
+     let css = @Html.Raw(JsonConvert.SerializeObject(ViewBag.WebFormSettings));
+    var stylehelp = new FormStyleHelper(css);
     $(document).ready(function () {
         if ("@signupFormRefid" != "") {
             $("#signup_object").val("@signupFormRefid");
@@ -259,6 +320,7 @@
             SignupFormRefid: $("#signup_object").val(),
             UserTypeForms: arr,
             MobileAppSettings: MobileSettings,
+            WebSettings: stylehelp.getStyleObj()
         };
         $.post("../Dev/SaveSolutionSettings",
             { obj: JSON.stringify(obj) },

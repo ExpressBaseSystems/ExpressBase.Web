@@ -44,11 +44,22 @@
     };
 
     this.PopoverPlacement = function (context, source) {
-        if (($(source).offset().left + 700) > document.body.clientWidth)
-            return "left";
-        else {
-            return "right";
-        }
+        let left = $(source).offset().left, dwidth = document.body.clientWidth, pos;
+
+        if (left < (dwidth - 700) || (dwidth / 2) > left)
+            pos = "right";
+        else if (left > 700 || (dwidth / 2) < left)
+            pos = "left";
+        else
+            pos = "right";
+
+        return pos;
+
+        //if (($(source).offset().left + 700) > document.body.clientWidth)
+        //    return "left";
+        //else {
+        //    return "right";
+        //}
     };
 
     this.FileUploader = function (ctrl, ctrlOpts) {
@@ -108,39 +119,6 @@
             if (name === "Delete") {
                 if (name === "Delete") {
                     EbDialog("show",
-                    {
-                        Message: "Are you sure? Changes Affect only if Form is Saved.",
-                        Buttons: {
-                            "Yes": { Background: "green", Align: "left", FontColor: "white;" },
-                            "No": { Background: "violet", Align: "right", FontColor: "white;" }
-                        },
-                        CallBack: function (name) {
-                            if (name === "Yes" && refids.length > 0) {
-                                let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
-
-                                for (let i = 0; i < refids.length; i++) {
-                                    let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
-                                    if (index !== -1) {
-                                        uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
-                                    }
-                                    else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
-                                        uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
-                                    }
-                                }
-                                if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
-                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-                                }
-                                imgup.deleteFromGallery(refids);
-                                imgup.customMenuCompleted("Delete", refids);
-                            }
-                        }
-                    });
-                }
-            }
-            else {
-                $.each(DpControlsList, function (i, dpObj) {
-                    if (name === 'Set as ' + dpObj.Label) {
-                        EbDialog("show",
                         {
                             Message: "Are you sure? Changes Affect only if Form is Saved.",
                             Buttons: {
@@ -148,20 +126,53 @@
                                 "No": { Background: "violet", Align: "right", FontColor: "white;" }
                             },
                             CallBack: function (name) {
-                                if (name === "Yes") {
-                                    if (refids.length > 0) {
-                                        dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
+                                if (name === "Yes" && refids.length > 0) {
+                                    let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
+
+                                    for (let i = 0; i < refids.length; i++) {
+                                        let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
+                                        if (index !== -1) {
+                                            uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
+                                        }
+                                        else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
+                                            uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
+                                        }
                                     }
+                                    if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
+                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                    }
+                                    imgup.deleteFromGallery(refids);
+                                    imgup.customMenuCompleted("Delete", refids);
                                 }
-                            }.bind()
+                            }
                         });
+                }
+            }
+            else {
+                $.each(DpControlsList, function (i, dpObj) {
+                    if (name === 'Set as ' + dpObj.Label) {
+                        EbDialog("show",
+                            {
+                                Message: "Are you sure? Changes Affect only if Form is Saved.",
+                                Buttons: {
+                                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                                },
+                                CallBack: function (name) {
+                                    if (name === "Yes") {
+                                        if (refids.length > 0) {
+                                            dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
+                                        }
+                                    }
+                                }.bind()
+                            });
                     }
                 });
             }
 
         }.bind(this, ctrlOpts.DpControlsList);
 
-        
+
     };
 
     //edit by amal for signature pad
@@ -748,6 +759,10 @@
 
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
+        $input.find("select").selectpicker({///////////////////////////////////////////////////////////
+            dropupAuto: false,
+        });
+
         $input.find("select option[value='Hourly']").attr("selected", "selected");
         $input.find("select").trigger("change");
     };
@@ -1150,13 +1165,15 @@
             event.preventDefault();
             if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
                 if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
-                    $('#webformsave').trigger('click');
+                    //$('#webformsave').trigger('click');
+                    this.Renderer.saveForm();
                 } else {
                     EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
                     this.CreateCaptcha(ctrlOpts);
                 }
             } else {
-                $('#webformsave').trigger('click');
+                //$('#webformsave').trigger('click');
+                this.Renderer.saveForm();
             }
         }.bind(this));
     }.bind(this);
@@ -1261,7 +1278,7 @@
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
-        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts});        
+        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts });
         //$('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
         //    trigger: 'hover',
         //    html: true,
@@ -1306,13 +1323,13 @@
     this.ProvisionLocation = function (ctrl, ctrlopts) {
         console.log('init ProvisionLocation');
 
-        $.each(ctrl.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
-                if (c)
-                    obj.Control = c;
-            }
-        }.bind(this));
+        //$.each(ctrl.Fields.$values, function (i, obj) {
+        //    if (obj.ControlName !== '') {
+        //        let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
+        //        if (c)
+        //            obj.Control = c;
+        //    }
+        //}.bind(this));
     };
 
     this.DisplayPicture = function (ctrl, ctrlopts) {
@@ -1358,7 +1375,12 @@
 
     this.TextBox = function (ctrl, ctrlopts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.TextMode === 0) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        ctrl.__EbAlert = this.Renderer.EbAlert;
+        if (ctrl.MaskPattern !== null && ctrl.MaskPattern !== "" && ctrl.TextMode == 0) {
+            $input.inputmask({ mask: ctrl.MaskPattern });
+        }
+        else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {
                 $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
             }
@@ -1420,14 +1442,31 @@
         if (ctrl.HideInputIcon)
             $input.siblings(".input-group-addon").hide();
 
-        $input.inputmask("currency", {
-            radixPoint: ".",
-            allowMinus: ctrl.AllowNegative,
-            groupSeparator: "",
-            digits: ctrl.DecimalPlaces,
-            prefix: '',
-            autoGroup: true
-        });
+
+
+        if (ctrl.InputMode == 1) {
+            $input.inputmask({
+                alias: "numeric",
+                _mask: function _mask(opts) {
+                    return ebcontext.user.Preference.CurrencyPattern;
+                },
+                groupSeparator: ebcontext.user.Preference.CurrencyGroupSeperator,
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
+                placeholder: "0",
+                digits: ebcontext.user.Preference.CurrencyDecimalDigits,
+                digitsOptional: !1
+            });
+        }
+        else {
+            $input.inputmask("currency", {
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
+                allowMinus: ctrl.AllowNegative,
+                groupSeparator: "",
+                digits: ctrl.DecimalPlaces,
+                prefix: '',
+                autoGroup: true
+            });
+        }
 
         $input.focus(function () { $(this).select(); });
 
@@ -1575,6 +1614,55 @@
         }
     };
 
+    this.DataLabel = function (ctrl) {
+        let Refid = ctrl.DataSourceId;
+        //this.GetFilterValuesForDataSource();
+        this.Rowdata = null;
+        //this.GetFilterValuesForDataSource();
+        $(`#${ctrl.EbSid}_icon i`).addClass("fa " + ctrl.Icon);
+        $(`#${ctrl.EbSid}_icon`).css("color", ctrl.IconColor);
+        if (ctrl.StaticLabelFont !== null)
+            GetFontCss(Label.StaticLabelFont, $(`#cont_${ctrl.EbSid} .eb-ctrl-label`));
+        if (ctrl.DynamicLabelFont !== null)
+            GetFontCss(ctrl.DynamicLabelFont, $(`#cont_${ctrl.EbSid} .data-dynamic-label`));
+        this.DataLabelRefresh(ctrl);
+    };
+
+    this.DataLabelRefresh = function (ctrl) {
+        this.filtervalues = [];
+        let ebDbType = 11;
+        let Refid = ctrl.DataSourceId;
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1 ));
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_currentuser_id", ebcontext.user.UserId));
+        this.filtervalues.push(new fltr_obj(ebDbType, "id", this.Renderer.rowId));
+        this.filtervalues.push(new fltr_obj(ebDbType, this.Renderer.FormObj.TableName + "_id", this.Renderer.rowId));
+
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetData4DashboardControl",
+            data: { DataSourceRefId: Refid, param: this.filtervalues },
+            async: false,
+            error: function (request, error) {
+                EbPopBox("show", {
+                    Message: "Failed to get data from DataSourse",
+                    ButtonStyle: {
+                        Text: "Ok",
+                        Color: "white",
+                        Background: "#508bf9",
+                        Callback: function () {
+                            //$(".dash-loader").hide();
+                        }
+                    }
+                });
+            },
+            success: function (resp) {
+                ctrl["Columns"] = JSON.parse(resp.columns);
+                this.Rowdata = resp.row;
+                $(`#cont_${ctrl.EbSid} .data-dynamic-label`).empty().append(this.Rowdata[ctrl.ValueMember.data]);
+                setTimeout(this.DataLabelRefresh.bind(this, ctrl), ctrl.RefreshTime > 1000 ? ctrl.RefreshTime : 3000);
+            }.bind(this)
+        });
+    }
     //this.BluePrint = function (ctrl, ctrlopts) {
     //    console.log("view mode bp");
     //    var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
@@ -1672,12 +1760,12 @@
     }
 
     this.TagInput = function (ctrl) {
-        var $ctrl = $("#" + ctrl.EbSid_CtxId +'_tagId');
-        if (ctrl.AutoSuggestion === true) {           
+        var $ctrl = $("#" + ctrl.EbSid_CtxId + '_tagId');
+        if (ctrl.AutoSuggestion === true) {
             var BloodhoundEngine = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.whitespace,
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
-                local: ctrl.Suggestions.$values                    
+                local: ctrl.Suggestions.$values
             });
             BloodhoundEngine.initialize();
             $ctrl.tagsinput({
@@ -1780,15 +1868,57 @@
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
+            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,
             dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px",
             utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
         });
+
+        if (ctrl.Sendotp) {
+            var btnHtml = `<div style="display: flex;"> <button type="button" id="${ctrl.EbSid}_sendOTP" class="ebbtn eb_btn-sm eb_btnblue pull-left" style="margin-top:10px;display:none" >Send OTP</button>
+                            <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p></div>`;
+            $('#cont_' + ctrl.EbSid).append(btnHtml);
+            $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
+            var vtemp=JSON.parse(ctrl.DataVals.M);
+            if (vtemp.is_verified==='true') {
+                $(`#${ctrl.EbSid}_OTPverified`).show();
+                $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum', vtemp.phone_no);
+            }
+            else {
+                $(`#${ctrl.EbSid}_sendOTP`).show();
+            }
+        }
+
         ctrl.getValueFromDOM = function (p1) {
-            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();           
-            return iti.getNumber();;
+            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();   
+           
+            if (ctrl.DisableCountryCode) {
+                let num = $(`#${ctrl.EbSid}`).val();
+                if (ctrl.Sendotp) {
+                    checkNumChange(num);                   
+                }
+                return num;
+            }
+            else {
+                let num = iti.getNumber();
+                if (ctrl.Sendotp) {
+                    checkNumChange(num);                  
+                }
+                return num;
+            }
+            
+            function checkNumChange(num) {
+                var vNum = $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum');
+                if (num !== vNum) {
+                    $(`#${ctrl.EbSid}_sendOTP`).show();
+                    $(`#${ctrl.EbSid}_OTPverified`).hide();
+                    ctrl.DataVals.M = {};
+                }
+            }
+
         };
         ctrl.bindOnChange = function (p1) {
             $(phninput).on("change", p1);
@@ -1799,6 +1929,8 @@
         };
 
         $(`#${ctrl.EbSid}`).attr("maxlength", "18");
+
+
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {
@@ -1951,6 +2083,147 @@
         EbPopBox("show", { Message: "Message sent", Title: "Success" });
     };
 
+    //Send OTP...for phone,email control
+
+    this.SendOTP_modal = function (ctrl) {
+        $("#eb_common_loader").EbLoader("show");
+        $(`#${ctrl.EbSid}_otpModal`).remove();
+        var otpRecever = $(`#${ctrl.EbSid}`).val();
+        $.ajax({
+            url: "../WebForm/SendOTP_Contol",
+            data: { formRefid: this.Renderer.formRefId, ctrlId: ctrl.EbSid, sendOTPto: otpRecever },
+            cache: false,
+            type: "POST",
+            success: function (verifyKey) {
+                console.log(verifyKey);
+                var html = `<div id="${ctrl.EbSid}_otpModal" class="modal fade" role="dialog">
+                      <div class="modal-dialog modal-dialog-centered" style="margin-top:15%;width:30%;">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="text-align: center;">Please enter the OTP to verify your phone number</h4>
+                          </div>
+                          <div class="modal-body">
+                            <p style="text-align: center;">An OTP has been sent to ${otpRecever}</p>
+                            <div style="justify-content: center;display: flex;">
+                                <div id="phnOTPdivOuter" class="col-md-12">
+                                    <div id="phnOTPdivInner">
+                                        <input id="${ctrl.EbSid}_otpValue" class="phoneOTPinput" tabindex="1" type="text" maxlength="6" />
+                                    </div>
+                                <div style="text-align: center;margin-top: 20px;">
+                                    <span id="OTPtimer" style="font-weight:bold"></span>
+                                </div>
+                                </div>
+                            </div>
+                          </div>
+                           <div class="modal-footer">
+                                <div tabindex="2" id="${ctrl.EbSid}_verifyotp" verifyKey="${verifyKey}" class="ebbtn eb_btn-sm eb_btnblue pull-left">
+                                  Verify OTP
+                                </div>
+                                <div class="pull-right ">
+                                     <button class="btn-link" hidden id="${ctrl.EbSid}_resendOTP">Resend</button>
+                                </div>
+                         </div>
+                        </div>
+
+                      </div>
+                    </div>`;
+
+                // $("#"+this.Renderer.FormObj.EbSid).append(html);
+                $('body').append(html);
+                $(`#${ctrl.EbSid}_otpModal`).modal("show");
+                this.ShowOtpTimer(ctrl);
+                $(`#${ctrl.EbSid}_verifyotp`).on('click', this.VerifyOTP_control.bind(this, ctrl));
+                $(`#${ctrl.EbSid}_resendOTP`).on('click', this.ResendOTP_control.bind(this, ctrl));
+                $("#eb_common_loader").EbLoader("hide");
+
+
+            }.bind(this)
+        });
+    }
+
+    var resend_otp = false;
+
+    this.ShowOtpTimer = function (ctrl) {
+        resend_otp = false;
+        document.getElementById('OTPtimer').innerHTML = 03 + ":" + 00;
+        this.startTimer_otp(ctrl);
+    }.bind(this);
+
+    this.startTimer_otp = function (ctrl) {
+        if (resend_otp)
+            return;
+        var presentTime = document.getElementById('OTPtimer').innerHTML;
+        var timeArray = presentTime.split(/[:]+/);
+        var m = timeArray[0];
+        var s = this.checkSecond_otp((timeArray[1] - 1));
+        if (s == 59) { m = m - 1 }
+        if (m < 0) {
+            this.OtpTimeOut(ctrl);
+            return;
+        }
+        document.getElementById('OTPtimer').innerHTML =
+            m + ":" + s;
+        setTimeout(this.startTimer_otp, 1000);
+    }.bind(this);
+
+    this.OtpTimeOut = function (ctrl) {
+        EbMessage("show", { Background: "red", Message: "Time out" });
+        $(`#${ctrl.EbSid}_resendOTP`).show();
+    }.bind(this);
+
+    this.checkSecond_otp = function (sec) {
+        if (sec < 10 && sec >= 0) { sec = "0" + sec; } // add zero in front of numbers < 10
+        if (sec < 0) { sec = "59"; }
+        return sec;
+    }.bind(this);
+
+    this.VerifyOTP_control = function (ctrl) {
+
+        $("#eb_common_loader").EbLoader("show");
+        var otpval = $(`#${ctrl.EbSid}_otpValue`).val();
+        var tstamp = $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey');
+        $.ajax({            
+            url: "../WebForm/VerifyOTP_control",
+            data: {
+                formRefid: this.Renderer.formRefId,
+                ctrlId: ctrl.EbSid,
+                otpValue: otpval,
+                tstamp: tstamp
+            },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                    ctrl.DataVals.M = JSON.stringify({ otp: otpval, timestamp: tstamp });
+                    $("#eb_common_loader").EbLoader("hide");
+                    $(`#${ctrl.EbSid}_sendOTP`).hide();
+                    $(`#${ctrl.EbSid}_OTPverified`).show();
+                    $(`#${ctrl.EbSid}_otpModal`).modal('hide');
+                }
+            }
+        });
+    }
+
+    this.ResendOTP_control = function (ctrl) {
+        $.ajax({
+            url: "../WebForm/ResendOTP_control",
+            data: {
+                formRefid: this.Renderer.formRefId,
+                ctrlId: ctrl.EbSid,
+                sendOTPto: $(`#${ctrl.EbSid}`).val(),
+                tstamp: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey')
+            },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    this.ShowOtpTimer(ctrl);
+                }
+            }.bind(this)
+        });
+    }
     //phonecontrol ends 
 
     this.PdfControl = function (ctrl) {

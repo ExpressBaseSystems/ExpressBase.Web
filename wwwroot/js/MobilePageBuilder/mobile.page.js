@@ -25,7 +25,9 @@ const Constants = {
     FORM_CONTROL: ".mform-control",
     LIST_CONTROL: ".mlist-control",
     DASH_CONTROL: ".mdash-control",
-    DS_COLUMN: ".ds-column"
+    DS_COLUMN: ".ds-column",
+    DATA_LABEL: ".data-label",
+    DROPPED: ".dropped"
 };
 
 $.fn.visibility = function (flag) {
@@ -289,7 +291,7 @@ function EbMobStudio(config) {
             }
             else if ($(div).hasClass("eb_mob_dashboard_container")) {
                 this.EbObject.Container.ChildControls.$values.length = 0;
-                $(div).find(".mob_dash_control").each(this.findDashContainerItems.bind(this));
+                $(div).find(".eb_mob_container_inner").children(".mob_dash_control").each(this.findDashContainerItems.bind(this));
             }
             commonO.Current_obj = this.EbObject;
             return true;
@@ -333,6 +335,7 @@ function EbMobStudio(config) {
     //dash save
     this.findDashContainerItems = function (i, o) {
         let jsobj = this.Procs[o.id];
+        jsobj.setObject();
         this.EbObject.Container.ChildControls.$values.push(jsobj);
     };
 

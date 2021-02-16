@@ -86,7 +86,8 @@
 <script type="text/javascript" src="~/js/FormBuilder/DGUCcolumn.js" asp-append-version=@bApnd></script>
 @*<script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>*@
 @*jith*@
-<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>
+@*<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.5/jquery.inputmask.min.js"></script>
 @*jith*@
 <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/vue@2.1.10.min.js" asp-append-version=@bApnd></script>
@@ -362,11 +363,27 @@
     div[ctype="DataGrid_New"] table.dataTable tbody tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody th.selected, div[ctype="DataGrid_New"] table.dataTable tbody td.selected {
         color: black !important;
     }
-
-
     /*DataGridNew related styles - End*/
 </style>
 
+@{
+    string str = "<style>";
+    if (ViewBag.__Solution.SolutionSettings.WebSettings != null) {
+
+        for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
+        {
+            for (int j = 0; j < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj.Count; j++)
+            {
+                str += "." + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Selector + "{" +
+                ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Css + "}";
+            }
+        }
+    }
+    str += "<style>";
+    <script>
+        $("head").append(`@Html.Raw(str)`);
+    </script>
+}
 <div id='WebForm-cont' class="webform-cont">
 
 </div>
@@ -514,6 +531,8 @@
     let _renderMode = @ViewBag.renderMode;
     let _formHTML = `@Html.Raw(ViewBag.WebFormHtml)`;
 
+    let _disableEditButton= @Html.Raw(ViewBag.disableEditButton);
+
     header.addRootObjectHelp(_formObj);
 
     //to store refids of uploaded files via all fileuploader ctrls
@@ -541,7 +560,8 @@
              isPartial: _ispartial,
              formPermissions: _formPermissions,
              headerObj: header,
-             formHTML: _formHTML
+             formHTML: _formHTML,
+             disableEditBtn: _disableEditButton
          });
 
     </script>

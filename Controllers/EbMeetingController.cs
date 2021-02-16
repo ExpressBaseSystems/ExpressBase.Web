@@ -97,13 +97,22 @@ namespace ExpressBase.Web.Controllers
         public string GetSlotDetails(int id)
         {
             GetMeetingsDetailsResponse Resp = this.ServiceClient.Post<GetMeetingsDetailsResponse>(new GetMeetingsDetailsRequest { MyActionId = id });
+            EbWebForm FormObj = EbFormHelper.GetEbObject<EbWebForm>(Resp.FormRefid, this.ServiceClient, this.Redis, null);
             string htm = "";
             string hosts = "";
             string attendees = "";
+            EbMeetingScheduler MeetingObj = new EbMeetingScheduler();
+            GetScheduleUserDetailsResponse Partiinfo = new GetScheduleUserDetailsResponse();
             MeetingResponse Response = new MeetingResponse();
+            for (int i = 0; i < FormObj.Controls.Count; i++)
+            {
+                if(FormObj.Controls[i].ObjType == "MeetingScheduler")
+                {
+                    MeetingObj = (EbMeetingScheduler)FormObj.Controls[i];
+                }
+            }
             if (Resp.IsDirectMeeting && Resp.ResponseStatus )
             {
-
                 for (int i = 0; i < Resp.ParticipantList.Count; i++)
                 {
                     if (Resp.ParticipantList[i].ParticipantType == 1)
@@ -210,6 +219,53 @@ namespace ExpressBase.Web.Controllers
                     ";
                 htm += $@"<div></div>";
             }
+
+            if (MeetingObj.SameHost)
+            {
+                Partiinfo = this.ServiceClient.Post<GetScheduleUserDetailsResponse>(new GetScheduleUserDetailsRequest { MyActionId = id });
+                if (Partiinfo.ParticipantType == ParticipantType.Host)
+                {
+                    htm = "";
+                    string Date = Convert.ToDateTime(Resp.MeetingScheduleDetails.Date).ToString("dddd, dd MMMM yyyy");
+                    string Slots = "";
+                    List<int> IdSlots = new List<int>();
+                    for (int i = 0; i < Resp.SlotList.Count; i++)
+                    {
+                        string TimeTo = Convert.ToDateTime(Resp.SlotList[i].TimeTo).ToString("hh:mm tt");
+                        string TimeFrom = Convert.ToDateTime(Resp.SlotList[i].TimeFrom).ToString("hh:mm tt");
+                        IdSlots.Add(Resp.SlotList[i].SlotId);
+                        //    if (Resp.SlotList[i].IsApproved == "F")
+                        //    {
+                        //        Slots += $@"<div id='{Resp.SlotList[i].SlotId}' m-id='{Resp.SlotList[i].MeetingScheduleId}' is-approved='{Resp.SlotList[i].IsApproved}'
+                        //class='slots-div unblocked-slot'> <i class='fa fa-dot-circle-o' aria-hidden='true'></i>{TimeFrom} to {TimeTo}</div>";
+                        //    }
+                        //    else
+                        //    {
+                        //        Slots += $@"<div id='{Resp.SlotList[i].SlotId}' m-id='{Resp.SlotList[i].MeetingScheduleId}' is-approved='{Resp.SlotList[i].IsApproved}'
+                        //class='solts-div blocked-slot'> <i class='fa fa-dot-circle-o' aria-hidden='true'></i> {TimeFrom} to {TimeTo}</div>";
+                        //    }
+                        Slots += $@"<tr><td>{TimeFrom}</td><td>{TimeTo}</td></tr>";
+
+                    }
+                    string joinedStr = string.Join(",", IdSlots);
+                    htm += $@"<div class='mr'>
+                        <div class='mr-title'> {Resp.MeetingScheduleDetails.Title} </div>
+                        <div class='mr-description'> <i class='fa fa-info-circle' aria-hidden='true'></i> <div>{Resp.MeetingScheduleDetails.Description} </div> </div>
+                        <div class='meeting-details'> 
+                        <div class='mr-venue'> <i class='fa fa-map-marker' aria-hidden='true'></i> <div>{Resp.MeetingScheduleDetails.Location}</div>  </div>
+                        <div class='mr-date'> <i class='fa fa-calendar-o' aria-hidden='true'></i> <div>{Date}</div> </div>
+                        <div class='slots'><div style='display:flex;'>
+                        <table class='table'><tr><th>Time From</th><th>Time To</th></tr>
+                        { Slots}</table></div> </div>
+                        </div></div>
+                    <div class='mr-btn-grp'>
+                    <button id='pick-multiple-slot' data-id='{joinedStr}' class='mr-btn'> Accept Meeting</button>
+                    </div>
+                    ";
+                    htm += $@"<div></div>";
+                }
+            }
+
             Response.Html = htm;
             Response.ResponseStatus = Resp.ResponseStatus;
             return JsonConvert.SerializeObject(Response);
@@ -290,9 +346,16 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(htm);
         }
 
+        //pick single meeting request
         public string PickSlot(int Slot, int myactionid)
         {
             PickMeetingSLotResponse Resp = this.ServiceClient.Post<PickMeetingSLotResponse>(new PickMeetingSLotRequest { MyActionId = myactionid, SlotId = Slot, UserInfo = this.LoggedInUser });
+            return JsonConvert.SerializeObject(Resp);
+        }
+        //pick multiple meeting request
+        public string PickMultipleSlot(List<int> Slots, int myactionid)
+        {
+            PickMultipleMeetingResponse Resp = this.ServiceClient.Post<PickMultipleMeetingResponse>(new PickMultipleMeetingRequest { MyActionId = myactionid, SlotIds = Slots, UserInfo = this.LoggedInUser });
             return JsonConvert.SerializeObject(Resp);
         }
 

@@ -2,8 +2,8 @@
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId;
     var _font = {
-        FontName: "Times-Roman",
-        CSSFontName:"Times",
+        FontName: "Roboto (Default)",
+        CSSFontName: "Roboto",
         Size: 14,
         Style: 0,
         color: "#333333",
@@ -111,7 +111,7 @@
     this.loadFont = function (e) {
         fontVal = $(e.target).val();
         fontName = $("#googleFont option:selected").text();
-        this.loadCSS('https://fonts.googleapis.com/css?family=' + fontVal);
+        if (fontVal !== 'Roboto') { this.loadCSS('https://fonts.googleapis.com/css?family=' + fontVal); }
         $('#font-preview').css('font-family', fontVal);
         this.fontObject.FontName = fontName;
         this.fontObject.CSSFontName = fontVal;

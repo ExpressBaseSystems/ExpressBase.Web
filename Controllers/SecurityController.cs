@@ -2,6 +2,7 @@
 using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Singletons;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
@@ -23,7 +24,7 @@ namespace ExpressBase.Web.Controllers
 {
 	public class SecurityController : EbBaseIntCommonController
 	{
-		public SecurityController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+		public SecurityController(IServiceClient _client, IRedisClient _redis, IEbMqClient _mqc) : base(_client, _redis, _mqc) { }
 
 		[EbBreadCrumbFilter("Security/type")]
 		public IActionResult CommonList(string type, string show)
@@ -241,7 +242,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.itemid = itemid;
 
 			////for showing login activity log
-						
+
 			Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
 			Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
 			ViewBag.Meta = _jsResult.AllMetas;
@@ -265,7 +266,7 @@ namespace ExpressBase.Web.Controllers
 						ORDER BY 
 							signin.signin_at DESC;";
 			_params.Add(new Param { Name = "islg", Type = ((int)EbDbTypes.String).ToString(), Value = "F" });
-			_params.Add(new Param { Name = "usrid", Type = ((int)EbDbTypes.Int32).ToString(), Value = itemid.ToString() });			
+			_params.Add(new Param { Name = "usrid", Type = ((int)EbDbTypes.Int32).ToString(), Value = itemid.ToString() });
 			DVColumnCollection DVColumnCollection = GetColumnsForLoginActivitySuser();
 			EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true };
 			string VisualObj = EbSerializers.Json_Serialize(Visualization);
@@ -665,7 +666,7 @@ namespace ExpressBase.Web.Controllers
 					if (str == "signin_at")
 						_col = new DVDateTimeColumn { Data = 3, Name = str, sTitle = "SignIn at", Type = EbDbTypes.DateTime, bVisible = true, Format = DateFormat.Date, ConvretToUsersTimeZone = true };
 					if (str == "signin_time")
-						_col = new DVDateTimeColumn { Data = 4, Name = str, sTitle = "SignIn time", Type = EbDbTypes.DateTime, bVisible = true, Format=DateFormat.Time,  ConvretToUsersTimeZone=true};
+						_col = new DVDateTimeColumn { Data = 4, Name = str, sTitle = "SignIn time", Type = EbDbTypes.DateTime, bVisible = true, Format = DateFormat.Time, ConvretToUsersTimeZone = true };
 					if (str == "signout_at")
 						_col = new DVDateTimeColumn { Data = 5, Name = str, sTitle = "SignOut at", Type = EbDbTypes.DateTime, bVisible = true, Format = DateFormat.Date, ConvretToUsersTimeZone = true };
 					if (str == "signout_time")
@@ -681,7 +682,7 @@ namespace ExpressBase.Web.Controllers
 					Columns.Add(_col);
 				}
 
-				
+
 			}
 			catch (Exception e)
 			{
@@ -713,7 +714,7 @@ namespace ExpressBase.Web.Controllers
 
 		}
 
-		
+
 		public bool UpdateUserType(int itemid, string name)
 		{
 			UpdateUserTypeResponse resp = this.ServiceClient.Post(new UpdateUserTypeRequset { Id = itemid, Name = name });
@@ -721,6 +722,31 @@ namespace ExpressBase.Web.Controllers
 				return true;
 			else
 				return false;
+		}
+
+		public bool BrowserExceptions(string errorMsg)
+		{
+			try
+			{
+
+				BrowserExceptionResponse Ber = this.MqClient.Post<BrowserExceptionResponse>(new BrowserExceptionMqRequest
+				{
+					Device_info = this.UserAgent,
+					Ip_address = this.RequestSourceIp,
+					Error_msg = errorMsg
+				});
+
+				if (Ber.Status)
+					return true;
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message + ex.StackTrace);
+			}
+			return false;
+
 		}
 	}
 }

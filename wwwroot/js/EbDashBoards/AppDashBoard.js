@@ -106,6 +106,16 @@
         $("#mobile-preloadmenu_mdl").modal("hide");
     };
 
+    this.mobileDashboardOnSelect = function (evt) {
+        var $el = $(evt.target).closest(".import_obj_expand_objlinks");
+        this.AppSettings.DashBoardRefId = $el.attr("refid");
+        let text = `${$el.attr("display-name")} (${this.AppSettings.DashBoardRefId})`;
+        $("#mobile-dash-refid").text(text);
+        $("#mobile-dashboard_mdl .import_obj_expand_objlinks").removeClass("selected");
+        $el.addClass("selected");
+        $("#mobile-dashboard_mdl").modal("hide");
+    };
+
     //mobile app
     this.resetMenuApi = function () {
         this.AppSettings.MenuApi = null;
@@ -113,6 +123,13 @@
         $("#mobile-preloadmenu_mdl").modal("hide");
         $("#mobile-preloadmenu_mdl .import_obj_expand_objlinks").removeClass("selected");
     };
+
+    this.resetMobileDashboard = function () {
+        this.AppSettings.DashBoardRefId = null;
+        $("#mobile-dash-refid").text("Not selected");
+        $("#mobile-dashboard_mdl .import_obj_expand_objlinks").removeClass("selected");
+        $("#mobile-dashboard_mdl").modal("hide");
+    }
 
     //mobile app
     this.objTypeClick = function (evt) {
@@ -213,8 +230,10 @@
         if (this.AppType === 2) {
             this.setUpImport4Mob();
             $("#mobile-preloadmenu_mdl .import_obj_expand_objlinks").on("click", this.menuApiOnSelect.bind(this));
+            $("#mobile-dashboard_mdl .import_obj_expand_objlinks").on("click", this.mobileDashboardOnSelect.bind(this));
             $("#save-appsettings-btn").on("click", this.saveAppSettings.bind(this));
             $("#mobile-preloadmenu_mdl #menu-api-reset").on("click", this.resetMenuApi.bind(this));
+            $("#mobile-dashboard_mdl #mobiledashboard-reset").on("click", this.resetMobileDashboard.bind(this));
         }
     };
 
@@ -397,7 +416,7 @@
         appSettings["Description"] = this.AppInfo.Description;
         appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
         appSettings["ThemeColor"] = $("#bot_tm_color").val();
-        appSettings["DpUrl"] = $('#bot_dp_url').attr("dpRefid") ? $('#bot_dp_url').attr("dpRefid"):$("#bot_dp_url").val();
+        appSettings["DpUrl"] = $('#bot_dp_url').attr("dpRefid") ? $('#bot_dp_url').attr("dpRefid") : $("#bot_dp_url").val();
         appSettings["CssContent"] = cssConstObj;
         appSettings["Authoptions"] = authOptions;
         appSettings["BotProp"] = botProperties;
@@ -488,7 +507,7 @@
                 let k = ` <div class="demodpdiv" style=" background:url('../images/${fileid}.png')center center no-repeat" "></div>`;
                 $("#dp_modal").append(k);
                 $('#bot_dp_url').val(`../images/${fileid}.png`);
-                $('#bot_dp_url').attr("dpRefid",fileid)
+                $('#bot_dp_url').attr("dpRefid", fileid)
             }
 
         };

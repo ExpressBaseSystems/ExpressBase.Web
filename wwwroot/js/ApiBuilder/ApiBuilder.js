@@ -185,7 +185,7 @@ function EbApiBuild(config) {
             else
                 return true;
         }
-        else 
+        else
             return true;
     };
 
@@ -440,6 +440,15 @@ function EbApiBuild(config) {
         this.EbObject.Request.Custom.$values = this.EbObject.Request.Custom.$values.filter(e => e.Name !== el.attr("p-name"));
         this.Request.Custom = this.EbObject.Request.Custom.$values.filter(e => e.Name !== el.attr("p-name"));
         el.remove();
+    };
+
+    this.getResource = function (index) {
+        let resources = $(`#${this.dropArea}`).find(".apiPrcItem.dropped") || [];
+        if (resources.length <= 0 || index >= resources.length) {
+            return null;
+        }
+        let $res = resources[index];
+        return this.Procs[$res.id];
     };
 
     this.start = function () {

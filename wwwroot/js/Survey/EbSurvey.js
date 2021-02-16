@@ -1,4 +1,4 @@
-﻿var SurveyObj = function (ques, context) {
+﻿const SurveyObj = function (ques, context) {
     let _chiceCount = 0;
     this.Survey = {
         QuesId: 0,

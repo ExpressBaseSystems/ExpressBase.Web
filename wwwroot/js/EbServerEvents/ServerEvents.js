@@ -2,7 +2,7 @@
     this.rTok = options.Rtoken || getrToken();
     this.ServerEventUrl = options.ServerEventUrl;
     this.Channels = options.Channels.join();
-    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();    
+    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
 
     this.onUploadSuccess = function (m, e) {
@@ -25,20 +25,20 @@
             //    headers: { 'eb_sse_subid': sub.id }
             //});
         }
-        
+
     };
 
     this.onJoin = function (user) {
-     //   console.log("onJoin Welcome, " + user.displayName);
+        //   console.log("onJoin Welcome, " + user.displayName);
     };
 
     this.onLeave = function (user) {
-      //  console.log(user.displayName + " has left the building");
+        //  console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
         //if (console)
-      //  console.log("onHeartbeat", msg, e);
+        //  console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
@@ -47,8 +47,8 @@
 
 
     this.mybroadcast = function (msg, e) {
-       //  console.log("mybroadcast", msg, e);
-      //  alert(213);
+        //  console.log("mybroadcast", msg, e);
+        //  alert(213);
     }
 
 
@@ -58,7 +58,7 @@
     };
 
     this.onLogOutMsg = function (m, e) {
-      //  console.log(m);
+        //  console.log(m);
         location.href = "../Tenantuser/Logout";
         this.onLogOut(m, e);
     };
@@ -71,7 +71,7 @@
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-       // console.log("stopped listening");
+        // console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
@@ -83,7 +83,7 @@
         let pop = {
             Message: "Exported Successfully. Go to App Store to view the package :"
         };
-        self.EbPopBox("show", pop);      
+        self.EbPopBox("show", pop);
     }
 
     this.importApplication = function (m, e) {
@@ -91,16 +91,16 @@
         let pop = {
             Message: "Application imported Successfully."
         };
-        self.EbPopBox("show", pop);      
+        self.EbPopBox("show", pop);
     }
 
-    this.userRoleChanged = function (m, e) {
-        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
-        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
-       // $('#menu_refresh').click();
+    this.updateUserMenu = function (m, e) {
+        localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
+       localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+        // $('#menu_refresh').click();
     }
     this.userDisabled = function (m) {
-      
+
         var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
                                     <div class="cw" style="align-items: center;">
 
@@ -122,6 +122,11 @@
         }, 1000);
     }
 
+    this.webFormEdit_EnableDisable = function (m, b) {
+        EbMessage("show", { Message: m, AutoHide: true, Background: 'blue' });
+        $(`.objectDashB-toolbar #webformedit`).attr("disabled", b);
+    }
+    
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
@@ -130,7 +135,7 @@
 
     this.ES.addEventListener('error', function (e) {
         console.log("ERROR!", e);
-    }, false);    
+    }, false);
 
     this.sEvent.eventReceivers = { "document": document };
 
@@ -168,8 +173,10 @@
             onNotification: this.onNotifyMsg.bind(this),
             exportApplication: this.exportApplication.bind(this),
             importApplication: this.importApplication.bind(this),
-            userRoleChanged: this.userRoleChanged.bind(this),
+            UpdateUserMenu: this.updateUserMenu.bind(this),
             userDisabled: this.userDisabled.bind(this),
+          //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
+          //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
 
         }
     });

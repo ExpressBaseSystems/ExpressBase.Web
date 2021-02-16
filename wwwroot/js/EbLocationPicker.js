@@ -493,13 +493,27 @@
         }
 
         else if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname !=  ("/SupportTicket/EditTicket")) {
+           
+            var message = {
+                'Error_Message': er.stack,
+                'URL': "",
+                'Line': "",
+                'Column': "",
+                'Error_object': ""
+            }
+            $.ajax({
+                url: "../Security/BrowserExceptions",
+                data: { errorMsg: JSON.stringify(message) },
+                cache: false,
+                type: "POST"
+            });
+
             if (confirm("An error occured while selecting location, do you want to report it?")) {
                 window.location = '/SupportTicket/bugsupport';
             } else {
                 window.location = "/Tenantuser/Logout"
             }
 
-            console.error(er);
         }
        
         

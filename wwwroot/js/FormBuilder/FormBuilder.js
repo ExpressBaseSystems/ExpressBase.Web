@@ -663,7 +663,7 @@
                 }
 
                 $ctrl.focus();
-                ctrlObj.Label = ebsid;
+                ctrlObj.Label = ebsid + " Label";
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
@@ -770,7 +770,7 @@
                     newo.Type = config.Type;
                     ctrl.Fields.$values.push(newo);
                 });
-                EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
+                //EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
             }.bind(this, _ctrl)
         });
     };

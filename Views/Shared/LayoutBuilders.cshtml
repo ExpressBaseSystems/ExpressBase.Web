@@ -220,6 +220,7 @@
 
     @Html.RenderScripts()
     <script>
+            reload_if_session_expired();
             AllMetasRoot = {};
             window.ebcontext = {
                 sid: "@ViewBag.cid",

@@ -130,6 +130,7 @@
 
     @Html.RenderScripts()
     <script>
+        reload_if_session_expired();
         AllMetasRoot = {};
         var _uo = @Html.Raw(@ViewBag.UserObject);
         window.ebcontext = {

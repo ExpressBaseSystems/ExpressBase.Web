@@ -112,13 +112,15 @@ const WebFormRender = function (option) {
         $.each(this.DGs, function (k, DG) {//dg Init
             this.DGBuilderObjs[DG.EbSid_CtxId] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
             this.DGBuilderObjs[DG.EbSid_CtxId].MultipleTables = this.DataMODEL | [];
-            if (!window.__IsDGctxMenuSet)
-                $.contextMenu({
-                    selector: '[eb-form="true"][mode="edit"] .Dg_body .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .Dg_body .dgtr:not([is-editing="true"]) > td',
-                    autoHide: true,
-                    build: this.ctxBuildFn.bind(this)
-                });
-            window.__IsDGctxMenuSet = true;
+            if (!DG.DisableRowDelete || DG.IsAddable) {
+                if (!window.__IsDGctxMenuSet)
+                    $.contextMenu({
+                        selector: '[eb-form="true"][mode="edit"] .Dg_body .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .Dg_body .dgtr:not([is-editing="true"]) > td',
+                        autoHide: true,
+                        build: this.ctxBuildFn.bind(this, DG)
+                    });
+                window.__IsDGctxMenuSet = true;
+            }
         }.bind(this));
     };
 
@@ -128,28 +130,32 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.ctxBuildFn = function ($trigger, e) {
-        return {
-            items: {
-                "deleteRow": {
-                    name: "Delete row",
-                    icon: "fa-trash",
-                    callback: this.del
-                },
-                "insertRowAbove": {
-                    name: "Insert row above",
-                    icon: "fa-angle-up",
-                    callback: this.insertRowAbove
+    this.ctxBuildFn = function (DG, $trigger, e) {
+        let cxtMnuItems = {};
 
-                },
-                "insertRowBelow": {
-                    name: "Insert row below",
-                    icon: "fa-angle-down",
-                    callback: this.insertRowBelow,
-                    //disabled: this.insertRowBelowDisableFn
-                }
-            }
-        };
+        if (!DG.DisableRowDelete) {
+            cxtMnuItems["deleteRow"] = {
+                name: "Delete row",
+                icon: "fa-trash",
+                callback: this.del
+            };
+        }
+
+        if (DG.IsAddable) {
+            cxtMnuItems["insertRowAbove"] = {
+                name: "Insert row above",
+                icon: "fa-angle-up",
+                callback: this.insertRowAbove
+            };
+            cxtMnuItems["insertRowBelow"] = {
+                name: "Insert row below",
+                icon: "fa-angle-down",
+                callback: this.insertRowBelow,
+                //disabled: this.insertRowBelowDisableFn
+            };
+        }
+
+        return { items: cxtMnuItems };
     }.bind(this);
 
     this.insertRowBelowDisableFn = function (key, opt) {

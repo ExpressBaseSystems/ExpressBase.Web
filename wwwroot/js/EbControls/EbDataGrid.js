@@ -577,10 +577,12 @@
                     @editBtn@
                     <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
                     <button type='button' class='cancel-row rowc'><span class='fa fa-times'></span></button>
-                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-trash'></span></button>
+                    <button type='button' class='del-row rowc @del-c@ @disable-del@'><span class='fa fa-trash'></span></button>
                 </td>`)
-            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
-            .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
+            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc @disable-edit@'><span class='fa fa-pencil'></span></button>" : "")
+            .replace("@del-c@", !isAnyColEditable ? "del-c" : "")
+            .replace("@disable-edit@", this.ctrl.DisableRowEdit ? "disable-edit" : "")
+            .replace("@disable-del@", this.ctrl.DisableRowDelete ? "disable-del" : "");
     };
 
     this.getTdWidth = function (i, col) {
@@ -918,6 +920,8 @@
 
     this.row_dblclick = function (e) {
         if (!($(e.target).hasClass("tdtxt") || $(e.target).is($(`#${this.TableId}>tbody > tr >td`))))
+            return;
+        if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
             return;
 
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);

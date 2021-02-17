@@ -149,6 +149,8 @@ class DvBuilder {
             this.OldDataSourceRefid = oldval;
             this.DatasourceModified();
         }
+        else if (pname === "ApiRefId")
+            this.GetColumnFromApi();
         else if (pname === "sTitle")
             $("#" + obj.name + "_columntitle").val(newval);
         else if (pname === "Url") {
@@ -274,6 +276,10 @@ class DvBuilder {
             this.getColumns();
     }
 
+    GetColumnFromApi() {
+        this.GetColumnsFromOwnApi();
+    }
+
     DrawBuilder() {
         commonO.Current_obj = this.EbObject;
         $("#get-col-loader").hide();
@@ -316,6 +322,19 @@ class DvBuilder {
             type: "POST",
             cache: false,
             data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: isCustom },
+            success: this.getcolumnSuccess.bind(this)
+        });
+    }
+
+    GetColumnsFromOwnApi() {
+        this.RemoveColumnRef();
+        $("#get-col-loader").show();
+        $("#eb_common_loader").EbLoader("show");
+        $.ajax({
+            url: "../DV/GetColumnsFromOwnApi",
+            type: "POST",
+            cache: false,
+            data: { apirefid: this.EbObject.ApiRefId },
             success: this.getcolumnSuccess.bind(this)
         });
     }

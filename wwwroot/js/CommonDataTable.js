@@ -105,6 +105,8 @@
 
 
     if (this.Source === "EbDataTable") {
+        if (this.EbObject && this.EbObject.ApiRefId !== null && this.EbObject.ApiRefId !== "")
+            this.Source = "PivotTable";
         this.split = new splitWindow("parent-div0", "contBox");
 
         this.split.windowOnFocus = function (ev) {
@@ -153,7 +155,7 @@
     };
 
     this.ajaxSucc = function (text) {
-        if (this.Source === "EbDataTable") {
+        if (this.Source === "EbDataTable" || this.Source === "PivotTable") {
             var flag = false;
             if (this.MainData !== null) {
                 this.isPipped = true;
@@ -169,7 +171,8 @@
             var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter;
             $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter).empty();
             this.filterHtml = text;
-            $("#obj_icons").empty();
+            let search = $('#obj_icons .toolb-srchbx-wrpr').detach();
+            $('#obj_icons').empty().append(search);
             this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
             $("#obj_icons").append(this.$submit);
             this.$submit.click(this.getColumnsSuccess.bind(this));
@@ -197,7 +200,7 @@
             if (this.PcFlag === true)
                 this.compareAndModifyRowGroup();
 
-            if ($("#" + this.ContextId).children("#filterBox").length === 0) {
+            if (jQuery.isEmptyObject(this.FilterDialog)) {
                 this.FD = false;
                 $(".filterCont").hide();
                 $("#eb_common_loader").EbLoader("hide");
@@ -245,6 +248,14 @@
         this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
             $.post("../dv/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + this.tabNum }, this.ajaxSucc.bind(this));
+    };
+
+    this.GetFD4Pivot = function () {
+        $("#eb_common_loader").EbLoader("show");
+        this.RemoveColumnRef();
+        this.ApiRefId = this.EbObject.ApiRefId;
+        if (this.ApiRefId !== "" && this.ApiRefId)
+            $.post("../dv/GetFD4Pivot", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + this.tabNum }, this.ajaxSucc.bind(this));
     };
 
     this.SetColumnRef = function () {
@@ -329,6 +340,8 @@
             this.EbObject.IsPaging = this.IsPaging = false;
             if (this.EbObject.IsDataFromApi && this.EbObject.FilterDialogRefId)
                 this.GetFD();
+            else if (this.EbObject.ApiRefId)
+                this.GetFD4Pivot();
             else
                 this.getColumnsSuccess();
         }
@@ -350,24 +363,39 @@
 
     this.getColumnsSuccess = function (e) {
         $("#eb_common_loader").EbLoader("show");
-        if (this.Source === "EbDataTable")
+        if (this.Source === "EbDataTable") {
             this.Do4EbdataTable();
+            this.Done4All();
+        }
         else if (this.Source === "Calendar") {
             $("#" + this.contId).empty();
             $("#" + this.contId).append(`<table id="${this.tableId}" class="table display table-bordered compact"></table>`);
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = 0;
             this.EbObject.RowHeight = this.RowHeight;
+            //this.EbObject.DataSourceRefId = Option.dsid;
             //this.MainData = null;
+            this.Done4All();
         }
         else if (this.Source === "datagrid") {
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RightFixedColumn = this.RightFixedColumn;
+            this.Done4All();
         }
         else if (this.Source === "WebForm") {
             this.MainData = null;
             this.totalcount = 0;
+            this.Done4All();
         }
+        else if (this.Source === "PivotTable") {
+            this.GetData4Pivot();
+        }
+        else {
+            this.Done4All();
+        }
+    };
+
+    this.Done4All = function () {
         this.getNotvisibleColumns();
         this.initCompleteflag = false;
         this.extraCol = [];
@@ -412,6 +440,51 @@
 
         }
         this.Init();
+    };
+
+    this.GetData4Pivot = function () {
+        $(".ppcont").hide();
+        $(".filterCont").hide();
+        if (this.FilterDialog) {
+            this.validateFD = this.FilterDialog.IsFDValidationOK;
+            if (this.isContextual) {
+                if (this.isSecondTime) {
+                    if (this.validateFD && !this.validateFD())
+                        return;
+                    this.filterValues = this.getFilterValues("filter");
+                }
+            }
+            else {
+                if (this.validateFD && !this.validateFD())
+                    return;
+                this.filterValues = this.getFilterValues("filter");
+            }
+        }
+        $("#eb_common_loader").EbLoader("show");
+        this.filtervalues = this.getFilterValues();
+        this.RemoveColumnRef();
+        $.ajax({
+            url: "../dv/getData",
+            type: 'POST',
+            data: { RefId: null, DataVizObjString: JSON.stringify(this.EbObject), ModifyDv: true, Params: this.filtervalues, LocId: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId) },
+            success: this.GetData4PivotSuccess.bind(this),
+        });
+    };
+
+    this.GetData4PivotSuccess = function (result) {
+        if (result.responseStatus) {
+            if (result.responseStatus.message !== null) {
+                console.log("Table View PreProcessing Error " + result.responseStatus.message);
+                if (this.Source === "WebForm" || this.Source === "Bot" || this.Source === "DashBoard")
+                    $("#" + this.tableId + "_processing").text("Something went wrong..");
+                else
+                    EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
+            }
+        }
+        this.MainData = result;
+        this.EbObject = JSON.parse(result.returnObjString);
+        this.isPipped = true;
+        this.Done4All();
     };
 
     this.getNotvisibleColumns = function () {
@@ -551,7 +624,7 @@
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
             console.log("Table View Error......" + message);
-            if (this.Source === "WebForm" || this.Source === "Bot" || this.Source === "DashBoard") 
+            if (this.Source === "WebForm" || this.Source === "Bot" || this.Source === "DashBoard")
                 $("#" + settings.sTableId + "_processing").text("Something went wrong..");
             else
                 EbPopBox("show", { Message: "Table View Error Occured....", Title: "Error" });
@@ -725,7 +798,7 @@
                 o.data = this.receiveAjaxData(this.MainData);
             }
             else {
-                if (this.Source === "Calendar") {
+                if (this.Source === "Calendar" || this.Source === "PivotTable") {
                     o.dom = "<'col-md-12 noPadding display-none'><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
@@ -1326,7 +1399,7 @@
             //    this.createFilterforTree();
             this.filterDisplay();
             this.createFooter();
-            if (this.Source === "EbDataTable")
+            if (this.Source === "EbDataTable" || this.Source === "PivotTable")
                 this.arrangeWindowHeight();
 
             this.CreateHeaderTooltip();
@@ -1805,7 +1878,7 @@
                 this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
-            if (this.Source === "EbDataTable")
+            if (this.Source === "EbDataTable" || this.Source === "PivotTable")
                 this.arrangeWindowHeight();
         }
         $("#" + this.tableId + " .tdheight").css("height", this.EbObject.RowHeight + "px");
@@ -2085,7 +2158,7 @@
             var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
             var $Groups = $(e.target).parents().closest(".group-All").nextAll(".group");
             var $target = $(e.target).closest("tr").find("i");
-            
+
             if ($target.hasClass("fa-plus-square-o")) {
                 $elems.show();
                 $(".group").show();
@@ -2131,7 +2204,7 @@
     }.bind(this);
 
     this.collapseRelated = function ($elem, type) {
-       
+
         if (type === "show") {
             $elem.removeClass("fa-plus-square-o");
             $elem.addClass("fa-minus-square-o");
@@ -2746,7 +2819,7 @@
                 readOnly: true,
                 starWidth: "24px"
             });
-        }       
+        }
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
@@ -2790,7 +2863,8 @@
         }
         else {
             $(".toolicons").show();
-            $("#obj_icons").empty();
+            let search = $('#obj_icons .toolb-srchbx-wrpr').detach();
+            $('#obj_icons').empty().append(search);
             $("#obj_icons").append(this.$submit);
         }
         this.$submit.click(this.getColumnsSuccess.bind(this));
@@ -3989,7 +4063,7 @@
                     $group.find('.' + this.tableId + '_rowgroupheadercheckbox').prop("indeterminate", false);
                     $group.find('.' + this.tableId + '_rowgroupheadercheckbox').prop("checked", false);
                 }
-                $group = $group.prevAll(".group[group="+(i-1)+"]").eq(0);
+                $group = $group.prevAll(".group[group=" + (i - 1) + "]").eq(0);
             }
         }
         let rowdata = this.unformatedData[idx];
@@ -4257,7 +4331,7 @@
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
         dq.TableId = "tbl" + idx;
-        if (Dvobj.RowGroupCollection.$values.length > 0) 
+        if (Dvobj.RowGroupCollection.$values.length > 0)
             dq.CurrentRowGroup = JSON.stringify(Dvobj.RowGroupCollection.$values[0]);
         dq.OrderBy = this.getOrderByInfoforInline(Dvobj);
         return dq;
@@ -4687,7 +4761,7 @@
 
         return gradient[val];
     };
-    if (this.Source === "EbDataTable")
+    if (this.Source === "EbDataTable" || this.Source === "PivotTable")
         this.start4EbDataTable();
     else
         this.start4Other();

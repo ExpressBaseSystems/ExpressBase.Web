@@ -309,6 +309,14 @@ body {
     display: none;
 }
 
+[is-added="false"] .edit-row.disable-edit {
+    display: none !important;
+}
+
+[is-added="false"] .del-row.disable-del {
+    display: none !important;
+}
+
 .del-row, .edit-row, .cancel-row {
     /*display: none;*/
     position: absolute;

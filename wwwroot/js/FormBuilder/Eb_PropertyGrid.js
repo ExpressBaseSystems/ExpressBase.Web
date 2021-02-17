@@ -206,6 +206,15 @@
 
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
+        else if (type === 39) {    // If color picker
+            valueHTML = `<div style="display:flex"  class="clr-pick-cont" ><input type="color" id ="${elemId}_color" style="width:30px;" value='#ffffff'>
+<input type="range" min="0" max="255" step = "5" id ="${elemId}_opacity" value = "255" class='range-cont'></div>
+<input type="text" id="${elemId}" style="display:none;" class="clr-cont">
+<script>
+ ColorPickerJs({elemId:"${elemId}",color: "${value}"});
+</script>`;
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+        }
         else if (type === 40) {    // If gradient color picker
             valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';

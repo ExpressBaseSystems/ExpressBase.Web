@@ -3513,3 +3513,9 @@ input.locinp {
 .webform-cont .dg_body input {
     background-color: white !important;
 }
+.webform-cont .ctrl-cover[disabled="disabled"] {
+    background-color: var(--eb-disablegray) !important;
+}
+.webform-cont .ctrl-cover [disabled="disabled"] {
+    background-color: var(--eb-disablegray) !important;
+}

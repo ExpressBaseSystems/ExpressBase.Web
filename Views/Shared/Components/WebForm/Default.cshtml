@@ -368,7 +368,7 @@
 
 @{
     string str = "<style>";
-    if (ViewBag.__Solution.SolutionSettings.WebSettings != null) {
+    if (ViewBag.__Solution.SolutionSettings?.WebSettings != null) {
 
         for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
         {

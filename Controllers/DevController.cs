@@ -972,7 +972,8 @@ namespace ExpressBase.Web.Controllers
             ViewBag.MobilePages = All_mobilePages.Data;
             ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
             ViewBag.WebFormSettings = solutionObj.SolutionSettings.WebSettings != null? solutionObj.SolutionSettings.WebSettings : new EbWebFormSettings(true);
-
+            ViewBag.SystemColumns = solutionObj.SolutionSettings?.SystemColumns ?? new EbSystemColumns(EbSysCols.Values);
+            
             if (solutionObj.SolutionSettings?.MobileAppSettings == null)
             {
                 ViewBag.MobileSettings = new MobileAppSettings();

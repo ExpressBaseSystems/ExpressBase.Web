@@ -1,6 +1,7 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @using ExpressBase.Common.LocationNSolution;
 @using Newtonsoft.Json;
+@using ExpressBase.Common.Structures;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     Dictionary<string, List<EbObjectWrapper>> Public_ObjList = ViewBag.objlist;
@@ -289,12 +290,60 @@
                 </div>
             </div>
         </div>
+        <div style="padding:10px 15px; width: 100%;">
+            <h5>System Columns</h5>
+            <div style="border: 1px solid #ccc; border-radius: 6px; padding: 10px; background-color: #eee;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button style="float: right;" onclick="resetSysColValues()">Reset All</button>
+                    </div>
+                </div>
+                <div class="row" id="divSysColCont">
+                    @{
+                        var counter = 1;
+                        foreach (EbSystemColumn esc in ViewBag.SystemColumns)
+                        {
+                            <div>
+                                <div class="col-md-2" style="padding-right: 0px;">
+                                    <div class="form-group">
+                                        <label>@(counter++). @esc.Name</label>
+                                        <input type="text" class="form-control" value="@esc.Value" data-def="@esc.Default" data-name="@esc.Name">
+                                    </div>
+                                </div>
+                                <div class="col-md-1" style="padding-left: 0px;">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <select class="form-control" data-def="@esc.Type" style="padding: 5px;">
+                                            @if (esc.PossibleTypes != null)
+                                            {
+                                                @foreach (KeyValuePair<int, string> type in esc.PossibleTypes)
+                                                {
+                                                    if (esc.Type == type.Key)
+                                                    {
+                                                        <option value="@type.Key" selected>@type.Value</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@type.Key">@type.Value</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     var MobileSettings = @Html.Raw(JsonConvert.SerializeObject(mobile_settings));
     var MobPageColl = [];
+    var SystemColumns = @Html.Raw(JsonConvert.SerializeObject(ViewBag.SystemColumns));
      let css = @Html.Raw(JsonConvert.SerializeObject(ViewBag.WebFormSettings));
     var stylehelp = new FormStyleHelper(css);
     $(document).ready(function () {
@@ -315,12 +364,14 @@
         });
 
         setMobileSettings();
+        setSystemColumns();
 
         let obj = {
             SignupFormRefid: $("#signup_object").val(),
             UserTypeForms: arr,
             MobileAppSettings: MobileSettings,
-            WebSettings: stylehelp.getStyleObj()
+            WebSettings: stylehelp.getStyleObj(),
+            SystemColumns: SystemColumns
         };
         $.post("../Dev/SaveSolutionSettings",
             { obj: JSON.stringify(obj) },
@@ -363,5 +414,23 @@
             userTypes.push(type);
         });
         return userTypes;
+    }
+
+    function setSystemColumns() {
+        SystemColumns = [];
+        $.each($("#divSysColCont").children(), function (i, obj) {
+            let $inp = $(obj).find('input');
+            let $sel = $(obj).find('select');
+            SystemColumns.push({ Name: $inp.attr('data-name'), Value: $inp.val(), Type: $sel.val() || 0 });
+        });
+    }
+
+    function resetSysColValues() {
+        $.each($("#divSysColCont").children(), function (i, obj) {
+            let $inp = $(obj).find('input');
+            let $sel = $(obj).find('select');
+            $inp.val($inp.attr('data-def'));
+            $sel.val($sel.attr('data-def'));
+        });
     }
 </script>

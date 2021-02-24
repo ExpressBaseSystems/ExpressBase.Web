@@ -1,0 +1,27 @@
+﻿.clr-pick-cont .range-cont {
+    border-radius: 8px;
+    height: 4px;
+    width: 10rem;
+    margin-left: 0rem;
+    margin: auto;
+    outline: none;
+    transition: background 450ms;
+    -webkit-appearance: none;
+}
+.clr-pick-cont .clr-cont {
+}
+#myinput {
+    border-radius: 8px;
+    height: 4px;
+    width: 150px;
+    outline: none;
+
+}
+
+.clr-pick-cont .range-cont::-webkit-slider-thumb {
+    width: 6px;
+    -webkit-appearance: none;
+    height: 12px;
+    background: black;
+    border-radius: 2px;
+}

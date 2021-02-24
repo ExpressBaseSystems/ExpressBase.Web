@@ -474,7 +474,7 @@
         let rowDataModel = JSON.parse(JSON.stringify(this.RowDataModel_empty));
         let eb_row_num = parseInt($(`#${this.TableId} tbody tr:last td.row-no-td`).attr("idx")) + 1;
         rowDataModel.RowId = rowId;
-        getObjByval(rowDataModel.Columns, "Name", "eb_row_num").Value = eb_row_num;
+        //getObjByval(rowDataModel.Columns, "Name", "eb_row_num").Value = eb_row_num;
         this.attachModalCellRef_Row(rowDataModel, rowObjectMODEL);
         return rowDataModel;
     };

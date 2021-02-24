@@ -192,6 +192,13 @@ var order_obj = function (colu, dir) {
     this.Direction = dir;
 };
 
+//to restrict access to internal pages by a logged out user
+var reload_if_session_expired = function () {    
+    if (!getTok()) {
+        alert("Session expired!");
+        location.reload();
+    }
+};
 
 Array.prototype.contains = function (element) {
     for (var i = 0; i < this.length; i++) {

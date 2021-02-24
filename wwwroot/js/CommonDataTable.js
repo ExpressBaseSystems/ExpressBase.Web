@@ -1261,7 +1261,8 @@
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.bVisible && (col.RenderType == parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Double")) || col.RenderType == parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
+        if (col.bVisible && (col.RenderType == parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64"))
+            || col.RenderType == parseInt(gettypefromString("Double")) || col.RenderType == parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
             _ls.push(new Agginfo(col.name, this.EbObject.Columns.$values[i].DecimalPlaces, col.data));
             this.NumericIndex.push(col.data);
         }
@@ -1423,7 +1424,7 @@
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm" && this.Source !== "AppsToObjectTable") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid" && this.Source !== "WebForm" && this.Source !== "AppsToObjectTable" && this.Source !== "Calendar") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -2434,7 +2435,7 @@
         if (col.bVisible) {
             var temp = $.grep(this.eb_agginfo, function (agg) { return agg.colname === col.name });
             //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
-            if (col.Aggregate) {
+            if (col.Aggregate || col.AggregateFun === 0 || col.AggregateFun === 1) {
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;

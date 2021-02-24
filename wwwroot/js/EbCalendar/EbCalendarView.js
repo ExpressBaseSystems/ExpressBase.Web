@@ -175,6 +175,7 @@
         $("#calendar-user-view").append(`<table id="${id}" class="table display table-bordered compact"></table>`);
         this.CustomDataCols = this.EbObject.DataColumns.$values.filter(col => col.IsCustomColumn);
         let _AllColumns = this.EbObject.KeyColumns.$values.concat(this.EbObject.LinesColumns.$values, this.CustomDataCols, this.EbObject.DateColumns.$values);
+        _AllColumns.push(this.EbObject.Columns.$values[this.EbObject.Columns.$values.length - 1]);
         var o = {};
         o.dsid = this.EbObject.DataSourceRefId;
         o.tableId = id;
@@ -217,7 +218,7 @@
                 symbol = "&lowast;";
             else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Sum)
                 symbol = "&sum;";
-            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-symbol="${symbol}" data-item='${obj.name}'>${symbol} ${obj.name} </a>`);
+            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-symbol="${symbol}" data-item='${obj.name}' data-index='${i}'>${symbol} ${obj.name} </a>`);
             if (i > 0)
                 $(`.${obj.name}_class`).hide();
             else
@@ -237,6 +238,39 @@
         $(`#ShowDataColumndd .datacolumnsymbol`).remove();
         $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${$(e.target).attr("data-symbol")}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
+        this.setFooterVals(e);
+    };
+
+    this.setFooterVals = function (e) {
+        let colindex = $(e.target).attr("data-index");
+        let tableId = "table1";
+        $.each(this.dt.eb_agginfo, function (index, agginfo) {
+            if (agginfo.colname) {
+                let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                let ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+
+                let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                let ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+
+                let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                let ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+
+                var col = this.dt.Api.column(agginfo.colname + ':name');
+                var summary_val = 0;
+                if (opScroll === '∑' || opLF === '∑' || opRF === '∑') {
+                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][2 * colindex] : 0;
+                }
+                if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
+                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][(2 * colindex)+1] : 0;
+                }
+                if (opScroll !== "")
+                    $(ftrtxtScroll).val(summary_val);
+                if (opLF !== "")
+                    $(ftrtxtLF).val(summary_val);
+                if (opRF !== "")
+                    $(ftrtxtRF).val(summary_val);
+            }
+        }.bind(this));
         this.dt.Api.columns.adjust();
     };
 

@@ -152,7 +152,7 @@
             fltr_collection = getValsForViz(this.filterDialog.FormObj);
             this.ModifyDv = true;
             this.EbObject.DateColumns.$values = [];
-            this.EbObject.Columns.$values = this.EbObject.Columns.$values.filter(col => !col.IsCustomColumn);
+            this.EbObject.Columns.$values = this.EbObject.Columns.$values.filter(col => !col.IsCustomColumn && col.name !=="Total");
         }
         return fltr_collection;
     };

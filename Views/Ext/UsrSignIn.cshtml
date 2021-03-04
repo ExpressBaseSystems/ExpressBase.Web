@@ -16,10 +16,14 @@
             </p>
         </div>
         <div class="br-ic" style="margin-left: 39rem;display: flex;">
-            <div><img src="~/images/gifs/chrome.png" style="height: 3rem;width: 3rem;" /> 
-            <a href="https://www.google.com/chrome/" target="_blank" style="font-size: 17px; margin-left: 10px;">Google Chrome</a></div>
-            <div><img src="~/images/gifs/microsoft-edge-new-2020-seeklogo.com-2.svg" style="height: 3rem;width: 3rem;" /> 
-            <a href="https://www.microsoft.com/en-us/edge" target="_blank" style="font-size: 17px; margin-left: 10px;">Microsoft Edge</a></div>
+            <div>
+                <img src="~/images/gifs/chrome.png" style="height: 3rem;width: 3rem;" />
+                <a href="https://www.google.com/chrome/" target="_blank" style="font-size: 17px; margin-left: 10px;">Google Chrome</a>
+            </div>
+            <div>
+                <img src="~/images/gifs/microsoft-edge-new-2020-seeklogo.com-2.svg" style="height: 3rem;width: 3rem;" />
+                <a href="https://www.microsoft.com/en-us/edge" target="_blank" style="font-size: 17px; margin-left: 10px;">Microsoft Edge</a>
+            </div>
         </div>
     </div>
     <div class="container" id="lgn-usr" hidden>
@@ -32,24 +36,21 @@
                     </div>
                     <h1 class="text-center">@console Login</h1><br>
 
-                    @if (ViewBag.WhichConsole == "uc")
+                    @if (ViewBag.WhichConsole == "uc" && ViewBag.Is2fA)
                     {
-                        @if (!ViewBag.Is2fA)
-                        {
-                            <ul class="nav nav-tabs eb-styledTab" role="tablist">
-                                <li class="active">
-                                    <a href="#withpw_container" role="tab" data-toggle="tab">
-                                        With Password
-                                    </a>
-                                </li>
+                        <ul class="nav nav-tabs eb-styledTab" role="tablist">
+                            <li class="active">
+                                <a href="#withpw_container" role="tab" data-toggle="tab">
+                                    With Password
+                                </a>
+                            </li>
 
-                                <li>
-                                    <a href="#withotp_container" role="tab" data-toggle="tab">
-                                        With OTP
-                                    </a>
-                                </li>
-                            </ul>
-                        }
+                            <li>
+                                <a href="#withotp_container" role="tab" data-toggle="tab">
+                                    With OTP
+                                </a>
+                            </li>
+                        </ul>
                     }
 
                     <div class="tab-content @styleClass">
@@ -88,7 +89,7 @@
                                 }
                             </div>
                         </div>
-                        @if (ViewBag.WhichConsole == "uc" && ViewBag.Is2fA != null && !ViewBag.Is2fA)
+                        @if (ViewBag.WhichConsole == "uc" && ViewBag.Is2fA != null && ViewBag.Is2fA)
                         {
                             <div class="tab-pane fade" id="withotp_container">
                                 <div class="form-group mb-25">
@@ -221,6 +222,6 @@
         }
 
         #browser-compatibility .br-ic div {
-               margin-right: 3rem;
+            margin-right: 3rem;
         }
 </style>

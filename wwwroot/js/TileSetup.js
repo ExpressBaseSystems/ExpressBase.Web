@@ -7,6 +7,7 @@
     this.resultObject = [];
     this.initObjectList = initObjList === null ? [] : initObjList;
     this.objectList = searchObjList === null ? [] : searchObjList;//all
+    this.systemRolesObjeList = [];
     this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
     this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
@@ -29,6 +30,7 @@
     this.divSearchResults = null;
     this.divSelected = null;
     this.pageInfo = null;
+    this.chbxShwAllRol = null;
 
     //DOM ELEMENTS IP
     this.txtIpAddress = null;
@@ -196,6 +198,7 @@
                             <div id="divSearchResults${t}" class="ts-body-md-rslt"></div>
                         </div>
                         <div class="modal-footer">
+                            <div id="chbxShowAll${t}" style="display: none; float: left; font-style: italic; opacity: 0.5;"><input type="checkbox">&nbsp Show system roles</div>
                             <button id="btnModalOk${t}" class="ebbtn eb_btn-sm eb_btnblue">OK</button>
                             <button class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
                         </div>
@@ -279,7 +282,28 @@
                     if (this.title === 'Add Roles') {
                         this.chkItemCustomFunc(this.parentthis, $srchRsltItem);
                     }
+                }.bind(this)
+            );
+
+            if (this.title === 'Add Roles') {
+                this.chbxShwAllRol = $(`#chbxShowAll${t}`);
+                this.chbxShwAllRol.show();
+                this.systemRolesObjeList = this.objectList.filter(e => e[this.objectMetadata[0]] < 100);
+                this.objectList = this.objectList.filter(e => e[this.objectMetadata[0]] >= 100);
+
+                this.chbxShwAllRol.find('input').on('change', function (e) {
+                    let $chkbox = $(e.target);
+                    if ($chkbox.prop('checked'))
+                        this.objectList = this.objectList.concat(this.systemRolesObjeList);
+                    else {
+                        this.systemRolesObjeList = this.objectList.filter(e => e[this.objectMetadata[0]] < 100);
+                        this.objectList = this.objectList.filter(e => e[this.objectMetadata[0]] >= 100);
+                    }
+                    this.isSrchRsltInitialized = false;
+                    this.initSearchResultDiv();
+                    this.getSearchResult(false);
                 }.bind(this));
+            }
         }
 
 
@@ -442,12 +466,12 @@
             let _present_item = $.grep(this.resultObject, function (a, b) {
                 if (b.Id === this.initObjectList[i].Id)
                     return true;
-            }.bind(this,i));
+            }.bind(this, i));
             if (_present_item.length === 0) {
                 ids += this.initObjectList[i].Id + ',';
             }
         }
-        if(ids.length > 1)
+        if (ids.length > 1)
             return ids.substring(0, ids.length - 1);
         return ids;
     };

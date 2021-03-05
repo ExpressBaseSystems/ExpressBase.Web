@@ -444,7 +444,7 @@
                             <div class="form-group has-feedback" style="width:15%; display:none;margin-bottom:0">
                                 <input type="text" class="form-control" id="txtSrch${value.Op_Name}" placeholder="Search" style="height: 32px; background-color: #EEE;" title="Search"/>
                                 <span id="spanSrch${value.Op_Name}" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
-                                <span id="spanRemv${value.Op_Name}" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;"></span>
+                                <span id="spanRemv${value.Op_Name}" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;pointer-events: inherit;"></span>
                             </div>
                             <div id='div${value.Op_Name}' class='collapsed collapse' style='width:inherit;'>
                                 <table style='width:100%;margin-bottom:0;' class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>

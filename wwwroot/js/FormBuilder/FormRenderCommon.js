@@ -447,7 +447,12 @@
 
     this.isSameValInUniqCtrl = function (ctrl) {
         let val = ctrl.getValueFromDOM();
-        return val === this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
+        if (typeof val === 'string')
+            val = val.trim().toLowerCase();
+        let initVal = this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
+        if (typeof initVal === 'string')
+            initVal = initVal.trim().toLowerCase(); 
+        return val === initVal;
     };
 
     // checks a control value is emptyString

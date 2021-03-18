@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ExpressBase.Common;
+using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
@@ -27,17 +30,38 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("QuestionBank")]
         public IActionResult question_bank()
         {
-            List<EbQuestion> Qlist = new List<EbQuestion>();
-            GetSurveyQuestionsResponse resp = this.ServiceClient.Get(new GetSurveyQuestionsRequest());
-
-            foreach (String qs in resp.Data)
+            try
             {
-                EbQuestion qstn = EbSerializers.Json_Deserialize<EbQuestion>(qs);
-                Qlist.Add(qstn);
+                List<EbQuestion> Qlist = new List<EbQuestion>();
+                GetSurveyQuestionsResponse resp = this.ServiceClient.Get(new GetSurveyQuestionsRequest());
+                Dictionary<String, String> ControlHTML = new Dictionary<String, String>();
+
+                if (resp != null && resp.Data != null)
+                {
+                    foreach (String qs in resp.Data)
+                    {
+                        EbQuestion qstn = EbSerializers.Json_Deserialize<EbQuestion>(qs);
+                        Qlist.Add(qstn);
+                        IEnumerable<EbControl> QstnCtrls = qstn.QSec.Controls.FlattenEbControls();
+                        IEnumerable<EbControl> AnswerCtrls = qstn.ASec.Controls.FlattenEbControls();
+                        foreach (EbControl ctrl in QstnCtrls.Concat(AnswerCtrls))
+                        {
+                            if (!ControlHTML.Keys.Contains(qstn.EbSid_CtxId))////////////////
+                                ControlHTML.Add(qstn.EbSid_CtxId, ctrl.GetHtml());
+                        }
+
+                    }
+                    //_object = EbSerializers.Json_Deserialize(element.Json_lc);
+                    //ViewBag.dsObj = _object;
+
+                    ViewBag.ControlHTML = ControlHTML;
+                    ViewBag.Questions = Qlist;
+                }
             }
-            //_object = EbSerializers.Json_Deserialize(element.Json_lc);
-            //ViewBag.dsObj = _object;
-            ViewBag.Questions = Qlist;
+            catch (Exception ex)
+            {
+                String Msg = ex.Message;
+            }
             return View();
         }
 

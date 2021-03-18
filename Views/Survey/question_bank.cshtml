@@ -95,7 +95,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade open-sans" id="questionModal" role="dialog">
+<div class="modal fade open-sans" data-backdrop="static" data-keyboard="false" id="questionModal" role="dialog">
     <div class="modal-dialog modal-lg" style="width:85%">
         <div class="modal-dialog modal-lg" style="width:95%">
             <div class="modal-content">
@@ -110,7 +110,7 @@
                     <div class="row qust-cont">
                         <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qs-cont pd-l-0">
                             <div class="q-container">
-                                <div tabindex="1" class="qs-inner-cont">
+                                <div tabindex="1" class="qs-inner-cont" eb-type="Questionnaire">
                                     <div class="qs-inner-wrap col-md-12 pd-0">
                                         <div class="qst-qctrl-wrap">
                                             <textarea type="text" rows="3" placeholder="Enter question ?" class="qst-inp" onfocus="$(this).select();"></textarea>

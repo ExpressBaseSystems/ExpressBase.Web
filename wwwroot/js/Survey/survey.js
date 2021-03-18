@@ -35,6 +35,8 @@
             $(`textarea[name="Question"]`).val("");
             $(".qst-opt-cont").empty();
             this.$Qmodal.find('.qs-inner-cont').attr('id', this.rootContainerObj.EbSid_CtxId);
+            this.$Qmodal.find('.qs-inner-wrap').attr('ebsid', this.rootContainerObj.ASec.EbSid_CtxId);
+            this.$Qmodal.find('.qst-ansctrl-cont').attr('ebsid', this.rootContainerObj.QSec.EbSid_CtxId);
         }.bind(this));
 
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
@@ -52,6 +54,8 @@
         this.$Qmodal.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
         this.$Qmodal.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));
         this.$Qmodal.on("focus", ".qs-inner-cont", this.controlOnFocus.bind(this));
+        this.$Qmodal.on("focus", ".qs-inner-wrap", this.controlOnFocus.bind(this));
+        this.$Qmodal.on("focus", ".qst-ansctrl-cont", this.controlOnFocus.bind(this));
 
         this.addAnsPopMenu();
         this.addQPopMenu();
@@ -141,6 +145,14 @@
             this.$curControl = $e;
             this.CreatePG(this.rootContainerObj);
             return;
+        }
+        else if ($e.hasClass('qs-inner-wrap')) {
+            this.$curControl = $e.closest(".Eb-ctrlContainer");
+            this.CreatePG(this.rootContainerObj.QSec);
+        }
+        else if ($e.hasClass('qst-ansctrl-cont')) {
+            this.$curControl = $e.closest(".Eb-ctrlContainer");
+            this.CreatePG(this.rootContainerObj.ASec);
         }
         else {
             if ($e.closest(".Eb-ctrlContainer").length > 0) {

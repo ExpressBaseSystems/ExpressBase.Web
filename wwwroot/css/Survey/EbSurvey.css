@@ -301,6 +301,10 @@
         background-color: #fdfdfe;
     }
 
+    .q-menu-item.qm-empty-ans:hover, .q-menu-item.qm-empty-ans:focus {
+        color: #e02012;
+    }
+
     .q-menu-item .fa {
         margin: auto;
     }

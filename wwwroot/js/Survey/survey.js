@@ -119,7 +119,7 @@
     this.AppendAnsCtrlInEditMode = function (ctrlObj) {
         let type = ctrlObj.ObjType;
         let ebsid = ctrlObj.EbSid;
-        let $ctrl = ctrlObj.$Control;
+        let $ctrl = $(ControlHTML[this.rootContainerObj.EbSid_CtxId + ctrlObj.EbSid_CtxId]);
         $ctrl.attr("childof", "ASec");
         ctrlObj.childof = "ASec";
         this.$AnsCtrlsCont.append($ctrl);

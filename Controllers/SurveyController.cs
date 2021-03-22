@@ -46,15 +46,16 @@ namespace ExpressBase.Web.Controllers
                         IEnumerable<EbControl> AnswerCtrls = qstn.ASec.Controls.FlattenEbControls();
                         foreach (EbControl ctrl in QstnCtrls.Concat(AnswerCtrls))
                         {
-                            if (!ControlHTML.Keys.Contains(qstn.EbSid_CtxId))////////////////
-                                ControlHTML.Add(qstn.EbSid_CtxId, ctrl.GetHtml());
+                            String keyId = qstn.EbSid_CtxId + ctrl.EbSid_CtxId;
+                            if (!ControlHTML.Keys.Contains(keyId))////////////////
+                                ControlHTML.Add(keyId, ctrl.GetHtml());
                         }
 
                     }
                     //_object = EbSerializers.Json_Deserialize(element.Json_lc);
                     //ViewBag.dsObj = _object;
 
-                    ViewBag.ControlHTML = ControlHTML;
+                    ViewBag.ControlHTML = JsonConvert.SerializeObject(ControlHTML);
                     ViewBag.Questions = Qlist;
                 }
             }

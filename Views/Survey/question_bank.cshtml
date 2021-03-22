@@ -150,7 +150,8 @@
 
     <script>
         //let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
-        let FBid =  "Qstn_" + Date.now().toString(36);
+        let FBid = "Qstn_" + Date.now().toString(36);
+        var ControlHTML =   @Html.Raw(ViewBag.ControlHTML);
         //let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
         let editModeFormObj =  @Html.Raw(JsonConvert.SerializeObject(Queries));
         var survey = new SurveyQuestionBank("QuestionBank",{

@@ -650,14 +650,14 @@
             height: 100%;
         }
 /*Mobile Rating control*/
-.mob_control .eb_ctrlhtml {
+/*.mob_control .eb_ctrlhtml {
     padding: 0px 2px;
-}
+}*/
 
-    .mob_control .eb_ctrlhtml span {
+    /*.mob_control .eb_ctrlhtml span {
         font-size: 20px;
         padding-right: 5px;
-    }
+    }*/
 /*Dashboard StackLayout*/
 .eb_mob_dashboard_container .control_container {
     min-height: 50px;

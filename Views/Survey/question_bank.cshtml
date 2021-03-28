@@ -95,7 +95,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade open-sans" id="questionModal" role="dialog">
+<div class="modal fade open-sans" data-backdrop="static" data-keyboard="false" id="questionModal" role="dialog">
     <div class="modal-dialog modal-lg" style="width:85%">
         <div class="modal-dialog modal-lg" style="width:95%">
             <div class="modal-content">
@@ -110,8 +110,8 @@
                     <div class="row qust-cont">
                         <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12 qs-cont pd-l-0">
                             <div class="q-container">
-                                <div tabindex="1" class="qs-inner-cont">
-                                    <div class="qs-inner-wrap col-md-12 pd-0">
+                                <div tabindex="1" class="qs-inner-cont Eb-ctrlContainer" eb-type="Questionnaire">
+                                    <div tabindex="1" class="qs-inner-wrap col-md-12 pd-0 Eb-ctrlContainer" eb-type="ASec">
                                         <div class="qst-qctrl-wrap">
                                             <textarea type="text" rows="3" placeholder="Enter question ?" class="qst-inp" onfocus="$(this).select();"></textarea>
                                             <div class="qctrl-inner ebcont-ctrl"></div>
@@ -122,7 +122,7 @@
                                             <div class="q-menu-item qm-empty"><i class="fa fa-trash" aria-hidden="true"></i></div>
                                         </div>
                                     </div>
-                                    <div tabindex="1" class="qst-ansctrl-cont col-md-12 pd-0">
+                                    <div tabindex="1" class="qst-ansctrl-cont col-md-12 pd-0 Eb-ctrlContainer" eb-type="QSec">
                                         <div class="qst-ansctrl-wrap">
                                             <div class="ansctrl-inner ebcont-ctrl"></div>
                                         </div>
@@ -150,7 +150,8 @@
 
     <script>
         //let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
-        let FBid =  "Qstn_" + Date.now().toString(36);
+        let FBid = "Qstn_" + Date.now().toString(36);
+        var ControlHTML =   @Html.Raw(ViewBag.ControlHTML);
         //let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
         let editModeFormObj =  @Html.Raw(JsonConvert.SerializeObject(Queries));
         var survey = new SurveyQuestionBank("QuestionBank",{

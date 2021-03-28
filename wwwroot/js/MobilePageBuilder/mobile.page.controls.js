@@ -201,6 +201,7 @@
         }
         this.Root.$Selectors.columnTree.empty().append(htmlString);
         this.Root.$Selectors.columnTree.killTree().treed().find(".branch").click();
+        this.makeTreeNodeDraggable();
     };
 
     var nonPersistControls = ["EbMobileTableLayout", "EbMobileDataGrid", "EbMobileFileUpload", "EbMobileButton"];
@@ -219,9 +220,13 @@
         }
         else {
             var $item = `<li class='styl'>
-                            <span eb-type='EbMobileDataColumn' ctrname="DataColumn" DbType='${jsobj.EbDbType}' ColName='${jsobj.Name}'>
-                                <i class='fa ${this.getIconByType(jsobj.EbDbType)} column_tree_typeicon'></i> 
-                                ${jsobj.Name} 
+                            <span eb-type='EbMobileDataColumn'
+                                    ctrname="DataColumn"
+                                    DbType='${jsobj.EbDbType}' 
+                                    class="${Constants.DS_COLUMN.replace(".", "")}" 
+                                    ColName='${jsobj.Name}'>
+                                        <i class='fa ${this.getIconByType(jsobj.EbDbType)} column_tree_typeicon'></i> 
+                                        ${jsobj.Name} 
                             </span>
                         </li>`
             html[propName].push($item);

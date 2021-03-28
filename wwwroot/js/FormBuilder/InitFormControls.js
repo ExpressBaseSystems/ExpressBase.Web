@@ -2295,6 +2295,14 @@
         }
 
     }
+
+
+    this.QuestionnaireConfigurator = function (ctrl) {
+        var $ctrl = $("#" + ctrl.EbSid_CtxId + '_tagId');
+        
+       
+    };
+
 };
 
 

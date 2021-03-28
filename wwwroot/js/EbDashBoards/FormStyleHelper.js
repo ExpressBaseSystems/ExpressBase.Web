@@ -6,18 +6,25 @@
     //this.AppSettings = {};
     //this.AppInfo = appinfo;
     //this.EbFontLst = font_lst;
-    this.css = css.CssContent != null ? css.CssContent : [];
-    let abc = "";
-    for (let i = 0; i < this.css.length; i++) {
-        abc += `<div><div class='webform_css_parent' data-toggle='collapse' data-target='#tg${i}' > 
-    <i class='fa fa-chevron-circle-down' aria-hidden='true'></i> ${this.css[0].Hearder} 
+
+    this.init = function (css) {
+        this.css = css.CssContent != null ? css.CssContent : [];
+        let abc = "";
+        for (let i = 0; i < this.css.length; i++) {
+            abc += `<div><div class='webform_css_parent' data-toggle='collapse' data-target='#tg${i}' > 
+            <i class='fa fa-chevron-circle-down' aria-hidden='true'></i> ${this.css[i].Heading} 
                 </div >
                 <div id='tg${i}' class='collapse' class='webform_css_child'>`;
-        for (let j = 0; j < this.css[i].CssObj.length; j++) {
-            abc += `<div class='css_selector' data-id='${i}~${j}'> <label data-id='${i}~${j}'>${this.css[i].CssObj[j].Selector}</label></div>`;
+            for (let j = 0; j < this.css[i].CssObj.length; j++) {
+                abc += `<div class='css_selector' data-id='${i}~${j}'> <label data-id='${i}~${j}'>${this.css[i].CssObj[j].Heading}</label></div>`;
+            }
+            abc += `</div></div>`;
         }
-        abc += `</div></div>`;
+        $("#css_cont").empty().append(abc);
+        $(".css_selector").off("click").on("click", this.CurrentStyle.bind(this));
+        $("#web_css_edit").on("change keyup paste", this.UpdateStyle2Obj.bind(this));
     }
+  
     this.CurrentStyle = function (e) {
         let _id = $(e.target).attr("data-id").split("~");
         $("#web_css_edit").val(this.css[_id[0]].CssObj[_id[1]].Css);
@@ -48,9 +55,18 @@
     //        }
     //    });
     //};
+    this.ResetStyle = function () {
+        $.ajax({
+            type: "POST",
+            url: "../Dev/ResetWebSettings",
+            success: function (data) {
+                $("#eb_common_loader").EbLoader("hide");
+                FormStyleHelper(JSON.parse(data));
+            }
+        });
+    }
+    this.init(css);
 
-    $("#css_cont").append(abc);
-    $(".css_selector").off("click").on("click", this.CurrentStyle.bind(this));
-    $("#web_css_edit").on("change keyup paste", this.UpdateStyle2Obj.bind(this));
+    $("#webform-style-reset").off("click").on("click", this.ResetStyle.bind(this));
     //$("#update_webform_settings").on("click", this.UpdateWebformSettings.bind(this));
 }

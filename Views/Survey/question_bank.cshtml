@@ -153,7 +153,7 @@
         let FBid = "Qstn_" + Date.now().toString(36);
         var ControlHTML =   @Html.Raw(ViewBag.ControlHTML);
         //let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
-        let editModeFormObj =  @Html.Raw(JsonConvert.SerializeObject(Queries));
+        let editModeFormObj =  @Html.Raw(EbSerializers.Json_Serialize(Queries));
         var survey = new SurveyQuestionBank("QuestionBank",{
             formId: FBid,
             PGId: "QBpg",

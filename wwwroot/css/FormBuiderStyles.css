@@ -1464,6 +1464,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
 }
 
+
+[isrendermode="false"] [ctype="RenderQuestionsControl"] .qrender-wrap .fa {
+    font-size: 160px;
+    padding: 0px 25px;
+}
+
+
     [eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
         border: none;
         padding: 7px;

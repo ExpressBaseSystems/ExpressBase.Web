@@ -1632,7 +1632,7 @@
         this.filtervalues = [];
         let ebDbType = 11;
         let Refid = ctrl.DataSourceId;
-        this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1 ));
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1));
         this.filtervalues.push(new fltr_obj(ebDbType, "eb_currentuser_id", ebcontext.user.UserId));
         this.filtervalues.push(new fltr_obj(ebDbType, "id", this.Renderer.rowId));
         this.filtervalues.push(new fltr_obj(ebDbType, this.Renderer.FormObj.TableName + "_id", this.Renderer.rowId));
@@ -1882,8 +1882,8 @@
                             <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p></div>`;
             $('#cont_' + ctrl.EbSid).append(btnHtml);
             $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
-            var vtemp=JSON.parse(ctrl.DataVals.M);
-            if (vtemp.is_verified==='true') {
+            var vtemp = JSON.parse(ctrl.DataVals.M);
+            if (vtemp.is_verified === 'true') {
                 $(`#${ctrl.EbSid}_OTPverified`).show();
                 $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum', vtemp.phone_no);
             }
@@ -1894,22 +1894,22 @@
 
         ctrl.getValueFromDOM = function (p1) {
             //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();   
-           
+
             if (ctrl.DisableCountryCode) {
                 let num = $(`#${ctrl.EbSid}`).val();
                 if (ctrl.Sendotp) {
-                    checkNumChange(num);                   
+                    checkNumChange(num);
                 }
                 return num;
             }
             else {
                 let num = iti.getNumber();
                 if (ctrl.Sendotp) {
-                    checkNumChange(num);                  
+                    checkNumChange(num);
                 }
                 return num;
             }
-            
+
             function checkNumChange(num) {
                 var vNum = $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum');
                 if (num !== vNum) {
@@ -2183,7 +2183,7 @@
         $("#eb_common_loader").EbLoader("show");
         var otpval = $(`#${ctrl.EbSid}_otpValue`).val();
         var tstamp = $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey');
-        $.ajax({            
+        $.ajax({
             url: "../WebForm/VerifyOTP_control",
             data: {
                 formRefid: this.Renderer.formRefId,
@@ -2295,6 +2295,94 @@
         }
 
     }
+
+
+    this.QuestionnaireConfigurator = function (ctrl) {
+        debugger;
+        let $input = $("#" + ctrl.EbSid_CtxId);
+
+        if (this.Renderer.rendererName == "Bot") {
+            $input.selectpicker({
+                dropupAuto: false,
+            });
+        }
+        else {
+            $input.selectpicker({
+                //dropupAuto: false,
+                container: "body [eb-root-obj-container]:first",
+                virtualScroll: 100,
+                size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
+
+            });
+
+
+            let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+            ////show dropdown ,adjust scroll etc related
+            $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+                let $el = $(e.target);
+                let $DDbScont = $DD.closest(".bs-container");
+                $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+
+                if ($DDbScont.hasClass("dropup")) {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
+                }
+                else {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
+                }
+
+                $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
+
+                if ($el.attr("is-scrollbind") !== 'true') {
+                    for (let i = 0; i < this.scrollableContSelectors.length; i++) {
+                        let contSelc = this.scrollableContSelectors[i];
+                        let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
+                        $ctrlCont.parents(contSelc).scroll(function (event) {
+                            if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
+                                $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
+                        }.bind(this));
+                    }
+                    $el.attr("is-scrollbind", 'true');
+                }
+            }.bind(this));
+
+        }
+
+
+        ctrl.getValueFromDOM = function (p1) {
+            let val = $('#' + this.EbSid_CtxId).selectpicker('val');
+            debugger
+            return val.toString();
+        };
+
+        ctrl.setValue = function (p1) {
+
+            if (p1 != null) {
+                isContained = false;
+
+                p1 = p1.toString();
+                p1 = p1.split(',');
+                $('#' + this.EbSid_CtxId + ' option').each(function (i, opt) {
+                    if ($(opt).attr('value') == p1 || (this.MultiSelect && p1.contains($(opt).attr('value')))) {
+                        isContained = true;
+                        return false;
+                    }
+                }.bind(this));
+                
+            }
+
+
+            $('#' + this.EbSid_CtxId).selectpicker('val', p1);
+        };
+        ctrl.clear = function () {
+            if (ebcontext.renderContext === 'WebForm')
+                this.setValue(null);
+            else
+                this.setValue(-1);
+        };
+    };
+
 };
 
 

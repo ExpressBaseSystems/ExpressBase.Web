@@ -60,6 +60,7 @@
     @Html.Raw(_toolBox.QCtrlsNames);
     @Html.Raw(_toolBox.ACtrlsNames);
     @Html.Raw(_toolBox.JsonToJsObjectFuncs);
+    @Html.Raw(_toolBox.TypeRegister);
     </script>
 }
 
@@ -113,7 +114,7 @@
                                 <div tabindex="1" class="qs-inner-cont Eb-ctrlContainer" eb-type="Questionnaire">
                                     <div tabindex="1" class="qs-inner-wrap col-md-12 pd-0 Eb-ctrlContainer" eb-type="ASec">
                                         <div class="qst-qctrl-wrap">
-                                            <textarea type="text" rows="3" placeholder="Enter question ?" class="qst-inp" onfocus="$(this).select();"></textarea>
+                                            <textarea type="text" rows="3" eb-type="TextControl" childof="QSec" placeholder="Enter question ?" class="qst-inp Eb-ctrlContainer" onfocus="$(this).select();"></textarea>
                                             <div class="qctrl-inner ebcont-ctrl"></div>
                                         </div>
 

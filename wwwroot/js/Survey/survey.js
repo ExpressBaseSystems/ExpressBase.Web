@@ -37,6 +37,8 @@
             this.$Qmodal.find('.qs-inner-cont').attr('id', this.rootContainerObj.EbSid_CtxId);
             this.$Qmodal.find('.qs-inner-wrap').attr('ebsid', this.rootContainerObj.ASec.EbSid_CtxId);
             this.$Qmodal.find('.qst-ansctrl-cont').attr('ebsid', this.rootContainerObj.QSec.EbSid_CtxId);
+            if ($(".qst-inp").attr("ebsid") === undefined)
+                $(".qst-inp").attr("ebsid", this.rootContainerObj.EbSid + "_text");// added from initJS of EbQuestion class
         }.bind(this));
 
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
@@ -520,7 +522,7 @@
     this.quesEdit = function (e) {
         //Edit mode
         let ebsid = $(e.target).closest(".query_tile").attr("ebsid");
-        this.EbObject = getObjByval(options.objInEditMode, "EbSid", ebsid);
+        this.EbObject = getObjByval(options.objInEditMode.$values, "EbSid", ebsid);
         if (this.EbObject) {
             this.isEditMode = true;
             this.InitEditModeCtrls(this.EbObject);

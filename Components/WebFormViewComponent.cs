@@ -129,6 +129,10 @@ namespace ExpressBase.Web.Components
 					{
 						(control as EbQuestionnaireConfigurator).InitFromDataBase(this.ServiceClient);
 					}
+                    else if(control is EbRenderQuestionsControl)
+                    {
+                        (control as EbRenderQuestionsControl).InitFromDataBase(this.ServiceClient);
+                    }
 				}
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();

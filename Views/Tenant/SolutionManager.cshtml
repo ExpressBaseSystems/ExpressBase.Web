@@ -1109,24 +1109,33 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <input name="DatabaseVendor" value="TextLocal" class="form-control Vendor " type="hidden" readonly />
-                                <div class="form-group">
-                                    <label>Sender (Optional)</label>
-                                    <input id="TextLocalInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Api Key</label>
                                     <input id="TextLocalInputApi" name="ApiKey" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
-                        <input type="hidden" class="Inputclear IntConfId" id="TextLocalInputIntConfId" name="Id" value="0" />
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input name="DatabaseVendor" value="TextLocal" class="form-control Vendor " type="hidden" readonly />
+                                    <div class="form-group">
+                                        <label>Sender (Optional)</label>
+                                        <input id="TextLocalInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Brand Name</label>
+                                        <input id="TextLocalInputBrand" name="BrandName" class="form-control Inputclear eb_input-h" type="text" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                            <input type="hidden" class="Inputclear IntConfId" id="TextLocalInputIntConfId" name="Id" value="0" />
+                        </div>
                     </div>
-                </div>
                 <div class="modal-footer border-style-none">
                     <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
                 </div>

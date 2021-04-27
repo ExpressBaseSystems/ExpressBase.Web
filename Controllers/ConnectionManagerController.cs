@@ -608,7 +608,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             EbDbConfig con = new EbDbConfig();
-            DatabaseVendors vendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());  
+            DatabaseVendors vendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());
             if (vendor == DatabaseVendors.PGSQL)
             {
                 con = new PostgresConfig()
@@ -695,11 +695,11 @@ namespace ExpressBase.Web.Controllers
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("AddAB Controller :" + e + e.StackTrace);
             }
-            return null;           
+            return null;
         }
         [HttpPost]
         public string AddTwilio()
@@ -756,7 +756,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                
+
                 EbExpertTextingConfig con = new EbExpertTextingConfig
                 {
                     UserName = req["UserName"],
@@ -785,11 +785,12 @@ namespace ExpressBase.Web.Controllers
                 var req = this.HttpContext.Request.Form;
 
                 EbTextLocalConfig con = new EbTextLocalConfig
-                {                  
-                    From = req["From"],                  
+                {
+                    From = req["From"],
                     ApiKey = req["ApiKey"],
                     Id = Convert.ToInt32(req["Id"]),
-                    NickName = req["nickname"]
+                    NickName = req["nickname"],
+                    BrandName = req["BrandName"]
                 };
                 res = this.ServiceClient.Post<AddTLResponse>(new AddTLRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
@@ -833,7 +834,7 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             try
             {
-               EbMongoConfig con = new EbMongoConfig
+                EbMongoConfig con = new EbMongoConfig
                 {
                     UserName = req["UserName"],
                     Password = req["Password"],
@@ -1072,7 +1073,7 @@ namespace ExpressBase.Web.Controllers
                     Channel = req["Channel"],
                     Type = EbIntegrations.Slack
                 };
-                res = this.ServiceClient.Post < AddSlackResponse>(new AddSlackRequest { Config = con, SolnId = req["SolutionId"] });
+                res = this.ServiceClient.Post<AddSlackResponse>(new AddSlackRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }
@@ -1096,7 +1097,7 @@ namespace ExpressBase.Web.Controllers
                     AppVersion = req["AppVersion"],
                     Type = EbIntegrations.Facebook
                 };
-                res = this.ServiceClient.Post < AddfacebookResponse>(new AddfacebookRequest { Config = con, SolnId = req["SolutionId"] });
+                res = this.ServiceClient.Post<AddfacebookResponse>(new AddfacebookRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }
@@ -1108,11 +1109,12 @@ namespace ExpressBase.Web.Controllers
         }
         public string AddGoogleDriveAsync()
         {
-            string RedirectUri ="";
+            string RedirectUri = "";
             AddGoogleDriveResponse res = new AddGoogleDriveResponse();
 
             IFormCollection req = this.HttpContext.Request.Form;
-            EbGoogleDriveConfig con = new EbGoogleDriveConfig {
+            EbGoogleDriveConfig con = new EbGoogleDriveConfig
+            {
                 ClientID = req["ClientID"],
                 Clientsecret = req["Clientsecret"],
                 ApplicationName = req["ApplicationName"],
@@ -1154,7 +1156,7 @@ namespace ExpressBase.Web.Controllers
                 return JsonConvert.SerializeObject(res);
             }
         }
-        public  async Task<TokenResponse> GetGoogleDriveKey(AuthorizationCodeFlow flow, string code, string RedirectUri)
+        public async Task<TokenResponse> GetGoogleDriveKey(AuthorizationCodeFlow flow, string code, string RedirectUri)
         {
             TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, RedirectUri, CancellationToken.None);
             return result;

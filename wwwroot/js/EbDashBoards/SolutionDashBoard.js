@@ -895,7 +895,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
     };
     this.TextLocalinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
-        $('#TextLocalConnectionEdit').modal('toggle');
+        $('#TextLocalConnectionEdit').modal('toggle'); 
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#TextLocalInputNickname').val(temp[obj].NickName);
@@ -903,6 +903,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#TextLocalInputApi').val(temp1["ApiKey"]);
                 $('#TextLocalInputFrom').val(temp1["From"]);
+                $('#TextLocalInputBrand').val(temp1["BrandName"]);
                 $('#IsSSL').prop('checked', temp1["IsSSL"]);
             }
         }

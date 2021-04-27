@@ -293,8 +293,10 @@
 
                 this.chbxShwAllRol.find('input').on('change', function (e) {
                     let $chkbox = $(e.target);
-                    if ($chkbox.prop('checked'))
+                    if ($chkbox.prop('checked')) {
                         this.objectList = this.objectList.concat(this.systemRolesObjeList);
+                        this.systemRolesObjeList = [];
+                    }
                     else {
                         this.systemRolesObjeList = this.objectList.filter(e => e[this.objectMetadata[0]] < 100);
                         this.objectList = this.objectList.filter(e => e[this.objectMetadata[0]] >= 100);

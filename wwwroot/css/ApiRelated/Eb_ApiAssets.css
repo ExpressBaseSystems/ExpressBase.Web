@@ -1,5 +1,4 @@
 ﻿.api_body {
-    
 }
 
 .eb_apiWrper {
@@ -153,7 +152,7 @@
     position: fixed;
     width: 100%;
     background: white;
-    height: 250px;
+    height: 10px;
     bottom: 0;
     z-index: 5;
     border-top: 1px solid #ccc;
@@ -231,8 +230,8 @@
             padding-left: 15px;
             list-style: none;
         }
-/*json window*/
-/*.objkey {
+    /*json window*/
+    /*.objkey {
             color: #204a87;
         }
 .objval {
@@ -241,17 +240,17 @@
 .a_ob_o, .a_ob_c{
     color: #729fcf;
 }*/
-.Json_reqOrRespWrpr .regRespWHead {
-    position: absolute;
-    background: #316396;
-    color: white;
-    padding: 2px 30px 2px 15px;
-    top: -25px;
-    font-size: 14px;
-    text-align: center;
-    -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
-    clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
-}
+    .Json_reqOrRespWrpr .regRespWHead {
+        position: absolute;
+        background: #316396;
+        color: white;
+        padding: 2px 30px 2px 15px;
+        top: -25px;
+        font-size: 14px;
+        text-align: center;
+        -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+        clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    }
 
         .Json_reqOrRespWrpr .regRespWHead i {
             font-size: 13px;
@@ -341,14 +340,16 @@
         color: #7f2f76 !important;
         font-weight: 600;
     }
-    /*custom parameter modal*/
+/*custom parameter modal*/
 .CpMdWrpr {
     display: flex;
     flex-direction: column;
 }
+
 .Custom_Param_val {
     padding: 0 15px;
 }
+
 .CpVcdMIrror {
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -356,14 +357,30 @@
     max-height: 250px;
     overflow: auto;
 }
+
 .context-menu-item {
     padding: 8px 2em;
     font-size: 14px;
 }
-.deleteCustom_p{
-    cursor:pointer;
+
+.deleteCustom_p {
+    cursor: pointer;
 }
+
 .editCustom_p {
     margin-left: 14px;
-    display:none;
+    display: none;
 }
+
+/*parameter window*/
+.api-resource-request {
+}
+
+    .api-resource-request .api-resource-request-header {
+    }
+
+    .api-resource-request .api-resource-request-body {
+    }
+
+    .api-resource-request .api-resource-req-table {
+    }

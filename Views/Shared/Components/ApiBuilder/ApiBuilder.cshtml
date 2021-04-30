@@ -99,8 +99,8 @@
     </div>
     <div class="Json_reqOrRespWrpr" id="@("tb" + ViewBag.tabnum + "_Json_reqOrRespWrp")">
         <div class="regRespWHead">
-            JSON <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg);" id="@("tb" + ViewBag.tabnum + "_pin_jswindow")"></i>
-            <i class="fa fa-thumb-tack pull-right" id="@("tb" + ViewBag.tabnum + "_unpin_jswindow")" style="display:none;"></i>
+            JSON <i class="fa fa-thumb-tack pull-right" style="display: none;transform: rotate(90deg);" id="@("tb" + ViewBag.tabnum + "_pin_jswindow")"></i>
+            <i class="fa fa-thumb-tack pull-right" id="@("tb" + ViewBag.tabnum + "_unpin_jswindow")"></i>
         </div>
         <div class="Json_reqOrRespWrpr_inner">
             <div class="JsonReq">
@@ -212,15 +212,30 @@
         ServiceUrl: '@ViewBag.ServiceUrl'
     });
 
+    function toggleParameterWindow(tabnumber, action) {
+        if (action == "show") {
+            $(`#tb${tabnumber}_Json_reqOrRespWrp`).animate({ height: 250 }, 300).css("top", "unset");
+            $(`#tb${tabnumber}_unpin_jswindow`).hide();
+            $(`#tb${tabnumber}_pin_jswindow`).show();
+        }
+        else {
+            $(`#tb${tabnumber}_Json_reqOrRespWrp`).animate({ height: 10 }, 300).css("top", "unset");
+            $(`#tb${tabnumber}_unpin_jswindow`).show();
+            $(`#tb${tabnumber}_pin_jswindow`).hide();
+        }
+    }
+
     $("#tb"+@ViewBag.tabnum+"_pin_jswindow").click(function (ev) {
         $("#tb"+@ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 10 }, 300).css("top","unset");
         $(`#tb${@ViewBag.tabnum}_unpin_jswindow`).show();
         $("#tb"+@ViewBag.tabnum+"_pin_jswindow").hide();
+        toggleParameterWindow(@ViewBag.tabnum,"hide");
     });
     $("#tb" + @ViewBag.tabnum + "_unpin_jswindow").click(function (ev) {
         $("#tb"+@ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 250 }, 300).css("top", "unset");
         $(`#tb${@ViewBag.tabnum}_unpin_jswindow`).hide();
         $("#tb"+@ViewBag.tabnum+"_pin_jswindow").show();
+       toggleParameterWindow(@ViewBag.tabnum,"show");
     });
 
     $("#param_type")

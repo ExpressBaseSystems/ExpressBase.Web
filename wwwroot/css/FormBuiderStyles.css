@@ -3516,7 +3516,7 @@ input.locinp {
 }
 
 .webform-cont .ctrl-cover input {
-    background-color: transparent !important;
+    /*background-color: transparent !important;*/ /*Fix disable-enable fn of all ctrls [eg: numeric]*/
 }
 
 .webform-cont .dg_body input {

@@ -817,7 +817,11 @@
                             number = intlTelInputUtils.formatNumber(number, this.selectedCountryData.iso2, format);
                         }
                         number = this._beforeSetNumber(number);
+                        let numChanged = false;
+                        if (this.telInput.value !== number)
+                            numChanged = true;
                         this.telInput.value = number;
+                        return numChanged;
                     }
                 }, {
                     key: "_updateFlagFromNumber",
@@ -1278,9 +1282,12 @@
                         // we must update the flag first, which updates this.selectedCountryData, which is used for
                         // formatting the number before displaying it
                         var flagChanged = this._updateFlagFromNumber(number);
-                        this._updateValFromNumber(number);
+                        var numChanged = this._updateValFromNumber(number);
                         if (flagChanged) {
                             this._triggerCountryChange();
+                        }
+                        else if (numChanged) {
+                            $(this.telInput).trigger('change');
                         }
                     }
                 }, {

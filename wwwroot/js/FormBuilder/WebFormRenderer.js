@@ -1199,6 +1199,54 @@ const WebFormRender = function (option) {
             });
     };
 
+    this.lockUnlockForm = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        EbDialog("show",
+        {
+            Message: `Are you sure to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this data entry?`,
+            Buttons: {
+                "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                "No": { Background: "violet", Align: "right", FontColor: "white;" }
+            },
+            CallBack: function (name) {
+                if (name === "Yes") {
+                    this.showLoader();
+                    $.ajax({
+                        type: "POST",
+                        url: "/WebForm/LockUnlockWebformData",
+                        data: {
+                            RefId: this.formRefId,
+                            RowId: this.rowId,
+                            CurrentLoc: currentLoc,
+                            Lock: !this.formData.IsLocked
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                            this.hideLoader();
+                        }.bind(this),
+                        success: function (result) {
+                            this.hideLoader();
+                            if (result > 0) {
+                                this.formData.IsLocked = !this.formData.IsLocked;
+                                EbMessage("show", { Message: `${this.formData.IsLocked ? 'Locked' : 'Unlocked'} ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00' });
+                                this.setHeader(this.mode);
+                            }
+                            else if (result === -1) {
+                                EbMessage("show", { Message: `${this.formData.IsLocked ? 'Unlock' : 'Lock'} operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000' });
+                            }
+                            else if (result === -2) {
+                                EbMessage("show", { Message: `Access denied to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this entry.`, AutoHide: true, Background: '#aa0000' });
+                            }
+                            else {
+                                EbMessage("show", { Message: `Something went wrong`, AutoHide: true, Background: '#aa0000' });
+                            }
+                        }.bind(this)
+                    });
+                }
+            }.bind(this)
+        });
+    };
+
     this.GetAuditTrail = function () {
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $("#AuditHistoryModal .modal-title").text("Audit Trail - " + this.FormObj.DisplayName);
@@ -1429,7 +1477,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc", "webformlock"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
@@ -1450,12 +1498,16 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, "New Mode"));
         }
         else if (this.Mode.isView) {
-            let btnsArr = ["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone"];
+            let btnsArr = ["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone", "webformlock"];
             if (this.formData.IsLocked) {
                 btnsArr.splice(1, 3);//
                 console.warn("Locked record!.............");
+                $("#webformlock").prop("title", "Unlock");
             }
-            else if (this.formData.IsCancelled) {
+            else {
+                $("#webformlock").prop("title", "Lock");
+            }
+            if (this.formData.IsCancelled) {
                 btnsArr.splice(3, 1);//
                 console.warn("Cancelled record!.............");
             }
@@ -1504,7 +1556,7 @@ const WebFormRender = function (option) {
                 r.push('webformedit');
         }
         else {
-            let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8 };
+            let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11 };
             for (let i = 0; i < btns.length; i++) {
                 if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].includes(op.New) && (mode === 'New Mode'))
                     r.push(btns[i]);
@@ -1527,6 +1579,8 @@ const WebFormRender = function (option) {
                 else if (btns[i] === "webformclone" && this.formPermissions[loc].includes(op.Clone) && mode === 'View Mode')
                     r.push(btns[i]);
                 else if (btns[i] === "webformopensrc" && this.formPermissions[loc].includes(op.View) && mode === 'View Mode')
+                    r.push(btns[i]);
+                else if (btns[i] === "webformlock" && this.formPermissions[loc].includes(op.LockUnlock) && mode === 'View Mode')
                     r.push(btns[i]);
             }
         }
@@ -1639,6 +1693,7 @@ const WebFormRender = function (option) {
         this.$saveBtn.off("click").on("click", this.saveForm.bind(this));
         this.$deleteBtn.off("click").on("click", this.deleteForm.bind(this));
         this.$cancelBtn.off("click").on("click", this.cancelForm.bind(this));
+        $("#webformlock").off("click").on("click", this.lockUnlockForm.bind(this));
         this.$editBtn.off("click").on("click", this.SwitchToEditMode.bind(this));
         ////this.$editBtn.off("click").on("click", this.CheckToAllowEditMode.bind(this));
         this.$auditBtn.off("click").on("click", this.GetAuditTrail.bind(this));

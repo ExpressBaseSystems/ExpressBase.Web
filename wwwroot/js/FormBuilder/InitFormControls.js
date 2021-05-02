@@ -2299,7 +2299,18 @@
 
     this.QuestionnaireConfigurator = function (ctrl) {
         debugger;
+        let Ques_Confi = {};
+        let que_SaveObj = [];
+        let ext_props = { "required": false, "unique": false, "validator": [] };
         let $input = $("#" + ctrl.EbSid_CtxId);
+        var PGobj = new Eb_PropertyGrid({
+            id: "queConf_PGrid_wrp",
+            wc: ebcontext.user.wc,
+            // cid: this.cid,
+            $extCont: $(".queConf_PGrid"),
+            isDraggable: true
+        });
+
 
         if (this.Renderer.rendererName == "Bot") {
             $input.selectpicker({
@@ -2347,16 +2358,39 @@
                 }
             }.bind(this));
 
+
         }
+        $(`#${ctrl.EbSid}_queBtn`).click(function () {
+
+            que_SaveObj = [];
+
+            $(`#${ctrl.EbSid}_queRender`).empty();
+            let QueIds = $('#' + ctrl.EbSid_CtxId).selectpicker('val');
+            QueIds.forEach(function (item, index) {
+                Ques_Confi = {};
+                Ques_Confi.id = 0;
+                Ques_Confi.ques_id = item;
+                Ques_Confi.ext_props = ext_props;
+                que_SaveObj.push(Ques_Confi);
+                $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlList[item]);
+            });
+
+        });
 
 
+        ctrl.bindOnChange = function (p1) {
+            debugger;
+            $(`#${ctrl.EbSid}_queBtn`).on("click", p1);
+        };
         ctrl.getValueFromDOM = function (p1) {
-            let val = $('#' + this.EbSid_CtxId).selectpicker('val');
-            debugger
-            return val.toString();
+            //let val = $('#' + this.EbSid_CtxId).selectpicker('val');
+            //debugger
+            //return val.toString();
+            return JSON.stringify(que_SaveObj);
         };
 
         ctrl.setValue = function (p1) {
+            debugger;
 
             if (p1 != null) {
                 isContained = false;
@@ -2369,10 +2403,8 @@
                         return false;
                     }
                 }.bind(this));
-                
+
             }
-
-
             $('#' + this.EbSid_CtxId).selectpicker('val', p1);
         };
         ctrl.clear = function () {

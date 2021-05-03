@@ -226,7 +226,7 @@ function EbMobStudio(config) {
         let o = this.makeElement(ebtype, ctrlname);
         $(event.target).append(o.$Control.outerHTML());
         this.refreshControl(o);
-        o.trigger(this);
+        o.trigger(this, 'drop');
         if (this.ContainerType === "EbMobileForm") {
             this.Controls.refreshColumnTree();
         }

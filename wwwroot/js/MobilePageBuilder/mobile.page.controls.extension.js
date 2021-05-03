@@ -180,14 +180,15 @@
             }
         },
         EbMobileDataGrid: {
-            trigger: function (root) {
+            trigger: function (root, event = null) {
                 root.makeDropable(this.EbSid, "EbMobileForm");
                 root.makeSortable(this.EbSid);
 
                 let tobj = root.makeElement("EbMobileTableLayout", "TableLayout");
                 $(`#${this.EbSid} .ctrl_as_container .data_layout`).append(tobj.$Control.outerHTML());
-                if (root.Mode === "edit" && this.DataLayout) {
+                if (root.Mode === "edit" && this.DataLayout && !event) {
                     $.extend(tobj, this.DataLayout);
+                    tobj.CellCollection = this.DataLayout.CellCollection;
                 }
                 tobj.trigger(root);
                 return tobj;

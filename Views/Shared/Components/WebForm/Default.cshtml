@@ -124,6 +124,10 @@
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Common/offline.js" asp-append-version=@bApnd></script>
 
+<script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/PGHelper.js" asp-append-version=@bApnd></script>
+
 @*nithin*@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
@@ -527,6 +531,7 @@
 
     header.insertButton(`<button id="webformclose" class='btn' title='Close' style='display: none;'><i class="fa fa-times" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
+    header.insertButton(`<button id="webformlock" class='btn' title='Lock/Unlock' style='display: none;'><i class="fa fa-unlock-alt" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformcancel" class='btn' title='Cancel' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformnew" class="btn" onclick="renderer.startNewMode();" title="New form(Alt+N)"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);

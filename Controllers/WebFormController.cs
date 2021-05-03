@@ -527,6 +527,14 @@ namespace ExpressBase.Web.Controllers
 			return Resp.RowAffected;
 		}
 
+		public int LockUnlockWebformData(string RefId, int RowId, int CurrentLoc, bool Lock)
+		{
+			if (!this.HasPermission(RefId, OperationConstants.LOCK_UNLOCK, CurrentLoc))
+				return -2; //Access Denied
+			LockUnlockWebFormDataResponse Resp = ServiceClient.Post<LockUnlockWebFormDataResponse>(new LockUnlockWebFormDataRequest { RefId = RefId, RowId = RowId, Lock = Lock });
+			return Resp.Status;
+		}
+
 		public string GetAuditTrail(string refid, int rowid, int currentloc)
 		{
 			try

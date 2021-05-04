@@ -1480,6 +1480,8 @@ const WebFormRender = function (option) {
         }
         this.AdjustDraftBtnsVisibility();
 
+        let lockedHtm = '';
+        let cancelledHtm = '';
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (this.Mode.isEdit) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn"], currentLoc, reqstMode));
@@ -1493,6 +1495,7 @@ const WebFormRender = function (option) {
                 btnsArr.splice(1, 3);//
                 console.warn("Locked record!.............");
                 $("#webformlock").prop("title", "Unlock");
+                lockedHtm = "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
             }
             else {
                 $("#webformlock").prop("title", "Lock");
@@ -1501,6 +1504,7 @@ const WebFormRender = function (option) {
                 //btnsArr.splice(3, 1);//
                 console.warn("Cancelled record!.............");
                 $("#webformcancel").prop("title", "Revoke Cancel");
+                cancelledHtm = "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";
             }
             else {
                 $("#webformcancel").prop("title", "Cancel");
@@ -1532,7 +1536,7 @@ const WebFormRender = function (option) {
         }
 
         if (_renderMode !== 3 && _renderMode !== 5)
-            this.headerObj.setFormMode(`<span mode="${reqstMode}" class="fmode">${modeText}</span>`);
+            this.headerObj.setFormMode(`<span mode="${reqstMode}" class="fmode">${modeText}</span>${lockedHtm}${cancelledHtm}`);
 
         $('title').text(this.FormObj.DisplayName + title_val + `(${modeText})`);
 

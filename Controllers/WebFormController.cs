@@ -519,11 +519,11 @@ namespace ExpressBase.Web.Controllers
 			return Resp.RowAffected;
 		}
 
-		public int CancelWebformData(string RefId, int RowId, int CurrentLoc)
+		public int CancelWebformData(string RefId, int RowId, int CurrentLoc, bool Cancel)
 		{
 			if (!this.HasPermission(RefId, OperationConstants.CANCEL, CurrentLoc))
 				return -2; //Access Denied
-			CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId });
+			CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, Cancel = Cancel });
 			return Resp.RowAffected;
 		}
 

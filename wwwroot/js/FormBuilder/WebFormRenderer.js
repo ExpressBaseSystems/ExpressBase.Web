@@ -1105,16 +1105,8 @@ const WebFormRender = function (option) {
             {
                 Message: "Are you sure to delete this data entry?",
                 Buttons: {
-                    "Yes": {
-                        Background: "green",
-                        Align: "left",
-                        FontColor: "white;"
-                    },
-                    "No": {
-                        Background: "violet",
-                        Align: "right",
-                        FontColor: "white;"
-                    }
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
                 },
                 CallBack: function (name) {
                     if (name === "Yes") {
@@ -1153,18 +1145,10 @@ const WebFormRender = function (option) {
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         EbDialog("show",
             {
-                Message: "Are you sure to cancel this data entry?",
+                Message: `Are you sure to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel' } this data entry?`,
                 Buttons: {
-                    "Yes": {
-                        Background: "green",
-                        Align: "left",
-                        FontColor: "white;"
-                    },
-                    "No": {
-                        Background: "violet",
-                        Align: "right",
-                        FontColor: "white;"
-                    }
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
                 },
                 CallBack: function (name) {
                     if (name === "Yes") {
@@ -1172,7 +1156,12 @@ const WebFormRender = function (option) {
                         $.ajax({
                             type: "POST",
                             url: "/WebForm/CancelWebformData",
-                            data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
+                            data: {
+                                RefId: this.formRefId,
+                                RowId: this.rowId,
+                                CurrentLoc: currentLoc,
+                                Cancel: !this.formData.IsCancelled
+                            },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                                 this.hideLoader();
@@ -1180,17 +1169,18 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
-                                    setTimeout(function () { window.close(); }, 3000);
+                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Cancellation Revoked' : 'Canceled' } ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00' });
+                                    this.formData.IsCancelled = !this.formData.IsCancelled;
+                                    this.setHeader(this.mode);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: 'Cancel operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Revoke Cancel' : 'Cancel' } operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
-                                    EbMessage("show", { Message: 'Access denied to cancel this entry.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: `Access denied to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel' } this entry.`, AutoHide: true, Background: '#aa0000' });
                                 }
                                 else {
-                                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: `Something went wrong`, AutoHide: true, Background: '#aa0000' });
                                 }
                             }.bind(this)
                         });
@@ -1508,8 +1498,12 @@ const WebFormRender = function (option) {
                 $("#webformlock").prop("title", "Lock");
             }
             if (this.formData.IsCancelled) {
-                btnsArr.splice(3, 1);//
+                //btnsArr.splice(3, 1);//
                 console.warn("Cancelled record!.............");
+                $("#webformcancel").prop("title", "Revoke Cancel");
+            }
+            else {
+                $("#webformcancel").prop("title", "Cancel");
             }
             if (this.formData.SrcDataId > 0 && this.formData.SrcRefId ?.length > 0) {
                 btnsArr.push("webformopensrc");
@@ -1566,7 +1560,7 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformdelete" && this.formPermissions[loc].includes(op.Delete))
                     r.push(btns[i]);
-                else if (btns[i] === "webformcancel" && this.formPermissions[loc].includes(op.Cancel))
+                else if (btns[i] === "webformcancel" && ((this.formPermissions[loc].includes(op.Cancel) && !this.formData.IsCancelled) || (this.formPermissions[loc].includes(op.RevokeCancel) && this.formData.IsCancelled)))
                     r.push(btns[i]);
                 else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].includes(op.AuditTrail))
                     r.push(btns[i]);

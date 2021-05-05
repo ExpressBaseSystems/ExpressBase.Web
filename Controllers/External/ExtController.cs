@@ -355,6 +355,7 @@ namespace ExpressBase.Web.Controllers
                             ViewBag.HasSignupForm = true;
                         }
                         ViewBag.Is2fA = solutionObj.Is2faEnabled;
+                        ViewBag.IsOtpSigninEnabled = solutionObj.IsOtpSigninEnabled;
                     }
                 }
                 ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);

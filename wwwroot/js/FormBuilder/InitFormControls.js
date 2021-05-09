@@ -2302,6 +2302,12 @@
         let Ques_Confi = {};
         let que_SaveObj = [];
         let ext_props = { "required": false, "unique": false, "validator": [] };
+        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid'>
+	                            <div  id='queConf_PGrid_wrp'>
+	
+	                            </div>
+                        </div>`);
+
         let $input = $("#" + ctrl.EbSid_CtxId);
         var PGobj = new Eb_PropertyGrid({
             id: "queConf_PGrid_wrp",
@@ -2376,7 +2382,7 @@
                 que_SaveObj.push(Ques_Confi);
                 $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlList[item]);
                 var control=ctrl.QuestionBankList[item]
-                CreatePG(control);
+              //  CreatePG(control);
             });
 
         });

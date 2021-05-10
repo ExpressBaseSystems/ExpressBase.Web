@@ -2302,7 +2302,7 @@
         let Ques_Confi = {};
         let que_SaveObj = [];
         let ext_props = { "required": false, "unique": false, "validator": [] };
-        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid'>
+        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0; position: fixed; width: 325px;'>
 	                            <div  id='queConf_PGrid_wrp'>
 	
 	                            </div>
@@ -2381,15 +2381,22 @@
                 Ques_Confi.ext_props = ext_props;
                 que_SaveObj.push(Ques_Confi);
                 $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlList[item]);
-                var control=ctrl.QuestionBankList[item]
+                var control = ctrl.QuestionBankList[item];
+                $('.q-pane').off("click").on("click", CreatePG.bind(this, control));
               //  CreatePG(control);
             });
+           
 
         });
+        var testt = function (ctl) {
+            alert();
+        }
+        //  $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
         var CreatePG = function (control) {
             console.log("CreatePG called for:" + control.Name);
-           // this.$propGrid.css("visibility", "visible");
-            //PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("ctype")]);////
+          //  this.$propGrid.css("visibility", "visible");
+            alert();
+            PGobj.setObject(control, AllMetas["EbQuestionnaireConfigurator"]);////
         };
 
         ctrl.bindOnChange = function (p1) {

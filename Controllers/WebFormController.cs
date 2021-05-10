@@ -36,6 +36,17 @@ namespace ExpressBase.Web.Controllers
 		public IActionResult Index(string refId, string _params, int _mode, int _locId)
 		{
 			Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+			string resp = GetFormForRendering(refId, _params, _mode, _locId, true);
+			EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
+			if (result.ErrorMessage != null)
+            {
+				TempData["ErrorResp"] = result.ErrorMessage.GraveAccentQuoted();
+				return Redirect(result.RedirectUrl);
+			}
+			ViewBag.EbFormAndDataWrapper = resp;
+			return View();
+
+
 			ViewBag.renderMode = 1;
 			ViewBag.rowId = 0;
 			Dictionary<string, string> EnableEditBtn = new Dictionary<string, string>();
@@ -103,7 +114,7 @@ namespace ExpressBase.Web.Controllers
 					{
 						string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? refId;
 						int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
-						GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
+						GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
 						ViewBag.formData = Resp.FormDataWrap;
 						ViewBag.Mode = WebFormModes.Export_Mode.ToString().Replace("_", " ");
 					}
@@ -151,6 +162,206 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.__User = this.LoggedInUser;
 
 			return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
+		}
+
+		[ResponseCache(Duration = 600, Location = ResponseCacheLocation.Any, NoStore = false)]
+		public FileContentResult cxt2js()
+        {
+            EbToolbox _toolBox = new EbToolbox(BuilderType.WebForm);
+			string all = _toolBox.EbOnChangeUIfns + ';' +_toolBox.AllMetas + ';' + _toolBox.AllControlls + ';' + _toolBox.EbObjectTypes + ';';
+			all += EbControlContainer.GetControlOpsJS(new EbWebForm(), BuilderType.WebForm);			
+			return File(all.ToUtf8Bytes(), "text/javascript");
+		}
+
+		public string GetFormForRendering(string refId, string _params, int _mode, int _locId, bool _ctrlOps)
+        {
+			Console.WriteLine(string.Format("GetFormForRendering - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+			EbFormAndDataWrapper resp = new EbFormAndDataWrapper();
+			resp.DisableEditButton = new Dictionary<string, string>() { { "disableEditButton", "0" } };
+			
+			EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(refId, this.ServiceClient, this.Redis, null);
+			WebForm.IsRenderMode = true;//this property must set before AfterRedisGet //userctrl using this prop
+			WebForm.UserObj = this.LoggedInUser;
+			WebForm.SolutionObj = GetSolutionObject(ViewBag.cid);
+			WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
+			EbWebForm WebForm_L = WebForm;
+
+			resp.RefId = refId;
+			resp.RenderMode = 1;////
+			resp.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+			resp.IsPartial = _mode > 10;
+			_mode = _mode > 0 ? _mode % 10 : _mode;
+
+			try
+			{
+				GetRowDataBasedOnMode(_params, _mode, refId, _locId, resp);
+			}
+			catch(Exception ex)
+            {
+				string t = $"Exception in GetFormForRendering.\n Message: {ex.Message}\n StackTrace: {ex.StackTrace}";
+				Console.WriteLine(t);
+				resp.Message = ex.Message;
+				resp.ErrorMessage = t;
+				resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.InternalServerError;
+				return JsonConvert.SerializeObject(resp);
+			}
+
+			if (ViewBag.wc == TokenConstants.DC)
+				resp.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
+
+			ValidateRequest(resp, _mode, _locId, WebForm);
+
+			if (resp.RedirectUrl != null)
+				return JsonConvert.SerializeObject(resp);
+
+			try
+			{
+				EbFormHelper.InitFromDataBase(WebForm_L, this.ServiceClient, this.Redis, ViewBag.wc);
+			}
+			catch(Exception ex)
+            {
+				string t = $"Exception in InitFromDataBase.\n Message: {ex.Message}\n StackTrace: {ex.StackTrace}";
+				Console.WriteLine(t);
+				resp.Message = ex.Message;
+				resp.ErrorMessage = t;
+				resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.InternalServerError;
+				return JsonConvert.SerializeObject(resp);
+			}
+
+			resp.WebFormHtml = WebForm_L.GetHtml();
+			resp.WebFormObj = EbSerializers.Json_Serialize(WebForm_L);
+			resp.FormPermissions = WebForm.GetLocBasedPermissions();
+			if (_ctrlOps)
+            {
+				resp.HtmlHead = WebForm_L.GetHead();
+			}
+			
+			return JsonConvert.SerializeObject(resp);
+        }
+
+		private void ValidateRequest(EbFormAndDataWrapper resp, int _mode, int _locId, EbWebForm webForm) 
+		{
+			string _cid = webForm.RefId.Split('-')[1];
+			if (ViewBag.cid != _cid)
+            {
+				resp.Message = "Not found";
+				resp.ErrorMessage = "Cid in refid does not match";
+				resp.RedirectUrl = "/StatusCode/404";
+				return;
+			}
+			WebformDataWrapper wdr = JsonConvert.DeserializeObject<WebformDataWrapper>(resp.FormDataWrap);
+			if (wdr.FormData == null)
+			{
+				resp.Message = wdr.Message;
+				resp.ErrorMessage = resp.FormDataWrap;
+				resp.RedirectUrl = "/StatusCode/" + wdr.Status;
+			}
+			else if (ViewBag.wc != TokenConstants.DC)
+			{
+				int RowId = 0;
+				if ((int)WebFormModes.Draft_Mode != _mode)
+				{
+					SingleRow primRow = wdr.FormData.MultipleTables[wdr.FormData.MasterTable][0];
+					RowId = primRow.RowId;
+					_locId = primRow.LocId;
+				}
+				if (RowId > 0)
+				{
+					bool neglectLocId = webForm.IsLocIndependent;
+					if (!(this.HasPermission(webForm.RefId, OperationConstants.VIEW, _locId, neglectLocId) || this.HasPermission(webForm.RefId, OperationConstants.EDIT, _locId, neglectLocId) ||
+						(this.HasPermission(webForm.RefId, OperationConstants.OWN_DATA, _locId, neglectLocId) && this.LoggedInUser.UserId == wdr.FormData.CreatedBy)))
+					{
+						resp.Message = "Access denied.";
+						resp.ErrorMessage = $"`Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: View/Edit`";
+						resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
+					}
+				}
+				else
+				{
+					if (!this.HasPermission(webForm.RefId, OperationConstants.NEW, _locId, true))
+					{
+						resp.Message = "Access denied.";
+						resp.ErrorMessage = $"`Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: New`";
+						resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
+					}
+				}
+			}
+		}
+
+		private void GetRowDataBasedOnMode(string _params, int _mode, string refId, int _locId, EbFormAndDataWrapper resp) 
+		{
+			if (_params != null)
+			{
+				List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
+				if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
+				{
+					Console.WriteLine("GetFormForRendering - View mode request identified.");
+					resp.RowId = Convert.ToInt32(ob[0].Value);
+					resp.FormDataWrap = getRowdata(refId, resp.RowId, _locId, resp.RenderMode);
+					if (resp.RowId > 0)
+					{
+						resp.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+						GetDisableEditBtnInfo(refId, resp.RowId, resp.DisableEditButton);
+					}
+					else
+					{
+						Console.WriteLine("GetFormForRendering - View mode requested but rowId is invalid.");
+						resp.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+					}
+				}
+				else if ((int)WebFormDVModes.New_Mode == _mode)// prefill mode
+				{
+					Console.WriteLine("GetFormForRendering - Prefill mode requested.");
+					GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
+					resp.FormDataWrap = Resp.FormDataWrap;
+					resp.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
+				}
+				else if ((int)WebFormModes.Export_Mode == _mode)
+				{
+					Console.WriteLine("GetFormForRendering - Export mode requested.");
+					string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? refId;
+					int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
+					GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
+					resp.FormDataWrap = Resp.FormDataWrap;
+					resp.Mode = WebFormModes.Export_Mode.ToString().Replace("_", " ");
+				}
+				else if ((int)WebFormModes.Draft_Mode == _mode)
+				{
+					Console.WriteLine("GetFormForRendering - Draft mode requested.");
+					int DraftId = Convert.ToInt32(ob.Find(e => e.Name == "id")?.ValueTo ?? 0);
+					GetFormDraftResponse Resp = ServiceClient.Post<GetFormDraftResponse>(new GetFormDraftRequest { RefId = refId, DraftId = DraftId });
+					resp.FormDataWrap = Resp.DataWrapper;
+					resp.Draft_FormData = Resp.FormDatajson;
+					resp.DraftId = DraftId;
+					resp.Mode = WebFormModes.Draft_Mode.ToString().Replace("_", " ");
+				}
+			}
+			else
+			{
+				resp.FormDataWrap = getRowdata(refId, 0, _locId, resp.RenderMode);
+			}
+		}
+
+		private void GetDisableEditBtnInfo(string refId, int rowId, Dictionary<string, string> DisableEditButton) 
+		{
+			string dataId = Convert.ToString(rowId);
+			bool Has_Key = CheckRedisEditCollection(refId, dataId);
+			if (Has_Key)
+			{
+				string HashValue = this.Redis.GetValueFromHash($"{refId}_Edit", dataId);
+				bool IsActive = CheckSubscriptionIdPulse(HashValue);
+				if (IsActive)
+				{
+					DisableEditButton["disableEditButton"] = "1";
+					GetSubscriptionId_InfoResponse res = GetSubscriberInfo(HashValue);
+					User UsrInfo = GetUserObject(res.AuthId);
+					DisableEditButton.Add("msg", $"This form is opend by {UsrInfo.FullName}");
+				}
+				else
+				{
+					bool clrHashField = this.Redis.RemoveEntryFromHash($"{refId}_Edit", dataId);
+				}
+			}
 		}
 
 		//Check permission

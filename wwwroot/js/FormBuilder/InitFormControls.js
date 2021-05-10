@@ -102,16 +102,16 @@
         });
 
         //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
-        uploadedFileRefList[ctrl.Name + '_add'] = [];
-        uploadedFileRefList[ctrl.Name + '_del'] = [];
+        this.Renderer.uploadedFileRefList[ctrl.Name + '_add'] = [];
+        this.Renderer.uploadedFileRefList[ctrl.Name + '_del'] = [];
 
         imgup.uploadSuccess = function (fileid) {
-            if (uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
-                uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
+                this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
         };
 
         imgup.windowClose = function () {
-            if (uploadedFileRefList[ctrl.Name + '_add'].length > 0)
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
         };
 
@@ -127,18 +127,18 @@
                             },
                             CallBack: function (name) {
                                 if (name === "Yes" && refids.length > 0) {
-                                    let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
+                                    let initLen = this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length;
 
                                     for (let i = 0; i < refids.length; i++) {
-                                        let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
+                                        let index = this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
                                         if (index !== -1) {
-                                            uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
+                                            this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
                                         }
-                                        else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
-                                            uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
+                                        else if (!this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
+                                            this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
                                         }
                                     }
-                                    if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
+                                    if (initLen < this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length) {
                                         EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
                                     }
                                     imgup.deleteFromGallery(refids);
@@ -1209,13 +1209,14 @@
     };
 
     this.iFrameOpen = function (ctrl) {//////////////////
-        let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
-        if (ctrl.OpenInNewTab) {
-            window.open(url, '_blank');
-            return;
-        }
-        $("#iFrameForm").attr("src", url);
-        $("#iFrameFormModal").modal("show");
+        //let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
+        //if (ctrl.OpenInNewTab) {
+        //    window.open(url, '_blank');
+        //    return;
+        //}
+        //$("#iFrameForm").attr("src", url);
+
+        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0);
     };
 
     this.SysLocation = function (ctrl) {

@@ -1,0 +1,556 @@
+﻿@using ExpressBase.Web.Filters;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+@using ExpressBase.Objects;
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<script>
+    console.log(Date.now);
+    var t0 = performance.now();
+</script>
+
+@* BOOTSTRAP CSS *@
+
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/DV/bootstrap-toggle.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css">
+<link href="~/css/DV/MonthPicker.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/css/bootstrap-select.css">
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />
+@*amal*@
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/EbControls/EbSignaturePad.css" asp-append-version=@bApnd />
+@*amal*@
+@*varghese*@
+<link rel="stylesheet" type="text/css" href="~/css/EbFileViewer/viewer.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/css/EbControls/EbBluePrintCss.css">
+<link rel="stylesheet" href="~/css/yearpicker.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" asp-append-version=@bApnd />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/DV/jquery.rateyo.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />
+<link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/fonts/icofont/icofont.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/Common/offline-theme-dark.css" asp-append-version=@bApnd />
+<link href="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/css/smart_wizard_all.min.css" rel="stylesheet" type="text/css" />
+
+
+
+<script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
+@*jith*@
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>*@@*jith*@
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/yearpicker.js" asp-append-version=@bApnd></script>
+@*<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+<script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
+@*<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/MonthPicker.min.js"></script>
+
+
+
+@*BUNDLES*@
+@*<environment exclude="Development">
+        <script type="text/javascript" src="~/js/Bundles/eb-formrender.p1.bundle.js" asp-append-version=@bApnd></script>
+    </environment>*@
+
+<script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/WebFormCollectionRender.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbPowerSelect.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbDataGrid_New.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/EbControls/EbDpFormControl.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbItemListControl.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbDynamicTab.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbProvisionUser.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/EbControls/EbReview.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/DGUCcolumn.js" asp-append-version=@bApnd></script>
+@*<script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>*@
+@*jith*@
+@*<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.5/jquery.inputmask.min.js"></script>
+@*jith*@
+<script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/vue@2.1.10.min.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/bootstrap-select.js " asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-locationpicker/0.1.12/locationpicker.jquery.min.js"></script>
+<script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
+
+<script type="text/javascript" src="~/js/SignaturePadApis/SigWebTablet.js"></script>
+@*amal*@
+<script type="text/javascript" src="~/js/EbControls/EbSignaturePad.js"></script>
+@*amal*@
+
+<script type="text/javascript" src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/splitWindow.js"></script>
+
+@*varghese*@
+<script src="~/js/EbControls/EbBluePrint.js" type="text/javascript"></script>
+<script type="text/javascript" src="~/js/EbControls/EbSimpleFileUploader.js"></script>
+<script type="text/javascript" src="~/js/EbFileViewer/EbFileViewerPlugin.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbFileViewer/viewer.js" asp-append-version=@bApnd></script>
+@*varghese*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>*@
+<script type="text/javascript" src="~/js/LayoutCommon/jquery.rateyo.min.js"></script>
+<script type="text/javascript" src="~/js/FormBuilder/jquery.scrollTo.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/DV/Chart.min.js"></script>
+<script type="text/javascript" src="~/js/DV/Chart.Zoom.min.js"></script>
+
+<script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/Common/offline.js" asp-append-version=@bApnd></script>
+
+<script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/PGHelper.js" asp-append-version=@bApnd></script>
+
+@*nithin*@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+<script src="~/js/DV/leaflet.js"></script>
+<script src="~/js/jquery.smartWizard.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="@Url.Content("~/webform/cxt2js")" asp-append-version=true></script>
+
+<script>
+    var t1 = performance.now();
+    console.log("web form link loading took " + (t1 - t0) + " milliseconds.");
+</script>
+
+
+
+<style>
+    .webform-cont {
+        /*margin-top: 38px;
+        height: calc(100vh - 38px);*/
+        margin-left: -15px;
+        width: calc(100% + 30px);
+    }
+
+    .form-buider-form {
+        height: calc( 100vh - 38px );
+        border: none;
+    }
+
+    .Eb-ctrlContainer .input-group-addon {
+        border-radius: 0;
+    }
+
+    .save-cont {
+        text-align: center;
+    }
+
+    .webform-save {
+        /*background-color: #2827a0;
+        border: none;
+        padding: 3px 11px;
+        color: white;
+        box-shadow: -2px 2px 3px 0 #00000059;
+        border-radius: 2px;*/
+    }
+
+    .form-buider-form .Eb-ctrlContainer {
+        min-height: 20px;
+    }
+
+    .radiog-cont {
+        border: none;
+        border-radius: 5px;
+    }
+
+    .fmode {
+        color: #fff;
+        font-weight: normal;
+        border-radius: 10px;
+        font-weight: normal;
+        margin-left: 3px;
+        padding: 1px 6px;
+        background-color: #9bf052;
+    }
+
+        .fmode[mode="New Mode"], .fmode[mode="New Mode"] {
+            background-color: #00d036;
+        }
+
+        .fmode[mode="Edit Mode"] {
+            background-color: #f09b52;
+        }
+
+        .fmode[mode="View Mode"] {
+            background-color: #222222;
+        }
+
+        .fmode[mode="Draft Mode"] {
+            background-color: #8f0202;
+        }
+
+    /*#divAuditTrail tbody {
+        max-height: calc(100vh - 225px);
+        overflow-y: auto;
+        width: 100%;
+    }
+
+    #divAuditTrail thead, #divAuditTrail tbody, #divAuditTrail tr, #divAuditTrail td, #divAuditTrail th {
+        display: block;
+    }
+
+    #divAuditTrail tbody td {
+        float: left;
+    }
+
+    #divAuditTrail thead tr th {
+        float: left;
+    }*/
+    /*#divAuditTrail .trans-title-tr th {
+        background-color: darkcyan;
+        color: white;
+    }*/
+    #divAuditTrail .table-title-tr th {
+        padding: 4px 8px;
+        /*background-color: #e5f3ff;*/
+    }
+
+    #divAuditTrail .second-table tr:nth-child(even) {
+        /*background-color: #f2f2f2;*/
+    }
+
+    #divAuditTrail tr:nth-child(even):hover {
+        background-color: white !important;
+    }
+
+    /*#divAuditTrail .second-table tr:hover, #divAuditTrail .first-table tr:hover {
+        background-color: #ddd;
+    }*/
+
+    #divAuditTrail .second-table td, #divAuditTrail .first-table td {
+        padding: 4px 8px;
+    }
+
+    #divAuditTrail .trans-head {
+        padding: 3px 0px;
+        background-color: #ccc;
+        width: 100%;
+        margin: 0 0 15px 0;
+        border-radius: 4px;
+    }
+
+    #divAuditTrail .line-table-div {
+        margin: 0 15px 15px 15px;
+    }
+
+    #divAuditTrail .form-table-div {
+        width: 50%;
+        padding: 0 15px 15px 15px;
+        display: inline-block;
+    }
+
+    /*DataGridNew related styles - Beginning*/
+    [ctype="DataGrid_New"] .ctrlstd_dg {
+        min-height: 36px;
+        display: inline-flex;
+    }
+
+    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {
+        color: gray;
+        pointer-events: none;
+    }
+
+    [ctype="DataGrid_New"] .edit-rowc, [ctype="DataGrid_New"] .del-rowc, [ctype="DataGrid_New"] .check-rowc, [ctype="DataGrid_New"] .cancel-rowc {
+        background: white;
+        border: none;
+    }
+
+    [ctype="DataGrid_New"] [mode="edit"] .edit-rowc {
+        color: #7171ff;
+    }
+
+        [ctype="DataGrid_New"] [mode="edit"] .edit-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #adadef !important;
+        }
+
+    [ctype="DataGrid_New"] [mode="edit"] .del-rowc {
+        color: #f55d5d;
+    }
+
+        [ctype="DataGrid_New"] [mode="edit"] .del-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
+        }
+
+    [ctype="DataGrid_New"] .check-rowc {
+        color: #019a01;
+    }
+
+        [ctype="DataGrid_New"] .check-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #87c987 !important;
+        }
+
+    [ctype="DataGrid_New"] .cancel-rowc {
+        color: #f55d5d;
+    }
+
+        [ctype="DataGrid_New"] .cancel-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
+        }
+
+    [ctype="DataGrid_New"] table.dataTable {
+        margin-top: 0px !important;
+    }
+
+    [ctype="DataGrid_New"] .DTFC_LeftHeadWrapper, [ctype="DataGrid_New"] .DTFC_RightHeadWrapper, [ctype="DataGrid_New"] .dataTables_scrollHead {
+        padding-bottom: 0px !important;
+        margin-bottom: 0px !important;
+    }
+
+    [ctype="DataGrid_New"] .DTFC_LeftFootWrapper, [ctype="DataGrid_New"] .DTFC_RightFootWrapper, [ctype="DataGrid_New"] .dataTables_scrollFoot {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    [ctype="DataGrid_New"] .DTFC_LeftFootWrapper, [ctype="DataGrid_New"] .DTFC_RightFootWrapper {
+        top: 17px !important;
+    }
+
+    div[ctype="DataGrid_New"] div.dataTables_wrapper tr.odd:hover {
+        background-color: rgb(249, 249, 249) !important;
+    }
+
+    div[ctype="DataGrid_New"] div.dataTables_wrapper tr.even:hover {
+        background-color: white !important;
+    }
+
+    div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody > tr > .selected, div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected:hover {
+        background-color: white !important;
+    }
+
+    div[ctype="DataGrid_New"] td.focus {
+        outline: none !important;
+        box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
+    }
+
+    div[ctype="DataGrid_New"] table.dataTable tbody tr.selected, div[ctype="DataGrid_New"] table.dataTable tbody th.selected, div[ctype="DataGrid_New"] table.dataTable tbody td.selected {
+        color: black !important;
+    }
+    /*DataGridNew related styles - End*/
+</style>
+
+<style>
+
+    /*#region subform*/
+    #subFormHeader {
+        height: 38px;
+        width: 100%;
+        background-color: #ffffff;
+        /*position: fixed;*/
+        z-index: 10;
+        padding: 2px 2px 2px 2px;
+        box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+        display: flex;
+        flex-flow: row;
+        float: left;
+        border-radius: 6px 6px 0px 0px;
+    }
+
+        #subFormHeader .sfh-title {
+            width: 50%;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px;
+        }
+
+        #subFormHeader .sfh-toolbar {
+            width: 50%;
+        }
+
+        #subFormHeader .sfh-tool-btns {
+            float: right;
+        }
+
+            #subFormHeader .sfh-tool-btns .btn {
+                background-color: transparent;
+                color: #336699;
+                padding: 3px 12px;
+                font-size: 18px;
+                margin-right: 2px;
+            }
+
+                #subFormHeader .sfh-tool-btns .btn:hover {
+                    background-color: #e4e4e4;
+                    outline: none;
+                    border-radius: 4px;
+                }
+
+    #subFormOverlay {
+        text-align: center;
+        position: absolute;
+        height: 60vh;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 6px;
+        display: none;
+        z-index: 11;
+    }
+
+    #subForm-cont {
+        /*width: 100%;*/
+        height: 60vh;
+        border: none;
+        border-radius: 6px;
+    }
+
+        #subForm-cont .form-buider-form {
+            height: 100%;
+            border-radius: 0px 0px 6px 6px;
+        }
+
+    .sf-msk {
+        background: black;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 80;
+        top: 0;
+        left: 0;
+        opacity: .5;
+    }
+    .sf-container {
+        position: fixed;
+        z-index: 81;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .sf-cont-body {
+        /*min-width: 350px;
+        min-height: 200px;*/
+        width: 60%;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px 0 rgb(60 64 67 / 30%), 0 4px 8px 3px rgb(60 64 67 / 15%);
+        position: relative;
+        display: flex;
+        flex-flow: column;
+    }
+    /*#endregion subform*/
+
+</style>
+
+<div id='WebForm-cont' class="webform-cont">
+
+</div>
+
+<script>
+    $("body").prepend(`
+<div class="modal fade" id="AuditHistoryModal" role="dialog">
+    <div class="modal-dialog" style="width: 100%; margin: 0px;">
+        <div class="modal-content" style="border: none; border-radius: 0px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
+                <h4 class="modal-title">Audit Trail</h4>
+            </div>
+            <div class="modal-body" style="height:calc(100vh - 60px); overflow: auto; padding: 15px 100px;">
+                <div id="divAuditTrail" style="height:calc(100vh - 90px);"> </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+
+    $("body").prepend(`
+<div class="modal fade" id="iFramePdfModal" role="dialog">
+    <div class="modal-dialog" style="width: 80%; margin: 4% auto;">
+        <div class="modal-content" style="border-radius: 0; border: none;">
+            <div class="modal-body" style="height: 80vh; padding: 0px;">
+                <div>
+                    <iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`);
+
+    $("body").prepend(` <input type="file" name="excelfile" id="excelfile" style="display: none;" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">`);
+
+    $("#iFramePdf").on('load', function (evt) {
+        try {
+            if ($(evt.target).attr("src") !== undefined) {
+                if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
+                    document.getElementById("iFramePdf").focus();
+                    document.getElementById("iFramePdf").contentWindow.print();
+                }
+                else {
+                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                }
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                $("#iFramePdfModal").modal("show");
+            }
+        }
+        catch (e) {
+            $("#eb_common_loader").EbLoader("hide");
+            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+        }
+    });
+
+    let __resp = @Html.Raw(ViewBag.EbFormAndDataWrapper);
+
+    let _masterData = {
+        _source: "master",
+        _formRefId: __resp.RefId,
+        _formObj: JSON.parse(__resp.WebFormObj),
+        _rowId: __resp.RowId,
+        _draftId: __resp.DraftId,
+
+        _formData: (__resp.DraftId > 0 ? JSON.parse(__resp.Draft_FormData) : JSON.parse(__resp.FormDataWrap).FormData),
+
+        _userObject:  ebcontext.user,
+        _mode: __resp.Mode,
+        _cid: "@ViewBag.Cid",
+        _env: "@ViewBag.Env",
+        _ispartial: __resp.IsPartial,
+        _formPermissions: __resp.FormPermissions,
+        _renderMode: __resp.RenderMode,
+        _formHTML:  __resp.WebFormHtml,
+
+        _disableEditButton: __resp.DisableEditButton
+    };
+
+
+    let DynamicTabPane = function () { console.log('Not Implemented'); }; // multiple form related changes will come
+
+    $("#layout_div").addClass("for-modal-blur"); // multiple form related changes will come
+</script>
+
+
+@Html.JsCode(
+    @<script>
+        ebcontext.webform = new WebFormCollectionRender(_masterData);
+    </script>
+)

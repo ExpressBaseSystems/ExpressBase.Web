@@ -13,7 +13,7 @@ const WebFormRender = function (option) {
     this.updateCtrlUI = function (cObj) {
         $.each(cObj, function (prop, val) {
             //prop = prop.charAt(0).toUpperCase() + prop.slice(1);
-            let meta = getObjByval(AllMetas["Eb" + cObj.ObjType], "name", prop);
+            let meta = getObjByval(AllMetas_w["Eb" + cObj.ObjType], "name", prop);
             if (meta) {
                 let NSS = meta.UIChangefn;
                 if (NSS) {
@@ -410,12 +410,12 @@ const WebFormRender = function (option) {
                 if (ctrl.getValueFromDOM() !== val) {
                     ctrl.__EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
-                        head: "Value Trimmed by mistake(Old Value : " + val + ", New Value:" + ctrl.getValueFromDOM() + " ) - contact Support" ,
+                        head: "Value Trimmed by mistake(Old Value : " + val + ", New Value:" + ctrl.getValueFromDOM() + " ) - contact Support",
                         body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
-                    $("#webformedit").attr("disabled" , true);
+                    $("#webformedit").attr("disabled", true);
                 }
             }
             else {
@@ -492,7 +492,7 @@ const WebFormRender = function (option) {
                 let SingleColumn = {};
                 SingleColumn.Name = key;
                 SingleColumn.Value = values[i];
-                SingleColumn.Type = EbEnums.EbDbTypes.Decimal;
+                SingleColumn.Type = EbEnums_w.EbDbTypes.Decimal;
                 ExtendedTables[key].push({
                     IsUpdate: false,
                     Columns: [SingleColumn]
@@ -601,8 +601,13 @@ const WebFormRender = function (option) {
             return;
         }
         else if (mode_s === "Close Mode") {
-            this.showLoader();
-            document.location.href = "/";
+            if (this.renderMode === 2) {
+                ebcontext.webform.hideSubForm();
+            }
+            else {
+                this.showLoader();
+                document.location.href = "/";
+            }
         }
     }.bind(this);
 
@@ -805,15 +810,15 @@ const WebFormRender = function (option) {
     this.cloneForm = function () {
         let params = [];
         params.push(new fltr_obj(11, "srcRowId", this.rowId));
-        let url = `../WebForm/Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify(params))}&_mode=7&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=7&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
         window.open(url, '_blank');
     };
 
     this.openSourceForm = function () {
-        if (this.formData.SrcDataId > 0 && this.formData.SrcRefId ?.length > 0) {
+        if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.formData.SrcDataId));
-            let url = `../WebForm/Index?refid=${this.formData.SrcRefId}&_params=${btoa(JSON.stringify(params))}&_mode=1&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+            let url = `../WebForm/Index?_r=${this.formData.SrcRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
             window.open(url, '_blank');
         }
     };
@@ -1167,7 +1172,7 @@ const WebFormRender = function (option) {
         let currentLoc = ebcontext.locations.getCurrent();
         EbDialog("show",
             {
-                Message: `Are you sure to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel' } this data entry?`,
+                Message: `Are you sure to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel'} this data entry?`,
                 Buttons: {
                     "Yes": { Background: "green", Align: "left", FontColor: "white;" },
                     "No": { Background: "violet", Align: "right", FontColor: "white;" }
@@ -1191,15 +1196,15 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Cancellation Revoked' : 'Canceled' } ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Cancellation Revoked' : 'Canceled'} ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00' });
                                     this.formData.IsCancelled = !this.formData.IsCancelled;
                                     this.setHeader(this.mode);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Revoke Cancel' : 'Cancel' } operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Revoke Cancel' : 'Cancel'} operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
-                                    EbMessage("show", { Message: `Access denied to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel' } this entry.`, AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: `Access denied to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel'} this entry.`, AutoHide: true, Background: '#aa0000' });
                                 }
                                 else {
                                     EbMessage("show", { Message: `Something went wrong`, AutoHide: true, Background: '#aa0000' });
@@ -1214,49 +1219,49 @@ const WebFormRender = function (option) {
     this.lockUnlockForm = function () {
         let currentLoc = ebcontext.locations.getCurrent();
         EbDialog("show",
-        {
-            Message: `Are you sure to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this data entry?`,
-            Buttons: {
-                "Yes": { Background: "green", Align: "left", FontColor: "white;" },
-                "No": { Background: "violet", Align: "right", FontColor: "white;" }
-            },
-            CallBack: function (name) {
-                if (name === "Yes") {
-                    this.showLoader();
-                    $.ajax({
-                        type: "POST",
-                        url: "/WebForm/LockUnlockWebformData",
-                        data: {
-                            RefId: this.formRefId,
-                            RowId: this.rowId,
-                            CurrentLoc: currentLoc,
-                            Lock: !this.formData.IsLocked
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
-                            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-                            this.hideLoader();
-                        }.bind(this),
-                        success: function (result) {
-                            this.hideLoader();
-                            if (result > 0) {
-                                this.formData.IsLocked = !this.formData.IsLocked;
-                                EbMessage("show", { Message: `${this.formData.IsLocked ? 'Locked' : 'Unlocked'} ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00' });
-                                this.setHeader(this.mode);
-                            }
-                            else if (result === -1) {
-                                EbMessage("show", { Message: `${this.formData.IsLocked ? 'Unlock' : 'Lock'} operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000' });
-                            }
-                            else if (result === -2) {
-                                EbMessage("show", { Message: `Access denied to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this entry.`, AutoHide: true, Background: '#aa0000' });
-                            }
-                            else {
-                                EbMessage("show", { Message: `Something went wrong`, AutoHide: true, Background: '#aa0000' });
-                            }
-                        }.bind(this)
-                    });
-                }
-            }.bind(this)
-        });
+            {
+                Message: `Are you sure to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this data entry?`,
+                Buttons: {
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        this.showLoader();
+                        $.ajax({
+                            type: "POST",
+                            url: "/WebForm/LockUnlockWebformData",
+                            data: {
+                                RefId: this.formRefId,
+                                RowId: this.rowId,
+                                CurrentLoc: currentLoc,
+                                Lock: !this.formData.IsLocked
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                                this.hideLoader();
+                            }.bind(this),
+                            success: function (result) {
+                                this.hideLoader();
+                                if (result > 0) {
+                                    this.formData.IsLocked = !this.formData.IsLocked;
+                                    EbMessage("show", { Message: `${this.formData.IsLocked ? 'Locked' : 'Unlocked'} ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00' });
+                                    this.setHeader(this.mode);
+                                }
+                                else if (result === -1) {
+                                    EbMessage("show", { Message: `${this.formData.IsLocked ? 'Unlock' : 'Lock'} operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000' });
+                                }
+                                else if (result === -2) {
+                                    EbMessage("show", { Message: `Access denied to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this entry.`, AutoHide: true, Background: '#aa0000' });
+                                }
+                                else {
+                                    EbMessage("show", { Message: `Something went wrong`, AutoHide: true, Background: '#aa0000' });
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
     };
 
     this.GetAuditTrail = function () {
@@ -1568,7 +1573,7 @@ const WebFormRender = function (option) {
             else {
                 $("#webformcancel").prop("title", "Cancel");
             }
-            if (this.formData.SrcDataId > 0 && this.formData.SrcRefId ?.length > 0) {
+            if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
                 btnsArr.push("webformopensrc");
             }
             this.headerObj.showElement(this.filterHeaderBtns(btnsArr, currentLoc, reqstMode));
@@ -1788,11 +1793,11 @@ const WebFormRender = function (option) {
     };
 
     this.OpenInNewTab = function () {
-        let url = `../WebForm/Index?refid=${this.formRefId}&_mode=1&_locId=${ebcontext.locations.getCurrent()}`;
+        let url = `../WebForm/Index?_r=${this.formRefId}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
         if (this.rowId > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.rowId));
-            url = `../WebForm/Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify(params))}&_mode=1&_locId=${ebcontext.locations.getCurrent()}`;
+            url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
         }
         window.open(url, '_blank');
     };
@@ -1971,7 +1976,7 @@ const WebFormRender = function (option) {
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        
+
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         if (parseInt(option.disableEditBtn.disableEditButton)) {
             ($(`.objectDashB-toolbar #webformedit`).attr("disabled", true))
@@ -1989,7 +1994,7 @@ const WebFormRender = function (option) {
         });
         this.initWebFormCtrls();
         this.initPrintMenu();
-        this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
+        this.defaultAfterSavemodeS = getKeyByVal(EbEnums_w.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         this.isInitiallyPopulating = true;
         this.populateControlsWithDataModel(this.DataMODEL);// 1st

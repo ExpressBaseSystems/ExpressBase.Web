@@ -1047,7 +1047,7 @@
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_m=7&_l=${ebcontext.locations.CurrentLoc}`;
             window.open(url, '_blank');
         }.bind(this);
     };
@@ -1209,7 +1209,7 @@
     };
 
     this.iFrameOpen = function (ctrl) {//////////////////
-        //let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
+        //let url = "../WebForm/Index?_r=" + ctrl.FormRefId + "&_m=12";
         //if (ctrl.OpenInNewTab) {
         //    window.open(url, '_blank');
         //    return;

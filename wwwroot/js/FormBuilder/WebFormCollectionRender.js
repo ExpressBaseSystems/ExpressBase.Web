@@ -1,9 +1,22 @@
-﻿const WebFormCollectionRender = function (Option) {
+﻿const CallWebFormCollectionRender = function (Option) {
+    if (ebcontext.webform)
+        ebcontext.webform.Init(Option);
+    else if (Option._source === 'master')
+        ebcontext.webform = new WebFormCollectionRender(Option);
+    else {
+        ebcontext.webform = new WebFormCollectionRender(null);
+        ebcontext.webform.Init(Option);
+    }
+};
+
+const WebFormCollectionRender = function (Option) {
     this.FormCollection = [];//renderer collection
     this.MasterHeader = null;
 
 
     this.Init = function (Op) {
+        if (Op === null) return;
+
         if (Op._source === 'master') {
             let _options = {
                 formObj: Op._formObj,
@@ -28,24 +41,60 @@
             let WebForm = new WebFormRender(_options);
             this.FormCollection.push(WebForm);
         }
-        else if (Op.Source === 'tv' || Op.Source === 'ps'){
-            //
-            //
-            //
+        else if (Op._source === 'tv') {
+
+            this.PopupForm(Op._refId, Op._params, Op._mode);
+
         }
-        this.SetSubFormModal();
+        else if (Op._source === 'ps') {
+
+        }
+
     };
 
     this.PopupForm = function (refId, params, mode) {
-
+        this.SetSubFormModal();
         this.showSubForm();
 
         let existing = this.FormCollection.find(e => e.formRefId === refId);
 
         if (existing) {
-            existing.startNewMode();
-            //
-            //
+            if (!params)
+                existing.startNewMode();
+            else {
+                this.showSubFormLoader();
+                $.ajax({
+                    type: "POST",
+                    url: "/WebForm/GetFormForRendering",
+                    data: {
+                        _refId: refId,
+                        _params: params,
+                        _mode: mode,
+                        _locId: ebcontext.locations.getCurrent(),
+                        _renderMode: 2,
+                        _dataOnly: true
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        this.hideSubFormLoader();
+                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: false, Background: '#aa0000' });
+                    }.bind(this),
+                    success: function (existing, result) {
+                        this.hideSubFormLoader();
+
+                        let resp = JSON.parse(result);
+                        if (resp.ErrorMessage) {
+                            console.error(resp.ErrorMessage);
+                            EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });
+                            return;
+                        }
+
+                        existing.FORCE_RELOAD(resp.RowId, JSON.parse(resp.FormDataWrap).FormData, resp.Mode);
+
+                    }.bind(this, existing)
+                });
+
+
+            }
         }
         else {
             this.showSubFormLoader();
@@ -53,10 +102,11 @@
                 type: "POST",
                 url: "/WebForm/GetFormForRendering",
                 data: {
-                    refId: refId,
+                    _refId: refId,
                     _params: params,
                     _mode: mode,
-                    _locId: ebcontext.locations.getCurrent()
+                    _locId: ebcontext.locations.getCurrent(),
+                    _renderMode: 2
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     this.hideSubFormLoader();
@@ -117,6 +167,12 @@
     };
 
     this.showSubForm = function () {
+        $('#subFormHeader .sfh-title').html('Loading...');
+        $('#subForm-cont').empty();
+        $('#subformedit').hide();
+        $('#subformnew').hide();
+        $('#subformsave').hide();
+        $('#subformopen').hide();
         $(`#subFormModal,.sf-msk`).fadeIn();
     };
 
@@ -125,7 +181,7 @@
     };
 
     this.showSubFormLoader = function () {
-        $("#sf_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+        $("#sf_loader").EbLoader("show", { maskItem: { Id: "body" } });
     };
 
     this.hideSubFormLoader = function () {
@@ -206,7 +262,7 @@
 <div id="subFormModal" class="sf-container" style='display: none;'>
     <div class="sf-cont-body">
         <div id="subFormHeader">
-            <div class='sfh-title'> WebForm Popup </div>
+            <div class='sfh-title'> Loading... </div>
             <div class='sfh-toolbar'> 
                 <div class='sfh-tool-btns'>
                     <button id="subformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>
@@ -225,9 +281,9 @@
     </div>
 </div>
    
-`);        
+`);
         $("#subformclose").off('click').on('click', this.hideSubForm.bind(this));
-        
+
 
         //var $modal = $('#subFormModal');
         //$modal.find('.modal-content')
@@ -246,7 +302,7 @@
 
     };
 
-    this.SetPopupFormTitle = function (title, mode, lock, cancel) {        
+    this.SetPopupFormTitle = function (title, mode, lock, cancel) {
         title = title + `<span mode="${mode}" class="fmode">${mode}</span>`;
         if (lock)
             title = title + "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";

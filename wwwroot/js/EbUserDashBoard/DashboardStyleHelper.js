@@ -224,7 +224,7 @@ function GetUrl4Link(refid) {
             _url = "../ReportRender/Index?refid=" + refid;
         }
         else if (objTypeName === "WebForm") {
-            _url = "../WebForm/Index?refid=" + refid;
+            _url = "../WebForm/Index?_r=" + refid;
         }
         else if (objTypeName === "DashBoard") {
             _url = "../DashBoard/DashBoardView?refid=" + refid;

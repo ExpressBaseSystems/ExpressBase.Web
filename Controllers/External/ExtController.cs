@@ -1409,7 +1409,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         if (s.Contains("000-00-" + id.Split("-")[3].PadLeft(5, '0')))
                         {
-                            return RedirectToAction("WebFormRender", "WebForm", new { refId = id, _params = p, _mode = m, _locId = usr.Preference.DefaultLocation, renderMode = 5 });
+                            return RedirectToAction("Index", "WebForm", new { _r = id, _p = p, _m = m, _l = usr.Preference.DefaultLocation, _rm = 5 });
                         }
                     }
                 }

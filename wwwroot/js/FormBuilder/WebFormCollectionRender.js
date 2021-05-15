@@ -12,7 +12,7 @@
 const WebFormCollectionRender = function (Option) {
     this.FormCollection = [];//renderer collection
     this.MasterHeader = null;
-
+    this.CurrentSubForm = null;
 
     this.Init = function (Op) {
         if (Op === null) return;
@@ -59,6 +59,7 @@ const WebFormCollectionRender = function (Option) {
         let existing = this.FormCollection.find(e => e.formRefId === refId);
 
         if (existing) {
+            this.CurrentSubForm = existing;
             if (!params)
                 existing.startNewMode();
             else {
@@ -150,6 +151,7 @@ const WebFormCollectionRender = function (Option) {
                     });
 
                     this.FormCollection.push(WebForm);
+                    this.CurrentSubForm = WebForm;
 
                 }.bind(this)
             });
@@ -178,6 +180,8 @@ const WebFormCollectionRender = function (Option) {
 
     this.hideSubForm = function () {
         $(`#subFormModal,.sf-msk`).fadeOut();
+        this.CurrentSubForm.DISPOSE();
+        this.CurrentSubForm = null;
     };
 
     this.showSubFormLoader = function () {
@@ -284,12 +288,10 @@ const WebFormCollectionRender = function (Option) {
 `);
         $("#subformclose").off('click').on('click', this.hideSubForm.bind(this));
 
-
-        //var $modal = $('#subFormModal');
-        //$modal.find('.modal-content')
+        //$('#subFormModal').find('.sf-cont-body')
         //    .css({
-        //        width: 625,
-        //        height: 175,
+        //        width: '60%',
+        //        height: '60vh',
         //    })
         //    .resizable({
         //        minWidth: 625,

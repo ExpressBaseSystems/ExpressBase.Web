@@ -3224,10 +3224,16 @@
                 this.WebFormlink(MapObj.ObjRefId, btoa(unescape(encodeURIComponent(JSON.stringify(filter)))), MapObj.FormMode);
             }
             else {
-
-                $("#iFrameFormPopupModal").modal("show");
-                let url = `../WebForm/Index?_r=${MapObj.ObjRefId}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_m=1${MapObj.FormMode}&_l=${ebcontext.locations.CurrentLoc}`;
-                $("#iFrameFormPopup").attr("src", url);
+                CallWebFormCollectionRender({
+                    _source: 'tv',
+                    _refId: MapObj.ObjRefId,
+                    _params: btoa(unescape(encodeURIComponent(JSON.stringify(filter)))),
+                    _mode: MapObj.FormMode,
+                    _locId: ebcontext.locations.CurrentLoc
+                });
+                //$("#iFrameFormPopupModal").modal("show");
+                //let url = `../WebForm/Index?_r=${MapObj.ObjRefId}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_m=1${MapObj.FormMode}&_l=${ebcontext.locations.CurrentLoc}`;
+                //$("#iFrameFormPopup").attr("src", url);
             }
         }
     };
@@ -3271,9 +3277,10 @@
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=12&_l=${ebcontext.locations.CurrentLoc}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.GroupFormLink, _params: filterparams, _mode: 2, _locId: ebcontext.locations.CurrentLoc });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=12&_l=${ebcontext.locations.CurrentLoc}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
             this.WebFormlink(this.GroupFormLink, filterparams, "2");
@@ -3285,9 +3292,10 @@
         this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=12&_l=${ebcontext.locations.CurrentLoc}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.ItemFormLink, _params: filterparams, _mode: 2, _locId: ebcontext.locations.CurrentLoc });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=12&_l=${ebcontext.locations.CurrentLoc}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
             this.WebFormlink(this.ItemFormLink, filterparams, "2");
@@ -3299,9 +3307,10 @@
         this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=11&_l=${ebcontext.locations.CurrentLoc}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.GroupFormLink, _params: filterparams, _mode: 1, _locId: ebcontext.locations.CurrentLoc });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=11&_l=${ebcontext.locations.CurrentLoc}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
             this.WebFormlink(this.GroupFormLink, filterparams, "1");
@@ -3313,9 +3322,10 @@
         this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=11&_l=${ebcontext.locations.CurrentLoc}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.ItemFormLink, _params: filterparams, _mode: 1, _locId: ebcontext.locations.CurrentLoc });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=11&_l=${ebcontext.locations.CurrentLoc}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
             this.WebFormlink(this.ItemFormLink, filterparams, "1");

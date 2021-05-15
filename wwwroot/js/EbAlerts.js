@@ -48,8 +48,11 @@
         else if (this.possition === "bottom-left") {
             this.bottom = 0; this.right = 0;
         }
-        var $alertBox = $('<div id="' + this.id + '" style="top:' + this.top + 'px; bottom:' + this.bottom + 'px; left:' + this.left + 'px; right:' + this.right + 'px;" class="ebalert-cont eb-alertbox ' + this.class + '"></div >');
-        $('body').append($alertBox);
+        var $alertBox = $('#' + this.id);
+        if ($alertBox.length === 0) {
+            $alertBox = $('<div id="' + this.id + '" style="top:' + this.top + 'px; bottom:' + this.bottom + 'px; left:' + this.left + 'px; right:' + this.right + 'px;" class="ebalert-cont eb-alertbox ' + this.class + '"></div >');
+            $('body').append($alertBox);
+        }
         if (typeof this.width === "number")
             this.width += "px";
         $alertBox.css("width", this.width);

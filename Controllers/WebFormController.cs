@@ -173,7 +173,7 @@ namespace ExpressBase.Web.Controllers
             EbToolbox _toolBox = new EbToolbox(BuilderType.WebForm);
             string all = _toolBox.EbOnChangeUIfns + ';' + _toolBox.AllMetas + ';' + _toolBox.AllControlls + ';' + _toolBox.EbObjectTypes + ';';
             all += EbControlContainer.GetControlOpsJS(new EbWebForm(), BuilderType.WebForm);
-            all = all.Replace("AllMetas", "AllMetas_w").Replace("EbEnums", "EbEnums_w");
+            all = all.Replace("AllMetas", "AllMetas_w").Replace("EbEnums", "EbEnums_w").Replace("EbObjects", "EbObjects_w");
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 

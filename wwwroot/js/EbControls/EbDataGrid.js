@@ -60,7 +60,7 @@
                 let col = this.ctrl.Controls.$values[colIndex];
                 let inpCtrlType = col.InputControlType;
                 let ctrlEbSid = "ctrl_" + Date.now().toString(36) + visibleCtrlIdx++;// creates a unique id
-                let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);// creates object
+                let inpCtrl = new EbObjects_w[inpCtrlType](ctrlEbSid, col);// creates object
                 inpCtrl.__isEditing = false;
                 inpCtrl.DataVals = getObjByval(dataRow.Columns, "Name", col.Name);
                 inpCtrl.curRowDataVals = getObjByval(this.curRowDataMODEL.Columns, "Name", col.Name);
@@ -497,7 +497,7 @@
         if (inpCtrl.ObjType === "DGUserControlColumn") {///////////
             $.each(col.Columns.$values, function (i, _inpCtrl) {
                 let _ctrlEbSid = "ctrl_" + Date.now().toString(36) + i;
-                let NewInpCtrl = $.extend({}, new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
+                let NewInpCtrl = $.extend({}, new EbObjects_w[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
                 NewInpCtrl.EbSid_CtxId = _ctrlEbSid;
                 inpCtrl.Columns.$values[i] = this.addPropsToInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
             }.bind(this));
@@ -551,7 +551,7 @@
             let col = this.ctrl.Controls.$values[i];
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + Date.now().toString(36) + visibleCtrlIdx;
-            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+            let inpCtrl = new EbObjects_w[inpCtrlType](ctrlEbSid, col);
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
             this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowid);

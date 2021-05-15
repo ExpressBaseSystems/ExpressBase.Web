@@ -113,13 +113,13 @@ const WebFormRender = function (option) {
             this.DGBuilderObjs[DG.EbSid_CtxId] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
             this.DGBuilderObjs[DG.EbSid_CtxId].MultipleTables = this.DataMODEL | [];
             if (!DG.DisableRowDelete || DG.IsAddable) {
-                if (!window.__IsDGctxMenuSet)
+                if (!this.__IsDGctxMenuSet)
                     $.contextMenu({
                         selector: '[eb-form="true"][mode="edit"] .Dg_body .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .Dg_body .dgtr:not([is-editing="true"]) > td',
                         autoHide: true,
                         build: this.ctxBuildFn.bind(this, DG)
                     });
-                window.__IsDGctxMenuSet = true;
+                this.__IsDGctxMenuSet = true;//old window?
             }
         }.bind(this));
     };
@@ -611,18 +611,33 @@ const WebFormRender = function (option) {
         }
     }.bind(this);
 
+    this.DISPOSE = function () {
+        if (this.renderMode !== 2) {
+            $.contextMenu('destroy');
+            this.__IsDGctxMenuSet = undefined;
+            $(".xdsoft_datetimepicker.xdsoft_noselect.xdsoft_").remove();
+        }
+
+        $(`#${this.FormObj.EbSid_CtxId} [data-toggle="tooltip"]`).tooltip('destroy').tooltip();
+
+        let tvCtrls = getFlatObjOfType(this.FormObj, "TVcontrol");
+        $.each(tvCtrls, function (a, b) { b.__filterValues = []; });
+
+        this.$formCont.empty();
+    };
+
     this.FORCE_RELOAD = function (rowId, formData, mode_s) {
         if (this.renderMode === 1) {
             let stateObj = { id: rowId };
             if (rowId > 0) {
-                let _url = `Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_mode=${this.isPartial === 'True' ? 11 : 1}&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+                let _url = `Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_m=${this.isPartial === 'True' ? 11 : 1}&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
                 //if (this.rowId > 0)
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
                 //else
                 //    window.history.pushState(stateObj, this.FormObj.DisplayName, _url);
             }
             else {
-                let _url = `Index?refid=${this.formRefId}&_mode=${this.isPartial === 'True' ? 12 : 2}&_locId=${ebcontext.locations.CurrentLocObj.LocId}`;
+                let _url = `Index?_r=${this.formRefId}&_m=${this.isPartial === 'True' ? 12 : 2}&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
             }
         }
@@ -632,18 +647,23 @@ const WebFormRender = function (option) {
             modeS: mode_s
         }
 
-        let t0 = performance.now();
+        //let t0 = performance.now();
 
-        $.contextMenu('destroy');
-        window.__IsDGctxMenuSet = undefined;
-        $(".xdsoft_datetimepicker.xdsoft_noselect.xdsoft_").remove();
+        if (this.renderMode !== 2) {
+            $.contextMenu('destroy');
+            this.__IsDGctxMenuSet = undefined;
+            $(".xdsoft_datetimepicker.xdsoft_noselect.xdsoft_").remove();
+        }
+
+        $(`#${this.FormObj.EbSid_CtxId} [data-toggle="tooltip"]`).tooltip('destroy').tooltip();
+
         let tvCtrls = getFlatObjOfType(this.FormObj, "TVcontrol");
         $.each(tvCtrls, function (a, b) { b.__filterValues = []; });
 
         this.resetBuilderVariables(forceRelaodOptions);
         this.init(option);
 
-        console.dev_log("WebFormRender : FORCE_RELOAD took " + (performance.now() - t0) + " milliseconds.");
+        //console.dev_log("WebFormRender : FORCE_RELOAD took " + (performance.now() - t0) + " milliseconds.");
 
     };
 
@@ -652,7 +672,7 @@ const WebFormRender = function (option) {
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             if (typeof this[key] !== typeof function () { }) {
-                if (!(key == "emptyFormDataModel_copy" || key == "__fromImport"))// persist
+                if (!(key == "emptyFormDataModel_copy" || key == "__fromImport" || key == "__IsDGctxMenuSet"))// persist
                     delete this[key];
             }
         }
@@ -1902,19 +1922,20 @@ const WebFormRender = function (option) {
 
     this.initConnectionCheck = function () {
         Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
-        //Offline.options = {checks: {xhr: {url: ebcontext.se_url + '/status'}}};
-        setInterval(this.connectionPing, 5000);///////////////////////////////////////////////////////////////
+        //Offline.options = {checks: {xhr: {url: '/WebForm/Status'}}};
+        setInterval(this.connectionPing, 10000);///////////////////////////////////////////////////////////////
     };
 
     this.connectionPing = function () {
         Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
+        //Offline.options = { checks: { xhr: { url: '/WebForm/Status' } } };
         if (Offline.state === 'up')
             Offline.check();
         console.log(Offline.state);
     };
 
     this.init = function () {
-        let t0 = performance.now();
+        //let t0 = performance.now();
 
         this.rendererName = 'WebForm';
 
@@ -1977,7 +1998,7 @@ const WebFormRender = function (option) {
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
 
-        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
+        $(`#${this.FormObj.EbSid_CtxId} [data-toggle="tooltip"]`).tooltip();// init bootstrap tooltip
         if (parseInt(option.disableEditBtn.disableEditButton)) {
             ($(`.objectDashB-toolbar #webformedit`).attr("disabled", true))
         }
@@ -2027,9 +2048,8 @@ const WebFormRender = function (option) {
                 return dialogText;
             }
         }.bind(this);
-        $('[data-toggle="tooltip"]').tooltip('destroy').tooltip();
 
-        console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
+        //console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
 
 
 

@@ -903,6 +903,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#TextLocalInputApi').val(temp1["ApiKey"]);
                 $('#TextLocalInputFrom').val(temp1["From"]);
+                $('#TextLocalInputBrand').val(temp1["BrandName"]);
                 $('#IsSSL').prop('checked', temp1["IsSSL"]);
             }
         }
@@ -2211,6 +2212,87 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             });
     };
 
+    this.OtpSigninSwitch = function (e) {
+        var postData = e.target.checked;
+        let msg = "Are you sure you want to turn ON Otp Sign-in?";
+        SolutionId = this.Sid;
+
+
+        if (this.Connections.SolutionInfo.Is2faEnabled) {
+            msg = "Are you sure you want to turn OFF Otp Sign-in?";
+        }
+        else if ($('div.checkbox-group :checkbox:checked').length < 1) {
+            if (postData)
+                $("#otpsigninswitch").bootstrapToggle('off');
+            EbMessage("show", {
+                Message: "Please select OTP delivery method", Background: "red"
+            });
+            return;
+        }
+        EbDialog("show",
+            {
+                Message: msg,
+                Buttons: {
+                    "Confirm": {
+                        Background: "green",
+                        Align: "right",
+                        FontColor: "white;"
+                    },
+                    "Cancel": {
+                        Background: "red",
+                        Align: "left",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (name) {
+                    if (name === "Confirm") {
+                        let _deliveryMethod = [];
+                        if ($("input[id='emailcheckbox_signin']:checked").length === 1)
+                            _deliveryMethod.push("email");
+                        if ($("input[id='smscheckbox_signin']:checked").length === 1)
+                            _deliveryMethod.push("sms");
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "../Tenant/SwitchOtpSignin",
+                            data: { data: postData, SolnId: SolutionId, deliveryMethod: _deliveryMethod.toString() }
+
+                        }).done(function (data) {
+                            let _data = JSON.parse(data);
+                            if (_data.res) {
+                                this.Connections.SolutionInfo.Is2faEnabled = postData;
+                                if (postData) {
+                                    EbMessage("show", { Message: "Otp Sign-in turned ON" });
+                                    $("#emailcheckbox_signin").prop("disabled", true);
+                                    $("#smscheckbox_signin").prop("disabled", true);
+                                }
+                                else {
+                                    EbMessage("show", { Message: "Otp Sign-in turned OFF" });
+                                    if (this.Connections.IsEmailIntegrated) {
+                                        $("#emailcheckbox_signin").prop("disabled", false);
+                                    }
+                                    if (this.Connections.IsSmsIntegrated) {
+                                        $("#smscheckbox_signin").prop("disabled", false);
+                                    }
+                                }
+                            } else {//error case
+                                //if (postData)
+                                //    $("#2faSwitch").bootstrapToggle('off');
+                                //else
+                                //    $("#2faSwitch").bootstrapToggle('on');
+                                EbMessage("show", {
+                                    Message: "Something went wrong. Please try again", Background: "red"
+                                });
+                            }
+                        }.bind(this));
+                    }
+                    else if (name === "Cancel" || name === "close") {
+                        $("#otpsigninswitch").bootstrapToggle('off');
+                    }
+                }.bind(this)
+            });
+    };
+
     this.DeleteSolution = function () {
         SolutionId = this.Sid;
         EbDialog("show",
@@ -2242,27 +2324,72 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                                     EbMessage("show", { Message: "Permanantly deleted" });
                                 }
                                 else {
-                                    EbMessage("show", { Message: "Something went wrong.", Background: "red" }); 
+                                    EbMessage("show", { Message: "Something went wrong.", Background: "red" });
                                 }
                             }.bind(this));
                         }
                         else {
                             EbMessage("show", { Message: "External Solution Id doesn't match.", Background: "red" });
                         }
-                    } 
+                    }
                 }
             });
     };
 
+    this.CleanupSolution = function () {
+        SolutionId = this.Sid;
+        EbDialog("show",
+            {
+                Message: "Enter Internal Solution Id to confirm data cleanup of solution '" + sname + "'",
+                Buttons: {
+                    "Confirm": {
+                        Background: "green",
+                        Align: "right",
+                        FontColor: "white;"
+                    },
+                    "Cancel": {
+                        Background: "red",
+                        Align: "left",
+                        FontColor: "white;"
+                    }
+                },
+                IsPrompt: true,
+                CallBack: function (name, prompt) {
+                    if (name === "Confirm") {
+                        if (prompt === SolutionId) {
+                            $.ajax({
+                                type: 'POST',
+                                url: "../Tenant/CleanupSolution",
+                                data: { SolnId: SolutionId, prompt_isid: prompt }
+                            }).done(function (data) {
+                                if (data) {
+                                    window.location.href = '../';
+                                    EbMessage("show", { Message: "Cleanup completed" });
+                                }
+                                else {
+                                    EbMessage("show", { Message: "Something went wrong.", Background: "red" });
+                                }
+                            }.bind(this));
+                        }
+                        else {
+                            EbMessage("show", { Message: "Internal Solution Id doesn't match.", Background: "red" });
+                        }
+                    }
+                }
+            });
+    };
 
     this.init = function () {
+        //Versioning
         if (this.versioning === 'True') {
             $("#VersioningSwitch").bootstrapToggle('on');
         }
+
+        //2FA
         if (this.Connections.SolutionInfo.Is2faEnabled) {
             $("#2faSwitch").bootstrapToggle('on');
-            if (this.Connections.SolutionInfo.OtpDelivery !== undefined) {
-                let p = this.Connections.SolutionInfo.OtpDelivery.split(",");
+            if (this.Connections.SolutionInfo.OtpDelivery2fa !== undefined) {
+                let p = this.Connections.SolutionInfo.OtpDelivery2fa.split(",");
                 for (i = 0; i < p.length; i++) {
                     if (p[i] === "email") {
                         $("#emailcheckbox").prop("checked", true);
@@ -2272,7 +2399,6 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                     }
                 }
             }
-
             $("#emailcheckbox").prop("disabled", true);
             $("#smscheckbox").prop("disabled", true);
         }
@@ -2284,10 +2410,39 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 $("#smscheckbox").prop("disabled", true);
             }
         }
+
+        // OTP sign-in
+        if (this.Connections.SolutionInfo.IsOtpSigninEnabled) {
+            $("#otpsigninswitch").bootstrapToggle('on');
+            if (this.Connections.SolutionInfo.OtpDeliverySignin !== undefined) {
+                let p = this.Connections.SolutionInfo.OtpDeliverySignin.split(",");
+                for (i = 0; i < p.length; i++) {
+                    if (p[i] === "email") {
+                        $("#emailcheckbox_signin").prop("checked", true);
+                    }
+                    else if (p[i] === "sms") {
+                        $("#smscheckbox_signin").prop("checked", true);
+                    }
+                }
+            }
+
+            $("#emailcheckbox_signin").prop("disabled", true);
+            $("#smscheckbox_signin").prop("disabled", true);
+        }
+        else {
+            if (!this.Connections.IsEmailIntegrated) {
+                $("#emailcheckbox_signin").prop("disabled", true);
+            }
+            if (!this.Connections.IsSmsIntegrated) {
+                $("#smscheckbox_signin").prop("disabled", true);
+            }
+        }
         $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#2faSwitch").change(this.TwoFASwitch.bind(this));
+        $("#otpsigninswitch").change(this.OtpSigninSwitch.bind(this));
         $("#del-soln-outer").on("click", this.DeleteSolution.bind(this));
+        $("#clean-soln-outer").on("click", this.CleanupSolution.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));

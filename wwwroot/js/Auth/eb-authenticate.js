@@ -114,7 +114,8 @@
                     "continue_with": $("input[name='continue_with']").val() || "",
                     otptype: $("#otptype").text(),
                     otp: $("#partitioned").val(),
-                    uname_otp: $("#uname_otp").val()
+                    uname_otp: $("#uname_otp").val(),
+                    forgotpassword: forgotpassword
                 },
                 success: function (auth) {
                     if (auth.authStatus) {
@@ -175,8 +176,8 @@
             else {
                 $(`#otpvalidate`)[0].click();
             }
-           
-            
+
+
         }
     });
 
@@ -273,9 +274,7 @@
 
     $("#otplogin").on("click", function () {
         let uname = $("#uname_otp").val();
-        //let emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         let is_email = ve(uname);
-        //let phoneRegex = /^(\+91-|\+91|0)?\d{10}$/;
         let is_mobile = veMob(uname);
         if (is_email || is_mobile) {
             $.ajax({
@@ -331,4 +330,10 @@
         }
     });
 
+    $("#forgotpw").on("click", function () {
+        $("#withpw_container").hide();
+        $("#withotp_container").removeClass("fade").addClass("active");
+        forgotpassword = true;
+    });
+    var forgotpassword = false;
 })(window);

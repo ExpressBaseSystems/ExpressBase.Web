@@ -178,7 +178,17 @@ namespace ExpressBase.Web.Controllers
             bool result = false;
             if (prompt_esid == EsolnId)
             {
-                DeleteSolutionResponse res = this.ServiceClient.Post<DeleteSolutionResponse>(new DeleteSolutionRequset { ISolutionId = SolnId, ESolutionId = EsolnId });
+                DeleteSolutionResponse res = this.ServiceClient.Post<DeleteSolutionResponse>(new DeleteSolutionRequset { ISolutionId = SolnId });
+                result = res.Status;
+            }
+            return result;
+        }
+        public bool CleanupSolution(string SolnId, string prompt_isid)
+        {
+            bool result = false;
+            if (prompt_isid == SolnId)
+            {
+                CleanupSolutionResponse res = this.ServiceClient.Post<CleanupSolutionResponse>(new CleanupSolutionRequset { ISolutionId = SolnId });
                 result = res.Status;
             }
             return result;
@@ -255,6 +265,25 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 resp = this.ServiceClient.Post<GetVersioning>(new SolutionEditRequest { Value = data, solution_id = SolnId, ChangeColumn = solutionChangeColumn.TwoFa, DeliveryMethod = deliveryMethod });
+                this.ServiceClient.Post<UpdateSolutionObjectResponse>(new UpdateSolutionObjectRequest()
+                {
+                    SolnId = SolnId
+                });
+
+            }
+            catch (Exception e)
+            {
+                resp.status = new ResponseStatus { Message = e.Message };
+            }
+            return JsonConvert.SerializeObject(resp);
+        }
+
+        public string SwitchOtpSignin(bool data, string SolnId, string deliveryMethod)
+        {
+            GetVersioning resp = new GetVersioning();
+            try
+            {
+                resp = this.ServiceClient.Post<GetVersioning>(new SolutionEditRequest { Value = data, solution_id = SolnId, ChangeColumn = solutionChangeColumn.OtpSignin, DeliveryMethod = deliveryMethod });
                 this.ServiceClient.Post<UpdateSolutionObjectResponse>(new UpdateSolutionObjectRequest()
                 {
                     SolnId = SolnId

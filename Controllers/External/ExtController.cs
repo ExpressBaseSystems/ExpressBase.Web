@@ -355,6 +355,7 @@ namespace ExpressBase.Web.Controllers
                             ViewBag.HasSignupForm = true;
                         }
                         ViewBag.Is2fA = solutionObj.Is2faEnabled;
+                        ViewBag.IsOtpSigninEnabled = solutionObj.IsOtpSigninEnabled;
                     }
                 }
                 ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -645,7 +646,7 @@ namespace ExpressBase.Web.Controllers
                 //    return  Response.Redirect(this.HttpContext.Request.Scheme + "://" + Subdomain + "/UserDashboard");
                 //}
 
-                 if (console == RoutingConstants.DC)
+                if (console == RoutingConstants.DC)
                     return RedirectToAction("DevDashBoard", "Dev");
                 else if (console == RoutingConstants.UC)
                     return RedirectToAction("UserDashboard", "TenantUser");
@@ -826,11 +827,22 @@ namespace ExpressBase.Web.Controllers
                         //UseTokenCookie = true
                     };
                     if (req["otptype"] == "signinotp")
-                    {
                         AuthenticateReq.Meta.Add("sso", "true");
-                    }
                     myAuthResponse = this.AuthClient.Get<MyAuthenticateResponse>(AuthenticateReq);
 
+                    if (req["otptype"] == "signinotp")
+                    {
+                        if (Convert.ToBoolean(req["forgotpassword"]))
+                        {
+                            this.ServiceClient.BearerToken = myAuthResponse.BearerToken;
+                            this.ServiceClient.RefreshToken = myAuthResponse.RefreshToken;
+                            this.ServiceClient.Post(new SetForgotPWInRedisRequest
+                            {
+                                UName = req["uname_otp"],
+                                SolutionId = IntSolutionId,
+                            });
+                        }
+                    }
                 }
                 catch (WebServiceException wse)
                 {

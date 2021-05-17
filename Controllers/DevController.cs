@@ -259,7 +259,7 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        public UpdateAppSettingsResponse UpdateAppSettingsWebform (string Settings, int appid,EbApplicationTypes type)
+        public UpdateAppSettingsResponse UpdateAppSettingsWebform(string Settings, int appid, EbApplicationTypes type)
         {
             UpdateAppSettingsResponse resp = null;
             try
@@ -978,6 +978,8 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.MobileSettings = new MobileAppSettings();
             }
+            GetCleanupQueryResponse response = this.ServiceClient.Post<GetCleanupQueryResponse>(new GetCleanupQueryRequest { });
+            ViewBag.CleanupQueries = response.CleanupQueries;
             return View();
         }
 
@@ -985,15 +987,14 @@ namespace ExpressBase.Web.Controllers
         {
             return JsonConvert.SerializeObject( new EbWebFormSettings(true));
         }
-
-        public string SaveSolutionSettings(string obj)
+        public string SaveSolutionSettings(string obj, string CleanupQueries)
         {
             try
             {
                 SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
                 if (solutionsettings != null)
                 {
-                    if(solutionsettings.UserTypeForms != null  || solutionsettings.MobileAppSettings?.UserTypeForms != null)
+                    if (solutionsettings.UserTypeForms != null || solutionsettings.MobileAppSettings?.UserTypeForms != null)
                     {
                         CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
                         {
@@ -1001,7 +1002,7 @@ namespace ExpressBase.Web.Controllers
                             UserTypeMobPages = solutionsettings.MobileAppSettings?.UserTypeForms
                         });
                     }
-                    SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
+                    SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj, CleanupQueries = CleanupQueries });
                     return resp.Message;
                 }
             }

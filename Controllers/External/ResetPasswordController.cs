@@ -24,6 +24,7 @@ namespace ExpressBase.Web.Controllers.External
         {
             ViewBag.cid = ViewBag.SolutionId;
             ViewBag.wc = ViewBag.WhichConsole;
+            ViewBag.IsForgotPw = this.Redis.Get<bool>("Fpw_"+Request.Cookies[TokenConstants.USERAUTHID]);
             return View("ResetPage");
         }
 
@@ -54,6 +55,9 @@ namespace ExpressBase.Web.Controllers.External
                         });
                         if (resp.Status)
                         {
+                            if (PwDetails.IsForgotPw) {
+                                this.Redis.Remove("Fpw_" + authid);
+                            }
                             CookieOptions options = new CookieOptions();
                             Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, _u.BearerToken, options);
                             Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, _u.RefreshToken, options);

@@ -31,7 +31,7 @@
                     padding: 10px;
                     margin-bottom: 10px;
                     border-radius: 4px;
-                    border: 1px solid #ccc;
+                  /*  border: 1px solid #ccc;*/
                 }
 
                     .objContainer_f_app:last-child {
@@ -43,11 +43,14 @@
                 }
         */
                 .app-name {
-                    height: 25px;
+                    height: 40px;
                     background-color: #75a8f5;
-                    padding: 3px;
+                    padding: 10px;
                     margin-bottom: 10px;
                     color: white;
+                }
+                .ebbtn{
+                    height:40px !important;
                 }
     </style>
 }
@@ -72,8 +75,7 @@
 
     <div class="tab-content" id="nav-tabContent">
 
-        <div class="tab-pane active col-md-12" id="nav-Packagedetail" role="tabpanel" aria-labelledby="Packagedetail-tab">
-            <div class="row col-md-5">
+        <div class="tab-pane active col-md-12" id="nav-Packagedetail" role="tabpanel" aria-labelledby="Packagedetail-tab"> 
                 <div class="form-group">
                     Package Name
                     <input type="text" class="form-control" id="packname" placeholder="Package Name" style="height:40px" />
@@ -81,9 +83,7 @@
                 <div class="form-group ">
                     Package Description
                     <input type="text" class="form-control" id="packdesc" placeholder="package Description" style="height:40px" />
-                </div>
-            </div>
-            <div class="row col-md-5 col-md-offset-1">
+                </div> 
                 <div class="form-group ">
                     Master Solution
                     <select class="selectpicker show-tick form-control" id="mastersoln" placeholder="Select Master solution" style="height:40px;">
@@ -101,8 +101,7 @@
                             <button class="btn btn-default appicon_btn" style="height:100%" id="packIcon"></button>
                         </span>
                     </div>
-                </div>
-            </div>
+                </div> 
         </div>
         <div class="tab-pane fade nav-apps" id="nav-apps" role="tabpanel" aria-labelledby="apps-tab">
             Please select versions of each objects to be exported.

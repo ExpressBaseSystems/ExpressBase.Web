@@ -10,6 +10,7 @@
     string signupFormRefid = ViewBag.signupFormRefid;
     MobileAppSettings mobile_settings = ViewBag.MobileSettings;
     EbWebFormSettings Web_settings = ViewBag.WebFormSettings;
+    string CleanupQueries = ViewBag.CleanupQueries;
 }
 <style>
     .switch {
@@ -129,12 +130,20 @@
         color: white;
         border-radius: 4px;
     }
+
     .web-settings-container {
         border: 1px solid #ccc;
         border-radius: 6px;
         padding: 10px;
         background-color: #eee;
         margin: 10px 15px;
+    }
+    
+    .query-container {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: #eee;
     }
 </style>
 <script src='~/js/Eb_dragula.js' type="text/javascript"></script>
@@ -281,7 +290,6 @@
         <div class="web-settings w-100" style="padding:10px 15px">
             <div class="container"><div class="row" ><div class="col-sm-10"><h5>Webform Style</h5></div><div class="col-sm-2"> <button class="btn btn-default" id="webform-style-reset"> Reset</button></div></div></div>
             <div class="web-settings-container display-flex">
-                <div class="col-lg-3" id="css_cont"> </div>
                 <div class="col-lg-6 col-sm-6">
                     <form>
                         <div class="form-group">
@@ -338,19 +346,35 @@
                 </div>
             </div>
         </div>
+        <div class="queries w-100" style="padding:10px 15px">
+            <h5>Cleanup Queries</h5>
+            <div class="query-container display-flex">
+                <div class="col-lg-12 col-sm-12">
+                    <form>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="5" id="queries" style="min-height: 32rem; overflow-y: auto; resize: none;"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<link rel="stylesheet" href="~/css/Bundles/codemirror.bundle.min.css" asp-append-version=true />
+<script type="text/javascript" src="~/js/Bundles/codemirror.bundle.js" asp-append-version=true></script>
 <script>
     var MobileSettings = @Html.Raw(JsonConvert.SerializeObject(mobile_settings));
     var MobPageColl = [];
     var SystemColumns = @Html.Raw(JsonConvert.SerializeObject(ViewBag.SystemColumns));
      let css = @Html.Raw(JsonConvert.SerializeObject(ViewBag.WebFormSettings));
     var stylehelp = new FormStyleHelper(css);
+
     $(document).ready(function () {
         if ("@signupFormRefid" != "") {
             $("#signup_object").val("@signupFormRefid");
         }
+        
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
         drake.off("drop").on("drop", function () {});
@@ -386,7 +410,9 @@
             SystemColumns: SystemColumns
         };
         $.post("../Dev/SaveSolutionSettings",
-            { obj: JSON.stringify(obj) },
+            {
+                obj: JSON.stringify(obj),
+                CleanupQueries: btoa(editor.getValue())},
             function (result) {
                 $("#eb_common_loader").EbLoader("hide");
                 EbDialog("show", {
@@ -445,4 +471,15 @@
             $sel.val($sel.attr('data-def'));
         });
     }
+
+    var editor = CodeMirror.fromTextArea(document.getElementById("queries"), {
+            mode: "text/x-pgsql",
+            lineNumbers: true,
+            lineWrapping: false,
+            extraKeys: { "Ctrl-Space": "autocomplete" },
+            autoRefresh: true,
+            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    });
+    editor.setValue(atob('@CleanupQueries'));
 </script>

@@ -2520,6 +2520,9 @@ input.locinp {
     float: left;
     border-radius: 6px 6px 0px 0px;
 }
+    #subFormHeader:hover{
+        cursor: move;
+    }
 
     #subFormHeader .sfh-title {
         width: 50%;
@@ -2608,6 +2611,7 @@ input.locinp {
     display: flex;
     flex-flow: column;
 }
+
 /*#endregion subform*/
 
 .fmode {

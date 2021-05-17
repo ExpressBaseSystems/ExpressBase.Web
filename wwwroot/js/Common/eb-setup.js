@@ -161,7 +161,7 @@
                 let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].DataId)]))));
                 let locid = this.getCurrentLocation();
                 let Id = pa[i].MyActionId;
-                let url = `href='../webform/index?refid=${pa[i].Link}&_params=${params}&_mode=1&_locId=${locid}' target='_blank'`;
+                let url = `href='../webform/index?_r=${pa[i].Link}&_p=${params}&_m=1&_l=${locid}' target='_blank'`;
                 let _label = "";
                 if (pa[i].ActionType === "Approval")
                     _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";

@@ -288,19 +288,19 @@ const WebFormCollectionRender = function (Option) {
 `);
         $("#subformclose").off('click').on('click', this.hideSubForm.bind(this));
 
-        //$('#subFormModal').find('.sf-cont-body')
-        //    .css({
-        //        width: '60%',
-        //        height: '60vh',
-        //    })
-        //    .resizable({
-        //        minWidth: 625,
-        //        minHeight: 175,
-        //        handles: 'n, e, s, w, ne, sw, se, nw',
-        //    })
-        //    .draggable({
-        //        handle: '#subFormHeader'
-        //    });
+        $('#subFormModal').find('.sf-cont-body')
+            .css({
+                width: '60%',
+                height: '60vh',
+            })
+            .resizable({
+                minWidth: 625,
+                minHeight: 175,
+                handles: 'n, e, s, w, ne, sw, se, nw',
+            })
+            .draggable({
+                handle: '#subFormHeader'
+            });
 
     };
 

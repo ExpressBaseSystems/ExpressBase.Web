@@ -867,9 +867,15 @@ namespace ExpressBase.Web.Controllers
                     Port = Convert.ToInt32(req["Port"]),
                     EmailAddress = req["Email"],
                     Password = req["Password"],
-                    EnableSsl = Convert.ToBoolean(req["IsSSL"]),
                     Id = Convert.ToInt32(req["Id"])
                 };
+                bool a;
+                Boolean.TryParse(req["IsSSL"], out a);
+                if(a)
+                    con.EnableSsl = Convert.ToBoolean(req["IsSSL"]);
+                else
+                    con.EnableSsl = (req["IsSSL"] == "on") ? true : false;
+                
 
                 res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con, /*IsNew = true,*/ SolnId = req["SolnId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolnId"] });

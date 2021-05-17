@@ -2336,6 +2336,48 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             });
     };
 
+    this.CleanupSolution = function () {
+        SolutionId = this.Sid;
+        EbDialog("show",
+            {
+                Message: "Enter Internal Solution Id to confirm data cleanup of solution '" + sname + "'",
+                Buttons: {
+                    "Confirm": {
+                        Background: "green",
+                        Align: "right",
+                        FontColor: "white;"
+                    },
+                    "Cancel": {
+                        Background: "red",
+                        Align: "left",
+                        FontColor: "white;"
+                    }
+                },
+                IsPrompt: true,
+                CallBack: function (name, prompt) {
+                    if (name === "Confirm") {
+                        if (prompt === SolutionId) {
+                            $.ajax({
+                                type: 'POST',
+                                url: "../Tenant/CleanupSolution",
+                                data: { SolnId: SolutionId, prompt_isid: prompt }
+                            }).done(function (data) {
+                                if (data) {
+                                    window.location.href = '../';
+                                    EbMessage("show", { Message: "Cleanup completed" });
+                                }
+                                else {
+                                    EbMessage("show", { Message: "Something went wrong.", Background: "red" });
+                                }
+                            }.bind(this));
+                        }
+                        else {
+                            EbMessage("show", { Message: "Internal Solution Id doesn't match.", Background: "red" });
+                        }
+                    }
+                }
+            });
+    };
 
     this.init = function () {
         //Versioning
@@ -2400,6 +2442,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         $("#2faSwitch").change(this.TwoFASwitch.bind(this));
         $("#otpsigninswitch").change(this.OtpSigninSwitch.bind(this));
         $("#del-soln-outer").on("click", this.DeleteSolution.bind(this));
+        $("#clean-soln-outer").on("click", this.CleanupSolution.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));

@@ -259,7 +259,7 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        public UpdateAppSettingsResponse UpdateAppSettingsWebform (string Settings, int appid,EbApplicationTypes type)
+        public UpdateAppSettingsResponse UpdateAppSettingsWebform(string Settings, int appid, EbApplicationTypes type)
         {
             UpdateAppSettingsResponse resp = null;
             try
@@ -971,24 +971,26 @@ namespace ExpressBase.Web.Controllers
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
             ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
-            ViewBag.WebFormSettings = solutionObj.SolutionSettings.WebSettings != null? solutionObj.SolutionSettings.WebSettings : new EbWebFormSettings(true);
+            ViewBag.WebFormSettings = solutionObj.SolutionSettings.WebSettings != null ? solutionObj.SolutionSettings.WebSettings : new EbWebFormSettings(true);
             ViewBag.SystemColumns = solutionObj.SolutionSettings?.SystemColumns ?? new EbSystemColumns(EbSysCols.Values);
-            
+
             if (solutionObj.SolutionSettings?.MobileAppSettings == null)
             {
                 ViewBag.MobileSettings = new MobileAppSettings();
             }
+            GetCleanupQueryResponse response = this.ServiceClient.Post<GetCleanupQueryResponse>(new GetCleanupQueryRequest { });
+            ViewBag.CleanupQueries = response.CleanupQueries;
             return View();
         }
 
-        public string SaveSolutionSettings(string obj)
+        public string SaveSolutionSettings(string obj, string CleanupQueries)
         {
             try
             {
                 SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
                 if (solutionsettings != null)
                 {
-                    if(solutionsettings.UserTypeForms != null  || solutionsettings.MobileAppSettings?.UserTypeForms != null)
+                    if (solutionsettings.UserTypeForms != null || solutionsettings.MobileAppSettings?.UserTypeForms != null)
                     {
                         CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
                         {
@@ -996,7 +998,7 @@ namespace ExpressBase.Web.Controllers
                             UserTypeMobPages = solutionsettings.MobileAppSettings?.UserTypeForms
                         });
                     }
-                    SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
+                    SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj, CleanupQueries = CleanupQueries });
                     return resp.Message;
                 }
             }

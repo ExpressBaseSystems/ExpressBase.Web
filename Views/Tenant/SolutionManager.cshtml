@@ -63,6 +63,9 @@
     .eb-sdash-longdivcontainer .toggle {
         width: 128px !important;
     }
+    .left-sec {
+        text-align: justify;
+    }
 </style>
 <div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
@@ -543,22 +546,22 @@
                 <div class="tab-pane" id="home" role="tabpanel">
                     <div class="eb-sdash-general-container flex-center">
                         @*<div class="eb-sdash-longdiv w-100" style="margin-bottom:20px;">
-            <div class="eb-sdash-upgradecont">
-                <div class="col-md-8">
-                    <p>Change your solution info</p>
-                </div>
-                <div class="col-md-4">
-                    <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
-                </div>
-            </div>
-        </div>*@
+                            <div class="eb-sdash-upgradecont">
+                                <div class="col-md-8">
+                                    <p>Change your solution info</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
+                                </div>
+                             </div>
+                        </div>*@
 
                         @*logo*@
-                        <div class="eb-sdash-longdiv" style="margin-bottom:20px;">
+                        <div class="eb-sdash-longdiv col-md-12 col-sm-12" style="margin-bottom:20px;">
                             <div class="eb-sdash-longdivhead">
                                 <label>Solution Logo</label>
-                            </div>
-                            <div class="eb-sdash-longdivcontainer">
+                            </div> 
+                            <div class="eb-sdash-longdivcontainer col-md-12 col-sm-12">
                                 <div class="left-sec" style="display:flex;justify-content:center;min-width:25%;">
                                     <img src="~/images/your_company_logo.png" data-src=@Logourl class="Eb_Image" style="max-width:200px;align-self:center;" />
                                 </div>
@@ -574,12 +577,12 @@
                         </div>
 
                         @*Otp Sign-in*@
-                        <div class="eb-sdash-longdiv">
+                        <div class="eb-sdash-longdiv col-md-12 col-sm-12">
                             <div class="eb-sdash-longdivhead">
                                 <label>Otp Sign-in</label>
                             </div>
-                            <div class="eb-sdash-longdivcontainer">
-                                <div class="left-sec">
+                            <div class="eb-sdash-longdivcontainer col-md-12 col-sm-12">
+                                <div class="left-sec col-md-9 col-sm-9">
                                     <p>
                                         A one-time password (OTP), also known as a one-time PIN or dynamic password, is a password that is valid for only one
                                         login session or transaction. It is more secure than a static password, especially a user-created password, which can be weak and/or reused across multiple accounts.
@@ -593,7 +596,7 @@
                                         @{ if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
                                             {
                                                 // <label class="label-custom-style" style="display:inline-block">Select OTP delivery method</label>
-                                                <div>Select OTP delivery method</div>
+                                                <div>Select OTP method</div>
                                                 <div class="form-check form-check-inline checkbox-group">
                                                     <div class="col-md-12">
                                                         <input class="form-check-input" name="s" type="checkbox" id="emailcheckbox_signin" value="email">
@@ -622,12 +625,12 @@
                         </div>
 
                         @*2FA*@
-                        <div class="eb-sdash-longdiv">
+                        <div class="eb-sdash-longdiv col-md-12 col-sm-12">
                             <div class="eb-sdash-longdivhead">
                                 <label>Two Factor Authentication</label>
                             </div>
-                            <div class="eb-sdash-longdivcontainer">
-                                <div class="left-sec">
+                            <div class="eb-sdash-longdivcontainer col-md-12 col-sm-12">
+                                <div class="left-sec col-md-9 col-sm-9">
                                     <p>
                                         Two-factor authentication (2FA), sometimes referred to as two-step verification or dual-factor authentication, is a security
                                         process in which users provide two different authentication factors to verify themselves. This process is done to better protect
@@ -639,7 +642,7 @@
                                         @{ if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
                                             {
                                                 // <label class="label-custom-style" style="display:inline-block">Select OTP delivery method</label>
-                                                <div>Select OTP delivery method</div>
+                                                <div>Select OTP method</div>
                                                 <div class="form-check form-check-inline checkbox-group">
                                                     <div class="col-md-12">
                                                         <input class="form-check-input" name="s" type="checkbox" id="emailcheckbox" value="email">
@@ -670,12 +673,12 @@
                         </div>
 
                         @*Object Versioning*@
-                        <div class="eb-sdash-longdiv">
+                        <div class="eb-sdash-longdiv col-md-12 col-sm-12">
                             <div class="eb-sdash-longdivhead">
                                 <label>Object Versioning</label>
                             </div>
-                            <div class="eb-sdash-longdivcontainer">
-                                <div class="left-sec">
+                            <div class="eb-sdash-longdivcontainer col-md-12 col-sm-12">
+                                <div class="left-sec col-md-9 col-sm-9">
                                     <p>
                                         An Invoice Form, can have two versions, pre-VAT & post-VAT, or a PDF report
                                         with two different ways of calculating taxable amount.
@@ -705,12 +708,12 @@
                         </div>
 
                         @*Delete SOlution*@
-                        <div class="eb-sdash-longdiv">
+                        <div class="eb-sdash-longdiv col-md-12 col-sm-12">
                             <div class="eb-sdash-longdivhead">
                                 <label>Permanently Delete Solution</label>
                             </div>
-                            <div class="eb-sdash-longdivcontainer">
-                                <div class="left-sec">
+                            <div class="eb-sdash-longdivcontainer col-md-12 col-sm-12">
+                                <div class="left-sec col-md-9 col-sm-9">
                                     <p>
                                         When you permanently delete a solution, the solution and all associated data will be romoved.You won't be able to accesss the solution or retrieve any data or objects you've added.
                                     </p>
@@ -718,6 +721,25 @@
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
                                     <div class="uname-advanced-sec">
                                         <div class="btn btn-danger" id="del-soln-outer"> <i class="fa fa-trash" aria-hidden="true"></i>  Delete Solution </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+    
+                        @*Cleanup Solution*@
+                        <div class="eb-sdash-longdiv col-md-12 col-sm-12">
+                            <div class="eb-sdash-longdivhead">
+                                <label>Cleanup Solution Database</label>
+                            </div>
+                            <div class="eb-sdash-longdivcontainer col-md-12 col-sm-12">
+                                <div class="left-sec col-md-9 col-sm-9">
+                                    <p>
+                                        When you Cleanup a solution, the solution data will be cleared.You won't be able to retrieve any data you've entered. This is usuallu use to clear data entered by users. Objects will remain same.
+                                    </p>
+                                </div>
+                                <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
+                                    <div class="uname-advanced-sec">
+                                        <div class="btn btn-danger" id="clean-soln-outer"> <i class="fa fa-recycle" aria-hidden="true"></i>  Cleanup Data </div>
                                     </div>
                                 </div>
                             </div>

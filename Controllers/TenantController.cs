@@ -178,7 +178,17 @@ namespace ExpressBase.Web.Controllers
             bool result = false;
             if (prompt_esid == EsolnId)
             {
-                DeleteSolutionResponse res = this.ServiceClient.Post<DeleteSolutionResponse>(new DeleteSolutionRequset { ISolutionId = SolnId, ESolutionId = EsolnId });
+                DeleteSolutionResponse res = this.ServiceClient.Post<DeleteSolutionResponse>(new DeleteSolutionRequset { ISolutionId = SolnId });
+                result = res.Status;
+            }
+            return result;
+        }
+        public bool CleanupSolution(string SolnId, string prompt_isid)
+        {
+            bool result = false;
+            if (prompt_isid == SolnId)
+            {
+                CleanupSolutionResponse res = this.ServiceClient.Post<CleanupSolutionResponse>(new CleanupSolutionRequset { ISolutionId = SolnId });
                 result = res.Status;
             }
             return result;

@@ -1314,33 +1314,9 @@ var EbDataTable = function (Option) {
             //}
         }
         else if (splitarray[2] === "0") {
-            let url = "../webform/index?_r=" + this.linkDV;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = this.dvformMode;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            let _filter = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
+            let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}`;
+            window.open(url, '_blank');
         }
         else {
             this.tabNum++;
@@ -2506,9 +2482,10 @@ var EbDataTable = function (Option) {
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?_r=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.GroupFormLink, _params: filterparams, _mode: 2, _locId: ebcontext.locations.getCurrent() });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../webform/index?_r=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
             var _form = document.createElement("form");
@@ -2545,38 +2522,14 @@ var EbDataTable = function (Option) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=12&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.ItemFormLink, _params: filterparams, _mode: 2, _locId: ebcontext.locations.getCurrent() });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../webform/index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=12&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = "../webform/index?_r=" + this.ItemFormLink;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = filterparams;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = "2";
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}`;
+            window.open(url, '_blank');
         }
     };
 
@@ -2584,38 +2537,14 @@ var EbDataTable = function (Option) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=11&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.GroupFormLink, _params: filterparams, _mode: 1, _locId: ebcontext.locations.getCurrent() });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../webform/index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=11&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = "../webform/index?_r=" + this.GroupFormLink;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = filterparams;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = "1";
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            window.open(url, '_blank');
         }
     };
 
@@ -2623,38 +2552,14 @@ var EbDataTable = function (Option) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=11&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({ _source: 'tv', _refId: this.ItemFormLink, _params: filterparams, _mode: 1, _locId: ebcontext.locations.getCurrent() });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../webform/index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=11&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = "../webform/index?_r=" + this.ItemFormLink;
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_blank");
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_params";
-            input.value = filterparams;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_mode";
-            input.value = "1";
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            window.open(url, '_blank');
         }
     };
 
@@ -3437,9 +3342,14 @@ var EbDataTable = function (Option) {
         }
         else if (this.popup) {
             this.popup = false;
-            $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?_r=${this.linkDV}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_m=1${this.dvformMode}&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
-            $("#iFrameFormPopup").attr("src", url);
+            CallWebFormCollectionRender({
+                _source: 'tv', _refId: this.linkDV,
+                _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
+                _mode: 1, _locId: ebcontext.locations.getCurrent()
+            });
+            //$("#iFrameFormPopupModal").modal("show");
+            //let url = `../webform/index?_r=${this.linkDV}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_m=1${this.dvformMode}&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            //$("#iFrameFormPopup").attr("src", url);
         }
         else {
             if (this.login === "uc")

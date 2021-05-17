@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
     string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
+    var IsForgotPw = ViewBag.IsForgotPw.ToString().ToLower();
 }
 <section class="eb_login">
     <div class="container">
@@ -9,15 +10,17 @@
                 <div class="loader_top" id="loader_profile"></div>
                 <div class="resetpw-htmlbox">
                     @*<div class="login-sec-image text-center">
-                        <img src=@logo class="T_logo Eb_Image" />
-                    </div>*@
+                            <img src=@logo class="T_logo Eb_Image" />
+                        </div>*@
                     <h1 class="text-center">Reset your password</h1><br>
                     <div>
-                        <label>Current Password</label>
-                        <div class="form-group pass_show pass_key">
-                            <input type="password" class="form-control ebtext-lg" id="currentpwd" placeholder="Current Password">
-                        </div>
-
+                        @if (!ViewBag.IsForgotPw)
+                        {
+                            <label>Current Password</label>
+                            <div class="form-group pass_show pass_key">
+                                <input type="password" class="form-control ebtext-lg" id="currentpwd" placeholder="Current Password">
+                            </div>
+                        }
                         <label>New Password</label>
                         <div class="form-group">
                             <div class="pass_key">
@@ -60,8 +63,10 @@
         var validate = 1;
         $(".validator-error-newpwd").empty();
         $(".validator-error-confirmpwd").empty();
-        if ($("#currentpwd").val().length < 1) {
-            validate = 0;
+        if (!@IsForgotPw) {
+            if ($("#currentpwd").val().length < 1) {
+                validate = 0;
+            }
         }
         if ($("#newpwd").val().length < 1) {
             validate = 0;
@@ -70,8 +75,8 @@
             validate = 0;
             $(".validator-error-newpwd").text("The password must be at least 8 characters.");
         }
-        else if ($("#newpwd").val() === $("#currentpwd").val())
-        { validate = 0;
+        else if ($("#newpwd").val() === $("#currentpwd").val()) {
+            validate = 0;
             $(".validator-error-newpwd").text("Cannot use current password");
         }
         else if ($("#confirmpwd").val().length < 1) {
@@ -89,10 +94,11 @@
         }
     });
     $("#resetpwbtn").on('click', function () {
-          $("#loader_profile").EbLoader("show");
+        $("#loader_profile").EbLoader("show");
         let o = {
             CurrentPassword: $("#currentpwd").val(),
             NewPassword: $("#newpwd").val(),
+            IsForgotPw: @IsForgotPw
         };
         $.post("ResetPassword/Reset",
             { PwDetails: o },
@@ -170,8 +176,8 @@
         color: #508bf9;
     }
 
-   .ebtext-lg {
-    height: 37px;
-    padding-left: 40px;
-}
+    .ebtext-lg {
+        height: 37px;
+        padding-left: 40px;
+    }
 </style>

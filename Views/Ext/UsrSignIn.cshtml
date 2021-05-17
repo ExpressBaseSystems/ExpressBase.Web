@@ -36,7 +36,7 @@
                     </div>
                     <h1 class="text-center">@console Login</h1><br>
 
-                    @if (ViewBag.WhichConsole == "uc" && ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled)
+                    @if (ViewBag.WhichConsole == "uc" && (ViewBag.Is2fA != null && !ViewBag.Is2fA) && ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled)
                     {
                         <ul class="nav nav-tabs eb-styledTab" role="tablist">
                             <li class="active">
@@ -82,39 +82,49 @@
                                 </div>
                                 @if (ViewBag.HasSignupForm)
                                 {
-                                    <a href="../Ext/UsrSignUp" id="Signupform" class="pull-right Signupform " style="margin-top:10px; ">
-                                        Create an account
-                                    </a>
+                                    <div>
+                                        <a href="../Ext/UsrSignUp" id="Signupform" class="pull-right Signupform " style="margin-top:10px; ">
+                                            Create an account
+                                        </a>
+                                    </div>
+                                }
+                                @if (ViewBag.WhichConsole == "uc" && (ViewBag.Is2fA != null && ViewBag.Is2fA || ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled))
+                                {
+                                    <div>
+                                        <a id="forgotpw" class="pull-left forgotpw " style="margin-top:10px; ">
+                                            Forgot password?
+                                        </a>
+                                    </div>
                                 }
                             </div>
                         </div>
-                        @if (ViewBag.WhichConsole == "uc" && ((ViewBag.Is2fA != null && ViewBag.Is2fA) || (ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled)))
-                        {
-                            <div class="tab-pane fade" id="withotp_container">
+                        @*@if (ViewBag.WhichConsole == "uc" && ((ViewBag.Is2fA != null && ViewBag.Is2fA) || (ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled)))
+                            {*@
+                        <div class="tab-pane fade" id="withotp_container">
 
-                                <div class="form-group mb-25">
-                                    <label> Email or Mobile</label>
-                                    <div class="log-username">
-                                        <input type="text" id="uname_otp" name="uname_otp" class="form-control ebtext-lg" value="@ViewBag.Email" />
-                                    </div>
-
-                                    <div class="validator-error">
-                                    </div>
-
+                            <div class="form-group mb-25">
+                                <label> Email or Mobile</label>
+                                <div class="log-username">
+                                    <input type="text" id="uname_otp" name="uname_otp" class="form-control ebtext-lg" value="@ViewBag.Email" />
                                 </div>
 
-                                <div class="form-group">
-                                    <button id="otplogin" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
-                                        Send OTP
-                                    </button>
-
-                                    <div id="Br-compatibility-otp" class="br-comp" style="padding-top: 10px;">
-                                    </div>
-
+                                <div class="validator-error">
                                 </div>
 
                             </div>
-                        }
+
+                            <div class="form-group">
+                                <button id="otplogin" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
+                                    Send OTP
+                                </button>
+
+                                <div id="Br-compatibility-otp" class="br-comp" style="padding-top: 10px;">
+                                </div>
+
+                            </div>
+
+                        </div>
+                        @*}*@
                     </div>
                 </div>
 
@@ -147,7 +157,7 @@
                         </div>
                     </div>
                 }
-                <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
+                <div style="display:flex;justify-content:center;align-items:center;margin-top:15px;font-weight: 500;">
                     <span>Powered by </span><img style="height:25px;" src="images/EB_Logo.png" />
                 </div>
             </div>

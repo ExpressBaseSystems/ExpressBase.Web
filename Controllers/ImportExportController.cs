@@ -130,7 +130,8 @@ namespace ExpressBase.Web.Controllers
                 AppCollection = App.appColl,
                 PackageName = App.packName,
                 PackageDescription = App.packDesc,
-                PackageIcon = App.packIcon
+                PackageIcon = App.packIcon,
+                MasterSoln = App.MasterSoln
             });
             return RedirectToAction("AppStore");
         }

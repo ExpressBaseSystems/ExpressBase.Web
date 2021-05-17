@@ -800,7 +800,7 @@
             //}
         }
         else if (splitarray[2] === "0") {
-            let url = "../webform/index?refid=" + this.linkDV;
+            let url = "../webform/index?_r=" + this.linkDV;
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
             _form.setAttribute("action", url);

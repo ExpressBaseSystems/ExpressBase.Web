@@ -34,12 +34,15 @@
         this.$Qmodal.on('show.bs.modal', function () {
             $(`textarea[name="Question"]`).val("");
             $(".qst-opt-cont").empty();
-        });
+            this.$Qmodal.find('.qs-inner-cont').attr('id', this.rootContainerObj.EbSid_CtxId);
+            this.$Qmodal.find('.qs-inner-wrap').attr('ebsid', this.rootContainerObj.ASec.EbSid_CtxId);
+            this.$Qmodal.find('.qst-ansctrl-cont').attr('ebsid', this.rootContainerObj.QSec.EbSid_CtxId);
+            if ($(".qst-inp").attr("ebsid") === undefined)
+                $(".qst-inp").attr("ebsid", this.rootContainerObj.EbSid + "_text");// added from initJS of EbQuestion class
+        }.bind(this));
+
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
         $('body').off("click").on("click", ".query_tile", this.quesEdit.bind(this));
-
-        $("#scoreCheck").off("change").on("change", this.scoreCheckboxChanged.bind(this));
-
         this.scoreCheckbox = $("#scoreCheck").prop("checked");
 
         $(`textarea[name="Question"]`).on("change", function (e) { this.Survey.Question = e.target.value; }.bind(this));
@@ -52,6 +55,9 @@
         this.$Qmodal.on("dblclick", ".eb-label-editable", this.ctrlLblDblClick.bind(this));
         this.$Qmodal.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
         this.$Qmodal.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));
+        this.$Qmodal.on("focus", ".qs-inner-cont", this.controlOnFocus.bind(this));
+        this.$Qmodal.on("focus", ".qs-inner-wrap", this.controlOnFocus.bind(this));
+        this.$Qmodal.on("focus", ".qst-ansctrl-cont", this.controlOnFocus.bind(this));
 
         this.addAnsPopMenu();
         this.addQPopMenu();
@@ -62,6 +68,7 @@
         $('#questionModal').off("click", '.qpopmenu .pmenu-icon-cont').on('click', '.qpopmenu .pmenu-icon-cont', this.AddQCtrl);
         this.InitDragula();
     };
+
     this.InitDragula = function () {
         this.DraggableConts = [document.querySelectorAll('.ansctrl-inner')[0], document.querySelectorAll('.qctrl-inner')[0]];
         this.drake = new dragula(this.DraggableConts, {
@@ -78,7 +85,6 @@
 
     this.AddQCtrl = function () {
         let $el = $(event.target).closest('.pmenu-icon-cont');
-
         let type = $el.attr("eb-type").trim();
         let ebsid = type + ++(this.controlCounters[type + "Counter"]);
         let ctrlObj = new EbObjects["Eb" + type](ebsid);
@@ -115,7 +121,7 @@
     this.AppendAnsCtrlInEditMode = function (ctrlObj) {
         let type = ctrlObj.ObjType;
         let ebsid = ctrlObj.EbSid;
-        let $ctrl = ctrlObj.$Control;
+        let $ctrl = $(ControlHTML[this.rootContainerObj.EbSid_CtxId + ctrlObj.EbSid_CtxId]);
         $ctrl.attr("childof", "ASec");
         ctrlObj.childof = "ASec";
         this.$AnsCtrlsCont.append($ctrl);
@@ -135,25 +141,36 @@
     this.controlOnFocus = function (e) {
         e.stopPropagation();
         let $e = $(e.target);
-        if (this.curControl && this.curControl.attr("ebsid") === $(e.target).attr("ebsid"))
+        if (this.$curControl && this.$curControl.attr("ebsid") === $(e.target).attr("ebsid"))
             return;
         if ($e.attr("id") === this.formId) {
-            this.curControl = $e;
+            this.$curControl = $e;
             this.CreatePG(this.rootContainerObj);
             return;
         }
-        else
-            this.curControl = $e.closest(".Eb-ctrlContainer");
-        let ebsid = this.curControl.attr("ebsid");
-        let ctrl = ($e.attr("childof") === "QSec") ? this.rootContainerObj.QSec.Controls.GetByName(ebsid) : this.rootContainerObj.ASec.Controls.GetByName(ebsid);
-        this.CreatePG(ctrl);
+        else if ($e.hasClass('qs-inner-wrap')) {
+            this.$curControl = $e.closest(".Eb-ctrlContainer");
+            this.CreatePG(this.rootContainerObj.QSec);
+        }
+        else if ($e.hasClass('qst-ansctrl-cont')) {
+            this.$curControl = $e.closest(".Eb-ctrlContainer");
+            this.CreatePG(this.rootContainerObj.ASec);
+        }
+        else {
+            if ($e.closest(".Eb-ctrlContainer").length > 0) {
+                this.$curControl = $e.closest(".Eb-ctrlContainer");
+                let ebsid = this.$curControl.attr("ebsid");
+                let ctrl = ($e.attr("childof") === "QSec") ? this.rootContainerObj.QSec.Controls.GetByName(ebsid) : this.rootContainerObj.ASec.Controls.GetByName(ebsid);
+                this.CreatePG(ctrl);
+            }
+        }
         //  this.PGobj.ReadOnly();
     }.bind(this);
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         //this.$propGrid.css("visibility", "visible");
-        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);////
+        this.PGobj.setObject(control, AllMetas["Eb" + this.$curControl.attr("eb-type")]);////
     };
 
 
@@ -505,7 +522,7 @@
     this.quesEdit = function (e) {
         //Edit mode
         let ebsid = $(e.target).closest(".query_tile").attr("ebsid");
-        this.EbObject = options.objInEditMode[ebsid];
+        this.EbObject = getObjByval(options.objInEditMode.$values, "EbSid", ebsid);
         if (this.EbObject) {
             this.isEditMode = true;
             this.InitEditModeCtrls(this.EbObject);
@@ -528,7 +545,7 @@
             this.AppendAnsCtrlInEditMode(ctrl);
         }.bind(this));
 
-        
+
         $("#" + this.rootContainerObj.EbSid).focus();
     };
 
@@ -553,86 +570,6 @@
             $("#scoreCheck").closest(".q-set-item").hide();
             $("#userInputType").closest(".q-set-item").show();
         }
-    };
-
-    this.appendChoice = function (temp, val, choice, score, isn) {
-        let v = val || "";
-        let c = choice || 0;
-        let s = score || 0;
-        let isnew = (isn === false) ? false : true;
-
-        $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-cont-inner"><div class="q-opt-control-cont float-left"></div>
-            <div class='input-group choice'>
-                <input type="text" isnew="${isnew}" name="Choices" Score="${s}" placeholder="New choice" ebdel="false" choiceid="${c}" value="${v}" class="qst-choice-text form-control"/>
-                <input type="number" class="qst-choice-number form-control" name="Score" min="0" value="${s}" placeholder="Score"/>
-                <span class="choice-action input-group-addon btn delete"><i class="fa fa-close" style="color:#c73434;"></i></span>
-            </div>
-        </div>`);
-
-        this.appendRadioOrCheckbox();
-
-        $(".choice-action").off("click").on("click", this.deleteChoiceClick.bind(this));
-        $(".qst-choice-text").last().focus();
-        this.addNewChoiceButton();
-
-        if (this.scoreCheckbox) {
-            $(".qst-choice-number").show();
-            $(".qst-choice-text").css("width", "80%");
-            $(".qst-choice-number").css("width", "20%");
-        }
-        else {
-            $(".qst-choice-number").hide();
-            $(".qst-choice-text").css("width", "100%");
-            $(".qst-choice-number").css("width", "0%");
-        }
-    };
-
-    this.appendRatingCtrl = function (o) {
-        let val = o.value;
-        let cid = o.choiceId;
-        let isnew = (o.isEdit) ? false : true;
-        $(".qst-opt-cont").html(`<div class="rating_input">
-                                        <div class="col-md-6 pd-l-0 display-flex">
-                                            <label class="col-md-3 pd-l-0 flex-center">Rating</label>
-                                            <div class="col-md-9 pd-l-0">
-                                                <input type="number" name="RatingCount" isnew="${isnew}" min="1" value="${val}" choiceid="${cid}" class="Rating_control form-control" /> 
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 pd-l-0">
-                                            <div class="rating_star_control">
-                                                <span class="fa fa-star"></span>
-                                            </div>
-                                        </div>
-                                    </div>`);
-        if (o.isEdit) {
-            this.ratingCountOnchange({ target: document.getElementsByClassName("Rating_control")[0] });
-        }
-        $(`.rating_input input[name="RatingCount"]`).off("click").on("click", this.ratingCountOnchange.bind(this));
-        $(`.rating_star_control span`).off("click").on("click", function (e) { $(e.target).toggleClass("R_checked") });
-    };
-
-    this.getChoiceType = function (t) {
-        let type = new String();
-        if (t === 1)
-            type = "SingleSelect";
-        else if (t === 2)
-            type = "MultiSelect";
-        else if (t === 3)
-            type = "Rating";
-        else if (t === 4)
-            type = "UserInput";
-        return type;
-    };
-
-    this.ratingCountOnchange = function (e) {
-        let c = e.target.value - this.RatingC;
-        for (i = 0; i < Math.abs(c); i++) {
-            if (c > 0)
-                $(e.target).closest(".rating_input").find(".rating_star_control").append(`<span class="fa fa-star"></span>`);
-            else
-                $(e.target).closest(".rating_input").find(".rating_star_control span:last-child").remove();
-        }
-        this.RatingC = e.target.value;
     };
 
     this.ctrlLblDblClick = function (e) {
@@ -710,35 +647,6 @@
 
     };
 
-    this.appendUserInput = function (chid) {
-        var html = new String();
-        var name = new String();
-        var cid = chid || 0;
-
-        if (this.UIType === "Text" || this.UIType === "Time") {
-            html = `<input type="text" class="form-control" />`;
-            name = "Single Line Text";
-        }
-        else if (this.UIType === "MultiText") {
-            html = `<textarea class="form-control"></textarea>`;
-            name = "MultiLine Text";
-        }
-        else if (this.UIType === "Date") {
-            html = `<input type="date" class="form-control"/>`;
-            name = "Date";
-        }
-        else {
-            return null;
-        }
-
-        $(".qst-opt-cont").html(`<div class="user-input-cont" choiceid="${cid}">
-                                        <label>${name}</label>
-                                        <div class="form-group">
-                                            ${html}
-                                        </div>
-                                    </div>`);
-    };
-
     this.changeUIType = function (e) {
         this.UIType = e.target.value;
         this.appendUserInput();
@@ -755,36 +663,6 @@
             <div class="btn eb_btn-sm eb_btngreen"> <i class="fa fa-plus"></i> Add Choice</div>
         </div>`);
         $(".q-opt-new-choice-btn").off("click").on("click", this.appendChoice.bind(this));
-    };
-
-    this.scoreCheckboxChanged = function (e) {
-        if ($(e.target).prop("checked") === true) {
-            this.scoreCheckbox = true;
-            $(".qst-choice-number").show();
-            $(".qst-choice-text").css("width", "80%");
-            $(".qst-choice-number").css("width", "20%");
-        }
-        else {
-            this.scoreCheckbox = false;
-            $(".qst-choice-number").hide();
-            $(".qst-choice-text").css("width", "100%");
-            $(".qst-choice-number").css("width", "0%");
-        }
-    };
-
-    this.appendRadioOrCheckbox = function () {
-        if (this.qstType === 1) {
-            $.each($(".q-opt-control-cont"), function (i, obj) {
-                if ($(obj).children().length === 0)
-                    $(obj).append(`<div class="col-md-1 pd-0 q-opt-input-cont"><input type="radio" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
-            });
-        }
-        else if (this.qstType === 2) {
-            $.each($(".q-opt-control-cont"), function (i, obj) {
-                if ($(obj).children().length === 0)
-                    $(obj).append(`<div class="col-md-1 pd-0 q-opt-input-cont"><input type="checkbox" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
-            });
-        }
     };
 
     this.saveQuestion = function () {

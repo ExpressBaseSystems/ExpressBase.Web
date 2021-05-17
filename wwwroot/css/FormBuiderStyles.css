@@ -11,7 +11,7 @@ html {
 }
 
 :focus {
-    outline: 1px solid #0075FF;
+    outline: none !important;
 }
 
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"]:focus,
@@ -1464,11 +1464,18 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
 }
 
-    [eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
-        border: none;
-        padding: 7px;
-        font-size: 17px;
-    }
+
+[isrendermode="false"] [ctype="RenderQuestionsControl"] .qrender-wrap .fa {
+    font-size: 160px;
+    padding: 0px 25px;
+}
+
+
+[eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
+    border: none;
+    padding: 7px;
+    font-size: 17px;
+}
 
 [eb-form="true"] [ctype="ChartControl"] .chartjs-hidden-iframe {
     width: auto !important;
@@ -2499,6 +2506,141 @@ input.locinp {
 }
 
 
+/*#region subform*/
+#subFormHeader {
+    height: 38px;
+    width: 100%;
+    background-color: #ffffff;
+    /*position: fixed;*/
+    z-index: 10;
+    padding: 2px 2px 2px 2px;
+    box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+    display: flex;
+    flex-flow: row;
+    float: left;
+    border-radius: 6px 6px 0px 0px;
+}
+    #subFormHeader:hover{
+        cursor: move;
+    }
+
+    #subFormHeader .sfh-title {
+        width: 50%;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px;
+    }
+
+    #subFormHeader .sfh-toolbar {
+        width: 50%;
+    }
+
+    #subFormHeader .sfh-tool-btns {
+        float: right;
+    }
+
+        #subFormHeader .sfh-tool-btns .btn {
+            background-color: transparent;
+            color: #336699;
+            padding: 3px 12px;
+            font-size: 18px;
+            margin-right: 2px;
+        }
+
+            #subFormHeader .sfh-tool-btns .btn:hover {
+                background-color: #e4e4e4;
+                outline: none;
+                border-radius: 4px;
+            }
+
+#subFormOverlay {
+    text-align: center;
+    position: absolute;
+    height: 60vh;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    display: none;
+    z-index: 11;
+}
+
+#subForm-cont {
+    /*width: 100%;*/
+    height: 60vh;
+    border: none;
+    border-radius: 6px;
+}
+
+    #subForm-cont .form-buider-form {
+        height: 100%;
+        border-radius: 0px 0px 6px 6px;
+    }
+
+.sf-msk {
+    background: black;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 80;
+    top: 0;
+    left: 0;
+    opacity: .5;
+}
+
+.sf-container {
+    position: fixed;
+    z-index: 81;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sf-cont-body {
+    /*min-width: 350px;
+        min-height: 200px;*/
+    width: 60%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgb(60 64 67 / 30%), 0 4px 8px 3px rgb(60 64 67 / 15%);
+    position: relative;
+    display: flex;
+    flex-flow: column;
+}
+
+/*#endregion subform*/
+
+.fmode {
+    color: #fff;
+    font-weight: normal;
+    border-radius: 10px;
+    font-weight: normal;
+    margin-left: 3px;
+    padding: 1px 6px;
+    background-color: #9bf052;
+}
+
+    .fmode[mode="New Mode"], .fmode[mode="New Mode"] {
+        background-color: #00d036;
+    }
+
+    .fmode[mode="Edit Mode"] {
+        background-color: #f09b52;
+    }
+
+    .fmode[mode="View Mode"] {
+        background-color: #222222;
+    }
+
+    .fmode[mode="Draft Mode"] {
+        background-color: #8f0202;
+    }
+
+
 
 /*animations*/
 /* Safari 4.0 - 8.0 */
@@ -3507,15 +3649,39 @@ input.locinp {
 .webform-cont .ctrl-cover .input-group input, i, span {
     background-color: transparent;
 }
+
 .webform-cont .ctrl-cover input {
-    background-color: transparent !important;
+    /*background-color: transparent !important;*/ /*Fix disable-enable fn of all ctrls [eg: numeric]*/
 }
+
 .webform-cont .dg_body input {
     background-color: white !important;
 }
+
 .webform-cont .ctrl-cover[disabled="disabled"] {
     background-color: var(--eb-disablegray) !important;
 }
+
 .webform-cont .ctrl-cover [disabled="disabled"] {
     background-color: var(--eb-disablegray) !important;
 }
+
+
+.Eb-Question-Ctrl {
+   border-top:solid 1px;
+}
+
+    .Eb-Question-Ctrl .q-pane {
+        border-bottom: solid #d0d0d0;
+        padding-bottom: 10px;
+        margin: 0rem 2rem;
+        margin-bottom: 2rem;
+    }
+
+        .Eb-Question-Ctrl .q-pane .q-sec {
+            padding-left: 0px;
+        }
+
+        .Eb-Question-Ctrl .q-pane .a-sec {
+            padding-left: 10px;
+        }

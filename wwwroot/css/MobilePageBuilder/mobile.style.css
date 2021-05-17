@@ -135,6 +135,9 @@
     margin: 10px 0;
     cursor: pointer;
 }
+.eb_stacklayout:focus {
+    outline:1px solid red;
+}
 
 .ctrl_label {
     font-weight: 500;

@@ -85,7 +85,7 @@
                 if (this.EbObject.RefId === null || this.EbObject.RefId === "")
                     EbMessage("show", { Message: 'Refresh page then Try again', AutoHide: true, Background: '#1e1ebf' });
                 else
-                    window.open("../WebForm/Index?refid=" + this.EbObject.RefId, '_blank');
+                    window.open("../WebForm/Index?_r=" + this.EbObject.RefId, '_blank');
             }.bind(this));
             $("#form_update_index").tooltip().off("click").on("click", function () {
                 if (this.EbObject.RefId === null || this.EbObject.RefId === "")

@@ -971,9 +971,9 @@ namespace ExpressBase.Web.Controllers
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
             ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
-            ViewBag.WebFormSettings = solutionObj.SolutionSettings.WebSettings != null ? solutionObj.SolutionSettings.WebSettings : new EbWebFormSettings(true);
+            ViewBag.WebFormSettings = solutionObj.SolutionSettings?.WebSettings ?? new EbWebFormSettings(true);
             ViewBag.SystemColumns = solutionObj.SolutionSettings?.SystemColumns ?? new EbSystemColumns(EbSysCols.Values);
-
+           
             if (solutionObj.SolutionSettings?.MobileAppSettings == null)
             {
                 ViewBag.MobileSettings = new MobileAppSettings();
@@ -983,6 +983,10 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public string ResetWebSettings()
+        {
+            return JsonConvert.SerializeObject( new EbWebFormSettings(true));
+        }
         public string SaveSolutionSettings(string obj, string CleanupQueries)
         {
             try

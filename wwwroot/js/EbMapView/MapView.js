@@ -611,7 +611,7 @@ var mapView = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    url = `../webform/index?refid=${this.MarkerLink}&_params=${btoa(JSON.stringify([this.markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")
@@ -900,7 +900,7 @@ var mapView = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    url = `../webform/index?refid=${this.MarkerLink}&_params=${btoa(JSON.stringify([this.markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")

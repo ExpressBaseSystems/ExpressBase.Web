@@ -69,6 +69,7 @@
     </environment>*@
 
 <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/WebFormCollectionRender.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbPowerSelect.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>
@@ -133,28 +134,14 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <script src="~/js/DV/leaflet.js"></script>
 <script src="~/js/jquery.smartWizard.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="@Url.Content("~/webform/cxt2js")"></script>
 
 <script>
     var t1 = performance.now();
     console.log("web form link loading took " + (t1 - t0) + " milliseconds.");
 </script>
 
-@{
 
-    EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.WebForm);
-
-    <script>
-    @Html.Raw(_toolBox.EbOnChangeUIfns);
-    @Html.Raw(_toolBox.AllMetas);
-    @Html.Raw(_toolBox.AllControlls);
-    @Html.Raw(_toolBox.EbObjectTypes);
-    </script>
-}
-
-
-<script>
-    @Html.Raw(ViewBag.HtmlHead);
-</script>
 
 <style>
     .webform-cont {
@@ -195,32 +182,7 @@
         border-radius: 5px;
     }
 
-    .fmode {
-        color: #fff;
-        font-weight: normal;
-        border-radius: 10px;
-        font-weight: normal;
-        margin-left: 3px;
-        padding: 1px 6px;
-        background-color: #9bf052;
-    }
-
-        .fmode[mode="New Mode"], .fmode[mode="New Mode"] {
-            background-color: #00d036;
-        }
-
-        .fmode[mode="Edit Mode"] {
-            background-color: #f09b52;
-        }
-
-        .fmode[mode="View Mode"] {
-            background-color: #222222;
-        }
-
-        .fmode[mode="Draft Mode"] {
-            background-color: #8f0202;
-        }
-
+    
     /*#divAuditTrail tbody {
         max-height: calc(100vh - 225px);
         overflow-y: auto;
@@ -371,79 +333,16 @@
 </style>
 
 <style>
-/*  
-    .webform-cont .form-buider-form {
-        background: white;
-    }
 
-    .webform-cont .ctrl-cover {
-        border: 1px solid var(--eb-bluishgray);
-        display: flex;
-        flex-flow: column;
-        position: relative;
-    }
+    
 
-    .webform-cont .eb-label-editable {
-        background-color: transparent;
-    }
-
-     .webform-cont [ctype='TextBox'] .eb-label-editable {
-        background-color: transparent !important;
-        color: brown;
-        font-family: cursive;
-        font-size: 14px;
-    }
-
-    .webform-cont [ctype='TextBox'] input {
-    }
-
-    .webform-cont [ctype='TextBox'] .input-group-addon {
-        background: transparent !important;
-        border-radius: 25px 0px 0px 20px;
-        color: brown;
-        font-size: 20px;
-        padding: 0px 10px !important;
-    }
-
-    .webform-cont [ctype='TextBox'] .ctrl-cover {
-        background-color: cornsilk;
-        border: solid 1px tan;
-        border-radius: 25px;
-        min-height: 30px;
-    }
-
-    .webform-cont .Eb-ctrlContainer[ctype="TextBox"] .ctrl-cover:focus-within {
-        outline: none !important;
-        border: solid 1px #429fff;
-    }
-*/
 </style>
 
-@{
-    @*string str = "<style>";
-    if (ViewBag.__Solution.SolutionSettings?.WebSettings != null) {
-
-        for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
-        {
-            for (int j = 0; j < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj.Count; j++)
-            {
-                str += ".webform-cont " + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].Selector + " " + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Selector + "{" +
-                ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Css + "}";
-            }
-        }
-    }
-    str += "<style>";
-    <script>
-        $("head").append(`@Html.Raw(str)`);
-    </script>*@
-}
 <div id='WebForm-cont' class="webform-cont">
 
 </div>
 
 <script>
-    @Html.Raw(ViewBag.ControlOperations);
-
     $("body").prepend(`
 <div class="modal fade" id="AuditHistoryModal" role="dialog">
     <div class="modal-dialog" style="width: 100%; margin: 0px;">
@@ -454,23 +353,6 @@
             </div>
             <div class="modal-body" style="height:calc(100vh - 60px); overflow: auto; padding: 15px 100px;">
                 <div id="divAuditTrail" style="height:calc(100vh - 90px);"> </div>
-            </div>
-        </div>
-    </div>
-</div>
-`);
-
-    $("body").prepend(`
-<div class="modal fade" id="iFrameFormModal" role="dialog">
-    <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
-        <div class="modal-content">
-            <div class="modal-body" style="height: 60vh; padding: 0px;">
-                <div>
-                    <div id="iFrameFormOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
-                        <div style="position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>
-                    </div>
-                    <iframe id="iFrameForm" style="width: 100%; height: 60vh; border: none; border-radius: 6px;" ></iframe>
-                </div>
             </div>
         </div>
     </div>
@@ -492,19 +374,6 @@
 
     $("body").prepend(` <input type="file" name="excelfile" id="excelfile" style="display: none;" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">`);
 
-    window.closeModal = function (func) {// receives call from iFrame
-        //func();
-        $('#iFrameFormModal').modal('hide');
-    };
-    $('#iFrameFormModal').on('hidden.bs.modal', function () {
-        $('#iFrameForm').removeAttr("src");
-        $("#iFrameFormOverlay").show();
-    });
-    $("#iFrameForm").on('load', function (evt) {
-        if ($(evt.target).attr("src") !== undefined)
-            $("#iFrameFormOverlay").hide();
-    });
-
     $("#iFramePdf").on('load', function (evt) {
         try {
             if ($(evt.target).attr("src") !== undefined) {
@@ -525,72 +394,30 @@
         }
     });
 
-    let header = new EbHeader();
-    header.insertButton(`<button id="webformclone" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformopensrc" class='btn' title='Open source record' style='display: none;'><i class="fa fa-external-link" aria-hidden="true"></i></button>`);
+    let __resp = @Html.Raw(ViewBag.EbFormAndDataWrapper);
 
-    header.insertButton(`<button id="webformclose" class='btn' title='Close' style='display: none;'><i class="fa fa-times" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformdelete" class='btn' title='Delete' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformlock" class='btn' title='Lock/Unlock' style='display: none;'><i class="fa fa-unlock-alt" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformcancel" class='btn' title='Cancel' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformnew" class="btn" onclick="renderer.startNewMode();" title="New form(Alt+N)"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
-    header.insertButton(`<div id="webformsave-selbtn"  style='display: none;' class="btn-select btn">
-                            <button id="webformsave" class="savebtn" title="Save form(Ctrl+S)"><i class="fa fa-save" aria-hidden="true"></i></button>
-                            <select class="selectpicker">
-                              <option data-token="new" data-title="Save and new" data-icon="fa-save"> & New</option>
-                              <option data-token="edit" data-title="Save and edit" data-icon="fa-save"> & Continue</option>
-                              <option data-token="view" data-title="Save and view" data-icon="fa-save"> & View</option>
-                              <option data-token="close" data-title="Save and close" data-icon="fa-save"> & Close</option>
-                            </select>
-                        </div>
-    `);
+    let _masterData = {
+        _source: "master",
+        _formRefId: __resp.RefId,
+        _formObj: JSON.parse(__resp.WebFormObj),
+        _rowId: __resp.RowId,
+        _draftId: __resp.DraftId,
 
-    header.insertButton(`<div id="webformexcel-selbtn"  style='display: none;' class="btn-select btn">
-                            <button id="webformexcel" class="savebtn" title="Excel form"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
-                            <select class="selectpicker">
-                              <option data-token="import" data-title="Import" data-icon="fa-upload"> Import</option>
-                              <option data-token="template-export" data-title="Form template" data-icon="fa-download"> Form template</option>
-                            </select>
-                        </div>
-    `);
+        _formData: (__resp.DraftId > 0 ? JSON.parse(__resp.Draft_FormData) : JSON.parse(__resp.FormDataWrap).FormData),
 
-    //header.insertButton(`<button id="webformprint" class='btn' title='Print' style='display: none;'><i class="fa fa-print" aria-hidden="true"></i></button>`);
-    header.insertButton(`<div id="webformprint-selbtn" style='display: none;' class="btn-select btn">
-                            <button id="webformprint" class="savebtn" title="Print"><i class="fa fa-print" aria-hidden="true"></i></button>
-                            <select class="selectpicker"></select>
-                        </div>
-    `);
+        _userObject:  ebcontext.user,
+        _mode: __resp.Mode,
+        _cid: "@ViewBag.Cid",
+        _env: "@ViewBag.Env",
+        _ispartial: __resp.IsPartial,
+        _formPermissions: __resp.FormPermissions,
+        _renderMode: __resp.RenderMode,
+        _formHTML:  __resp.WebFormHtml,
 
-    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
+        _disableEditButton: __resp.DisableEditButton
+    };
 
-    header.insertButton(`<button id="webformsavedraft" role="save-draft" class="btn" title="Save as draft"><i class="icofont-ui-clip-board"></i></button>`);
-    header.insertButton(`<button id="webformdeletedraft" role="delete-draft" class="btn" title="Delete draft"><i class="icofont-bin"></i></i></button>`);
-    header.insertButton(`<button id="webforminvalidmsgs" onclick='renderer.FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>`);
 
-    let _formRefId = "@Html.Raw(ViewBag.formRefId)";
-    let _formObj = @Html.Raw(ViewBag.WebFormObj);
-    let _rowId = @Html.Raw(ViewBag.rowId);
-    let _draftId= @Html.Raw(ViewBag.draftId);
-    let _formDataWraper =  @Html.Raw(ViewBag.formData);
-
-    let _formData = (_draftId > 0) ? @Html.Raw(ViewBag.formData_draft) : _formDataWraper.FormData;
-
-    let _userObject =  @Html.Raw(ViewBag.userObject);
-    let _mode = "@Html.Raw(ViewBag.Mode)";
-    let _cid = "@ViewBag.Cid";
-    let _env = "@ViewBag.Env";
-    let _ispartial = "@ViewBag.IsPartial";
-    let _formPermissions = @Html.Raw(ViewBag.FormPermissions);
-    let _renderMode = @ViewBag.renderMode;
-    let _formHTML = `@Html.Raw(ViewBag.WebFormHtml)`;
-
-    let _disableEditButton= @Html.Raw(ViewBag.disableEditButton);
-
-    header.addRootObjectHelp(_formObj);
-
-    //to store refids of uploaded files via all fileuploader ctrls
-    let uploadedFileRefList = {}; // multiple form related changes will come
     let DynamicTabPane = function () { console.log('Not Implemented'); }; // multiple form related changes will come
 
     $("#layout_div").addClass("for-modal-blur"); // multiple form related changes will come
@@ -599,24 +426,6 @@
 
 @Html.JsCode(
     @<script>
-         const renderer = new WebFormRender({ // multiple form related changes will come
-             formObj: _formObj,
-             $formCont: $("#WebForm-cont"),
-             headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose" },
-             formRefId: _formRefId,
-             mode: _mode,
-             rowId: _rowId,
-             draftId: _draftId,
-             formData: _formData,
-             userObject: _userObject,
-             cid: _cid,
-             env: _env,
-             isPartial: _ispartial,
-             formPermissions: _formPermissions,
-             headerObj: header,
-             formHTML: _formHTML,
-             disableEditBtn: _disableEditButton
-         });
-
+        CallWebFormCollectionRender(_masterData);
     </script>
 )

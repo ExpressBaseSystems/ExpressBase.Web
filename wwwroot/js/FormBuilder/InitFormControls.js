@@ -102,16 +102,16 @@
         });
 
         //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
-        uploadedFileRefList[ctrl.Name + '_add'] = [];
-        uploadedFileRefList[ctrl.Name + '_del'] = [];
+        this.Renderer.uploadedFileRefList[ctrl.Name + '_add'] = [];
+        this.Renderer.uploadedFileRefList[ctrl.Name + '_del'] = [];
 
         imgup.uploadSuccess = function (fileid) {
-            if (uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
-                uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
+                this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
         };
 
         imgup.windowClose = function () {
-            if (uploadedFileRefList[ctrl.Name + '_add'].length > 0)
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
         };
 
@@ -127,18 +127,18 @@
                             },
                             CallBack: function (name) {
                                 if (name === "Yes" && refids.length > 0) {
-                                    let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
+                                    let initLen = this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length;
 
                                     for (let i = 0; i < refids.length; i++) {
-                                        let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
+                                        let index = this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
                                         if (index !== -1) {
-                                            uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
+                                            this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
                                         }
-                                        else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
-                                            uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
+                                        else if (!this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
+                                            this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
                                         }
                                     }
-                                    if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
+                                    if (initLen < this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length) {
                                         EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
                                     }
                                     imgup.deleteFromGallery(refids);
@@ -1047,7 +1047,7 @@
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_m=7&_l=${ebcontext.locations.CurrentLoc}`;
             window.open(url, '_blank');
         }.bind(this);
     };
@@ -1209,13 +1209,14 @@
     };
 
     this.iFrameOpen = function (ctrl) {//////////////////
-        let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
-        if (ctrl.OpenInNewTab) {
-            window.open(url, '_blank');
-            return;
-        }
-        $("#iFrameForm").attr("src", url);
-        $("#iFrameFormModal").modal("show");
+        //let url = "../WebForm/Index?_r=" + ctrl.FormRefId + "&_m=12";
+        //if (ctrl.OpenInNewTab) {
+        //    window.open(url, '_blank');
+        //    return;
+        //}
+        //$("#iFrameForm").attr("src", url);
+
+        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0);
     };
 
     this.SysLocation = function (ctrl) {
@@ -1632,7 +1633,7 @@
         this.filtervalues = [];
         let ebDbType = 11;
         let Refid = ctrl.DataSourceId;
-        this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1 ));
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1));
         this.filtervalues.push(new fltr_obj(ebDbType, "eb_currentuser_id", ebcontext.user.UserId));
         this.filtervalues.push(new fltr_obj(ebDbType, "id", this.Renderer.rowId));
         this.filtervalues.push(new fltr_obj(ebDbType, this.Renderer.FormObj.TableName + "_id", this.Renderer.rowId));
@@ -1882,8 +1883,8 @@
                             <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p></div>`;
             $('#cont_' + ctrl.EbSid).append(btnHtml);
             $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
-            var vtemp=JSON.parse(ctrl.DataVals.M);
-            if (vtemp.is_verified==='true') {
+            var vtemp = JSON.parse(ctrl.DataVals.M);
+            if (vtemp.is_verified === 'true') {
                 $(`#${ctrl.EbSid}_OTPverified`).show();
                 $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum', vtemp.phone_no);
             }
@@ -1894,22 +1895,22 @@
 
         ctrl.getValueFromDOM = function (p1) {
             //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();   
-           
+
             if (ctrl.DisableCountryCode) {
                 let num = $(`#${ctrl.EbSid}`).val();
                 if (ctrl.Sendotp) {
-                    checkNumChange(num);                   
+                    checkNumChange(num);
                 }
                 return num;
             }
             else {
                 let num = iti.getNumber();
                 if (ctrl.Sendotp) {
-                    checkNumChange(num);                  
+                    checkNumChange(num);
                 }
                 return num;
             }
-            
+
             function checkNumChange(num) {
                 var vNum = $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum');
                 if (num !== vNum) {
@@ -2183,7 +2184,7 @@
         $("#eb_common_loader").EbLoader("show");
         var otpval = $(`#${ctrl.EbSid}_otpValue`).val();
         var tstamp = $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey');
-        $.ajax({            
+        $.ajax({
             url: "../WebForm/VerifyOTP_control",
             data: {
                 formRefid: this.Renderer.formRefId,
@@ -2295,6 +2296,151 @@
         }
 
     }
+
+
+    this.QuestionnaireConfigurator = function (ctrl) {
+        debugger;
+        let Ques_Confi = {};
+        let que_SaveObj = [];
+        let ext_props = { "required": false, "unique": false, "validator": [] };
+        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0; position: fixed; width: 325px;'>
+	                            <div  id='queConf_PGrid_wrp'>
+	
+	                            </div>
+                        </div>`);
+
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        var PGobj = new Eb_PropertyGrid({
+            id: "queConf_PGrid_wrp",
+            wc: ebcontext.user.wc,
+            // cid: this.cid,
+            $extCont: $(".queConf_PGrid"),
+            isDraggable: true
+        });
+
+       
+
+
+        if (this.Renderer.rendererName == "Bot") {
+            $input.selectpicker({
+                dropupAuto: false,
+            });
+        }
+        else {
+            $input.selectpicker({
+                //dropupAuto: false,
+                container: "body [eb-root-obj-container]:first",
+                virtualScroll: 100,
+                size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
+
+            });
+
+
+            let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+            ////show dropdown ,adjust scroll etc related
+            $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+                let $el = $(e.target);
+                let $DDbScont = $DD.closest(".bs-container");
+                $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+
+                if ($DDbScont.hasClass("dropup")) {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
+                }
+                else {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
+                }
+
+                $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
+
+                if ($el.attr("is-scrollbind") !== 'true') {
+                    for (let i = 0; i < this.scrollableContSelectors.length; i++) {
+                        let contSelc = this.scrollableContSelectors[i];
+                        let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
+                        $ctrlCont.parents(contSelc).scroll(function (event) {
+                            if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
+                                $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
+                        }.bind(this));
+                    }
+                    $el.attr("is-scrollbind", 'true');
+                }
+            }.bind(this));
+
+
+        }
+        $(`#${ctrl.EbSid}_queBtn`).click(function () {
+
+            que_SaveObj = [];
+
+            $(`#${ctrl.EbSid}_queRender`).empty();
+            let QueIds = $('#' + ctrl.EbSid_CtxId).selectpicker('val');
+            QueIds.forEach(function (item, index) {
+                Ques_Confi = {};
+                Ques_Confi.id = 0;
+                Ques_Confi.ques_id = item;
+                Ques_Confi.ext_props = ext_props;
+                que_SaveObj.push(Ques_Confi);
+                $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlList[item]);
+                var control = ctrl.QuestionBankList[item];
+                $('.q-pane').off("click").on("click", CreatePG.bind(this, control));
+              //  CreatePG(control);
+            });
+           
+
+        });
+        var testt = function (ctl) {
+            alert();
+        }
+        //  $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
+        var CreatePG = function (control) {
+            console.log("CreatePG called for:" + control.Name);
+          //  this.$propGrid.css("visibility", "visible");
+            alert();
+            PGobj.setObject(control, AllMetas["EbQuestionnaireConfigurator"]);////
+        };
+
+        ctrl.bindOnChange = function (p1) {
+
+            alert("bind change");
+            debugger;
+            $(`#${ctrl.EbSid}_queBtn`).on("click", p1);
+        };
+        ctrl.getValueFromDOM = function (p1) {
+
+            alert("value from dom");
+            //let val = $('#' + this.EbSid_CtxId).selectpicker('val');
+            //debugger
+            //return val.toString();
+            return JSON.stringify(que_SaveObj);
+        };
+
+        ctrl.setValue = function (p1) {
+            debugger;
+            var qArray = [];
+            alert("setvalue");
+            if (p1 != null) {
+                qObj = JSON.parse(p1);
+                if (qObj.length > 0) {
+                    qObj.forEach(function (item) {
+                        item.id;
+                        qArray.push(item.ques_id);
+                        $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlList[item.ques_id]);
+                    });
+                }
+            }
+            $('#' + this.EbSid_CtxId).selectpicker('val', qArray);
+        };
+        ctrl.clear = function () {
+
+            alert("clear");
+            if (ebcontext.renderContext === 'WebForm')
+                this.setValue(null);
+            else
+                this.setValue(-1);
+        };
+    };
+
 };
 
 

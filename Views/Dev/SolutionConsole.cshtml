@@ -100,6 +100,7 @@
         border-radius: 4px;
         cursor: pointer;
         background: white;
+        margin-top: 7px;
     }
 
     .webform_css_child {
@@ -287,7 +288,7 @@
             </div>
         </div>
         <div class="web-settings w-100" style="padding:10px 15px">
-            <h5>Webform Style</h5>
+            <div class="container"><div class="row" ><div class="col-sm-10"><h5>Webform Style</h5></div><div class="col-sm-2"> <button class="btn btn-default" id="webform-style-reset"> Reset</button></div></div></div>
             <div class="web-settings-container display-flex">
                 <div class="col-lg-6 col-sm-6">
                     <form>
@@ -377,6 +378,17 @@
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
         drake.off("drop").on("drop", function () {});
+    });
+
+    $("#webform-style-reset").off("click").on("click", function () {
+        $.ajax({
+            type: "POST",
+            url: "../Dev/ResetWebSettings",
+            success: function (data) {
+                $("#eb_common_loader").EbLoader("hide");
+                stylehelp.init(JSON.parse(data));
+            }
+        });
     });
 
     $("#save").on("click", function () {

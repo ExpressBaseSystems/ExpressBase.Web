@@ -42,14 +42,19 @@ const WebFormCollectionRender = function (Option) {
             this.FormCollection.push(WebForm);
         }
         else if (Op._source === 'tv') {
-
             this.PopupForm(Op._refId, Op._params, Op._mode);
-
         }
         else if (Op._source === 'ps') {
 
         }
 
+        window.onbeforeunload = function (e) {
+            if (this.FormCollection.find(e => e.Mode.isEdit)) {
+                var dialogText = 'Changes you made may not be saved.';
+                e.returnValue = dialogText;
+                return dialogText;
+            }
+        }.bind(this);
     };
 
     this.PopupForm = function (refId, params, mode) {

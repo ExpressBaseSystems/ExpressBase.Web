@@ -624,6 +624,8 @@ const WebFormRender = function (option) {
         $.each(tvCtrls, function (a, b) { b.__filterValues = []; });
 
         this.$formCont.empty();
+        this.Mode = {};
+        this.mode = '';
     };
 
     this.FORCE_RELOAD = function (rowId, formData, mode_s) {
@@ -2040,14 +2042,6 @@ const WebFormRender = function (option) {
         }
 
         this.LocationInit();
-
-        window.onbeforeunload = function (e) {
-            if (this.Mode.isEdit) {
-                var dialogText = 'Changes you made may not be saved.';
-                e.returnValue = dialogText;
-                return dialogText;
-            }
-        }.bind(this);
 
         //console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
 

@@ -592,19 +592,16 @@
                                     </p>
                                 </div>
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
-                                    <div class="uname-advanced-sec">
+                                    <div class="uname-advanced-sec signin-del-check">
                                         @{ if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
                                             {
-                                                // <label class="label-custom-style" style="display:inline-block">Select OTP delivery method</label>
                                                 <div>Select OTP method</div>
                                                 <div class="form-check form-check-inline checkbox-group">
                                                     <div class="col-md-12">
                                                         <input class="form-check-input" name="s" type="checkbox" id="emailcheckbox_signin" value="email">
-                                                        @*<label class="form-check-label" for="emailcheckbox">Email</label>*@
                                                         Email
                                                         <div>
                                                             <input class="form-check-input" name="s" type="checkbox" id="smscheckbox_signin" value="sms">
-                                                            @*<label class="form-check-label" for="smscheckbox">Sms</label>*@
                                                             Sms
                                                         </div>
                                                     </div>
@@ -638,7 +635,7 @@
                                     </p>
                                 </div>
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
-                                    <div class="uname-advanced-sec">
+                                    <div class="uname-advanced-sec 2fa-del-check">
                                         @{ if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
                                             {
                                                 // <label class="label-custom-style" style="display:inline-block">Select OTP delivery method</label>

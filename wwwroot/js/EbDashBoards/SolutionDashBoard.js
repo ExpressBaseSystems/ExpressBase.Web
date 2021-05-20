@@ -2140,7 +2140,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         if (this.Connections.SolutionInfo.Is2faEnabled) {
             msg = "Are you sure you want to turn OFF Two Factor Authentication?";
         }
-        else if ($('div.checkbox-group :checkbox:checked').length < 1) {
+        else if ($('.2fa-del-check .checkbox-group :checkbox:checked').length < 1) {
             if (postData)
                 $("#2faSwitch").bootstrapToggle('off');
             EbMessage("show", {
@@ -2194,11 +2194,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                                         $("#smscheckbox").prop("disabled", false);
                                     }
                                 }
-                            } else {//error case
-                                //if (postData)
-                                //    $("#2faSwitch").bootstrapToggle('off');
-                                //else
-                                //    $("#2faSwitch").bootstrapToggle('on');
+                            } else {
                                 EbMessage("show", {
                                     Message: "Something went wrong. Please try again", Background: "red"
                                 });
@@ -2218,10 +2214,10 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         SolutionId = this.Sid;
 
 
-        if (this.Connections.SolutionInfo.Is2faEnabled) {
+        if (this.Connections.SolutionInfo.IsOtpSigninEnabled) {
             msg = "Are you sure you want to turn OFF Otp Sign-in?";
         }
-        else if ($('div.checkbox-group :checkbox:checked').length < 1) {
+        else if ($('.signin-del-check .checkbox-group :checkbox:checked').length < 1) {
             if (postData)
                 $("#otpsigninswitch").bootstrapToggle('off');
             EbMessage("show", {
@@ -2260,7 +2256,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                         }).done(function (data) {
                             let _data = JSON.parse(data);
                             if (_data.res) {
-                                this.Connections.SolutionInfo.Is2faEnabled = postData;
+                                this.Connections.SolutionInfo.IsOtpSigninEnabled = postData;
                                 if (postData) {
                                     EbMessage("show", { Message: "Otp Sign-in turned ON" });
                                     $("#emailcheckbox_signin").prop("disabled", true);

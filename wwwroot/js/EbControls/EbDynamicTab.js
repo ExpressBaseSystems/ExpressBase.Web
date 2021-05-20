@@ -265,7 +265,7 @@
         dObj.FRC.fireInitOnchangeNC(dObj.flatControls);
 
         for (let i = 0; i < dObj.DGs.length; i++) {
-            let _DG = new ControlOps[dObj.DGs[i].ObjType](dObj.DGs[i]);
+            let _DG = new ControlOps_w[dObj.DGs[i].ObjType](dObj.DGs[i]);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
             dObj.FRC.bindValueUpdateFns_OnChange(_DG);

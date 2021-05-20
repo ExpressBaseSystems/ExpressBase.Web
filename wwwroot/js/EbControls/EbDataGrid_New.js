@@ -145,7 +145,7 @@
             let inpCtrl = new EbObjects[ctrl.InputControlType](ctrl.EbSid_CtxId, ctrl);// creates object
             inpCtrl.ObjType = ctrl.InputControlType.substring(2);
             inpCtrl.isDGCtrl = true;////////////////////////////////
-            inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);// attach getValue(), ... methods
+            inpCtrl = new ControlOps_w[inpCtrl.ObjType](inpCtrl);// attach getValue(), ... methods
             let ctrlHtml = `<div id='td_@ebsid@'><div id='@ebsid@Wraper' style='' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${ctrl.DBareHtml || inpCtrl.BareControlHtml}</div></div>`
                 .replace("@isReadonly@", ctrl.IsDisable)
                 .replace("@singleselect@", ctrl.MultiSelect ? "" : `singleselect=${!ctrl.MultiSelect}`)

@@ -173,7 +173,7 @@ namespace ExpressBase.Web.Controllers
             EbToolbox _toolBox = new EbToolbox(BuilderType.WebForm);
             string all = _toolBox.EbOnChangeUIfns + ';' + _toolBox.AllMetas + ';' + _toolBox.AllControlls + ';' + _toolBox.EbObjectTypes + ';';
             all += EbControlContainer.GetControlOpsJS(new EbWebForm(), BuilderType.WebForm);
-            all = all.Replace("AllMetas", "AllMetas_w").Replace("EbEnums", "EbEnums_w").Replace("EbObjects", "EbObjects_w");
+            all = all.Replace("AllMetas", "AllMetas_w").Replace("EbEnums", "EbEnums_w").Replace("EbObjects", "EbObjects_w").Replace("ControlOps", "ControlOps_w");
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 
@@ -243,7 +243,7 @@ namespace ExpressBase.Web.Controllers
         private void ValidateRequest(EbFormAndDataWrapper resp, int _mode, int _locId, EbWebForm webForm)
         {
             string _cid = webForm.RefId.Split('-')[1];
-            if (ViewBag.cid != _cid)
+            if (ViewBag.cid != _cid && ViewBag.Env == "Production")
             {
                 resp.Message = "Not found";
                 resp.ErrorMessage = "Cid in refid does not match";

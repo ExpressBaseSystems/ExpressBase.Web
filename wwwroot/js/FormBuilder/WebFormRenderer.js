@@ -253,7 +253,7 @@ const WebFormRender = function (option) {
         };
         this.DynamicTabObject = new EbDynamicTab(opts);
 
-        JsonToEbControls(this.FormObj);// extend eb functions to control object (setValue(), disable()...)
+        JsonToEbControls(this.FormObj, 'webform');// extend eb functions to control object (setValue(), disable()...)
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
         this.SetWatchers();//added a watcher to update form attribute
@@ -276,7 +276,7 @@ const WebFormRender = function (option) {
         this.initWizards();
 
         $.each(this.DGs, function (k, DG) {
-            let _DG = new ControlOps[DG.ObjType](DG);
+            let _DG = new ControlOps_w[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
             this.FRC.bindValueUpdateFns_OnChange(_DG);

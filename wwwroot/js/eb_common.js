@@ -570,11 +570,13 @@ function gettypefromString(str) {
         return "5";
 }
 
-function JsonToEbControls(ctrlsContainer) {
+function JsonToEbControls(ctrlsContainer, type) {
     $.each(ctrlsContainer.Controls.$values, function (i, obj) {
         if (obj.IsContainer) {
-            JsonToEbControls(obj);
+            JsonToEbControls(obj, type);
         }
+        else if (type === 'webform')
+            ctrlsContainer.Controls.$values[i] = new ControlOps_w[obj.ObjType](obj);
         else
             ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
     });

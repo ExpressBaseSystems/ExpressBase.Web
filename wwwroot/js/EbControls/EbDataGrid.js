@@ -514,7 +514,7 @@
                 inpCtrl.Columns.$values[i] = this.attachFns(col, col.ObjType);
             }
         }
-        return new ControlOps[colType](inpCtrl);
+        return new ControlOps_w[colType](inpCtrl);
     };
 
     this.cloneObjArr = function (arr) {

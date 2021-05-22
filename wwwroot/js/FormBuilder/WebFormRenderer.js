@@ -1526,6 +1526,7 @@ const WebFormRender = function (option) {
             this.$newBtn.hide();
             this.$editBtn.hide();
             this.$saveBtn.hide();
+            this.$openInNewBtn.show();
 
             if (this.Mode.isEdit) {
                 this.$saveBtn.show();
@@ -1815,7 +1816,9 @@ const WebFormRender = function (option) {
     };
 
     this.OpenInNewTab = function () {
-        let url = `../WebForm/Index?_r=${this.formRefId}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+        let url = ebcontext.webform.LastResponse.Url;
+        if (!url)
+            url = `../WebForm/Index?_r=${this.formRefId}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
         if (this.rowId > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.rowId));
@@ -2015,11 +2018,11 @@ const WebFormRender = function (option) {
             right: 24,
             onClose: this.FRC.invalidBoxOnClose
         });
+        this.isInitiallyPopulating = true;
         this.initWebFormCtrls();
         this.initPrintMenu();
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums_w.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
-        this.isInitiallyPopulating = true;
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
         this.isInitiallyPopulating = false;
 

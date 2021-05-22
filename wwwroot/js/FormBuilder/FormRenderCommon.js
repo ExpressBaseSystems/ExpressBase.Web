@@ -255,7 +255,8 @@
             }
             else if (depCtrl.ObjType === "PowerSelect") {
                 if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
-                    depCtrl.initializer.reloadWithParams(curCtrl);
+                    if (depCtrl.initializer)
+                        depCtrl.initializer.reloadWithParams(curCtrl);
                 }
                 else {
                     curCtrl.__isInitiallyPopulating = false;

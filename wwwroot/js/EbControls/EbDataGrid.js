@@ -900,7 +900,7 @@
             let name = Names[i];
             let inpCtrl = this.curRowObjectMODEL[name];
             let OldVal = inpCtrl.DataVals.Value;
-            if (!(inpCtrl.ObjType === "PowerSelect" && OldVal === "") && OldVal !== inpCtrl.getValueFromDOM())
+            if (!(inpCtrl.ObjType === "PowerSelect" && OldVal === "") && !inpCtrl.Hidden && OldVal !== inpCtrl.getValueFromDOM())
                 inpCtrl.setValue(OldVal);
         }
     };
@@ -1111,13 +1111,13 @@
         }
 
         this.ctrl[colname + "_sum"] = sum;
-        if (updateDpnt)
+        if (updateDpnt && !this.formRenderer.isInitiallyPopulating)
             this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
         return sum.toFixed(getObjByval(colCtrls, "Name", colname).DecimalPlaces);
     };
 
-    this.sumOfCol = function (colName) {
-        return parseFloat(this.getAggOfCol(colName));
+    this.sumOfCol = function (updateDpnt, colName) {
+        return parseFloat(this.getAggOfCol(colName, updateDpnt));
     }.bind(this);
 
     this.updateDepCtrl = function (Col) {
@@ -1142,7 +1142,7 @@
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'Value Expression' of : " + Col.Name + " - " + e.message);
+                //alert("error in 'Value Expression' of : " + Col.Name + " - " + e.message);
             }
         }.bind(this));
     };
@@ -1549,7 +1549,7 @@
     this.addUtilityFnsForUDF = function () {
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;// return false if any column has value
         this.ctrl.rowRequired_valid_Check = this.RowRequired_valid_Check;// checks row validations and returns bool
-        this.ctrl.sum = this.sumOfCol;// returns sum of a numeric column
+        this.ctrl.sum = this.sumOfCol.bind(this, false);// returns sum of a numeric column
         this.ctrl.getRowByIndex = this.getRowByIndex;// get row by index (0,1...)
         this.ctrl.getValuesOfColumn = this.getValuesOfColumn;// returns value array of particular column
 

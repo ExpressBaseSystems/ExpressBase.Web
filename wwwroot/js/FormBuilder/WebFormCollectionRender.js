@@ -13,6 +13,7 @@ const WebFormCollectionRender = function (Option) {
     this.FormCollection = [];//renderer collection
     this.MasterHeader = null;
     this.CurrentSubForm = null;
+    this.LastResponse = {};
 
     this.Init = function (Op) {
         if (Op === null) return;
@@ -88,6 +89,7 @@ const WebFormCollectionRender = function (Option) {
                         this.hideSubFormLoader();
 
                         let resp = JSON.parse(result);
+                        this.LastResponse = resp;
                         if (resp.ErrorMessage) {
                             console.error(resp.ErrorMessage);
                             EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });
@@ -121,6 +123,7 @@ const WebFormCollectionRender = function (Option) {
                 success: function (result) {
                     this.hideSubFormLoader();
                     let resp = JSON.parse(result);
+                    this.LastResponse = resp;
                     if (resp.ErrorMessage) {
                         console.error(resp.ErrorMessage);
                         EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });

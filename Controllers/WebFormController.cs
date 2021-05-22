@@ -167,7 +167,7 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
 
-        [ResponseCache(Duration = 43200, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
         public FileContentResult cxt2js()
         {
             EbToolbox _toolBox = new EbToolbox(BuilderType.WebForm);

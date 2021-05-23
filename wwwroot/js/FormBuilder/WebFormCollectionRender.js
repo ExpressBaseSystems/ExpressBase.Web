@@ -172,7 +172,7 @@ const WebFormCollectionRender = function (Option) {
             Edit: "subformedit",
             Save: "subformsave",
             OpenInNewTab: "subformopen",
-            Close: "webformclose",//& Open in new tab//&& Cancel editing.            
+            Close: "webformclose",//& Open in new tab//&& Cancel editing.
         };
     };
 
@@ -190,6 +190,22 @@ const WebFormCollectionRender = function (Option) {
         $(`#subFormModal,.sf-msk`).fadeOut();
         this.CurrentSubForm.DISPOSE();
         this.CurrentSubForm = null;
+    };
+
+    this.maximizeSubForm = function () {
+        let $mxBtn = $('#subformmaximize');
+        if ($mxBtn.children().hasClass('fa-window-maximize')) {
+            $mxBtn.children().removeClass('fa-window-maximize').addClass('fa-window-restore');
+            $mxBtn.prop('title', 'Restore');
+            $('#subForm-cont').css('height', 'calc(100vh - 38px)');
+            $('#subFormModal .sf-cont-body').css('width', '100%').css('height', '100vh').css('left', '0px').css('top', '0px');
+        }
+        else {
+            $mxBtn.children().removeClass('fa-window-restore').addClass('fa-window-maximize');
+            $mxBtn.prop('title', 'Maximize');
+            $('#subForm-cont').css('height', '60vh');
+            $('#subFormModal .sf-cont-body').css('width', '60%').css('height', '60vh');
+        }
     };
 
     this.showSubFormLoader = function () {
@@ -268,7 +284,7 @@ const WebFormCollectionRender = function (Option) {
     };
 
     this.SetSubFormModal = function () {
-        if ($("#subFormModal").length === 0)
+        if ($("#subFormModal").length === 0) {
             $("body").prepend(`
 <div class="sf-msk" style='display: none;'></div>
 <div id="subFormModal" class="sf-container" style='display: none;'>
@@ -281,6 +297,7 @@ const WebFormCollectionRender = function (Option) {
                     <button id="subformnew" class="btn" title="New" style='display: none;'><i class="fa fa-plus" aria-hidden="true"></i></button>
                     <button id="subformsave" class='btn' title='Save' style='display: none;'><i class="fa fa-save" aria-hidden="true"></i></button>
                     <button id="subformopen" class='btn' title='Open in new tab'><i class="fa fa-external-link" aria-hidden="true"></i></button>
+                    <button id="subformmaximize" class='btn' title='Maximize'><i class="fa fa-window-maximize" aria-hidden="true"></i></button>
                     <button id="subformclose" class='btn' title='Close' data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></button>
                 </div> 
             </div>
@@ -294,22 +311,23 @@ const WebFormCollectionRender = function (Option) {
 </div>
    
 `);
-        $("#subformclose").off('click').on('click', this.hideSubForm.bind(this));
+            $("#subformclose").off('click').on('click', this.hideSubForm.bind(this));
+            $("#subformmaximize").off('click').on('click', this.maximizeSubForm.bind(this));
 
-        $('#subFormModal').find('.sf-cont-body')
-            .css({
-                width: '60%',
-                height: '60vh',
-            })
-            .resizable({
-                minWidth: 625,
-                minHeight: 175,
-                handles: 'n, e, s, w, ne, sw, se, nw',
-            })
-            .draggable({
-                handle: '#subFormHeader'
-            });
-
+            $('#subFormModal').find('.sf-cont-body')
+                .css({
+                    width: '60%',
+                    height: '60vh',
+                })
+                .resizable({
+                    minWidth: 625,
+                    minHeight: 175,
+                    handles: 'n, e, s, w, ne, sw, se, nw',
+                })
+                .draggable({
+                    handle: '#subFormHeader'
+                });
+        }
     };
 
     this.SetPopupFormTitle = function (title, mode, lock, cancel) {

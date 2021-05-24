@@ -601,6 +601,7 @@ const WebFormRender = function (option) {
             return;
         }
         else if (mode_s === "Close Mode") {
+            this.Mode.isEdit = false;
             if (this.renderMode === 2) {
                 ebcontext.webform.hideSubForm();
             }

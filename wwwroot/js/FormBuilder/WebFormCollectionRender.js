@@ -187,9 +187,16 @@ const WebFormCollectionRender = function (Option) {
     };
 
     this.hideSubForm = function () {
-        $(`#subFormModal,.sf-msk`).fadeOut();
-        this.CurrentSubForm.DISPOSE();
-        this.CurrentSubForm = null;
+        let proceed = true;
+        if (this.CurrentSubForm && this.CurrentSubForm.Mode.isEdit) {
+            if (!confirm('Changes you made may not be saved.'))
+                proceed = false;
+        }
+        if (proceed) {
+            $(`#subFormModal,.sf-msk`).fadeOut();
+            this.CurrentSubForm.DISPOSE();
+            this.CurrentSubForm = null;
+        }
     };
 
     this.maximizeSubForm = function (event, forcemax = false, forceres = false) {

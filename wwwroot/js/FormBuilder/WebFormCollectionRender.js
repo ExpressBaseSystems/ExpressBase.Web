@@ -160,7 +160,7 @@ const WebFormCollectionRender = function (Option) {
 
                     this.FormCollection.push(WebForm);
                     this.CurrentSubForm = WebForm;
-
+                    this.maximizeSubForm('e', false, true);
                 }.bind(this)
             });
         }
@@ -192,9 +192,17 @@ const WebFormCollectionRender = function (Option) {
         this.CurrentSubForm = null;
     };
 
-    this.maximizeSubForm = function () {
+    this.maximizeSubForm = function (event, forcemax = false, forceres = false) {
+        let size = {
+            0: { h: '40vh', w: '40%' },
+            1: { h: '60vh', w: '60%' },
+            2: { h: '80vh', w: '80%' },
+            3: { h: '100vh', w: '100%' }
+        };
+
         let $mxBtn = $('#subformmaximize');
-        if ($mxBtn.children().hasClass('fa-window-maximize')) {
+
+        if (($mxBtn.children().hasClass('fa-window-maximize') && !forceres) || forcemax) {
             $mxBtn.children().removeClass('fa-window-maximize').addClass('fa-window-restore');
             $mxBtn.prop('title', 'Restore');
             $('#subForm-cont').css('height', 'calc(100vh - 38px)');
@@ -203,8 +211,14 @@ const WebFormCollectionRender = function (Option) {
         else {
             $mxBtn.children().removeClass('fa-window-restore').addClass('fa-window-maximize');
             $mxBtn.prop('title', 'Maximize');
-            $('#subForm-cont').css('height', '60vh');
-            $('#subFormModal .sf-cont-body').css('width', '60%').css('height', '60vh');
+            let Idx = 1;
+            if (this.CurrentSubForm) {
+                let pfSize = this.CurrentSubForm.FormObj.PopupFormSize;
+                if (typeof (pfSize) === 'number' && pfSize >= 0 && pfSize <= 3)
+                    Idx = pfSize;
+            }
+            $('#subForm-cont').css('height', `calc(${size[Idx].h} - 40px)`);
+            $('#subFormModal .sf-cont-body').css('width', size[Idx].w).css('height', size[Idx].h).css('left', '0px').css('top', '0px');
         }
     };
 
@@ -319,11 +333,11 @@ const WebFormCollectionRender = function (Option) {
                     width: '60%',
                     height: '60vh',
                 })
-                .resizable({
-                    minWidth: 625,
-                    minHeight: 175,
-                    handles: 'n, e, s, w, ne, sw, se, nw',
-                })
+                //.resizable({
+                //    minWidth: 625,
+                //    minHeight: 175,
+                //    handles: 'n, e, s, w, ne, sw, se, nw',
+                //})
                 .draggable({
                     handle: '#subFormHeader'
                 });

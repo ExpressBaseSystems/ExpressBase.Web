@@ -59,6 +59,10 @@ const WebFormCollectionRender = function (Option) {
     };
 
     this.PopupForm = function (refId, params, mode) {
+        if (!refId) {
+            console.error('Invalid refId for popup form');
+            return;
+        }
         this.SetSubFormModal();
         this.showSubForm();
 
@@ -194,7 +198,8 @@ const WebFormCollectionRender = function (Option) {
         }
         if (proceed) {
             $(`#subFormModal,.sf-msk`).fadeOut();
-            this.CurrentSubForm.DISPOSE();
+            if (this.CurrentSubForm)
+                this.CurrentSubForm.DISPOSE();
             this.CurrentSubForm = null;
         }
     };
@@ -317,9 +322,9 @@ const WebFormCollectionRender = function (Option) {
                     <button id="subformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>
                     <button id="subformnew" class="btn" title="New" style='display: none;'><i class="fa fa-plus" aria-hidden="true"></i></button>
                     <button id="subformsave" class='btn' title='Save' style='display: none;'><i class="fa fa-save" aria-hidden="true"></i></button>
-                    <button id="subformopen" class='btn' title='Open in new tab'><i class="fa fa-external-link" aria-hidden="true"></i></button>
-                    <button id="subformmaximize" class='btn' title='Maximize'><i class="fa fa-window-maximize" aria-hidden="true"></i></button>
-                    <button id="subformclose" class='btn' title='Close' data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    <button id="subformopen" class='' title='Open in new tab'><i class="fa fa-external-link" aria-hidden="true"></i></button>
+                    <button id="subformmaximize" class='' title='Maximize'><i class="fa fa-window-maximize" aria-hidden="true"></i></button>
+                    <button id="subformclose" class='' title='Close' data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></button>
                 </div> 
             </div>
             <div class="sf_loader" id="sf_loader" style="top: 35px;"></div>

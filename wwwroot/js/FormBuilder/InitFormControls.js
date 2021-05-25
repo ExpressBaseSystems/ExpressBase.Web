@@ -66,7 +66,7 @@
         let files = [];
         let catTitle = [];
         let customMenu = [{ name: "Delete", icon: "fa-trash" }];
-        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
+        let fileType = this.getKeyByValue(EbEnums_w.FileClass, ctrl.FileType.toString());
         $.each(ctrl.Categories.$values, function (i, obj) {
             catTitle.push(obj.CategoryTitle);
         }.bind(catTitle));
@@ -1811,7 +1811,7 @@
     };
 
     this.SimpleFileUploader = function (ctrl) {
-        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
+        let fileType = this.getKeyByValue(EbEnums_w.FileClass, ctrl.FileType.toString());
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
             renderer: this.Renderer.rendererName,

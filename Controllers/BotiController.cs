@@ -282,7 +282,7 @@ namespace ExpressBase.Web.Controllers
                     new InsertDataFromWebformRequest
                     {
                         RefId = BotForm.WebFormRefId,
-                        FormData = Values,
+                        FormData = JsonConvert.SerializeObject(Values),
                         RowId = rowid,
                         CurrentLoc = this.LoggedInUser?.Preference?.DefaultLocation ?? 1
                     });

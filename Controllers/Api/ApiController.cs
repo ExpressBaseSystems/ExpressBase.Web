@@ -921,7 +921,7 @@ namespace ExpressBase.Web.Controllers
                 InsertDataFromWebformRequest request = new InsertDataFromWebformRequest
                 {
                     RefId = form["refid"],
-                    FormData = JsonConvert.DeserializeObject<WebformData>(form["webform_data"]),
+                    FormData = form["webform_data"],
                     RowId = Convert.ToInt32(form["rowid"]),
                     CurrentLoc = Convert.ToInt32(form["locid"])
                 };

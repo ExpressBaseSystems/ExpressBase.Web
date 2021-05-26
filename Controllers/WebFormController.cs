@@ -700,12 +700,11 @@ namespace ExpressBase.Web.Controllers
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
-                WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
                 InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
                     new InsertDataFromWebformRequest
                     {
                         RefId = RefId,
-                        FormData = Values,
+                        FormData = ValObj,
                         RowId = RowId,
                         CurrentLoc = CurrentLoc,
                         DraftId = DraftId

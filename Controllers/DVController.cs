@@ -417,7 +417,7 @@ namespace ExpressBase.Web.Controllers
                         new InsertDataFromWebformRequest
                         {
                             RefId = RefId,
-                            FormData = obj,
+                            FormData = JsonConvert.SerializeObject(obj),
                             RowId = RowId,
                             CurrentLoc = CurrentLoc
                         });

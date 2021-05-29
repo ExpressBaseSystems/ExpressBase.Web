@@ -142,7 +142,7 @@
         this.DGColCtrls = [];
         for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
             let ctrl = this.ctrl.Controls.$values[i];
-            let inpCtrl = new EbObjects[ctrl.InputControlType](ctrl.EbSid_CtxId, ctrl);// creates object
+            let inpCtrl = new EbObjects_w[ctrl.InputControlType](ctrl.EbSid_CtxId, ctrl);// creates object
             inpCtrl.ObjType = ctrl.InputControlType.substring(2);
             inpCtrl.isDGCtrl = true;////////////////////////////////
             inpCtrl = new ControlOps_w[inpCtrl.ObjType](inpCtrl);// attach getValue(), ... methods

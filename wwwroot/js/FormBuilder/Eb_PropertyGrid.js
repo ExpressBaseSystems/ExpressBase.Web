@@ -1,4 +1,9 @@
 ﻿const Eb_PropertyGrid = function (options, parentPG) {
+
+    this.AllMetas = options.root === 'webform' ? AllMetas_w || AllMetas : AllMetas || AllMetas_w;
+    this.EbObjects = options.root === 'webform' ? EbObjects_w || EbObjects : EbObjects || EbObjects_w;
+
+    this.root = options.root;
     this.ParentPG = parentPG;
     this.wc = options.wc;
     this.Isdraggable = options.isDraggable;
@@ -373,7 +378,7 @@
             let fieldMeta = {};
             let objType = "Eb" + field.ObjType;
             let _propName = field.Name;
-            Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", "FieldValue"));
+            Object.assign(fieldMeta, getObjByval(this.AllMetas[objType], "name", "FieldValue"));
             fieldMeta.name = _propName;
             fieldMeta.alias = null;
             DictMetas.push(fieldMeta);
@@ -818,7 +823,7 @@
         $(`[ebsid=${SelItem}]`).focus();
         SelObj = this.AllObjects[SelItem];
         let type = SelObj.$type.split(",")[0].split(".")[2];
-        this.setObject(SelObj, AllMetas[type]);
+        this.setObject(SelObj, this.AllMetas[type]);
         this.DD_onChange(e);
     };
 
@@ -1104,11 +1109,11 @@
     this.initNullpropsWithDefaultVals = function () {
         let keys = Object.keys(this.PropsObj);
         let consName = this.PropsObj.constructor.name;
-        if (this.PropsObj.$type && typeof EbObjects[this.PropsObj.$type.split(",")[0].split(".")[2]] === "function")
+        if (this.PropsObj.$type && typeof this.EbObjects[this.PropsObj.$type.split(",")[0].split(".")[2]] === "function")
             consName = this.PropsObj.$type.split(",")[0].split(".")[2];
         if (consName === "Object")
             return;
-        let dummyObj = new EbObjects[consName]("dummyObj_PG", {});
+        let dummyObj = new this.EbObjects[consName]("dummyObj_PG", {});
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             if ((this.PropsObj[key] === null || this.PropsObj[key] === undefined) && this.PropsObj[key] !== dummyObj[key]) {

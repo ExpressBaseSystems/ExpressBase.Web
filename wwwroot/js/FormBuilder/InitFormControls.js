@@ -108,12 +108,12 @@
         imgup.uploadSuccess = function (fileid) {
             if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
                 this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
-        };
+        }.bind(this);
 
         imgup.windowClose = function () {
             if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-        };
+        }.bind(this);
 
         imgup.customTrigger = function (DpControlsList, name, refids) {
             if (name === "Delete") {
@@ -2315,7 +2315,8 @@
             wc: ebcontext.user.wc,
             // cid: this.cid,
             $extCont: $(".queConf_PGrid"),
-            isDraggable: true
+            isDraggable: true,
+            root: 'webform'
         });
 
        
@@ -2397,7 +2398,7 @@
             console.log("CreatePG called for:" + control.Name);
           //  this.$propGrid.css("visibility", "visible");
             alert();
-            PGobj.setObject(control, AllMetas["EbQuestionnaireConfigurator"]);////
+            PGobj.setObject(control, AllMetas_w["EbQuestionnaireConfigurator"]);////
         };
 
         ctrl.bindOnChange = function (p1) {

@@ -2,6 +2,9 @@
 
     //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
+    this.AllMetas = AllMetas_w || AllMetas;
+    this.EbObjects = EbObjects_w || EbObjects;
+
     this.wc = options.wc;
     this.cid = options.cid;
     this.formId = options.formId;
@@ -353,7 +356,7 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         let ObjCopy = { ...editModeObj };
-        let newObj = new EbObjects["Eb" + editModeObj.ObjType](editModeObj.EbSid, editModeObj);
+        let newObj = new this.EbObjects["Eb" + editModeObj.ObjType](editModeObj.EbSid, editModeObj);
         this.rootContainerObj = newObj;
         this.rootContainerObj.Name = ObjCopy.Name;
         this.rootContainerObj.EbSid_CtxId = ObjCopy.EbSid_CtxId;
@@ -427,11 +430,11 @@
         let ShortName = "Step" + (lastNum + 1);
         let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
         let ebsid = TabEdsid + "_" + ShortName;
-        let newObj = new EbObjects["EbWizardStep"](ebsid);
+        let newObj = new this.EbObjects["EbWizardStep"](ebsid);
         newObj.Name = ShortName;
         newObj.Title = ShortName;
 
-        this.PGobj.setObject(TabObj, AllMetas["EbWizardControl"]);
+        this.PGobj.setObject(TabObj, this.AllMetas["EbWizardControl"]);
 
         TabObj.Controls.$values.push(newObj);
         this.addWizardStep(this.PGobj.PropsObj, "Controls", "val", newObj);
@@ -448,7 +451,7 @@
 
         let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
         let PaneObj = this.rootContainerObj.Controls.GetByName(PaneEbsid);
-        let ctrlMeta = AllMetas["EbTabControl"];
+        let ctrlMeta = this.AllMetas["EbTabControl"];
         this.PGobj.setObject(TabObj, ctrlMeta);
 
         let index = TabObj.Controls.$values.indexOf(PaneObj);
@@ -520,7 +523,7 @@
         let obj = this.rootContainerObj.Controls.GetByName(ebsid);
         let _type = obj.ObjType;
         $.each(obj, function (propName, propVal) {
-            let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
+            let meta = getObjByval(this.AllMetas["Eb" + _type], "name", propName);
             if (meta && meta.IsUIproperty)
                 this.updateUIProp(propName, ebsid, _type);
         }.bind(this));
@@ -528,7 +531,7 @@
 
     this.updateUIProp = function (propName, id, type) {
         let obj = this.rootContainerObj.Controls.GetByName(id);
-        let NSS = getObjByval(AllMetas["Eb" + type], "name", propName).UIChangefn;
+        let NSS = getObjByval(this.AllMetas["Eb" + type], "name", propName).UIChangefn;
         if (NSS) {
             let NS1 = NSS.split(".")[0];
             let NS2 = NSS.split(".")[1];
@@ -552,7 +555,7 @@
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
-        this.rootContainerObj = new EbObjects["Eb" + this.builderType](this.formId);
+        this.rootContainerObj = new this.EbObjects["Eb" + this.builderType](this.formId);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
     }
@@ -563,7 +566,7 @@
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
-        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);////
+        this.PGobj.setObject(control, this.AllMetas["Eb" + this.curControl.attr("eb-type")]);////
     };
 
     this.saveObj = function () {
@@ -615,7 +618,7 @@
                 let ebsid = type + ++(this.controlCounters[type + "Counter"]);
                 let $sibling = $(sibling);
                 $el.remove();
-                let ctrlObj = new EbObjects["Eb" + type](ebsid);
+                let ctrlObj = new this.EbObjects["Eb" + type](ebsid);
                 let $ctrl = ctrlObj.$Control;
 
                 if (type === "UserControl") {///user control refid set on ctrlobj
@@ -679,7 +682,7 @@
                 let ebsid = type + ++(this.controlCounters[type + "Counter"]);
                 let $sibling = $(sibling);
                 $el.remove();
-                let ctrlObj = new EbObjects["Eb" + type](ebsid);
+                let ctrlObj = new this.EbObjects["Eb" + type](ebsid);
                 ctrlObj.DataObjCtrlName = CntrlName;
                 ctrlObj.DataObjColName = ColumnlName;
                 ctrlObj.Label = ColumnlName;
@@ -764,7 +767,7 @@
             success: function (ctrl, configObj) {
                 ctrl._locationConfig = JSON.parse(configObj);
                 $.each(ctrl._locationConfig, function (i, config) {
-                    let newo = new EbObjects.UsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
+                    let newo = new this.EbObjects.UsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
                     newo.DisplayName = config.Name;
                     newo.IsRequired = config.IsRequired;
                     newo.Type = config.Type;
@@ -1017,11 +1020,11 @@
         let $colTile = $e.closest(".Eb-ctrlContainer");
         let ebsid = $colTile.attr("ebsid");
         let ctrlType = $colTile.attr("eb-type");
-        let ctrlMeta = AllMetas["Eb" + ctrlType];
+        let ctrlMeta = this.AllMetas["Eb" + ctrlType];
         if (ctrlType === "TabControl" || ctrlType === "WizardControl") {
             ebsid = $e.closest("li").attr("ebsid");
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-            let paneMeta = AllMetas["Eb" + ctrl.ObjType];
+            let paneMeta = this.AllMetas["Eb" + ctrl.ObjType];
             ctrl["Title"] = val;
             this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
         }
@@ -1031,7 +1034,7 @@
             else
                 ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");// for DG label
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-            let ColMeta = AllMetas["Eb" + ctrl.ObjType];
+            let ColMeta = this.AllMetas["Eb" + ctrl.ObjType];
             ctrl["Title"] = val;
 
             if ($e.closest("th").length === 1)
@@ -1056,7 +1059,7 @@
         let ebsid = $ControlTile.attr("ebsid");
         let ctrlType = $ControlTile.attr("eb-type");
         let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-        let ctrlMeta = AllMetas["Eb" + ctrlType];
+        let ctrlMeta = this.AllMetas["Eb" + ctrlType];
         this.PGobj.setObject(ctrl, ctrlMeta);
         let colEbsid = $(e.target).closest(`[ctrl-ebsid]`).attr("ctrl-ebsid");
         this.PGobj.CXVE.colTile2FocusSelec = `[ebsid=${colEbsid}].colTile`;
@@ -1078,7 +1081,7 @@
 
         let ebsid = TabEdsid + "_" + ShortName;
 
-        let newObj = new EbObjects["EbTabPane"](ebsid);
+        let newObj = new this.EbObjects["EbTabPane"](ebsid);
 
         newObj.Name = ShortName;
         newObj.Title = ShortName;
@@ -1086,7 +1089,7 @@
         let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
 
 
-        let ctrlMeta = AllMetas["EbTabControl"];
+        let ctrlMeta = this.AllMetas["EbTabControl"];
         this.PGobj.setObject(TabObj, ctrlMeta);
 
         TabObj.Controls.$values.push(newObj);

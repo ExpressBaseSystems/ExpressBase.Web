@@ -2,6 +2,9 @@
 
     //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
+    this.AllMetas = pgObj.AllMetas;
+    this.EbObjects = pgObj.EbObjects;
+
     this.PGobj = pgObj;
     this.CE_PGObj = {};
     this.pgCXE_Cont_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-Cont";
@@ -321,7 +324,8 @@
             wc: this.PGobj.wc,
             cid: this.PGobj.cid,
             $extCont: $(".property-grid-cont"),
-            IsInnerCall: true
+            IsInnerCall: true,
+            root: this.PGobj.root
         }, this.PGobj);
 
         this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
@@ -484,7 +488,8 @@
             this.CE_PGObj = new Eb_PropertyGrid({
                 id: this.PGobj.wraperId + "_InnerPG",
                 IsInnerCall: true,
-                dependedProp: this.CurMeta.Dprop2
+                dependedProp: this.CurMeta.Dprop2,
+                root: this.PGobj.root
             }, this.PGobj);
         }
     }.bind(this);
@@ -1152,7 +1157,8 @@
 
         this.CE_PGObj = new Eb_PropertyGrid({
             id: this.PGobj.wraperId + "_InnerPG",
-            IsInnerCall: true
+            IsInnerCall: true,
+            root: this.PGobj.root
         }, this.PGobj);
 
         this.getOSClist(options);
@@ -1316,19 +1322,19 @@
         let obj = "";
         let type = "ObjectBasicVis";
         if (parseInt(refId.split("-")[2]) === EbObjectTypes.WebForm) {
-            obj = new EbObjects.ObjectBasicForm(ObjName + "ppty");
+            obj = new this.EbObjects.ObjectBasicForm(ObjName + "ppty");
             type = "ObjectBasicForm";
         }
         else if (parseInt(refId.split("-")[2]) === EbObjectTypes.Report) {
-            obj = new EbObjects.ObjectBasicReport(ObjName + "ppty");
+            obj = new this.EbObjects.ObjectBasicReport(ObjName + "ppty");
             type = "ObjectBasicReport";
         }
         else if (parseInt(refId.split("-")[2]) === EbObjectTypes.SmsBuilder) {
-            obj = new EbObjects.ObjectBasicSMS(ObjName + "ppty");
+            obj = new this.EbObjects.ObjectBasicSMS(ObjName + "ppty");
             type = "ObjectBasicSMS";
         }
         else
-            obj = new EbObjects.ObjectBasicVis(ObjName + "ppty");
+            obj = new this.EbObjects.ObjectBasicVis(ObjName + "ppty");
         let versionNumber = $e.find(".selectpicker option:selected").attr("ver-no");
         obj.ObjRefId = refId;
         obj.ObjDisplayName = data[ObjName][0].displayName;
@@ -1364,7 +1370,7 @@
         let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp].$values;//--
         let ExistObj = CurRefId.filter(refobj => refobj.ObjName === name);
         if (ExistObj.length > 0 && type)
-            this.CE_PGObj.setObject(ExistObj[0], AllMetas[type]);
+            this.CE_PGObj.setObject(ExistObj[0], this.AllMetas[type]);
     };
 
     this.VTileRemoveClick1 = function () {
@@ -1561,7 +1567,7 @@
         }
         if (!obj)
             console.error("Object " + obj);
-        this.CE_PGObj.setObject(obj, AllMetas[type]);
+        this.CE_PGObj.setObject(obj, this.AllMetas[type]);
     };
 
     this.mapperColTileClickFn = function (e) {
@@ -1646,7 +1652,7 @@
         let lastItemCount = this.getMaxNumberFromItemName($(this.pgCXE_Cont_Slctr + " .CE-body .colTile"));
         let ShortName = ($DD.text() + (lastItemCount + 1)).replace(/ /g, "").toLowerCase();// toLowerCase tmp fix
         let EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
-        obj = new EbObjects[SelType](EbSid);
+        obj = new this.EbObjects[SelType](EbSid);
         obj.Name = ShortName;
         if (obj.hasOwnProperty('Title'))
             obj.Title = ShortName;
@@ -1683,7 +1689,7 @@
         $.each(this.CElistFromSrc, function (i, colObj) {
             let RObj = getObjByval(this.selectedCols, idField, colObj[idField]);
             if (!RObj)
-                RObj = getObjByval(this.selectedCols, "name", colObj.Name);
+                RObj = getObjByval(this.selectedCols, "name", colObj.Name || colObj.name);
             if (RObj) {
                 if (RObj === colObj)/// if already reference exit
                     return false;

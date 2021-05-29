@@ -1148,7 +1148,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     }
 
 .Dg_body {
-    display: flex;
+    /*display: flex;*/
     box-shadow: -1px 0px 0px 0px #f6f6ff;
 }
 

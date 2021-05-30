@@ -293,7 +293,7 @@ function MobileMenu(option) {
         else if (eType === "delete_row") {
             let $row = selector.$trigger.find(".eb_tablelayout_tr:last-child");
             let rowcount = $table.find(".eb_tablelayout_tr").length;
-            if (rowcount > 2) {
+            if (rowcount > 1) {
                 $row.remove();
             }
         }
@@ -329,7 +329,7 @@ function MobileMenu(option) {
         else if (eType === "delete_row") {
             let $row = selector.$trigger.find(".eb_datalink_tr:last-child");
             let rowcount = $table.find(".eb_datalink_tr").length;
-            if (rowcount > 2) {
+            if (rowcount > 1) {
                 $row.remove();
             }
         }

@@ -188,6 +188,8 @@
                 $(`#${this.EbSid} .ctrl_as_container .data_layout`).append(tobj.$Control.outerHTML());
                 if (root.Mode === "edit" && this.DataLayout && !event) {
                     $.extend(tobj, this.DataLayout);
+                    if (tobj.RowCount <= 0) tobj.RowCount = 2;
+                    if (tobj.ColumCount <= 0) tobj.ColumCount = 2;
                     tobj.CellCollection = this.DataLayout.CellCollection;
                 }
                 tobj.trigger(root);

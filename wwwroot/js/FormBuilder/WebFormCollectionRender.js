@@ -87,6 +87,7 @@ const WebFormCollectionRender = function (Option) {
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         this.hideSubFormLoader();
+                        this.hideSubForm();
                         EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: false, Background: '#aa0000' });
                     }.bind(this),
                     success: function (existing, result) {
@@ -97,6 +98,7 @@ const WebFormCollectionRender = function (Option) {
                         if (resp.ErrorMessage) {
                             console.error(resp.ErrorMessage);
                             EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });
+                            this.hideSubForm();
                             return;
                         }
 
@@ -122,6 +124,7 @@ const WebFormCollectionRender = function (Option) {
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     this.hideSubFormLoader();
+                    this.hideSubForm();
                     EbMessage("show", { Message: `Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
                 }.bind(this),
                 success: function (result) {
@@ -131,6 +134,7 @@ const WebFormCollectionRender = function (Option) {
                     if (resp.ErrorMessage) {
                         console.error(resp.ErrorMessage);
                         EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });
+                        this.hideSubForm();
                         return;
                     }
 
@@ -139,6 +143,7 @@ const WebFormCollectionRender = function (Option) {
                     if (!FormObj.MakeEbSidUnique) {
                         console.error('MakeEbSidUnique must be true for popup form');
                         EbMessage("show", { Message: "Form rendering failed. Contact admin.", AutoHide: true, Background: '#aa0000' });
+                        this.hideSubForm();
                         return;
                     }
 
@@ -356,9 +361,11 @@ const WebFormCollectionRender = function (Option) {
         }
     };
 
-    this.SetPopupFormTitle = function (title, mode, lock, cancel) {
+    this.SetPopupFormTitle = function (title, mode, lock, cancel, readonly) {
         title = title + `<span mode="${mode}" class="fmode">${mode}</span>`;
-        if (lock)
+        if (readonly)
+            title = title + "<span class='fmode' style='background-color: gray;'><i class='fa fa-lock'></i> ReadOnly</span>";
+        else if (lock)
             title = title + "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
         if (cancel)
             title = title + "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";

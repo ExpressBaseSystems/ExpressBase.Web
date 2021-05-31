@@ -1550,7 +1550,7 @@ const WebFormRender = function (option) {
             }
             catch (e) { console.log("Error in title expression  " + e.message); }
 
-            ebcontext.webform.SetPopupFormTitle(this.FormObj.DisplayName + title_val, reqstMode, this.formData.IsLocked, this.formData.IsCancelled);
+            ebcontext.webform.SetPopupFormTitle(this.FormObj.DisplayName + title_val, reqstMode, this.formData.IsLocked, this.formData.IsCancelled, this.formData.IsReadOnly);
 
             return;
         }

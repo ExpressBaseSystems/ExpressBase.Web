@@ -242,14 +242,14 @@ namespace ExpressBase.Web.Controllers
 
         private void ValidateRequest(EbFormAndDataWrapper resp, int _mode, int _locId, EbWebForm webForm)
         {
-            string _cid = webForm.RefId.Split('-')[1];
-            if (ViewBag.cid != _cid && ViewBag.Env == "Production")
-            {
-                resp.Message = "Not found";
-                resp.ErrorMessage = "Cid in refid does not match";
-                resp.RedirectUrl = "/StatusCode/404";
-                return;
-            }
+            //string _cid = webForm.RefId.Split('-')[1];
+            //if (ViewBag.cid != _cid && ViewBag.Env == "Production")
+            //{
+            //    resp.Message = "Not found";
+            //    resp.ErrorMessage = "Cid in refid does not match";
+            //    resp.RedirectUrl = "/StatusCode/404";
+            //    return;
+            //}
             WebformDataWrapper wdr = JsonConvert.DeserializeObject<WebformDataWrapper>(resp.FormDataWrap);
             if (wdr.FormData == null)
             {

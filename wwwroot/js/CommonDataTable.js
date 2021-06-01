@@ -2,6 +2,10 @@
 
     //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
+    if (typeof (AllMetas) === 'undefined') var AllMetas = AllMetas_w;
+    if (typeof (EbEnums) === 'undefined') var EbEnums = EbEnums_w;
+    if (typeof (EbObjects) === 'undefined') var EbObjects = EbObjects_w;
+
     this.propGrid = Option.PGobj;
     this.Api = null;
     this.order_info = new Object();

@@ -176,6 +176,17 @@ namespace ExpressBase.Web.Controllers
             all = all.Replace("AllMetas", "AllMetas_w").Replace("EbEnums", "EbEnums_w").Replace("EbObjects", "EbObjects_w").Replace("ControlOps", "ControlOps_w");
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
+        
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
+        public FileContentResult cxt2js_vis()
+        {
+            var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
+            string all = _jsResult.AllMetas + ';' + 
+                _jsResult.JsObjects + ';' + 
+                _jsResult.EbObjectTypes + ';';
+            return File(all.ToUtf8Bytes(), "text/javascript");
+        }
 
         public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly)
         {

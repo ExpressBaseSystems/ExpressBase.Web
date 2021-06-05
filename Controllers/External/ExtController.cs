@@ -356,6 +356,8 @@ namespace ExpressBase.Web.Controllers
                         }
                         ViewBag.Is2fA = solutionObj.Is2faEnabled;
                         ViewBag.IsOtpSigninEnabled = solutionObj.IsOtpSigninEnabled;
+                        ViewBag.IsEmailIntegrated = solutionObj.IsEmailIntegrated;
+                        ViewBag.IsSmsIntegrated = solutionObj.IsSmsIntegrated;
                     }
                 }
                 ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);

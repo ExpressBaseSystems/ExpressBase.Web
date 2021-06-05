@@ -1537,7 +1537,7 @@ const WebFormRender = function (option) {
             }
             else if (this.Mode.isView) {
                 this.$newBtn.show();
-                if (!this.formData.IsLocked)
+                if (!this.formData.IsLocked && !this.formData.IsReadOnly)
                     this.$editBtn.show();
             }
             let title_val = '';
@@ -1550,7 +1550,7 @@ const WebFormRender = function (option) {
             }
             catch (e) { console.log("Error in title expression  " + e.message); }
 
-            ebcontext.webform.SetPopupFormTitle(this.FormObj.DisplayName + title_val, reqstMode, this.formData.IsLocked, this.formData.IsCancelled);
+            ebcontext.webform.SetPopupFormTitle(this.FormObj.DisplayName + title_val, reqstMode, this.formData.IsLocked, this.formData.IsCancelled, this.formData.IsReadOnly);
 
             return;
         }
@@ -1579,23 +1579,30 @@ const WebFormRender = function (option) {
         }
         else if (this.Mode.isView) {
             let btnsArr = ["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone", "webformlock"];
-            if (this.formData.IsLocked) {
-                btnsArr.splice(1, 3);//
-                console.warn("Locked record!.............");
-                $("#webformlock").prop("title", "Unlock");
-                lockedHtm = "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
+            if (this.formData.IsReadOnly) {
+                btnsArr = ["webformnew", "webformaudittrail", "webformprint-selbtn", "webformclone"];
+                console.warn("ReadOnly record!.............");
+                lockedHtm = "<span class='fmode' style='background-color: gray;'><i class='fa fa-eye'></i> ReadOnly</span>";
             }
             else {
-                $("#webformlock").prop("title", "Lock");
-            }
-            if (this.formData.IsCancelled) {
-                //btnsArr.splice(3, 1);//
-                console.warn("Cancelled record!.............");
-                $("#webformcancel").prop("title", "Revoke Cancel");
-                cancelledHtm = "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";
-            }
-            else {
-                $("#webformcancel").prop("title", "Cancel");
+                if (this.formData.IsLocked) {
+                    btnsArr.splice(1, 3);//
+                    console.warn("Locked record!.............");
+                    $("#webformlock").prop("title", "Unlock");
+                    lockedHtm = "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
+                }
+                else {
+                    $("#webformlock").prop("title", "Lock");
+                }
+                if (this.formData.IsCancelled) {
+                    //btnsArr.splice(3, 1);//
+                    console.warn("Cancelled record!.............");
+                    $("#webformcancel").prop("title", "Revoke Cancel");
+                    cancelledHtm = "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";
+                }
+                else {
+                    $("#webformcancel").prop("title", "Cancel");
+                }
             }
             if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
                 btnsArr.push("webformopensrc");

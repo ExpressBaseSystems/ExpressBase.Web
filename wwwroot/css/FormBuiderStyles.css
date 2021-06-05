@@ -1096,7 +1096,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 
-[ctype="Label"] > .ctrl-cover {
+[ctype="Label"] > .ctrl-cover, [ctype="TextControl"] > .ctrl-cover {
     display: none !important;
 }
 

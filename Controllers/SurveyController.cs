@@ -38,9 +38,10 @@ namespace ExpressBase.Web.Controllers
 
                 if (resp != null && resp.Data != null)
                 {
-                    foreach (String qs in resp.Data)
+                    foreach (KeyValuePair<int, string> entry in resp.Data)
                     {
-                        EbQuestion qstn = EbSerializers.Json_Deserialize<EbQuestion>(qs);
+                        EbQuestion qstn = EbSerializers.Json_Deserialize<EbQuestion>(entry.Value);
+                        qstn.QId = entry.Key;
                         Qlist.Add(qstn);
                         IEnumerable<EbControl> QstnCtrls = qstn.QSec.Controls.FlattenEbControls();
                         IEnumerable<EbControl> AnswerCtrls = qstn.ASec.Controls.FlattenEbControls();

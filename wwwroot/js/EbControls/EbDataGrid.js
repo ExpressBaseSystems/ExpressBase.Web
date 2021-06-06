@@ -1767,8 +1767,7 @@
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
-        this.$table.on("dblclick", ".dgtr > td", this.row_dblclick);
-        //this.$table.on("focusout", ".dgtr", this.checkRow_click_New);
+        //this.$table.on("dblclick", ".dgtr > td", this.row_dblclick);
         this.$table.on("focusin", ".dgtr", this.row_dblclick);
 
         $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);

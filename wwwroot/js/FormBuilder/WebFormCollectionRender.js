@@ -365,10 +365,12 @@ const WebFormCollectionRender = function (Option) {
         title = title + `<span mode="${mode}" class="fmode">${mode}</span>`;
         if (readonly)
             title = title + "<span class='fmode' style='background-color: gray;'><i class='fa fa-lock'></i> ReadOnly</span>";
-        else if (lock)
-            title = title + "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
-        if (cancel)
-            title = title + "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";
+        else {
+            if (lock)
+                title = title + "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
+            if (cancel)
+                title = title + "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";
+        }
         $("#subFormHeader .sfh-title").html(title);
     };
 

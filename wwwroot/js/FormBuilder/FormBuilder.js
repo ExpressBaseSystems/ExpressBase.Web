@@ -2,8 +2,8 @@
 
     //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
-    this.AllMetas = AllMetas_w || AllMetas;
-    this.EbObjects = EbObjects_w || EbObjects;
+    this.AllMetas = options.root === 'webform' ? (AllMetas_w || AllMetas) : AllMetas;
+    this.EbObjects = options.root === 'webform' ? (EbObjects_w || EbObjects) : EbObjects;
 
     this.wc = options.wc;
     this.cid = options.cid;

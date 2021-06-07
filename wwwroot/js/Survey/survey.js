@@ -11,15 +11,6 @@
     this.controlCounters = CtrlCounters;//Global
     this.isEditMode = false;
 
-    if (this.EbObject === null || this.EbObject === undefined) {
-        this.rootContainerObj = new EbObjects["EbQuestion"](this.formId);
-
-        Proc(this.rootContainerObj.QSec, this.rootContainerObj.QSec);
-        Proc(this.rootContainerObj.ASec, this.rootContainerObj.ASec);
-        this.$AnsCtrlsCont.attr('ebsid', this.rootContainerObj.EbSid);
-        this.EbObject = this.rootContainerObj;
-    }
-
 
     this.Survey = {
         QuesId: 0,
@@ -43,6 +34,14 @@
         else {
             this.$AnsCtrlsCont.empty();
             this.$QCtrlsCont.empty();
+
+
+            this.rootContainerObj = new EbObjects["EbQuestion"](this.formId);
+
+            Proc(this.rootContainerObj.QSec, this.rootContainerObj.QSec);
+            Proc(this.rootContainerObj.ASec, this.rootContainerObj.ASec);
+            this.$AnsCtrlsCont.attr('ebsid', this.rootContainerObj.EbSid);
+            this.EbObject = this.rootContainerObj;
         }
 
         this.$Qmodal.find('.qs-inner-cont').attr('id', this.rootContainerObj.EbSid_CtxId);

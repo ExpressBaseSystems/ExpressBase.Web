@@ -368,8 +368,8 @@ namespace ExpressBase.Web.Controllers
                 obj.BeforeSave(ServiceClient, Redis);
 
                 var temp = obj.DiscoverRelatedRefids();
-                if (temp != null && temp.Count > 0) 
-                    _rel_obj_tmp = string.Join(",", temp); 
+                if (temp != null && temp.Count > 0)
+                    _rel_obj_tmp = string.Join(",", temp);
 
                 if (_rel_obj_tmp.Length > 0)
                     _rel_obj_tmp = _rel_obj_tmp.Substring(0, _rel_obj_tmp.Length - 1);//removing excess comma
@@ -409,7 +409,8 @@ namespace ExpressBase.Web.Controllers
                             SourceSolutionId = ViewBag.cid,
                             SourceObjId = "0",
                             SourceVerID = "0",
-                            DisplayName = obj.DisplayName
+                            DisplayName = obj.DisplayName,
+                            HideInMenu = obj.HideInMenu
                         };
                         EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                         if (res.Message != string.Empty && res.RefId == null)
@@ -433,7 +434,8 @@ namespace ExpressBase.Web.Controllers
                         ChangeLog = _changeLog,
                         Tags = _tags,
                         Apps = _apps,
-                        DisplayName = obj.DisplayName
+                        DisplayName = obj.DisplayName,
+                        HideInMenu = obj.HideInMenu
                     };
                     EbObject_CommitResponse res = ServiceClient.Post(ds);
                     _response.Refid = res.RefId;
@@ -496,7 +498,8 @@ namespace ExpressBase.Web.Controllers
                             SourceSolutionId = ViewBag.cid,
                             SourceObjId = "0",
                             SourceVerID = "0",
-                            DisplayName = obj.DisplayName
+                            DisplayName = obj.DisplayName,
+                            HideInMenu = obj.HideInMenu
                         };
 
                         EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
@@ -516,7 +519,8 @@ namespace ExpressBase.Web.Controllers
                         Relations = _rel_obj_tmp,
                         Tags = _tags,
                         Apps = _apps,
-                        DisplayName = obj.DisplayName
+                        DisplayName = obj.DisplayName,
+                        HideInMenu = obj.HideInMenu
                     };
 
                     EbObject_SaveResponse res = ServiceClient.Post(ds);

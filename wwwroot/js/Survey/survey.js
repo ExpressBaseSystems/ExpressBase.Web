@@ -5,19 +5,11 @@
     this.$AnsCtrlsCont = $('.ansctrl-inner');
     this.$QCtrlsCont = $('.qctrl-inner');
     this.$propGrid = $("#" + options.PGId);
+    this.$modal = $("#questn_modal");
 
 
     this.controlCounters = CtrlCounters;//Global
     this.isEditMode = false;
-
-    if (this.EbObject === null || this.EbObject === undefined) {
-        this.rootContainerObj = new EbObjects["EbQuestion"](this.formId);
-
-        Proc(this.rootContainerObj.QSec, this.rootContainerObj.QSec);
-        Proc(this.rootContainerObj.ASec, this.rootContainerObj.ASec);
-        this.$AnsCtrlsCont.attr('ebsid', this.rootContainerObj.EbSid);
-        this.EbObject = this.rootContainerObj;
-    }
 
 
     this.Survey = {
@@ -29,20 +21,44 @@
     this.RatingC = 1;
     this.UIType = "Text";
 
+    this.modalShow = function () {
+        if (this.mode === 'edit') {
+            //Edit mode
+            let ebsid = $(event.target).closest(".query_tile").attr("ebsid");
+            this.EbObject = getObjByval(options.objInEditMode.$values, "EbSid", ebsid);
+            if (this.EbObject) {
+                this.isEditMode = true;
+                this.InitEditModeCtrls(this.EbObject);
+            }
+        }
+        else {
+            this.$AnsCtrlsCont.empty();
+            this.$QCtrlsCont.empty();
+
+
+            this.rootContainerObj = new EbObjects["EbQuestion"](this.formId);
+
+            Proc(this.rootContainerObj.QSec, this.rootContainerObj.QSec);
+            Proc(this.rootContainerObj.ASec, this.rootContainerObj.ASec);
+            this.$AnsCtrlsCont.attr('ebsid', this.rootContainerObj.EbSid);
+            this.EbObject = this.rootContainerObj;
+        }
+
+        this.$Qmodal.find('.qs-inner-cont').attr('id', this.rootContainerObj.EbSid_CtxId);
+        this.$Qmodal.find('.qs-inner-wrap').attr('ebsid', this.rootContainerObj.ASec.EbSid_CtxId);
+        this.$Qmodal.find('.qst-ansctrl-cont').attr('ebsid', this.rootContainerObj.QSec.EbSid_CtxId);
+
+        if ($(".qst-inp").attr("ebsid") === undefined)
+            $(".qst-inp").attr("ebsid", this.rootContainerObj.EbSid + "_text");// added from initJS of EbQuestion class
+    }.bind(this);
+
     this.init = function () {
         this.$Qmodal = $("#questionModal");
-        this.$Qmodal.on('show.bs.modal', function () {
-            $(`textarea[name="Question"]`).val("");
-            $(".qst-opt-cont").empty();
-            this.$Qmodal.find('.qs-inner-cont').attr('id', this.rootContainerObj.EbSid_CtxId);
-            this.$Qmodal.find('.qs-inner-wrap').attr('ebsid', this.rootContainerObj.ASec.EbSid_CtxId);
-            this.$Qmodal.find('.qst-ansctrl-cont').attr('ebsid', this.rootContainerObj.QSec.EbSid_CtxId);
-            if ($(".qst-inp").attr("ebsid") === undefined)
-                $(".qst-inp").attr("ebsid", this.rootContainerObj.EbSid + "_text");// added from initJS of EbQuestion class
-        }.bind(this));
+        this.$Qmodal.on('show.bs.modal', this.modalShow);
 
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
         $('body').off("click").on("click", ".query_tile", this.quesEdit.bind(this));
+        $('#questn_new').on("click", this.quesNew.bind(this));
         this.scoreCheckbox = $("#scoreCheck").prop("checked");
 
         $(`textarea[name="Question"]`).on("change", function (e) { this.Survey.Question = e.target.value; }.bind(this));
@@ -116,6 +132,18 @@
         this.rootContainerObj.ASec.Controls.$values.push(ctrlObj);
         $ctrl.focus();
         this.updateControlUI(ebsid);
+    }.bind(this); 
+
+    this.AppendQuesCtrlInEditMode = function (ctrlObj) {
+        let type = ctrlObj.ObjType;
+        let ebsid = ctrlObj.EbSid;
+        let $ctrl = $(ControlHTML[this.rootContainerObj.EbSid_CtxId + ctrlObj.EbSid_CtxId]);
+        $ctrl.attr("childof", "QSec");
+        ctrlObj.childof = "QSec";
+        this.$QCtrlsCont.append($ctrl);
+        this.dropedCtrlInit($ctrl, type, ebsid);
+        $ctrl.focus();
+        this.updateControlUI(ebsid);
     }.bind(this);
 
     this.AppendAnsCtrlInEditMode = function (ctrlObj) {
@@ -140,7 +168,7 @@
 
     this.controlOnFocus = function (e) {
         e.stopPropagation();
-        let $e = $(e.target);
+        let $e = $(e.target).closest(".Eb-ctrlContainer");
         if (this.$curControl && this.$curControl.attr("ebsid") === $(e.target).attr("ebsid"))
             return;
         if ($e.attr("id") === this.formId) {
@@ -520,16 +548,15 @@
     };
 
     this.quesEdit = function (e) {
-        //Edit mode
-        let ebsid = $(e.target).closest(".query_tile").attr("ebsid");
-        this.EbObject = getObjByval(options.objInEditMode.$values, "EbSid", ebsid);
-        if (this.EbObject) {
-            this.isEditMode = true;
-            this.InitEditModeCtrls(this.EbObject);
-        }
+        this.mode = 'edit'
 
         this.$Qmodal.modal("show");
     };
+
+    this.quesNew = function () {
+        this.mode = 'new';
+        this.$Qmodal.modal("show");
+    }.bind(this);
 
     this.InitEditModeCtrls = function (editModeObj) {
         let ObjCopy = { ...editModeObj };
@@ -539,10 +566,23 @@
         this.rootContainerObj.EbSid_CtxId = ObjCopy.EbSid_CtxId;
         this.EbObject = this.rootContainerObj;
 
+        this.$modal.find('.modal-title').text("Edit Question");
+
         // convert json to ebobjects
         Proc(editModeObj, this.rootContainerObj);
-        $.each(this.rootContainerObj.ASec.Controls, function (i, ctrl) {
+
+        Proc(editModeObj.QSec, this.rootContainerObj.QSec);
+        Proc(editModeObj.ASec, this.rootContainerObj.ASec);
+
+        this.$AnsCtrlsCont.empty();
+        this.$QCtrlsCont.empty();
+
+        $.each(this.rootContainerObj.ASec.Controls.$values, function (i, ctrl) {
             this.AppendAnsCtrlInEditMode(ctrl);
+        }.bind(this));
+
+        $.each(this.rootContainerObj.QSec.Controls.$values, function (i, ctrl) {
+            this.AppendQuesCtrlInEditMode(ctrl);
         }.bind(this));
 
 

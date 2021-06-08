@@ -400,8 +400,8 @@ body, html, .html-root {
 
 .login-sec-image {
     width: 100%;
-    padding-top: 10px;
-    padding-bottom: 15px;
+   /* padding-top: 10px;
+    padding-bottom: 15px;*/
 }
 
     .login-sec-image img {
@@ -439,6 +439,7 @@ body, html, .html-root {
     padding: 20px 15px;
     border-radius: 6px;
     border: 1px solid #ddd;
+    height:315px;
 }
 .login_tabcontent-dc {
 

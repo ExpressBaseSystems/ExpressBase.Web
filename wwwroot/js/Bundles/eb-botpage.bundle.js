@@ -44,18 +44,29 @@ var InitControls = function (option) {
     };
 
     this.PopoverPlacement = function (context, source) {
-        if (($(source).offset().left + 700) > document.body.clientWidth)
-            return "left";
-        else {
-            return "right";
-        }
+        let left = $(source).offset().left, dwidth = document.body.clientWidth, pos;
+
+        if (left < (dwidth - 700) || (dwidth / 2) > left)
+            pos = "right";
+        else if (left > 700 || (dwidth / 2) < left)
+            pos = "left";
+        else
+            pos = "right";
+
+        return pos;
+
+        //if (($(source).offset().left + 700) > document.body.clientWidth)
+        //    return "left";
+        //else {
+        //    return "right";
+        //}
     };
 
     this.FileUploader = function (ctrl, ctrlOpts) {
         let files = [];
         let catTitle = [];
         let customMenu = [{ name: "Delete", icon: "fa-trash" }];
-        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
+        let fileType = this.getKeyByValue(EbEnums_w.FileClass, ctrl.FileType.toString());
         $.each(ctrl.Categories.$values, function (i, obj) {
             catTitle.push(obj.CategoryTitle);
         }.bind(catTitle));
@@ -91,56 +102,23 @@ var InitControls = function (option) {
         });
 
         //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
-        uploadedFileRefList[ctrl.Name + '_add'] = [];
-        uploadedFileRefList[ctrl.Name + '_del'] = [];
+        this.Renderer.uploadedFileRefList[ctrl.Name + '_add'] = [];
+        this.Renderer.uploadedFileRefList[ctrl.Name + '_del'] = [];
 
         imgup.uploadSuccess = function (fileid) {
-            if (uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
-                uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
-        };
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].indexOf(fileid) === -1)
+                this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].push(fileid);
+        }.bind(this);
 
         imgup.windowClose = function () {
-            if (uploadedFileRefList[ctrl.Name + '_add'].length > 0)
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-        };
+        }.bind(this);
 
         imgup.customTrigger = function (DpControlsList, name, refids) {
             if (name === "Delete") {
                 if (name === "Delete") {
                     EbDialog("show",
-                    {
-                        Message: "Are you sure? Changes Affect only if Form is Saved.",
-                        Buttons: {
-                            "Yes": { Background: "green", Align: "left", FontColor: "white;" },
-                            "No": { Background: "violet", Align: "right", FontColor: "white;" }
-                        },
-                        CallBack: function (name) {
-                            if (name === "Yes" && refids.length > 0) {
-                                let initLen = uploadedFileRefList[ctrl.Name + '_del'].length;
-
-                                for (let i = 0; i < refids.length; i++) {
-                                    let index = uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
-                                    if (index !== -1) {
-                                        uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
-                                    }
-                                    else if (!uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
-                                        uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
-                                    }
-                                }
-                                if (initLen < uploadedFileRefList[ctrl.Name + '_del'].length) {
-                                    EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-                                }
-                                imgup.deleteFromGallery(refids);
-                                imgup.customMenuCompleted("Delete", refids);
-                            }
-                        }
-                    });
-                }
-            }
-            else {
-                $.each(DpControlsList, function (i, dpObj) {
-                    if (name === 'Set as ' + dpObj.Label) {
-                        EbDialog("show",
                         {
                             Message: "Are you sure? Changes Affect only if Form is Saved.",
                             Buttons: {
@@ -148,20 +126,53 @@ var InitControls = function (option) {
                                 "No": { Background: "violet", Align: "right", FontColor: "white;" }
                             },
                             CallBack: function (name) {
-                                if (name === "Yes") {
-                                    if (refids.length > 0) {
-                                        dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
+                                if (name === "Yes" && refids.length > 0) {
+                                    let initLen = this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length;
+
+                                    for (let i = 0; i < refids.length; i++) {
+                                        let index = this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].indexOf(refids[i]);
+                                        if (index !== -1) {
+                                            this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].splice(index, 1);
+                                        }
+                                        else if (!this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].includes(refids[i])) {
+                                            this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].push(refids[i]);
+                                        }
                                     }
+                                    if (initLen < this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length) {
+                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                    }
+                                    imgup.deleteFromGallery(refids);
+                                    imgup.customMenuCompleted("Delete", refids);
                                 }
-                            }.bind()
+                            }
                         });
+                }
+            }
+            else {
+                $.each(DpControlsList, function (i, dpObj) {
+                    if (name === 'Set as ' + dpObj.Label) {
+                        EbDialog("show",
+                            {
+                                Message: "Are you sure? Changes Affect only if Form is Saved.",
+                                Buttons: {
+                                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                                },
+                                CallBack: function (name) {
+                                    if (name === "Yes") {
+                                        if (refids.length > 0) {
+                                            dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
+                                        }
+                                    }
+                                }.bind()
+                            });
                     }
                 });
             }
 
         }.bind(this, ctrlOpts.DpControlsList);
 
-        
+
     };
 
     //edit by amal for signature pad
@@ -748,6 +759,10 @@ var InitControls = function (option) {
 
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
+        $input.find("select").selectpicker({///////////////////////////////////////////////////////////
+            dropupAuto: false,
+        });
+
         $input.find("select option[value='Hourly']").attr("selected", "selected");
         $input.find("select").trigger("change");
     };
@@ -1032,7 +1047,7 @@ var InitControls = function (option) {
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7&_locId=${ebcontext.locations.CurrentLoc}`;
+            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_m=7&_l=${ebcontext.locations.CurrentLoc}`;
             window.open(url, '_blank');
         }.bind(this);
     };
@@ -1150,13 +1165,15 @@ var InitControls = function (option) {
             event.preventDefault();
             if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
                 if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
-                    $('#webformsave').trigger('click');
+                    //$('#webformsave').trigger('click');
+                    this.Renderer.saveForm();
                 } else {
                     EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
                     this.CreateCaptcha(ctrlOpts);
                 }
             } else {
-                $('#webformsave').trigger('click');
+                //$('#webformsave').trigger('click');
+                this.Renderer.saveForm();
             }
         }.bind(this));
     }.bind(this);
@@ -1192,13 +1209,14 @@ var InitControls = function (option) {
     };
 
     this.iFrameOpen = function (ctrl) {//////////////////
-        let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
-        if (ctrl.OpenInNewTab) {
-            window.open(url, '_blank');
-            return;
-        }
-        $("#iFrameForm").attr("src", url);
-        $("#iFrameFormModal").modal("show");
+        //let url = "../WebForm/Index?_r=" + ctrl.FormRefId + "&_m=12";
+        //if (ctrl.OpenInNewTab) {
+        //    window.open(url, '_blank');
+        //    return;
+        //}
+        //$("#iFrameForm").attr("src", url);
+
+        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0);
     };
 
     this.SysLocation = function (ctrl) {
@@ -1261,7 +1279,7 @@ var InitControls = function (option) {
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
-        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts});        
+        new EbProvUserJs(ctrl, { Renderer: this.Renderer, ctrlopts: ctrlopts });
         //$('#' + ctrl.EbSid_CtxId + '_usrimg').popover({
         //    trigger: 'hover',
         //    html: true,
@@ -1306,13 +1324,13 @@ var InitControls = function (option) {
     this.ProvisionLocation = function (ctrl, ctrlopts) {
         console.log('init ProvisionLocation');
 
-        $.each(ctrl.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
-                if (c)
-                    obj.Control = c;
-            }
-        }.bind(this));
+        //$.each(ctrl.Fields.$values, function (i, obj) {
+        //    if (obj.ControlName !== '') {
+        //        let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
+        //        if (c)
+        //            obj.Control = c;
+        //    }
+        //}.bind(this));
     };
 
     this.DisplayPicture = function (ctrl, ctrlopts) {
@@ -1358,7 +1376,12 @@ var InitControls = function (option) {
 
     this.TextBox = function (ctrl, ctrlopts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.TextMode === 0) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        ctrl.__EbAlert = this.Renderer.EbAlert;
+        if (ctrl.MaskPattern !== null && ctrl.MaskPattern !== "" && ctrl.TextMode == 0) {
+            $input.inputmask({ mask: ctrl.MaskPattern });
+        }
+        else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {
                 $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
             }
@@ -1420,14 +1443,31 @@ var InitControls = function (option) {
         if (ctrl.HideInputIcon)
             $input.siblings(".input-group-addon").hide();
 
-        $input.inputmask("currency", {
-            radixPoint: ".",
-            allowMinus: ctrl.AllowNegative,
-            groupSeparator: "",
-            digits: ctrl.DecimalPlaces,
-            prefix: '',
-            autoGroup: true
-        });
+
+
+        if (ctrl.InputMode == 1) {
+            $input.inputmask({
+                alias: "numeric",
+                _mask: function _mask(opts) {
+                    return ebcontext.user.Preference.CurrencyPattern;
+                },
+                groupSeparator: ebcontext.user.Preference.CurrencyGroupSeperator,
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
+                placeholder: "0",
+                digits: ebcontext.user.Preference.CurrencyDecimalDigits,
+                digitsOptional: !1
+            });
+        }
+        else {
+            $input.inputmask("currency", {
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
+                allowMinus: ctrl.AllowNegative,
+                groupSeparator: "",
+                digits: ctrl.DecimalPlaces,
+                prefix: '',
+                autoGroup: true
+            });
+        }
 
         $input.focus(function () { $(this).select(); });
 
@@ -1575,6 +1615,55 @@ var InitControls = function (option) {
         }
     };
 
+    this.DataLabel = function (ctrl) {
+        let Refid = ctrl.DataSourceId;
+        //this.GetFilterValuesForDataSource();
+        this.Rowdata = null;
+        //this.GetFilterValuesForDataSource();
+        $(`#${ctrl.EbSid}_icon i`).addClass("fa " + ctrl.Icon);
+        $(`#${ctrl.EbSid}_icon`).css("color", ctrl.IconColor);
+        if (ctrl.StaticLabelFont !== null)
+            GetFontCss(Label.StaticLabelFont, $(`#cont_${ctrl.EbSid} .eb-ctrl-label`));
+        if (ctrl.DynamicLabelFont !== null)
+            GetFontCss(ctrl.DynamicLabelFont, $(`#cont_${ctrl.EbSid} .data-dynamic-label`));
+        this.DataLabelRefresh(ctrl);
+    };
+
+    this.DataLabelRefresh = function (ctrl) {
+        this.filtervalues = [];
+        let ebDbType = 11;
+        let Refid = ctrl.DataSourceId;
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1));
+        this.filtervalues.push(new fltr_obj(ebDbType, "eb_currentuser_id", ebcontext.user.UserId));
+        this.filtervalues.push(new fltr_obj(ebDbType, "id", this.Renderer.rowId));
+        this.filtervalues.push(new fltr_obj(ebDbType, this.Renderer.FormObj.TableName + "_id", this.Renderer.rowId));
+
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetData4DashboardControl",
+            data: { DataSourceRefId: Refid, param: this.filtervalues },
+            async: false,
+            error: function (request, error) {
+                EbPopBox("show", {
+                    Message: "Failed to get data from DataSourse",
+                    ButtonStyle: {
+                        Text: "Ok",
+                        Color: "white",
+                        Background: "#508bf9",
+                        Callback: function () {
+                            //$(".dash-loader").hide();
+                        }
+                    }
+                });
+            },
+            success: function (resp) {
+                ctrl["Columns"] = JSON.parse(resp.columns);
+                this.Rowdata = resp.row;
+                $(`#cont_${ctrl.EbSid} .data-dynamic-label`).empty().append(this.Rowdata[ctrl.ValueMember.data]);
+                setTimeout(this.DataLabelRefresh.bind(this, ctrl), ctrl.RefreshTime > 1000 ? ctrl.RefreshTime : 3000);
+            }.bind(this)
+        });
+    }
     //this.BluePrint = function (ctrl, ctrlopts) {
     //    console.log("view mode bp");
     //    var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
@@ -1672,12 +1761,12 @@ var InitControls = function (option) {
     }
 
     this.TagInput = function (ctrl) {
-        var $ctrl = $("#" + ctrl.EbSid_CtxId +'_tagId');
-        if (ctrl.AutoSuggestion === true) {           
+        var $ctrl = $("#" + ctrl.EbSid_CtxId + '_tagId');
+        if (ctrl.AutoSuggestion === true) {
             var BloodhoundEngine = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.whitespace,
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
-                local: ctrl.Suggestions.$values                    
+                local: ctrl.Suggestions.$values
             });
             BloodhoundEngine.initialize();
             $ctrl.tagsinput({
@@ -1722,7 +1811,7 @@ var InitControls = function (option) {
     };
 
     this.SimpleFileUploader = function (ctrl) {
-        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
+        let fileType = this.getKeyByValue(EbEnums_w.FileClass, ctrl.FileType.toString());
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
             renderer: this.Renderer.rendererName,
@@ -1780,15 +1869,57 @@ var InitControls = function (option) {
             initialCountry: "auto",
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
+            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,
             dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px",
             utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
         });
+
+        if (ctrl.Sendotp) {
+            var btnHtml = `<div style="display: flex;"> <button type="button" id="${ctrl.EbSid}_sendOTP" class="ebbtn eb_btn-sm eb_btnblue pull-left" style="margin-top:10px;display:none" >Send OTP</button>
+                            <p id="${ctrl.EbSid}_OTPverified" style="font-size:14px;margin-top:10px;display:none">Verified <i style="font-size:16px;color:green" class="fa fa-check-circle"></i> </p></div>`;
+            $('#cont_' + ctrl.EbSid).append(btnHtml);
+            $(`#${ctrl.EbSid}_sendOTP`).off("click").on("click", this.SendOTP_modal.bind(this, ctrl));
+            var vtemp = JSON.parse(ctrl.DataVals.M);
+            if (vtemp.is_verified === 'true') {
+                $(`#${ctrl.EbSid}_OTPverified`).show();
+                $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum', vtemp.phone_no);
+            }
+            else {
+                $(`#${ctrl.EbSid}_sendOTP`).show();
+            }
+        }
+
         ctrl.getValueFromDOM = function (p1) {
-            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();           
-            return iti.getNumber();;
+            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();   
+
+            if (ctrl.DisableCountryCode) {
+                let num = $(`#${ctrl.EbSid}`).val();
+                if (ctrl.Sendotp) {
+                    checkNumChange(num);
+                }
+                return num;
+            }
+            else {
+                let num = iti.getNumber();
+                if (ctrl.Sendotp) {
+                    checkNumChange(num);
+                }
+                return num;
+            }
+
+            function checkNumChange(num) {
+                var vNum = $(`#${ctrl.EbSid}_OTPverified`).attr('varifiedNum');
+                if (num !== vNum) {
+                    $(`#${ctrl.EbSid}_sendOTP`).show();
+                    $(`#${ctrl.EbSid}_OTPverified`).hide();
+                    ctrl.DataVals.M = {};
+                }
+            }
+
         };
         ctrl.bindOnChange = function (p1) {
             $(phninput).on("change", p1);
@@ -1799,6 +1930,8 @@ var InitControls = function (option) {
         };
 
         $(`#${ctrl.EbSid}`).attr("maxlength", "18");
+
+
     };
 
     this.Contexmenu4SmsColumn = function (ctrl) {
@@ -1951,6 +2084,147 @@ var InitControls = function (option) {
         EbPopBox("show", { Message: "Message sent", Title: "Success" });
     };
 
+    //Send OTP...for phone,email control
+
+    this.SendOTP_modal = function (ctrl) {
+        $("#eb_common_loader").EbLoader("show");
+        $(`#${ctrl.EbSid}_otpModal`).remove();
+        var otpRecever = $(`#${ctrl.EbSid}`).val();
+        $.ajax({
+            url: "../WebForm/SendOTP_Contol",
+            data: { formRefid: this.Renderer.formRefId, ctrlId: ctrl.EbSid, sendOTPto: otpRecever },
+            cache: false,
+            type: "POST",
+            success: function (verifyKey) {
+                console.log(verifyKey);
+                var html = `<div id="${ctrl.EbSid}_otpModal" class="modal fade" role="dialog">
+                      <div class="modal-dialog modal-dialog-centered" style="margin-top:15%;width:30%;">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="text-align: center;">Please enter the OTP to verify your phone number</h4>
+                          </div>
+                          <div class="modal-body">
+                            <p style="text-align: center;">An OTP has been sent to ${otpRecever}</p>
+                            <div style="justify-content: center;display: flex;">
+                                <div id="phnOTPdivOuter" class="col-md-12">
+                                    <div id="phnOTPdivInner">
+                                        <input id="${ctrl.EbSid}_otpValue" class="phoneOTPinput" tabindex="1" type="text" maxlength="6" />
+                                    </div>
+                                <div style="text-align: center;margin-top: 20px;">
+                                    <span id="OTPtimer" style="font-weight:bold"></span>
+                                </div>
+                                </div>
+                            </div>
+                          </div>
+                           <div class="modal-footer">
+                                <div tabindex="2" id="${ctrl.EbSid}_verifyotp" verifyKey="${verifyKey}" class="ebbtn eb_btn-sm eb_btnblue pull-left">
+                                  Verify OTP
+                                </div>
+                                <div class="pull-right ">
+                                     <button class="btn-link" hidden id="${ctrl.EbSid}_resendOTP">Resend</button>
+                                </div>
+                         </div>
+                        </div>
+
+                      </div>
+                    </div>`;
+
+                // $("#"+this.Renderer.FormObj.EbSid).append(html);
+                $('body').append(html);
+                $(`#${ctrl.EbSid}_otpModal`).modal("show");
+                this.ShowOtpTimer(ctrl);
+                $(`#${ctrl.EbSid}_verifyotp`).on('click', this.VerifyOTP_control.bind(this, ctrl));
+                $(`#${ctrl.EbSid}_resendOTP`).on('click', this.ResendOTP_control.bind(this, ctrl));
+                $("#eb_common_loader").EbLoader("hide");
+
+
+            }.bind(this)
+        });
+    }
+
+    var resend_otp = false;
+
+    this.ShowOtpTimer = function (ctrl) {
+        resend_otp = false;
+        document.getElementById('OTPtimer').innerHTML = 03 + ":" + 00;
+        this.startTimer_otp(ctrl);
+    }.bind(this);
+
+    this.startTimer_otp = function (ctrl) {
+        if (resend_otp)
+            return;
+        var presentTime = document.getElementById('OTPtimer').innerHTML;
+        var timeArray = presentTime.split(/[:]+/);
+        var m = timeArray[0];
+        var s = this.checkSecond_otp((timeArray[1] - 1));
+        if (s == 59) { m = m - 1 }
+        if (m < 0) {
+            this.OtpTimeOut(ctrl);
+            return;
+        }
+        document.getElementById('OTPtimer').innerHTML =
+            m + ":" + s;
+        setTimeout(this.startTimer_otp, 1000);
+    }.bind(this);
+
+    this.OtpTimeOut = function (ctrl) {
+        EbMessage("show", { Background: "red", Message: "Time out" });
+        $(`#${ctrl.EbSid}_resendOTP`).show();
+    }.bind(this);
+
+    this.checkSecond_otp = function (sec) {
+        if (sec < 10 && sec >= 0) { sec = "0" + sec; } // add zero in front of numbers < 10
+        if (sec < 0) { sec = "59"; }
+        return sec;
+    }.bind(this);
+
+    this.VerifyOTP_control = function (ctrl) {
+
+        $("#eb_common_loader").EbLoader("show");
+        var otpval = $(`#${ctrl.EbSid}_otpValue`).val();
+        var tstamp = $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey');
+        $.ajax({
+            url: "../WebForm/VerifyOTP_control",
+            data: {
+                formRefid: this.Renderer.formRefId,
+                ctrlId: ctrl.EbSid,
+                otpValue: otpval,
+                tstamp: tstamp
+            },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                    ctrl.DataVals.M = JSON.stringify({ otp: otpval, timestamp: tstamp });
+                    $("#eb_common_loader").EbLoader("hide");
+                    $(`#${ctrl.EbSid}_sendOTP`).hide();
+                    $(`#${ctrl.EbSid}_OTPverified`).show();
+                    $(`#${ctrl.EbSid}_otpModal`).modal('hide');
+                }
+            }
+        });
+    }
+
+    this.ResendOTP_control = function (ctrl) {
+        $.ajax({
+            url: "../WebForm/ResendOTP_control",
+            data: {
+                formRefid: this.Renderer.formRefId,
+                ctrlId: ctrl.EbSid,
+                sendOTPto: $(`#${ctrl.EbSid}`).val(),
+                tstamp: $(`#${ctrl.EbSid}_verifyotp`).attr('verifyKey')
+            },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    this.ShowOtpTimer(ctrl);
+                }
+            }.bind(this)
+        });
+    }
     //phonecontrol ends 
 
     this.PdfControl = function (ctrl) {
@@ -2022,6 +2296,168 @@ var InitControls = function (option) {
         }
 
     }
+
+
+    this.QuestionnaireConfigurator = function (ctrl) {
+        debugger;
+        let Ques_Confi = {};
+        let que_SaveObj = [];
+       // let ext_props = { "required": false, "unique": false, "validator": [] };
+        let queSelCollection = {};
+
+        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0; position: fixed; width: 325px;'>
+	                            <div  id='queConf_PGrid_wrp'>
+	
+	                            </div>
+                        </div>`);
+
+        let $input = $("#" + ctrl.EbSid_CtxId);
+
+        var PGobj = new Eb_PropertyGrid({
+            id: "queConf_PGrid_wrp",
+            wc: ebcontext.user.wc,
+            // cid: this.cid,
+            $extCont: $(".queConf_PGrid"),
+            isDraggable: true,
+            root: 'webform'
+        });
+      //  PGobj.css("visibility", "hidden");
+
+       
+
+
+        if (this.Renderer.rendererName == "Bot") {
+            $input.selectpicker({
+                dropupAuto: false,
+            });
+        }
+        else {
+            $input.selectpicker({
+                //dropupAuto: false,
+                container: "body [eb-root-obj-container]:first",
+                virtualScroll: 100,
+                size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
+
+            });
+
+
+            let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+            ////show dropdown ,adjust scroll etc related
+            $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+                let $el = $(e.target);
+                let $DDbScont = $DD.closest(".bs-container");
+                $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+
+                if ($DDbScont.hasClass("dropup")) {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
+                }
+                else {
+                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
+                }
+
+                $DD.css("min-width", $el.closest(".ctrl-cover").css("width"));
+
+                if ($el.attr("is-scrollbind") !== 'true') {
+                    for (let i = 0; i < this.scrollableContSelectors.length; i++) {
+                        let contSelc = this.scrollableContSelectors[i];
+                        let $ctrlCont = this.isDGps ? $(`#td_${ctrl.EbSid_CtxId}`) : $('#cont_' + ctrl.EbSid_CtxId);
+                        $ctrlCont.parents(contSelc).scroll(function (event) {
+                            if ($el.closest(".dropdown.bootstrap-select").length === 1 && $el.closest(".dropdown.bootstrap-select").hasClass("open"))
+                                $el.siblings(".dropdown-toggle").trigger('click.bs.dropdown.data-api').focus();// triggers select-picker's event to hide dropdown
+                        }.bind(this));
+                    }
+                    $el.attr("is-scrollbind", 'true');
+                }
+            }.bind(this));
+
+
+        }
+        $(`#${ctrl.EbSid}_queBtn`).click(function () {
+
+            let QueIds = $('#' + ctrl.EbSid_CtxId).selectpicker('val');
+            QueIds.forEach(function (item, index) {////to add new item to collection and save object
+                if (!(item in queSelCollection)) {
+                    let ext_props = new EbObjects_w["Ques_ext_props"]("extProp" + Date.now());
+                    Ques_Confi = {};
+                    Ques_Confi.id = 0;
+                    Ques_Confi.ques_id = item;
+                    Ques_Confi.ext_props = ext_props;
+                    queSelCollection[`${item}`] = ext_props;
+                    que_SaveObj.push(Ques_Confi);
+                    $(`#${ctrl.EbSid}_queRender`).append(`<div class="queOuterDiv" id="EbQuestionnaire${item}" qid="${item}" style="border-style: dashed;padding:10px;margin:10px;">${(ctrl.QuestionBankCtlHtmlList[item])}</div>`);
+                    var control = ctrl.QuestionBankList[item];
+                    $('.queOuterDiv').off("click").on("click", CreatePG.bind(this, control));
+                }
+               
+              //  CreatePG(control);
+            });
+            arr2 = Object.keys(queSelCollection)
+            let removedElem = arr2.filter(x => !QueIds.includes(x));
+            if (removedElem.length > 0) {////to delete removed item from collection and save object
+                removedElem.forEach(function (item, index) {
+                    $(`#EbQuestionnaire${item}`).remove();
+                    let indx = que_SaveObj.findIndex(x => x.ques_id === item);
+                    if (indx>=0)
+                        que_SaveObj.splice(indx,1);
+                    delete queSelCollection[item];
+                });
+            }
+           
+
+        });
+       
+        var CreatePG = function (control,e) {
+            let qId = $(e.target).closest('.queOuterDiv').attr('qid');
+            console.log("CreatePG called for:" + control.Name);
+            let propObj = queSelCollection[`${qId}`];
+          //  this.$propGrid.css("visibility", "visible");
+            ////PGobj.setObject(control, AllMetas_w["EbQuestionnaireConfigurator"]);
+            PGobj.setObject(propObj, AllMetas_w["Ques_ext_props"]);////
+        };
+
+        ctrl.bindOnChange = function (p1) {
+
+           // alert("bind change");
+            debugger;
+            $(`#${ctrl.EbSid}_queBtn`).on("click", p1);
+        };
+        ctrl.getValueFromDOM = function (p1) {
+
+           // alert("value from dom");
+            //let val = $('#' + this.EbSid_CtxId).selectpicker('val');
+            //debugger
+            //return val.toString();
+            return JSON.stringify(que_SaveObj);
+        };
+
+        ctrl.setValue = function (p1) {
+            debugger;
+            var qArray = [];
+           // alert("setvalue");
+            if (p1 != null) {
+                qObj = JSON.parse(p1);
+                if (qObj.length > 0) {
+                    qObj.forEach(function (item) {
+                        item.id;
+                        qArray.push(item.ques_id);
+                        $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlHtmlList[item.ques_id]);
+                    });
+                }
+            }
+            $('#' + this.EbSid_CtxId).selectpicker('val', qArray);
+        };
+        ctrl.clear = function () {
+
+           // alert("clear");
+            if (ebcontext.renderContext === 'WebForm')
+                this.setValue(null);
+            else
+                this.setValue(-1);
+        };
+    };
+
 };
 
 
@@ -5282,7 +5718,7 @@ var EbServerEvents = function (options) {
     this.rTok = options.Rtoken || getrToken();
     this.ServerEventUrl = options.ServerEventUrl;
     this.Channels = options.Channels.join();
-    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();    
+    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
 
     this.onUploadSuccess = function (m, e) {
@@ -5305,20 +5741,20 @@ var EbServerEvents = function (options) {
             //    headers: { 'eb_sse_subid': sub.id }
             //});
         }
-        
+
     };
 
     this.onJoin = function (user) {
-     //   console.log("onJoin Welcome, " + user.displayName);
+        //   console.log("onJoin Welcome, " + user.displayName);
     };
 
     this.onLeave = function (user) {
-      //  console.log(user.displayName + " has left the building");
+        //  console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
         //if (console)
-      //  console.log("onHeartbeat", msg, e);
+        //  console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
@@ -5327,8 +5763,8 @@ var EbServerEvents = function (options) {
 
 
     this.mybroadcast = function (msg, e) {
-       //  console.log("mybroadcast", msg, e);
-      //  alert(213);
+        //  console.log("mybroadcast", msg, e);
+        //  alert(213);
     }
 
 
@@ -5338,7 +5774,7 @@ var EbServerEvents = function (options) {
     };
 
     this.onLogOutMsg = function (m, e) {
-      //  console.log(m);
+        //  console.log(m);
         location.href = "../Tenantuser/Logout";
         this.onLogOut(m, e);
     };
@@ -5351,7 +5787,7 @@ var EbServerEvents = function (options) {
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-       // console.log("stopped listening");
+        // console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
@@ -5363,7 +5799,7 @@ var EbServerEvents = function (options) {
         let pop = {
             Message: "Exported Successfully. Go to App Store to view the package :"
         };
-        self.EbPopBox("show", pop);      
+        self.EbPopBox("show", pop);
     }
 
     this.importApplication = function (m, e) {
@@ -5371,20 +5807,20 @@ var EbServerEvents = function (options) {
         let pop = {
             Message: "Application imported Successfully."
         };
-        self.EbPopBox("show", pop);      
+        self.EbPopBox("show", pop);
     }
 
-    this.userRoleChanged = function (m, e) {
-        alert("userRoleChanged");
-        console.log(m);
-        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
-        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
-       // $('#menu_refresh').click();
+    this.updateUserMenu = function (m, e) {
+        localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
+       localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+        // $('#menu_refresh').click();
     }
     this.userDisabled = function (m) {
-      
+
         var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
-                                    <div class="cw">
+                                    <div class="cw" style="align-items: center;">
+
+                                        <i class="fa fa-warning" style="font-size: 35px;color:red;padding: 10px;"></i>
                                         <div class="msgbdy">${m}</div>
                                         <div id="cntTimer">You will be logged out in <span id="counterSpn"></span> seconds</div>
                                     </div>
@@ -5402,6 +5838,11 @@ var EbServerEvents = function (options) {
         }, 1000);
     }
 
+    this.webFormEdit_EnableDisable = function (m, b) {
+        EbMessage("show", { Message: m, AutoHide: true, Background: 'blue' });
+        $(`.objectDashB-toolbar #webformedit`).attr("disabled", b);
+    }
+    
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
@@ -5410,7 +5851,7 @@ var EbServerEvents = function (options) {
 
     this.ES.addEventListener('error', function (e) {
         console.log("ERROR!", e);
-    }, false);    
+    }, false);
 
     this.sEvent.eventReceivers = { "document": document };
 
@@ -5448,10 +5889,11 @@ var EbServerEvents = function (options) {
             onNotification: this.onNotifyMsg.bind(this),
             exportApplication: this.exportApplication.bind(this),
             importApplication: this.importApplication.bind(this),
-            userRoleChanged: this.userRoleChanged.bind(this),
+            UpdateUserMenu: this.updateUserMenu.bind(this),
             userDisabled: this.userDisabled.bind(this),
+          //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
+          //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
 
-            mybroadcast: this.mybroadcast.bind(this)
         }
     });
 };
@@ -5651,6 +6093,13 @@ var order_obj = function (colu, dir) {
     this.Direction = dir;
 };
 
+//to restrict access to internal pages by a logged out user
+var reload_if_session_expired = function () {    
+    if (!getTok()) {
+        alert("Session expired!");
+        location.reload();
+    }
+};
 
 Array.prototype.contains = function (element) {
     for (var i = 0; i < this.length; i++) {
@@ -6022,11 +6471,13 @@ function gettypefromString(str) {
         return "5";
 }
 
-function JsonToEbControls(ctrlsContainer) {
+function JsonToEbControls(ctrlsContainer, type) {
     $.each(ctrlsContainer.Controls.$values, function (i, obj) {
         if (obj.IsContainer) {
-            JsonToEbControls(obj);
+            JsonToEbControls(obj, type);
         }
+        else if (type === 'webform')
+            ctrlsContainer.Controls.$values[i] = new ControlOps_w[obj.ObjType](obj);
         else
             ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
     });
@@ -6963,6 +7414,12 @@ function groupBy(arr, property) {
         return acc;
     }, {});
 }
+
+window.mobileAndTabletCheck = function () {
+    let check = false;
+    (function (a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true; })(navigator.userAgent || navigator.vendor || window.opera);
+    return check;
+};
 var DateFormatter; !function () { "use strict"; var e, t, a, r, n, o; n = 864e5, o = 3600, e = function (e, t) { return "string" == typeof e && "string" == typeof t && e.toLowerCase() === t.toLowerCase() }, t = function (e, a, r) { var n = r || "0", o = e.toString(); return o.length < a ? t(n + o, a) : o }, a = function (e) { var t, r; for (e = e || {}, t = 1; t < arguments.length; t++) if (r = arguments[t]) for (var n in r) r.hasOwnProperty(n) && ("object" == typeof r[n] ? a(e[n], r[n]) : e[n] = r[n]); return e }, r = { dateSettings: { days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], meridiem: ["AM", "PM"], ordinal: function (e) { var t = e % 10, a = { 1: "st", 2: "nd", 3: "rd" }; return 1 !== Math.floor(e % 100 / 10) && a[t] ? a[t] : "th" } }, separators: /[ \-+\/\.T:@]/g, validParts: /[dDjlNSwzWFmMntLoYyaABgGhHisueTIOPZcrU]/g, intParts: /[djwNzmnyYhHgGis]/g, tzParts: /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g, tzClip: /[^-+\dA-Z]/g }, DateFormatter = function (e) { var t = this, n = a(r, e); t.dateSettings = n.dateSettings, t.separators = n.separators, t.validParts = n.validParts, t.intParts = n.intParts, t.tzParts = n.tzParts, t.tzClip = n.tzClip }, DateFormatter.prototype = { constructor: DateFormatter, parseDate: function (t, a) { var r, n, o, i, s, d, u, l, f, c, m = this, h = !1, g = !1, p = m.dateSettings, y = { date: null, year: null, month: null, day: null, hour: 0, min: 0, sec: 0 }; if (!t) return void 0; if (t instanceof Date) return t; if ("number" == typeof t) return new Date(t); if ("U" === a) return o = parseInt(t), o ? new Date(1e3 * o) : t; if ("string" != typeof t) return ""; if (r = a.match(m.validParts), !r || 0 === r.length) throw new Error("Invalid date format definition."); for (n = t.replace(m.separators, "\x00").split("\x00"), o = 0; o < n.length; o++) switch (i = n[o], s = parseInt(i), r[o]) { case "y": case "Y": f = i.length, 2 === f ? y.year = parseInt((70 > s ? "20" : "19") + i) : 4 === f && (y.year = s), h = !0; break; case "m": case "n": case "M": case "F": isNaN(i) ? (d = p.monthsShort.indexOf(i), d > -1 && (y.month = d + 1), d = p.months.indexOf(i), d > -1 && (y.month = d + 1)) : s >= 1 && 12 >= s && (y.month = s), h = !0; break; case "d": case "j": s >= 1 && 31 >= s && (y.day = s), h = !0; break; case "g": case "h": u = r.indexOf("a") > -1 ? r.indexOf("a") : r.indexOf("A") > -1 ? r.indexOf("A") : -1, c = n[u], u > -1 ? (l = e(c, p.meridiem[0]) ? 0 : e(c, p.meridiem[1]) ? 12 : -1, s >= 1 && 12 >= s && l > -1 ? y.hour = s + l : s >= 0 && 23 >= s && (y.hour = s)) : s >= 0 && 23 >= s && (y.hour = s), g = !0; break; case "G": case "H": s >= 0 && 23 >= s && (y.hour = s), g = !0; break; case "i": s >= 0 && 59 >= s && (y.min = s), g = !0; break; case "s": s >= 0 && 59 >= s && (y.sec = s), g = !0 } if (h === !0 && y.year && y.month && y.day) y.date = new Date(y.year, y.month - 1, y.day, y.hour, y.min, y.sec, 0); else { if (g !== !0) return !1; y.date = new Date(0, 0, 0, y.hour, y.min, y.sec, 0) } return y.date }, guessDate: function (e, t) { if ("string" != typeof e) return e; var a, r, n, o, i = this, s = e.replace(i.separators, "\x00").split("\x00"), d = /^[djmn]/g, u = t.match(i.validParts), l = new Date, f = 0; if (!d.test(u[0])) return e; for (r = 0; r < s.length; r++) { switch (f = 2, n = s[r], o = parseInt(n.substr(0, 2)), r) { case 0: "m" === u[0] || "n" === u[0] ? l.setMonth(o - 1) : l.setDate(o); break; case 1: "m" === u[0] || "n" === u[0] ? l.setDate(o) : l.setMonth(o - 1); break; case 2: a = l.getFullYear(), n.length < 4 ? (l.setFullYear(parseInt(a.toString().substr(0, 4 - n.length) + n)), f = n.length) : (l.setFullYear = parseInt(n.substr(0, 4)), f = 4); break; case 3: l.setHours(o); break; case 4: l.setMinutes(o); break; case 5: l.setSeconds(o) } n.substr(f).length > 0 && s.splice(r + 1, 0, n.substr(f)) } return l }, parseFormat: function (e, a) { var r, i = this, s = i.dateSettings, d = /\\?(.?)/gi, u = function (e, t) { return r[e] ? r[e]() : t }; return r = { d: function () { return t(r.j(), 2) }, D: function () { return s.daysShort[r.w()] }, j: function () { return a.getDate() }, l: function () { return s.days[r.w()] }, N: function () { return r.w() || 7 }, w: function () { return a.getDay() }, z: function () { var e = new Date(r.Y(), r.n() - 1, r.j()), t = new Date(r.Y(), 0, 1); return Math.round((e - t) / n) }, W: function () { var e = new Date(r.Y(), r.n() - 1, r.j() - r.N() + 3), a = new Date(e.getFullYear(), 0, 4); return t(1 + Math.round((e - a) / n / 7), 2) }, F: function () { return s.months[a.getMonth()] }, m: function () { return t(r.n(), 2) }, M: function () { return s.monthsShort[a.getMonth()] }, n: function () { return a.getMonth() + 1 }, t: function () { return new Date(r.Y(), r.n(), 0).getDate() }, L: function () { var e = r.Y(); return e % 4 === 0 && e % 100 !== 0 || e % 400 === 0 ? 1 : 0 }, o: function () { var e = r.n(), t = r.W(), a = r.Y(); return a + (12 === e && 9 > t ? 1 : 1 === e && t > 9 ? -1 : 0) }, Y: function () { return a.getFullYear() }, y: function () { return r.Y().toString().slice(-2) }, a: function () { return r.A().toLowerCase() }, A: function () { var e = r.G() < 12 ? 0 : 1; return s.meridiem[e] }, B: function () { var e = a.getUTCHours() * o, r = 60 * a.getUTCMinutes(), n = a.getUTCSeconds(); return t(Math.floor((e + r + n + o) / 86.4) % 1e3, 3) }, g: function () { return r.G() % 12 || 12 }, G: function () { return a.getHours() }, h: function () { return t(r.g(), 2) }, H: function () { return t(r.G(), 2) }, i: function () { return t(a.getMinutes(), 2) }, s: function () { return t(a.getSeconds(), 2) }, u: function () { return t(1e3 * a.getMilliseconds(), 6) }, e: function () { var e = /\((.*)\)/.exec(String(a))[1]; return e || "Coordinated Universal Time" }, T: function () { var e = (String(a).match(i.tzParts) || [""]).pop().replace(i.tzClip, ""); return e || "UTC" }, I: function () { var e = new Date(r.Y(), 0), t = Date.UTC(r.Y(), 0), a = new Date(r.Y(), 6), n = Date.UTC(r.Y(), 6); return e - t !== a - n ? 1 : 0 }, O: function () { var e = a.getTimezoneOffset(), r = Math.abs(e); return (e > 0 ? "-" : "+") + t(100 * Math.floor(r / 60) + r % 60, 4) }, P: function () { var e = r.O(); return e.substr(0, 3) + ":" + e.substr(3, 2) }, Z: function () { return 60 * -a.getTimezoneOffset() }, c: function () { return "Y-m-d\\TH:i:sP".replace(d, u) }, r: function () { return "D, d M Y H:i:s O".replace(d, u) }, U: function () { return a.getTime() / 1e3 || 0 } }, u(e, e) }, formatDate: function (e, t) { var a, r, n, o, i, s = this, d = ""; if ("string" == typeof e && (e = s.parseDate(e, t), e === !1)) return !1; if (e instanceof Date) { for (n = t.length, a = 0; n > a; a++) i = t.charAt(a), "S" !== i && (o = s.parseFormat(i, e), a !== n - 1 && s.intParts.test(i) && "S" === t.charAt(a + 1) && (r = parseInt(o), o += s.dateSettings.ordinal(r)), d += o); return d } return "" } } }(), function (e) { "function" == typeof define && define.amd ? define(["jquery", "jquery-mousewheel"], e) : "object" == typeof exports ? module.exports = e : e(jQuery) }(function (e) {
     "use strict"; function t(e, t, a) { this.date = e, this.desc = t, this.style = a } var a = { i18n: { ar: { months: ["كانون الثاني", "شباط", "آذار", "نيسان", "مايو", "حزيران", "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول"], dayOfWeekShort: ["ن", "ث", "ع", "خ", "ج", "س", "ح"], dayOfWeek: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"] }, ro: { months: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"], dayOfWeekShort: ["Du", "Lu", "Ma", "Mi", "Jo", "Vi", "Sâ"], dayOfWeek: ["Duminică", "Luni", "Marţi", "Miercuri", "Joi", "Vineri", "Sâmbătă"] }, id: { months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], dayOfWeekShort: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"], dayOfWeek: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] }, is: { months: ["Janúar", "Febrúar", "Mars", "Apríl", "Maí", "Júní", "Júlí", "Ágúst", "September", "Október", "Nóvember", "Desember"], dayOfWeekShort: ["Sun", "Mán", "Þrið", "Mið", "Fim", "Fös", "Lau"], dayOfWeek: ["Sunnudagur", "Mánudagur", "Þriðjudagur", "Miðvikudagur", "Fimmtudagur", "Föstudagur", "Laugardagur"] }, bg: { months: ["Януари", "Февруари", "Март", "Април", "Май", "Юни", "Юли", "Август", "Септември", "Октомври", "Ноември", "Декември"], dayOfWeekShort: ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], dayOfWeek: ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"] }, fa: { months: ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"], dayOfWeekShort: ["یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"], dayOfWeek: ["یک‌شنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه", "یک‌شنبه"] }, ru: { months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"], dayOfWeekShort: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"], dayOfWeek: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"] }, uk: { months: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"], dayOfWeekShort: ["Ндл", "Пнд", "Втр", "Срд", "Чтв", "Птн", "Сбт"], dayOfWeek: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"] }, en: { months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], dayOfWeekShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] }, el: { months: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάιος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], dayOfWeekShort: ["Κυρ", "Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ"], dayOfWeek: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] }, de: { months: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], dayOfWeekShort: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"], dayOfWeek: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"] }, nl: { months: ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"], dayOfWeekShort: ["zo", "ma", "di", "wo", "do", "vr", "za"], dayOfWeek: ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"] }, tr: { months: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], dayOfWeekShort: ["Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cts"], dayOfWeek: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"] }, fr: { months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], dayOfWeekShort: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"], dayOfWeek: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"] }, es: { months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], dayOfWeekShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"], dayOfWeek: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"] }, th: { months: ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"], dayOfWeekShort: ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."], dayOfWeek: ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัส", "ศุกร์", "เสาร์", "อาทิตย์"] }, pl: { months: ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"], dayOfWeekShort: ["nd", "pn", "wt", "śr", "cz", "pt", "sb"], dayOfWeek: ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"] }, pt: { months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], dayOfWeekShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"], dayOfWeek: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] }, ch: { months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], dayOfWeekShort: ["日", "一", "二", "三", "四", "五", "六"] }, se: { months: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"] }, kr: { months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"], dayOfWeekShort: ["일", "월", "화", "수", "목", "금", "토"], dayOfWeek: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"] }, it: { months: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], dayOfWeekShort: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"], dayOfWeek: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] }, da: { months: ["January", "Februar", "Marts", "April", "Maj", "Juni", "July", "August", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"], dayOfWeek: ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"] }, no: { months: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], dayOfWeekShort: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"], dayOfWeek: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] }, ja: { months: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], dayOfWeekShort: ["日", "月", "火", "水", "木", "金", "土"], dayOfWeek: ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"] }, vi: { months: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"], dayOfWeekShort: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"], dayOfWeek: ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"] }, sl: { months: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"], dayOfWeek: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"] }, cs: { months: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], dayOfWeekShort: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"] }, hu: { months: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], dayOfWeekShort: ["Va", "Hé", "Ke", "Sze", "Cs", "Pé", "Szo"], dayOfWeek: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"] }, az: { months: ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"], dayOfWeekShort: ["B", "Be", "Ça", "Ç", "Ca", "C", "Ş"], dayOfWeek: ["Bazar", "Bazar ertəsi", "Çərşənbə axşamı", "Çərşənbə", "Cümə axşamı", "Cümə", "Şənbə"] }, bs: { months: ["Januar", "Februar", "Mart", "April", "Maj", "Jun", "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"], dayOfWeekShort: ["Ned", "Pon", "Uto", "Sri", "Čet", "Pet", "Sub"], dayOfWeek: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"] }, ca: { months: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], dayOfWeekShort: ["Dg", "Dl", "Dt", "Dc", "Dj", "Dv", "Ds"], dayOfWeek: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"] }, "en-GB": { months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], dayOfWeekShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] }, et: { months: ["Jaanuar", "Veebruar", "Märts", "Aprill", "Mai", "Juuni", "Juuli", "August", "September", "Oktoober", "November", "Detsember"], dayOfWeekShort: ["P", "E", "T", "K", "N", "R", "L"], dayOfWeek: ["Pühapäev", "Esmaspäev", "Teisipäev", "Kolmapäev", "Neljapäev", "Reede", "Laupäev"] }, eu: { months: ["Urtarrila", "Otsaila", "Martxoa", "Apirila", "Maiatza", "Ekaina", "Uztaila", "Abuztua", "Iraila", "Urria", "Azaroa", "Abendua"], dayOfWeekShort: ["Ig.", "Al.", "Ar.", "Az.", "Og.", "Or.", "La."], dayOfWeek: ["Igandea", "Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata"] }, fi: { months: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu", "Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], dayOfWeekShort: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"], dayOfWeek: ["sunnuntai", "maanantai", "tiistai", "keskiviikko", "torstai", "perjantai", "lauantai"] }, gl: { months: ["Xan", "Feb", "Maz", "Abr", "Mai", "Xun", "Xul", "Ago", "Set", "Out", "Nov", "Dec"], dayOfWeekShort: ["Dom", "Lun", "Mar", "Mer", "Xov", "Ven", "Sab"], dayOfWeek: ["Domingo", "Luns", "Martes", "Mércores", "Xoves", "Venres", "Sábado"] }, hr: { months: ["Siječanj", "Veljača", "Ožujak", "Travanj", "Svibanj", "Lipanj", "Srpanj", "Kolovoz", "Rujan", "Listopad", "Studeni", "Prosinac"], dayOfWeekShort: ["Ned", "Pon", "Uto", "Sri", "Čet", "Pet", "Sub"], dayOfWeek: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"] }, ko: { months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"], dayOfWeekShort: ["일", "월", "화", "수", "목", "금", "토"], dayOfWeek: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"] }, lt: { months: ["Sausio", "Vasario", "Kovo", "Balandžio", "Gegužės", "Birželio", "Liepos", "Rugpjūčio", "Rugsėjo", "Spalio", "Lapkričio", "Gruodžio"], dayOfWeekShort: ["Sek", "Pir", "Ant", "Tre", "Ket", "Pen", "Šeš"], dayOfWeek: ["Sekmadienis", "Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis"] }, lv: { months: ["Janvāris", "Februāris", "Marts", "Aprīlis ", "Maijs", "Jūnijs", "Jūlijs", "Augusts", "Septembris", "Oktobris", "Novembris", "Decembris"], dayOfWeekShort: ["Sv", "Pr", "Ot", "Tr", "Ct", "Pk", "St"], dayOfWeek: ["Svētdiena", "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena", "Piektdiena", "Sestdiena"] }, mk: { months: ["јануари", "февруари", "март", "април", "мај", "јуни", "јули", "август", "септември", "октомври", "ноември", "декември"], dayOfWeekShort: ["нед", "пон", "вто", "сре", "чет", "пет", "саб"], dayOfWeek: ["Недела", "Понеделник", "Вторник", "Среда", "Четврток", "Петок", "Сабота"] }, mn: { months: ["1-р сар", "2-р сар", "3-р сар", "4-р сар", "5-р сар", "6-р сар", "7-р сар", "8-р сар", "9-р сар", "10-р сар", "11-р сар", "12-р сар"], dayOfWeekShort: ["Дав", "Мяг", "Лха", "Пүр", "Бсн", "Бям", "Ням"], dayOfWeek: ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан", "Бямба", "Ням"] }, "pt-BR": { months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], dayOfWeekShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], dayOfWeek: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] }, sk: { months: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], dayOfWeekShort: ["Ne", "Po", "Ut", "St", "Št", "Pi", "So"], dayOfWeek: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"] }, sq: { months: ["Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor", "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"], dayOfWeekShort: ["Die", "Hën", "Mar", "Mër", "Enj", "Pre", "Shtu"], dayOfWeek: ["E Diel", "E Hënë", "E Martē", "E Mërkurë", "E Enjte", "E Premte", "E Shtunë"] }, "sr-YU": { months: ["Januar", "Februar", "Mart", "April", "Maj", "Jun", "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"], dayOfWeekShort: ["Ned", "Pon", "Uto", "Sre", "čet", "Pet", "Sub"], dayOfWeek: ["Nedelja", "Ponedeljak", "Utorak", "Sreda", "Četvrtak", "Petak", "Subota"] }, sr: { months: ["јануар", "фебруар", "март", "април", "мај", "јун", "јул", "август", "септембар", "октобар", "новембар", "децембар"], dayOfWeekShort: ["нед", "пон", "уто", "сре", "чет", "пет", "суб"], dayOfWeek: ["Недеља", "Понедељак", "Уторак", "Среда", "Четвртак", "Петак", "Субота"] }, sv: { months: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], dayOfWeekShort: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"], dayOfWeek: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"] }, "zh-TW": { months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], dayOfWeekShort: ["日", "一", "二", "三", "四", "五", "六"], dayOfWeek: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] }, zh: { months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], dayOfWeekShort: ["日", "一", "二", "三", "四", "五", "六"], dayOfWeek: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] }, he: { months: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], dayOfWeekShort: ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "שבת"], dayOfWeek: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת", "ראשון"] }, hy: { months: ["Հունվար", "Փետրվար", "Մարտ", "Ապրիլ", "Մայիս", "Հունիս", "Հուլիս", "Օգոստոս", "Սեպտեմբեր", "Հոկտեմբեր", "Նոյեմբեր", "Դեկտեմբեր"], dayOfWeekShort: ["Կի", "Երկ", "Երք", "Չոր", "Հնգ", "Ուրբ", "Շբթ"], dayOfWeek: ["Կիրակի", "Երկուշաբթի", "Երեքշաբթի", "Չորեքշաբթի", "Հինգշաբթի", "Ուրբաթ", "Շաբաթ"] }, kg: { months: ["Үчтүн айы", "Бирдин айы", "Жалган Куран", "Чын Куран", "Бугу", "Кулжа", "Теке", "Баш Оона", "Аяк Оона", "Тогуздун айы", "Жетинин айы", "Бештин айы"], dayOfWeekShort: ["Жек", "Дүй", "Шей", "Шар", "Бей", "Жум", "Ише"], dayOfWeek: ["Жекшемб", "Дүйшөмб", "Шейшемб", "Шаршемб", "Бейшемби", "Жума", "Ишенб"] }, rm: { months: ["Schaner", "Favrer", "Mars", "Avrigl", "Matg", "Zercladur", "Fanadur", "Avust", "Settember", "October", "November", "December"], dayOfWeekShort: ["Du", "Gli", "Ma", "Me", "Gie", "Ve", "So"], dayOfWeek: ["Dumengia", "Glindesdi", "Mardi", "Mesemna", "Gievgia", "Venderdi", "Sonda"] }, ka: { months: ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"], dayOfWeekShort: ["კვ", "ორშ", "სამშ", "ოთხ", "ხუთ", "პარ", "შაბ"], dayOfWeek: ["კვირა", "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი"] } }, value: "", rtl: !1, format: "Y/m/d H:i", formatTime: "H:i", formatDate: "Y/m/d", startDate: !1, step: 60, monthChangeSpinner: !0, closeOnDateSelect: !1, closeOnTimeSelect: !0, closeOnWithoutClick: !0, closeOnInputClick: !0, timepicker: !0, datepicker: !0, weeks: !1, defaultTime: !1, defaultDate: !1, minDate: !1, maxDate: !1, minTime: !1, maxTime: !1, disabledMinTime: !1, disabledMaxTime: !1, allowTimes: [], opened: !1, initTime: !0, inline: !1, theme: "", onSelectDate: function () { }, onSelectTime: function () { }, onChangeMonth: function () { }, onGetWeekOfYear: function () { }, onChangeYear: function () { }, onChangeDateTime: function () { }, onShow: function () { }, onClose: function () { }, onGenerate: function () { }, withoutCopyright: !0, inverseButton: !1, hours12: !1, next: "xdsoft_next", prev: "xdsoft_prev", dayOfWeekStart: 0, parentID: "body", timeHeightInTimePicker: 25, timepickerScrollbar: !0, todayButton: !0, prevButton: !0, nextButton: !0, defaultSelect: !0, scrollMonth: !0, scrollTime: !0, scrollInput: !0, lazyInit: !1, mask: !1, validateOnBlur: !0, allowBlank: !0, yearStart: 1950, yearEnd: 2050, monthStart: 0, monthEnd: 11, style: "", id: "", fixed: !1, roundTime: "round", className: "", weekends: [], highlightedDates: [], highlightedPeriods: [], allowDates: [], allowDateRe: null, disabledDates: [], disabledWeekDays: [], yearOffset: 0, beforeShowDay: null, enterLikeTab: !0, showApplyButton: !1 }, r = null, n = "en", o = "en", i = { meridiem: ["AM", "PM"] }, s = function () { var t = a.i18n[o], n = { days: t.dayOfWeek, daysShort: t.dayOfWeekShort, months: t.months, monthsShort: e.map(t.months, function (e) { return e.substring(0, 3) }) }; r = new DateFormatter({ dateSettings: e.extend({}, i, n) }) }; e.datetimepicker = { setLocale: function (e) { var t = a.i18n[e] ? e : n; o != t && (o = t, s()) }, setDateFormatter: function (e) { r = e }, RFC_2822: "D, d M Y H:i:s O", ATOM: "Y-m-dTH:i:sP", ISO_8601: "Y-m-dTH:i:sO", RFC_822: "D, d M y H:i:s O", RFC_850: "l, d-M-y H:i:s T", RFC_1036: "D, d M y H:i:s O", RFC_1123: "D, d M Y H:i:s O", RSS: "D, d M Y H:i:s O", W3C: "Y-m-dTH:i:sP" }, s(), window.getComputedStyle || (window.getComputedStyle = function (e) { return this.el = e, this.getPropertyValue = function (t) { var a = /(\-([a-z]){1})/g; return "float" === t && (t = "styleFloat"), a.test(t) && (t = t.replace(a, function (e, t, a) { return a.toUpperCase() })), e.currentStyle[t] || null }, this }), Array.prototype.indexOf || (Array.prototype.indexOf = function (e, t) { var a, r; for (a = t || 0, r = this.length; r > a; a += 1) if (this[a] === e) return a; return -1 }), Date.prototype.countDaysInMonth = function () { return new Date(this.getFullYear(), this.getMonth() + 1, 0).getDate() }, e.fn.xdsoftScroller = function (t) { return this.each(function () { var a, r, n, o, i, s = e(this), d = function (e) { var t, a = { x: 0, y: 0 }; return "touchstart" === e.type || "touchmove" === e.type || "touchend" === e.type || "touchcancel" === e.type ? (t = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0], a.x = t.clientX, a.y = t.clientY) : ("mousedown" === e.type || "mouseup" === e.type || "mousemove" === e.type || "mouseover" === e.type || "mouseout" === e.type || "mouseenter" === e.type || "mouseleave" === e.type) && (a.x = e.clientX, a.y = e.clientY), a }, u = 100, l = !1, f = 0, c = 0, m = 0, h = !1, g = 0, p = function () { }; return "hide" === t ? void s.find(".xdsoft_scrollbar").hide() : (e(this).hasClass("xdsoft_scroller_box") || (a = s.children().eq(0), r = s[0].clientHeight, n = a[0].offsetHeight, o = e('<div class="xdsoft_scrollbar"></div>'), i = e('<div class="xdsoft_scroller"></div>'), o.append(i), s.addClass("xdsoft_scroller_box").append(o), p = function (e) { var t = d(e).y - f + g; 0 > t && (t = 0), t + i[0].offsetHeight > m && (t = m - i[0].offsetHeight), s.trigger("scroll_element.xdsoft_scroller", [u ? t / u : 0]) }, i.on("touchstart.xdsoft_scroller mousedown.xdsoft_scroller", function (a) { r || s.trigger("resize_scroll.xdsoft_scroller", [t]), f = d(a).y, g = parseInt(i.css("margin-top"), 10), m = o[0].offsetHeight, "mousedown" === a.type || "touchstart" === a.type ? (document && e(document.body).addClass("xdsoft_noselect"), e([document.body, window]).on("touchend mouseup.xdsoft_scroller", function n() { e([document.body, window]).off("touchend mouseup.xdsoft_scroller", n).off("mousemove.xdsoft_scroller", p).removeClass("xdsoft_noselect") }), e(document.body).on("mousemove.xdsoft_scroller", p)) : (h = !0, a.stopPropagation(), a.preventDefault()) }).on("touchmove", function (e) { h && (e.preventDefault(), p(e)) }).on("touchend touchcancel", function () { h = !1, g = 0 }), s.on("scroll_element.xdsoft_scroller", function (e, t) { r || s.trigger("resize_scroll.xdsoft_scroller", [t, !0]), t = t > 1 ? 1 : 0 > t || isNaN(t) ? 0 : t, i.css("margin-top", u * t), setTimeout(function () { a.css("marginTop", -parseInt((a[0].offsetHeight - r) * t, 10)) }, 10) }).on("resize_scroll.xdsoft_scroller", function (e, t, d) { var l, f; r = s[0].clientHeight, n = a[0].offsetHeight, l = r / n, f = l * o[0].offsetHeight, l > 1 ? i.hide() : (i.show(), i.css("height", parseInt(f > 10 ? f : 10, 10)), u = o[0].offsetHeight - i[0].offsetHeight, d !== !0 && s.trigger("scroll_element.xdsoft_scroller", [t || Math.abs(parseInt(a.css("marginTop"), 10)) / (n - r)])) }), s.on("mousewheel", function (e) { var t = Math.abs(parseInt(a.css("marginTop"), 10)); return t -= 20 * e.deltaY, 0 > t && (t = 0), s.trigger("scroll_element.xdsoft_scroller", [t / (n - r)]), e.stopPropagation(), !1 }), s.on("touchstart", function (e) { l = d(e), c = Math.abs(parseInt(a.css("marginTop"), 10)) }), s.on("touchmove", function (e) { if (l) { e.preventDefault(); var t = d(e); s.trigger("scroll_element.xdsoft_scroller", [(c - (t.y - l.y)) / (n - r)]) } }), s.on("touchend touchcancel", function () { l = !1, c = 0 })), void s.trigger("resize_scroll.xdsoft_scroller", [t])) }) }, e.fn.datetimepicker = function (n, i) {
         var s, d, u = this, l = 48, f = 57, c = 96, m = 105, h = 17, g = 46, p = 13, y = 27, v = 8, b = 37, D = 38, k = 39, x = 40, T = 9, S = 116, w = 65, O = 67, M = 86, _ = 90, W = 89, F = !1, C = e.isPlainObject(n) || !n ? e.extend(!0, {}, a, n) : e.extend(!0, {}, a), P = 0, A = function (e) { e.on("open.xdsoft focusin.xdsoft mousedown.xdsoft touchstart", function t() { e.is(":disabled") || e.data("xdsoft_datetimepicker") || (clearTimeout(P), P = setTimeout(function () { e.data("xdsoft_datetimepicker") || s(e), e.off("open.xdsoft focusin.xdsoft mousedown.xdsoft touchstart", t).trigger("open.xdsoft") }, 100)) }) }; return s = function (a) {
@@ -7714,7 +8171,8 @@ const FormRenderCommon = function (options) {
             }
             else if (depCtrl.ObjType === "PowerSelect") {
                 if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
-                    depCtrl.initializer.reloadWithParams(curCtrl);
+                    if (depCtrl.initializer)
+                        depCtrl.initializer.reloadWithParams(curCtrl);
                 }
                 else {
                     curCtrl.__isInitiallyPopulating = false;
@@ -7792,7 +8250,8 @@ const FormRenderCommon = function (options) {
         $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
             try {
                 let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
-                depCtrl.__setSuggestionVals();
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView))))
+                    depCtrl.__setSuggestionVals();
             }
             catch (e) {
                 console.eb_log("eb error :");
@@ -7905,7 +8364,12 @@ const FormRenderCommon = function (options) {
 
     this.isSameValInUniqCtrl = function (ctrl) {
         let val = ctrl.getValueFromDOM();
-        return val === this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
+        if (typeof val === 'string')
+            val = val.trim().toLowerCase();
+        let initVal = this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
+        if (typeof initVal === 'string')
+            initVal = initVal.trim().toLowerCase(); 
+        return val === initVal;
     };
 
     // checks a control value is emptyString
@@ -7940,7 +8404,7 @@ const FormRenderCommon = function (options) {
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
                         head: "Required",
-                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='renderer.FRC.goToCtrlwithEbSid()'>"
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.FormCollection[0].FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
@@ -8219,7 +8683,7 @@ const FormRenderCommon = function (options) {
         //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
         //    EbMakeInvalid(ctrl,`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         //else
-        let contSel = '#td_' + ctrl.EbSid_CtxId;
+        let contSel = '#cont_' + ctrl.EbSid_CtxId;
         if (ctrl.IsDGCtrl)
             contSel = '#td_' + ctrl.EbSid_CtxId;
         EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);

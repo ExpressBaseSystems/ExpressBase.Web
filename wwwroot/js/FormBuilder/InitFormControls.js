@@ -2303,8 +2303,6 @@
         let Ques_Confi = {};
         let que_SaveObj = [];
        // let ext_props = { "required": false, "unique": false, "validator": [] };
-        let ext_props = new EbObjects_w["Ques_ext_props"];
-
         let queSelCollection = {};
 
         $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0; position: fixed; width: 325px;'>
@@ -2381,6 +2379,7 @@
             let QueIds = $('#' + ctrl.EbSid_CtxId).selectpicker('val');
             QueIds.forEach(function (item, index) {////to add new item to collection and save object
                 if (!(item in queSelCollection)) {
+                    let ext_props = new EbObjects_w["Ques_ext_props"]("extProp" + Date.now());
                     Ques_Confi = {};
                     Ques_Confi.id = 0;
                     Ques_Confi.ques_id = item;

@@ -759,7 +759,7 @@ namespace ExpressBase.Web.Controllers
 
         public string GetPushedDataInfo(string RefId, int RowId, int CurrentLoc)
         {
-            if (!this.HasPermission(RefId, OperationConstants.VIEW, CurrentLoc))
+            if (!this.HasPermission(RefId, OperationConstants.AUDIT_TRAIL, CurrentLoc))
                 return "Access Denied";
             GetPushedDataInfoResponse Resp = ServiceClient.Post<GetPushedDataInfoResponse>(new GetPushedDataInfoRequest { RefId = RefId, RowId = RowId });
             return Resp.Result;

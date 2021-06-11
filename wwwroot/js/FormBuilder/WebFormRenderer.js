@@ -1679,7 +1679,7 @@ const WebFormRender = function (option) {
 
             if (this.FormObj.DataPushers && this.FormObj.DataPushers.$values.length > 0) {
                 let aValidDP = this.FormObj.DataPushers.$values.find(e => e.$type.includes('EbFormDataPusher') || e.$type.includes('EbBatchFormDataPusher'));
-                if (aValidDP)
+                if (aValidDP && this.formPermissions[currentLoc].includes(5))
                     this.DataPushedPopover();
             }
 

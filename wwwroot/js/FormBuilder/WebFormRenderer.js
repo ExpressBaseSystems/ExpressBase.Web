@@ -1529,7 +1529,7 @@ const WebFormRender = function (option) {
         let contentFn = function (type) {
             let _html = '';
             if (type === 'loader') {
-                _html += `<div><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`;
+                _html += `<div style='color: #888;'><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`;
             }
             else if (type === 'init') {
                 if (contentHtml)
@@ -1539,7 +1539,7 @@ const WebFormRender = function (option) {
             }
             else if (type === 'error') {
                 _html += `<div><button class='btn' id='webformpusheddata_btn'><i class="fa fa-refresh"></i> Refresh</button><div style="color: #a88;">Error in loading!</div></div>`;
-            }            
+            }
             return _html;
         };
 
@@ -1596,13 +1596,18 @@ const WebFormRender = function (option) {
                 success: function (_resp) {
                     try {
                         let _respObj = JSON.parse(_resp);
-                        let html = '<div>'
-                        $.each(_respObj, function (k, v) {
-                            html += `<div style='padding: 2px 0px;'><a href='${v}' target='_blank'>${k}</a></div>`;
-                        });
-                        html += '</div>';
-                        $('#webformpusheddata-div').html(html);
-                        contentHtml = html;
+                        if ($.isEmptyObject(_respObj)) {
+                            contentHtml = '<div style="color: #888;">Nothing to Display</div>'
+                            $('#webformpusheddata-div').html(contentHtml);
+                        }
+                        else {
+                            contentHtml = '<div>'
+                            $.each(_respObj, function (k, v) {
+                                contentHtml += `<div style='padding: 2px 0px;'><a href='${v}' target='_blank'>${k}</a></div>`;
+                            });
+                            contentHtml += '</div>';
+                            $('#webformpusheddata-div').html(contentHtml);
+                        }
                     }
                     catch (e) {
                         $('#webformpusheddata-div').html(contentFn('error'));

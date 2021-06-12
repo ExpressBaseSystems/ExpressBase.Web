@@ -601,7 +601,7 @@
 
 
 .sub-controls-DD-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-    width: 205px;
+    width: 205px !important;
 }
 
 .pgCXEditor-Cont .OSE-DD-cont .btn {
@@ -756,7 +756,7 @@
     height: .5px !important;
 }
 
-.sub-controls-DD-cont .btn-group > .btn:first-child {
+.sub-controls-DD-cont .bootstrap-select > .btn {
     margin-left: 0;
     background-color: transparent;
     color: black;

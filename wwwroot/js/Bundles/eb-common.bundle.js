@@ -1,16 +1,17 @@
 !function (e, t) { "function" == typeof define && define.amd ? define(["exports"], t) : "object" == typeof exports && "string" != typeof exports.nodeName ? t(exports) : t(e.commonJsStrict = {}) }(this, function (e) { "function" != typeof Promise && function (e) { function t(e, t) { return function () { e.apply(t, arguments) } } function i(e) { if ("object" != typeof this) throw new TypeError("Promises must be constructed via new"); if ("function" != typeof e) throw new TypeError("not a function"); this._state = null, this._value = null, this._deferreds = [], s(e, t(o, this), t(r, this)) } function n(e) { var t = this; return null === this._state ? void this._deferreds.push(e) : void h(function () { var i = t._state ? e.onFulfilled : e.onRejected; if (null !== i) { var n; try { n = i(t._value) } catch (t) { return void e.reject(t) } e.resolve(n) } else (t._state ? e.resolve : e.reject)(t._value) }) } function o(e) { try { if (e === this) throw new TypeError("A promise cannot be resolved with itself."); if (e && ("object" == typeof e || "function" == typeof e)) { var i = e.then; if ("function" == typeof i) return void s(t(i, e), t(o, this), t(r, this)) } this._state = !0, this._value = e, a.call(this) } catch (e) { r.call(this, e) } } function r(e) { this._state = !1, this._value = e, a.call(this) } function a() { for (var e = 0, t = this._deferreds.length; t > e; e++)n.call(this, this._deferreds[e]); this._deferreds = null } function s(e, t, i) { var n = !1; try { e(function (e) { n || (n = !0, t(e)) }, function (e) { n || (n = !0, i(e)) }) } catch (e) { if (n) return; n = !0, i(e) } } var l = setTimeout, h = "function" == typeof setImmediate && setImmediate || function (e) { l(e, 1) }, u = Array.isArray || function (e) { return "[object Array]" === Object.prototype.toString.call(e) }; i.prototype.catch = function (e) { return this.then(null, e) }, i.prototype.then = function (e, t) { var o = this; return new i(function (i, r) { n.call(o, new function (e, t, i, n) { this.onFulfilled = "function" == typeof e ? e : null, this.onRejected = "function" == typeof t ? t : null, this.resolve = i, this.reject = n }(e, t, i, r)) }) }, i.all = function () { var e = Array.prototype.slice.call(1 === arguments.length && u(arguments[0]) ? arguments[0] : arguments); return new i(function (t, i) { function n(r, a) { try { if (a && ("object" == typeof a || "function" == typeof a)) { var s = a.then; if ("function" == typeof s) return void s.call(a, function (e) { n(r, e) }, i) } e[r] = a, 0 == --o && t(e) } catch (e) { i(e) } } if (0 === e.length) return t([]); for (var o = e.length, r = 0; r < e.length; r++)n(r, e[r]) }) }, i.resolve = function (e) { return e && "object" == typeof e && e.constructor === i ? e : new i(function (t) { t(e) }) }, i.reject = function (e) { return new i(function (t, i) { i(e) }) }, i.race = function (e) { return new i(function (t, i) { for (var n = 0, o = e.length; o > n; n++)e[n].then(t, i) }) }, i._setImmediateFn = function (e) { h = e }, "undefined" != typeof module && module.exports ? module.exports = i : e.Promise || (e.Promise = i) }(this), "function" != typeof window.CustomEvent && function () { function e(e, t) { t = t || { bubbles: !1, cancelable: !1, detail: void 0 }; var i = document.createEvent("CustomEvent"); return i.initCustomEvent(e, t.bubbles, t.cancelable, t.detail), i } e.prototype = window.Event.prototype, window.CustomEvent = e }(), HTMLCanvasElement.prototype.toBlob || Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", { value: function (e, t, i) { for (var n = atob(this.toDataURL(t, i).split(",")[1]), o = n.length, r = new Uint8Array(o), a = 0; a < o; a++)r[a] = n.charCodeAt(a); e(new Blob([r], { type: t || "image/png" })) } }); var t, i, n, o = ["Webkit", "Moz", "ms"], r = document.createElement("div").style, a = [1, 8, 3, 6], s = [2, 7, 4, 5]; function l(e) { if (e in r) return e; for (var t = e[0].toUpperCase() + e.slice(1), i = o.length; i--;)if ((e = o[i] + t) in r) return e } function h(e, t) { e = e || {}; for (var i in t) t[i] && t[i].constructor && t[i].constructor === Object ? (e[i] = e[i] || {}, h(e[i], t[i])) : e[i] = t[i]; return e } function u(e) { return h({}, e) } function c(e) { if ("createEvent" in document) { var t = document.createEvent("HTMLEvents"); t.initEvent("change", !1, !0), e.dispatchEvent(t) } else e.fireEvent("onchange") } function p(e, t, i) { if ("string" == typeof t) { var n = t; (t = {})[n] = i } for (var o in t) e.style[o] = t[o] } function d(e, t) { e.classList ? e.classList.add(t) : e.className += " " + t } function m(e, t) { for (var i in t) e.setAttribute(i, t[i]) } function f(e) { return parseInt(e, 10) } function v(e, t) { var i = e.naturalWidth, n = e.naturalHeight, o = t || b(e); if (o && o >= 5) { var r = i; i = n, n = r } return { width: i, height: n } } i = l("transform"), t = l("transformOrigin"), n = l("userSelect"); var g = { translate3d: { suffix: ", 0px" }, translate: { suffix: "" } }, w = function (e, t, i) { this.x = parseFloat(e), this.y = parseFloat(t), this.scale = parseFloat(i) }; w.parse = function (e) { return e.style ? w.parse(e.style[i]) : e.indexOf("matrix") > -1 || e.indexOf("none") > -1 ? w.fromMatrix(e) : w.fromString(e) }, w.fromMatrix = function (e) { var t = e.substring(7).split(","); return t.length && "none" !== e || (t = [1, 0, 0, 1, 0, 0]), new w(f(t[4]), f(t[5]), parseFloat(t[0])) }, w.fromString = function (e) { var t = e.split(") "), i = t[0].substring(q.globals.translate.length + 1).split(","), n = t.length > 1 ? t[1].substring(6) : 1, o = i.length > 1 ? i[0] : 0, r = i.length > 1 ? i[1] : 0; return new w(o, r, n) }, w.prototype.toString = function () { var e = g[q.globals.translate].suffix || ""; return q.globals.translate + "(" + this.x + "px, " + this.y + "px" + e + ") scale(" + this.scale + ")" }; var y = function (e) { if (!e || !e.style[t]) return this.x = 0, void (this.y = 0); var i = e.style[t].split(" "); this.x = parseFloat(i[0]), this.y = parseFloat(i[1]) }; function b(e) { return e.exifdata ? e.exifdata.Orientation : 1 } function x(e, t, i) { var n = t.width, o = t.height, r = e.getContext("2d"); switch (e.width = t.width, e.height = t.height, r.save(), i) { case 2: r.translate(n, 0), r.scale(-1, 1); break; case 3: r.translate(n, o), r.rotate(180 * Math.PI / 180); break; case 4: r.translate(0, o), r.scale(1, -1); break; case 5: e.width = o, e.height = n, r.rotate(90 * Math.PI / 180), r.scale(1, -1); break; case 6: e.width = o, e.height = n, r.rotate(90 * Math.PI / 180), r.translate(0, -o); break; case 7: e.width = o, e.height = n, r.rotate(-90 * Math.PI / 180), r.translate(-n, o), r.scale(1, -1); break; case 8: e.width = o, e.height = n, r.translate(0, n), r.rotate(-90 * Math.PI / 180) }r.drawImage(t, 0, 0, n, o), r.restore() } function C() { var e, t, o, r, a, s = this.options.viewport.type ? "cr-vp-" + this.options.viewport.type : null; this.options.useCanvas = this.options.enableOrientation || E.call(this), this.data = {}, this.elements = {}, e = this.elements.boundary = document.createElement("div"), t = this.elements.viewport = document.createElement("div"), this.elements.img = document.createElement("img"), o = this.elements.overlay = document.createElement("div"), this.options.useCanvas ? (this.elements.canvas = document.createElement("canvas"), this.elements.preview = this.elements.canvas) : this.elements.preview = this.elements.img, d(e, "cr-boundary"), e.setAttribute("aria-dropeffect", "none"), r = this.options.boundary.width, a = this.options.boundary.height, p(e, { width: r + (isNaN(r) ? "" : "px"), height: a + (isNaN(a) ? "" : "px") }), d(t, "cr-viewport"), s && d(t, s), p(t, { width: this.options.viewport.width + "px", height: this.options.viewport.height + "px" }), t.setAttribute("tabindex", 0), d(this.elements.preview, "cr-image"), m(this.elements.preview, { alt: "preview", "aria-grabbed": "false" }), d(o, "cr-overlay"), this.element.appendChild(e), e.appendChild(this.elements.preview), e.appendChild(t), e.appendChild(o), d(this.element, "croppie-container"), this.options.customClass && d(this.element, this.options.customClass), function () { var e, t, o, r, a, s = this, l = !1; function h(e, t) { var i = s.elements.preview.getBoundingClientRect(), n = a.y + t, o = a.x + e; s.options.enforceBoundary ? (r.top > i.top + t && r.bottom < i.bottom + t && (a.y = n), r.left > i.left + e && r.right < i.right + e && (a.x = o)) : (a.y = n, a.x = o) } function u(e) { s.elements.preview.setAttribute("aria-grabbed", e), s.elements.boundary.setAttribute("aria-dropeffect", e ? "move" : "none") } function d(i) { if ((void 0 === i.button || 0 === i.button) && (i.preventDefault(), !l)) { if (l = !0, e = i.pageX, t = i.pageY, i.touches) { var o = i.touches[0]; e = o.pageX, t = o.pageY } u(l), a = w.parse(s.elements.preview), window.addEventListener("mousemove", m), window.addEventListener("touchmove", m), window.addEventListener("mouseup", f), window.addEventListener("touchend", f), document.body.style[n] = "none", r = s.elements.viewport.getBoundingClientRect() } } function m(n) { n.preventDefault(); var r = n.pageX, l = n.pageY; if (n.touches) { var u = n.touches[0]; r = u.pageX, l = u.pageY } var d = r - e, m = l - t, f = {}; if ("touchmove" === n.type && n.touches.length > 1) { var v = n.touches[0], g = n.touches[1], w = Math.sqrt((v.pageX - g.pageX) * (v.pageX - g.pageX) + (v.pageY - g.pageY) * (v.pageY - g.pageY)); o || (o = w / s._currentZoom); var y = w / o; return L.call(s, y), void c(s.elements.zoomer) } h(d, m), f[i] = a.toString(), p(s.elements.preview, f), R.call(s), t = l, e = r } function f() { u(l = !1), window.removeEventListener("mousemove", m), window.removeEventListener("touchmove", m), window.removeEventListener("mouseup", f), window.removeEventListener("touchend", f), document.body.style[n] = "", B.call(s), Y.call(s), o = 0 } s.elements.overlay.addEventListener("mousedown", d), s.elements.viewport.addEventListener("keydown", function (e) { var t = 37, l = 38, u = 39, c = 40; if (!e.shiftKey || e.keyCode !== l && e.keyCode !== c) { if (s.options.enableKeyMovement && e.keyCode >= 37 && e.keyCode <= 40) { e.preventDefault(); var d = function (e) { switch (e) { case t: return [1, 0]; case l: return [0, 1]; case u: return [-1, 0]; case c: return [0, -1] } }(e.keyCode); a = w.parse(s.elements.preview), document.body.style[n] = "none", r = s.elements.viewport.getBoundingClientRect(), function (e) { var t = e[0], r = e[1], l = {}; h(t, r), l[i] = a.toString(), p(s.elements.preview, l), R.call(s), document.body.style[n] = "", B.call(s), Y.call(s), o = 0 }(d) } } else { var m = 0; m = e.keyCode === l ? parseFloat(s.elements.zoomer.value, 10) + parseFloat(s.elements.zoomer.step, 10) : parseFloat(s.elements.zoomer.value, 10) - parseFloat(s.elements.zoomer.step, 10), s.setZoom(m) } }), s.elements.overlay.addEventListener("touchstart", d) }.call(this), this.options.enableZoom && function () { var e = this, t = e.elements.zoomerWrap = document.createElement("div"), i = e.elements.zoomer = document.createElement("input"); function n() { _.call(e, { value: parseFloat(i.value), origin: new y(e.elements.preview), viewportRect: e.elements.viewport.getBoundingClientRect(), transform: w.parse(e.elements.preview) }) } function o(t) { var i, o; if ("ctrl" === e.options.mouseWheelZoom && !0 !== t.ctrlKey) return 0; i = t.wheelDelta ? t.wheelDelta / 1200 : t.deltaY ? t.deltaY / 1060 : t.detail ? t.detail / -60 : 0, o = e._currentZoom + i * e._currentZoom, t.preventDefault(), L.call(e, o), n.call(e) } d(t, "cr-slider-wrap"), d(i, "cr-slider"), i.type = "range", i.step = "0.0001", i.value = 1, i.style.display = e.options.showZoomer ? "" : "none", i.setAttribute("aria-label", "zoom"), e.element.appendChild(t), t.appendChild(i), e._currentZoom = 1, e.elements.zoomer.addEventListener("input", n), e.elements.zoomer.addEventListener("change", n), e.options.mouseWheelZoom && (e.elements.boundary.addEventListener("mousewheel", o), e.elements.boundary.addEventListener("DOMMouseScroll", o)) }.call(this), this.options.enableResize && function () { var e, t, i, o, r, a, s, l = this, h = document.createElement("div"), u = !1, c = 50; d(h, "cr-resizer"), p(h, { width: this.options.viewport.width + "px", height: this.options.viewport.height + "px" }), this.options.resizeControls.height && (d(a = document.createElement("div"), "cr-resizer-vertical"), h.appendChild(a)); this.options.resizeControls.width && (d(s = document.createElement("div"), "cr-resizer-horisontal"), h.appendChild(s)); function m(a) { if ((void 0 === a.button || 0 === a.button) && (a.preventDefault(), !u)) { var s = l.elements.overlay.getBoundingClientRect(); if (u = !0, t = a.pageX, i = a.pageY, e = -1 !== a.currentTarget.className.indexOf("vertical") ? "v" : "h", o = s.width, r = s.height, a.touches) { var h = a.touches[0]; t = h.pageX, i = h.pageY } window.addEventListener("mousemove", f), window.addEventListener("touchmove", f), window.addEventListener("mouseup", v), window.addEventListener("touchend", v), document.body.style[n] = "none" } } function f(n) { var a = n.pageX, s = n.pageY; if (n.preventDefault(), n.touches) { var u = n.touches[0]; a = u.pageX, s = u.pageY } var d = a - t, m = s - i, f = l.options.viewport.height + m, v = l.options.viewport.width + d; "v" === e && f >= c && f <= r ? (p(h, { height: f + "px" }), l.options.boundary.height += m, p(l.elements.boundary, { height: l.options.boundary.height + "px" }), l.options.viewport.height += m, p(l.elements.viewport, { height: l.options.viewport.height + "px" })) : "h" === e && v >= c && v <= o && (p(h, { width: v + "px" }), l.options.boundary.width += d, p(l.elements.boundary, { width: l.options.boundary.width + "px" }), l.options.viewport.width += d, p(l.elements.viewport, { width: l.options.viewport.width + "px" })), R.call(l), k.call(l), B.call(l), Y.call(l), i = s, t = a } function v() { u = !1, window.removeEventListener("mousemove", f), window.removeEventListener("touchmove", f), window.removeEventListener("mouseup", v), window.removeEventListener("touchend", v), document.body.style[n] = "" } a && (a.addEventListener("mousedown", m), a.addEventListener("touchstart", m)); s && (s.addEventListener("mousedown", m), s.addEventListener("touchstart", m)); this.elements.boundary.appendChild(h) }.call(this) } function E() { return this.options.enableExif && window.EXIF } function L(e) { if (this.options.enableZoom) { var t = this.elements.zoomer, i = j(e, 4); t.value = Math.max(t.min, Math.min(t.max, i)) } } function _(e) { var n = this, o = e ? e.transform : w.parse(n.elements.preview), r = e ? e.viewportRect : n.elements.viewport.getBoundingClientRect(), a = e ? e.origin : new y(n.elements.preview); function s() { var e = {}; e[i] = o.toString(), e[t] = a.toString(), p(n.elements.preview, e) } if (n._currentZoom = e ? e.value : n._currentZoom, o.scale = n._currentZoom, n.elements.zoomer.setAttribute("aria-valuenow", n._currentZoom), s(), n.options.enforceBoundary) { var l = function (e) { var t = this._currentZoom, i = e.width, n = e.height, o = this.elements.boundary.clientWidth / 2, r = this.elements.boundary.clientHeight / 2, a = this.elements.preview.getBoundingClientRect(), s = a.width, l = a.height, h = i / 2, u = n / 2, c = -1 * (h / t - o), p = -1 * (u / t - r), d = 1 / t * h, m = 1 / t * u; return { translate: { maxX: c, minX: c - (s * (1 / t) - i * (1 / t)), maxY: p, minY: p - (l * (1 / t) - n * (1 / t)) }, origin: { maxX: s * (1 / t) - d, minX: d, maxY: l * (1 / t) - m, minY: m } } }.call(n, r), h = l.translate, u = l.origin; o.x >= h.maxX && (a.x = u.minX, o.x = h.maxX), o.x <= h.minX && (a.x = u.maxX, o.x = h.minX), o.y >= h.maxY && (a.y = u.minY, o.y = h.maxY), o.y <= h.minY && (a.y = u.maxY, o.y = h.minY) } s(), X.call(n), Y.call(n) } function B() { var e = this._currentZoom, n = this.elements.preview.getBoundingClientRect(), o = this.elements.viewport.getBoundingClientRect(), r = w.parse(this.elements.preview.style[i]), a = new y(this.elements.preview), s = o.top - n.top + o.height / 2, l = o.left - n.left + o.width / 2, h = {}, u = {}; h.y = s / e, h.x = l / e, u.y = (h.y - a.y) * (1 - e), u.x = (h.x - a.x) * (1 - e), r.x -= u.x, r.y -= u.y; var c = {}; c[t] = h.x + "px " + h.y + "px", c[i] = r.toString(), p(this.elements.preview, c) } function R() { if (this.elements) { var e = this.elements.boundary.getBoundingClientRect(), t = this.elements.preview.getBoundingClientRect(); p(this.elements.overlay, { width: t.width + "px", height: t.height + "px", top: t.top - e.top + "px", left: t.left - e.left + "px" }) } } y.prototype.toString = function () { return this.x + "px " + this.y + "px" }; var Z, z, M, I, X = (Z = R, z = 500, function () { var e = this, t = arguments, i = M && !I; clearTimeout(I), I = setTimeout(function () { I = null, M || Z.apply(e, t) }, z), i && Z.apply(e, t) }); function Y() { var e, t = this.get(); F.call(this) && (this.options.update.call(this, t), this.$ && "undefined" == typeof Prototype ? this.$(this.element).trigger("update.croppie", t) : (window.CustomEvent ? e = new CustomEvent("update", { detail: t }) : (e = document.createEvent("CustomEvent")).initCustomEvent("update", !0, !0, t), this.element.dispatchEvent(e))) } function F() { return this.elements.preview.offsetHeight > 0 && this.elements.preview.offsetWidth > 0 } function W() { var e, n = {}, o = this.elements.preview, r = new w(0, 0, 1), a = new y; F.call(this) && !this.data.bound && (this.data.bound = !0, n[i] = r.toString(), n[t] = a.toString(), n.opacity = 1, p(o, n), e = this.elements.preview.getBoundingClientRect(), this._originalImageWidth = e.width, this._originalImageHeight = e.height, this.data.orientation = b(this.elements.img), this.options.enableZoom ? k.call(this, !0) : this._currentZoom = 1, r.scale = this._currentZoom, n[i] = r.toString(), p(o, n), this.data.points.length ? function (e) { if (4 !== e.length) throw "Croppie - Invalid number of points supplied: " + e; var n = e[2] - e[0], o = this.elements.viewport.getBoundingClientRect(), r = this.elements.boundary.getBoundingClientRect(), a = { left: o.left - r.left, top: o.top - r.top }, s = o.width / n, l = e[1], h = e[0], u = -1 * e[1] + a.top, c = -1 * e[0] + a.left, d = {}; d[t] = h + "px " + l + "px", d[i] = new w(c, u, s).toString(), p(this.elements.preview, d), L.call(this, s), this._currentZoom = s }.call(this, this.data.points) : function () { var e = this.elements.preview.getBoundingClientRect(), t = this.elements.viewport.getBoundingClientRect(), n = this.elements.boundary.getBoundingClientRect(), o = t.left - n.left, r = t.top - n.top, a = o - (e.width - t.width) / 2, s = r - (e.height - t.height) / 2, l = new w(a, s, this._currentZoom); p(this.elements.preview, i, l.toString()) }.call(this), B.call(this), R.call(this)) } function k(e) { var t, i, n, o, r = 0, a = this.options.maxZoom || 1.5, s = this.elements.zoomer, l = parseFloat(s.value), h = this.elements.boundary.getBoundingClientRect(), u = v(this.elements.img, this.data.orientation), p = this.elements.viewport.getBoundingClientRect(); this.options.enforceBoundary && (n = p.width / u.width, o = p.height / u.height, r = Math.max(n, o)), r >= a && (a = r + 1), s.min = j(r, 4), s.max = j(a, 4), !e && (l < s.min || l > s.max) ? L.call(this, l < s.min ? s.min : s.max) : e && (i = Math.max(h.width / u.width, h.height / u.height), t = null !== this.data.boundZoom ? this.data.boundZoom : i, L.call(this, t)), c(s) } function A(e) { var t = e.points, i = f(t[0]), n = f(t[1]), o = f(t[2]) - i, r = f(t[3]) - n, a = e.circle, s = document.createElement("canvas"), l = s.getContext("2d"), h = e.outputWidth || o, u = e.outputHeight || r; e.outputWidth && e.outputHeight; return s.width = h, s.height = u, e.backgroundColor && (l.fillStyle = e.backgroundColor, l.fillRect(0, 0, h, u)), !1 !== this.options.enforceBoundary && (o = Math.min(o, this._originalImageWidth), r = Math.min(r, this._originalImageHeight)), l.drawImage(this.elements.preview, i, n, o, r, 0, 0, h, u), a && (l.fillStyle = "#fff", l.globalCompositeOperation = "destination-in", l.beginPath(), l.arc(s.width / 2, s.height / 2, s.width / 2, 0, 2 * Math.PI, !0), l.closePath(), l.fill()), s } function O(e, t) { var i, n, o, r, a = this, s = [], l = null, h = E.call(a); if ("string" == typeof e) i = e, e = {}; else if (Array.isArray(e)) s = e.slice(); else { if (void 0 === e && a.data.url) return W.call(a), Y.call(a), null; i = e.url, s = e.points || [], l = void 0 === e.zoom ? null : e.zoom } return a.data.bound = !1, a.data.url = i || a.data.url, a.data.boundZoom = l, (n = i, o = h, r = new Image, r.style.opacity = 0, new Promise(function (e) { function t() { r.style.opacity = 1, setTimeout(function () { e(r) }, 1) } r.removeAttribute("crossOrigin"), n.match(/^https?:\/\/|^\/\//) && r.setAttribute("crossOrigin", "anonymous"), r.onload = function () { o ? EXIF.getData(r, function () { t() }) : t() }, r.src = n })).then(function (i) { if (function (e) { this.elements.img.parentNode && (Array.prototype.forEach.call(this.elements.img.classList, function (t) { e.classList.add(t) }), this.elements.img.parentNode.replaceChild(e, this.elements.img), this.elements.preview = e), this.elements.img = e }.call(a, i), s.length) a.options.relative && (s = [s[0] * i.naturalWidth / 100, s[1] * i.naturalHeight / 100, s[2] * i.naturalWidth / 100, s[3] * i.naturalHeight / 100]); else { var n, o, r = v(i), l = a.elements.viewport.getBoundingClientRect(), h = l.width / l.height; r.width / r.height > h ? n = (o = r.height) * h : (n = r.width, o = r.height / h); var u = (r.width - n) / 2, c = (r.height - o) / 2, p = u + n, d = c + o; a.data.points = [u, c, p, d] } a.data.points = s.map(function (e) { return parseFloat(e) }), a.options.useCanvas && function (e) { var t = this.elements.canvas, i = this.elements.img, n = t.getContext("2d"), o = E.call(this); e = this.options.enableOrientation && e, n.clearRect(0, 0, t.width, t.height), t.width = i.width, t.height = i.height, o && !e ? x(t, i, f(b(i) || 0)) : e && x(t, i, e) }.call(a, e.orientation || 1), W.call(a), Y.call(a), t && t() }).catch(function (e) { console.error("Croppie:" + e) }) } function j(e, t) { return parseFloat(e).toFixed(t || 0) } function H() { var e = this.elements.preview.getBoundingClientRect(), t = this.elements.viewport.getBoundingClientRect(), i = t.left - e.left, n = t.top - e.top, o = (t.width - this.elements.viewport.offsetWidth) / 2, r = (t.height - this.elements.viewport.offsetHeight) / 2, a = i + this.elements.viewport.offsetWidth + o, s = n + this.elements.viewport.offsetHeight + r, l = this._currentZoom; (l === 1 / 0 || isNaN(l)) && (l = 1); var h = this.options.enforceBoundary ? 0 : Number.NEGATIVE_INFINITY; return i = Math.max(h, i / l), n = Math.max(h, n / l), a = Math.max(h, a / l), s = Math.max(h, s / l), { points: [j(i), j(n), j(a), j(s)], zoom: l, orientation: this.data.orientation } } var N = { type: "canvas", format: "png", quality: 1 }, S = ["jpeg", "webp", "png"]; function P(e) { var t = this, i = H.call(t), n = h(u(N), u(e)), o = "string" == typeof e ? e : n.type || "base64", r = n.size || "viewport", a = n.format, s = n.quality, l = n.backgroundColor, c = "boolean" == typeof n.circle ? n.circle : "circle" === t.options.viewport.type, m = t.elements.viewport.getBoundingClientRect(), f = m.width / m.height; return "viewport" === r ? (i.outputWidth = m.width, i.outputHeight = m.height) : "object" == typeof r && (r.width && r.height ? (i.outputWidth = r.width, i.outputHeight = r.height) : r.width ? (i.outputWidth = r.width, i.outputHeight = r.width / f) : r.height && (i.outputWidth = r.height * f, i.outputHeight = r.height)), S.indexOf(a) > -1 && (i.format = "image/" + a, i.quality = s), i.circle = c, i.url = t.data.url, i.backgroundColor = l, new Promise(function (e, n) { switch (o.toLowerCase()) { case "rawcanvas": e(A.call(t, i)); break; case "canvas": case "base64": e(function (e) { return A.call(this, e).toDataURL(e.format, e.quality) }.call(t, i)); break; case "blob": (function (e) { var t = this; return new Promise(function (i, n) { A.call(t, e).toBlob(function (e) { i(e) }, e.format, e.quality) }) }).call(t, i).then(e); break; default: e(function (e) { var t = e.points, i = document.createElement("div"), n = document.createElement("img"), o = t[2] - t[0], r = t[3] - t[1]; return d(i, "croppie-result"), i.appendChild(n), p(n, { left: -1 * t[0] + "px", top: -1 * t[1] + "px" }), n.src = e.url, p(i, { width: o + "px", height: r + "px" }), i }.call(t, i)) } }) } function D(e) { if (!this.options.useCanvas || !this.options.enableOrientation) throw "Croppie: Cannot rotate without enableOrientation && EXIF.js included"; var t, i, n, o, r, l = this.elements.canvas; this.data.orientation = (t = this.data.orientation, i = e, n = a.indexOf(t) > -1 ? a : s, o = n.indexOf(t), r = i / 90 % n.length, n[(n.length + o + r % n.length) % n.length]), x(l, this.elements.img, this.data.orientation), k.call(this), _.call(this), copy = null } if (window.jQuery) { var T = window.jQuery; T.fn.croppie = function (e) { if ("string" === typeof e) { var t = Array.prototype.slice.call(arguments, 1), i = T(this).data("croppie"); return "get" === e ? i.get() : "result" === e ? i.result.apply(i, t) : "bind" === e ? i.bind.apply(i, t) : this.each(function () { var i = T(this).data("croppie"); if (i) { var n = i[e]; if (!T.isFunction(n)) throw "Croppie " + e + " method not found"; n.apply(i, t), "destroy" === e && T(this).removeData("croppie") } }) } return this.each(function () { var t = new q(this, e); t.$ = T, T(this).data("croppie", t) }) } } function q(e, t) { if (e.className.indexOf("croppie-container") > -1) throw new Error("Croppie: Can't initialize croppie more than once"); if (this.element = e, this.options = h(u(q.defaults), t), "img" === this.element.tagName.toLowerCase()) { var i = this.element; d(i, "cr-original-image"), m(i, { "aria-hidden": "true", alt: "" }); var n = document.createElement("div"); this.element.parentNode.appendChild(n), n.appendChild(i), this.element = n, this.options.url = this.options.url || i.src } if (C.call(this), this.options.url) { var o = { url: this.options.url, points: this.options.points }; delete this.options.url, delete this.options.points, O.call(this, o) } } q.defaults = { viewport: { width: 100, height: 100, type: "square" }, boundary: {}, orientationControls: { enabled: !0, leftClass: "", rightClass: "" }, resizeControls: { width: !0, height: !0 }, customClass: "", showZoomer: !0, enableZoom: !0, enableResize: !1, mouseWheelZoom: !0, enableExif: !1, enforceBoundary: !0, enableOrientation: !1, enableKeyMovement: !0, update: function () { } }, q.globals = { translate: "translate3d" }, h(q.prototype, { bind: function (e, t) { return O.call(this, e, t) }, get: function () { var e = H.call(this), t = e.points; return this.options.relative && (t[0] /= this.elements.img.naturalWidth / 100, t[1] /= this.elements.img.naturalHeight / 100, t[2] /= this.elements.img.naturalWidth / 100, t[3] /= this.elements.img.naturalHeight / 100), e }, result: function (e) { return P.call(this, e) }, refresh: function () { return function () { W.call(this) }.call(this) }, setZoom: function (e) { L.call(this, e), c(this.elements.zoomer) }, rotate: function (e) { D.call(this, e) }, destroy: function () { return function () { var e, t; this.element.removeChild(this.elements.boundary), e = this.element, t = "croppie-container", e.classList ? e.classList.remove(t) : e.className = e.className.replace(t, ""), this.options.enableZoom && this.element.removeChild(this.elements.zoomerWrap), delete this.elements }.call(this) } }), e.Croppie = window.Croppie = q });
 /* store.js - Copyright (c) 2010-2017 Marcus Westin */
 !function (e) { if ("object" == typeof exports && "undefined" != typeof module) module.exports = e(); else if ("function" == typeof define && define.amd) define([], e); else { var t; t = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : this, t.store = e() } }(function () { var define, module, exports; return function e(t, r, n) { function o(u, a) { if (!r[u]) { if (!t[u]) { var s = "function" == typeof require && require; if (!a && s) return s(u, !0); if (i) return i(u, !0); var c = new Error("Cannot find module '" + u + "'"); throw c.code = "MODULE_NOT_FOUND", c } var f = r[u] = { exports: {} }; t[u][0].call(f.exports, function (e) { var r = t[u][1][e]; return o(r ? r : e) }, f, f.exports, e, t, r, n) } return r[u].exports } for (var i = "function" == typeof require && require, u = 0; u < n.length; u++)o(n[u]); return o }({ 1: [function (e, t, r) { "use strict"; var n = e("../src/store-engine"), o = e("../storages/all"), i = [e("../plugins/json2")]; t.exports = n.createStore(o, i) }, { "../plugins/json2": 2, "../src/store-engine": 4, "../storages/all": 6 }], 2: [function (e, t, r) { "use strict"; function n() { return e("./lib/json2"), {} } t.exports = n }, { "./lib/json2": 3 }], 3: [function (require, module, exports) { "use strict"; var _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) { return typeof e } : function (e) { return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e }; "object" !== ("undefined" == typeof JSON ? "undefined" : _typeof(JSON)) && (JSON = {}), function () { function f(e) { return e < 10 ? "0" + e : e } function this_value() { return this.valueOf() } function quote(e) { return rx_escapable.lastIndex = 0, rx_escapable.test(e) ? '"' + e.replace(rx_escapable, function (e) { var t = meta[e]; return "string" == typeof t ? t : "\\u" + ("0000" + e.charCodeAt(0).toString(16)).slice(-4) }) + '"' : '"' + e + '"' } function str(e, t) { var r, n, o, i, u, a = gap, s = t[e]; switch (s && "object" === ("undefined" == typeof s ? "undefined" : _typeof(s)) && "function" == typeof s.toJSON && (s = s.toJSON(e)), "function" == typeof rep && (s = rep.call(t, e, s)), "undefined" == typeof s ? "undefined" : _typeof(s)) { case "string": return quote(s); case "number": return isFinite(s) ? String(s) : "null"; case "boolean": case "null": return String(s); case "object": if (!s) return "null"; if (gap += indent, u = [], "[object Array]" === Object.prototype.toString.apply(s)) { for (i = s.length, r = 0; r < i; r += 1)u[r] = str(r, s) || "null"; return o = 0 === u.length ? "[]" : gap ? "[\n" + gap + u.join(",\n" + gap) + "\n" + a + "]" : "[" + u.join(",") + "]", gap = a, o } if (rep && "object" === ("undefined" == typeof rep ? "undefined" : _typeof(rep))) for (i = rep.length, r = 0; r < i; r += 1)"string" == typeof rep[r] && (n = rep[r], o = str(n, s), o && u.push(quote(n) + (gap ? ": " : ":") + o)); else for (n in s) Object.prototype.hasOwnProperty.call(s, n) && (o = str(n, s), o && u.push(quote(n) + (gap ? ": " : ":") + o)); return o = 0 === u.length ? "{}" : gap ? "{\n" + gap + u.join(",\n" + gap) + "\n" + a + "}" : "{" + u.join(",") + "}", gap = a, o } } var rx_one = /^[\],:{}\s]*$/, rx_two = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, rx_three = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, rx_four = /(?:^|:|,)(?:\s*\[)+/g, rx_escapable = /[\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, rx_dangerous = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g; "function" != typeof Date.prototype.toJSON && (Date.prototype.toJSON = function () { return isFinite(this.valueOf()) ? this.getUTCFullYear() + "-" + f(this.getUTCMonth() + 1) + "-" + f(this.getUTCDate()) + "T" + f(this.getUTCHours()) + ":" + f(this.getUTCMinutes()) + ":" + f(this.getUTCSeconds()) + "Z" : null }, Boolean.prototype.toJSON = this_value, Number.prototype.toJSON = this_value, String.prototype.toJSON = this_value); var gap, indent, meta, rep; "function" != typeof JSON.stringify && (meta = { "\b": "\\b", "\t": "\\t", "\n": "\\n", "\f": "\\f", "\r": "\\r", '"': '\\"', "\\": "\\\\" }, JSON.stringify = function (e, t, r) { var n; if (gap = "", indent = "", "number" == typeof r) for (n = 0; n < r; n += 1)indent += " "; else "string" == typeof r && (indent = r); if (rep = t, t && "function" != typeof t && ("object" !== ("undefined" == typeof t ? "undefined" : _typeof(t)) || "number" != typeof t.length)) throw new Error("JSON.stringify"); return str("", { "": e }) }), "function" != typeof JSON.parse && (JSON.parse = function (text, reviver) { function walk(e, t) { var r, n, o = e[t]; if (o && "object" === ("undefined" == typeof o ? "undefined" : _typeof(o))) for (r in o) Object.prototype.hasOwnProperty.call(o, r) && (n = walk(o, r), void 0 !== n ? o[r] = n : delete o[r]); return reviver.call(e, t, o) } var j; if (text = String(text), rx_dangerous.lastIndex = 0, rx_dangerous.test(text) && (text = text.replace(rx_dangerous, function (e) { return "\\u" + ("0000" + e.charCodeAt(0).toString(16)).slice(-4) })), rx_one.test(text.replace(rx_two, "@").replace(rx_three, "]").replace(rx_four, ""))) return j = eval("(" + text + ")"), "function" == typeof reviver ? walk({ "": j }, "") : j; throw new SyntaxError("JSON.parse") }) }() }, {}], 4: [function (e, t, r) { "use strict"; function n(e, t) { var r = { _seenPlugins: [], _namespacePrefix: "", _namespaceRegexp: null, _legalNamespace: /^[a-zA-Z0-9_\-]+$/, _storage: function () { if (!this.enabled) throw new Error("store.js: No supported storage has been added! Add one (e.g store.addStorage(require('store/storages/cookieStorage')) or use a build with more built-in storages (e.g https://github.com/marcuswestin/store.js/tree/master/dist/store.legacy.min.js)"); return this._storage.resolved }, _testStorage: function (e) { try { var t = "__storejs__test__"; e.write(t, t); var r = e.read(t) === t; return e.remove(t), r } catch (n) { return !1 } }, _assignPluginFnProp: function (e, t) { var r = this[t]; this[t] = function () { function t() { if (r) { var e = r.apply(o, t.args); return delete t.args, e } } var n = Array.prototype.slice.call(arguments, 0), o = this, i = [t].concat(n); return t.args = n, e.apply(o, i) } }, _serialize: function (e) { return JSON.stringify(e) }, _deserialize: function (e, t) { if (!e) return t; var r = ""; try { r = JSON.parse(e) } catch (n) { r = e } return void 0 !== r ? r : t } }, n = a(r, l); return u(e, function (e) { n.addStorage(e) }), u(t, function (e) { n.addPlugin(e) }), n } var o = e("./util"), i = o.pluck, u = o.each, a = o.create, s = o.isList, c = o.isFunction, f = o.isObject; t.exports = { createStore: n }; var l = { version: "2.0.3", enabled: !1, storage: null, addStorage: function (e) { this.enabled || this._testStorage(e) && (this._storage.resolved = e, this.enabled = !0, this.storage = e.name) }, addPlugin: function (e) { var t = this; if (s(e)) return void u(e, function (e) { t.addPlugin(e) }); var r = i(this._seenPlugins, function (t) { return e === t }); if (!r) { if (this._seenPlugins.push(e), !c(e)) throw new Error("Plugins must be function values that return objects"); var n = e.call(this); if (!f(n)) throw new Error("Plugins must return an object of function properties"); u(n, function (r, n) { if (!c(r)) throw new Error("Bad plugin property: " + n + " from plugin " + e.name + ". Plugins should only return functions."); t._assignPluginFnProp(r, n) }) } }, get: function (e, t) { var r = this._storage().read(this._namespacePrefix + e); return this._deserialize(r, t) }, set: function (e, t) { return void 0 === t ? this.remove(e) : (this._storage().write(this._namespacePrefix + e, this._serialize(t)), t) }, remove: function (e) { this._storage().remove(this._namespacePrefix + e) }, each: function (e) { var t = this; this._storage().each(function (r, n) { e(t._deserialize(r), n.replace(t._namespaceRegexp, "")) }) }, clearAll: function () { this._storage().clearAll() }, hasNamespace: function (e) { return this._namespacePrefix == "__storejs_" + e + "_" }, namespace: function (e) { if (!this._legalNamespace.test(e)) throw new Error("store.js namespaces can only have alhpanumerics + underscores and dashes"); var t = "__storejs_" + e + "_"; return a(this, { _namespacePrefix: t, _namespaceRegexp: t ? new RegExp("^" + t) : null }) }, createStore: function (e, t) { return n(e, t) } } }, { "./util": 5 }], 5: [function (e, t, r) { (function (e) { "use strict"; function r() { return Object.assign ? Object.assign : function (e, t, r, n) { for (var o = 1; o < arguments.length; o++)a(Object(arguments[o]), function (t, r) { e[r] = t }); return e } } function n() { if (Object.create) return function (e, t, r, n) { var o = u(arguments, 1); return g.apply(this, [Object.create(e)].concat(o)) }; var e = function () { }; return function (t, r, n, o) { var i = u(arguments, 1); return e.prototype = t, g.apply(this, [new e].concat(i)) } } function o() { return String.prototype.trim ? function (e) { return String.prototype.trim.call(e) } : function (e) { return e.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "") } } function i(e, t) { return function () { return t.apply(e, Array.prototype.slice.call(arguments, 0)) } } function u(e, t) { return Array.prototype.slice.call(e, t || 0) } function a(e, t) { c(e, function (e, r) { return t(e, r), !1 }) } function s(e, t) { var r = f(e) ? [] : {}; return c(e, function (e, n) { return r[n] = t(e, n), !1 }), r } function c(e, t) { if (f(e)) { for (var r = 0; r < e.length; r++)if (t(e[r], r)) return e[r] } else for (var n in e) if (e.hasOwnProperty(n) && t(e[n], n)) return e[n] } function f(e) { return null != e && "function" != typeof e && "number" == typeof e.length } function l(e) { return e && "[object Function]" === {}.toString.call(e) } function p(e) { return e && "[object Object]" === {}.toString.call(e) } var g = r(), d = n(), v = o(), h = "undefined" != typeof window ? window : e; t.exports = { assign: g, create: d, trim: v, bind: i, slice: u, each: a, map: s, pluck: c, isList: f, isFunction: l, isObject: p, Global: h } }).call(this, "undefined" != typeof global ? global : "undefined" != typeof self ? self : "undefined" != typeof window ? window : {}) }, {}], 6: [function (e, t, r) { "use strict"; t.exports = { localStorage: e("./localStorage"), "oldFF-globalStorage": e("./oldFF-globalStorage"), "oldIE-userDataStorage": e("./oldIE-userDataStorage"), cookieStorage: e("./cookieStorage"), sessionStorage: e("./sessionStorage"), memoryStorage: e("./memoryStorage") } }, { "./cookieStorage": 7, "./localStorage": 8, "./memoryStorage": 9, "./oldFF-globalStorage": 10, "./oldIE-userDataStorage": 11, "./sessionStorage": 12 }], 7: [function (e, t, r) { "use strict"; function n(e) { if (!e || !s(e)) return null; var t = "(?:^|.*;\\s*)" + escape(e).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"; return unescape(p.cookie.replace(new RegExp(t), "$1")) } function o(e) { for (var t = p.cookie.split(/; ?/g), r = t.length - 1; r >= 0; r--)if (l(t[r])) { var n = t[r].split("="), o = unescape(n[0]), i = unescape(n[1]); e(i, o) } } function i(e, t) { e && (p.cookie = escape(e) + "=" + escape(t) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/") } function u(e) { e && s(e) && (p.cookie = escape(e) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/") } function a() { o(function (e, t) { u(t) }) } function s(e) { return new RegExp("(?:^|;\\s*)" + escape(e).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=").test(p.cookie) } var c = e("../src/util"), f = c.Global, l = c.trim; t.exports = { name: "cookieStorage", read: n, write: i, each: o, remove: u, clearAll: a }; var p = f.document }, { "../src/util": 5 }], 8: [function (e, t, r) { "use strict"; function n() { return f.localStorage } function o(e) { return n().getItem(e) } function i(e, t) { return n().setItem(e, t) } function u(e) { for (var t = n().length - 1; t >= 0; t--) { var r = n().key(t); e(o(r), r) } } function a(e) { return n().removeItem(e) } function s() { return n().clear() } var c = e("../src/util"), f = c.Global; t.exports = { name: "localStorage", read: o, write: i, each: u, remove: a, clearAll: s } }, { "../src/util": 5 }], 9: [function (e, t, r) { "use strict"; function n(e) { return s[e] } function o(e, t) { s[e] = t } function i(e) { for (var t in s) s.hasOwnProperty(t) && e(s[t], t) } function u(e) { delete s[e] } function a(e) { s = {} } t.exports = { name: "memoryStorage", read: n, write: o, each: i, remove: u, clearAll: a }; var s = {} }, {}], 10: [function (e, t, r) { "use strict"; function n(e) { return f[e] } function o(e, t) { f[e] = t } function i(e) { for (var t = f.length - 1; t >= 0; t--) { var r = f.key(t); e(f[r], r) } } function u(e) { return f.removeItem(e) } function a() { i(function (e, t) { delete f[e] }) } var s = e("../src/util"), c = s.Global; t.exports = { name: "oldFF-globalStorage", read: n, write: o, each: i, remove: u, clearAll: a }; var f = c.globalStorage }, { "../src/util": 5 }], 11: [function (e, t, r) { "use strict"; function n(e, t) { if (!v) { var r = s(e); d(function (e) { e.setAttribute(r, t), e.save(p) }) } } function o(e) { if (!v) { var t = s(e), r = null; return d(function (e) { r = e.getAttribute(t) }), r } } function i(e) { d(function (t) { for (var r = t.XMLDocument.documentElement.attributes, n = r.length - 1; n >= 0; n--) { var o = r[n]; e(t.getAttribute(o.name), o.name) } }) } function u(e) { var t = s(e); d(function (e) { e.removeAttribute(t), e.save(p) }) } function a() { d(function (e) { var t = e.XMLDocument.documentElement.attributes; e.load(p); for (var r = t.length - 1; r >= 0; r--)e.removeAttribute(t[r].name); e.save(p) }) } function s(e) { return e.replace(/^d/, "___$&").replace(h, "___") } function c() { if (!g || !g.documentElement || !g.documentElement.addBehavior) return null; var e, t, r, n = "script"; try { t = new ActiveXObject("htmlfile"), t.open(), t.write("<" + n + ">document.w=window</" + n + '><iframe src="/favicon.ico"></iframe>'), t.close(), e = t.w.frames[0].document, r = e.createElement("div") } catch (o) { r = g.createElement("div"), e = g.body } return function (t) { var n = [].slice.call(arguments, 0); n.unshift(r), e.appendChild(r), r.addBehavior("#default#userData"), r.load(p), t.apply(this, n), e.removeChild(r) } } var f = e("../src/util"), l = f.Global; t.exports = { name: "oldIE-userDataStorage", write: n, read: o, each: i, remove: u, clearAll: a }; var p = "storejs", g = l.document, d = c(), v = (l.navigator ? l.navigator.userAgent : "").match(/ (MSIE 8|MSIE 9|MSIE 10)\./), h = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g") }, { "../src/util": 5 }], 12: [function (e, t, r) { "use strict"; function n() { return f.sessionStorage } function o(e) { return n().getItem(e) } function i(e, t) { return n().setItem(e, t) } function u(e) { for (var t = n().length - 1; t >= 0; t--) { var r = n().key(t); e(o(r), r) } } function a(e) { return n().removeItem(e) } function s() { return n().clear() } var c = e("../src/util"), f = c.Global; t.exports = { name: "sessionStorage", read: o, write: i, each: u, remove: a, clearAll: s } }, { "../src/util": 5 }] }, {}, [1])(1) });
-var EbHeader = function () {
-    var _objName = $(".EbHeadTitle #objname");
-    var _btnContainer = $(".comon_header_dy #obj_icons");
-    var _layout = $("#layout_div");
-    var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
+try {
+    var EbHeader = function () {
+        var _objName = $(".EbHeadTitle #objname");
+        var _btnContainer = $(".comon_header_dy #obj_icons");
+        var _layout = $("#layout_div");
+        var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
-    this.insertGlobalSearch = function () {
-        $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD
+        this.insertGlobalSearch = function () {
+            $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD
 
-        $('body').prepend(`
+            $('body').prepend(`
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -36,15 +37,15 @@ var EbHeader = function () {
     </div>
   </div>
 </div>`);
-        $(window).off("keydown.ebsearch").on("keydown.ebsearch", function () {
-            if (event.ctrlKey || event.metaKey) {// ctrl + s - save form
-                if (event.which === 81) {
-                    $('#exampleModalCenter').modal('show');
+            $(window).off("keydown.ebsearch").on("keydown.ebsearch", function () {
+                if (event.ctrlKey || event.metaKey) {// ctrl + s - save form
+                    if (event.which === 81) {
+                        $('#exampleModalCenter').modal('show');
+                    }
                 }
-            }
-        });
+            });
 
-        window.ebcontext.header.insertButton(`
+            $('#notificaionandprofile').prepend(`
 <div class='toolb-srchbx-wrpr'>
     <input type='text' class='toolb-srchbx'/>
     <button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter__" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -57,171 +58,171 @@ var EbHeader = function () {
 <div class="eb_common_loader" id="srch_loader"></div>
 </div>`);
 
-        this.$toolbSrchBx = $('.toolb-srchbx');
-        this.$srchWrap = $('.toolb-srchbx-wrpr');
+            this.$toolbSrchBx = $('.toolb-srchbx');
+            this.$srchWrap = $('.toolb-srchbx-wrpr');
 
-        $('#exampleModalCenter').on('shown.bs.modal', function (e) {
-            $('#exampleModalCenter .srch-bx').focus();
-        });
+            $('#exampleModalCenter').on('shown.bs.modal', function (e) {
+                $('#exampleModalCenter .srch-bx').focus();
+            });
 
-        //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
-        $('#platformsearch').on('click', this.platformSearch);
+            //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
+            $('#platformsearch').on('click', this.platformSearch);
 
-        this.$toolbSrchBx.on('focus', function () {
-            $('.search-dd').slideDown(100);
-        }.bind(this));
+            this.$toolbSrchBx.on('focus', function () {
+                $('.search-dd').slideDown(100);
+            }.bind(this));
 
-        this.$toolbSrchBx.on('keyup', function () {
-            this.isSimpleSearch = true;
-            if (event.keyCode === 13)
-                this.platformSearch();
-            else if (event.keyCode === 27)
-                $('.search-dd').slideUp(50);
-        }.bind(this));
+            this.$toolbSrchBx.on('keyup', function () {
+                this.isSimpleSearch = true;
+                if (event.keyCode === 13)
+                    this.platformSearch();
+                else if (event.keyCode === 27)
+                    $('.search-dd').slideUp(50);
+            }.bind(this));
 
-        $('.srch-li').on('keyup', function () {
-            if (event.keyCode === 13)
-                this.platformSearch();
-        }.bind(this));
+            $('.srch-li').on('keyup', function () {
+                if (event.keyCode === 13)
+                    this.platformSearch();
+            }.bind(this));
 
-        //$('#exampleModalCenter .srch-bx').on('keyup', function () {
-        //this.isSimpleSearch = false;
-        //    if (event.keyCode === 13)
-        //        this.platformSearch();
-        //}.bind(this));
-    }.bind(this);
+            //$('#exampleModalCenter .srch-bx').on('keyup', function () {
+            //this.isSimpleSearch = false;
+            //    if (event.keyCode === 13)
+            //        this.platformSearch();
+            //}.bind(this));
+        }.bind(this);
 
-    this.scrollList = function () {
-        var list = document.querySelector('.srch-ul-outer'); // targets the <ul>
-        var first = list.querySelector('.srch-li'); // targets the first <li>
-        var maininput = this.$toolbSrchBx[0];  // targets the input, which triggers the functions populating the list
-        document.onkeydown = function (e) { // listen to keyboard events
-            switch (e.keyCode) {
-                case 38: // if the UP key is pressed
-                    if (document.activeElement == maininput) {
+        this.scrollList = function () {
+            var list = document.querySelector('.srch-ul-outer'); // targets the <ul>
+            var first = list.querySelector('.srch-li'); // targets the first <li>
+            var maininput = this.$toolbSrchBx[0];  // targets the input, which triggers the functions populating the list
+            document.onkeydown = function (e) { // listen to keyboard events
+                switch (e.keyCode) {
+                    case 38: // if the UP key is pressed
+                        if (document.activeElement == maininput) {
+                            break;
+                        } // stop the script if the focus is on the input or first element
+                        else if (document.activeElement == first.querySelector('.ctrldtlsWrap')) {
+                            maininput.focus();
+                        } // stop the script if the focus is on the input or first element
+                        else {
+                            let prevSibling = $(document.activeElement).closest('.srch-li').prev()[0] || $(document.activeElement).closest('.collapse').prev().prev().find('.srch-li:last')[0];
+                            if (prevSibling)
+                                prevSibling.querySelector('.ctrldtlsWrap').focus();
+                        } // select the element before the current, and focus it
                         break;
-                    } // stop the script if the focus is on the input or first element
-                    else if (document.activeElement == first.querySelector('a')) {
-                        maininput.focus();
-                    } // stop the script if the focus is on the input or first element
-                    else {
-                        let prevSibling = $(document.activeElement).closest('.srch-li').prev()[0] || $(document.activeElement).closest('.collapse').prev().prev().find('.srch-li:last')[0];
-                        if (prevSibling)
-                            prevSibling.querySelector('a').focus();
-                    } // select the element before the current, and focus it
-                    break;
-                case 40: // if the DOWN key is pressed
-                    if (document.activeElement == maininput) {
-                        first.querySelector('a').focus();
-                    } // if the currently focused element is the main input --> focus the first <li>
-                    else {
-                        let nextSibling = $(document.activeElement).closest('.srch-li').next()[0] || $(document.activeElement).closest('.collapse').next().next().find('.srch-li:first')[0];
-                        if (nextSibling)
-                            nextSibling.querySelector('a').focus();
-                    } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
-                    break;
+                    case 40: // if the DOWN key is pressed
+                        if (document.activeElement == maininput) {
+                            first.querySelector('.ctrldtlsWrap').focus();
+                        } // if the currently focused element is the main input --> focus the first <li>
+                        else {
+                            let nextSibling = $(document.activeElement).closest('.srch-li').next()[0] || $(document.activeElement).closest('.collapse').next().next().find('.srch-li:first')[0];
+                            if (nextSibling)
+                                nextSibling.querySelector('.ctrldtlsWrap').focus();
+                        } // target the currently focused element -> <a>, go up a node -> <li>, select the next node, go down a node and focus it
+                        break;
+                }
             }
         }
-    }
 
-    this.platformSearch = function () {
-        let $srch = this.isSimpleSearch ? this.$toolbSrchBx : $('#exampleModalCenter .srch-bx');
-        let searchkey = $srch.val();
-        if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
-            //do ajax call
-            $('.search-dd').slideUp(100);
-            this.getSearchResult(searchkey);
-            //this.drawResultList.bind(this, searchkey)();
-            $srch.data('lastKey', searchkey);
-        }
-    }.bind(this);
+        this.platformSearch = function () {
+            let $srch = this.isSimpleSearch ? this.$toolbSrchBx : $('#exampleModalCenter .srch-bx');
+            let searchkey = $srch.val();
+            if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
+                //do ajax call
+                $('.search-dd').slideUp(100);
+                this.getSearchResult(searchkey);
+                //this.drawResultList.bind(this, searchkey)();
+                $srch.data('lastKey', searchkey);
+            }
+        }.bind(this);
 
-    this.getSearchResult = function (searchkey) {
-        $("#srch_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
-        $.ajax({
-            type: "POST",
-            url: "/WebForm/SearchInPlatform4FormData",
-            data: {
-                key: searchkey
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
-                EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
-            }.bind(this),
-            success: this.drawResultList.bind(this, searchkey)
-        });
-    }.bind(this);
+        this.getSearchResult = function (searchkey) {
+            $("#srch_loader").EbLoader("show", { maskItem: { Id: ".search-dd" } });
+            $.ajax({
+                type: "POST",
+                url: "/WebForm/SearchInPlatform4FormData",
+                data: {
+                    key: searchkey
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
+                    EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
+                success: this.drawResultList.bind(this, searchkey)
+            });
+        }.bind(this);
 
-    this.drawResultList = function (searchkey, data = `{ "RowCount": 12, "Data": [{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]}`) {
-        data = JSON.parse(data);
-        let dataItems = data.Data;
-        let DataItemsG = groupBy(data.Data.sort((a, b) => (a.DisplayName > b.DisplayName) ? 1 : ((b.DisplayName > a.DisplayName) ? -1 : 0)), 'DisplayName');
-        let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
-        $('.srch-body-cont').empty();
+        this.drawResultList = function (searchkey, data = `{ "RowCount": 12, "Data": [{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]}`) {
+            data = JSON.parse(data);
+            let dataItems = data.Data;
+            let DataItemsG = groupBy(data.Data.sort((a, b) => (a.DisplayName > b.DisplayName) ? 1 : ((b.DisplayName > a.DisplayName) ? -1 : 0)), 'DisplayName');
+            let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
+            $('.srch-body-cont').empty();
 
 
-        let html = `<ul class="srch-ul-outer">
+            let html = `<ul class="srch-ul-outer">
                         <li class="li-summary">
                             <div class='srch-summary-text'><b>${dataItems.length}</b> / <b>${data.RowCount}</b> matches</div>
                         </li>`;
-        if (dataItems.length > 0) {
-            $.each(DataItemsG, function (formName, items) {
-                html += this.getUlHtml(items, true);
-            }.bind(this));
-        }
-        else {
+            if (dataItems.length > 0) {
+                $.each(DataItemsG, function (formName, items) {
+                    html += this.getUlHtml(items, true);
+                }.bind(this));
+            }
+            else {
 
-            html += `<li class="srch-li">
+                html += `<li class="srch-li">
                         <div class='srch-li-block'>
                             <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
                             <div class="ctrldtlsWrap">Try some other keyword</div>
                         </div>
                     </li>`;
-        }
+            }
 
-        html += `</ul>`;
+            html += `</ul>`;
 
-        //$('.srch-body-cont').append(html);
-        $cont.append(html);
-        $('.search-dd').slideDown(100);
-        modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'g'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
-        $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
-        this.scrollList();
-        $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.ctrldtlsWrap').focus() });
-    };
+            //$('.srch-body-cont').append(html);
+            $cont.append(html);
+            $('.search-dd').slideDown(100);
+            modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'gi'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
+            $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
+            this.scrollList();
+            $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.ctrldtlsWrap').focus() });
+        };
 
-    this.getUlHtml = function (dataItems, hideHead) {
-        let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
-        let html =
-            `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
+        this.getUlHtml = function (dataItems, hideHead) {
+            let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
+            let html =
+                `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
                 <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</h5>
             </li>
             <li id='${idfromDN}' class='collapse in'>
                 <ul class="srch-ul">`;
-        $.each(dataItems, function (i, obj) {
-            let j = 0;
-            let modifiedAtarr = obj.ModifiedAt.split(' ');
-            let createdAtArr = obj.CreatedAt.split(' ');
-            html += `
+            $.each(dataItems, function (i, obj) {
+                let j = 0;
+                let modifiedAtarr = obj.ModifiedAt.split(' ');
+                let createdAtArr = obj.CreatedAt.split(' ');
+                html += `
                     <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
                         <div class='srch-li-block'>
-                            <div class="ctrldtlsWrap" onclick="window.open('${obj.Link}', '_blank')">`;
-            $.each(obj.Data, function (name, val) {
-                if (j++ % 3 === 0) {
-                    html += `
+                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">`;
+                $.each(obj.Data, function (name, val) {
+                    if (j++ % 3 === 0) {
+                        html += `
                                 <table class='ctrldtls'>
                                     <tbody>`;
-                }
-                html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
-                if (j % 3 === 0) {
-                    html += `
+                    }
+                    html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
+                    if (j % 3 === 0) {
+                        html += `
                                     </tbody>
                                 </table>`;
-                }
-                if (j === 6)
-                    return false;
-            });
-            html += `
+                    }
+                    if (j === 6)
+                        return false;
+                });
+                html += `
                                     </tbody>
                                 </table>
                             </div>
@@ -231,7 +232,7 @@ var EbHeader = function () {
                                     <tbody>
                                         <tr>
                                             <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
-                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
+                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
                                         <tr>    
                                     </tbody>
                                 </table>
@@ -239,33 +240,33 @@ var EbHeader = function () {
                                     <tbody>
                                         <tr>
                                             <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
-                                            <td class='metalbl'> <i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
+                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>`;
-            html += '   </li>'
-        });
-        return `${html}
+                html += '   </li>'
+            });
+            return `${html}
                 </ul>
             </li>`;
-    };
+        };
 
-    this.hideDDclickOutside = function (e) {
-        if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
-            $('.search-dd').slideUp(100);
-        }
-    };
+        this.hideDDclickOutside = function (e) {
+            if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
+                $('.search-dd').slideUp(100);
+            }
+        };
 
-    this.addRootObjectHelp = function (obj) {
-        let AvailableDocs = { isPdf: (obj.Info && (!!obj.Info.trim())), isVideo: (obj.InfoVideoURLs && obj.InfoVideoURLs.$values.length > 0) };
+        this.addRootObjectHelp = function (obj) {
+            let AvailableDocs = { isPdf: (obj.Info && (!!obj.Info.trim())), isVideo: (obj.InfoVideoURLs && obj.InfoVideoURLs.$values.length > 0) };
 
-        if (AvailableDocs.isPdf || AvailableDocs.isVideo) {
-            let html = `<button id="${obj.EbSid_CtxId}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
-            this.insertButton(html);
+            if (AvailableDocs.isPdf || AvailableDocs.isVideo) {
+                let html = `<button id="${obj.EbSid_CtxId}HelperBtn" class="btn" title="Info"><i class="fa ${obj.InfoIcon}" aria-hidden="true"></i></button>`;
+                this.insertButton(html);
 
-            let HelpHtml = `
+                let HelpHtml = `
             <div id='${obj.EbSid_CtxId}infoCont' class='eb-popup-cont'>
                 <div class='eb-popup-head'>
                     <span>Help</span>
@@ -291,104 +292,104 @@ var EbHeader = function () {
             </div>
             `;
 
-            if (AvailableDocs.isPdf) {
-                let docbtn = `
+                if (AvailableDocs.isPdf) {
+                    let docbtn = `
               <li class="nav-item @active@">
                 <a class="nav-link" id="${obj.EbSid_CtxId}-doctab" data-toggle="tab" href="#${obj.EbSid_CtxId}doc" role="tab" aria-controls="home" aria-selected="true">
                 <i class="fa fa-file-text-o" aria-hidden="true"></i> Document
                 </a>
               </li>`;
 
-                let docContent = `
+                    let docContent = `
               <div class="tab-pane fade @activein@"  id="${obj.EbSid_CtxId}doc" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-doctab">
                 <iframe id='${obj.EbSid_CtxId}info' class='obj-hlp-iframe' src="/files/${obj.Info}.pdf" title="Iframe Example"></iframe>
               </div>`;
-                HelpHtml = HelpHtml.replace('@pdfBtn@', docbtn).replace('@pdfContent@', docContent)
-            }
-            else {
-                HelpHtml = HelpHtml.replace('@pdfBtn@', '').replace('@pdfContent@', '')
-            }
+                    HelpHtml = HelpHtml.replace('@pdfBtn@', docbtn).replace('@pdfContent@', docContent)
+                }
+                else {
+                    HelpHtml = HelpHtml.replace('@pdfBtn@', '').replace('@pdfContent@', '')
+                }
 
-            if (AvailableDocs.isVideo) {
-                let vidbtn = `
+                if (AvailableDocs.isVideo) {
+                    let vidbtn = `
               <li class="nav-item @active@">
                 <a class="nav-link" id="${obj.EbSid_CtxId}-vidtab" vid-tab data-toggle="tab" href="#${obj.EbSid_CtxId}video" role="tab" aria-controls="profile" aria-selected="false">
                     <i class="icofont-ui-video-play"></i> Video
                 </a>
               </li>`;
-                let vidContent = `
+                    let vidContent = `
               <div class="tab-pane fade @activein@" id="${obj.EbSid_CtxId}video" is-video="true" role="tabpanel" aria-labelledby="${obj.EbSid_CtxId}-tab">
                 ${this.getVidTabsHtml(obj)}
               </div>`;
-                HelpHtml = HelpHtml.replace('@vidbtn@', vidbtn).replace('@vidContent@', vidContent)
-            }
-            else {
-                HelpHtml = HelpHtml.replace('@vidbtn@', '').replace('@vidContent@', '')
-            }
-
-            HelpHtml = HelpHtml.replace('@activein@', 'active in').replace('@activein@', '')
-                .replace('@active@', 'active').replace('@active@', '');
-
-            $("body").append(HelpHtml);
-
-            this.$infoModal = $(`#${obj.EbSid_CtxId}infoCont`);
-
-            this.$infoModal.draggable({
-                handle: ".eb-popup-head",
-                stop: this.infoModalStop
-            });
-
-            this.$infoModal.resizable({
-                //aspectRatio: true,
-                handles: "sw, se, nw, ne"
-            });
-
-
-            $(`#${obj.EbSid}HelperBtn`).on("click", function () {
-                this.$infoModal.toggle();
-            }.bind(this));
-
-            $('a[data-toggle="tab"][vid-tab]').on('shown.bs.tab', function (e) {
-                let $e = $(e.target); // newly activated tab
-                $activetab = $('.info-tab-body li.active > a');
-                $($activetab.attr("href")).addClass('active').addClass('in');
-            });
-
-
-            $(`#${obj.EbSid}infoCont .hclose`).on("click", this.objhelpHide);
-            $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick", this.objhelpHide);
-
-
-            $(`#${obj.EbSid}infoCont .hnewt`).on("click", function () {
-                let extURL;
-                if ($(`#${obj.EbSid}infoCont .tab-pane.active`).attr('is-video') === "true") {
-                    extURL = getObjByval(obj.InfoVideoURLs.$values, "EbSid", $('.info-tab-body .nav-item.active a').attr('id').replace(/\-vidtab$/, '')).URL
+                    HelpHtml = HelpHtml.replace('@vidbtn@', vidbtn).replace('@vidContent@', vidContent)
                 }
                 else {
-                    extURL = `/files/${obj.Info}.pdf`;
+                    HelpHtml = HelpHtml.replace('@vidbtn@', '').replace('@vidContent@', '')
                 }
-                window.open(extURL, '_blank');
-            }.bind(this));
-        }
-    };
 
-    this.objhelpHide = function () {
-        this.$infoModal.hide();
-    }.bind(this)
+                HelpHtml = HelpHtml.replace('@activein@', 'active in').replace('@activein@', '')
+                    .replace('@active@', 'active').replace('@active@', '');
 
-    this.getVidTabsHtml = function (obj) {
-        let vidbtn = "";
-        let vidContents = "";
-        for (let i = 0; i < obj.InfoVideoURLs.$values.length; i++) {
-            let URL = obj.InfoVideoURLs.$values[i];
+                $("body").append(HelpHtml);
 
-            if (URL.Hide)
-                continue;
-            let vidId = URL.URL.substring(URL.URL.lastIndexOf("/embed/") + 7, URL.URL.length);
+                this.$infoModal = $(`#${obj.EbSid_CtxId}infoCont`);
 
-            if (vidId.includes('?'))
-                vidId = vidId.substring(0, vidId.indexOf('?'));
-            vidbtn += `
+                this.$infoModal.draggable({
+                    handle: ".eb-popup-head",
+                    stop: this.infoModalStop
+                });
+
+                this.$infoModal.resizable({
+                    //aspectRatio: true,
+                    handles: "sw, se, nw, ne"
+                });
+
+
+                $(`#${obj.EbSid}HelperBtn`).on("click", function () {
+                    this.$infoModal.toggle();
+                }.bind(this));
+
+                $('a[data-toggle="tab"][vid-tab]').on('shown.bs.tab', function (e) {
+                    let $e = $(e.target); // newly activated tab
+                    $activetab = $('.info-tab-body li.active > a');
+                    $($activetab.attr("href")).addClass('active').addClass('in');
+                });
+
+
+                $(`#${obj.EbSid}infoCont .hclose`).on("click", this.objhelpHide);
+                $(`#${obj.EbSid}infoCont .eb-popup-head`).on("dblclick", this.objhelpHide);
+
+
+                $(`#${obj.EbSid}infoCont .hnewt`).on("click", function () {
+                    let extURL;
+                    if ($(`#${obj.EbSid}infoCont .tab-pane.active`).attr('is-video') === "true") {
+                        extURL = getObjByval(obj.InfoVideoURLs.$values, "EbSid", $('.info-tab-body .nav-item.active a').attr('id').replace(/\-vidtab$/, '')).URL
+                    }
+                    else {
+                        extURL = `/files/${obj.Info}.pdf`;
+                    }
+                    window.open(extURL, '_blank');
+                }.bind(this));
+            }
+        };
+
+        this.objhelpHide = function () {
+            this.$infoModal.hide();
+        }.bind(this)
+
+        this.getVidTabsHtml = function (obj) {
+            let vidbtn = "";
+            let vidContents = "";
+            for (let i = 0; i < obj.InfoVideoURLs.$values.length; i++) {
+                let URL = obj.InfoVideoURLs.$values[i];
+
+                if (URL.Hide)
+                    continue;
+                let vidId = URL.URL.substring(URL.URL.lastIndexOf("/embed/") + 7, URL.URL.length);
+
+                if (vidId.includes('?'))
+                    vidId = vidId.substring(0, vidId.indexOf('?'));
+                vidbtn += `
               <li class="nav-item @active@">
                 <a class="nav-link" id="${URL.EbSid}-vidtab" data-toggle="tab" href="#${URL.EbSid}video" role="tab" aria-controls="profile" aria-selected="false">
                     <img src='https://img.youtube.com/vi/` + vidId + `/hqdefault.jpg' alt=" ${URL.Title}" height="80"></br>
@@ -396,14 +397,14 @@ var EbHeader = function () {
                 </a>
               </li>`;
 
-            vidContents += `
+                vidContents += `
               <div class="tab-pane fade @activein@" id="${URL.EbSid}video" is-video="true" role="tabpanel" aria-labelledby="${URL.EbSid}-tab">
                 <iframe src="${URL.URL}" class='obj-hlp-iframe' frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>`;
-        }
+            }
 
 
-        let tabBody = `
+            let tabBody = `
                 <div class='info-tab-body v-tab'>
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                       ${vidbtn}
@@ -413,80 +414,132 @@ var EbHeader = function () {
                     </div>
                 </div>
             `.replace('@activein@', 'active in').replace(/@activein@/g, '')
-            .replace('@active@', 'active').replace('@active@', '');
+                .replace('@active@', 'active').replace('@active@', '');
 
-        return tabBody;
-    }
-
-    this.infoModalStop = function () {
-        this.$infoModal.attr("dragging", "true");
-        if (parseInt(this.$infoModal.css("top").trim("px")) <= 0)
-            this.$infoModal.css("top", "5px");
-        if (parseInt(this.$infoModal.css("top").trim("px")) >= window.innerHeight)
-            this.$infoModal.css("top", "0px");
-        if (parseInt(this.$infoModal.css("left").trim("px")) >= window.innerWidth || parseInt(this.$infoModal.css("left").trim("px")) < 20 - this.$infoModal.width()) {
-            this.$infoModal.css("left", "auto");
-            this.$infoModal.css("right", "0px");
+            return tabBody;
         }
 
-        this.$infoModal.find(`.eb-popup-head .pgcorner`).show(100);
-    }.bind(this);
+        this.infoModalStop = function () {
+            this.$infoModal.attr("dragging", "true");
+            if (parseInt(this.$infoModal.css("top").trim("px")) <= 0)
+                this.$infoModal.css("top", "5px");
+            if (parseInt(this.$infoModal.css("top").trim("px")) >= window.innerHeight)
+                this.$infoModal.css("top", "0px");
+            if (parseInt(this.$infoModal.css("left").trim("px")) >= window.innerWidth || parseInt(this.$infoModal.css("left").trim("px")) < 20 - this.$infoModal.width()) {
+                this.$infoModal.css("left", "auto");
+                this.$infoModal.css("right", "0px");
+            }
 
-    this.insertButton = function ($html) {
-        _btnContainer.prepend(`${$html}`);
+            this.$infoModal.find(`.eb-popup-head .pgcorner`).show(100);
+        }.bind(this);
+
+        this.insertButton = function ($html) {
+            _btnContainer.prepend(`${$html}`);
+        };
+
+        this.setName = function (name) {
+            _objName.text(`${name}`);
+        };
+
+        this.setNameAsHtml = function (html) {
+            _objName.html(`${html}`);
+        };
+
+        this.setMode = function (html) {
+            _objName.append(`${html}`);
+        };
+
+        this.setFormMode = function (html) {
+            _objName.find("span").remove();
+            _objName.append(`${html}`);
+        };
+
+        this.hideElement = function (collectionofIds) {
+            collectionofIds.forEach(function (item, i) {
+                _btnContainer.find("#" + item).hide();
+            }.bind(this));
+        };
+
+        this.showElement = function (collectionofIds) {
+            collectionofIds.forEach(function (item, i) {
+                _btnContainer.find("#" + item).show();
+            }.bind(this));
+        };
+
+        this.clearHeader = function () {
+            _btnContainer.empty();
+        };
+
+        this.setLocation = function (t) {
+            $("#LocInfoCr_name").text(t);
+        };
+
+        this.setLocation_type = function (t) {
+            $("#LocInfoCr_type").text(t);
+        };
+
+        this.updateNCount = function (count) {
+            _nCounter.text(count);
+            if (count > 0)
+                _nCounter.show();
+            else
+                _nCounter.hide();
+        };
+
+        _layout.data("EbHeader", this);
+
+
+        //window.onerror = function (msg, url, lineNo, columnNo, error) {
+        //    var string = msg.toLowerCase();//script error--When an error occurs in a script, loaded from a different origin, 
+        //    var message = {
+        //        'Error_Message': msg,
+        //        'URL': url,
+        //        'Line': lineNo,
+        //        'Column': columnNo,
+        //        'Error_object': error
+        //    }
+
+        //    if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname != ("/SupportTicket/EditTicket")) {
+
+        //        $.ajax({
+        //            url: "../Security/BrowserExceptions",
+        //            data: { errorMsg: JSON.stringify(message) },
+        //            cache: false,
+        //            type: "POST"
+        //        });
+
+        //    }
+        //    return false;
+        //};
+
+
     };
+}
+catch (er) {
+    if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname != ("/SupportTicket/EditTicket")) {
 
-    this.setName = function (name) {
-        _objName.text(`${name}`);
-    };
+        var message = {
+            'Error_Message': er.stack,
+            'URL': "",
+            'Line': "",
+            'Column': "",
+            'Error_object': ""
+        }
+        $.ajax({
+            url: "../Security/BrowserExceptions",
+            data: { errorMsg: JSON.stringify(message) },
+            cache: false,
+            type: "POST"
+        });
 
-    this.setNameAsHtml = function (html) {
-        _objName.html(`${html}`);
-    };
+        if (confirm("An error occured while setting headers, do you want to report it?")) {
+            window.location = '/SupportTicket/bugsupport';
+        } else {
+            window.location = "/Tenantuser/Logout"
+        }
 
-    this.setMode = function (html) {
-        _objName.append(`${html}`);
-    };
-
-    this.setFormMode = function (html) {
-        _objName.find("span").remove();
-        _objName.append(`${html}`);
-    };
-
-    this.hideElement = function (collectionofIds) {
-        collectionofIds.forEach(function (item, i) {
-            _btnContainer.find("#" + item).hide();
-        }.bind(this));
-    };
-
-    this.showElement = function (collectionofIds) {
-        collectionofIds.forEach(function (item, i) {
-            _btnContainer.find("#" + item).show();
-        }.bind(this));
-    };
-
-    this.clearHeader = function () {
-        _btnContainer.empty();
-    };
-
-    this.setLocation = function (t) {
-        $("#LocInfoCr_name").text(t);
-    };
-
-    this.setLocation_type = function (t) {
-        $("#LocInfoCr_type").text(t);
-    };
-
-    this.updateNCount = function (count) {
-        _nCounter.text(count);
-        if (count > 0)
-            _nCounter.show();
-        else
-            _nCounter.hide();
-    };
-
-    _layout.data("EbHeader", this);
-};
+    }
+}
 var EbMenu = function (option) {
     this.login = option.Console;
     this.Tid = option.Sid;
@@ -693,7 +746,7 @@ var EbMenu = function (option) {
                 _url = "../ReportRender/Index?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "WebForm") {
-                _url = "../WebForm/Index?refid=" + _obj.Refid;
+                _url = "../WebForm/Index?_r=" + _obj.Refid;
             }
             else if (_obj.EbType === "DashBoard") {
                 _url = "../DashBoard/DashBoardView?refid=" + _obj.Refid;
@@ -947,8 +1000,6 @@ var EbMenu = function (option) {
 
     this.start();
 }
-var MeetingRequestView;
-var haaaa;
 class Setup {
 
     constructor(option) {
@@ -964,9 +1015,6 @@ class Setup {
         this.getNotifications();
         //this.userNotification();aler
         this.modal = new EbCommonModal();
-
-        MeetingRequestView = this.MeetingRequestView.bind(this);
-        haaaa = this.haaaa.bind(this);
     }
 
     getCurrentLocation() {
@@ -1001,11 +1049,12 @@ class Setup {
             this.nf_window.hide();
         }
     }
-
+    
     initServerEvents() {
+        window.ebcontext.sse_channels.push("file-upload");
         this.se = new EbServerEvents({
             ServerEventUrl: this.option.se_url,
-            Channels: ["file-upload"]
+            Channels: ebcontext.sse_channels
         });
 
         this.se.onNotification = function (msg) {
@@ -1061,10 +1110,12 @@ class Setup {
                     this.nf_container.append(`
                 <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
                     <i class="fa fa-times notification-close" style="float: right;"></i>
-                    <div class="notification-inner">
-                        <h5>${nf[i].Title || plc}</h5>
-                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
-                    </div>
+                    <a target="_blank" href="${nf[i].Link}">
+                        <div class="notification-inner">
+                            <h5>${nf[i].Title || plc}</h5>
+                            <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
+                        </div>
+                    </a>
                 </li>`);
                 }
             }
@@ -1080,10 +1131,12 @@ class Setup {
                     this.nf_container.prepend(`
                 <li class="nf-tile nf-lst" notification-id="${nf[i].NotificationId}" link-url="${nf[i].Link}">
                     <i class="fa fa-times notification-close" style="float: right;"></i>
-                    <div class="notification-inner">
-                        <h5>${nf[i].Title || plc}</h5>
-                        <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
-                    </div>
+                    <a target="_blank" href="${nf[i].Link}">
+                        <div class="notification-inner">
+                            <h5>${nf[i].Title || plc}</h5>
+                            <span class='pending_date status-time' title='${nf[i].CreatedDate}'>${nf[i].Duration}</span>
+                        </div>
+                    </a>
                 </li>`);
                     this.notification_count += 1;
                 }
@@ -1110,12 +1163,12 @@ class Setup {
                 let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].DataId)]))));
                 let locid = this.getCurrentLocation();
                 let Id = pa[i].MyActionId;
-                let url = `href='../webform/index?refid=${pa[i].Link}&_params=${params}&_mode=1&_locId=${locid}' target='_blank'`;
+                let url = `href='../webform/index?_r=${pa[i].Link}&_p=${params}&_m=1&_l=${locid}' target='_blank'`;
                 let _label = "";
                 if (pa[i].ActionType === "Approval")
                     _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";
                 else
-                    url = 'href="#" onclick="MeetingRequestView(this); return false;"';
+                    url = 'href="#" class="MeetingRequestViewCls"';
                 var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
@@ -1150,6 +1203,8 @@ class Setup {
        
 
         ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+
+        $('.MeetingRequestViewCls').off("click").on('click', this.MeetingRequestView.bind(this));
     }
 
     drawMeetings(pa, onload) {
@@ -1160,7 +1215,7 @@ class Setup {
             for (let i = 0; i < pa.length; i++) {
                 let _label = "";
                 let Id = pa[i].MyActionId;
-                let url = 'href="#" onclick="haaaa(this); return false;"';
+                let url = 'href="#" class="GetMeetingsDetailsCls"';
                 var _htm = `
                 <li class="nf-tile">
                         <a ${url} data-id='${Id}'>
@@ -1192,6 +1247,7 @@ class Setup {
             $("#nf-window #nf-mymeeting-count").text(`(${this.meetings_count})`);
         }
         ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+        $('.GetMeetingsDetailsCls').off("click").on('click', this.GetMeetingsDetails.bind(this));
     }
 
     userNotification() {
@@ -1239,7 +1295,7 @@ class Setup {
         }.bind(this);
     }
 
-    UpdateNotification = function (e) {
+    UpdateNotification (e) {
         let notification_id = $(e.target).closest("div").attr("notification-id");
         let link_url = $(e.target).closest("div").attr("link-url");
         $.ajax({
@@ -1265,7 +1321,7 @@ class Setup {
         $('#notification-count').attr("count", x);
     }
 
-    ClearAll_NF = function () {
+    ClearAll_NF() {
         var nf = $(".nf-lst");
         var nfArray = [];
         if (nf.length > 0) {
@@ -1294,7 +1350,7 @@ class Setup {
         }
     }
 
-    CloseNotification = function (e) {
+    CloseNotification (e) {
         let notification_id = $(e.target).closest('li').attr("notification-id");
         $.ajax({
             type: "POST",
@@ -1311,8 +1367,8 @@ class Setup {
         e.stopPropagation();
     }
 
-    MeetingRequestView = function (e) {
-        let id = $(e).closest("a").attr("data-id");
+    MeetingRequestView (e) {
+        let id = $(e.target).closest("a").attr("data-id");
         //alert(id);
         $.post("../EbMeeting/GetSlotDetails", { id: id }, function (data) {
             let Resp = JSON.parse(data);
@@ -1396,6 +1452,46 @@ class Setup {
                         }
                     });
                 });
+                $('#pick-multiple-slot').off('click').on('click', function () {
+                    let SlotStr = $('#pick-multiple-slot').attr('data-id');
+                    var SlotsArr = SlotStr.split(',');
+                    $.post("../EbMeeting/PickMultipleSlot", { Slots: SlotsArr, myactionid: id }, function (data) {
+                        let sts = JSON.parse(data);
+                        if (sts.ResponseStatus) {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Success...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
+                                }
+                            });
+                            $(`#accept-meeting`).attr('disabled', 'disabled');
+                        }
+                        else {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Failed. Some Error Found...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+                $(".unblocked-slot").off('click').on('click', function (e   ) {
+                    let _id = e.target.getAttribute('id');
+                    $('#pick-slot').attr("data-id", _id);
+                    $(".unblocked-slot").removeClass('selected');
+                    $(e.target).addClass('selected');
+                });
             }
             else {
                 EbPopBox("show", {
@@ -1413,8 +1509,8 @@ class Setup {
 
     };
 
-    haaaa = function (e) {
-        let id = $(e).closest("a").attr("data-id");
+    GetMeetingsDetails (e) {
+        let id = $(e.target).closest("a").attr("data-id");
         //alert(id);
         $.post("../EbMeeting/GetMeetingsDetails", { meetingid: id }, function (data) {
             let html = JSON.parse(data);
@@ -2155,7 +2251,7 @@ var EbServerEvents = function (options) {
     this.rTok = options.Rtoken || getrToken();
     this.ServerEventUrl = options.ServerEventUrl;
     this.Channels = options.Channels.join();
-    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();    
+    this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
 
     this.onUploadSuccess = function (m, e) {
@@ -2178,20 +2274,20 @@ var EbServerEvents = function (options) {
             //    headers: { 'eb_sse_subid': sub.id }
             //});
         }
-        
+
     };
 
     this.onJoin = function (user) {
-     //   console.log("onJoin Welcome, " + user.displayName);
+        //   console.log("onJoin Welcome, " + user.displayName);
     };
 
     this.onLeave = function (user) {
-      //  console.log(user.displayName + " has left the building");
+        //  console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
         //if (console)
-      //  console.log("onHeartbeat", msg, e);
+        //  console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
@@ -2200,8 +2296,8 @@ var EbServerEvents = function (options) {
 
 
     this.mybroadcast = function (msg, e) {
-       //  console.log("mybroadcast", msg, e);
-      //  alert(213);
+        //  console.log("mybroadcast", msg, e);
+        //  alert(213);
     }
 
 
@@ -2211,7 +2307,7 @@ var EbServerEvents = function (options) {
     };
 
     this.onLogOutMsg = function (m, e) {
-      //  console.log(m);
+        //  console.log(m);
         location.href = "../Tenantuser/Logout";
         this.onLogOut(m, e);
     };
@@ -2224,7 +2320,7 @@ var EbServerEvents = function (options) {
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-       // console.log("stopped listening");
+        // console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
@@ -2236,7 +2332,7 @@ var EbServerEvents = function (options) {
         let pop = {
             Message: "Exported Successfully. Go to App Store to view the package :"
         };
-        self.EbPopBox("show", pop);      
+        self.EbPopBox("show", pop);
     }
 
     this.importApplication = function (m, e) {
@@ -2244,20 +2340,20 @@ var EbServerEvents = function (options) {
         let pop = {
             Message: "Application imported Successfully."
         };
-        self.EbPopBox("show", pop);      
+        self.EbPopBox("show", pop);
     }
 
-    this.userRoleChanged = function (m, e) {
-        alert("userRoleChanged");
-        console.log(m);
-        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
-        store.remove("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
-       // $('#menu_refresh').click();
+    this.updateUserMenu = function (m, e) {
+        localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
+       localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+        // $('#menu_refresh').click();
     }
     this.userDisabled = function (m) {
-      
+
         var html = `<div class="eb_dlogBox_container eb_dlogBox_blurBG" id="eb_dlogBox_logout">
-                                    <div class="cw">
+                                    <div class="cw" style="align-items: center;">
+
+                                        <i class="fa fa-warning" style="font-size: 35px;color:red;padding: 10px;"></i>
                                         <div class="msgbdy">${m}</div>
                                         <div id="cntTimer">You will be logged out in <span id="counterSpn"></span> seconds</div>
                                     </div>
@@ -2275,6 +2371,11 @@ var EbServerEvents = function (options) {
         }, 1000);
     }
 
+    this.webFormEdit_EnableDisable = function (m, b) {
+        EbMessage("show", { Message: m, AutoHide: true, Background: 'blue' });
+        $(`.objectDashB-toolbar #webformedit`).attr("disabled", b);
+    }
+    
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
@@ -2283,7 +2384,7 @@ var EbServerEvents = function (options) {
 
     this.ES.addEventListener('error', function (e) {
         console.log("ERROR!", e);
-    }, false);    
+    }, false);
 
     this.sEvent.eventReceivers = { "document": document };
 
@@ -2321,10 +2422,11 @@ var EbServerEvents = function (options) {
             onNotification: this.onNotifyMsg.bind(this),
             exportApplication: this.exportApplication.bind(this),
             importApplication: this.importApplication.bind(this),
-            userRoleChanged: this.userRoleChanged.bind(this),
+            UpdateUserMenu: this.updateUserMenu.bind(this),
             userDisabled: this.userDisabled.bind(this),
+          //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
+          //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
 
-            mybroadcast: this.mybroadcast.bind(this)
         }
     });
 };

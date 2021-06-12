@@ -1444,7 +1444,7 @@ class Tour {
         }
     }
 
-    getLinks = function (tc) {
+    getLinks(tc) {
         let html = [];
         if (tc != 0)
             html.push(`<button id="stack_el_${tc}_prev" class="TourTileBtn TourTilePrevBtn">&#8592; Prev</button>`);
@@ -1530,8 +1530,8 @@ var FontEditor = function (params, fontEditobj) {
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId;
     var _font = {
-        FontName: "Times-Roman",
-        CSSFontName:"Times",
+        FontName: "Roboto (Default)",
+        CSSFontName: "Roboto",
         Size: 14,
         Style: 0,
         color: "#333333",
@@ -1639,7 +1639,7 @@ var FontEditor = function (params, fontEditobj) {
     this.loadFont = function (e) {
         fontVal = $(e.target).val();
         fontName = $("#googleFont option:selected").text();
-        this.loadCSS('https://fonts.googleapis.com/css?family=' + fontVal);
+        if (fontVal !== 'Roboto') { this.loadCSS('https://fonts.googleapis.com/css?family=' + fontVal); }
         $('#font-preview').css('font-family', fontVal);
         this.fontObject.FontName = fontName;
         this.fontObject.CSSFontName = fontVal;

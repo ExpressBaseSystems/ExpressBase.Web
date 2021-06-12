@@ -926,13 +926,18 @@
 
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
+        let $e = $(e.target);
+        let $tr = $e.closest("tr");
+        let new_rowId = $tr.attr("rowid");
+        if (rowId === new_rowId)
+            return;
+
         if ($activeTr.length === 1) {
             if (!this.RowRequired_valid_Check(rowId))
                 return;
             this.confirmRow(rowId);
         }
-        let $e = $(e.target);
-        let $tr = $e.closest("tr");
+        
         if (this.isDGEditable()) {
             $tr.find(".edit-row").trigger("click");
             setTimeout(function () {
@@ -1038,8 +1043,8 @@
     this.setcurRowDataMODELWithNewVals = function (rowId) {
         $.each(this.objectMODEL[rowId], function (i, inpCtrl) {
             if (inpCtrl.DataVals !== undefined) {
-                inpCtrl.DataVals.Value = JSON.parse(JSON.stringify(inpCtrl.curRowDataVals.Value));
-                inpCtrl.DataVals.D = JSON.parse(JSON.stringify(inpCtrl.curRowDataVals.D));
+                inpCtrl.DataVals.Value = inpCtrl.curRowDataVals.Value ? JSON.parse(JSON.stringify(inpCtrl.curRowDataVals.Value)) : inpCtrl.curRowDataVals.Value;
+                inpCtrl.DataVals.D = inpCtrl.curRowDataVals.D ? JSON.parse(JSON.stringify(inpCtrl.curRowDataVals.D)) : inpCtrl.curRowDataVals.D;
             }
         }.bind(this));
     };
@@ -1049,8 +1054,8 @@
         for (let i = 0; i < curRowCtrls.length; i++) {
             let inpCtrl = curRowCtrls[i];
             if (inpCtrl.DataVals !== undefined) {
-                inpCtrl.curRowDataVals.Value = JSON.parse(JSON.stringify(inpCtrl.DataVals.Value));
-                inpCtrl.curRowDataVals.D = JSON.parse(JSON.stringify(inpCtrl.DataVals.D));
+                inpCtrl.curRowDataVals.Value = inpCtrl.DataVals.Value ? JSON.parse(JSON.stringify(inpCtrl.DataVals.Value)) : inpCtrl.DataVals.Value;
+                inpCtrl.curRowDataVals.D = inpCtrl.DataVals.Value ? JSON.parse(JSON.stringify(inpCtrl.DataVals.D)) : inpCtrl.DataVals.Value;
             }
         }
     };

@@ -7355,7 +7355,7 @@ html {
 }
 
 :focus {
-    outline: 1px solid #0075FF;
+    outline: none !important;
 }
 
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"]:focus,
@@ -7600,11 +7600,11 @@ body {
         box-shadow: none;
     }
 
-.form-buider-form table {
-    width: 100%;
-    position: relative;
-    /*table-layout: fixed;*/
-}
+    .form-buider-form table {
+        width: 100%;
+        position: relative;
+        /*table-layout: fixed;*/
+    }
 
     .form-buider-form .btn-group {
         width: 100% !important;
@@ -7651,6 +7651,14 @@ body {
 
 [is-editing="false"] .cancel-row {
     display: none;
+}
+
+[is-added="false"] .edit-row.disable-edit {
+    display: none !important;
+}
+
+[is-added="false"] .del-row.disable-del {
+    display: none !important;
 }
 
 .del-row, .edit-row, .cancel-row {
@@ -7891,10 +7899,10 @@ body {
 }
 
 .RenderAsWizard .wiz-addbtn {
-    display:none;
+    display: none;
 }
 
-[eb-form="true"][isrendermode="false"] .RenderAsWizard>.wiz-addbtn {
+[eb-form="true"][isrendermode="false"] .RenderAsWizard > .wiz-addbtn {
     position: absolute;
     display: inline-flex;
     top: 0;
@@ -7906,7 +7914,8 @@ body {
     color: white;
     border-radius: 50%;
 }
-    [ctype="TabControl"] .nav-tabs {
+
+[ctype="TabControl"] .nav-tabs {
     border-bottom: 1px solid #ddd0;
 }
 
@@ -8385,8 +8394,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 
 
-.Eb-ctrlContainer[eb-readonly="true"] .dg-th {
-    background-color: #fafafa;
+
+.Eb-ctrlContainer[eb-readonly="true"] .Dg_head th,
+.Eb-ctrlContainer[eb-readonly="true"] .dgtr > td,
+[eb-form="true"][mode="view"] .Dg_head th,
+[eb-form="true"][mode="view"] .dgtr > td {
     color: #555;
 }
 
@@ -8480,7 +8492,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     }
 
 .Dg_body {
-    display: flex;
+    /*display: flex;*/
     box-shadow: -1px 0px 0px 0px #f6f6ff;
 }
 
@@ -8796,11 +8808,18 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
 }
 
-    [eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
-        border: none;
-        padding: 7px;
-        font-size: 17px;
-    }
+
+[isrendermode="false"] [ctype="RenderQuestionsControl"] .qrender-wrap .fa {
+    font-size: 160px;
+    padding: 0px 25px;
+}
+
+
+[eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
+    border: none;
+    padding: 7px;
+    font-size: 17px;
+}
 
 [eb-form="true"] [ctype="ChartControl"] .chartjs-hidden-iframe {
     width: auto !important;
@@ -9544,13 +9563,20 @@ input.locinp {
     background-color: rgb(199, 199, 199);
 }
 
-.filter-box .input-group-addon, .form-buider-form .input-group-addon, [eb-type="BotForm"] .input-group-addon {
+
+.filter-box .input-group-addon,
+.form-buider-form .input-group-addon,
+[eb-type="BotForm"] .input-group-addon,
+.q-container .input-group-addon {
     padding: 0px !important;
     padding: 0px 2.5px !important;
     background-color: white;
 }
 
-    .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa, [eb-type="BotForm"] .input-group-addon > .fa {
+    .filter-box .input-group-addon > .fa,
+    .form-buider-form .input-group-addon > .fa,
+    [eb-type="BotForm"] .input-group-addon > .fa,
+    .q-container .input-group-addon > .fa {
         padding: 3px 7px !important;
     }
 
@@ -9822,6 +9848,141 @@ input.locinp {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+
+/*#region subform*/
+#subFormHeader {
+    height: 38px;
+    width: 100%;
+    background-color: #ffffff;
+    /*position: fixed;*/
+    z-index: 10;
+    padding: 2px 2px 2px 2px;
+    box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+    display: flex;
+    flex-flow: row;
+    float: left;
+    border-radius: 6px 6px 0px 0px;
+}
+    #subFormHeader:hover{
+        cursor: move;
+    }
+
+    #subFormHeader .sfh-title {
+        width: 50%;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px;
+    }
+
+    #subFormHeader .sfh-toolbar {
+        width: 50%;
+    }
+
+    #subFormHeader .sfh-tool-btns {
+        float: right;
+    }
+
+        #subFormHeader .sfh-tool-btns .btn {
+            background-color: transparent;
+            color: #336699;
+            padding: 3px 12px;
+            font-size: 18px;
+            margin-right: 2px;
+        }
+
+            #subFormHeader .sfh-tool-btns .btn:hover {
+                background-color: #e4e4e4;
+                outline: none;
+                border-radius: 4px;
+            }
+
+#subFormOverlay {
+    text-align: center;
+    position: absolute;
+    height: 60vh;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    display: none;
+    z-index: 11;
+}
+
+#subForm-cont {
+    /*width: 100%;*/
+    height: calc(60vh - 40px);
+    border: none;
+    border-radius: 6px;
+}
+
+    #subForm-cont .form-buider-form {
+        height: 100%;
+        border-radius: 0px 0px 6px 6px;
+    }
+
+.sf-msk {
+    background: black;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 80;
+    top: 0;
+    left: 0;
+    opacity: .5;
+}
+
+.sf-container {
+    position: fixed;
+    z-index: 81;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sf-cont-body {
+    /*min-width: 350px;
+        min-height: 200px;*/
+    width: 60%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgb(60 64 67 / 30%), 0 4px 8px 3px rgb(60 64 67 / 15%);
+    position: relative;
+    display: flex;
+    flex-flow: column;
+}
+
+/*#endregion subform*/
+
+.fmode {
+    color: #fff;
+    font-weight: normal;
+    border-radius: 10px;
+    font-weight: normal;
+    margin-left: 3px;
+    padding: 1px 6px;
+    background-color: #9bf052;
+}
+
+    .fmode[mode="New Mode"], .fmode[mode="New Mode"] {
+        background-color: #00d036;
+    }
+
+    .fmode[mode="Edit Mode"] {
+        background-color: #f09b52;
+    }
+
+    .fmode[mode="View Mode"] {
+        background-color: #222222;
+    }
+
+    .fmode[mode="Draft Mode"] {
+        background-color: #8f0202;
+    }
 
 
 
@@ -10377,6 +10538,40 @@ input.locinp {
     .phnContextBtn:hover {
         cursor: pointer;
     }
+
+.phoneOTPinput {
+    padding-left: 15px;
+    letter-spacing: 42px;
+    border: 0;
+    background-image: linear-gradient(to left, #0371f9cc 70%, rgba(255, 255, 255, 0) 0%);
+    background-position: bottom;
+    background-size: 50px 1px;
+    background-repeat: repeat-x;
+    background-position-x: 35px;
+    width: 330px;
+    min-width: 330px;
+}
+
+#phnOTPdivOuter {
+    width: 305px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+#phnOTPdivInner {
+    left: 0;
+    position: sticky;
+}
+
+.phoneOTPinput {
+    outline: none;
+}
+
+#resend {
+    outline: none;
+}
+
 /*ebEmail control*/
 .emailCtrl_invalid {
     background: #ffb2b24f;
@@ -10795,6 +10990,46 @@ input.locinp {
 }
 /*#sendregion EbAudioInput*/
 
+.webform-cont .ctrl-cover .input-group input, i, span {
+    background-color: transparent;
+}
+
+.webform-cont .ctrl-cover input {
+    /*background-color: transparent !important;*/ /*Fix disable-enable fn of all ctrls [eg: numeric]*/
+}
+
+.webform-cont .dg_body input {
+    background-color: white !important;
+}
+
+.webform-cont .ctrl-cover[disabled="disabled"] {
+    background-color: var(--eb-disablegray) !important;
+}
+
+.webform-cont .ctrl-cover [disabled="disabled"] {
+    background-color: var(--eb-disablegray) !important;
+}
+
+
+.Eb-Question-Ctrl {
+   border-top:solid 1px;
+}
+
+    .Eb-Question-Ctrl .q-pane {
+        border-bottom: solid #d0d0d0;
+        padding-bottom: 10px;
+        margin: 0rem 2rem;
+        margin-bottom: 2rem;
+    }
+
+        .Eb-Question-Ctrl .q-pane .q-sec {
+            padding-left: 0px;
+        }
+
+        .Eb-Question-Ctrl .q-pane .a-sec {
+            padding-left: 10px;
+        }
+
 .alt {
     background-color: rgb(243, 249, 249);
 }
@@ -11197,8 +11432,8 @@ body, html, .html-root {
 
 .login-sec-image {
     width: 100%;
-    padding-top: 10px;
-    padding-bottom: 15px;
+   /* padding-top: 10px;
+    padding-bottom: 15px;*/
 }
 
     .login-sec-image img {
@@ -11236,6 +11471,7 @@ body, html, .html-root {
     padding: 20px 15px;
     border-radius: 6px;
     border: 1px solid #ddd;
+    height:315px;
 }
 .login_tabcontent-dc {
 
@@ -13247,6 +13483,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
 
     .mr .slots .slots-div {
         padding: 5px 11px;
+        margin: 5px;
         border: solid 1px #c1c1c1;
         border-radius: 3px;
     }
@@ -13256,9 +13493,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
         }
 
     .mr .slots .unblocked-slot:hover {
-        background-color: #00e0ea;
+        background-color: #00ff437a;
         cursor: pointer;
-        border: solid 1px #00e0ea;
+        border: solid 1px #00ff437a;
     }
 
     .mr .slots .blocked-slot {
@@ -13267,9 +13504,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     }
 
     .mr .slots .selected {
-        background-color: #6fa9d2;
+        background-color: #18ca03;
         cursor: pointer;
-        border: solid 1px #6fa9d2;
+        border: solid 1px #18ca03;
         color: white;
     }
 

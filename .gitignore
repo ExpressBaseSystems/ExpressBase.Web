@@ -263,3 +263,7 @@ paket-files/
 # Ignore all files inside Bundle folder
 /wwwroot/js/Bundles/*
 /wwwroot/css/Bundles/*
+/wwwroot/js/vrgs_js_test
+/wwwroot/css/Vrgs_testcss
+/Views/vrgs_test
+/Controllers/Vrgs_test.cs

@@ -1521,6 +1521,109 @@ const WebFormRender = function (option) {
         }
     };
 
+    this.DataPushedPopover = function () {
+        $('#webformpusheddata').show();
+        let timer1;
+        let contentHtml = null;
+
+        let contentFn = function (type) {
+            let _html = '';
+            if (type === 'loader') {
+                _html += `<div style='color: #888;'><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`;
+            }
+            else if (type === 'init') {
+                if (contentHtml)
+                    _html += contentHtml;
+                else
+                    _html += `<div ><button class='btn' id='webformpusheddata_btn'><i class="fa fa-refresh"></i> Refresh</button></div>`;
+            }
+            else if (type === 'error') {
+                _html += `<div><button class='btn' id='webformpusheddata_btn'><i class="fa fa-refresh"></i> Refresh</button><div style="color: #a88;">Error in loading!</div></div>`;
+            }
+            return _html;
+        };
+
+        let $poTrig = $('#webformpusheddata').popover({
+            trigger: 'manual',
+            html: true,
+            container: "body",
+            placement: 'bottom',
+            content: `<div id='webformpusheddata-div' style = 'min-height: 80px; min-width: 250px; display: flex; justify-content: center; align-items: center;'></div>`,
+            delay: { "hide": 100 }
+        });
+
+        let OnMouseEnter = function () {
+            clearTimeout(timer1);
+            let _this = this;
+            let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            if (!$poDiv.length) {
+                $(_this).popover("show");
+                $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            }
+            $poDiv.off("mouseleave").on("mouseleave", function () {
+                timer1 = setTimeout(function () { $(_this).popover('hide'); }, 300);
+            });
+
+            $poDiv.off("mouseenter").on("mouseenter", function () {
+                clearTimeout(timer1);
+            });
+        };
+
+        let OnMouseLeave = function () {
+            let _this = this;
+            timer1 = setTimeout(function () {
+                if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+                    $(_this).popover("hide");
+                }
+            }, 300);
+        };
+
+        let LoadData = function () {
+            if (contentHtml) {
+                $('#webformpusheddata-div').html(contentFn('init'));
+                return;
+            }
+            $('#webformpusheddata-div').html(contentFn('loader'));
+            $.ajax({
+                type: "POST",
+                url: "/WebForm/GetPushedDataInfo",
+                data: {
+                    RefId: this.formRefId, RowId: this.rowId, CurrentLoc: ebcontext.locations.getCurrent()
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $('#webformpusheddata-div').html(contentFn('error'));
+                }.bind(this),
+                success: function (_resp) {
+                    try {
+                        let _respObj = JSON.parse(_resp);
+                        if ($.isEmptyObject(_respObj)) {
+                            contentHtml = '<div style="color: #888;">Nothing to Display</div>'
+                            $('#webformpusheddata-div').html(contentHtml);
+                        }
+                        else {
+                            contentHtml = '<div>'
+                            $.each(_respObj, function (k, v) {
+                                contentHtml += `<div style='padding: 2px 0px;'><a href='${v}' target='_blank'>${k}</a></div>`;
+                            });
+                            contentHtml += '</div>';
+                            $('#webformpusheddata-div').html(contentHtml);
+                        }
+                    }
+                    catch (e) {
+                        $('#webformpusheddata-div').html(contentFn('error'));
+                        console.log(_resp);
+                        console.error(e);
+                    }
+                }.bind(this)
+            })
+        };
+
+        $poTrig.on('click', OnMouseEnter.bind($poTrig));
+        $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
+        $('#webformpusheddata').on('shown.bs.popover', LoadData.bind(this));
+        $('body').on('click', '#webformpusheddata_btn', LoadData.bind(this));
+    };
+
     this.setHeader = function (reqstMode) {
         let currentLoc = ebcontext.locations.getCurrent();
         if (this.renderMode === 2) {//partial
@@ -1555,7 +1658,7 @@ const WebFormRender = function (option) {
             return;
         }
 
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc", "webformlock"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc", "webformlock", "webformpusheddata"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
@@ -1578,6 +1681,13 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, "New Mode"));
         }
         else if (this.Mode.isView) {
+
+            if (this.FormObj.DataPushers && this.FormObj.DataPushers.$values.length > 0) {
+                let aValidDP = this.FormObj.DataPushers.$values.find(e => e.$type.includes('EbFormDataPusher') || e.$type.includes('EbBatchFormDataPusher'));
+                if (aValidDP && this.formPermissions[currentLoc].includes(5))
+                    this.DataPushedPopover();
+            }
+
             let btnsArr = ["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone", "webformlock"];
             if (this.formData.IsReadOnly) {
                 btnsArr = ["webformnew", "webformaudittrail", "webformprint-selbtn", "webformclone"];

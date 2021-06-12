@@ -282,6 +282,7 @@ const WebFormCollectionRender = function (Option) {
                             </div>`);
 
         header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformpusheddata" class="btn" title="Dependent Form Submissions" style='display: none;'><i class="fa fa-tags" aria-hidden="true"></i></button>`);
 
         header.insertButton(`<button id="webformsavedraft" role="save-draft" class="btn" title="Save as draft"><i class="icofont-ui-clip-board"></i></button>`);
         header.insertButton(`<button id="webformdeletedraft" role="delete-draft" class="btn" title="Delete draft"><i class="icofont-bin"></i></i></button>`);

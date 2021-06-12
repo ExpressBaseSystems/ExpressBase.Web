@@ -305,7 +305,7 @@ function EbMakeInvalid(ctrl, contSel, _ctrlCont, msg = "This field is required",
 
 function EbMakeValid(contSel, _ctrlCont, ctrl) {
     //setTimeout(function () {
-    $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)").siblings("[name=ctrlsend]").css('disabled', false);
+    $(`${contSel}  ${_ctrlCont}:first`).css("border", "").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
     if (ctrl)

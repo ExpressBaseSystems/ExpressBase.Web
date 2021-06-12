@@ -176,14 +176,14 @@ namespace ExpressBase.Web.Controllers
             all = all.Replace("AllMetas", "AllMetas_w").Replace("EbEnums", "EbEnums_w").Replace("EbObjects", "EbObjects_w").Replace("ControlOps", "ControlOps_w");
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
-        
+
         [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
         public FileContentResult cxt2js_vis()
         {
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
-            string all = _jsResult.AllMetas + ';' + 
-                _jsResult.JsObjects + ';' + 
+            string all = _jsResult.AllMetas + ';' +
+                _jsResult.JsObjects + ';' +
                 _jsResult.EbObjectTypes + ';';
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
@@ -755,6 +755,14 @@ namespace ExpressBase.Web.Controllers
                 return -2; //Access Denied
             LockUnlockWebFormDataResponse Resp = ServiceClient.Post<LockUnlockWebFormDataResponse>(new LockUnlockWebFormDataRequest { RefId = RefId, RowId = RowId, Lock = Lock });
             return Resp.Status;
+        }
+
+        public string GetPushedDataInfo(string RefId, int RowId, int CurrentLoc)
+        {
+            if (!this.HasPermission(RefId, OperationConstants.AUDIT_TRAIL, CurrentLoc))
+                return "Access Denied";
+            GetPushedDataInfoResponse Resp = ServiceClient.Post<GetPushedDataInfoResponse>(new GetPushedDataInfoRequest { RefId = RefId, RowId = RowId });
+            return Resp.Result;
         }
 
         public string GetAuditTrail(string refid, int rowid, int currentloc)

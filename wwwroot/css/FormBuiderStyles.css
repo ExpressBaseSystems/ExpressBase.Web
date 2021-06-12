@@ -1110,6 +1110,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     flex-flow: column;
     position: relative;
 }
+.form-buider-form .ctrl-cover {
+    border: 1px solid rgb(180 180 200 / 100%);
+}
 
 [tdcoltype="DGStringColumn"] > .ctrl-cover {
     position: unset;
@@ -1149,7 +1152,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .Dg_body {
     /*display: flex;*/
-    box-shadow: -1px 0px 0px 0px #f6f6ff;
+    /*box-shadow: -1px 0px 0px 0px #f6f6ff;*/
+    border-left: 1px solid #dddddf;
 }
 
 .check-wraper {
@@ -2070,7 +2074,7 @@ input.locinp {
 }
 
 .grid-cont .Dg_head, .Dg_footer {
-    padding-right: 8px;
+    /*padding-right: 8px;*/
 }
 
     .grid-cont .Dg_head > table > thead {
@@ -2089,7 +2093,8 @@ input.locinp {
 }
 
 .grid-cont .ctrlth {
-    width: 50px;
+    width: 38px;
+    padding-right: 18px !important;
 }
 
 .Dg_body .dgtbl {
@@ -2122,6 +2127,10 @@ input.locinp {
         padding: 0.5px;
         vertical-align: middle;
     }
+
+.Dg_head .slno > span {
+    text-align: center;
+}
 
 .inp-inner-loader {
     background: url(../images/gifs/loader2.gif) !important;
@@ -2285,9 +2294,9 @@ input.locinp {
 }
 
 .webform-cont ::-webkit-scrollbar {
-    width: 8px;
+    /*width: 8px;
     height: 8px;
-    background-color: #F5F5F5;
+    background-color: #F5F5F5;*/
 }
 
 [ctype="DataGrid_New"] > .ctrl-cover > .grid-cont > div > .dataTables_wrapper > .DTFC_ScrollWrapper > .dataTables_scroll > div.dataTables_scrollBody::-webkit-scrollbar {
@@ -2520,7 +2529,8 @@ input.locinp {
     float: left;
     border-radius: 6px 6px 0px 0px;
 }
-    #subFormHeader:hover{
+
+    #subFormHeader:hover {
         cursor: move;
     }
 
@@ -3668,7 +3678,7 @@ input.locinp {
 
 
 .Eb-Question-Ctrl {
-   border-top:solid 1px;
+    border-top: solid 1px;
 }
 
     .Eb-Question-Ctrl .q-pane {

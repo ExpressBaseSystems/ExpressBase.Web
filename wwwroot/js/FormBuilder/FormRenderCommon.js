@@ -255,8 +255,9 @@
             }
             else if (depCtrl.ObjType === "PowerSelect") {
                 if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
-                    if (depCtrl.initializer)
+                    if (depCtrl.initializer && (!depCtrl.IsDGCtrl || (depCtrl.IsDGCtrl && depCtrl.__DG.RowCount > 0))) {
                         depCtrl.initializer.reloadWithParams(curCtrl);
+                    }
                 }
                 else {
                     curCtrl.__isInitiallyPopulating = false;

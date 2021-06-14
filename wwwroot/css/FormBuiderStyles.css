@@ -2128,6 +2128,10 @@ input.locinp {
         vertical-align: middle;
     }
 
+.Dg_head .slno > span {
+    text-align: center;
+}
+
 .inp-inner-loader {
     background: url(../images/gifs/loader2.gif) !important;
     background-repeat: no-repeat !important;
@@ -2525,7 +2529,8 @@ input.locinp {
     float: left;
     border-radius: 6px 6px 0px 0px;
 }
-    #subFormHeader:hover{
+
+    #subFormHeader:hover {
         cursor: move;
     }
 
@@ -3673,7 +3678,7 @@ input.locinp {
 
 
 .Eb-Question-Ctrl {
-   border-top:solid 1px;
+    border-top: solid 1px;
 }
 
     .Eb-Question-Ctrl .q-pane {

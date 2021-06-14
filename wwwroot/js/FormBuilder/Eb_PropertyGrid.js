@@ -700,7 +700,10 @@
                 $MainCtrlsDDCont.find("select").append(optHtml);
                 $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
             }
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', optText);
+        // added to manage recursive onchange inside webform render
+        if ($(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val') !== optText) {
+            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', optText);
+        }
     };
 
     //Add a control name to Control DD
@@ -822,7 +825,7 @@
         let SelItem = $(e.target).find("option:selected").attr("data-name");
         $(`[ebsid=${SelItem}]`).focus();
         SelObj = this.AllObjects[SelItem];
-        let type = SelObj.$type.split(",")[0].split(".")[2];
+        let type = SelObj.constructor.name
         this.setObject(SelObj, this.AllMetas[type]);
         this.DD_onChange(e);
     };

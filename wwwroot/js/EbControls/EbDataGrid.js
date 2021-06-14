@@ -575,11 +575,11 @@
             .replace("@cogs@", `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
-                    <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
-                    <button type='button' class='cancel-row rowc'><span class='fa fa-times'></span></button>
-                    <button type='button' class='del-row rowc @del-c@ @disable-del@'><span class='fa fa-trash'></span></button>
+                    <button type='button' class='check-row rowc' tabindex='-1'><span class='fa fa-check'></span></button>
+                    <button type='button' class='cancel-row rowc' tabindex='-1'><span class='fa fa-times'></span></button>
+                    <button type='button' class='del-row rowc @del-c@ @disable-del@' tabindex='-1'><span class='fa fa-trash'></span></button>
                 </td>`)
-            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc @disable-edit@'><span class='fa fa-pencil'></span></button>" : "")
+            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc @disable-edit@' tabindex='-1'><span class='fa fa-pencil'></span></button>" : "")
             .replace("@del-c@", !isAnyColEditable ? "del-c" : "")
             .replace("@disable-edit@", this.ctrl.DisableRowEdit ? "disable-edit" : "")
             .replace("@disable-del@", this.ctrl.DisableRowDelete ? "disable-del" : "");
@@ -941,10 +941,28 @@
         if (this.isDGEditable()) {
             $tr.find(".edit-row").trigger("click");
             setTimeout(function () {
-                $e.closest("td").find("[ui-inp]").select();
+                let UiInps = $e.closest("td").find("[ui-inp]");
+                if (UiInps.length > 0) {
+                    $e.closest("td").find("[ui-inp]").select();
+                }
+                else {
+                    let enabledUiInps = $e.find("td [ui-inp]:enabled");
+                    if (enabledUiInps.length > 0)
+                        $(enabledUiInps[0]).select();
+                }
             }, 310);
         }
     }.bind(this);
+
+    this.row_focusout = function (e) {
+        setTimeout(this.row_focusout_inner.bind(this, e), 100);
+    };
+
+    this.row_focusout_inner = function (e) {
+        if ($(document.activeElement).parents(`#${this.TableId}`).length === 0) {
+            $(e.target).closest('tr').find('.check-row').trigger('click');
+        }
+    };
 
     this.confirmRow = function (rowId) {
         if (!rowId) {
@@ -1774,6 +1792,7 @@
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
         //this.$table.on("dblclick", ".dgtr > td", this.row_dblclick);
         this.$table.on("focusin", ".dgtr", this.row_dblclick);
+        this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
 
         $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);

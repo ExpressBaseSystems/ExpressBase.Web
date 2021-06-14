@@ -273,8 +273,15 @@
         this.sysValidationsOK(ctrl);
     };
 
-    this.UpdateValExpDepCtrls = function (curCtrl) {
+    this.waitLoop = function (psCtrl, curCtrl, index) {
+        psCtrl.__continue = null;        
+        this.UpdateValExpDepCtrls(curCtrl, index);
+    };
+
+    this.UpdateValExpDepCtrls = function (curCtrl, index) {
         $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+            if (typeof(index) === 'number' && i <= index)
+                return true;
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
             if (depCtrl === "not found")
                 return;
@@ -289,9 +296,17 @@
                         if (valExpFnStr) {
                             if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
-                                depCtrl.justSetValue(ValueExpr_val);
-                                this.validateCtrl(depCtrl);
-                                EbBlink(depCtrl);
+                                if (depCtrl.ObjType === 'PowerSelect') {
+                                    depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
+                                    depCtrl.justSetValue(ValueExpr_val);
+                                    EbBlink(depCtrl);
+                                    return false;
+                                }
+                                else {
+                                    depCtrl.justSetValue(ValueExpr_val);
+                                    this.validateCtrl(depCtrl);
+                                    EbBlink(depCtrl);
+                                }
                             }
                             else {
                                 $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

@@ -56,7 +56,7 @@
     }
 };
 
-const EbPowerSelect = function (ctrl, options) {
+const EbPowerSelect = function (ctrl, options) {    
     //parameters 
     this.getFilterValuesFn = options.getFilterValuesFn || function () { return []; };
     this.ComboObj = ctrl;
@@ -144,7 +144,7 @@ const EbPowerSelect = function (ctrl, options) {
             $('#' + this.name + 'Container').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
             $('#' + this.name + 'Container' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
-            this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 600)); //delayed search on combo searchbox
+            this.$searchBoxes.keyup(this.searchFN.bind(this)); 
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
             this.Values = [];
@@ -216,16 +216,29 @@ const EbPowerSelect = function (ctrl, options) {
     this.getSearchByExp = function (DefOp, mapedFieldType) {
         let op = String.empty;
         if (mapedFieldType === "string") {
-            if (DefOp === 0)// Equals
-                op = " = ";
-            else if (DefOp === 1)// Startwith
-                op = "x*";
-            else if (DefOp === 2)//EndsWith
-                op = "*x";
-            else if (DefOp === 3)// Between
-                op = "*x*";
-            else if (DefOp === 3)// Contains
-                op = "*x*";
+            if (typeof (this.ComboObj.SearchOperator) === 'number') {//temp solution
+                let inop = this.ComboObj.SearchOperator.toString();
+                if (inop === EbEnums_w.PsSearchOperators.StartsWith)
+                    op = 'x*';
+                else if (inop === EbEnums_w.PsSearchOperators.EndsWith)
+                    op = '*x';
+                else if (inop === EbEnums_w.PsSearchOperators.Equals)
+                    op = ' = ';
+                else
+                    op = '*x*';
+            }
+            else {
+                if (DefOp === 0)// Equals
+                    op = " = ";
+                else if (DefOp === 1)// Startwith
+                    op = "x*";
+                else if (DefOp === 2)//EndsWith
+                    op = "*x";
+                else if (DefOp === 3)// Between
+                    op = "*x*";
+                else if (DefOp === 3)// Contains
+                    op = "*x*";
+            }
         }
         else if (mapedField === "numeric") {
             switch (DefOp.toString()) {
@@ -250,7 +263,20 @@ const EbPowerSelect = function (ctrl, options) {
             }
         }
         return op;
-    }
+    };
+
+    this.getSearchTextRegex = function (text) {
+        if (typeof (this.ComboObj.SearchOperator) === 'number') {
+            let op = this.ComboObj.SearchOperator.toString();
+            if (op === EbEnums_w.PsSearchOperators.StartsWith)
+                text = '^' + text;
+            else if (op === EbEnums_w.PsSearchOperators.EndsWith)
+                text = text + '$';
+            else if (op === EbEnums_w.PsSearchOperators.Equals)
+                text = '^' + text + '$';
+        }
+        return text;
+    };
 
     this.showCtrlMsg = function () {
         EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSearchLength} characters to search`, "info");
@@ -259,6 +285,15 @@ const EbPowerSelect = function (ctrl, options) {
     this.hideCtrlMsg = function () {
         EbHideCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
     }.bind(this);
+
+    this.searchFN = function (e) {
+        if (this.ComboObj.IsPreload) {
+            this.delayedSearchFN(e);
+        }
+        else {
+            debounce(this.delayedSearchFN.bind(this), 600)(e);
+        }
+    };
 
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
@@ -282,7 +317,7 @@ const EbPowerSelect = function (ctrl, options) {
         let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         let $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         let colObj = getObjByval(this.ComboObj.DisplayMembers.$values, "name", mapedField);
-        let searchByExp = "*x*";//this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
+        let searchByExp = this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
         if (mapedFieldType !== "string")
             searchByExp = " = ";
         if (!this.IsDatatableInit) {
@@ -311,7 +346,7 @@ const EbPowerSelect = function (ctrl, options) {
                 }
 
                 if (this.datatable) {
-                    this.datatable.Api.column(mapedField + ":name").search(searchVal).draw();
+                    this.datatable.Api.column(mapedField + ":name").search(this.getSearchTextRegex(searchVal), true).draw();
                 }
             }
             else {
@@ -523,6 +558,7 @@ const EbPowerSelect = function (ctrl, options) {
                 console.warn("PS: " + result.error);
             }
             return;
+            if (this.ComboObj.__continue) this.ComboObj.__continue();
         }
         this.data = result;
         this.unformattedData = result.data;
@@ -541,6 +577,8 @@ const EbPowerSelect = function (ctrl, options) {
                 this.filterArray.clear();
             }
             this.IsFromSetValues = false;
+
+            if (this.ComboObj.__continue) this.ComboObj.__continue();
         }
         else {// not from setValue (search,...)
             if (!this.isDMSearchEmpty() && this.ComboObj.IsPreload === false && this.unformattedData.length === 1) {
@@ -692,6 +730,7 @@ const EbPowerSelect = function (ctrl, options) {
                     console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
                     if (this.IsFromReloadWithParams2setOldval)
                         this.ComboObj.___DoNotImport = false;
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                     return;
                 }
 
@@ -711,6 +750,7 @@ const EbPowerSelect = function (ctrl, options) {
 
                 try {
                     this.Vobj.valueMembers.push(...tempVMs);
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                 }
                 catch (e) {
                     console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
@@ -809,7 +849,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
-            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.filterArray[0].Value).draw();
+            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.getSearchTextRegex(this.filterArray[0].Value), true).draw();
     };
 
     // init datatable

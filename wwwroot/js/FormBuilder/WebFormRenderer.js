@@ -1658,7 +1658,7 @@ const WebFormRender = function (option) {
             return;
         }
 
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc", "webformlock", "webformpusheddata"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc", "webformlock", "webformpusheddata", "webformdiscardedit"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
@@ -1676,6 +1676,7 @@ const WebFormRender = function (option) {
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (this.Mode.isEdit) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn"], currentLoc, reqstMode));
+            this.headerObj.showElement(["webformdiscardedit"]);
         }
         else if (this.Mode.isNew) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, "New Mode"));
@@ -1927,6 +1928,7 @@ const WebFormRender = function (option) {
             $("#webformsavedraft").off("click").on("click", this.saveAsDraft);
             $("#webformdeletedraft").off("click").on("click", this.deleteDraft);
             this.$openSrcBtn.off("click").on("click", this.openSourceForm.bind(this));
+            $("#webformdiscardedit").off("click").on("click", this.DiscardChanges.bind(this));
         }
 
         $("body").off("focus", "[ui-inp]").on("focus", "[ui-inp]", this.selectUIinpOnFocus);
@@ -1943,6 +1945,55 @@ const WebFormRender = function (option) {
             url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
         }
         window.open(url, '_blank');
+    };
+
+    this.DiscardChanges = function () {
+        if (!this.IsAnyChangesInFormData()) {
+            this.FORCE_RELOAD(this.rowId, this.formDataBackUp, "View Mode");
+            return;
+        }
+        EbDialog("show",
+            {
+                Message: "Are you sure to Discard all changes?",
+                Buttons: {
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        this.FORCE_RELOAD(this.rowId, this.formDataBackUp, "View Mode");
+                    }
+                }.bind(this)
+            });
+    };
+
+    this.IsAnyChangesInFormData = function () {
+        let changeDetected = false;
+        let modelBkUp = this.formDataBackUp.MultipleTables;
+        $.each(this.DataMODEL, function (k, Table) {
+            if (!modelBkUp[k] || (modelBkUp[k] && modelBkUp[k].length != Table.length)) {
+                changeDetected = true;
+                return false;
+            }
+            for (let i = 0; i < Table.length; i++) {
+                let RowBkUp = modelBkUp[k].find(e => e.RowId === Table[i].RowId);
+                if (!RowBkUp || (RowBkUp && RowBkUp.Columns.length != Table[i].Columns.length)) {
+                    changeDetected = true;
+                    return false;
+                }
+                for (let j = 0; j < Table[i].Columns.length; j++) {
+                    let ColumnBkUp = RowBkUp.Columns.find(e => e.Name === Table[i].Columns[j].Name);
+                    if (!ColumnBkUp || (ColumnBkUp && Table[i].Columns[j].Value !== ColumnBkUp.Value)) {
+                        let ctrl = this.flatControls.find(e => e.Name === ColumnBkUp.Name);
+                        if (!(ctrl && ctrl.DoNotPersist)) {
+                            changeDetected = true;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }.bind(this));
+        return changeDetected;
     };
 
     this.excelUpload = function () {
@@ -2098,6 +2149,7 @@ const WebFormRender = function (option) {
         this.uploadedFileRefList = {};
 
         this.formData = option.formData;
+        this.formDataBackUp = JSON.parse(JSON.stringify(this.formData));
         if (this.mode === "New Mode" || this.mode === "Prefill Mode")
             this.emptyFormDataModel_copy = JSON.parse(JSON.stringify(this.formData));// takes a copy (if switched to new mode)
         this.DataMODEL = this.formData.MultipleTables;

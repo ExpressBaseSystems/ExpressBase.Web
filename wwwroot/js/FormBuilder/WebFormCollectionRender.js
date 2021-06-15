@@ -249,6 +249,7 @@ const WebFormCollectionRender = function (Option) {
 
     this.GetMasterHeaderBtns = function (Op) {
         let header = new EbHeader();
+        header.insertButton(`<button id="webformdiscardedit" class='btn' title='Discard Changes' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformclone" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformopensrc" class='btn' title='Open source record' style='display: none;'><i class="fa fa-external-link" aria-hidden="true"></i></button>`);
 

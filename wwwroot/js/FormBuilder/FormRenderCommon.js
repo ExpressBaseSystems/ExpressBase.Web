@@ -274,13 +274,13 @@
     };
 
     this.waitLoop = function (psCtrl, curCtrl, index) {
-        psCtrl.__continue = null;        
+        psCtrl.__continue = null;
         this.UpdateValExpDepCtrls(curCtrl, index);
     };
 
     this.UpdateValExpDepCtrls = function (curCtrl, index) {
         $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
-            if (typeof(index) === 'number' && i <= index)
+            if (typeof (index) === 'number' && i <= index)
                 return true;
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
             if (depCtrl === "not found")
@@ -407,7 +407,10 @@
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) { //calls in onchange
-            if (event && event.type === "blur" && curCtrl.ObjType === "Date") { // to manage unnecessorily change triggering while blur from date pluggin
+            if (event && curCtrl.ObjType === "Date") { // to manage unnecessorily change triggering while blur from date pluggin
+                if (!curCtrl.__lastval) {
+                    curCtrl.__lastval = this.getOldDataVal(this.FO.formDataBackUp, curCtrl);
+                }
                 if (curCtrl.getValue() !== curCtrl.__lastval)
                     curCtrl.__lastval = curCtrl.getValue();
                 else
@@ -450,6 +453,20 @@
         }.bind(this);
     };
 
+    this.getOldDataVal = function (formDataBackUp, ctrlObj) {
+        let val = null;
+        $.each(formDataBackUp.MultipleTables, function (i, Table) {
+            for (let x = 0; x < Table.length; x++) {
+                let Column = Table[x].Columns.find(e => e.Name === ctrlObj.Name);
+                if (Column) {
+                    val = Column.Value;
+                    return false;
+                }
+            }
+        }.bind(this));
+        return val;
+    };
+
     this.bindRequired = function (control) {
         if (control.ObjType === "SimpleSelect" || control.RenderAsSimpleSelect)
             $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
@@ -468,7 +485,7 @@
             val = val.trim().toLowerCase();
         let initVal = this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
         if (typeof initVal === 'string')
-            initVal = initVal.trim().toLowerCase(); 
+            initVal = initVal.trim().toLowerCase();
         return val === initVal;
     };
 

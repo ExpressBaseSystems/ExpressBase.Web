@@ -1031,6 +1031,10 @@
         });
     };
 
+    this.RenderQuestionsControl = function (ctrl, ctrlOpts) {
+        return new EbRenderQuestionsControl(ctrl, ctrlOpts);
+    };
+
     this.DataGrid = function (ctrl, ctrlOpts) {
         return new EbDataGrid(ctrl, ctrlOpts);
     };
@@ -2299,7 +2303,7 @@
 
 
     this.QuestionnaireConfigurator = function (ctrl) {
-        debugger;
+        //debugger;
         let Ques_Confi = {};
         let que_SaveObj = [];
        // let ext_props = { "required": false, "unique": false, "validator": [] };
@@ -2400,7 +2404,6 @@
         });
 
         var setObjectValue_Html = function (item, setvalueTrue, _ext_prpty) {
-            debugger;
             let ext_props = new EbObjects_w["Ques_ext_props"]("Question_properties" + Date.now());
             Ques_Confi = {};
             Ques_Confi.id = 0;
@@ -2436,7 +2439,7 @@
         ctrl.bindOnChange = function (p1) {
 
            // alert("bind change");
-            debugger;
+            //debugger;
             $(`#${ctrl.EbSid}_queBtn`).on("click", p1);
             $('#queConf_PGrid_wrp').on('input', p1);
         };
@@ -2446,7 +2449,7 @@
         };
 
         ctrl.setValue = function (p1) {
-            debugger;
+            //debugger;
             var qArray = [];
            // alert("setvalue");
             if (p1 != null) {

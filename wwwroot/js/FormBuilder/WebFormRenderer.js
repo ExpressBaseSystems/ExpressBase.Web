@@ -124,6 +124,13 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.initRQCs = function () {
+        $.each(this.RQCs, function (k, RQC) {//dg Init
+            this.DGBuilderObjs[RQC.EbSid_CtxId] = this.initControls.init(RQC, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+            this.DGBuilderObjs[RQC.EbSid_CtxId].MultipleTables = this.DataMODEL | [];
+        }.bind(this));
+    };
+
     this.initDGsNew = function () {
         $.each(this.DGsNew, function (k, DG) {//dg Init
             this.DGNewBuilderObjs[DG.EbSid_CtxId] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
@@ -262,6 +269,7 @@ const WebFormRender = function (option) {
         this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject - done for filterdialog default value
         this._allPSsInit = false;
 
+        this.RQCs = getFlatContObjsOfType(this.FormObj, "RenderQuestionsControl");// all RQCs in formObject
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
         this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject
         this.setFormObject();// set helper functions to this.formObject and other...
@@ -271,6 +279,7 @@ const WebFormRender = function (option) {
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.FRC.setDisabledControls(this.flatControls);// disables disabled controls 
         this.initDGs();
+        this.initRQCs();
         this.initDGsNew();
         this.initReviewCtrl();
         this.initWizards();
@@ -429,9 +438,12 @@ const WebFormRender = function (option) {
     this.getNormalTblNames = function () {
         let NCCTblNames = [];
         let FlatContControls = getFlatContControls(this.FormObj);
-        $.each(FlatContControls, function (i, CC) {
-            let TableName = CC.TableName.trim();
-            if (!CC.IsSpecialContainer && TableName !== '' && !NCCTblNames.includes(TableName))
+        $.each(FlatContControls, function (i, ctrl) {
+            if (ctrl.IsSpecialContainer || !ctrl.TableName) {
+                return;
+            }
+            let TableName = ctrl.TableName.trim();
+            if (!NCCTblNames.includes(TableName))
                 NCCTblNames.push(TableName);
         });
         return NCCTblNames;
@@ -2165,6 +2177,7 @@ const WebFormRender = function (option) {
         this.MasterTable = this.FormObj.TableName;
         this.IsPSsInitComplete = {};
         this.DGBuilderObjs = {};
+        this.RQCRenderer = {};
         this.DGNewBuilderObjs = {};
         this.uniqCtrlsInitialVals = {};
         this.DynamicTabObject = null;

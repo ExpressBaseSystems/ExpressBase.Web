@@ -324,7 +324,11 @@ const EbPowerSelect = function (ctrl, options) {
             if (this.ComboObj.MinSearchLength > searchVal.length)
                 return;
             let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
-            this.filterArray.push(filterObj);
+            let temp = this.filterArray.find(e => e.Column === filterObj.Column);
+            if (temp)
+                temp.Value = filterObj.Value;
+            else
+                this.filterArray.push(filterObj);
             this.V_showDD();
             if (!this.ComboObj.IsPreload)
                 this.DMlastSearchVal[mapedField] = searchVal;

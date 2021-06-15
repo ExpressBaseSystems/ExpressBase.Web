@@ -923,6 +923,8 @@
             return;
         if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
             return;
+        if (this.Mode.isView)
+            return;
 
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
@@ -955,6 +957,8 @@
     }.bind(this);
 
     this.row_focusout = function (e) {
+        if (this.Mode.isView)
+            return;
         setTimeout(this.row_focusout_inner.bind(this, e), 100);
     };
 

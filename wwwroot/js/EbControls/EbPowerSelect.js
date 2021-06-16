@@ -1379,7 +1379,8 @@ const EbPowerSelect = function (ctrl, options) {
     }.bind(this);
 
     this.getRowUnformattedData = function ($tr) {
-        return this.unformattedData.filter(obj => obj[this.VMindex] == this.datatable.Api.row($tr).data()[this.VMindex].replace(/[^\d.-]/g, '') * 1)[0];
+        let vmValue = this.datatable.Api.row($tr).data()[this.VMindex].replace(/[^\d.-]/g, '') * 1;
+        return this.unformattedData.filter(obj => obj[this.VMindex] == vmValue)[0];
     };
 
     this.checkBxClickEventHand = function (e) {

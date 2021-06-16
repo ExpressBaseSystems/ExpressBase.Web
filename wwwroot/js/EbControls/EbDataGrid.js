@@ -147,13 +147,14 @@
 
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@;'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
                       <span>${this.getDispMembr(inpCtrl)}</span>
                     </div >                                               
                 </td>`
             .replace("@isReadonly@", col.IsDisable)
+            .replace("@back-color@", col.IsDisable ? 'rgba(238,238,238,0.6)' : 'transparent')
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
@@ -192,6 +193,10 @@
         //if (!this.curRowObjectMODEL[this.colNames[0]].__isEditing)
         this.setcurRowDataMODELWithOldVals(rowId);
         this.changeEditFlagInRowCtrls(true, rowId);
+        
+        let enabledUiInps = $tr.find("td [ui-inp]:enabled");
+        if (enabledUiInps.length > 0)
+            $(enabledUiInps[0]).select();
     }.bind(this);
 
     this.changeEditFlagInRowCtrls = function (val, rowId) {
@@ -919,11 +924,14 @@
     }.bind(this);
 
     this.row_dblclick = function (e) {
-        if (!($(e.target).hasClass("tdtxt") || $(e.target).is($(`#${this.TableId}>tbody > tr >td`)) || $(e.target).is($(`#${this.TableId}>tbody > tr`))))
+        if (!($(e.target).hasClass("tdtxt") || $(e.target).is($(`#${this.TableId}>tbody > tr >td`)) || $(e.target).is($(`#${this.TableId}>tbody > tr`)))) {
             return;
+        }
         if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
             return;
         if (this.Mode.isView)
+            return;
+        if ($(e.currentTarget).hasClass('ctrlstd'))
             return;
 
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
@@ -931,8 +939,13 @@
         let $e = $(e.target);
         let $tr = $e.closest("tr");
         let new_rowId = $tr.attr("rowid");
-        if (rowId === new_rowId)
+        if (rowId === new_rowId) {
+            let UiInps = $e.closest("td").find("[ui-inp]");
+            if (UiInps.length > 0) {
+                $e.closest("td").find("[ui-inp]").select();
+            }
             return;
+        }
 
         if ($activeTr.length === 1) {
             if (!this.RowRequired_valid_Check(rowId))
@@ -947,11 +960,6 @@
                 if (UiInps.length > 0) {
                     $e.closest("td").find("[ui-inp]").select();
                 }
-                else {
-                    let enabledUiInps = $e.find("td [ui-inp]:enabled");
-                    if (enabledUiInps.length > 0)
-                        $(enabledUiInps[0]).select();
-                }
             }, 310);
         }
     }.bind(this);
@@ -963,8 +971,28 @@
     };
 
     this.row_focusout_inner = function (e) {
-        if ($(document.activeElement).parents(`#${this.TableId}`).length === 0) {
-            $(e.target).closest('tr').find('.check-row').trigger('click');
+        let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
+        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0) {
+            $activeTr.find('.check-row').trigger('click');
+        }
+    };
+
+    this.row_focusin = function (e) {
+        if (this.Mode.isView)
+            return;
+        let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
+        let rowId = $activeTr.attr("rowid");
+        let $tr = $(e.currentTarget);
+        let new_rowId = $tr.attr("rowid");
+        if (rowId != new_rowId && new_rowId) {
+            if ($activeTr.length > 0) {
+                if (this.confirmRow(rowId)) {
+                    $tr.find('.edit-row').trigger('click');
+                }
+            }
+            else {
+                $tr.find('.edit-row').trigger('click');
+            }
         }
     };
 
@@ -1795,7 +1823,8 @@
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
         //this.$table.on("dblclick", ".dgtr > td", this.row_dblclick);
-        this.$table.on("focusin", ".dgtr", this.row_dblclick);
+        this.$table.on("click", ".dgtr > td", this.row_dblclick);
+        this.$table.on("focusin", ".dgtr", this.row_focusin.bind(this));
         this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
 
         $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
@@ -1825,7 +1854,7 @@
 
     this.preInit = function () {
         if (this.ctrl.DataSourceId) {
-            if (this.Mode.isNew || (this.ctrl.IsLoadDataSourceInEditMode && (this.Mode.isEdit || this.Mode.isView))) {
+            if (this.Mode.isNew || (this.ctrl.IsLoadDataSourceInEditMode && this.Mode.isEdit)) {
                 this.isDataImport = true;// is this using??
                 this.setSuggestionVals();
             }

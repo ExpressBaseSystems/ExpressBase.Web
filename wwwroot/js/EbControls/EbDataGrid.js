@@ -314,8 +314,13 @@
         let dispKeys = Object.keys(dispDict0);
         for (let j = 0; j < dispKeys.length; j++) {
             let dispKey = dispKeys[j]
-            textspn += "<div iblock>";
-
+            let widthStyle = `style="width: auto;"`;
+            if (inpCtrl.DisplayMembers) {
+                let widthper = inpCtrl.DisplayMembers.$values.find(e => e.name == dispKey).Width;
+                if (widthper > 0 && widthper <= 100)
+                    widthStyle = `style="width: ${widthper}%;"`;
+            }
+            textspn += `<div iblock ${widthStyle}>`;
             for (let k = 0; k < valMsArr.length; k++) {
                 let vm = parseInt(valMsArr[k]);
                 let dispDict = cellObj.D[vm];
@@ -324,10 +329,10 @@
 
             }
 
-            textspn += "</div>&nbsp;&nbsp;&nbsp;";
+            textspn += "</div>";
         }
 
-        return textspn.substr(0, textspn.length - 18);
+        return textspn;//.substr(0, textspn.length - 18);
     };
 
     this.getSSDispMembrs = function (cellObj, rowId, col) {

@@ -126,7 +126,7 @@
                     else if (ctrl[ExprName].Lang === 2) {
                         let filterValues = [];
                         $.each(ctrl.ValExpParams.$values, function (i, depCtrl) {
-                            let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                            let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl);
                             filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
                         }.bind(this));
                         filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));

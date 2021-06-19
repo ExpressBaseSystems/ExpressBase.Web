@@ -609,7 +609,7 @@ const EbPowerSelect = function (ctrl, options) {
             }
             this.IsFromReloadWithParams2setOldval = false;
 
-            this.focus1stRow();
+            //this.focus1stRow();
         }
         this.hideLoader();
     };
@@ -843,7 +843,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.IsDatatableInit = true;
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
-        this.focus1stRow();
+        //this.focus1stRow();
     };
 
     //this.preInit = function (e, settings) {
@@ -1202,7 +1202,7 @@ const EbPowerSelect = function (ctrl, options) {
             //    return;
             //else
             this.V_showDD();
-            this.focus1stRow();
+            //this.focus1stRow();
         }
 
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);

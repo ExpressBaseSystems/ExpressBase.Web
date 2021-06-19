@@ -972,12 +972,19 @@
     this.row_focusout = function (e) {
         if (this.Mode.isView)
             return;
-        setTimeout(this.row_focusout_inner.bind(this, e), 100);
+        if ($(e.target).parents(`#cont_${this.ctrl.EbSid}`).length > 0)
+            return;
+
+        let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
+        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 && $('.DDdiv:visible').length === 0) {
+            $activeTr.find('.check-row').trigger('click');
+        }
+        //setTimeout(this.row_focusout_inner.bind(this, e), 200);
     };
 
     this.row_focusout_inner = function (e) {
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
-        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0) {
+        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 && $('.DDdiv:visible').length === 0) {
             $activeTr.find('.check-row').trigger('click');
         }
     };
@@ -1830,7 +1837,8 @@
         //this.$table.on("dblclick", ".dgtr > td", this.row_dblclick);
         this.$table.on("click", ".dgtr > td", this.row_dblclick);
         this.$table.on("focusin", ".dgtr", this.row_focusin.bind(this));
-        this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
+        //this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
+        $(document).on('mouseup', this.row_focusout.bind(this));
 
         $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);

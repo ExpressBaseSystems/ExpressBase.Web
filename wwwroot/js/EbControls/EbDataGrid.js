@@ -314,18 +314,18 @@
         let dispKeys = Object.keys(dispDict0);
         for (let j = 0; j < dispKeys.length; j++) {
             let dispKey = dispKeys[j]
-            let widthStyle = `style="width: auto;"`;
+            let widthStyle = `style="width: auto; pointer-events: auto;"`;
             if (inpCtrl.DisplayMembers) {
                 let widthper = inpCtrl.DisplayMembers.$values.find(e => e.name == dispKey).Width;
                 if (widthper > 0 && widthper <= 100)
-                    widthStyle = `style="width: ${widthper}%;"`;
+                    widthStyle = `style="width: ${widthper}%; pointer-events: auto;"`;
             }
             textspn += `<div iblock ${widthStyle}>`;
             for (let k = 0; k < valMsArr.length; k++) {
                 let vm = parseInt(valMsArr[k]);
                 let dispDict = cellObj.D[vm];
-                let DMVal = dispDict[dispKey];
-                textspn += `<div class='selected-tag'>${DMVal === null ? "" : DMVal}</div>`;
+                let DMVal = dispDict[dispKey] == null ? "" : dispDict[dispKey];
+                textspn += `<div class='selected-tag' title="${DMVal}">${DMVal}</div>`;
 
             }
 

@@ -376,6 +376,23 @@
         opacity: 1;
     }
 
+.DDdiv > .DDrefresh {
+    position: absolute;
+    right: 22px;
+    top: 0;
+    z-index: 999;
+    color: white;
+    opacity: 0.2;
+    background-color: blue;
+    font-size: 14px;
+    width: 22px;
+    text-align: center;
+}
+
+    .DDdiv > .DDrefresh:hover {
+        opacity: 1;
+    }
+
 .ps-addbtn {
     width: 32px !important;
     z-index: 1;

@@ -135,6 +135,7 @@ const EbPowerSelect = function (ctrl, options) {
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit)
             $('#' + this.name + 'Container .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
             $('#' + this.name + 'Container .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
+            $('#' + this.name + 'Container .DDrefresh').off("click").on("click", this.DDrefresh.bind(this)); // dd refresh button
             $('#' + this.name + 'tbl').keydown(function (e) {
                 if (e.which === 27) {
                     this.lastFocusedDMsearchBox.focus();
@@ -514,14 +515,14 @@ const EbPowerSelect = function (ctrl, options) {
     //    this.URLwithParams = url.toString();
     //};
 
-    this.reloadWithParams = function () {
+    this.reloadWithParams = function (setOldValue = true) {
         this.oldValsFromReloadWithParams = [... this.Vobj.valueMembers];
         this.clearValues(true);
         this.fromReloadWithParams = true;
         //if (this.ComboObj.IsDataFromApi)
         //    this.attachParams2Url();
 
-        this.IsFromReloadWithParams2setOldval = true;
+        this.IsFromReloadWithParams2setOldval = setOldValue;
         this.getData();
     };
 
@@ -1020,6 +1021,10 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.DDclose = function (e) {
         this.Vobj.hideDD();
+    };
+
+    this.DDrefresh = function (e) {
+        this.reloadWithParams(false);
     };
 
     //this.getSelectedRow = function () {

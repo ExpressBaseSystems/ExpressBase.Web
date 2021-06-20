@@ -992,6 +992,8 @@
     this.row_focusin = function (e) {
         if (this.Mode.isView)
             return;
+        if ($(e.target).hasClass('rowc'))
+            return;
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
         let $tr = $(e.currentTarget);

@@ -1126,6 +1126,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .dgtbl .ctrl-cover {
     border-top: none;
     border-bottom: none;
+    border-left: 1px solid var(--eb-bluishgray);
+    border-right: 1px solid var(--eb-bluishgray);
 }
 
 .Dg_body .slno-tbl {

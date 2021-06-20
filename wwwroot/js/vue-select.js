@@ -94,7 +94,7 @@ function delid() {
                 multiple: { type: Boolean, default: !1 },
                 placeholder: { type: String, default: "" },
                 transition: { type: String, default: "expand" },
-                clearSearchOnSelect: { type: Boolean, default: !0 },
+                clearSearchOnSelect: { type: Boolean, default: !1 },//eb_edited
                 label: { type: String, default: "label" },
                 getOptionLabel: {
                     type: Function, default: function (t) {

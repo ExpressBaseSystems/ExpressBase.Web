@@ -61,6 +61,92 @@
         this.FO.__fromImport = false;
     };
 
+    this.DrCallBack = function (ctrl, CtrlPaths, Index, ExprName) {
+        ctrl.__continue = null;
+        this.execAllDefaultValExpr_Inner(CtrlPaths, Index, ExprName);
+    };
+
+    this.execAllValExprForDoNotPersistCtrls = function () {
+        if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
+            console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        this.execAllDefaultValExpr_Inner(this.FO.FormObj.DoNotPersistExecOrder, 0, 'ValueExpr');
+    };
+
+    this.execAllDefaultValExpr = function () {
+        if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
+            console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        this.execAllDefaultValExpr_Inner(this.FO.FormObj.DefaultValsExecOrder, 0, 'DefaultValueExpression');
+    };
+
+    this.execAllDefaultValExpr_Inner = function (CtrlPaths, Index, ExprName) {
+
+        for (; Index < CtrlPaths.$values.length; Index++) {
+            let ctrl = this.FO.formObject.__getCtrlByPath(CtrlPaths.$values[Index]);
+            ctrl.___DoNotUpdateDrDepCtrls = this.FO.__fromImport;
+
+            if (ctrl === "not found")
+                return;
+            try {
+                if (ctrl.ObjType === "TVcontrol") {
+                    //depCtrl.reloadWithParam(curCtrl);
+                }
+                else {
+                    if (!ctrl[ExprName])
+                        continue;
+                    if (ctrl[ExprName].Lang === 0) {
+                        let jsExpr = atob(ctrl[ExprName].Code);
+                        let result = new Function("form", "user", `event`, jsExpr).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+                        if (result) {
+                            if (!ctrl.IsDGCtrl) {
+                                if (ctrl.ObjType === 'PowerSelect') {
+                                    ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, ++Index, ExprName);
+                                    ctrl.justSetValue(result);
+                                    EbBlink(ctrl);
+                                    break;
+                                }
+                                else {
+                                    ctrl.justSetValue(result);
+                                    this.validateCtrl(ctrl);
+                                    EbBlink(ctrl);
+                                }
+                            }
+                            else {
+                                $.each(ctrl.__DG.AllRowCtrls, function (rowid, row) {
+                                    row[ctrl.Name].setValue(result);
+                                }.bind(this));
+                            }
+                            //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                            //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
+                        }
+                    }
+                    else if (ctrl[ExprName].Lang === 2) {
+                        let filterValues = [];
+                        $.each(ctrl.ValExpParams.$values, function (i, depCtrl) {
+                            let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl);
+                            filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
+                        }.bind(this));
+                        filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
+                        filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                        filterValues.push(new fltr_obj(11, "id", this.FO.FormObj.rowId));
+                        ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, ++Index, ExprName);
+                        this.ExecuteSqlValueExpr(ctrl, filterValues, 1);
+                        break;
+                    }
+                }
+            }
+            catch (e) {
+                console.error('Error in default/value expression: ' + ctrl.Name);
+                console.log(e);
+            }
+        }
+        if (Index >= CtrlPaths.length)
+            this.FO.__fromImport = false;
+    };
+
     this.execValueExpNC = function (DoNotPersistExecOrder) {
         if (!DoNotPersistExecOrder) {//for old forms
             console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
@@ -273,8 +359,8 @@
         this.sysValidationsOK(ctrl);
     };
 
-    this.waitLoop = function (psCtrl, curCtrl, index) {
-        psCtrl.__continue = null;
+    this.waitLoop = function (depCtrl, curCtrl, index) {
+        depCtrl.__continue = null;
         this.UpdateValExpDepCtrls(curCtrl, index);
     };
 
@@ -318,23 +404,17 @@
                         }
                     }
                     else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
-                        let params = [];
-
-                        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
-                            try {
-                                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                                let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
-                                let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
-                                params.push(param);
-                            }
-                            catch (e) {
-                                console.eb_log("eb error :");
-                                console.eb_log(e);
-                                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                            }
+                        let filterValues = [];
+                        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {
+                            let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                            filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
                         }.bind(this));
-
-                        ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                        filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
+                        filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                        filterValues.push(new fltr_obj(11, "id", this.FO.FormObj.rowId));
+                        depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
+                        this.ExecuteSqlValueExpr(depCtrl, filterValues, 0);
+                        return false;
                     }
                 }
             }
@@ -345,6 +425,27 @@
             }
         }.bind(this));
     }.bind(this);
+
+    this.ExecuteSqlValueExpr = function (depCtrl, filterValues, type) {
+        this.FO.showLoader();
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/ExecuteSqlValueExpr",
+            data: { _refid: this.FO.FormObj.RefId, _triggerctrl: depCtrl.Name, _params: filterValues, _type: type },
+            error: function (xhr, ajaxOptions, thrownError) {
+                EbMessage("show", { Message: `Couldn't Update ${depCtrl.Label || depCtrl.Name}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+                this.FO.hideLoader();
+                if (depCtrl.__continue) depCtrl.__continue();
+            }.bind(this),
+            success: function (val) {
+                this.FO.hideLoader();
+                depCtrl.justSetValue(val);
+                if (depCtrl.ObjType !== 'PowerSelect' && depCtrl.__continue) {
+                    depCtrl.__continue();
+                }
+            }.bind(this)
+        });
+    };
 
     this.importDGRelatedUpdates = function (curCtrl) {
         $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {

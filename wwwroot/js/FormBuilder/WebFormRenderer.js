@@ -2211,12 +2211,12 @@ const WebFormRender = function (option) {
 
         if (this.Mode.isNew) {
             if (this.draftId === 0) // not new mode in draft
-                this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
+                this.FRC.execAllDefaultValExpr();//exec default Value Expression 2nd
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
         }
         else {
-            this.FRC.execValueExpNC(this.FormObj.DoNotPersistExecOrder);//================== exec Value Expression   2nd
+            this.FRC.execAllValExprForDoNotPersistCtrls();//================== exec Value Expression   2nd
         }
 
         if (this.Mode.isView) {

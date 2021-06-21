@@ -73,9 +73,10 @@
         }
 
 /*form style over ride*/
+/*use contextual selectors - commented due to issue with dg style*/
 tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
-    background-color: none !important;
-    border: none !important;
+    /*background-color: none !important;
+    border: none !important;*/
 }
 
 .dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {

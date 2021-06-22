@@ -361,7 +361,7 @@ body {
     padding-top: 3px;
     background-color: transparent;
     border: none;
-    width: 50%;
+    width: calc(50% - 2px);
     height: 100%;
     flex-grow: 1;
 }
@@ -639,13 +639,14 @@ eb-disable {
     max-width: inherit !important;*/
     margin-bottom: 0;
     border-width: 0px 0px 1px 0px;
+    border-collapse: separate;
 }
 
     .dgtbl > tbody > tr > td {
         position: relative;
         border: none !important;
         padding: 0 !important;
-        border-right: dotted 1px rgb(241, 241, 241) !important;
+        border-right: dotted 1px rgb(200, 200, 220) !important;
         height: 34px;
         vertical-align: middle;
     }
@@ -2122,7 +2123,7 @@ input.locinp {
 .Dg_footer {
     display: none;
     border-right: 1px solid #dddddf;
-    border-left: 1px solid #dddddf;
+    /*border-left: 1px solid #dddddf;*/
 }
 
     .Dg_footer > .dgtbl > tbody > .dgtr > td {

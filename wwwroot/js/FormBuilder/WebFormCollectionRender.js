@@ -46,7 +46,7 @@ const WebFormCollectionRender = function (Option) {
             this.PopupForm(Op._refId, Op._params, Op._mode);
         }
         else if (Op._source === 'ps') {
-
+            this.PopupForm(Op._refId, Op._params, Op._mode);
         }
 
         window.onbeforeunload = function (e) {

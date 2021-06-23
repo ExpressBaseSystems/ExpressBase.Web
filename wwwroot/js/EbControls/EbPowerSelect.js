@@ -143,6 +143,7 @@ const EbPowerSelect = function (ctrl, options) {
                 }
             }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Container').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+            $('#' + this.name + 'Container').on('click', "[class= selected-tag]", this.clickedOnTag.bind(this));
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
             $('#' + this.name + 'Container' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
             this.$searchBoxes.keyup(this.searchFN.bind(this)); 
@@ -1376,6 +1377,24 @@ const EbPowerSelect = function (ctrl, options) {
             this.datatable.columnSearch = [];
             //this.datatable.Api.ajax.reload();
             this.reloadDT();
+        }
+    };
+
+    this.clickedOnTag = function (e) {
+        if (!($(e.target).hasClass('selected-tag')))
+            return;
+
+        if (this.ComboObj.FormRefId && this.Vobj.valueMembers && this.Vobj.valueMembers.length > 0) {
+            let vms = this.Vobj.valueMembers.toString().split(",");
+            if (vms.length > 0) {
+                let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
+                if (this.ComboObj.OpenInNewTab) {
+                    let url = `../WebForm/Index?_r=${this.ComboObj.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.CurrentLoc}`;
+                    window.open(url, '_blank');
+                }
+                else
+                    CallWebFormCollectionRender({ _source: 'ps', _refId: this.ComboObj.FormRefId, _params: _params, _mode: 1 });
+            }
         }
     };
 

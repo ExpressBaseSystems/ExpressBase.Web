@@ -147,7 +147,7 @@
 
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@;'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@;' form-link='@form-link@'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
                       <span>${this.getDispMembr(inpCtrl)}</span>
@@ -156,16 +156,18 @@
             .replace("@isReadonly@", col.IsDisable)
             .replace("@back-color@", col.IsDisable ? 'rgba(238,238,238,0.6)' : 'transparent')
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
+            .replace("@form-link@", col.FormRefId ? 'true' : 'false')
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getTdHtml = function (inpCtrl, col, i) {
-        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}' form-link='@form-link@'>
                     <div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                 </td>`
             .replace("@isReadonly@", col.IsDisable)
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
+            .replace("@form-link@", col.FormRefId ? 'true' : 'false')
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
@@ -739,7 +741,7 @@
                 continue;
             if (inpCtrl.getValue() === val) {
                 $ctrl.attr("uniq-ok", "false");
-                ctrl.addInvalidStyle("This field is unique, try another value");
+                ctrl.addInvalidStyle("This column allows only unique values.");
             }
             else {
                 $ctrl.attr("uniq-ok", "true");
@@ -1772,6 +1774,30 @@
         return DGrows;
     };
 
+    this.clickedOnPsSeletedTag = function (e) {
+        if (!($(e.target).hasClass('selected-tag')))
+            return;
+        let $td = $(e.currentTarget).closest("td");
+        let rowid = $td.closest("tr").attr("rowid");
+        let psname = $td.attr('colname');
+        let psctrl = this.objectMODEL[rowid] ? this.objectMODEL[rowid].find(e => e.Name == psname) : null;
+        if (!psctrl)
+            return;
+        let vmvalue = psctrl.DataVals.Value + '';
+        if (psctrl.FormRefId && vmvalue) {
+            let vms = vmvalue.split(",");
+            if (vms.length > 0) {
+                let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
+                if (psctrl.OpenInNewTab) {
+                    let url = `../WebForm/Index?_r=${psctrl.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.CurrentLoc}`;
+                    window.open(url, '_blank');
+                }
+                else
+                    CallWebFormCollectionRender({ _source: 'ps', _refId: psctrl.FormRefId, _params: _params, _mode: 1 });
+            }
+        }
+    };
+
     this.init = function () {
         this.curRowObjectMODEL = {};
         this.ctrl.currentRow = this.curRowObjectMODEL;
@@ -1841,6 +1867,7 @@
         this.$table.on("focusin", ".dgtr", this.row_focusin.bind(this));
         //this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
         $(document).on('mouseup', this.row_focusout.bind(this));
+        this.$table.on("click", ".dgtr > td[tdcoltype='DGPowerSelectColumn'] > [coltype='DGPowerSelectColumn'] .selected-tag", this.clickedOnPsSeletedTag.bind(this));
 
         $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);

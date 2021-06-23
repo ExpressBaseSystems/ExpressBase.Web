@@ -991,7 +991,7 @@ eb-disable {
     border-left: solid 1px #ffffff;
     border-right: solid 1px #ffffff;
     border-top: solid 1px #ddddde;
-    background-color: #ffffff !important;
+    background-color: #eee !important;
 }
 
 .tdtxt-agg {
@@ -1356,6 +1356,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
+[ctype="PowerSelect"] [form-link="true"] .selected-tag, [tdcoltype="DGPowerSelectColumn"][form-link="true"] .selected-tag {
+    color: rgb(51 51 151);
+    cursor: pointer;
+}
+    [ctype="PowerSelect"] [form-link="true"] .selected-tag:hover, [tdcoltype="DGPowerSelectColumn"][form-link="true"] .selected-tag:hover {
+        color: rgb(51 51 51);
+        background-color: white !important;
+    }
 
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
     border-radius: 1px;
@@ -2088,7 +2096,7 @@ input.locinp {
         background-color: #dddddf;
     }
 .grid-cont .Dg_footer::-webkit-scrollbar {
-    background-color: inherit;
+    background-color: #eee;
 }
 
 .grid-cont .Dg_footer .dgtbl {

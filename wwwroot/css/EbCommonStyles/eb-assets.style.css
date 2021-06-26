@@ -612,7 +612,7 @@
         display: block;
     }
 /*locswitch*/
-.loc_switchModal {
+.loc_switchModal, .finyear_switchModal {
     display: none;
     position: fixed;
     width: 100%;
@@ -632,7 +632,7 @@
     display: flex;
 }
 
-.loc_switchModal_box {
+.loc_switchModal_box, .finyear_switchModal_box {
     background: white;
     box-shadow: var(--eb-shadow);
     min-width: 40%;
@@ -642,7 +642,7 @@
     max-width: 50%;
 }
 
-.loc_switchModal_outer {
+.loc_switchModal_outer, .finyear_switchModal_outer {
     width: 100%;
     height: 100%;
     display: flex;
@@ -651,7 +651,7 @@
     background-color: #000000b8;
 }
 
-.loc_switchModal_box .locs_head {
+.loc_switchModal_box .locs_head, .finyear_switchModal_box .fin_head {
     padding: 5px 20px;
     padding-top: 10px;
     background: #ececec;
@@ -698,7 +698,7 @@
                 color: green;
             }
 
-.loc_switchModal_close {
+.loc_switchModal_close, .finyear_switchModal_close {
     float: right;
     font-size: 28px;
     font-weight: 700;
@@ -712,7 +712,7 @@
     margin-bottom: 10px;
 }
 
-    .loc_switchModal_close:hover {
+    .loc_switchModal_close:hover, .finyear_switchModal_close:hover {
         color: #000;
         text-decoration: none;
         cursor: pointer;
@@ -783,7 +783,7 @@
         color: white;
     }
 
-.loc_switchModal_box .locs_bdy {
+.loc_switchModal_box .locs_bdy, .finyear_switchModal_box .fin_bdy {
     overflow: auto;
     padding: 15px 15px 15px 15px;
     max-height: 50vh;
@@ -796,7 +796,25 @@
         background-color: #e5f5f3;
     }
 
-.loc_switchModal_box .locs_foot {
+    .finyear_switchModal_box .fin_bdy tr[lock='false']:hover {
+        background-color: #f0f8ff;
+        cursor: pointer;
+    }
+    .finyear_switchModal_box .fin_bdy tr[lock='true'] {
+        pointer-events: none;
+        background-color: #fff8dc;
+        color: #bc8f8f;
+        cursor: not-allowed;
+    }
+    .finyear_switchModal_box .fin_bdy tr[active='true'] {
+        background-color: #e6e6fa;
+        color: #0000aa;
+    }
+    .finyear_switchModal_box .fin_bdy table, .finyear_switchModal_box .fin_bdy th {
+        text-align: center;
+    }
+
+.loc_switchModal_box .locs_foot, .finyear_switchModal_box .fin_foot {
     padding: 7px 20px 7px 10px
 }
 
@@ -804,7 +822,7 @@
         padding: 2px 5px;
     }
 
-    .loc_switchModal_box .locs_foot .loc-switchbtn {
+    .loc_switchModal_box .locs_foot .loc-switchbtn, .finyear_switchModal_box .fin_foot .fin-switchbtn {
         letter-spacing: 0.1em;
         font-weight: 500;
     }
@@ -814,7 +832,7 @@
             background: #8a8a8a;
         }
 
-.loc_switchModal_fade {
+.loc_switchModal_fade, .finyear_switchModal_fade {
     display: none;
     position: fixed;
     top: 0;

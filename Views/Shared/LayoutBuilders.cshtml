@@ -352,7 +352,12 @@
                 Uid:'@ViewBag.UId',
                 Current:@ViewBag.CurrentLocation
             });
-            window.ebcontext.locations = loc__;
+            window.ebcontext.locations = loc__;            
+            window.ebcontext.finyears = new FinYearPicker({
+                FinYears: @Html.Raw(ViewBag.FinYears),
+                Tid: '@ViewBag.cid',
+                Uid:'@ViewBag.UId',
+            });
         </script>
     }
 

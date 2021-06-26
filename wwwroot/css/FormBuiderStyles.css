@@ -974,9 +974,9 @@ eb-disable {
     background-color: white;
 }
 
-.dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
-    background-color: #e7edf4 !important;
-}
+    .dgtbl > tbody > tr:nth-child(odd):hover, .dgtbl > tbody > tr:nth-child(even):hover {
+        background-color: #e7edf4 !important;
+    }
 
 
 .dgtbl > tbody > tr th:last-child, .fs-tbl > tbody > tr th:last-child {

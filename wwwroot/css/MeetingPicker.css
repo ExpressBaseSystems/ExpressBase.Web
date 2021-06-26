@@ -80,7 +80,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
 }
 
 .dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
-    background-color: white !important;
+    /*background-color: white !important;*/
 }
 
 /*jquery style override*/

@@ -492,8 +492,8 @@
             $('body').append(html);
         }
 
-        else if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname !=  ("/SupportTicket/EditTicket")) {
-           
+        else if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname != ("/SupportTicket/EditTicket")) {
+
             var message = {
                 'Error_Message': er.stack,
                 'URL': "",
@@ -513,9 +513,158 @@
             } else {
                 window.location = "/Tenantuser/Logout"
             }
-
         }
-       
-        
+    }
+};
+
+let FinYearPicker = function (options) {
+    try {
+        this.finyears = options.FinYears;
+        this.Tid = options.Tid || null;
+        this.Uid = options.Uid || null;
+        this.$toggleBtn = $("#switch_finyear");
+        this.storeKey = "Eb_Fy-" + this.Tid + this.Uid;
+        this.SELECTORS_FY = [];
+        this.SELECTORS_AP = [];
+
+        this.init = function () {
+            if (this.finyears == null || this.finyears.List == null || this.finyears.List.length <= 0)
+                return;
+            this.appendModal();
+            this.$toggleBtn.show();
+
+            this.$toggleBtn.on('click', this.toggleBtnClicked.bind(this));
+            this.$modalClose.on('click', this.closeBtnClicked.bind(this));
+            this.$switchBtn.on('click', this.switchBtnClicked.bind(this));
+            this.$modalTbl.on('click', 'tr[lock="false"][active="false"]', this.clickedOnTr.bind(this));
+        };
+
+        this.switchBtnClicked = function (e) {
+            store.set(this.storeKey, this.$modalTbl.find(`tr[active='true']`).attr('data-id'));
+            this.closeBtnClicked();
+        };
+
+        this.clickedOnTr = function (e) {
+            this.$modalTbl.find('tr[active="true"]').attr('active', 'false');
+            $(e.currentTarget).attr('active', 'true');
+        };
+
+        this.toggleBtnClicked = function (e) {
+            this.setActiveInDom();
+            this.resetAllDateInputs();
+            this.$modal.show('fast');
+            this.$fade.show('fast');
+        };
+
+        this.closeBtnClicked = function (e) {
+            this.$modal.hide('fast');
+            this.$fade.hide('fast');
+            this.resetAllDateInputs();
+        };
+
+        this.setActiveInDom = function () {
+            this.$modalTbl.find('tr[active="true"]').attr('active', 'false');
+            let obj = this.getCurrent();
+            if (obj) {
+                this.$modalTbl.find(`tr[data-id=${obj.Id}]`).attr('active', 'true');
+            }
+        };
+
+        this.getCurrent = function () {
+            if (this.finyears.List.length <= 0)
+                return null;
+            let id = store.get(this.storeKey);
+            let obj = this.finyears.List.find(e => e.Id == this.finyears.Current);
+            if (id)
+                obj = this.finyears.List.find(e => e.Id == id);
+            else
+                store.set(this.storeKey, this.finyears.Current);
+
+            return obj;
+        };
+
+        this.resetAllDateInputs = function () {
+            for (let i = 0; i < this.SELECTORS_AP.length; i++) {
+                this.setFinacialYear(this.SELECTORS_AP[i], true);
+            }
+            for (let i = 0; i < this.SELECTORS_FY.length; i++) {
+                this.setFinacialYear(this.SELECTORS_FY[i], false);
+            }
+        };
+
+        this.setFinacialYear = function (selector, isActivePeriod = false) {
+            let obj = this.getCurrent();
+            if (!obj) return;
+            if (isActivePeriod) {
+                if (!this.SELECTORS_AP.includes(selector))
+                    this.SELECTORS_AP.push(selector);
+
+                $(selector).datetimepicker({
+                    minDate: obj.ActStart_s,
+                    maxDate: obj.ActEnd_s,
+                });
+            }
+            else {
+                if (!this.SELECTORS_FY.includes(selector))
+                    this.SELECTORS_FY.push(selector);
+
+                $(selector).datetimepicker({
+                    minDate: obj.FyStart_s,
+                    maxDate: obj.FyEnd_s,
+                });
+            }
+        }.bind(this);
+
+        this.appendModal = function () {
+            $('body').prepend(`
+<div id="finyear_switch_warp">
+    <div class="finyear_switchModal_fade" id="finyear_modal_fade"></div>
+    <div class="finyear_switchModal" id="finyear_modal">
+        <div class="finyear_switchModal_outer">
+            <div class="finyear_switchModal_box">
+                <div class="fin_head">
+                    <button type="button" id="finyear_modal_close" class="finyear_switchModal_close">&times;</button>                    
+                    <h4>Switch Financial Years</h4>
+                </div>
+                <div class="fin_bdy"></div>
+                <div class="fin_foot">
+                    <button class="btn btn-sm fin-switchbtn pull-right" id="setfinyear">Switch</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`);
+            this.$modal = $("#finyear_modal");
+            this.$fade = $("#finyear_modal_fade");
+            this.$modalClose = $("#finyear_modal_close");
+            this.$modalbody = $("#finyear_modal .fin_bdy");
+            this.$switchBtn = $("#setfinyear");
+
+            let tableHtm = `<table class='table'>
+    <tr style='background-color: #d3d3d3;'>
+        <th></th>
+        <th>Year Start</th>
+        <th>Year End</th>
+        <th>Active Period</th>
+    </tr>`;
+            for (let i = 0; i < this.finyears.List.length; i++) {
+                let fy = this.finyears.List[i];
+                tableHtm += `
+<tr data-id='${fy.Id}' lock='${(fy.Locked && !this.finyears.SysUser) ? "true" : "false"}' active='false'>
+    <td style="text-align: left;"><i class="fa fa-globe" title='Global location'></i> ${fy.Locked ? '<i class="fa fa-lock" title="Locked"></i>' : ''}</td>
+    <td>${fy.FyStart_sl}</td>
+    <td>${fy.FyEnd_sl}</td>
+    <td>(${fy.ActStart_sl} &nbsp <i>to</i> &nbsp ${fy.ActEnd_sl})</td>
+</tr>`;
+            }
+            tableHtm += `</table>`;
+            this.$modalbody.html(tableHtm);
+            this.$modalTbl = this.$modalbody.find('table');
+        };
+
+        this.init();
+    }
+    catch (e) {
+        console.error(e);
     }
 };

@@ -574,12 +574,14 @@ let FinYearPicker = function (options) {
             if (this.finyears.List.length <= 0)
                 return null;
             let id = store.get(this.storeKey);
-            let obj = this.finyears.List.find(e => e.Id == this.finyears.Current);
-            if (id)
+            let obj = null;
+            if (id) {
                 obj = this.finyears.List.find(e => e.Id == id);
-            else
+            }
+            if (!obj) {
                 store.set(this.storeKey, this.finyears.Current);
-
+                obj = this.finyears.List.find(e => e.Id == this.finyears.Current);
+            }
             return obj;
         };
 

@@ -88,7 +88,7 @@ const WebFormCollectionRender = function (Option) {
                     error: function (xhr, ajaxOptions, thrownError) {
                         this.hideSubFormLoader();
                         this.hideSubForm();
-                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: false, Background: '#aa0000' });
+                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                     }.bind(this),
                     success: function (existing, result) {
                         this.hideSubFormLoader();

@@ -1752,10 +1752,18 @@
             return;
         }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
+        let lastModel = this.DataMODEL;
         this.formRenderer.DataMODEL[this.ctrl.TableName] = dataModel;// attach to master model object
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
         this.populateDGWithDataModel(dataModel);
+
+        for (let i = 0; i < lastModel.length; i++) {
+            if (lastModel[i].RowId > 0) {
+                lastModel[i].IsDelete = true;
+                this.DataMODEL.push(lastModel[i]);
+            }
+        }
     };
 
     this.getDGIterable = function () {

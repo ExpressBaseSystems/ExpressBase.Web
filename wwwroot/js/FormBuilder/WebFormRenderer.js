@@ -543,7 +543,7 @@ const WebFormRender = function (option) {
 
         if (respObj.Status === 200) {
             if (this.renderMode === 3) {
-                EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: false, Background: '#00aa00' });
+                EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: true, Background: '#00aa00' });
                 setTimeout(function () {
                     ebcontext.setup.ss.onLogOutMsg();
                 }, 3000);
@@ -551,7 +551,7 @@ const WebFormRender = function (option) {
             }
             if (this.renderMode === 5) {
                 this.$formCont.html(`<div id="" style="height:calc(100vh - 38px);"> <div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> <i class="fa fa-check" aria-hidden="true" style="color: green;"></i>&nbsp;Submitted successfully </div></div>`);
-                //EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
+                //EbMessage("show", { Message: "Form save success ", AutoHide: true, Background: '#00aa00' });
                 $(`#eb_messageBox_container`).children().hide();//// temp fix to avoid SE message (FormEdit btn enabled....)
                 $(`#eb_messageBox_container`).css("padding", "0");////
                 return;
@@ -713,7 +713,7 @@ const WebFormRender = function (option) {
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     this.hideLoader();
-                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: false, Background: '#aa0000' });
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                 }.bind(this),
                 success: function (_respObjStr) {
                     this.hideLoader();

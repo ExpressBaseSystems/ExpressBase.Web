@@ -603,6 +603,12 @@
                 return false;
             }
         }
+        else if (ctrl.ObjType === "Date" && ctrl.RestrictionRule > 0) {
+            if (!ebcontext.finyears.checkDate(ctrl.getValue(), ctrl.RestrictionRule === 2)) {
+                ctrl.addInvalidStyle("Must be between " + ebcontext.finyears.getDateRangeToDisplay(ctrl.RestrictionRule === 2), 'warning');
+                return false;
+            }
+        }
         return true;
     };
 

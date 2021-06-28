@@ -594,6 +594,7 @@ let FinYearPicker = function (options) {
             }
         };
 
+        //EXTERNAL fn - initformctrls
         this.setFinacialYear = function (selector, isActivePeriod = false) {
             let obj = this.getCurrent();
             if (!obj) return;
@@ -615,6 +616,36 @@ let FinYearPicker = function (options) {
                     maxDate: obj.FyEnd_s,
                 });
             }
+        }.bind(this);
+
+        //EXTERNAL fn - frc
+        this.checkDate = function (dateIn_s, isActivePeriod = false) {
+            let obj = this.getCurrent();
+            if (!obj || !dateIn_s) return true;
+            let startDt, endDt, date;
+            if (isActivePeriod) {
+                startDt = moment(obj.ActStart_s, ebcontext.user.Preference.ShortDatePattern);
+                endDt = moment(obj.ActEnd_s, ebcontext.user.Preference.ShortDatePattern);
+            }
+            else {
+                startDt = moment(obj.FyStart_s, ebcontext.user.Preference.ShortDatePattern);
+                endDt = moment(obj.FyEnd_s, ebcontext.user.Preference.ShortDatePattern);
+            }
+            date = moment(dateIn_s, 'YYYY-MM-DD');
+            if (startDt <= date && endDt >= date)
+                return true;
+
+            return false;
+        }.bind(this);
+
+        //EXTERNAL fn - frc
+        this.getDateRangeToDisplay = function (isActivePeriod = false) {
+            let obj = this.getCurrent();
+            if (!obj) return true;
+            if (isActivePeriod)
+                return obj.ActStart_s + ' and ' + obj.ActEnd_s;
+            else
+                return obj.FyStart_s + ' and ' + obj.FyEnd_s;
         }.bind(this);
 
         this.appendModal = function () {

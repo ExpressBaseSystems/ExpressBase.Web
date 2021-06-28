@@ -1632,8 +1632,8 @@ const WebFormRender = function (option) {
 
         $poTrig.on('click', OnMouseEnter.bind($poTrig));
         $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
-        $('#webformpusheddata').on('shown.bs.popover', LoadData.bind(this));
-        $('body').on('click', '#webformpusheddata_btn', LoadData.bind(this));
+        $('#webformpusheddata').off('shown.bs.popover').on('shown.bs.popover', LoadData.bind(this));
+        $('body').off('click', '#webformpusheddata_btn').on('click', '#webformpusheddata_btn', LoadData.bind(this));
     };
 
     this.setHeader = function (reqstMode) {

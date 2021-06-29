@@ -697,6 +697,7 @@
     this.addAggragateRow = function () {
         let tr = this.getAggTrHTML();
         let $tr = $(tr);
+        $tr.attr('tabindex', '-1');
         $(`#${this.TableId}_footer>tbody`).append($tr);
     };
 

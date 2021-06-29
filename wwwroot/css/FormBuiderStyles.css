@@ -361,7 +361,7 @@ body {
     padding-top: 3px;
     background-color: transparent;
     border: none;
-    width: 50%;
+    width: calc(50% - 2px);
     height: 100%;
     flex-grow: 1;
 }
@@ -639,13 +639,14 @@ eb-disable {
     max-width: inherit !important;*/
     margin-bottom: 0;
     border-width: 0px 0px 1px 0px;
+    border-collapse: separate;
 }
 
     .dgtbl > tbody > tr > td {
         position: relative;
         border: none !important;
         padding: 0 !important;
-        border-right: dotted 1px rgb(241, 241, 241) !important;
+        border-right: dotted 1px rgb(200, 200, 220) !important;
         height: 34px;
         vertical-align: middle;
     }
@@ -966,16 +967,16 @@ eb-disable {
 }
 
 .dgtbl > tbody > tr:last-child {
-    border-bottom: solid 1px #f8f8f8
+    /*border-bottom: solid 1px #f8f8f8*/
 }
 
 .dgtbl > tbody > tr:nth-child(even) {
     background-color: white;
 }
 
-.dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
-    background-color: #e7edf4 !important;
-}
+    .dgtbl > tbody > tr:nth-child(odd):hover, .dgtbl > tbody > tr:nth-child(even):hover {
+        background-color: #e7edf4 !important;
+    }
 
 
 .dgtbl > tbody > tr th:last-child, .fs-tbl > tbody > tr th:last-child {
@@ -990,7 +991,7 @@ eb-disable {
     border-left: solid 1px #ffffff;
     border-right: solid 1px #ffffff;
     border-top: solid 1px #ddddde;
-    background-color: #ffffff !important;
+    background-color: #eee !important;
 }
 
 .tdtxt-agg {
@@ -1009,9 +1010,9 @@ eb-disable {
 
 tr[agg='true'] [coltype='DGNumericColumn'] span {
     position: absolute;
-    top: -14px;
+    top: -7px;
     right: 0;
-    border-top: solid 1px #585858;
+    /*border-top: solid 1px #585858;*/
 }
 
 [eb-form='true'] .bootstrap-select, .chat-ctrl-cont .bootstrap-select {
@@ -1111,6 +1112,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     position: relative;
 }
 
+.form-buider-form .ctrl-cover {
+    border: 1px solid rgb(200 200 220 / 100%);
+}
+
 [tdcoltype="DGStringColumn"] > .ctrl-cover {
     position: unset;
     /*height: calc(100% - 2px);*/
@@ -1123,6 +1128,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .dgtbl .ctrl-cover {
     border-top: none;
     border-bottom: none;
+    border-left: 1px solid var(--eb-bluishgray);
+    border-right: 1px solid var(--eb-bluishgray);
 }
 
 .Dg_body .slno-tbl {
@@ -1149,7 +1156,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .Dg_body {
     /*display: flex;*/
-    box-shadow: -1px 0px 0px 0px #f6f6ff;
+    /*box-shadow: -1px 0px 0px 0px #f6f6ff;*/
+    border-left: 1px solid #dddddf;
 }
 
 .check-wraper {
@@ -1348,6 +1356,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
+[ctype="PowerSelect"] [form-link="true"] .selected-tag, [tdcoltype="DGPowerSelectColumn"][form-link="true"] .selected-tag {
+    color: rgb(51 51 151);
+    cursor: pointer;
+    pointer-events: auto;
+}
+    [ctype="PowerSelect"] [form-link="true"] .selected-tag:hover, [tdcoltype="DGPowerSelectColumn"][form-link="true"] .selected-tag:hover {
+        color: rgb(51 51 51);
+        background-color: white !important;
+    }
 
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
     border-radius: 1px;
@@ -1386,6 +1403,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [coltype=DGPowerSelectColumn] {
     padding: 0;
+    width: calc(100% - 28px);
 }
 
 .ctrl-cover > .input-group > .nullable-check [type="checkbox"] {
@@ -2070,18 +2088,32 @@ input.locinp {
 }
 
 .grid-cont .Dg_head, .Dg_footer {
-    padding-right: 8px;
+    /*padding-right: 8px;*/
+    /*width: calc(100% - 16px);*/
+    overflow-y: scroll;
 }
 
-    .grid-cont .Dg_head > table > thead {
+    .grid-cont .Dg_head::-webkit-scrollbar {
         background-color: #dddddf;
-        background: linear-gradient(45deg, #dddddf 0%,#ececee 50%,#dddddf 100%);
-        color: black;
     }
+.grid-cont .Dg_footer::-webkit-scrollbar {
+    background-color: #eee;
+}
 
-        .grid-cont .Dg_head > table, .grid-cont .Dg_head > table > thead > tr > th {
-            border-bottom-width: 0px;
-        }
+.grid-cont .Dg_footer .dgtbl {
+    border-width: 0px;
+    border-left: 1px solid #dddddf;
+}
+
+.grid-cont .Dg_head > table > thead {
+    background-color: #dddddf;
+    background: linear-gradient(45deg, #dddddf 0%,#ececee 50%,#dddddf 100%);
+    color: black;
+}
+
+    .grid-cont .Dg_head > table, .grid-cont .Dg_head > table > thead > tr > th {
+        border-bottom-width: 0px;
+    }
 
 .Eb-ctrlContainer[ctype="DataGrid"] > .ctrl-cover {
     border-width: 0 0 1px 0;
@@ -2089,7 +2121,8 @@ input.locinp {
 }
 
 .grid-cont .ctrlth {
-    width: 50px;
+    /*width: 38px;
+    padding-right: 18px !important;*/
 }
 
 .Dg_body .dgtbl {
@@ -2098,10 +2131,12 @@ input.locinp {
 
 .Dg_footer {
     display: none;
+    border-right: 1px solid #dddddf;
+    /*border-left: 1px solid #dddddf;*/
 }
 
     .Dg_footer > .dgtbl > tbody > .dgtr > td {
-        padding: 3px !important;
+        padding: 8px 6px !important;
     }
 
 .dgtbl > thead > tr > th:last-child {
@@ -2122,6 +2157,10 @@ input.locinp {
         padding: 0.5px;
         vertical-align: middle;
     }
+
+.Dg_head .slno > span {
+    text-align: center;
+}
 
 .inp-inner-loader {
     background: url(../images/gifs/loader2.gif) !important;
@@ -2263,7 +2302,7 @@ input.locinp {
 }
 
 [eb-form="true"][mode="view"] .v-select .selected-tag {
-    padding: 3px 12px;
+    /*padding: 3px 12px;*/
 }
 
 .eb-radiobtn, .eb-chckbx {
@@ -2285,9 +2324,9 @@ input.locinp {
 }
 
 .webform-cont ::-webkit-scrollbar {
-    width: 8px;
+    /*width: 8px;
     height: 8px;
-    background-color: #F5F5F5;
+    background-color: #F5F5F5;*/
 }
 
 [ctype="DataGrid_New"] > .ctrl-cover > .grid-cont > div > .dataTables_wrapper > .DTFC_ScrollWrapper > .dataTables_scroll > div.dataTables_scrollBody::-webkit-scrollbar {
@@ -2520,7 +2559,8 @@ input.locinp {
     float: left;
     border-radius: 6px 6px 0px 0px;
 }
-    #subFormHeader:hover{
+
+    #subFormHeader:hover {
         cursor: move;
     }
 
@@ -3668,7 +3708,7 @@ input.locinp {
 
 
 .Eb-Question-Ctrl {
-   border-top:solid 1px;
+    border-top: solid 1px;
 }
 
     .Eb-Question-Ctrl .q-pane {

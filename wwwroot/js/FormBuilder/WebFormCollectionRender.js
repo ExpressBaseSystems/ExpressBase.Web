@@ -46,7 +46,7 @@ const WebFormCollectionRender = function (Option) {
             this.PopupForm(Op._refId, Op._params, Op._mode);
         }
         else if (Op._source === 'ps') {
-
+            this.PopupForm(Op._refId, Op._params, Op._mode);
         }
 
         window.onbeforeunload = function (e) {
@@ -88,7 +88,7 @@ const WebFormCollectionRender = function (Option) {
                     error: function (xhr, ajaxOptions, thrownError) {
                         this.hideSubFormLoader();
                         this.hideSubForm();
-                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: false, Background: '#aa0000' });
+                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                     }.bind(this),
                     success: function (existing, result) {
                         this.hideSubFormLoader();
@@ -249,6 +249,7 @@ const WebFormCollectionRender = function (Option) {
 
     this.GetMasterHeaderBtns = function (Op) {
         let header = new EbHeader();
+        header.insertButton(`<button id="webformdiscardedit" class='btn' title='Discard Changes' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformclone" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformopensrc" class='btn' title='Open source record' style='display: none;'><i class="fa fa-external-link" aria-hidden="true"></i></button>`);
 
@@ -282,6 +283,7 @@ const WebFormCollectionRender = function (Option) {
                             </div>`);
 
         header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformpusheddata" class="btn" title="Dependent Form Submissions" style='display: none;'><i class="fa fa-tags" aria-hidden="true"></i></button>`);
 
         header.insertButton(`<button id="webformsavedraft" role="save-draft" class="btn" title="Save as draft"><i class="icofont-ui-clip-board"></i></button>`);
         header.insertButton(`<button id="webformdeletedraft" role="delete-draft" class="btn" title="Delete draft"><i class="icofont-bin"></i></i></button>`);

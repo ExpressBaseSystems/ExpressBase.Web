@@ -47,6 +47,9 @@
 <link rel="stylesheet" type="text/css" href="~/css/Common/offline-theme-dark.css" asp-append-version=@bApnd />
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/css/smart_wizard_all.min.css" rel="stylesheet" type="text/css" />
 
+@*propertygrid*@
+<link rel="stylesheet" type="text/css" href="~/css/LayoutCommon/dragula.min.css" />
+<link rel="stylesheet" href="~/css/Bundles/codemirror.bundle.min.css" asp-append-version=@bApnd />
 
 
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
@@ -79,6 +82,7 @@
 <script type="text/javascript" src="~/js/EbControls/EbItemListControl.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbDynamicTab.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbProvisionUser.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbRenderQuestionsControl.js" asp-append-version=@bApnd></script>
 @*jith*@
 <script type="text/javascript" src="~/js/EbControls/EbReview.js" asp-append-version=@bApnd></script>
 @*jith*@
@@ -129,13 +133,16 @@
 <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/PGHelper.js" asp-append-version=@bApnd></script>
 <link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
+<script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/Bundles/codemirror.bundle.js" asp-append-version=@bApnd></script>
+
 @*nithin*@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <script src="~/js/DV/leaflet.js"></script>
 <script src="~/js/jquery.smartWizard.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="/webform/cxt2js"></script>
-<script type="text/javascript" src="/webform/cxt2js_vis?v=1.2"></script>
+<script type="text/javascript" src="/webform/cxt2js?v=@ExpressBase.Common.Singletons.BuildInfo.Version"></script>
+<script type="text/javascript" src="/webform/cxt2js_vis?v=@ExpressBase.Common.Singletons.BuildInfo.Version"></script>
 
 <script>
     var t1 = performance.now();

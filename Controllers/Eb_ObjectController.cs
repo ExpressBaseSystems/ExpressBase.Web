@@ -410,7 +410,7 @@ namespace ExpressBase.Web.Controllers
                             SourceObjId = "0",
                             SourceVerID = "0",
                             DisplayName = obj.DisplayName,
-                            HideInMenu = obj.HideInMenu
+                            HideInMenu = (obj as IEBRootObject).HideInMenu
                         };
                         EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                         if (res.Message != string.Empty && res.RefId == null)
@@ -435,7 +435,7 @@ namespace ExpressBase.Web.Controllers
                         Tags = _tags,
                         Apps = _apps,
                         DisplayName = obj.DisplayName,
-                        HideInMenu = obj.HideInMenu
+                        HideInMenu = (obj as IEBRootObject).HideInMenu
                     };
                     EbObject_CommitResponse res = ServiceClient.Post(ds);
                     _response.Refid = res.RefId;
@@ -499,7 +499,7 @@ namespace ExpressBase.Web.Controllers
                             SourceObjId = "0",
                             SourceVerID = "0",
                             DisplayName = obj.DisplayName,
-                            HideInMenu = obj.HideInMenu
+                            HideInMenu = (obj as IEBRootObject).HideInMenu
                         };
 
                         EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
@@ -520,7 +520,7 @@ namespace ExpressBase.Web.Controllers
                         Tags = _tags,
                         Apps = _apps,
                         DisplayName = obj.DisplayName,
-                        HideInMenu = obj.HideInMenu
+                        HideInMenu = (obj as IEBRootObject).HideInMenu
                     };
 
                     EbObject_SaveResponse res = ServiceClient.Post(ds);

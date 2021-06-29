@@ -56,7 +56,7 @@
     }
 };
 
-const EbPowerSelect = function (ctrl, options) {
+const EbPowerSelect = function (ctrl, options) {    
     //parameters 
     this.getFilterValuesFn = options.getFilterValuesFn || function () { return []; };
     this.ComboObj = ctrl;
@@ -135,6 +135,7 @@ const EbPowerSelect = function (ctrl, options) {
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit)
             $('#' + this.name + 'Container .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
             $('#' + this.name + 'Container .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
+            $('#' + this.name + 'Container .DDrefresh').off("click").on("click", this.DDrefresh.bind(this)); // dd refresh button
             $('#' + this.name + 'tbl').keydown(function (e) {
                 if (e.which === 27) {
                     this.lastFocusedDMsearchBox.focus();
@@ -142,9 +143,10 @@ const EbPowerSelect = function (ctrl, options) {
                 }
             }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Container').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+            $('#' + this.name + 'Container').on('click', "[class= selected-tag]", this.clickedOnTag.bind(this));
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
             $('#' + this.name + 'Container' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
-            this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 600)); //delayed search on combo searchbox
+            this.$searchBoxes.keyup(this.searchFN.bind(this)); 
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
             this.Values = [];
@@ -216,16 +218,29 @@ const EbPowerSelect = function (ctrl, options) {
     this.getSearchByExp = function (DefOp, mapedFieldType) {
         let op = String.empty;
         if (mapedFieldType === "string") {
-            if (DefOp === 0)// Equals
-                op = " = ";
-            else if (DefOp === 1)// Startwith
-                op = "x*";
-            else if (DefOp === 2)//EndsWith
-                op = "*x";
-            else if (DefOp === 3)// Between
-                op = "*x*";
-            else if (DefOp === 3)// Contains
-                op = "*x*";
+            if (typeof (this.ComboObj.SearchOperator) === 'number') {//temp solution
+                let inop = this.ComboObj.SearchOperator.toString();
+                if (inop === EbEnums_w.PsSearchOperators.StartsWith)
+                    op = 'x*';
+                else if (inop === EbEnums_w.PsSearchOperators.EndsWith)
+                    op = '*x';
+                else if (inop === EbEnums_w.PsSearchOperators.Equals)
+                    op = ' = ';
+                else
+                    op = '*x*';
+            }
+            else {
+                if (DefOp === 0)// Equals
+                    op = " = ";
+                else if (DefOp === 1)// Startwith
+                    op = "x*";
+                else if (DefOp === 2)//EndsWith
+                    op = "*x";
+                else if (DefOp === 3)// Between
+                    op = "*x*";
+                else if (DefOp === 3)// Contains
+                    op = "*x*";
+            }
         }
         else if (mapedField === "numeric") {
             switch (DefOp.toString()) {
@@ -250,7 +265,20 @@ const EbPowerSelect = function (ctrl, options) {
             }
         }
         return op;
-    }
+    };
+
+    this.getSearchTextRegex = function (text) {
+        if (typeof (this.ComboObj.SearchOperator) === 'number') {
+            let op = this.ComboObj.SearchOperator.toString();
+            if (op === EbEnums_w.PsSearchOperators.StartsWith)
+                text = '^' + text;
+            else if (op === EbEnums_w.PsSearchOperators.EndsWith)
+                text = text + '$';
+            else if (op === EbEnums_w.PsSearchOperators.Equals)
+                text = '^' + text + '$';
+        }
+        return text;
+    };
 
     this.showCtrlMsg = function () {
         EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSearchLength} characters to search`, "info");
@@ -259,6 +287,15 @@ const EbPowerSelect = function (ctrl, options) {
     this.hideCtrlMsg = function () {
         EbHideCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
     }.bind(this);
+
+    this.searchFN = function (e) {
+        if (this.ComboObj.IsPreload) {
+            this.delayedSearchFN(e);
+        }
+        else {
+            debounce(this.delayedSearchFN.bind(this), 600)(e);
+        }
+    };
 
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
@@ -282,14 +319,18 @@ const EbPowerSelect = function (ctrl, options) {
         let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         let $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         let colObj = getObjByval(this.ComboObj.DisplayMembers.$values, "name", mapedField);
-        let searchByExp = "*x*";//this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
+        let searchByExp = this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
         if (mapedFieldType !== "string")
             searchByExp = " = ";
         if (!this.IsDatatableInit) {
             if (this.ComboObj.MinSearchLength > searchVal.length)
                 return;
             let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
-            this.filterArray.push(filterObj);
+            let temp = this.filterArray.find(e => e.Column === filterObj.Column);
+            if (temp)
+                temp.Value = filterObj.Value;
+            else
+                this.filterArray.push(filterObj);
             this.V_showDD();
             if (!this.ComboObj.IsPreload)
                 this.DMlastSearchVal[mapedField] = searchVal;
@@ -311,7 +352,7 @@ const EbPowerSelect = function (ctrl, options) {
                 }
 
                 if (this.datatable) {
-                    this.datatable.Api.column(mapedField + ":name").search(searchVal).draw();
+                    this.datatable.Api.column(mapedField + ":name").search(this.getSearchTextRegex(searchVal), true).draw();
                 }
             }
             else {
@@ -475,14 +516,14 @@ const EbPowerSelect = function (ctrl, options) {
     //    this.URLwithParams = url.toString();
     //};
 
-    this.reloadWithParams = function () {
+    this.reloadWithParams = function (setOldValue = true) {
         this.oldValsFromReloadWithParams = [... this.Vobj.valueMembers];
         this.clearValues(true);
         this.fromReloadWithParams = true;
         //if (this.ComboObj.IsDataFromApi)
         //    this.attachParams2Url();
 
-        this.IsFromReloadWithParams2setOldval = true;
+        this.IsFromReloadWithParams2setOldval = setOldValue;
         this.getData();
     };
 
@@ -523,6 +564,7 @@ const EbPowerSelect = function (ctrl, options) {
                 console.warn("PS: " + result.error);
             }
             return;
+            if (this.ComboObj.__continue) this.ComboObj.__continue();
         }
         this.data = result;
         this.unformattedData = result.data;
@@ -541,6 +583,8 @@ const EbPowerSelect = function (ctrl, options) {
                 this.filterArray.clear();
             }
             this.IsFromSetValues = false;
+
+            if (this.ComboObj.__continue) this.ComboObj.__continue();
         }
         else {// not from setValue (search,...)
             if (!this.isDMSearchEmpty() && this.ComboObj.IsPreload === false && this.unformattedData.length === 1) {
@@ -567,7 +611,7 @@ const EbPowerSelect = function (ctrl, options) {
             }
             this.IsFromReloadWithParams2setOldval = false;
 
-            this.focus1stRow();
+            //this.focus1stRow();
         }
         this.hideLoader();
     };
@@ -619,6 +663,11 @@ const EbPowerSelect = function (ctrl, options) {
     this.ajaxData = function () {
         this.EbObject = new EbTableVisualization("Container");// used by all ebobejcts
         this.filterValues = this.getFilterValuesFn();
+
+        if (!getObjByval(this.filterValues, 'Name', this.ComboObj.Name)) {
+            this.filterValues.push(new fltr_obj(this.ComboObj.EbDbType, this.ComboObj.Name, 0));
+        }
+
         this.AddUserAndLcation();
 
         if (this.ComboObj.IsDataFromApi) {
@@ -687,6 +736,7 @@ const EbPowerSelect = function (ctrl, options) {
                     console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
                     if (this.IsFromReloadWithParams2setOldval)
                         this.ComboObj.___DoNotImport = false;
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                     return;
                 }
 
@@ -706,6 +756,7 @@ const EbPowerSelect = function (ctrl, options) {
 
                 try {
                     this.Vobj.valueMembers.push(...tempVMs);
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                 }
                 catch (e) {
                     console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
@@ -794,7 +845,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.IsDatatableInit = true;
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
-        this.focus1stRow();
+        //this.focus1stRow();
     };
 
     //this.preInit = function (e, settings) {
@@ -804,7 +855,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
-            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.filterArray[0].Value).draw();
+            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.getSearchTextRegex(this.filterArray[0].Value), true).draw();
     };
 
     // init datatable
@@ -971,6 +1022,10 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.DDclose = function (e) {
         this.Vobj.hideDD();
+    };
+
+    this.DDrefresh = function (e) {
+        this.reloadWithParams(false);
     };
 
     //this.getSelectedRow = function () {
@@ -1153,7 +1208,7 @@ const EbPowerSelect = function (ctrl, options) {
             //    return;
             //else
             this.V_showDD();
-            this.focus1stRow();
+            //this.focus1stRow();
         }
 
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);
@@ -1325,12 +1380,31 @@ const EbPowerSelect = function (ctrl, options) {
         }
     };
 
+    this.clickedOnTag = function (e) {
+        if (!($(e.target).hasClass('selected-tag')))
+            return;
+
+        if (this.ComboObj.FormRefId && this.Vobj.valueMembers && this.Vobj.valueMembers.length > 0) {
+            let vms = this.Vobj.valueMembers.toString().split(",");
+            if (vms.length > 0) {
+                let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
+                if (this.ComboObj.OpenInNewTab) {
+                    let url = `../WebForm/Index?_r=${this.ComboObj.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.CurrentLoc}`;
+                    window.open(url, '_blank');
+                }
+                else
+                    CallWebFormCollectionRender({ _source: 'ps', _refId: this.ComboObj.FormRefId, _params: _params, _mode: 1 });
+            }
+        }
+    };
+
     this.reloadDT = function () {
         this.datatable.Api.draw(false);
     }.bind(this);
 
     this.getRowUnformattedData = function ($tr) {
-        return this.unformattedData.filter(obj => obj[this.VMindex] == this.datatable.Api.row($tr).data()[this.VMindex].replace(/[^\d.-]/g, '') * 1)[0];
+        let vmValue = this.datatable.Api.row($tr).data()[this.VMindex].replace(/[^\d.-]/g, '') * 1;
+        return this.unformattedData.filter(obj => obj[this.VMindex] == vmValue)[0];
     };
 
     this.checkBxClickEventHand = function (e) {

@@ -12,7 +12,8 @@ namespace ExpressBase.Web2
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel(options=> {
+                .UseKestrel(options =>
+                {
                     options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
                     options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);
                     options.Limits.MinResponseDataRate = null;

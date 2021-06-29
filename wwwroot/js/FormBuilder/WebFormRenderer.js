@@ -115,12 +115,19 @@ const WebFormRender = function (option) {
             if (!DG.DisableRowDelete || DG.IsAddable) {
                 if (!this.__IsDGctxMenuSet)
                     $.contextMenu({
-                        selector: '[eb-form="true"][mode="edit"] .Dg_body .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .Dg_body .dgtr:not([is-editing="true"]) > td',
+                        selector: '[eb-form="true"][mode="edit"] .Dg_body .dgtr > td,[eb-form="true"][mode="new"] .Dg_body .dgtr > td',
                         autoHide: true,
                         build: this.ctxBuildFn.bind(this, DG)
                     });
                 this.__IsDGctxMenuSet = true;//old window?
             }
+        }.bind(this));
+    };
+
+    this.initRQCs = function () {
+        $.each(this.RQCs, function (k, RQC) {//dg Init
+            this.DGBuilderObjs[RQC.EbSid_CtxId] = this.initControls.init(RQC, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+            this.DGBuilderObjs[RQC.EbSid_CtxId].MultipleTables = this.DataMODEL | [];
         }.bind(this));
     };
 
@@ -262,6 +269,7 @@ const WebFormRender = function (option) {
         this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject - done for filterdialog default value
         this._allPSsInit = false;
 
+        this.RQCs = getFlatContObjsOfType(this.FormObj, "RenderQuestionsControl");// all RQCs in formObject
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
         this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject
         this.setFormObject();// set helper functions to this.formObject and other...
@@ -271,6 +279,7 @@ const WebFormRender = function (option) {
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.FRC.setDisabledControls(this.flatControls);// disables disabled controls 
         this.initDGs();
+        this.initRQCs();
         this.initDGsNew();
         this.initReviewCtrl();
         this.initWizards();
@@ -429,9 +438,12 @@ const WebFormRender = function (option) {
     this.getNormalTblNames = function () {
         let NCCTblNames = [];
         let FlatContControls = getFlatContControls(this.FormObj);
-        $.each(FlatContControls, function (i, CC) {
-            let TableName = CC.TableName.trim();
-            if (!CC.IsSpecialContainer && TableName !== '' && !NCCTblNames.includes(TableName))
+        $.each(FlatContControls, function (i, ctrl) {
+            if (ctrl.IsSpecialContainer || !ctrl.TableName) {
+                return;
+            }
+            let TableName = ctrl.TableName.trim();
+            if (!NCCTblNames.includes(TableName))
                 NCCTblNames.push(TableName);
         });
         return NCCTblNames;
@@ -531,7 +543,7 @@ const WebFormRender = function (option) {
 
         if (respObj.Status === 200) {
             if (this.renderMode === 3) {
-                EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: false, Background: '#00aa00' });
+                EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: true, Background: '#00aa00' });
                 setTimeout(function () {
                     ebcontext.setup.ss.onLogOutMsg();
                 }, 3000);
@@ -539,7 +551,7 @@ const WebFormRender = function (option) {
             }
             if (this.renderMode === 5) {
                 this.$formCont.html(`<div id="" style="height:calc(100vh - 38px);"> <div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> <i class="fa fa-check" aria-hidden="true" style="color: green;"></i>&nbsp;Submitted successfully </div></div>`);
-                //EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
+                //EbMessage("show", { Message: "Form save success ", AutoHide: true, Background: '#00aa00' });
                 $(`#eb_messageBox_container`).children().hide();//// temp fix to avoid SE message (FormEdit btn enabled....)
                 $(`#eb_messageBox_container`).css("padding", "0");////
                 return;
@@ -701,7 +713,7 @@ const WebFormRender = function (option) {
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     this.hideLoader();
-                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: false, Background: '#aa0000' });
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                 }.bind(this),
                 success: function (_respObjStr) {
                     this.hideLoader();
@@ -1521,6 +1533,109 @@ const WebFormRender = function (option) {
         }
     };
 
+    this.DataPushedPopover = function () {
+        $('#webformpusheddata').show();
+        let timer1;
+        let contentHtml = null;
+
+        let contentFn = function (type) {
+            let _html = '';
+            if (type === 'loader') {
+                _html += `<div style='color: #888;'><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`;
+            }
+            else if (type === 'init') {
+                if (contentHtml)
+                    _html += contentHtml;
+                else
+                    _html += `<div ><button class='btn' id='webformpusheddata_btn'><i class="fa fa-refresh"></i> Refresh</button></div>`;
+            }
+            else if (type === 'error') {
+                _html += `<div><button class='btn' id='webformpusheddata_btn'><i class="fa fa-refresh"></i> Refresh</button><div style="color: #a88;">Error in loading!</div></div>`;
+            }
+            return _html;
+        };
+
+        let $poTrig = $('#webformpusheddata').popover({
+            trigger: 'manual',
+            html: true,
+            container: "body",
+            placement: 'bottom',
+            content: `<div id='webformpusheddata-div' style = 'min-height: 80px; min-width: 250px; display: flex; justify-content: center; align-items: center;'></div>`,
+            delay: { "hide": 100 }
+        });
+
+        let OnMouseEnter = function () {
+            clearTimeout(timer1);
+            let _this = this;
+            let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            if (!$poDiv.length) {
+                $(_this).popover("show");
+                $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            }
+            $poDiv.off("mouseleave").on("mouseleave", function () {
+                timer1 = setTimeout(function () { $(_this).popover('hide'); }, 300);
+            });
+
+            $poDiv.off("mouseenter").on("mouseenter", function () {
+                clearTimeout(timer1);
+            });
+        };
+
+        let OnMouseLeave = function () {
+            let _this = this;
+            timer1 = setTimeout(function () {
+                if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+                    $(_this).popover("hide");
+                }
+            }, 300);
+        };
+
+        let LoadData = function () {
+            if (contentHtml) {
+                $('#webformpusheddata-div').html(contentFn('init'));
+                return;
+            }
+            $('#webformpusheddata-div').html(contentFn('loader'));
+            $.ajax({
+                type: "POST",
+                url: "/WebForm/GetPushedDataInfo",
+                data: {
+                    RefId: this.formRefId, RowId: this.rowId, CurrentLoc: ebcontext.locations.getCurrent()
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $('#webformpusheddata-div').html(contentFn('error'));
+                }.bind(this),
+                success: function (_resp) {
+                    try {
+                        let _respObj = JSON.parse(_resp);
+                        if ($.isEmptyObject(_respObj)) {
+                            contentHtml = '<div style="color: #888;">Nothing to Display</div>'
+                            $('#webformpusheddata-div').html(contentHtml);
+                        }
+                        else {
+                            contentHtml = '<div>'
+                            $.each(_respObj, function (k, v) {
+                                contentHtml += `<div style='padding: 2px 0px;'><a href='${v}' target='_blank'>${k}</a></div>`;
+                            });
+                            contentHtml += '</div>';
+                            $('#webformpusheddata-div').html(contentHtml);
+                        }
+                    }
+                    catch (e) {
+                        $('#webformpusheddata-div').html(contentFn('error'));
+                        console.log(_resp);
+                        console.error(e);
+                    }
+                }.bind(this)
+            })
+        };
+
+        $poTrig.on('click', OnMouseEnter.bind($poTrig));
+        $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
+        $('#webformpusheddata').off('shown.bs.popover').on('shown.bs.popover', LoadData.bind(this));
+        $('body').off('click', '#webformpusheddata_btn').on('click', '#webformpusheddata_btn', LoadData.bind(this));
+    };
+
     this.setHeader = function (reqstMode) {
         let currentLoc = ebcontext.locations.getCurrent();
         if (this.renderMode === 2) {//partial
@@ -1555,7 +1670,7 @@ const WebFormRender = function (option) {
             return;
         }
 
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc", "webformlock"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn", "webformopensrc", "webformlock", "webformpusheddata", "webformdiscardedit"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
@@ -1573,11 +1688,19 @@ const WebFormRender = function (option) {
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (this.Mode.isEdit) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn"], currentLoc, reqstMode));
+            this.headerObj.showElement(["webformdiscardedit"]);
         }
         else if (this.Mode.isNew) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, "New Mode"));
         }
         else if (this.Mode.isView) {
+
+            if (this.FormObj.DataPushers && this.FormObj.DataPushers.$values.length > 0) {
+                let aValidDP = this.FormObj.DataPushers.$values.find(e => e.$type.includes('EbFormDataPusher') || e.$type.includes('EbBatchFormDataPusher'));
+                if (aValidDP && this.formPermissions[currentLoc].includes(5))
+                    this.DataPushedPopover();
+            }
+
             let btnsArr = ["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn", "webformclone", "webformlock"];
             if (this.formData.IsReadOnly) {
                 btnsArr = ["webformnew", "webformaudittrail", "webformprint-selbtn", "webformclone"];
@@ -1817,6 +1940,7 @@ const WebFormRender = function (option) {
             $("#webformsavedraft").off("click").on("click", this.saveAsDraft);
             $("#webformdeletedraft").off("click").on("click", this.deleteDraft);
             this.$openSrcBtn.off("click").on("click", this.openSourceForm.bind(this));
+            $("#webformdiscardedit").off("click").on("click", this.DiscardChanges.bind(this));
         }
 
         $("body").off("focus", "[ui-inp]").on("focus", "[ui-inp]", this.selectUIinpOnFocus);
@@ -1833,6 +1957,55 @@ const WebFormRender = function (option) {
             url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
         }
         window.open(url, '_blank');
+    };
+
+    this.DiscardChanges = function () {
+        if (!this.IsAnyChangesInFormData()) {
+            this.FORCE_RELOAD(this.rowId, this.formDataBackUp, "View Mode");
+            return;
+        }
+        EbDialog("show",
+            {
+                Message: "Are you sure to Discard all changes?",
+                Buttons: {
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        this.FORCE_RELOAD(this.rowId, this.formDataBackUp, "View Mode");
+                    }
+                }.bind(this)
+            });
+    };
+
+    this.IsAnyChangesInFormData = function () {
+        let changeDetected = false;
+        let modelBkUp = this.formDataBackUp.MultipleTables;
+        $.each(this.DataMODEL, function (k, Table) {
+            if (!modelBkUp[k] || (modelBkUp[k] && modelBkUp[k].length != Table.length)) {
+                changeDetected = true;
+                return false;
+            }
+            for (let i = 0; i < Table.length; i++) {
+                let RowBkUp = modelBkUp[k].find(e => e.RowId === Table[i].RowId);
+                if (!RowBkUp || (RowBkUp && RowBkUp.Columns.length != Table[i].Columns.length)) {
+                    changeDetected = true;
+                    return false;
+                }
+                for (let j = 0; j < Table[i].Columns.length; j++) {
+                    let ColumnBkUp = RowBkUp.Columns.find(e => e.Name === Table[i].Columns[j].Name);
+                    if (!ColumnBkUp || (ColumnBkUp && Table[i].Columns[j].Value !== ColumnBkUp.Value)) {
+                        let ctrl = this.flatControls.find(e => e.Name === ColumnBkUp.Name);
+                        if (!(ctrl && ctrl.DoNotPersist)) {
+                            changeDetected = true;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }.bind(this));
+        return changeDetected;
     };
 
     this.excelUpload = function () {
@@ -1988,6 +2161,7 @@ const WebFormRender = function (option) {
         this.uploadedFileRefList = {};
 
         this.formData = option.formData;
+        this.formDataBackUp = JSON.parse(JSON.stringify(this.formData));
         if (this.mode === "New Mode" || this.mode === "Prefill Mode")
             this.emptyFormDataModel_copy = JSON.parse(JSON.stringify(this.formData));// takes a copy (if switched to new mode)
         this.DataMODEL = this.formData.MultipleTables;
@@ -2003,6 +2177,7 @@ const WebFormRender = function (option) {
         this.MasterTable = this.FormObj.TableName;
         this.IsPSsInitComplete = {};
         this.DGBuilderObjs = {};
+        this.RQCRenderer = {};
         this.DGNewBuilderObjs = {};
         this.uniqCtrlsInitialVals = {};
         this.DynamicTabObject = null;
@@ -2036,12 +2211,12 @@ const WebFormRender = function (option) {
 
         if (this.Mode.isNew) {
             if (this.draftId === 0) // not new mode in draft
-                this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
+                this.FRC.execAllDefaultValExpr();//exec default Value Expression 2nd
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
         }
         else {
-            this.FRC.execValueExpNC(this.FormObj.DoNotPersistExecOrder);//================== exec Value Expression   2nd
+            this.FRC.execAllValExprForDoNotPersistCtrls();//================== exec Value Expression   2nd
         }
 
         if (this.Mode.isView) {

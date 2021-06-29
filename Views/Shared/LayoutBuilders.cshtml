@@ -176,7 +176,7 @@
     <script src="/js/FilterDialogBuilder/Eb_FilterDialogRender.js" type="text/javascript" asp-append-version=@bApnd></script>
 
     @*FormRelated*@
-    <script type="text/javascript" src="@Url.Content("~/webform/cxt2js")"></script>
+    <script type="text/javascript" src="/webform/cxt2js?v=@ExpressBase.Common.Singletons.BuildInfo.Version"></script>
     <script type="text/javascript" src="~/js/FormBuilder/WebFormCollectionRender.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/EbControls/EbDynamicTab.js" asp-append-version=@bApnd></script>
@@ -352,7 +352,12 @@
                 Uid:'@ViewBag.UId',
                 Current:@ViewBag.CurrentLocation
             });
-            window.ebcontext.locations = loc__;
+            window.ebcontext.locations = loc__;            
+            window.ebcontext.finyears = new FinYearPicker({
+                FinYears: @Html.Raw(ViewBag.FinYears),
+                Tid: '@ViewBag.cid',
+                Uid:'@ViewBag.UId',
+            });
         </script>
     }
 

@@ -169,7 +169,7 @@ namespace ExpressBase.Web.BaseControllers
             List<EbLocation> list = new List<EbLocation>();
             try
             {
-                Eb_Solution s_obj = GetSolutionObject(contrlr.ViewBag.cid); 
+                Eb_Solution s_obj = GetSolutionObject(contrlr.ViewBag.cid);
                 if (this.LoggedInUser.LocationIds.Contains(-1) || this.LoggedInUser.Roles.Contains("SolutionAdmin"))
                     list = s_obj.Locations.Values.ToList();
                 else
@@ -185,6 +185,8 @@ namespace ExpressBase.Web.BaseControllers
                     }
                 }
                 _json = JsonConvert.SerializeObject(list);
+
+                contrlr.ViewBag.FinYears = JsonConvert.SerializeObject(GetFinancialYearsObject(s_obj, this.LoggedInUser));
             }
             catch (Exception e)
             {

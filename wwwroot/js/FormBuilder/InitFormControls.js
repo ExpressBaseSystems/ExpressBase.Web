@@ -254,6 +254,10 @@
                     mask: true
                 });
                 //$input.val(userObject.Preference.ShortDate);
+                if (ctrl.RestrictionRule == 1)
+                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId);
+                else if (ctrl.RestrictionRule == 2)
+                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId, true);
             }
             else if (ctrl.EbDateType === 17) { //Time
                 $input.datetimepicker({
@@ -1029,6 +1033,10 @@
         $(window).resize(function () {
             $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
         });
+    };
+
+    this.RenderQuestionsControl = function (ctrl, ctrlOpts) {
+        return new EbRenderQuestionsControl(ctrl, ctrlOpts);
     };
 
     this.DataGrid = function (ctrl, ctrlOpts) {
@@ -2299,15 +2307,13 @@
 
 
     this.QuestionnaireConfigurator = function (ctrl) {
-        debugger;
+        //debugger;
         let Ques_Confi = {};
         let que_SaveObj = [];
-       // let ext_props = { "required": false, "unique": false, "validator": [] };
-        let ext_props = new EbObjects_w["Ques_ext_props"];
-
+        // let ext_props = { "required": false, "unique": false, "validator": [] };
         let queSelCollection = {};
 
-        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0; position: fixed; width: 325px;'>
+        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0;top: 50px; position: fixed; width: 325px;'>
 	                            <div  id='queConf_PGrid_wrp'>
 	
 	                            </div>
@@ -2323,9 +2329,9 @@
             isDraggable: true,
             root: 'webform'
         });
-      //  PGobj.css("visibility", "hidden");
+        //  PGobj.css("visibility", "hidden");
 
-       
+
 
 
         if (this.Renderer.rendererName == "Bot") {
@@ -2381,69 +2387,83 @@
             let QueIds = $('#' + ctrl.EbSid_CtxId).selectpicker('val');
             QueIds.forEach(function (item, index) {////to add new item to collection and save object
                 if (!(item in queSelCollection)) {
-                    Ques_Confi = {};
-                    Ques_Confi.id = 0;
-                    Ques_Confi.ques_id = item;
-                    Ques_Confi.ext_props = ext_props;
-                    queSelCollection[`${item}`] = ext_props;
-                    que_SaveObj.push(Ques_Confi);
-                    $(`#${ctrl.EbSid}_queRender`).append(`<div class="queOuterDiv" id="EbQuestionnaire${item}" qid="${item}" style="border-style: dashed;padding:10px;margin:10px;">${(ctrl.QuestionBankCtlHtmlList[item])}</div>`);
-                    var control = ctrl.QuestionBankList[item];
-                    $('.queOuterDiv').off("click").on("click", CreatePG.bind(this, control));
+                    setObjectValue_Html(item, false, {});
                 }
-               
-              //  CreatePG(control);
+
+                //  CreatePG(control);
             });
             arr2 = Object.keys(queSelCollection)
             let removedElem = arr2.filter(x => !QueIds.includes(x));
             if (removedElem.length > 0) {////to delete removed item from collection and save object
                 removedElem.forEach(function (item, index) {
                     $(`#EbQuestionnaire${item}`).remove();
-                    let indx = que_SaveObj.findIndex(x => x.ques_id === item);
-                    if (indx>=0)
-                        que_SaveObj.splice(indx,1);
+                    let indx = que_SaveObj.findIndex(x => x.ques_id == item);
+                    if (indx >= 0)
+                        que_SaveObj.splice(indx, 1);
                     delete queSelCollection[item];
                 });
             }
-           
+
 
         });
-       
-        var CreatePG = function (control,e) {
+
+        var setObjectValue_Html = function (item, setvalueTrue, _ext_prpty) {
+            let ext_props = new EbObjects_w["Ques_ext_props"]("Question_properties" + Date.now());
+            Ques_Confi = {};
+            Ques_Confi.id = 0;
+            Ques_Confi.ques_id = item;
+            if (setvalueTrue) {
+
+                $.extend(ext_props, _ext_prpty);
+                ext_props.EbSid_CtxId = ext_props.EbSid = _ext_prpty.Name;
+                Ques_Confi.ext_props = ext_props;
+                queSelCollection[`${item}`] = ext_props;
+            }
+            else {
+
+                Ques_Confi.ext_props = ext_props;
+                queSelCollection[`${item}`] = ext_props;
+            }
+            que_SaveObj.push(Ques_Confi);
+            $(`#${ctrl.EbSid}_queRender`).append(`<div class="queOuterDiv" id="EbQuestionnaire${item}" qid="${item}" style="border-style: ridge;padding:10px;margin:10px;">${(ctrl.QuestionBankCtlHtmlList[item])}</div>`);
+            var control = ctrl.QuestionBankList[item];
+            $(`.queOuterDiv`).find('*').attr('disabled', 'disabled').css('background-color', 'var(--eb-disablegray)');
+            $('.queOuterDiv').off("click").on("click", CreatePG.bind(this, control));
+        }
+
+        var CreatePG = function (control, e) {
             let qId = $(e.target).closest('.queOuterDiv').attr('qid');
             console.log("CreatePG called for:" + control.Name);
             let propObj = queSelCollection[`${qId}`];
-          //  this.$propGrid.css("visibility", "visible");
+            //  this.$propGrid.css("visibility", "visible");
             ////PGobj.setObject(control, AllMetas_w["EbQuestionnaireConfigurator"]);
             PGobj.setObject(propObj, AllMetas_w["Ques_ext_props"]);////
         };
 
         ctrl.bindOnChange = function (p1) {
 
-           // alert("bind change");
-            debugger;
+            // alert("bind change");
+            //debugger;
             $(`#${ctrl.EbSid}_queBtn`).on("click", p1);
+            $('#queConf_PGrid_wrp').on('input', p1);
         };
         ctrl.getValueFromDOM = function (p1) {
 
-           // alert("value from dom");
-            //let val = $('#' + this.EbSid_CtxId).selectpicker('val');
-            //debugger
-            //return val.toString();
             return JSON.stringify(que_SaveObj);
         };
 
         ctrl.setValue = function (p1) {
-            debugger;
+            //debugger;
             var qArray = [];
-           // alert("setvalue");
+            // alert("setvalue");
             if (p1 != null) {
                 qObj = JSON.parse(p1);
                 if (qObj.length > 0) {
                     qObj.forEach(function (item) {
                         item.id;
+                        setObjectValue_Html(item.ques_id, true, item.ext_props);
                         qArray.push(item.ques_id);
-                        $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlHtmlList[item.ques_id]);
+                        // $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlHtmlList[item.ques_id]);
                     });
                 }
             }
@@ -2451,7 +2471,7 @@
         };
         ctrl.clear = function () {
 
-           // alert("clear");
+            // alert("clear");
             if (ebcontext.renderContext === 'WebForm')
                 this.setValue(null);
             else

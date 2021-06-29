@@ -1156,6 +1156,8 @@
 
     this.markDelColCtrls = function (rowId) {
         let rowCtrls = this.objectMODEL[rowId];
+        if (!rowCtrls)
+            return;
         for (let i = 0; i < rowCtrls.length; i++) {
             let inpCtrl = rowCtrls[i];
             inpCtrl.__isDeleted = true;

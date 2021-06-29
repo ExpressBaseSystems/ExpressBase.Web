@@ -10,7 +10,7 @@
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'OnChange fn': ${inpCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
     };
@@ -35,7 +35,7 @@
             } catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'DefaultValueExpression' of : " + ctrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'DefaultValueExpression': ${ctrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
     };
@@ -228,7 +228,7 @@
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'Value expression of' of : " + control.Name + " - " + e.message);
+            EbMessage("show", { Message: `Error in 'ValueExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
         }
     };
 
@@ -252,7 +252,7 @@
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'On Change function or Behaviour Expression' of : " + control.Name + " - " + e.message);
+            EbMessage("show", { Message: `Error in 'OnChange fn or BehaviourExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
         }
     };
 
@@ -421,7 +421,7 @@
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'ValueExpression': ${curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }.bind(this));
     }.bind(this);
@@ -457,7 +457,7 @@
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'ValueExpression': ${curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }.bind(this));
     }.bind(this);

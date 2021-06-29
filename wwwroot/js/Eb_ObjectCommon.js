@@ -207,8 +207,10 @@
         if (this.ObjectType === 0)
             this.UpdateBuilder();
 
-        if (this.ObjCollection[this.target].afterUpdateDashboard) {
-            this.ObjCollection[this.target].afterUpdateDashboard();
+        if (this.target !== "#preview_tab") {
+            if (this.ObjCollection[this.target].afterUpdateDashboard) {
+                this.ObjCollection[this.target].afterUpdateDashboard();
+            }
         }
     };
 

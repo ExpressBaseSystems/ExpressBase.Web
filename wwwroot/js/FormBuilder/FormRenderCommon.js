@@ -10,7 +10,7 @@
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'OnChange fn': ${inpCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
     };
@@ -35,7 +35,7 @@
             } catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'DefaultValueExpression' of : " + ctrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'DefaultValueExpression': ${ctrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
     };
@@ -89,7 +89,7 @@
             ctrl.___DoNotUpdateDrDepCtrls = this.FO.__fromImport;
 
             if (ctrl === "not found")
-                return;
+                continue;
             try {
                 if (ctrl.ObjType === "TVcontrol") {
                     //depCtrl.reloadWithParam(curCtrl);
@@ -228,7 +228,7 @@
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'Value expression of' of : " + control.Name + " - " + e.message);
+            EbMessage("show", { Message: `Error in 'ValueExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
         }
     };
 
@@ -252,7 +252,7 @@
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'On Change function or Behaviour Expression' of : " + control.Name + " - " + e.message);
+            EbMessage("show", { Message: `Error in 'OnChange fn or BehaviourExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
         }
     };
 
@@ -365,12 +365,12 @@
     };
 
     this.UpdateValExpDepCtrls = function (curCtrl, index) {
-        $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
-            if (typeof (index) === 'number' && i <= index)
-                return true;
+        let i = typeof (index) === 'number' ? (index + 1) : 0;
+        for (; i < curCtrl.DependedValExp.$values.length; i++) {
+            let depCtrl_s = curCtrl.DependedValExp.$values[i];
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
             if (depCtrl === "not found")
-                return;
+                continue;
             try {
                 if (depCtrl.ObjType === "TVcontrol") {
                     depCtrl.reloadWithParam(curCtrl);
@@ -386,7 +386,7 @@
                                     depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
                                     depCtrl.justSetValue(ValueExpr_val);
                                     EbBlink(depCtrl);
-                                    return false;
+                                    break;
                                 }
                                 else {
                                     depCtrl.justSetValue(ValueExpr_val);
@@ -414,16 +414,21 @@
                         filterValues.push(new fltr_obj(11, "id", this.FO.FormObj.rowId));
                         depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
                         this.ExecuteSqlValueExpr(depCtrl, filterValues, 0);
-                        return false;
+                        break;
                     }
                 }
             }
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'ValueExpression': ${curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
-        }.bind(this));
+        }
+
+        if (i === curCtrl.DependedValExp.$values.length && curCtrl.__continue2) {
+            curCtrl.__continue2();
+            curCtrl.__continue2 = null;
+        }
     }.bind(this);
 
     this.ExecuteSqlValueExpr = function (depCtrl, filterValues, type) {
@@ -457,7 +462,7 @@
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'ValueExpression': ${curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }.bind(this));
     }.bind(this);
@@ -518,17 +523,23 @@
                     return;
             }
             if (curCtrl.DependedValExp && curCtrl.DependedValExp.$values.length !== 0) {
+                curCtrl.__continue2 = this.updateDependentControls_inner.bind(this, curCtrl);
                 this.UpdateValExpDepCtrls(curCtrl);
             }
-            if (curCtrl.DependedDG) {
-                this.importDGRelatedUpdates(curCtrl);
-            }
-            if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
-                if (!curCtrl.___DoNotImport)
-                    this.PSImportRelatedUpdates(curCtrl);
-                curCtrl.___DoNotImport = false;
-            }
+            else
+                this.updateDependentControls_inner(curCtrl);
         }.bind(this);
+    };
+
+    this.updateDependentControls_inner = function (curCtrl) {
+        if (curCtrl.DependedDG) {
+            this.importDGRelatedUpdates(curCtrl);
+        }
+        if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
+            if (!curCtrl.___DoNotImport)
+                this.PSImportRelatedUpdates(curCtrl);
+            curCtrl.___DoNotImport = false;
+        }
     };
 
     this.setUpdateDependentCtrlWithDrFn = function () {

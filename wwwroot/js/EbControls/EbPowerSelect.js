@@ -1542,6 +1542,8 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');
+        if ($ctrl.length === 0)
+            return;
         //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
         let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
         let $form_div = $(document).find("[eb-root-obj-container]:first");

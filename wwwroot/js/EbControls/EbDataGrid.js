@@ -697,6 +697,7 @@
     this.addAggragateRow = function () {
         let tr = this.getAggTrHTML();
         let $tr = $(tr);
+        $tr.attr('tabindex', '-1');
         $(`#${this.TableId}_footer>tbody`).append($tr);
     };
 
@@ -1156,6 +1157,8 @@
 
     this.markDelColCtrls = function (rowId) {
         let rowCtrls = this.objectMODEL[rowId];
+        if (!rowCtrls)
+            return;
         for (let i = 0; i < rowCtrls.length; i++) {
             let inpCtrl = rowCtrls[i];
             inpCtrl.__isDeleted = true;

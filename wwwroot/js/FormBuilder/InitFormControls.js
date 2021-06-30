@@ -144,7 +144,7 @@
                                     imgup.deleteFromGallery(refids);
                                     imgup.customMenuCompleted("Delete", refids);
                                 }
-                            }
+                            }.bind(this)
                         });
                 }
             }

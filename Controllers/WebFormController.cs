@@ -43,7 +43,7 @@ namespace ExpressBase.Web.Controllers
             EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
             if (result.ErrorMessage != null)
             {
-                TempData["ErrorResp"] = result.ErrorMessage.GraveAccentQuoted();
+                TempData["ErrorResp"] = result.ErrorMessage.ReplaceAll("`", "").GraveAccentQuoted();
                 return Redirect(result.RedirectUrl);
             }
             ViewBag.EbFormAndDataWrapper = resp;

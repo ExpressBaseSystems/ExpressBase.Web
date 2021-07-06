@@ -1015,7 +1015,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*border-top: solid 1px #585858;*/
 }
 
-[eb-form='true'] .bootstrap-select, .chat-ctrl-cont .bootstrap-select {
+[eb-form='true'] .bootstrap-select:not(.bs-container), .chat-ctrl-cont .bootstrap-select {
     width: 100% !important;
 }
 
@@ -1361,6 +1361,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     cursor: pointer;
     pointer-events: auto;
 }
+
     [ctype="PowerSelect"] [form-link="true"] .selected-tag:hover, [tdcoltype="DGPowerSelectColumn"][form-link="true"] .selected-tag:hover {
         color: rgb(51 51 51);
         background-color: white !important;
@@ -2096,6 +2097,7 @@ input.locinp {
     .grid-cont .Dg_head::-webkit-scrollbar {
         background-color: #dddddf;
     }
+
 .grid-cont .Dg_footer::-webkit-scrollbar {
     background-color: #eee;
 }

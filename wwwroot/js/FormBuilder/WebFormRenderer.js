@@ -767,9 +767,10 @@ const WebFormRender = function (option) {
         let dgb;
         $.each(this.DGBuilderObjs, function (k, DGB) {
             if (DGB.hasActiveRow()) {
-                dgb = DGB;
-                hasActiveRows = true;
-                return false;
+                DGB.checkActiveRecord();
+                //dgb = DGB;
+                //hasActiveRows = true;
+                //return false;
             }
         }.bind(this));
         return { DGB: dgb, hasActiveRows: hasActiveRows };

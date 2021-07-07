@@ -985,7 +985,8 @@
         //setTimeout(this.row_focusout_inner.bind(this, e), 200);
     };
 
-    this.row_focusout_inner = function (e) {
+    //external fn
+    this.checkActiveRecord = function (e) {
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 && $('.DDdiv:visible').length === 0) {
             $activeTr.find('.check-row').trigger('click');

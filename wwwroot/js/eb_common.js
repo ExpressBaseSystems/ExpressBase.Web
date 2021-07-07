@@ -742,7 +742,16 @@ function RecurFlatControls(src_obj, dest_coll) {
 function getValsFromForm(formObj) {
     let fltr_collection = [];
     let flag = 1;
-    $.each(getFlatCtrlObjs(formObj), function (i, obj) {
+    let ctrl_arr = getFlatCtrlObjs(formObj);
+    let DGs = getFlatContObjsOfType(formObj, "DataGrid");
+    for (let i = 0; i < DGs.length; i++) {
+        if (DGs[i].currentRow) {
+            let t = Object.values(DGs[i].currentRow).filter(e => typeof (e) === 'object' && e.getValue);
+            ctrl_arr = ctrl_arr.concat(t);
+        }
+    }
+
+    $.each(ctrl_arr, function (i, obj) {
         if (obj.ObjType === "FileUploader")
             return;
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
@@ -1025,6 +1034,17 @@ function dgOnChangeBind() {
 
             col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
         }
+
+        if (col.DrDependents && col.DrDependents.$values.length !== 0) {
+            let FnString = `let curCtrl = form.__getCtrlByPath(this.__path);
+                            form.updateDependentCtrlWithDr(curCtrl, form);`;
+
+            let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+            col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+
+        }
+
     }.bind(this));
 }
 

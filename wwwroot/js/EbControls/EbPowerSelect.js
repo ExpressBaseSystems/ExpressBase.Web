@@ -736,6 +736,7 @@ const EbPowerSelect = function (ctrl, options) {
                     console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
                     if (this.IsFromReloadWithParams2setOldval)
                         this.ComboObj.___DoNotImport = false;
+                    this.ComboObj.___isNotUpdateValExpDepCtrls = false;
                     if (this.ComboObj.__continue) this.ComboObj.__continue();
                     return;
                 }

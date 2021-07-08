@@ -43,7 +43,7 @@ namespace ExpressBase.Web.Controllers
             EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
             if (result.ErrorMessage != null)
             {
-                TempData["ErrorResp"] = result.ErrorMessage.ReplaceAll("`", "").GraveAccentQuoted();
+                TempData["ErrorResp"] = GetFormattedErrMsg(result.ErrorMessage);
                 return Redirect(result.RedirectUrl);
             }
             ViewBag.EbFormAndDataWrapper = resp;
@@ -382,7 +382,7 @@ namespace ExpressBase.Web.Controllers
             WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
             if (wfd.FormData == null)
             {
-                TempData["ErrorResp"] = ViewBag.formData;
+                TempData["ErrorResp"] = GetFormattedErrMsg(ViewBag.formData);
                 return "/StatusCode/" + wfd.Status;
             }
             else if (ViewBag.wc != TokenConstants.DC)
@@ -415,6 +415,13 @@ namespace ExpressBase.Web.Controllers
                 }
             }
             return null;
+        }
+
+        private string GetFormattedErrMsg(string msg)
+        {
+            msg = msg.ReplaceAll("`", "");
+            int len = msg.Length > 300 ? 300 : msg.Length;
+            return msg.Substring(0, len).GraveAccentQuoted();
         }
 
         //[HttpGet("WebFormRender/{refId}/{_params}/{_mode}/{_locId}/{rendermode}")]
@@ -472,7 +479,7 @@ namespace ExpressBase.Web.Controllers
             WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
             if (wfd.FormData == null)
             {
-                TempData["ErrorResp"] = ViewBag.formData;
+                TempData["ErrorResp"] = GetFormattedErrMsg(ViewBag.formData);
                 return Redirect("/StatusCode/" + wfd.Status);
                 //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
             }

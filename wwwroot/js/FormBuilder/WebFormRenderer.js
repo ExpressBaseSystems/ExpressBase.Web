@@ -2213,12 +2213,13 @@ const WebFormRender = function (option) {
         if (this.Mode.isNew) {
             if (this.draftId === 0) // not new mode in draft
                 this.FRC.execAllDefaultValExpr();//exec default Value Expression 2nd
-            if (this.ReviewCtrl)
-                this.ReviewCtrlBuilder.hide();
         }
         else {
             this.FRC.execAllValExprForDoNotPersistCtrls();//================== exec Value Expression   2nd
         }
+
+        if (this.ReviewCtrl && (this.Mode.isNew || this.ReviewCtrl.Hidden))
+            this.ReviewCtrlBuilder.hide();
 
         if (this.Mode.isView) {
             this.SwitchToViewMode();

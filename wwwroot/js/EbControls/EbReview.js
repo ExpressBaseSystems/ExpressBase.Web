@@ -113,7 +113,6 @@
 
     this.saveForm_call = function () {
         this.formRenderer.showLoader();
-        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
@@ -123,7 +122,7 @@
                 ValObj: this.getDATAMODEL(),
                 RefId: this.formRenderer.formRefId,
                 RowId: this.formRenderer.rowId,
-                CurrentLoc: currentLoc
+                CurrentLoc: ebcontext.locations.getCurrent()
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.formRenderer.hideLoader();
@@ -171,7 +170,8 @@
     };
 
     this.switch2viewMode = function (DataMODEL) {
-        this.show();
+        if (!this.ctrl.Hidden)
+            this.show();
         this.DataMODEL = DataMODEL;
         this.set();
     };
@@ -208,6 +208,7 @@
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", ebsid);
+            //if stage is null
             let html = stage.Html;
 
             html = html.replace("@rowid@", row.RowId);
@@ -368,11 +369,12 @@
             this.hasPermission = getObjByval(this.CurStageDATA.Columns, "Name", "has_permission").Value === "T";//false;//
             this.isFormDataEditable = getObjByval(this.CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
             if (!this.isFormDataEditable)
-                this.formRenderer.disableformEditbtn();
+                this.formRenderer.disableformEditbtn();////
             else
                 this.formRenderer.enableformEditbtn();
-
         }
+        else if (this.ctrl.AllowEditOnCompletion)
+            this.isFormDataEditable = true;
 
 
         if (this.ctrl.RenderAsTable) {

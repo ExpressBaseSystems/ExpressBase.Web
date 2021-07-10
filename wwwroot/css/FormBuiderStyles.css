@@ -1360,6 +1360,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     color: rgb(51 51 151);
     cursor: pointer;
     pointer-events: auto;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
     [ctype="PowerSelect"] [form-link="true"] .selected-tag:hover, [tdcoltype="DGPowerSelectColumn"][form-link="true"] .selected-tag:hover {

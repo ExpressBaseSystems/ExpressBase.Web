@@ -4226,8 +4226,10 @@
     };
 
     this.ExecuteApproval = function ($td, e) {
-        $("#eb_common_loader").EbLoader("show");
+        //$("#eb_common_loader").EbLoader("show");
         $('.btn-approval_popover').popover('hide');
+        $td.find('.btn-approval_popover').popover('destroy');
+        $td.find('.btn-approval_popover i').removeClass('fa-history').addClass('fa-spinner fa-pulse');
         let val = $(e.target).closest("#action").find(".selectpicker").val();
         val = JSON.parse(atob(val));
         let comments = $(e.target).closest("#action").find(".comment-text").val();
@@ -4254,8 +4256,20 @@
         if ($td.find(".status-label").text() === "Review Completed")
             EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
         var cell = this.Api.cell($td);
-        cell.data($td.html()).draw();
-        $("#eb_common_loader").EbLoader("hide");
+        cell.data($td.html());
+
+        $td.find('.btn-approval_popover').popover({
+            container: 'body',
+            trigger: 'click',
+            placement: this.PopoverPlacement,
+            html: true,
+            template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
+            },
+        });
+
+        //$("#eb_common_loader").EbLoader("hide");
     };
 
     this.getRowGroupFilter = function ($elem) {

@@ -4252,9 +4252,12 @@
     };
 
     this.cccccc = function ($td, resp) {
+        if (!(resp._data))
+            return;
+
         $td.html(resp._data);
-        if ($td.find(".status-label").text() === "Review Completed")
-            EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
+        //if ($td.find(".status-label").text() === "Review Completed")
+        //    EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
         var cell = this.Api.cell($td);
         cell.data($td.html());
 

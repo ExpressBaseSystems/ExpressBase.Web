@@ -4261,7 +4261,9 @@
         var cell = this.Api.cell($td);
         cell.data($td.html());
 
-        $td.find('.btn-approval_popover').popover({
+        let $popoverBtn = $td.find('.btn-approval_popover');
+
+        $popoverBtn.popover({
             container: 'body',
             trigger: 'click',
             placement: this.PopoverPlacement,
@@ -4271,6 +4273,16 @@
                 return atob($(this).attr("data-contents"));
             },
         });
+
+        $popoverBtn.off('shown.bs.popover').on('shown.bs.popover', function (e) {
+            $(".stage_actions").selectpicker();
+            let $td = $(e.target).closest("td.tdheight");
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+        }.bind(this));
+
+        $popoverBtn.off('hidden.bs.popover').on('hidden.bs.popover', function (e) {
+            $(e.target).data("bs.popover").inState.click = false;
+        }.bind(this));
 
         //$("#eb_common_loader").EbLoader("hide");
     };

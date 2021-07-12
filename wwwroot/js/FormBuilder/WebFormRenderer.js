@@ -1787,7 +1787,7 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].includes(op.AuditTrail))
                     r.push(btns[i]);
-                else if (btns[i] === "webformnew" && this.formPermissions[loc].includes(op.New))
+                else if (btns[i] === "webformnew" && this.formPermissions[loc].includes(op.New) && !this.FormObj.IsDisable)
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);

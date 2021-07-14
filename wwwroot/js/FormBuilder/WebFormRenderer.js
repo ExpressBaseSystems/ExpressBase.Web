@@ -851,10 +851,16 @@ const WebFormRender = function (option) {
     };
 
     this.openSourceForm = function () {
-        if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+        if (this.formData.SrcDataId > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.formData.SrcDataId));
-            let url = `../WebForm/Index?_r=${this.formData.SrcRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
+            let url = `&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
+            if (this.formData.SrcRefId?.length > 0)
+                url = `../WebForm/Index?_r=${this.formData.SrcRefId}${url}`;
+            else if (this.formData.SrcVerId > 0)
+                url = `../WebForm/Inde?_r=${this.formData.SrcVerId}${url}`;
+            else
+                return;
             window.open(url, '_blank');
         }
     };
@@ -1728,7 +1734,7 @@ const WebFormRender = function (option) {
                     $("#webformcancel").prop("title", "Cancel");
                 }
             }
-            if (this.formData.SrcDataId > 0 && this.formData.SrcRefId?.length > 0) {
+            if (this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0)) {
                 btnsArr.push("webformopensrc");
             }
             this.headerObj.showElement(this.filterHeaderBtns(btnsArr, currentLoc, reqstMode));

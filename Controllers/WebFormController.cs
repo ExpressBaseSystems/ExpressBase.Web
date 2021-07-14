@@ -48,123 +48,12 @@ namespace ExpressBase.Web.Controllers
             }
             ViewBag.EbFormAndDataWrapper = resp;
             return View();
+        }
 
-
-            ViewBag.renderMode = 1;
-            ViewBag.rowId = 0;
-            Dictionary<string, string> EnableEditBtn = new Dictionary<string, string>();
-            EnableEditBtn.Add("disableEditButton", "0");
-            //ViewBag.disableEditButton = 0;
-            ViewBag.draftId = 0;
-            ViewBag.formData_draft = 0;
-            ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-            ViewBag.IsPartial = _mode > 10;
-            _mode = _mode > 0 ? _mode % 10 : _mode;
-            if (_params != null)
-            {
-                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
-                if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
-                {
-                    Console.WriteLine("Webform Render - View mode request identified.");
-                    ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId, 1);
-
-                    if (ob[0].ValueTo > 0)
-                    {
-                        string dataId = Convert.ToString(ob[0].ValueTo);
-                        ViewBag.rowId = ob[0].ValueTo;
-                        ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
-
-                        bool Has_Key = CheckRedisEditCollection(refId, dataId);
-                        if (Has_Key)
-                        {
-                            string HashValue = this.Redis.GetValueFromHash($"{refId}_Edit", dataId);
-                            bool IsActive = CheckSubscriptionIdPulse(HashValue);
-                            if (IsActive)
-                            {
-                                //ViewBag.disableEditButton = 1;
-                                EnableEditBtn["disableEditButton"] = "1";
-                                GetSubscriptionId_InfoResponse res = GetSubscriberInfo(HashValue);
-                                User UsrInfo = GetUserObject(res.AuthId);
-                                EnableEditBtn.Add("msg", $"This form is opend by {UsrInfo.FullName}");
-                            }
-                            else
-                            {
-                                bool clrHashField = this.Redis.RemoveEntryFromHash($"{refId}_Edit", dataId);
-                            }
-
-                        }
-                    }
-
-
-                }
-                else if ((int)WebFormDVModes.New_Mode == _mode)// prefill mode
-                {
-                    try
-                    {
-                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
-                        ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
-                    }
-                    catch (Exception ex)
-                    {
-                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
-                        Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
-                    }
-                }
-                else if ((int)WebFormModes.Export_Mode == _mode)
-                {
-                    try
-                    {
-                        string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? refId;
-                        int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
-                        GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
-                        ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.Export_Mode.ToString().Replace("_", " ");
-                    }
-                    catch (Exception ex)
-                    {
-                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
-                        Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
-                    }
-                }
-                else if ((int)WebFormModes.Draft_Mode == _mode)
-                {
-                    try
-                    {
-                        int DraftId = Convert.ToInt32(ob.Find(e => e.Name == "id")?.ValueTo ?? 0);
-                        GetFormDraftResponse Resp = ServiceClient.Post<GetFormDraftResponse>(new GetFormDraftRequest { RefId = refId, DraftId = DraftId });
-                        ViewBag.formData = Resp.DataWrapper;
-                        ViewBag.formData_draft = Resp.FormDatajson;
-                        ViewBag.draftId = DraftId;
-                        ViewBag.Mode = WebFormModes.Draft_Mode.ToString().Replace("_", " ");
-                    }
-                    catch (Exception ex)
-                    {
-                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
-                        Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
-                    }
-                }
-            }
-            else
-            {
-                ViewBag.formData = getRowdata(refId, 0, _locId, 1);
-            }
-
-            if (ViewBag.wc == TokenConstants.DC)
-            {
-                ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
-            }
-            string temp = GetRedirectUrl(refId, _mode, _locId);
-            if (temp != null)
-                return Redirect(temp);
-            ViewBag.disableEditButton = JsonConvert.SerializeObject(EnableEditBtn);
-            ViewBag.formRefId = refId;
-            ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
-
-            ViewBag.__Solution = GetSolutionObject(ViewBag.cid);
-            ViewBag.__User = this.LoggedInUser;
-
-            return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
+        public IActionResult Inde(int _r, string _p, int _m, int _l, int _rm)
+        {
+            GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = _r });
+            return RedirectToAction("Index", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm });
         }
 
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]

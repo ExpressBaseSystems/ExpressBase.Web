@@ -1799,7 +1799,7 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].includes(op.ExcelImport) && mode === 'New Mode' && this.FormObj.EnableExcelImport)
                     r.push(btns[i]);
-                else if (btns[i] === "webformclone" && this.formPermissions[loc].includes(op.Clone) && mode === 'View Mode')
+                else if (btns[i] === "webformclone" && this.formPermissions[loc].includes(op.Clone) && mode === 'View Mode' && !this.FormObj.IsDisable)
                     r.push(btns[i]);
                 else if (btns[i] === "webformopensrc" && this.formPermissions[loc].includes(op.View) && mode === 'View Mode')
                     r.push(btns[i]);

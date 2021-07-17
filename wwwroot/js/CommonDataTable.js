@@ -2805,7 +2805,8 @@
         $('.btn-approval_popover').off('shown.bs.popover').on('shown.bs.popover', function (e) {
             $(".stage_actions").selectpicker();
             let $td = $(e.target).closest("td.tdheight");
-            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
+            $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
         }.bind(this));
 
         $('.btn-approval_popover').on('hidden.bs.popover', function (e) {
@@ -4225,14 +4226,22 @@
         this.Api.columns.adjust();
     };
 
-    this.ExecuteApproval = function ($td, e) {
+    this.ExecuteApproval = function ($td, action, e) {
         //$("#eb_common_loader").EbLoader("show");
         $('.btn-approval_popover').popover('hide');
         $td.find('.btn-approval_popover').popover('destroy');
         $td.find('.btn-approval_popover i').removeClass('fa-history').addClass('fa-spinner fa-pulse');
-        let val = $(e.target).closest("#action").find(".selectpicker").val();
-        val = JSON.parse(atob(val));
-        let comments = $(e.target).closest("#action").find(".comment-text").val();
+        let val, comments;
+        if (action === 'reset') {
+            val = $(e.target).attr("data-json");
+            val = JSON.parse(atob(val));
+            comments = $(e.target).closest("#resetstage").find(".comment-text").val();   
+        }
+        else {
+            val = $(e.target).closest("#action").find(".selectpicker").val();
+            val = JSON.parse(atob(val));
+            comments = $(e.target).closest("#action").find(".comment-text").val();            
+        }
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
@@ -4277,7 +4286,8 @@
         $popoverBtn.off('shown.bs.popover').on('shown.bs.popover', function (e) {
             $(".stage_actions").selectpicker();
             let $td = $(e.target).closest("td.tdheight");
-            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
+            $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
         }.bind(this));
 
         $popoverBtn.off('hidden.bs.popover').on('hidden.bs.popover', function (e) {

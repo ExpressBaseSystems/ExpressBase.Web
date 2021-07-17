@@ -69,7 +69,7 @@
                     {
                         Name: 'stage_unique_id',
                         Type: 16,
-                        Value: '__control_stage'
+                        Value: '__system_stage'
                     },
                     {
                         Name: 'action_unique_id',
@@ -238,7 +238,7 @@
             let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", ebsid);
             let html;
-            if (ebsid === '__control_stage' && actUniqueId === '__review_reset')
+            if (ebsid === '__system_stage' && actUniqueId === '__review_reset')
                 html = `<div class='message' rowid='@rowid@' rowid='@rowid@'>
    <div class='fs-dp' @dpstyle@></div>
    <div class='bubble'>
@@ -331,7 +331,7 @@
             let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", ebsid);
             let html;
-            if (ebsid === '__control_stage' && actUniqueId === '__review_reset') {
+            if (ebsid === '__system_stage' && actUniqueId === '__review_reset') {
                 html = `<tr name='Stage One' rowid='@rowid@'>
 	<td class='row-no-td rc-slno'>@slno@</td>
 	<td class='row-no-td rc-stage' col='stage'><span class='fstd-div'>System</span></td>

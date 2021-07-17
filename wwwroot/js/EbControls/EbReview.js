@@ -458,7 +458,7 @@
             this.drawCommentBox();
             this.$container.find(".message[rowid='0']").show();
             this.$container.find(".rc-inp-cont").hide();
-
+            this.showResetBtn();
             if (!this.CurStageDATA || !this.hasPermission)
                 return;
 

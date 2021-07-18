@@ -908,8 +908,8 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     font-weight: 500;
 }
 .status-time {
-    font-size: 13px;
-    color: #041982;
+    font-size: 10px;
+    /*color: #555;*/
     margin: 0;
 }
 

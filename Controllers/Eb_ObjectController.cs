@@ -171,6 +171,8 @@ namespace ExpressBase.Web.Controllers
                             _object.AfterRedisGet(Redis, ServiceClient);
                         ViewBag.dsObj = _object;
                     }
+                    GetFormBuilderRelatedDataResp result = this.ServiceClient.Get(new GetFormBuilderRelatedDataRqst { EbObjectRefId = null, EbObjType = EbObjectTypes.Null.IntCode });
+                    ViewBag.roles = JsonConvert.SerializeObject(result.Roles);
                 }
                 else if (type.Equals(EbObjectTypes.Report))
                 {

@@ -16,6 +16,7 @@ namespace ExpressBase.Web.Components
             ViewBag.Refid = refid;
             ViewBag.ServiceUrl = ssurl;
             ViewBag.url = url;
+            ViewBag.RolesList = ViewBag.roles ?? "{}";
             return View();
         }
     }

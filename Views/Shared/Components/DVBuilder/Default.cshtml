@@ -270,6 +270,9 @@
         var commonO = $("#layout_div").data("commonObj");
     }
 
+    if (!ebcontext.Roles)
+        ebcontext.Roles = @Html.Raw(ViewBag.RolesList);
+
     var DVobj = new DvBuilder({
         RefId: '@ViewBag.Refid',
         Version: '@ViewBag.VersionNumber',
@@ -285,5 +288,5 @@
 
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DVobj;
 
-    
+
 </script>

@@ -63,6 +63,35 @@
     };
 
     this.getCurRowValues = function () {
+        if (this.resetFlow) {
+            let data = {
+                Columns: [
+                    {
+                        Name: 'stage_unique_id',
+                        Type: 16,
+                        Value: '__system_stage'
+                    },
+                    {
+                        Name: 'action_unique_id',
+                        Type: 16,
+                        Value: '__review_reset'
+                    },
+                    {
+                        Name: 'comments',
+                        Type: 16,
+                        Value: $(`#${this.resetPopUpId} textarea`).val()
+                    },
+                    {
+                        Name: 'eb_my_actions_id',
+                        Type: 7,
+                        Value: 0
+                    }
+                ]
+            };
+            this.resetFlow = false;
+            return data;
+        }
+
         let action_unique_id, comments;
 
 
@@ -116,10 +145,9 @@
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url: "/WebForm/InsertWebformData",
+            url: "/WebForm/ExecuteReview",
             data: {
-                TableName: this.formRenderer.FormObj.TableName,
-                ValObj: this.getDATAMODEL(),
+                Data: this.getDATAMODEL(),
                 RefId: this.formRenderer.formRefId,
                 RowId: this.formRenderer.rowId,
                 CurrentLoc: ebcontext.locations.getCurrent()
@@ -207,9 +235,24 @@
         for (let i = 0; i < this.DataMODEL.length; i++) {
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
+            let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", ebsid);
-            //if stage is null
-            let html = stage.Html;
+            let html;
+            if (ebsid === '__system_stage' && actUniqueId === '__review_reset')
+                html = `<div class='message' rowid='@rowid@' rowid='@rowid@'>
+   <div class='fs-dp' @dpstyle@></div>
+   <div class='bubble'>
+	  <div class='msg-head'>System (Reset)</div>
+	  <div class='msg-comment'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@comment@</div>
+	  <span class='msg-uname'>@uname@</span>
+	  <div class='corner'></div>
+	  <span data-toggle='tooltip' title data-original-title='@timeTitle@'>@time@</span>
+   </div>
+</div>`;
+            else if (!stage)
+                continue;
+            else
+                html = stage.Html;
 
             html = html.replace("@rowid@", row.RowId);
             html = html.replace("@slno@", i + 1);
@@ -244,11 +287,11 @@
                         //this.curDDHtml = stage.DDHtml;
                         //this.curDDval = column.Value;
                     }
-                    else
+                    else if (stage)
                         html = html.replace("@action@", `(${getObjByval(stage.StageActions.$values, "EbSid", column.Value).Name})`);
                 }
                 else if (column.Name === "eb_created_at") {
-                    
+
                     if (row.RowId === 0 || column.Value === null)
                         html = html.replace("@timeTitle@", "").replace("@time@", '<i class="fa fa-clock-o" aria-hidden="true" style="font-size: 14px;"></i>');
                     else {
@@ -285,8 +328,34 @@
         for (let i = 0; i < this.DataMODEL.length; i++) {
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
+            let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", ebsid);
-            let html = stage.Html;
+            let html;
+            if (ebsid === '__system_stage' && actUniqueId === '__review_reset') {
+                html = `<tr name='Stage One' rowid='@rowid@'>
+	<td class='row-no-td rc-slno'>@slno@</td>
+	<td class='row-no-td rc-stage' col='stage'><span class='fstd-div'>System</span></td>
+	<td class='row-no-td rc-status' col='status' class='fs-ctrl-td'>
+		<span class='fstd-div'>Reset</span>
+	</td>
+	<td class='fs-ctrl-td rc-by' col='review-dtls'>
+		<div class='fstd-div'>
+			<div class='fs-user-cont'>
+				<div class='fs-dp' @dpstyle@></div>
+				<div class='fs-udtls-cont'>
+					<span class='fs-uname'> @uname@ </span>
+					<span class='fs-time'> @time@ </span>
+				</div>
+			</div>
+		</div>
+	</td>
+	<td class='fs-ctrl-td rc-remarks' col='remarks'><div class='fstd-div'> <textarea class='fs-textarea'>@comment@</textarea> </div></td>
+</tr>`;
+            }
+            else if (!stage)
+                continue;
+            else
+                html = stage.Html;
 
             html = html.replace("@rowid@", row.RowId);
             html = html.replace("@slno@", i + 1);
@@ -304,7 +373,9 @@
                 }
                 if (column.Name === "action_unique_id") {
                     this.afterRenderFuncs.push(function (val) {
-                        this.$tableBody.find(`tr[rowid='${row.RowId}'] [col='status'] .selectpicker`).selectpicker('val', column.Value);
+                        let $sel = this.$tableBody.find(`tr[rowid='${row.RowId}'] [col='status'] .selectpicker`);
+                        if ($sel.length > 0)
+                            $sel.selectpicker('val', column.Value);
                     }.bind(this));
                 }
                 else if (column.Name === "eb_created_at") {
@@ -387,7 +458,7 @@
             this.drawCommentBox();
             this.$container.find(".message[rowid='0']").show();
             this.$container.find(".rc-inp-cont").hide();
-
+            this.showResetBtn();
             if (!this.CurStageDATA || !this.hasPermission)
                 return;
 
@@ -395,10 +466,87 @@
             this.$container.find(".rc-inp-cont").show();
         }
 
+        this.showResetBtn();
+
         if (!this.CurStageDATA || !this.hasPermission)
             return;
 
         this.$submit.show(300);
+    };
+
+    this.showResetBtn = function () {
+        let roleIds = [];
+        let hasResetPerm = false;
+        if (this.ctrl.ResetterRoles && this.ctrl.ResetterRoles.$values)
+            roleIds = this.ctrl.ResetterRoles.$values;
+        if (ebcontext.user.RoleIds.includes(1) || ebcontext.user.RoleIds.includes(2) || ebcontext.user.RoleIds.some(e => roleIds.includes(e)))
+            hasResetPerm = true;
+
+        if (!hasResetPerm)
+            return;
+        let $btnParent = this.$container.find('.fs-grid-cont');
+        if ($btnParent.length > 0 && $btnParent.find('.reset-btn').length === 0)
+            $btnParent.append(`<div class="reset-btn"><i class="fa fa-wrench" aria-hidden="true"></i> Reset</div>`);
+
+        this.resetPopUpId = `${this.ctrl.EbSid_CtxId}-reset`;
+        let popUpContent = `
+            <div id='${this.resetPopUpId}' class='review-reset-popover'>
+                <div>
+                    <div style='color: #555;'>Remarks</div>
+                    <textarea></textarea>
+                </div>
+                <div class='review-reset-btn-cont'>
+                    <div class='review-reset-btn'>Reset</div>
+                </div>
+            </div>`
+        let $resetBtn = this.$container.find('.fs-grid-cont .reset-btn');
+
+        let $poTrig = $resetBtn.popover({
+            trigger: 'manual',
+            html: true,
+            container: "body",
+            placement: 'left',
+            content: popUpContent,
+            delay: { "hide": 100 }
+        });
+
+        let timer1;
+
+        let OnMouseEnter = function () {
+            clearTimeout(timer1);
+            let _this = this;
+            let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            if (!$poDiv.length) {
+                $(_this).popover("show");
+                $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            }
+            $poDiv.off("mouseleave").on("mouseleave", function () {
+                timer1 = setTimeout(function () { $(_this).popover('hide'); }, 500);
+            });
+
+            $poDiv.off("mouseenter").on("mouseenter", function () {
+                clearTimeout(timer1);
+            });
+        };
+
+        let OnMouseLeave = function () {
+            let _this = this;
+            timer1 = setTimeout(function () {
+                if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+                    $(_this).popover("hide");
+                }
+            }, 500);
+        };
+
+        let initiateReset = function () {
+            this.resetFlow = true;
+            $poTrig.popover('hide');
+            this.saveForm_call();
+        };
+
+        $poTrig.on('click', OnMouseEnter.bind($poTrig));
+        $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
+        $('body').off('click', `#${this.resetPopUpId} .review-reset-btn`).on('click', `#${this.resetPopUpId} .review-reset-btn`, initiateReset.bind(this));
     };
 
     this.init();

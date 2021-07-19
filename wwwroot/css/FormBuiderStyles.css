@@ -721,6 +721,49 @@ eb-disable {
     width: 270px;
 }
 
+.review-reset-popover {
+    min-height: 90px;
+    min-width: 220px;
+}
+    .review-reset-popover textarea {
+        width: 100%;
+        height: 65px;
+        border-color: #ccc;
+        resize: none;
+    }
+    .review-reset-popover .review-reset-btn-cont {
+        float: right;
+    }
+    .review-reset-popover .review-reset-btn {
+        width: 50px;
+        text-align: center;
+        background-color: gray;
+        cursor: pointer;
+        border-radius: 2px;
+        color: white;
+    }
+        .review-reset-popover .review-reset-btn:hover {
+            color: #555;
+            background-color: #ccc;
+        }
+
+
+.fs-grid-cont .reset-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: gray;
+    padding: 0px 5px;
+    color: white;
+    border-radius: 2px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+    .fs-grid-cont .reset-btn:hover {
+        opacity: 1;
+    }
+
 .fs-grid-cont .fs-submit-cont {
     display: flex;
     justify-content: center;

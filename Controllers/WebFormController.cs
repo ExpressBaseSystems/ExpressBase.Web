@@ -594,6 +594,37 @@ namespace ExpressBase.Web.Controllers
             return Resp.Json;
         }
 
+        public string ExecuteReview(string Data, string RefId, int RowId, int CurrentLoc)
+        {
+            try
+            {
+                string Operation = OperationConstants.NEW;
+                if (RowId > 0)
+                    Operation = OperationConstants.EDIT;
+                EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
+                bool neglectLocId = WebForm.IsLocIndependent;
+                if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
+                    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
+                DateTime dt = DateTime.Now;
+                Console.WriteLine("ExecuteReview request received : " + dt);
+                ExecuteReviewResponse Resp = ServiceClient.Post<ExecuteReviewResponse>(
+                    new ExecuteReviewRequest
+                    {
+                        RefId = RefId,
+                        FormData = Data,
+                        RowId = RowId,
+                        CurrentLoc = CurrentLoc
+                    });
+                Console.WriteLine("ExecuteReview execution time : " + (DateTime.Now - dt).TotalMilliseconds);
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
+                return JsonConvert.SerializeObject(new ExecuteReviewResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
+        }
+
         public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId)
         {
             try

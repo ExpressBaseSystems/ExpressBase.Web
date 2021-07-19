@@ -396,7 +396,7 @@ namespace ExpressBase.Web.Controllers
         public ParticularApprovalColumnResponse PostWebformData(List<Param> Params, string RefId, int RowId, int CurrentLoc)
         {
             ParticularApprovalColumnResponse res = null;
-            InsertDataFromWebformResponse Resp = null;
+            ExecuteReviewResponse Resp = null;
             try
             {
                 WebformData obj = new WebformData();
@@ -413,8 +413,8 @@ namespace ExpressBase.Web.Controllers
                 SingleTable ss = new SingleTable();
                 ss.Add(new SingleRow { Columns = singleColumns });
                 obj.MultipleTables.Add("eb_approval_lines", ss);
-                Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
-                        new InsertDataFromWebformRequest
+                Resp = ServiceClient.Post<ExecuteReviewResponse>(
+                        new ExecuteReviewRequest
                         {
                             RefId = RefId,
                             FormData = JsonConvert.SerializeObject(obj),

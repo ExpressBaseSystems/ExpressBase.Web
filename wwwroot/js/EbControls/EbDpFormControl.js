@@ -140,7 +140,7 @@
 
     ok(e) {
         this.toggleModal(e);
-        this.windowClose();
+        //this.windowClose();
     }
 
     toggleModal(e) {

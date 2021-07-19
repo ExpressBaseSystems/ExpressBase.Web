@@ -351,20 +351,23 @@ namespace ExpressBase.Web.BaseControllers
         public EbFinancialYears GetFinancialYearsObject(Eb_Solution s_obj, User user)
         {
             EbFinancialYears fys = s_obj.FinancialYears ?? new EbFinancialYears();
-            string s = this.LoggedInUser.Preference.GetShortDatePattern();
-            string sl = this.LoggedInUser.Preference.GetLongDatePattern();
-            foreach (EbFinancialYear fy in fys.List)
+            if (WhichConsole == RoutingConstants.UC)
             {
-                fy.FyStart_s = fy.FyStart.ToString(s, CultureInfo.InvariantCulture);
-                fy.FyEnd_s = fy.FyEnd.ToString(s, CultureInfo.InvariantCulture);
-                fy.ActStart_s = fy.ActStart.ToString(s, CultureInfo.InvariantCulture);
-                fy.ActEnd_s = fy.ActEnd.ToString(s, CultureInfo.InvariantCulture);
-                fy.FyStart_sl = fy.FyStart.ToString(sl, CultureInfo.InvariantCulture);
-                fy.FyEnd_sl = fy.FyEnd.ToString(sl, CultureInfo.InvariantCulture);
-                fy.ActStart_sl = fy.ActStart.ToString(sl, CultureInfo.InvariantCulture);
-                fy.ActEnd_sl = fy.ActEnd.ToString(sl, CultureInfo.InvariantCulture);
+                string s = this.LoggedInUser.Preference.GetShortDatePattern();
+                string sl = this.LoggedInUser.Preference.GetLongDatePattern();
+                foreach (EbFinancialYear fy in fys.List)
+                {
+                    fy.FyStart_s = fy.FyStart.ToString(s, CultureInfo.InvariantCulture);
+                    fy.FyEnd_s = fy.FyEnd.ToString(s, CultureInfo.InvariantCulture);
+                    fy.ActStart_s = fy.ActStart.ToString(s, CultureInfo.InvariantCulture);
+                    fy.ActEnd_s = fy.ActEnd.ToString(s, CultureInfo.InvariantCulture);
+                    fy.FyStart_sl = fy.FyStart.ToString(sl, CultureInfo.InvariantCulture);
+                    fy.FyEnd_sl = fy.FyEnd.ToString(sl, CultureInfo.InvariantCulture);
+                    fy.ActStart_sl = fy.ActStart.ToString(sl, CultureInfo.InvariantCulture);
+                    fy.ActEnd_sl = fy.ActEnd.ToString(sl, CultureInfo.InvariantCulture);
+                }
+                fys.SysUser = user.RoleIds.Exists(e => e < 100);
             }
-            fys.SysUser = user.RoleIds.Exists(e => e < 100);
             return fys;
         }
     }

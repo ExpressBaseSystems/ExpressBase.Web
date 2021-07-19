@@ -44,6 +44,7 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        [Microsoft.AspNetCore.Mvc.Route("/pdm")]
         public IActionResult DatabaseIntegrityCheck()
         {
             if (ViewBag.cid == "admin")
@@ -173,13 +174,13 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/LastAccess")]
         public string LastAccess()
-        { 
+        {
             if (ViewBag.cid == "admin")
                 if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
                 {
-                     this.ServiceClient.Post(new LastSolnAccessRequest { SolnId = ViewBag.cid });
+                    this.ServiceClient.Post(new LastSolnAccessRequest { SolnId = ViewBag.cid });
                     return "Servicestack is processing your request. Check mail after sometime.";
-                }            
+                }
             return "No prmission";
         }
 

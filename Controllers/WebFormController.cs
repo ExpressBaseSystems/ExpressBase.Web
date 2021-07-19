@@ -173,7 +173,7 @@ namespace ExpressBase.Web.Controllers
                         (this.HasPermission(webForm.RefId, OperationConstants.OWN_DATA, _locId, neglectLocId) && this.LoggedInUser.UserId == wdr.FormData.CreatedBy)))
                     {
                         resp.Message = "Access denied.";
-                        resp.ErrorMessage = $"`Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: View/Edit`";
+                        resp.ErrorMessage = $"Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: View/Edit";
                         resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
                     }
                 }
@@ -182,7 +182,7 @@ namespace ExpressBase.Web.Controllers
                     if (!this.HasPermission(webForm.RefId, OperationConstants.NEW, _locId, true))
                     {
                         resp.Message = "Access denied.";
-                        resp.ErrorMessage = $"`Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: New`";
+                        resp.ErrorMessage = $"Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: New";
                         resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
                     }
                 }
@@ -265,50 +265,9 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        //Check permission
-        private string GetRedirectUrl(string RefId, int Mode, int LocId)
-        {
-            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-            if (wfd.FormData == null)
-            {
-                TempData["ErrorResp"] = GetFormattedErrMsg(ViewBag.formData);
-                return "/StatusCode/" + wfd.Status;
-            }
-            else if (ViewBag.wc != TokenConstants.DC)
-            {
-                int RowId = 0;
-                if ((int)WebFormModes.Draft_Mode != Mode)
-                {
-                    SingleRow primRow = wfd.FormData.MultipleTables[wfd.FormData.MasterTable][0];
-                    RowId = primRow.RowId;
-                    LocId = primRow.LocId;
-                }
-                if (RowId > 0)
-                {
-                    EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
-                    bool neglectLocId = WebForm.IsLocIndependent;
-                    if (!(this.HasPermission(RefId, OperationConstants.VIEW, LocId, neglectLocId) || this.HasPermission(RefId, OperationConstants.EDIT, LocId, neglectLocId) ||
-                        (this.HasPermission(RefId, OperationConstants.OWN_DATA, LocId, neglectLocId) && this.LoggedInUser.UserId == wfd.FormData.CreatedBy)))
-                    {
-                        TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: View/Edit`";
-                        return "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
-                    }
-                }
-                else
-                {
-                    if (!this.HasPermission(RefId, OperationConstants.NEW, LocId, true))
-                    {
-                        TempData["ErrorResp"] = $"`Access denied. RefId: {RefId}, DataId: {RowId}, LocId: {LocId}, Operation: New`";
-                        return "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
-                    }
-                }
-            }
-            return null;
-        }
-
         private string GetFormattedErrMsg(string msg)
         {
-            msg = msg.ReplaceAll("`", "");
+            msg = msg.Replace("`", "");
             int len = msg.Length > 300 ? 300 : msg.Length;
             return msg.Substring(0, len).GraveAccentQuoted();
         }

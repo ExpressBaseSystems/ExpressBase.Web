@@ -160,6 +160,29 @@
         }
     };
 
+    //Duplicate for FD - first time execution only - correct object refrence issue or default on change triggering
+    //this will avoid multiple execution of onchange fn
+    this.bindFnsToCtrl_FD = function (Obj) {
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") ||
+            Obj.HiddenExpDependants && Obj.HiddenExpDependants.$values.length > 0 ||
+            Obj.DisableExpDependants && Obj.DisableExpDependants.$values.length > 0) {
+            try {
+                let control = Obj;
+                let FnString =
+                    this.wrapInFn(atob(control.OnChangeFn.Code)) +
+                    ((control.HiddenExpDependants && control.HiddenExpDependants.$values.length !== 0 || control.DisableExpDependants && control.DisableExpDependants.$values.length !== 0) ? ` ;
+                    form.updateDependentControlsBehavior(${control.__path}, form);` : "");
+                let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+                control.__onChangeFn = onChangeFn;// for FD only need clenup
+            } catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                EbMessage("show", { Message: `Error in 'OnChange fn or BehaviourExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+            
+    };
+
     this.bindFnsToCtrl = function (Obj) {
         if (Obj.Required)
             this.bindRequired(Obj);

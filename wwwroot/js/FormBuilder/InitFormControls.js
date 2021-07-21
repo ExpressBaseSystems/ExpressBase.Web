@@ -378,14 +378,17 @@
             $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
                 let $el = $(e.target);
                 let $DDbScont = $DD.closest(".bs-container");
-                $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+                //$DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+                $DDbScont.offset({ left: $el.closest(".ctrl-cover").offset().left });
 
                 if ($DDbScont.hasClass("dropup")) {
-                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    //$DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    $DDbScont.offset({ top: $DDbScont.offset().top + 1});
                     $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
                 }
                 else {
-                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    //$DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    $DDbScont.offset({ top: $DDbScont.offset().top - 1});
                     $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
                 }
 

@@ -978,17 +978,15 @@
         if ($(e.target).parents(`#cont_${this.ctrl.EbSid}`).length > 0)
             return;
 
-        let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
-        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 && $('.DDdiv:visible').length === 0) {
-            $activeTr.find('.check-row').trigger('click');
-        }
+        this.checkActiveRecord();
         //setTimeout(this.row_focusout_inner.bind(this, e), 200);
     };
 
-    //external fn
+    //external + internal fn
     this.checkActiveRecord = function (e) {
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
-        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 && $('.DDdiv:visible').length === 0) {
+        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 && 
+            $('.DDdiv:visible').length === 0 && $('.eb-ss-ddup:visible').length === 0 && $('.eb-ss-dd:visible').length === 0) {
             $activeTr.find('.check-row').trigger('click');
         }
     };

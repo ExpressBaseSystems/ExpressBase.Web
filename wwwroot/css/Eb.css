@@ -416,6 +416,7 @@
     height: 100%;
     box-shadow: inherit;
     align-items: stretch;
+    min-height: 32px;
 }
 
 .ps-cont .eb-loader-prcbar, .ps-cont .eb-loader-prcbar:before {

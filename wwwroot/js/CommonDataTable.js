@@ -4230,7 +4230,7 @@
         //$("#eb_common_loader").EbLoader("show");
         $('.btn-approval_popover').popover('hide');
         $td.find('.btn-approval_popover').popover('destroy');
-        $td.find('.btn-approval_popover i').removeClass('fa-history').addClass('fa-spinner fa-pulse');
+        $td.find('.btn-approval_popover i').removeClass('fa-history').removeClass('fa-pencil').addClass('fa-spinner fa-pulse');
         let val, comments;
         if (action === 'reset') {
             val = $(e.target).attr("data-json");
@@ -4261,8 +4261,12 @@
     };
 
     this.cccccc = function ($td, resp) {
-        if (!(resp._data))
+        if (!(resp._data)) {
+            console.error(resp.messaage);
+            $td.find('.btn-approval_popover').attr('title', resp.messaage);
+            $td.find('.btn-approval_popover i').removeClass('fa-spinner fa-pulse').addClass('fa-exclamation-circle');//.css('color', 'red !important');
             return;
+        }
 
         $td.html(resp._data);
         //if ($td.find(".status-label").text() === "Review Completed")

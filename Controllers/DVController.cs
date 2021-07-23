@@ -395,7 +395,7 @@ namespace ExpressBase.Web.Controllers
 
         public ParticularApprovalColumnResponse PostWebformData(List<Param> Params, string RefId, int RowId, int CurrentLoc)
         {
-            ParticularApprovalColumnResponse res = null;
+            ParticularApprovalColumnResponse res = new ParticularApprovalColumnResponse();
             ExecuteReviewResponse Resp = null;
             try
             {
@@ -440,6 +440,10 @@ namespace ExpressBase.Web.Controllers
                         Console.WriteLine("EXCEPTION AT Approval in DV ParticularApprovalColumnResponse" + ex.Message);
                         Console.WriteLine(ex.StackTrace);
                     }
+                }
+                else
+                {
+                    res.Messaage = Resp.Message + "; " +Resp.MessageInt;
                 }
 
             }

@@ -2770,7 +2770,7 @@
             placement: 'bottom'
         });
         $('.status-time').tooltip({
-            placement: 'top'
+            placement: 'left'
         });
 
         $('.columntooltip').popover({
@@ -4264,7 +4264,7 @@
         if (!(resp._data)) {
             console.error(resp.messaage);
             $td.find('.btn-approval_popover').attr('title', resp.messaage);
-            $td.find('.btn-approval_popover i').removeClass('fa-spinner fa-pulse').addClass('fa-exclamation-circle');//.css('color', 'red !important');
+            $td.find('.btn-approval_popover i').removeClass('fa-spinner fa-pulse').addClass('fa-exclamation-circle').attr('style', 'color: red !important;');
             return;
         }
 

@@ -443,7 +443,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                 {
-                    res.Messaage = Resp.Message + "; " +Resp.MessageInt;
+                    res.Messaage = Resp.Message + " ### " +Resp.MessageInt;
                 }
 
             }

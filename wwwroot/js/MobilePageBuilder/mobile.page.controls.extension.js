@@ -125,7 +125,7 @@
 
                 if (ebtype === "EbMobileDataColumn") {
                     o.Type = $dragged.attr("DbType");
-                    o.ColumnName = $dragged.attr("ColName");
+                    o.ColumnName = $dragged.attr("ColName") || 'column' + CtrlCounters['MobileDataColumnCounter'];
                     o.ColumnIndex = $dragged.attr("index");
                 }
                 root.refreshControl(o);
@@ -340,9 +340,12 @@
             trigger: function (root) {
                 this.propertyChanged("HorrizontalAlign");
             },
-            propertyChanged: function (propname) {
+            propertyChanged: function (propname,root) {
                 if (propname === "HorrizontalAlign") {
                     window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
+                }
+                else if (propname === "ColumnName") {
+                    root.refreshControl(this);
                 }
             }
         },

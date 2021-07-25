@@ -249,23 +249,20 @@ const WebFormCollectionRender = function (Option) {
 
     this.GetMasterHeaderBtns = function (Op) {
         let header = new EbHeader();
-        header.insertButton(`<button id="webformdiscardedit" class='btn' title='Discard Changes' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformdiscardedit" class='btn' title='Discard Changes (Ctrl+Q)' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformclone" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformopensrc" class='btn' title='Open source record' style='display: none;'><i class="fa fa-external-link" aria-hidden="true"></i></button>`);
 
         header.insertButton(`<button id="webformclose" class='btn' title='Close' style='display: none;'><i class="fa fa-times" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformdelete" class='btn' title='Delete' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformdelete" class='btn' title='Delete (Alt+D)' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformlock" class='btn' title='Lock/Unlock' style='display: none;'><i class="fa fa-unlock-alt" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformcancel" class='btn' title='Cancel' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformnew" class="btn" title="New form(Alt+N)"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformcancel" class='btn' title='Cancel (Alt+C)' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformnew" class="btn" title="New form (Alt+N)"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformedit" class='btn' title='Edit (Ctrl+E)' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
         header.insertButton(`<div id="webformsave-selbtn"  style='display: none;' class="btn-select btn">
-                                <button id="webformsave" class="savebtn" title="Save form(Ctrl+S)"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                <button id="webformsave" class="savebtn" title="Save form (Ctrl+S)"><i class="fa fa-save" aria-hidden="true"></i></button>
                                 <select class="selectpicker">
-                                  <option data-token="new" data-title="Save and new" data-icon="fa-save"> & New</option>
-                                  <option data-token="edit" data-title="Save and edit" data-icon="fa-save"> & Continue</option>
-                                  <option data-token="view" data-title="Save and view" data-icon="fa-save"> & View</option>
-                                  <option data-token="close" data-title="Save and close" data-icon="fa-save"> & Close</option>
+                                  
                                 </select>
                             </div>`);
 
@@ -278,11 +275,11 @@ const WebFormCollectionRender = function (Option) {
                             </div>`);
 
         header.insertButton(`<div id="webformprint-selbtn" style='display: none;' class="btn-select btn">
-                                <button id="webformprint" class="savebtn" title="Print"><i class="fa fa-print" aria-hidden="true"></i></button>
+                                <button id="webformprint" class="savebtn" title="Print (Ctrl+P)"><i class="fa fa-print" aria-hidden="true"></i></button>
                                 <select class="selectpicker"></select>
                             </div>`);
 
-        header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
+        header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail (Alt+H)" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformpusheddata" class="btn" title="Dependent Form Submissions" style='display: none;'><i class="fa fa-tags" aria-hidden="true"></i></button>`);
 
         header.insertButton(`<button id="webformsavedraft" role="save-draft" class="btn" title="Save as draft"><i class="icofont-ui-clip-board"></i></button>`);
@@ -311,7 +308,9 @@ const WebFormCollectionRender = function (Option) {
             DraftSave: "webformsavedraft",
             DraftDelete: "webformdeletedraft",
             GotoInvalid: "webforminvalidmsgs",
-            OpenSrc: "webformopensrc"
+            OpenSrc: "webformopensrc",
+            Discard: "webformdiscardedit",
+            Dependent: "webformpusheddata"
         }
         return headerBtns;
     };

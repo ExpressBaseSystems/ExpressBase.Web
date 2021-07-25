@@ -366,12 +366,13 @@
 
     $("body").prepend(`
 <div class="modal fade" id="iFramePdfModal" role="dialog">
-    <div class="modal-dialog" style="width: 80%; margin: 4% auto;">
+    <div class="modal-dialog" style="width: 100%; margin: 38px 0 0 0;">
         <div class="modal-content" style="border-radius: 0; border: none;">
-            <div class="modal-body" style="height: 80vh; padding: 0px;">
-                <div>
-                    <iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" ></iframe>
+            <div class="modal-body" style="height: calc(100vh - 38px); padding: 0px;">
+                <div style="position: absolute; top: -33px; z-index: -1000; right: 11px; color: #fdd;">
+                    <i class="fa fa-times fa-2x" aria-hidden="true" data-dismiss="modal"></i>
                 </div>
+                <iframe id="iFramePdf" style="width: 100%; height: calc(100vh - 38px); border: none;" ></iframe>
             </div>
         </div>
     </div>
@@ -390,7 +391,7 @@
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                 }
                 $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
-                $("#iFramePdfModal").modal("show");
+                //$("#iFramePdfModal").modal("show");
             }
         }
         catch (e) {

@@ -69,6 +69,9 @@
         $(`#eb_dlogBox_container,.eb_dlgMsk`).fadeIn();
         if (settings.$for)
             settings.$for.css('filter', 'blur(3px)');
+        if ($('.dlgBoxBtn-cust').length > 0) {
+            $($('.dlgBoxBtn-cust')[0]).focus();
+        }
     };
 
     function hideMsg() {

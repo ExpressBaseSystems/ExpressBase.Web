@@ -90,3 +90,8 @@
     .eb_dlogBox_container .eb_dlogBox_prompt_input:focus {
         outline-color: #508bf9;
     }
+
+.eb_dlogBox_container .dlgBoxBtn-cust:focus {
+    outline: 5px auto -webkit-focus-ring-color !important;
+    outline-offset: -2px !important;
+}

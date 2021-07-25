@@ -2469,7 +2469,7 @@ input.locinp {
     }
 
     .btn-select .dropdown-menu > li > a {
-        padding: 5px 14px !important;
+        /*padding: 5px 14px !important;*/
     }
 
     .btn-select .dropdown-menu {

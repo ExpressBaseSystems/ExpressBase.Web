@@ -1516,7 +1516,8 @@ const WebFormRender = function (option) {
             else if (event.which === 69) {// ctrl+E -> edit
                 if (this.$editBtn.css("display") !== "none") {
                     event.preventDefault();
-                    this.SwitchToEditMode();
+                    if ($(`#${this.hBtns['Edit']}:enabled`).length > 0)
+                        this.SwitchToEditMode();
                 }
             }
             else if (event.which === 81) {// ctrl+Q -> discard

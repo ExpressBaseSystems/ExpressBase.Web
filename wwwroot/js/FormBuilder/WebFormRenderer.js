@@ -1786,7 +1786,7 @@ const WebFormRender = function (option) {
                     $(`#${this.hBtns['Lock']}`).prop("title", "Lock (Alt+L)");
                 }
                 if (this.formData.IsCancelled) {
-                    //btnsArr.splice(3, 1);//
+                    btnsArr.splice(1, 1);//
                     console.warn("Cancelled record!.............");
                     $(`#${this.hBtns['Cancel']}`).prop("title", "Revoke Cancel (Alt+C)");
                     cancelledHtm = "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";

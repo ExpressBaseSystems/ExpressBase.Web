@@ -1777,7 +1777,7 @@ const WebFormRender = function (option) {
             }
             else {
                 if (this.formData.IsLocked) {
-                    btnsArr.splice(1, 3);//
+                    btnsArr.splice(1, 2);//
                     console.warn("Locked record!.............");
                     $(`#${this.hBtns['Lock']}`).prop("title", "Unlock (Alt+L)");
                     lockedHtm = "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
@@ -1786,7 +1786,8 @@ const WebFormRender = function (option) {
                     $(`#${this.hBtns['Lock']}`).prop("title", "Lock (Alt+L)");
                 }
                 if (this.formData.IsCancelled) {
-                    btnsArr.splice(1, 1);//
+                    if (!this.formData.IsLocked)
+                        btnsArr.splice(1, 1);//
                     console.warn("Cancelled record!.............");
                     $(`#${this.hBtns['Cancel']}`).prop("title", "Revoke Cancel (Alt+C)");
                     cancelledHtm = "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";

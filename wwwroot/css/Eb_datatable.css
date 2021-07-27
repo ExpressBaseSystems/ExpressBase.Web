@@ -196,8 +196,12 @@ td {
     white-space: nowrap;
 }
 
-table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
-    color: white !important;
+table.dataTable tbody tr.selected[eb-void=T] {
+    color: #b30000 !important;
+}
+
+table.dataTable tbody tr.selected:not([eb-void=T]), table.dataTable tbody th.selected, table.dataTable tbody td.selected {
+    color: white !important;    
 }
 
 .eb_finput {

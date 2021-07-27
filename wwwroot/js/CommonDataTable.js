@@ -1359,7 +1359,7 @@
     };
 
     this.rowCallBackFunc = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-        //this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
+        this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
         if (this.treeColumn) {
             let elem = aData[this.treeColumn.data].split("&nbsp;").join("").split("&emsp;").join("");
             let treeElem = $(elem);
@@ -4535,9 +4535,9 @@
                     this.EbObject.Columns.$values[i].className += " tdheight dt-right";
             }
             else if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
-                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "sys_cancelled") {
-                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
-                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "eb_lock") {
+                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "eb_lock") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "eb_lock") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 }
                 else {
                     if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
@@ -4625,11 +4625,11 @@
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === 'true' || data === true || data === 'T') ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {
-        return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
+        return (data === 'true' || data === true || data === 'T') ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
     };
 
     this.renderlink4NewTable = function (data, type, row, meta) {
@@ -4653,10 +4653,12 @@
                 $(nRow).css('background-color', '#' + t);
             }
 
-            if (value.name === 'sys_cancelled') {
+            if (value.name === 'eb_void') {
                 var tr = aData[value.data];
-                if (tr === true)
-                    $(nRow).css('color', '#f00');
+                if (tr === 'true' || tr === true || tr === 'T') {
+                    $(nRow).css('color', '#ab0000');
+                    $(nRow).attr('eb-void', 'T');
+                }
             }
         });
     };

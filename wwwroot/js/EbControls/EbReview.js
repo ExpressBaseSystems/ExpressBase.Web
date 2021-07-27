@@ -444,7 +444,7 @@
             else
                 this.formRenderer.enableformEditbtn();
         }
-        else if (this.ctrl.AllowEditOnCompletion)
+        else if (this.ctrl.AllowEditOnCompletion || this.DataMODEL.length === 0)
             this.isFormDataEditable = true;
 
 

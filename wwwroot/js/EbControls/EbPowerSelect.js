@@ -578,13 +578,15 @@ const EbPowerSelect = function (ctrl, options) {
         }
 
         if (this.IsFromSetValues) {// from set value
+            let flag = false;
             if (this.setvaluesColl && this.setvaluesColl.length > 0) {
-                this.setValues2PSFromData(this.setvaluesColl);
+                flag = this.setValues2PSFromData(this.setvaluesColl);
                 this.filterArray.clear();
             }
+
             this.IsFromSetValues = false;
 
-            if (this.ComboObj.__continue) this.ComboObj.__continue();
+            if (!flag && this.ComboObj.__continue) this.ComboObj.__continue();
         }
         else {// not from setValue (search,...)
             if (!this.isDMSearchEmpty() && this.ComboObj.IsPreload === false && this.unformattedData.length === 1) {
@@ -757,13 +759,13 @@ const EbPowerSelect = function (ctrl, options) {
 
                 try {
                     this.Vobj.valueMembers.push(...tempVMs);
-                    if (this.ComboObj.__continue) this.ComboObj.__continue();
+                    //if (this.ComboObj.__continue) this.ComboObj.__continue();
                 }
                 catch (e) {
                     console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
                 }
             }.bind(this));
-
+            return true;
         }
         catch (e) {
             console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);

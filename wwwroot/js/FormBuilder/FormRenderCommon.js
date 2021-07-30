@@ -92,7 +92,7 @@
                 continue;
             try {
                 if (ctrl.ObjType === "TVcontrol") {
-                    //depCtrl.reloadWithParam(curCtrl);
+                    depCtrl.reloadWithParam(curCtrl);
                 }
                 else {
                     if (!ctrl[ExprName])
@@ -103,7 +103,7 @@
                         if (result) {
                             if (!ctrl.IsDGCtrl) {
                                 if (ctrl.ObjType === 'PowerSelect') {
-                                    ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, ++Index, ExprName);
+                                    ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
                                     ctrl.justSetValue(result);
                                     EbBlink(ctrl);
                                     break;
@@ -132,7 +132,7 @@
                         filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
                         filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
                         filterValues.push(new fltr_obj(11, "id", this.FO.FormObj.rowId));
-                        ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, ++Index, ExprName);
+                        ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
                         this.ExecuteSqlValueExpr(ctrl, filterValues, 1);
                         break;
                     }
@@ -143,8 +143,24 @@
                 console.log(e);
             }
         }
-        if (Index >= CtrlPaths.length)
+        if (Index >= CtrlPaths.$values.length) {
+            if (!this.FO.__fromImport) {
+                let Dgs = [];
+                for (let i = 0; i < CtrlPaths.$values.length; i++) {
+                    let ctrl = this.FO.formObject.__getCtrlByPath(CtrlPaths.$values[i]);
+                    if (ctrl != "not found" && ctrl.DependedDG && ctrl.DependedDG.$values) {
+                        for (let j = 0; j < ctrl.DependedDG.$values.length; j++) {
+                            if (!Dgs.includes(ctrl.DependedDG.$values[j]))
+                                Dgs.push(ctrl.DependedDG.$values[j]);
+                        }
+                    }
+                }
+                if (Dgs.length > 0) {
+                    this.importDGRelatedUpdates(Dgs);
+                }
+            }
             this.FO.__fromImport = false;
+        }
     };
 
     this.execValueExpNC = function (DoNotPersistExecOrder) {
@@ -180,7 +196,7 @@
                 EbMessage("show", { Message: `Error in 'OnChange fn or BehaviourExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
-            
+
     };
 
     this.bindFnsToCtrl = function (Obj) {
@@ -316,6 +332,10 @@
             if (this.DataVals) {
                 this.DataVals.Value = this.getValueFromDOM();
                 this.DataVals.D = this.getDisplayMemberFromDOM();
+
+                if (this.ObjType === 'PowerSelect' && this.__continue) {
+                    this.__continue();
+                }
             }
         }
     };
@@ -475,8 +495,8 @@
         });
     };
 
-    this.importDGRelatedUpdates = function (curCtrl) {
-        $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
+    this.importDGRelatedUpdates = function (DependedDGs) {
+        $.each(DependedDGs, function (i, depCtrl_s) {
             try {
                 let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
                 if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView))))
@@ -555,8 +575,8 @@
     };
 
     this.updateDependentControls_inner = function (curCtrl) {
-        if (curCtrl.DependedDG) {
-            this.importDGRelatedUpdates(curCtrl);
+        if (curCtrl.DependedDG && curCtrl.DependedDG.$values) {
+            this.importDGRelatedUpdates(curCtrl.DependedDG.$values);
         }
         if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
             if (!curCtrl.___DoNotImport)

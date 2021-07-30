@@ -520,6 +520,37 @@ const WebFormRender = function (option) {
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         this.DynamicTabObject.updateDataModel();
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+
+        for (let EbSid_CtxId in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[EbSid_CtxId];
+            let Script = DGB.ctrl.PersistRowOnlyIf;
+            if (!Script || Script.Lang != 0 || !Script.Code)
+                continue;
+            let Table = WebformData.MultipleTables[DGB.ctrl.TableName];
+            if (!Table || Table.length === 0)
+                continue;
+            Table = JSON.parse(JSON.stringify(Table));
+            let NwTable = [];
+            try {
+                let FnString = atob(Script.Code);
+                for (let i = 0; i < Table.length; i++) {
+                    DGB.setCurRow(Table[i].RowId);
+                    let res = new Function("form", "user", FnString).bind(DGB.ctrl.currentRow, this.formObject, this.userObject)();
+                    if (res)
+                        NwTable.push(Table[i]);
+                    else if (Table[i].RowId > 0) {
+                        Table[i].IsDelete = true;
+                        NwTable.push(Table[i]);
+                    }
+                }
+            }
+            catch (e) {
+                console.error(e);
+                NwTable = Table;
+            }
+            WebformData.MultipleTables[DGB.ctrl.TableName] = NwTable;
+        }
+
         //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
@@ -2298,7 +2329,7 @@ const WebFormRender = function (option) {
         this.isInitiallyPopulating = false;
 
         if (this.Mode.isNew) {
-            if (this.draftId === 0) // not new mode in draft
+            if (this.mode != "Export Mode" && this.mode != "Draft Mode") // not new mode in draft
                 this.FRC.execAllDefaultValExpr();//exec default Value Expression 2nd
         }
         else {

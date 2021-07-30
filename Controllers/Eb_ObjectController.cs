@@ -180,40 +180,40 @@ namespace ExpressBase.Web.Controllers
                     _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
                     if (_object != null)
                     {
-                        //-------------------------temp fix to copy old prop value (string) to new prop value (EbScript)----------------------------
-                        foreach (EbReportDetail dt in (_object as EbReport).Detail)
-                        {
-                            foreach (EbReportField field in dt.Fields)
-                            {
-                                if (field is EbDataField)
-                                {
-                                    var _new = (field as EbDataField).AppearExpression;
-                                    var old = (field as EbDataField).AppearanceExpression;
-                                    if (_new == null)
-                                    {
-                                        if (!string.IsNullOrEmpty(old))
-                                            _new = new EbScript { Code = old, Lang = ScriptingLanguage.CSharp };
-                                        else
-                                            _new = new EbScript();
-                                        (field as EbDataField).AppearExpression = _new;
-                                    }
-                                    if (field is EbCalcField)
-                                    {
-                                        var __new = (field as EbCalcField).ValExpression;
-                                        var _old = (field as EbCalcField).ValueExpression;
-                                        if (__new == null)
-                                        {
-                                            if (!string.IsNullOrEmpty(_old))
-                                                __new = new EbScript { Code = _old, Lang = ScriptingLanguage.CSharp };
-                                            else
-                                                __new = new EbScript();
-                                            (field as EbCalcField).ValExpression = __new;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        //----------------------------------------------------------------------------------------------------------------------------
+                        ////-------------------------temp fix to copy old prop value (string) to new prop value (EbScript)----------------------------
+                        //foreach (EbReportDetail dt in (_object as EbReport).Detail)
+                        //{
+                        //    foreach (EbReportField field in dt.Fields)
+                        //    {
+                        //        if (field is EbDataField)
+                        //        {
+                        //            var _new = (field as EbDataField).AppearExpression;
+                        //            var old = (field as EbDataField).AppearanceExpression;
+                        //            if (_new == null)
+                        //            {
+                        //                if (!string.IsNullOrEmpty(old))
+                        //                    _new = new EbScript { Code = old, Lang = ScriptingLanguage.CSharp };
+                        //                else
+                        //                    _new = new EbScript();
+                        //                (field as EbDataField).AppearExpression = _new;
+                        //            }
+                        //            if (field is EbCalcField)
+                        //            {
+                        //                var __new = (field as EbCalcField).ValExpression;
+                        //                var _old = (field as EbCalcField).ValueExpression;
+                        //                if (__new == null)
+                        //                {
+                        //                    if (!string.IsNullOrEmpty(_old))
+                        //                        __new = new EbScript { Code = _old, Lang = ScriptingLanguage.CSharp };
+                        //                    else
+                        //                        __new = new EbScript();
+                        //                    (field as EbCalcField).ValExpression = __new;
+                        //                }
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                        ////----------------------------------------------------------------------------------------------------------------------------
 
                         _object.AfterRedisGet(Redis, ServiceClient);
                         ViewBag.dsObj = _object;

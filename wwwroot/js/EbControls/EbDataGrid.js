@@ -386,7 +386,7 @@
             dspMmbr = this.getBooleanDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
-            dspMmbr = cellObj.F || cellObj.Value.toFixed(col.DecimalPlaces);// || (col.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(col.DecimalPlaces))); // temporary fix
+            dspMmbr = col.InputMode == 1 ? cellObj.Value.toLocaleString('en-IN', { maximumFractionDigits: col.DecimalPlaces, minimumFractionDigits: col.DecimalPlaces }) : cellObj.Value.toFixed(col.DecimalPlaces);// cellObj.F || (col.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(col.DecimalPlaces))); // temporary fix
         }
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)
@@ -1130,7 +1130,9 @@
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.IsAggragate) {
                 let colname = col.Name;
-                $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname, updateDpnt));
+                let val = parseFloat(this.getAggOfCol(colname, updateDpnt));
+                val = col.InputMode == 1 ? val.toLocaleString('en-IN', { maximumFractionDigits: col.DecimalPlaces, minimumFractionDigits: col.DecimalPlaces }) : val.toFixed(col.DecimalPlaces);
+                $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(val);
             }
         }.bind(this));
     };
@@ -1139,7 +1141,10 @@
         setTimeout(function () {// need to change=====================================================================================
             let $td = $(e.target).closest("td");
             let colname = $td.attr("colname");
-            $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+            let val = parseFloat(this.getAggOfCol(colname));
+            let col = this.ctrl.Controls.$values.find(e => e.Name === colname);
+            val = col.InputMode == 1 ? val.toLocaleString('en-IN', { maximumFractionDigits: col.DecimalPlaces, minimumFractionDigits: col.DecimalPlaces }) : val.toFixed(col.DecimalPlaces);
+            $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(val);
         }.bind(this), 10);
     }.bind(this);
 
@@ -1172,7 +1177,7 @@
             if (inpCtrl.__isDeleted)
                 continue;
             if (document.getElementById(inpCtrl.EbSid_CtxId) === document.activeElement)
-                val = document.activeElement.value;
+                val = document.activeElement.value.replace(/,/g, '');
             else {
                 if (inpCtrl.__isEditing)
                     val = inpCtrl.curRowDataVals.Value || 0;
@@ -1186,7 +1191,7 @@
         this.ctrl[colname + "_sum"] = sum;
         if (updateDpnt && !this.formRenderer.isInitiallyPopulating)
             this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
-        return sum.toFixed(getObjByval(colCtrls, "Name", colname).DecimalPlaces);
+        return sum.toFixed(getObjByval(this.ctrl.Controls.$values, "Name", colname).DecimalPlaces);
     };
 
     this.sumOfCol = function (updateDpnt, colName) {

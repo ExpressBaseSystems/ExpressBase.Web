@@ -131,7 +131,7 @@
                         }.bind(this));
                         filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
                         filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-                        filterValues.push(new fltr_obj(11, "id", this.FO.FormObj.rowId));
+                        filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
                         ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
                         this.ExecuteSqlValueExpr(ctrl, filterValues, 1);
                         break;
@@ -454,7 +454,7 @@
                         }.bind(this));
                         filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
                         filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-                        filterValues.push(new fltr_obj(11, "id", this.FO.FormObj.rowId));
+                        filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
                         depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
                         this.ExecuteSqlValueExpr(depCtrl, filterValues, 0);
                         break;

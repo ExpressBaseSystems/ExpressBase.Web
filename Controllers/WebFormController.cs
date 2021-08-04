@@ -217,14 +217,14 @@ namespace ExpressBase.Web.Controllers
                     resp.FormDataWrap = Resp.FormDataWrap;
                     resp.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
                 }
-                else if ((int)WebFormModes.Export_Mode == _mode)
+                else if ((int)WebFormModes.Export_Mode == _mode || (int)WebFormModes.Clone_Mode == _mode)
                 {
                     Console.WriteLine("GetFormForRendering - Export mode requested.");
                     string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? refId;
                     int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
                     GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                     resp.FormDataWrap = Resp.FormDataWrap;
-                    resp.Mode = WebFormModes.Export_Mode.ToString().Replace("_", " ");
+                    resp.Mode = ((WebFormModes)_mode).ToString().Replace("_", " ");
                 }
                 else if ((int)WebFormModes.Draft_Mode == _mode)
                 {

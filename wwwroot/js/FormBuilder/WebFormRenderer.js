@@ -881,7 +881,7 @@ const WebFormRender = function (option) {
     this.cloneForm = function () {
         let params = [];
         params.push(new fltr_obj(11, "srcRowId", this.rowId));
-        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=7&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
+        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=9&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
         window.open(url, '_blank');
     };
 
@@ -1766,7 +1766,7 @@ const WebFormRender = function (option) {
 
             let modeText = this.mode;
 
-            if (reqstMode === "Export Mode" || reqstMode === "Prefill Mode") {
+            if (reqstMode === "Export Mode" || reqstMode === "Clone Mode" || reqstMode === "Prefill Mode") {
                 modeText = "New Mode";
             }
             else if (reqstMode === "Draft Mode" && this.draftId > 0) {
@@ -1855,7 +1855,7 @@ const WebFormRender = function (option) {
 
         let modeText = this.mode;
 
-        if (reqstMode === "Preview Mode" || reqstMode === "Export Mode" || reqstMode === "Prefill Mode") {
+        if (reqstMode === "Preview Mode" || reqstMode === "Export Mode" || reqstMode === "Clone Mode" || reqstMode === "Prefill Mode") {
             modeText = "New Mode";
         }
         else if (reqstMode === "Draft Mode" && this.draftId > 0) {
@@ -2235,7 +2235,7 @@ const WebFormRender = function (option) {
             else
                 this.Mode.isView = true;
         }
-        else if (this.mode === "New Mode" || this.mode === "Export Mode" || this.mode === "Draft Mode" || this.mode === "Prefill Mode" || this.mode === "Preview Mode")
+        else if (this.mode === "New Mode" || this.mode === "Export Mode" || this.mode === "Clone Mode" || this.mode === "Draft Mode" || this.mode === "Prefill Mode" || this.mode === "Preview Mode")
             this.Mode.isNew = true;
         else if (this.mode === "Edit Mode")
             this.Mode.isEdit = true;
@@ -2338,7 +2338,7 @@ const WebFormRender = function (option) {
         this.isInitiallyPopulating = false;
 
         if (this.Mode.isNew) {
-            if (this.mode != "Export Mode" && this.mode != "Draft Mode") // not new mode in draft
+            if (this.mode != "Clone Mode" && this.mode != "Draft Mode") // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
                 this.FRC.execAllDefaultValExpr();//exec default Value Expression 2nd
         }
         else {

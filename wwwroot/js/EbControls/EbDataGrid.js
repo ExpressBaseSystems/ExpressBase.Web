@@ -288,6 +288,7 @@
                 ctrl.___DoNotUpdateDataVals = true;
 
                 if (ctrl.ObjType === "PowerSelect") {
+                    ctrl.__isInitiallyPopulating = true;
                     ctrl.setDisplayMember(Value);
                 }
                 else

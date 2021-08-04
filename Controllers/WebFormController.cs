@@ -541,12 +541,12 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public object ExecuteSqlValueExpr(string _refid, string _triggerctrl, List<Param> _params, int _type)
+        public string ExecuteSqlValueExpr(string _refid, string _triggerctrl, List<Param> _params, int _type)
         {
             ExecuteSqlValueExprResponse Resp = this.ServiceClient.Post<ExecuteSqlValueExprResponse>(new ExecuteSqlValueExprRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params, ExprType = _type });
-            object res = null;
+            string res = "null";
             if (!string.IsNullOrWhiteSpace(Resp.Result))
-                res = JsonConvert.DeserializeObject<SingleColumn>(Resp.Result).Value;
+                res = Resp.Result;
             return res;
         }
 

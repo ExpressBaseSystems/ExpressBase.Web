@@ -133,7 +133,7 @@
                         filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
                         filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
                         ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
-                        this.ExecuteSqlValueExpr(ctrl, filterValues, 1);
+                        this.ExecuteSqlValueExpr(ctrl, filterValues, ExprName === 'ValueExpr' ? 0 : 1);
                         break;
                     }
                 }
@@ -485,13 +485,18 @@
                 this.FO.hideLoader();
                 if (depCtrl.__continue) depCtrl.__continue();
             }.bind(this),
-            success: function (val) {
+            success: function (ctrl, val) {
                 this.FO.hideLoader();
-                depCtrl.justSetValue(val);
-                if (depCtrl.ObjType !== 'PowerSelect' && depCtrl.__continue) {
-                    depCtrl.__continue();
+                val = JSON.parse(val);
+                if (val) {
+                    depCtrl.justSetValue(val.Value);
+                    if (depCtrl.ObjType !== 'PowerSelect' && depCtrl.__continue) {
+                        depCtrl.__continue();
+                    }
                 }
-            }.bind(this)
+                else
+                    console.error('ExecuteSqlValueExpr did not respond properly: ' + ctrl.Name);
+            }.bind(this, depCtrl)
         });
     };
 

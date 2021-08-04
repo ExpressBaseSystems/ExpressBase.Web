@@ -1764,7 +1764,16 @@ const WebFormRender = function (option) {
             }
             catch (e) { console.log("Error in title expression  " + e.message); }
 
-            ebcontext.webform.SetPopupFormTitle(this.FormObj.DisplayName + title_val, reqstMode, this.formData.IsLocked, this.formData.IsCancelled, this.formData.IsReadOnly);
+            let modeText = this.mode;
+
+            if (reqstMode === "Export Mode" || reqstMode === "Prefill Mode") {
+                modeText = "New Mode";
+            }
+            else if (reqstMode === "Draft Mode" && this.draftId > 0) {
+                modeText = "Draft";
+            }
+
+            ebcontext.webform.SetPopupFormTitle(this.FormObj.DisplayName + title_val, modeText, this.formData.IsLocked, this.formData.IsCancelled, this.formData.IsReadOnly);
 
             return;
         }

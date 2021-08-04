@@ -1058,8 +1058,14 @@
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_m=7&_l=${ebcontext.locations.CurrentLoc}`;
-            window.open(url, '_blank');
+            let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+            if (ctrl.OpenInNewTab) {
+                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${ebcontext.locations.CurrentLoc}`;
+                window.open(url, '_blank');
+            }
+            else {
+                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7);
+            }
         }.bind(this);
     };
 

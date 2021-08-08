@@ -26,6 +26,7 @@ using ExpressBase.Common.ServerEvents_Artifacts;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Security;
 using System.Collections;
+using ExpressBase.Objects.WebFormRelated;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -39,7 +40,7 @@ namespace ExpressBase.Web.Controllers
             string refId = _r, _params = _p;
             int _mode = _m, _locId = _l;//
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
-            string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false);
+            string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false, false);
             EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
             if (result.ErrorMessage != null)
             {
@@ -77,7 +78,7 @@ namespace ExpressBase.Web.Controllers
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 
-        public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly)
+        public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly, bool _randomizeId)
         {
             Console.WriteLine(string.Format("GetFormForRendering - refid : {0}, prams : {1}, mode : {2}, locid : {3}", _refId, _params, _mode, _locId));
             EbFormAndDataWrapper resp = new EbFormAndDataWrapper();
@@ -93,7 +94,7 @@ namespace ExpressBase.Web.Controllers
             resp.RefId = _refId;
             resp.RenderMode = _renderMode > 0 ? _renderMode : 1;
             resp.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-            resp.Url = $"/WebForm/Index?_r={_refId}&_p={_params}&_m={_mode}&_l={_locId}&_rm={_renderMode}";
+            resp.Url = $"/WebForm/Index?_r={_refId}&_p={_params}&_m={_mode}&_l={_locId}{(_renderMode != 2 ? "&_rm=" + _renderMode : "")}";
             resp.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;
 
@@ -118,6 +119,11 @@ namespace ExpressBase.Web.Controllers
 
             if (!_dataOnly && resp.RedirectUrl == null)
             {
+                if (_randomizeId)
+                {
+                    EbControl[] Allctrls = WebForm_L.Controls.FlattenAllEbControls();
+                    BeforeSaveHelper.UpdateEbSid(WebForm_L, Allctrls, true);
+                }
                 try
                 {
                     EbFormHelper.InitFromDataBase(WebForm_L, this.ServiceClient, this.Redis, ViewBag.wc);

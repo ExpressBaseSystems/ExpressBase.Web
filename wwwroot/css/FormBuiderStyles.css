@@ -725,15 +725,18 @@ eb-disable {
     min-height: 90px;
     min-width: 220px;
 }
+
     .review-reset-popover textarea {
         width: 100%;
         height: 65px;
         border-color: #ccc;
         resize: none;
     }
+
     .review-reset-popover .review-reset-btn-cont {
         float: right;
     }
+
     .review-reset-popover .review-reset-btn {
         width: 50px;
         text-align: center;
@@ -742,6 +745,7 @@ eb-disable {
         border-radius: 2px;
         color: white;
     }
+
         .review-reset-popover .review-reset-btn:hover {
             color: #555;
             background-color: #ccc;
@@ -2593,7 +2597,7 @@ input.locinp {
 
 
 /*#region subform*/
-#subFormHeader {
+.sub-form-header {
     height: 38px;
     width: 100%;
     background-color: #ffffff;
@@ -2607,40 +2611,68 @@ input.locinp {
     border-radius: 6px 6px 0px 0px;
 }
 
-    #subFormHeader:hover {
+    .sub-form-header:hover {
         cursor: move;
     }
 
-    #subFormHeader .sfh-title {
+    .sub-form-header .sfh-loc {
+        text-align: center;
+        padding: 0 10px;
+        font-family: Montserrat;
+    }
+
+    .sub-form-header .sfh-title {
         width: 50%;
         font-size: 13px;
         font-weight: 500;
         padding: 8px;
+        border-left: 1px solid #ccc;
     }
 
-    #subFormHeader .sfh-toolbar {
+    .sub-form-header .sfh-toolbar {
         width: 50%;
     }
 
-    #subFormHeader .sfh-tool-btns {
+    .sub-form-header .sfh-tool-btns {
         float: right;
     }
 
-        #subFormHeader .sfh-tool-btns .btn {
+        .sub-form-header .sfh-tool-btns .btn {
             background-color: transparent;
             color: #336699;
-            padding: 3px 12px;
+            padding: 4px 12px;
             font-size: 18px;
             margin-right: 2px;
         }
 
-            #subFormHeader .sfh-tool-btns .btn:hover {
+            .sub-form-header .sfh-tool-btns .btn:hover {
                 background-color: #e4e4e4;
                 outline: none;
                 border-radius: 4px;
             }
 
-#subFormOverlay {
+            .sub-form-header .sfh-tool-btns .btn.dropdown-toggle {
+                height: 28px;
+                border: none;
+            }
+
+            .sub-form-header .sfh-tool-btns .btn .filter-option {
+                display: none;
+            }
+
+        .sub-form-header .sfh-tool-btns .bootstrap-select {
+            width: 50px !important;
+        }
+
+        .sub-form-header .sfh-tool-btns .caret {
+            right: 8px !important;
+        }
+
+        .sub-form-header .sfh-tool-btns .btn-select > button {
+            z-index: 3;
+        }
+
+.sub-form-overlay {
     text-align: center;
     position: absolute;
     height: 60vh;
@@ -2651,14 +2683,14 @@ input.locinp {
     z-index: 11;
 }
 
-#subForm-cont {
+.sub-form-cont {
     /*width: 100%;*/
     height: calc(60vh - 40px);
     border: none;
     border-radius: 6px;
 }
 
-    #subForm-cont .form-buider-form {
+    .sub-form-cont .form-buider-form {
         height: 100%;
         border-radius: 0px 0px 6px 6px;
     }
@@ -2668,7 +2700,7 @@ input.locinp {
     height: 100%;
     width: 100%;
     position: fixed;
-    z-index: 80;
+    z-index: 81;
     top: 0;
     left: 0;
     opacity: .5;
@@ -2676,7 +2708,7 @@ input.locinp {
 
 .sf-container {
     position: fixed;
-    z-index: 81;
+    z-index: 80;
     height: 100%;
     width: 100%;
     top: 0;
@@ -2684,6 +2716,10 @@ input.locinp {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.sf-container-top {
+    z-index: 82 !important;
 }
 
 .sf-cont-body {

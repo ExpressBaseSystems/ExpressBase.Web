@@ -687,7 +687,7 @@
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
                         head: "Required",
-                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.FormCollection[0].FRC.goToCtrlwithEbSid()'>"
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.RenderCollection[" + this.FO.__MultiRenderCxt + "].FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
@@ -706,9 +706,9 @@
         required_valid_flag = required_valid_flag && this.runFormValidations();
         if (this.FO.headerObj && this.FO.EbAlert) {
             if (!required_valid_flag)
-                this.FO.headerObj.showElement(["webforminvalidmsgs"]);
+                this.FO.headerObj.showElement([this.FO.hBtns['GotoInvalid']]);
             else
-                this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
+                this.FO.headerObj.hideElement([this.FO.hBtns['GotoInvalid']]);
         }
 
         return required_valid_flag;

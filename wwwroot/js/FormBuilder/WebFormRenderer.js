@@ -602,7 +602,7 @@ const WebFormRender = function (option) {
 
             respObj.FormData = JSON.parse(respObj.FormData);//======
             //this.DynamicTabObject.disposeDynamicTab();// febin
-            
+
             if (this.AfterSavePrintDoc) {
                 this.printDocument_inner(this.AfterSavePrintDoc, respObj.RowId);
                 this.AfterSavePrintDoc = null;
@@ -1524,14 +1524,14 @@ const WebFormRender = function (option) {
 
     this.showLoader = function () {
         if (this.renderMode === 2)
-            ebcontext.webform.showSubFormLoader();
+            ebcontext.webform.showSubFormLoader(this.__MultiRenderCxt);
         else
             $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
 
     this.hideLoader = function () {
         if (this.renderMode === 2)
-            ebcontext.webform.hideSubFormLoader();
+            ebcontext.webform.hideSubFormLoader(this.__MultiRenderCxt);
         else
             $("#eb_common_loader").EbLoader("hide");
     };
@@ -1757,9 +1757,9 @@ const WebFormRender = function (option) {
         catch (e) { console.log("Error in title expression  " + e.message); }
 
         let modeText = this.mode;
-        if (reqstMode === "Preview Mode" || reqstMode === "Export Mode" || reqstMode === "Clone Mode" || reqstMode === "Prefill Mode") 
+        if (reqstMode === "Preview Mode" || reqstMode === "Export Mode" || reqstMode === "Clone Mode" || reqstMode === "Prefill Mode")
             modeText = "New Mode";
-        else if (reqstMode === "Draft Mode" && this.draftId > 0) 
+        else if (reqstMode === "Draft Mode" && this.draftId > 0)
             modeText = "Draft";
 
         if (this.renderMode === 2) {//partial
@@ -1871,7 +1871,7 @@ const WebFormRender = function (option) {
                 else if (btns[i] === this.hBtns['DraftSave'] && this.formPermissions[loc].includes(op.New) && this.FormObj.CanSaveAsDraft && this.Mode.isNew)
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['DraftDelete'] && this.FormObj.CanSaveAsDraft && this.draftId > 0 && this.Mode.View)
-                    r.push(btns[i]);                
+                    r.push(btns[i]);
             }
         }
         return r;
@@ -1913,7 +1913,7 @@ const WebFormRender = function (option) {
         let loc = ebcontext.locations.getCurrent();
         if (this.formPermissions[loc].includes(0) && !this.FormObj.IsDisable)
             $sel.append(`<option data-token="new" data-title="Save and new">Save & New</option>`);
-        if (this.formPermissions[loc].includes(2) || (this.formPermissions[loc].includes(8) && this.formData.CreatedBy === this.userObject.UserId)) 
+        if (this.formPermissions[loc].includes(2) || (this.formPermissions[loc].includes(8) && this.formData.CreatedBy === this.userObject.UserId))
             $sel.append(`<option data-token="edit" data-title="Save and edit">Save & Continue</option>`);
         $sel.append(`<option data-token="view" data-title="Save and view">Save & View</option>`);
         $sel.append(`<option data-token="close" data-title="Save and close">Save & Close</option>`);
@@ -2015,7 +2015,7 @@ const WebFormRender = function (option) {
             this.$exceleBtn = $('#' + this.hBtns['Excel']);
             this.$excelSelBtn = $('#' + this.hBtns['ExcelSel']);
             this.$draftDeleteBtn = $('#' + this.hBtns['DraftDelete']);
-            
+
             this.$excelSelBtn.off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.excelExportImport.bind(this));
             $(`#${this.hBtns['ExcelSel']} .selectpicker`).selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
             $("#excelfile").off('change').on('change', this.excelUpload.bind(this));
@@ -2044,7 +2044,7 @@ const WebFormRender = function (option) {
         this.$openSrcBtn.off("click").on("click", this.openSourceForm.bind(this));
         $('#' + this.hBtns['Discard']).off("click").on("click", this.DiscardChanges.bind(this));
 
-        $("body").off("focus", "[ui-inp]").on("focus", "[ui-inp]", this.selectUIinpOnFocus);        
+        $("body").off("focus", "[ui-inp]").on("focus", "[ui-inp]", this.selectUIinpOnFocus);
     };
 
     this.OpenInNewTab = function () {
@@ -2224,6 +2224,7 @@ const WebFormRender = function (option) {
         //let t0 = performance.now();
 
         this.rendererName = 'WebForm';
+        this.__MultiRenderCxt = option.__MultiRenderCxt;
 
         this.$formCont = option.$formCont;
         this.formHTML = option.formHTML;
@@ -2298,7 +2299,7 @@ const WebFormRender = function (option) {
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         this.initWebFormCtrls();
         this.initPrintMenu();
-        this.initSaveMenu();        
+        this.initSaveMenu();
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
         this.isInitiallyPopulating = false;
 

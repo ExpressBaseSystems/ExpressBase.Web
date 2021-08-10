@@ -151,9 +151,9 @@ const WebFormCollectionRender = function (Option) {
             formPermissions: _obj.formPermissions,
             headerObj: this.subFormHeaderObj,
             formHTML: _obj.formHTML,
-            disableEditBtn: resp.DisableEditButton
+            disableEditBtn: resp.DisableEditButton,
+            __MultiRenderCxt: cxt
         });
-        WebForm.__MultiRenderCxt = cxt;
         WebForm.__MultiRenderUrl = resp.Url;
         this.RenderCollection.push(WebForm);
         this.CurrentSubForm = WebForm;
@@ -248,19 +248,18 @@ const WebFormCollectionRender = function (Option) {
         }
     };
 
-    this.showSubFormLoader = function () {
-        this.showHideSubFormLoader("show", { maskItem: { Id: "body" } });
+    this.showSubFormLoader = function (cxt) {
+        if (cxt >= 0)
+            $("#sf_loader" + cxt).EbLoader("show", { maskItem: { Id: "body" } });
+        else
+            $("#eb_common_loader").EbLoader("show");
     };
 
-    this.hideSubFormLoader = function () {
-        this.showHideSubFormLoader("hide");
-    };
-
-    this.showHideSubFormLoader = function (op, ob) {
-        let cxt = '';
-        if (this.CurrentSubForm)
-            cxt = this.CurrentSubForm.__MultiRenderCxt;
-        $("#sf_loader" + cxt).EbLoader(op, ob);
+    this.hideSubFormLoader = function (cxt) {
+        if (cxt >= 0)
+            $("#sf_loader" + cxt).EbLoader("hide");
+        else
+            $("#eb_common_loader").EbLoader("hide");
     };
 
     this.GetMasterHeaderBtns = function (Op) {

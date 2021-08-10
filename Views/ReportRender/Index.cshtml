@@ -81,6 +81,7 @@
     .fdCont {
         position: absolute;
         height: calc(100% - 38px);
+        right: 0;
         overflow: hidden;
         z-index: 4;
         border-radius: 2px;
@@ -100,7 +101,7 @@
             <div class='content_dv' id='content_dv'>
                 <iframe id="reportIframe" class="reportIframe"></iframe>
             </div>
-            <div class='fdCont fd' id='sub_windows_sidediv_dv' style="width: 350px; position: absolute;">
+            <div class='fdCont fd' id='sub_windows_sidediv_dv'>
                 <div class="pgHead"> Param window <div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div>
                 @{
                     if (ViewBag.Fd.EbDataSource != null)
@@ -134,12 +135,12 @@
         }
         $("#filter").on("click", function () {
             if ($("#sub_windows_sidediv_dv").css("display") === "none") {
-                $("#sub_windows_sidediv_dv").show();
-                $("#content_dv").css("width", "calc(100% - 350px)");
+                $("#sub_windows_sidediv_dv").show(500);
+                $("#content_dv").animate({ width: "calc(100% - 350px)" });
             }
             else {
-                $("#sub_windows_sidediv_dv").hide();
-                $("#content_dv").css("width", "100%");
+                $("#sub_windows_sidediv_dv").hide(500);
+                $("#content_dv").animate({ width: "100%" });
             }
         });
 
@@ -171,8 +172,8 @@
     }
 
     function render() {
-        $("#sub_windows_sidediv_dv").css("display", "none");
-        $("#content_dv").css("width", "100%");
+        $("#sub_windows_sidediv_dv").hide(500);
+        $("#content_dv").animate({ width: "100%" });
             //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
         var ParamsArray = null;

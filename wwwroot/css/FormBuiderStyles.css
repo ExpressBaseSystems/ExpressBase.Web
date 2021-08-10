@@ -2627,10 +2627,16 @@ input.locinp {
         font-weight: 500;
         padding: 8px;
         border-left: 1px solid #ccc;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .sub-form-header .sfh-toolbar {
         width: 50%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .sub-form-header .sfh-tool-btns {

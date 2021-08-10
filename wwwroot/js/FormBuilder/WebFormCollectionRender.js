@@ -341,8 +341,8 @@ const WebFormCollectionRender = function (Option) {
     <div class="sf-cont-body">
         <div id="subFormHeader${cxt}" class='sub-form-header'>
             <div class='sfh-loc'>
-                <div style="font-size: 11px;">${curLoc.TypeName}</div>
-                <div>${curLoc.ShortName}</div>
+                <div style="font-size: 11px; white-space: nowrap;">${curLoc.TypeName}</div>
+                <div style="white-space: nowrap;">${curLoc.ShortName}</div>
             </div>
             <div class='sfh-title'> Loading... </div>
             <div class='sfh-toolbar'> 

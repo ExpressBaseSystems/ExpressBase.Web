@@ -44,6 +44,8 @@ namespace ExpressBase.Web.Components
                     }
                     else if (control is EbUserLocation)
                     {
+                        if (_sol == null && ViewBag.cid != null)
+                            _sol = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
                         (control as EbUserLocation).InitFromDataBase(this.ServiceClient, _user, _sol, ParentRefid);
                     }
                     else if (control is EbLocationSelector)

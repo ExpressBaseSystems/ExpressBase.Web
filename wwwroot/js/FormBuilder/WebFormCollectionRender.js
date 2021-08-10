@@ -252,7 +252,7 @@ const WebFormCollectionRender = function (Option) {
         if (cxt >= 0)
             $("#sf_loader" + cxt).EbLoader("show", { maskItem: { Id: "body" } });
         else
-            $("#eb_common_loader").EbLoader("show");
+            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "body" } });
     };
 
     this.hideSubFormLoader = function (cxt) {

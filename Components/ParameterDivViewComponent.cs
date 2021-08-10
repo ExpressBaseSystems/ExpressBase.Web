@@ -42,11 +42,13 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);
                     }
-                    else if (control is EbUserLocation)
+                    else if (control is EbUserLocation ctrl)
                     {
                         if (_sol == null && ViewBag.cid != null)
                             _sol = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-                        (control as EbUserLocation).InitFromDataBase(this.ServiceClient, _user, _sol, ParentRefid);
+                        if (_user == null)
+                            _user = JsonConvert.DeserializeObject<User>(ViewBag.UserObject);
+                        ctrl.InitFromDataBase(this.ServiceClient, _user, _sol, ParentRefid);
                     }
                     else if (control is EbLocationSelector)
                     {

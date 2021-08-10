@@ -108,7 +108,7 @@
                     {
                         if (ViewBag.Fd.EbDataSource.FilterDialog != null)
                         {
-                            @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = dsobj });
+                            @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = dsobj, ParentRefid = ViewBag.Refid });
                             fd = true;
                         }
                     }
@@ -135,12 +135,12 @@
         }
         $("#filter").on("click", function () {
             if ($("#sub_windows_sidediv_dv").css("display") === "none") {
-                $("#sub_windows_sidediv_dv").show(500);
-                $("#content_dv").animate({ width: "calc(100% - 350px)" });
+                $("#sub_windows_sidediv_dv").show(300);
+                $("#content_dv").animate({ width: "calc(100% - 350px)" }, 300);
             }
             else {
-                $("#sub_windows_sidediv_dv").hide(500);
-                $("#content_dv").animate({ width: "100%" });
+                $("#sub_windows_sidediv_dv").hide(300);
+                $("#content_dv").animate({ width: "100%" }, 300);
             }
         });
 
@@ -172,8 +172,8 @@
     }
 
     function render() {
-        $("#sub_windows_sidediv_dv").hide(500);
-        $("#content_dv").animate({ width: "100%" });
+        $("#sub_windows_sidediv_dv").hide(300);
+        $("#content_dv").animate({ width: "100%" }, 300);
             //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
         var ParamsArray = null;

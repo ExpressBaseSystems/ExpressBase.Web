@@ -56,7 +56,7 @@
     }
 };
 
-const EbPowerSelect = function (ctrl, options) {    
+const EbPowerSelect = function (ctrl, options) {
     //parameters 
     this.getFilterValuesFn = options.getFilterValuesFn || function () { return []; };
     this.ComboObj = ctrl;
@@ -146,7 +146,7 @@ const EbPowerSelect = function (ctrl, options) {
             $('#' + this.name + 'Container').on('click', "[class= selected-tag]", this.clickedOnTag.bind(this));
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
             $('#' + this.name + 'Container' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
-            this.$searchBoxes.keyup(this.searchFN.bind(this)); 
+            this.$searchBoxes.keyup(this.searchFN.bind(this));
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
             this.Values = [];
@@ -1549,7 +1549,7 @@ const EbPowerSelect = function (ctrl, options) {
             return;
         //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
         let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
-        let $form_div = $(document).find("[eb-root-obj-container]:first");
+        let $form_div = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
         let $scrollBody = this.$DDdiv.find('.dataTables_scrollBody');
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 
@@ -1614,7 +1614,7 @@ const EbPowerSelect = function (ctrl, options) {
             this.$DDdiv.hide();
         let $div_detach = this.$DDdiv.detach();
         $div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
-        let $form_div = $(document).find("[eb-root-obj-container]:first");
+        let $form_div = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
         $div_detach.appendTo($form_div);
         this.adjustDDposition();
         this.bindHideDDonScroll();

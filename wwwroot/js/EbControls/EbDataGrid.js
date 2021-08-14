@@ -1278,6 +1278,7 @@
         this.delAllRows();
         this.updateAggCols();
         this.resetBuffers();
+        if (this.ctrl.__continue) this.ctrl.__continue();
         //if (!this.ctrl.IsDisable && isAddrow)
         //    this.addRow();
     };
@@ -1744,6 +1745,7 @@
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
                 EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+                if (this.ctrl.__continue) this.ctrl.__continue();
             }.bind(this),
             success: this.reloadDG.bind(this)
         });
@@ -1772,6 +1774,7 @@
                 this.DataMODEL.push(lastModel[i]);
             }
         }
+        if (this.ctrl.__continue) this.ctrl.__continue();
     };
 
     this.getDGIterable = function () {

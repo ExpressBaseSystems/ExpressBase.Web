@@ -971,4 +971,355 @@
             contSel = '#td_' + ctrl.EbSid_CtxId;
         EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);
     };
+
+    //#region SingleBinding - New
+
+    this.GetDepHandleObj = function (curCtrl) {
+        let DepHandleObj = {
+            curCtrl: curCtrl,
+            ValueP: [], ValueC: [],
+            DrPaths: [], DrCtrls: [],
+            HideP: [], HideC: [],
+            DisableP: [], DisableC: []
+        };
+        this.DepHandleObj_create_rec(null, DepHandleObj);
+        return DepHandleObj;
+    };
+
+    this.DepHandleObj_create_rec = function (depCtrl, DepHandleObj) {
+        this.DepHandleObj_create_rec_inner(depCtrl, 'DependedValExp', DepHandleObj, 'ValueP', 'ValueC', true);
+        this.DepHandleObj_create_rec_inner(depCtrl, 'DrDependents', DepHandleObj, 'DrPaths', 'DrCtrls', true);
+        this.DepHandleObj_create_rec_inner(depCtrl, 'HiddenExpDependants', DepHandleObj, 'HideP', 'HideC', false);
+        this.DepHandleObj_create_rec_inner(depCtrl, 'DisableExpDependants', DepHandleObj, 'DisableP', 'DisableC', false);
+    };
+
+    this.DepHandleObj_create_rec_inner = function (depCtrl, Prop, DepHandleObj, prop1, prop2, rec) {
+        if (DepHandleObj.curCtrl === depCtrl)
+            return;
+        if (depCtrl === null)
+            depCtrl = DepHandleObj.curCtrl;
+        if (depCtrl[Prop] && depCtrl[Prop].$values.length > 0) {
+            let a = depCtrl[Prop].$values;
+            for (let i = 0; i < a.length; i++) {
+                let nxtCtrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (nxtCtrl != 'not found') {
+                    let indx = DepHandleObj[prop1].indexOf(a[i]);
+                    if (indx >= 0) {
+                        DepHandleObj[prop1].splice(indx, 1);
+                        DepHandleObj[prop2].splice(indx, 1);
+                    }
+                    DepHandleObj[prop1].push(a[i]);
+                    DepHandleObj[prop2].push(nxtCtrl);
+                    if (rec) {
+                        nxtCtrl.__lockDependencyExec = true;
+                        this.DepHandleObj_create_rec(nxtCtrl, DepHandleObj);
+                    }
+                }
+            }
+        }
+    };
+
+    this.bindFunctionToDG = function (DG) {
+        $.each(DG.Controls.$values, function (i, col) {// need change
+            col.bindOnChange({ form: this.FO.formObject, col: col, DG: DG, user: this.FO.userObject }, this.DgchangeListener.bind(this, col));
+        }.bind(this));
+    };
+
+    this.DgchangeListener = function (Obj, event) {
+        //let __this = form.__getCtrlByPath(this.__path);
+        let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)
+        if (__this === undefined)
+            __this = this.FO.formObject.__getCtrlByPath(Obj.__path);
+
+        if (__this.DataVals !== undefined) {
+            let v = __this.getValueFromDOM();
+            let d = __this.getDisplayMemberFromDOM();
+            if (__this.ObjType === 'Numeric')
+                v = parseFloat(v);
+            if (__this.__isEditing) {
+                __this.curRowDataVals.Value = v;
+                __this.curRowDataVals.D = d;
+            }
+            else {
+                __this.DataVals.Value = v;
+                __this.DataVals.D = d;
+
+                if ($(event.target).data('ctrl_ref'))// when trigger change from setValue(if the setValue called from inactive row control) update DG table td
+                    ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
+            }
+        }
+
+        let DepHandleObj = this.GetDepHandleObj(__this);
+
+        if (DepHandleObj.ValueP.length > 0 && !__this.___isNotUpdateValExpDepCtrls) {
+            __this.__continue2 = this.ctrlChangeListener_inner1.bind(this, DepHandleObj);
+            this.UpdateDependency1(DepHandleObj);
+        }
+        else {
+            this.ctrlChangeListener_inner1(DepHandleObj);
+            __this.___isNotUpdateValExpDepCtrls = false;
+        }
+
+
+    }.bind(this);
+
+    this.bindFunctionToCtrls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            Obj.bindOnChange(this.ctrlChangeListener.bind(this, Obj));
+
+            if (Obj.Required) {
+                if (Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)
+                    $("#cont_" + Obj.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+                else
+                    $("#" + Obj.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+            }
+
+            if (Obj.Unique)
+                $("#" + Obj.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, Obj), 1000));
+
+            if (Obj.Validators && Obj.Validators.$values.length > 0) {
+                $("#" + Obj.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, Obj));
+            }
+        }.bind(this));
+    };
+
+    this.ctrlChangeListener = function (Obj, event) {
+
+        //if (event && Obj.ObjType === "Date") {
+        //    if (!Obj.__lastval) {
+        //        Obj.__lastval = this.getOldDataVal(this.FO.formDataBackUp, Obj);
+        //    }
+        //    if (Obj.getValue() !== Obj.__lastval)
+        //        Obj.__lastval = Obj.getValue();
+        //    else
+        //        return;
+        //}
+
+        if (Obj.getValue() === Obj.getValueFromDOM()) {
+            console.log('No value change: ' + Obj.Name);
+            return;
+        }
+
+        if (!Obj.___DoNotUpdateDataVals) {
+            if (Obj.DataVals) {
+                Obj.DataVals.Value = Obj.getValueFromDOM();
+                Obj.DataVals.D = Obj.getDisplayMemberFromDOM();
+
+                if (Obj.ObjType === 'PowerSelect' && Obj.__continue) {
+                    Obj.__continue();
+                }
+            }
+        }
+
+        if (Obj.__lockDependencyExec || Obj.___isNotUpdateValExpDepCtrls)
+            return;
+
+        let DepHandleObj = this.GetDepHandleObj(Obj);
+
+        if (DepHandleObj.ValueP.length > 0 && !Obj.___isNotUpdateValExpDepCtrls) {
+            Obj.__continue2 = this.ctrlChangeListener_inner1.bind(this, DepHandleObj);
+            this.UpdateDependency1(DepHandleObj);
+        }
+        else {
+            this.ctrlChangeListener_inner1(DepHandleObj);
+            Obj.___isNotUpdateValExpDepCtrls = false;
+        }
+    }
+
+    this.ctrlChangeListener_inner1 = function (DepHandleObj) {
+        if (DepHandleObj.DrPaths.length > 0) {
+            DepHandleObj.curCtrl.__continue3 = this.ctrlChangeListener_inner2.bind(this, DepHandleObj);
+            this.UpdateDependency2(DepHandleObj);
+        }
+        else
+            this.ctrlChangeListener_inner2(DepHandleObj);
+    };
+
+    //hidden disable onchange
+    this.ctrlChangeListener_inner2 = function (DepHandleObj) {
+        for (let i = 0; i < DepHandleObj.HideC.length; i++) {
+            let depCtrl = DepHandleObj.HideC[i];
+            let depCtrl_s = DepHandleObj.HideP[i];
+            try {
+                let code = atob(depCtrl.HiddenExpr.Code);
+                let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (hideExpVal)
+                    depCtrl.hide();
+                else
+                    depCtrl.show();
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'HideExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+        for (let i = 0; i < DepHandleObj.DisableC.length; i++) {
+            let depCtrl = DepHandleObj.DisableC[i];
+            let depCtrl_s = DepHandleObj.DisableP[i];
+            try {
+                let code = atob(depCtrl.DisableExpr.Code);
+                let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (hideExpVal) {
+                    depCtrl.disable();
+                    depCtrl.__IsDisableByExp = true;
+                }
+                else {
+                    if (!this.FO.Mode.isView) {
+                        depCtrl.enable();
+                        depCtrl.__IsDisableByExp = false;
+                    }
+                }
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'ReadOnlyExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+
+        let chngFn = DepHandleObj.curCtrl.OnChangeFn;
+        if (chngFn && chngFn.Code && chngFn.Code.trim() !== "") {
+            try {
+                new Function("form", "user", `event`, atob(chngFn.Code)).bind(DepHandleObj.curCtrl, this.FO.formObject, this.FO.userObject)();
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'OnChange Function': ${DepHandleObj.curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+
+    };
+
+    //resume val expr
+    this.resumeExec1 = function (depCtrl, DepHandleObj) {
+        depCtrl.__continue = null;
+        depCtrl.__lockDependencyExec = false;
+        this.UpdateDependency1(DepHandleObj);
+    };
+
+    //ValueExpression
+    this.UpdateDependency1 = function (DepHandleObj) {
+        let curCtrl = DepHandleObj.curCtrl;
+        if (DepHandleObj.ValueP.length === 0) {
+            if (curCtrl.__continue2) {
+                curCtrl.__continue2();
+                curCtrl.__continue2 = null;
+            }
+            return;
+        }
+        let depCtrl_s = DepHandleObj.ValueP.splice(0, 1)[0]
+        let depCtrl = DepHandleObj.ValueC.splice(0, 1)[0];
+        let wait = false;
+        depCtrl.__continue = null;
+
+        if (depCtrl.ValueExpr && depCtrl.ValueExpr.Code && depCtrl.ValueExpr.Lang === 0) {
+            let ValueExpr_val = null;
+            try {
+                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                // if persist - manual onchange only setValue. DoNotPersist always setValue
+                if (depCtrl.ObjType === 'PowerSelect') {
+                    depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
+                    depCtrl.justSetValue(ValueExpr_val);
+                    EbBlink(depCtrl);
+                    wait = true;
+                }
+                else {
+                    depCtrl.justSetValue(ValueExpr_val);
+                    this.validateCtrl(depCtrl);
+                    EbBlink(depCtrl);
+                }
+            }
+            else {
+                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                    row[depCtrl.Name].setValue(ValueExpr_val);
+                }.bind(this));
+            }
+            //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+            //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
+
+        }
+        else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+            let filterValues = [];
+            $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {
+                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
+            }.bind(this));
+            filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
+            filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+            filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
+            depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
+            this.ExecuteSqlValueExpr(depCtrl, filterValues, 0);
+            wait = true;
+        }
+        if (!wait) {
+            depCtrl.__lockDependencyExec = false;
+            this.UpdateDependency1(DepHandleObj);
+        }
+
+    };
+
+    //resume dr dependency
+    this.resumeExec2 = function (depCtrl, DepHandleObj) {
+        depCtrl.__continue = null;
+        depCtrl.__lockDependencyExec = false;
+        this.UpdateDependency2(DepHandleObj);
+    };
+
+    //Dr dependency
+    this.UpdateDependency2 = function (DepHandleObj) {
+        let curCtrl = DepHandleObj.curCtrl;
+        if (DepHandleObj.DrPaths.length === 0) {
+            if (curCtrl.__continue3) {
+                curCtrl.__continue3();
+                curCtrl.__continue3 = null;
+            }
+            return;
+        }
+        let depCtrl_s = DepHandleObj.DrPaths.splice(0, 1)[0];
+        let depCtrl = DepHandleObj.DrCtrls.splice(0, 1)[0];
+        let wait = false;
+        depCtrl.__continue = null;
+
+        if (depCtrl.ObjType === "TVcontrol") {
+            depCtrl.reloadWithParam(curCtrl);
+        }
+        else if (depCtrl.ObjType === "PowerSelect") {
+            if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
+                if (depCtrl.initializer && (!depCtrl.IsDGCtrl || (depCtrl.IsDGCtrl && depCtrl.__DG.RowCount > 0))) {
+                    depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
+                    depCtrl.initializer.reloadWithParams(true);
+                    wait = true;
+                }
+            }
+            else {
+                curCtrl.__isInitiallyPopulating = false;
+                curCtrl.___DoNotUpdateDrDepCtrls = false;
+            }
+        }
+        else if (depCtrl.ObjType === "DataGrid") {
+            try {
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)))) {
+                    depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
+                    depCtrl.__setSuggestionVals();
+                    wait = true;
+                }
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to load 'DataGrid': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+        if (!wait) {
+            depCtrl.__lockDependencyExec = false;
+            this.UpdateDependency2(DepHandleObj);
+        }
+    }.bind(this);
+
+    //#endregion SingleBinding
 };

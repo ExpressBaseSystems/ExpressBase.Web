@@ -550,6 +550,7 @@ const EbPowerSelect = function (ctrl, options) {
                 this.hideLoader();
                 this.V_hideDD();
                 console.warn("PS: getData4PowerSelect ajax call failed");
+                if (this.ComboObj.__continue) this.ComboObj.__continue();
             }.bind(this)
         });
     };
@@ -715,8 +716,10 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setValues2PSFromData = function (setvaluesColl) {
-        if (!setvaluesColl || setvaluesColl.length === 0)
+        if (!setvaluesColl || setvaluesColl.length === 0) {
+            if (this.ComboObj.__continue) this.ComboObj.__continue();
             return;
+        }
 
         if (this.IsFromReloadWithParams2setOldval)
             this.ComboObj.___DoNotImport = true;

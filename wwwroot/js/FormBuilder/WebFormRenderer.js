@@ -275,8 +275,11 @@ const WebFormRender = function (option) {
         this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
         this.initNCs();// order 1
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.FRC.bindFunctionToCtrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
+        //this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
+        //this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+
+
         this.FRC.setDisabledControls(this.flatControls);// disables disabled controls 
         this.initDGs();
         this.initRQCs();
@@ -288,7 +291,8 @@ const WebFormRender = function (option) {
             let _DG = new ControlOps_w[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
-            this.FRC.bindValueUpdateFns_OnChange(_DG);
+            this.FRC.bindFunctionToDG(_DG);
+            //this.FRC.bindValueUpdateFns_OnChange(_DG);
         }.bind(this));
     };
 

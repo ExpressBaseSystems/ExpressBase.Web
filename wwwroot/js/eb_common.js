@@ -1399,7 +1399,7 @@ const formatData4webform = function (_multipleTables) {
                 let singleColumn = columns[k];
                 delete singleColumn["D"];
                 delete singleColumn["F"];//provUser test
-                delete singleColumn["R"];
+                //delete singleColumn["R"];
                 delete singleColumn["ValueExpr_val"];
                 delete singleColumn["DisplayMember"];
             }

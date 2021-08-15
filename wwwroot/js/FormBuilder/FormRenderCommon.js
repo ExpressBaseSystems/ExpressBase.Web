@@ -1012,6 +1012,7 @@
             for (let i = 0; i < a.length; i++) {
                 let nxtCtrl = this.FO.formObject.__getCtrlByPath(a[i]);
                 if (nxtCtrl != 'not found') {
+                    nxtCtrl.__lockDependencyExec = false;
                     let indx = DepHandleObj[prop1].indexOf(a[i]);
                     if (indx >= 0) {
                         DepHandleObj[prop1].splice(indx, 1);
@@ -1135,11 +1136,19 @@
         if (Obj.__defaultValExprExec) {
             console.log('default val expr: ' + Obj.Name);
             Obj.__defaultValExprExec = false;
+            Obj.___isNotUpdateValExpDepCtrls = false;
             return;
         }
 
         if (this.FO.isInitiallyPopulating) {
             console.log('initial loading: ' + Obj.Name);
+            Obj.___isNotUpdateValExpDepCtrls = false;
+            return;
+        }
+
+        if (Obj.___isNotUpdateValExpDepCtrls) {
+            console.log('should be from justsetvalue: ' + Obj.Name);
+            Obj.___isNotUpdateValExpDepCtrls = false;
             return;
         }
 
@@ -1325,30 +1334,18 @@
             depCtrl.reloadWithParam(curCtrl);
         }
         else if (depCtrl.ObjType === "PowerSelect") {
-            if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
-                if (depCtrl.initializer && (!depCtrl.IsDGCtrl || (depCtrl.IsDGCtrl && depCtrl.__DG.RowCount > 0))) {
-                    depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
-                    depCtrl.initializer.reloadWithParams(true);
-                    wait = true;
-                }
-            }
-            else {
-                curCtrl.__isInitiallyPopulating = false;
-                curCtrl.___DoNotUpdateDrDepCtrls = false;
+            if (depCtrl.initializer && (!depCtrl.IsDGCtrl || (depCtrl.IsDGCtrl && depCtrl.__DG.RowCount > 0))) {
+                depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
+                depCtrl.initializer.reloadWithParams(true);
+                wait = true;
             }
         }
         else if (depCtrl.ObjType === "DataGrid") {
             try {
-                if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
-                    if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)))) {
-                        depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
-                        depCtrl.__setSuggestionVals();
-                        wait = true;
-                    }
-                }
-                else {
-                    curCtrl.__isInitiallyPopulating = false;
-                    curCtrl.___DoNotUpdateDrDepCtrls = false;
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)))) {
+                    depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
+                    depCtrl.__setSuggestionVals();
+                    wait = true;
                 }
             }
             catch (e) {

@@ -1739,7 +1739,7 @@
             data: {
                 _refid: this.formRefId,
                 _rowid: this.formRenderer.rowId,
-                _triggerctrl: lastCtrlName,
+                _triggerctrl: this.ctrl.Name,
                 _params: paramsColl
             },
             error: function (xhr, ajaxOptions, thrownError) {

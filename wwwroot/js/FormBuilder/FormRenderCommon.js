@@ -100,7 +100,7 @@
                         if (!ctrl.IsDGCtrl) {
                             ctrl.__defaultValExprExec = true;
                             if (ctrl.ObjType === 'PowerSelect') {
-                                ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);                                
+                                ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
                                 ctrl.justSetValue(result);
                                 EbBlink(ctrl);
                                 break;
@@ -161,6 +161,15 @@
                         }
                     }
                 }
+
+                if (ExprName === 'DefaultValueExpression') {
+                    for (let i = 0; i < this.FO.DGs.length; i++) {
+                        if (this.FO.DGs[i].Eb__paramControls && this.FO.DGs[i].Eb__paramControls.$values.length === 0) {
+                            Dgs.push('form.' + this.FO.DGs[i].Name);
+                        }
+                    }
+                }
+
                 if (Dgs.length > 0) {
                     this.importDGRelatedUpdates(Dgs);
                 }
@@ -1028,7 +1037,7 @@
                                 x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
                             }
                         }
-                        else if (nxtCtrl.ObjType === 'PowerSelect' && nxtCtrl.IsDGCtrl){
+                        else if (nxtCtrl.ObjType === 'PowerSelect' && nxtCtrl.IsDGCtrl) {
                             let dgpath = a[i].substring(0, a[i].lastIndexOf('.'));
                             let x = DepHandleObj[prop1].findIndex(e => e === dgpath);
                             if (x >= 0)

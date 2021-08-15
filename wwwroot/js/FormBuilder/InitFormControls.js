@@ -350,7 +350,7 @@
             ctrl.setValue(val);
     };
 
-    this.SimpleSelect = function (ctrl) {
+    this.SimpleSelect = function (ctrl, ctrlOpts) {
         let $input = $("#" + ctrl.EbSid_CtxId);
 
         $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
@@ -364,7 +364,7 @@
         else {
             $input.selectpicker({
                 //dropupAuto: false,
-                container: "body [eb-root-obj-container]:first",
+                container: (ctrlOpts.parentCont ? `#${ctrlOpts.parentCont}` : `body [eb-root-obj-container]:first`),
                 virtualScroll: 500,
                 size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
                 //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
@@ -441,8 +441,8 @@
         }
     };
 
-    this.BooleanSelect = function (ctrl) {
-        this.SimpleSelect(ctrl);
+    this.BooleanSelect = function (ctrl, ctrlOpts) {
+        this.SimpleSelect(ctrl, ctrlOpts);
     };
 
     // http://davidstutz.de/bootstrap-multiselect
@@ -696,6 +696,19 @@
                 let val = depCtrl.getValue();
                 let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
                 filterObj.Value = val;
+            }
+
+            ctrl.initializer.filterValues = ctrl.__filterValues;
+            ctrl.initializer.Api.ajax.reload();
+        };
+
+        ctrl.reloadWithParamAll = function (depCtrls) {
+            if (depCtrls) {
+                for (let i = 0; i < depCtrls.length; i++) {
+                    let val = depCtrls[i].getValue();
+                    let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl[i].Name);
+                    filterObj.Value = val;
+                }
             }
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
@@ -1085,7 +1098,7 @@
         let t0 = performance.now();
 
         if (ctrl.RenderAsSimpleSelect) {
-            this.SimpleSelect(ctrl);
+            this.SimpleSelect(ctrl, ctrlOpts);
             return;
         }
         else if (ctrl.IsInsertable) {

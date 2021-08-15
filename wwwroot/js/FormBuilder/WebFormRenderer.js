@@ -211,8 +211,10 @@ const WebFormRender = function (option) {
         for (let i = 0; i < this.flatControls.length; i++) {
             let Obj = this.flatControls[i]
             let opt = {};
-            if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
+            if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect) {
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
+                opt.parentCont = this.FormObj.EbSid_CtxId;
+            }
             else if (Obj.ObjType === "FileUploader") {
                 opt.FormDataExtdObj = this.FormDataExtdObj;
                 opt.DpControlsList = getFlatObjOfType(this.FormObj, "DisplayPicture");
@@ -228,6 +230,9 @@ const WebFormRender = function (option) {
                 opt.flatControls = this.flatControls;
             else if (Obj.ObjType === "SubmitButton") {
                 opt.renderMode = this.renderMode;
+            }
+            else if (Obj.ObjType === "SimpleSelect" || Obj.ObjType === "BooleanSelect") {
+                opt.parentCont = this.FormObj.EbSid_CtxId;
             }
             this.initControls.init(Obj, opt);
         }

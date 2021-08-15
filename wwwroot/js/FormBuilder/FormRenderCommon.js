@@ -91,51 +91,47 @@
             if (ctrl === "not found")
                 continue;
             try {
-                if (ctrl.ObjType === "TVcontrol") {
-                    depCtrl.reloadWithParam(curCtrl);
-                }
-                else {
-                    if (!ctrl[ExprName])
-                        continue;
-                    if (ctrl[ExprName].Lang === 0) {
-                        let jsExpr = atob(ctrl[ExprName].Code);
-                        let result = new Function("form", "user", `event`, jsExpr).bind(ctrl, this.FO.formObject, this.FO.userObject)();
-                        if (result) {
-                            if (!ctrl.IsDGCtrl) {
-                                if (ctrl.ObjType === 'PowerSelect') {
-                                    ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
-                                    ctrl.justSetValue(result);
-                                    EbBlink(ctrl);
-                                    break;
-                                }
-                                else {
-                                    ctrl.justSetValue(result);
-                                    this.validateCtrl(ctrl);
-                                    EbBlink(ctrl);
-                                }
+                if (!ctrl[ExprName])
+                    continue;
+                if (ctrl[ExprName].Lang === 0) {
+                    let jsExpr = atob(ctrl[ExprName].Code);
+                    let result = new Function("form", "user", `event`, jsExpr).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+                    if (result) {
+                        if (!ctrl.IsDGCtrl) {
+                            ctrl.__defaultValExprExec = true;
+                            if (ctrl.ObjType === 'PowerSelect') {
+                                ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);                                
+                                ctrl.justSetValue(result);
+                                EbBlink(ctrl);
+                                break;
                             }
                             else {
-                                $.each(ctrl.__DG.AllRowCtrls, function (rowid, row) {
-                                    row[ctrl.Name].setValue(result);
-                                }.bind(this));
+                                ctrl.justSetValue(result);
+                                this.validateCtrl(ctrl);
+                                EbBlink(ctrl);
                             }
-                            //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
-                            //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
                         }
+                        else {
+                            $.each(ctrl.__DG.AllRowCtrls, function (rowid, row) {
+                                row[ctrl.Name].setValue(result);
+                            }.bind(this));
+                        }
+                        //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                        //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
                     }
-                    else if (ctrl[ExprName].Lang === 2) {
-                        let filterValues = [];
-                        $.each(ctrl.ValExpParams.$values, function (i, depCtrl) {
-                            let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl);
-                            filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
-                        }.bind(this));
-                        filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
-                        filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-                        filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
-                        ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
-                        this.ExecuteSqlValueExpr(ctrl, filterValues, ExprName === 'ValueExpr' ? 0 : 1);
-                        break;
-                    }
+                }
+                else if (ctrl[ExprName].Lang === 2) {
+                    let filterValues = [];
+                    $.each(ctrl.ValExpParams.$values, function (i, depCtrl) {
+                        let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl);
+                        filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
+                    }.bind(this));
+                    filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
+                    filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                    filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
+                    ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
+                    this.ExecuteSqlValueExpr(ctrl, filterValues, ExprName === 'ValueExpr' ? 0 : 1);
+                    break;
                 }
             }
             catch (e) {
@@ -146,18 +142,31 @@
         if (Index >= CtrlPaths.$values.length) {
             if (!this.FO.__fromImport) {
                 let Dgs = [];
+                let TvCtrls = {};
                 for (let i = 0; i < CtrlPaths.$values.length; i++) {
                     let ctrl = this.FO.formObject.__getCtrlByPath(CtrlPaths.$values[i]);
-                    if (ctrl != "not found" && ctrl.DependedDG && ctrl.DependedDG.$values) {
-                        for (let j = 0; j < ctrl.DependedDG.$values.length; j++) {
-                            if (!Dgs.includes(ctrl.DependedDG.$values[j]))
-                                Dgs.push(ctrl.DependedDG.$values[j]);
+                    if (ctrl != "not found" && ctrl.DrDependents && ctrl.DrDependents.$values) {
+                        let dd = ctrl.DrDependents.$values;
+                        for (let j = 0; j < dd.length; j++) {
+                            let _ctrl = this.FO.formObject.__getCtrlByPath(dd[j]);
+                            if (_ctrl.ObjType === "TVcontrol") {
+                                if (!TvCtrls.hasOwnProperty(dd[j]))
+                                    TvCtrls[dd[j]] = { ctrl: _ctrl, params: [] };
+                                TvCtrls[dd[j]].params.push(ctrl);
+                            }
+                            else if (_ctrl.ObjType === "DataGrid") {
+                                if (!Dgs.includes(dd[j]))
+                                    Dgs.push(dd[j]);
+                            }
                         }
                     }
                 }
                 if (Dgs.length > 0) {
                     this.importDGRelatedUpdates(Dgs);
                 }
+                $.each(TvCtrls, function (k, obj) {
+                    obj.ctrl.reloadWithParamAll(obj.params);
+                }.bind(this));
             }
             this.FO.__fromImport = false;
         }
@@ -503,7 +512,7 @@
     this.importDGRelatedUpdates = function (DependedDGs) {
         $.each(DependedDGs, function (i, depCtrl_s) {
             try {
-                let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
+                let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                 if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView))))
                     depCtrl.__setSuggestionVals();
             }
@@ -988,7 +997,7 @@
 
     this.DepHandleObj_create_rec = function (depCtrl, DepHandleObj) {
         this.DepHandleObj_create_rec_inner(depCtrl, 'DependedValExp', DepHandleObj, 'ValueP', 'ValueC', true);
-        this.DepHandleObj_create_rec_inner(depCtrl, 'DrDependents', DepHandleObj, 'DrPaths', 'DrCtrls', true);
+        this.DepHandleObj_create_rec_inner(depCtrl, 'DrDependents', DepHandleObj, 'DrPaths', 'DrCtrls', false);
         this.DepHandleObj_create_rec_inner(depCtrl, 'HiddenExpDependants', DepHandleObj, 'HideP', 'HideC', false);
         this.DepHandleObj_create_rec_inner(depCtrl, 'DisableExpDependants', DepHandleObj, 'DisableP', 'DisableC', false);
     };
@@ -1008,11 +1017,32 @@
                         DepHandleObj[prop1].splice(indx, 1);
                         DepHandleObj[prop2].splice(indx, 1);
                     }
-                    DepHandleObj[prop1].push(a[i]);
-                    DepHandleObj[prop2].push(nxtCtrl);
-                    if (rec) {
-                        nxtCtrl.__lockDependencyExec = true;
-                        this.DepHandleObj_create_rec(nxtCtrl, DepHandleObj);
+                    let ph = true;
+                    if (Prop === 'DrDependents') {
+                        if (nxtCtrl.ObjType === 'DataGrid') {
+                            let x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                            while (x >= 0) {
+                                DepHandleObj[prop1].splice(x, 1);
+                                DepHandleObj[prop2].splice(x, 1);
+                                x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                            }
+                        }
+                        else if (nxtCtrl.ObjType === 'PowerSelect' && nxtCtrl.IsDGCtrl){
+                            let dgpath = a[i].substring(0, a[i].lastIndexOf('.'));
+                            let x = DepHandleObj[prop1].findIndex(e => e === dgpath);
+                            if (x >= 0)
+                                ph = false;
+                        }
+                    }
+                    if (ph) {
+                        DepHandleObj[prop1].push(a[i]);
+                        DepHandleObj[prop2].push(nxtCtrl);
+
+                        if (rec) {
+                            if (!nxtCtrl.___isNotUpdateValExpDepCtrls && Prop === 'DependedValExp')
+                                nxtCtrl.__lockDependencyExec = true;
+                            this.DepHandleObj_create_rec(nxtCtrl, DepHandleObj);
+                        }
                     }
                 }
             }
@@ -1083,24 +1113,12 @@
         }.bind(this));
     };
 
+    //listener entry point
     this.ctrlChangeListener = function (Obj, event) {
 
-        //if (event && Obj.ObjType === "Date") {
-        //    if (!Obj.__lastval) {
-        //        Obj.__lastval = this.getOldDataVal(this.FO.formDataBackUp, Obj);
-        //    }
-        //    if (Obj.getValue() !== Obj.__lastval)
-        //        Obj.__lastval = Obj.getValue();
-        //    else
-        //        return;
-        //}
+        let valChanged = Obj.getValue() != Obj.getValueFromDOM();
 
-        if (Obj.getValue() === Obj.getValueFromDOM()) {
-            console.log('No value change: ' + Obj.Name);
-            return;
-        }
-
-        if (!Obj.___DoNotUpdateDataVals) {
+        if (valChanged) {
             if (Obj.DataVals) {
                 Obj.DataVals.Value = Obj.getValueFromDOM();
                 Obj.DataVals.D = Obj.getDisplayMemberFromDOM();
@@ -1110,9 +1128,25 @@
                 }
             }
         }
+        else {
+            console.log('value not changed: ' + Obj.Name);
+        }
 
-        if (Obj.__lockDependencyExec || Obj.___isNotUpdateValExpDepCtrls)
+        if (Obj.__defaultValExprExec) {
+            console.log('default val expr: ' + Obj.Name);
+            Obj.__defaultValExprExec = false;
             return;
+        }
+
+        if (this.FO.isInitiallyPopulating) {
+            console.log('initial loading: ' + Obj.Name);
+            return;
+        }
+
+        if (Obj.__lockDependencyExec) {
+            console.log('dependency execution blocked: ' + Obj.Name);
+            return;
+        }
 
         let DepHandleObj = this.GetDepHandleObj(Obj);
 
@@ -1121,11 +1155,12 @@
             this.UpdateDependency1(DepHandleObj);
         }
         else {
-            this.ctrlChangeListener_inner1(DepHandleObj);
             Obj.___isNotUpdateValExpDepCtrls = false;
+            this.ctrlChangeListener_inner1(DepHandleObj);
         }
     }
 
+    //val expr completed
     this.ctrlChangeListener_inner1 = function (DepHandleObj) {
         if (DepHandleObj.DrPaths.length > 0) {
             DepHandleObj.curCtrl.__continue3 = this.ctrlChangeListener_inner2.bind(this, DepHandleObj);
@@ -1304,10 +1339,16 @@
         }
         else if (depCtrl.ObjType === "DataGrid") {
             try {
-                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)))) {
-                    depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
-                    depCtrl.__setSuggestionVals();
-                    wait = true;
+                if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
+                    if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)))) {
+                        depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
+                        depCtrl.__setSuggestionVals();
+                        wait = true;
+                    }
+                }
+                else {
+                    curCtrl.__isInitiallyPopulating = false;
+                    curCtrl.___DoNotUpdateDrDepCtrls = false;
                 }
             }
             catch (e) {

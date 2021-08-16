@@ -1239,8 +1239,9 @@
             console.log('value not changed: ' + Obj.Name);
         }
 
-        if (valChanged && this.isPsImportFlow(Obj)) {
+        if (valChanged && !this.FO.__fromImport && this.isPsImportFlow(Obj)) {
             console.log('Ps import flow: ' + Obj.Name);
+            this.FO.__fromImport = false;
             return;
         }
 

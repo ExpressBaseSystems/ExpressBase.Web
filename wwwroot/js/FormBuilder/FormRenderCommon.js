@@ -1030,7 +1030,7 @@
                         }
                         _ctrl.__filterControls.push(a[i]);
                     }
-                    else if (_ctrl.ObjType === "DataGrid") {
+                    else if (_ctrl.ObjType === "DataGrid" && this.FO.Mode.isNew) {
                         if (!DepHandleObj.DrPaths.includes(dd[j])) {
                             DepHandleObj.DrPaths.push(dd[j]);
                             DepHandleObj.DrCtrls.push(_ctrl);

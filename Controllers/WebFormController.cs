@@ -892,13 +892,13 @@ namespace ExpressBase.Web.Controllers
             return SCtrls;
         }
 
-        public string updateAllFormTables()
+        public string updateAllFormTables(string op)
         {
             if (ViewBag.wc == RoutingConstants.DC && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
             {
                 try
                 {
-                    UpdateAllFormTablesResponse r = this.ServiceClient.Post<UpdateAllFormTablesResponse>(new UpdateAllFormTablesRequest());
+                    UpdateAllFormTablesResponse r = this.ServiceClient.Post<UpdateAllFormTablesResponse>(new UpdateAllFormTablesRequest() { InMsg = op });
                     return r.Message;
                 }
                 catch (Exception e)

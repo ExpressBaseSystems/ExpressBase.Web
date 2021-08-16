@@ -1239,6 +1239,11 @@
             console.log('value not changed: ' + Obj.Name);
         }
 
+        if (valChanged && this.isPsImportFlow(Obj)) {
+            console.log('Ps import flow: ' + Obj.Name);
+            return;
+        }
+
         if (Obj.__defaultValExprExec) {
             console.log('default val expr: ' + Obj.Name);
             Obj.__defaultValExprExec = false;
@@ -1265,6 +1270,18 @@
 
         let DepHandleObj = this.GetDepHandleObj(Obj);
         this.ctrlChangeListener_inner0(DepHandleObj);
+    };
+
+    this.isPsImportFlow = function (ctrl) {
+        let b = !1;
+        if (ctrl.ObjType === 'PowerSelect' && (ctrl.DataImportId || (ctrl.IsImportFromApi && ctrl.ImportApiUrl)) && this.FO.Mode.isNew) {
+            if (!ctrl.___DoNotImport && !ctrl.isEmpty()) {
+                this.FO.psDataImport(ctrl);
+                b = !0;
+            }
+            ctrl.___DoNotImport = false;
+        }
+        return b;
     };
 
     this.ctrlChangeListener_inner0 = function (DepHandleObj) {

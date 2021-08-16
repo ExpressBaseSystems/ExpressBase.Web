@@ -2312,13 +2312,10 @@ const WebFormRender = function (option) {
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
         this.isInitiallyPopulating = false;
 
-        if (this.Mode.isNew) {
-            if (this.mode != "Clone Mode" && this.mode != "Draft Mode") // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
-                this.FRC.execAllDefaultValExpr();//exec default Value Expression 2nd
-        }
-        else {
+        if (this.Mode.isNew)
+            this.FRC.execAllDefaultValExpr();//exec default Value Expression 2nd
+        else
             this.FRC.execAllValExprForDoNotPersistCtrls();//================== exec Value Expression   2nd
-        }
 
         if (this.ReviewCtrl && (this.Mode.isNew || this.ReviewCtrl.Hidden))
             this.ReviewCtrlBuilder.hide();

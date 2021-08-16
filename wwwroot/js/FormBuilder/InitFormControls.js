@@ -383,12 +383,12 @@
 
                 if ($DDbScont.hasClass("dropup")) {
                     //$DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
-                    $DDbScont.offset({ top: $DDbScont.offset().top + 1});
+                    $DDbScont.offset({ top: $DDbScont.offset().top + 1 });
                     $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
                 }
                 else {
                     //$DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
-                    $DDbScont.offset({ top: $DDbScont.offset().top - 1});
+                    $DDbScont.offset({ top: $DDbScont.offset().top - 1 });
                     $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
                 }
 
@@ -702,11 +702,12 @@
             ctrl.initializer.Api.ajax.reload();
         };
 
-        ctrl.reloadWithParamAll = function (depCtrls) {
-            if (depCtrls) {
-                for (let i = 0; i < depCtrls.length; i++) {
-                    let val = depCtrls[i].getValue();
-                    let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl[i].Name);
+        ctrl.reloadWithParamAll = function () {
+            let a = ctrl.__filterControls;
+            if (a) {
+                for (let i = 0; i < a.length; i++) {
+                    let val = a[i].getValue();
+                    let filterObj = getObjByval(ctrl.__filterValues, "Name", a[i].Name);
                     filterObj.Value = val;
                 }
             }

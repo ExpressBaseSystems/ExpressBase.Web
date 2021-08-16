@@ -66,21 +66,21 @@
         this.execAllDefaultValExpr_Inner(CtrlPaths, Index, ExprName);
     };
 
-    this.execAllValExprForDoNotPersistCtrls = function () {
-        if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
-            console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
-            return;
-        }
-        this.execAllDefaultValExpr_Inner(this.FO.FormObj.DoNotPersistExecOrder, 0, 'ValueExpr');
-    };
+    //this.execAllValExprForDoNotPersistCtrls = function () {
+    //    if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
+    //        console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+    //        return;
+    //    }
+    //    this.execAllDefaultValExpr_Inner(this.FO.FormObj.DoNotPersistExecOrder, 0, 'ValueExpr');
+    //};
 
-    this.execAllDefaultValExpr = function () {
-        if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
-            console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
-            return;
-        }
-        this.execAllDefaultValExpr_Inner(this.FO.FormObj.DefaultValsExecOrder, 0, 'DefaultValueExpression');
-    };
+    //this.execAllDefaultValExpr = function () {
+    //    if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
+    //        console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
+    //        return;
+    //    }
+    //    this.execAllDefaultValExpr_Inner(this.FO.FormObj.DefaultValsExecOrder, 0, 'DefaultValueExpression');
+    //};
 
     this.execAllDefaultValExpr_Inner = function (CtrlPaths, Index, ExprName) {
 
@@ -992,9 +992,106 @@
 
     //#region SingleBinding - New
 
+    this.GetDepHandleObj_ForDefValExpr = function (CtrlPaths, ExprName) {
+        let DepHandleObj = {
+            curCtrl: {},
+            isInitSetup: true,
+            exprName: ExprName,
+            ValueP: [], ValueC: [],
+            DrPaths: [], DrCtrls: [],
+            HideP: [], HideC: [],
+            DisableP: [], DisableC: []
+        };
+
+        this.GetDepHandleObj_ForDefValExpr_inner(CtrlPaths, DepHandleObj, 'ValueP', 'ValueC');
+        let a = DepHandleObj.ValueC;
+        for (let i = 0; i < a.length; i++) {
+            a[i].__lockDependencyExec = true;
+        }
+
+        a = this.FO.flatControls;
+        for (let i = 0; i < a.length; i++) {
+            this.GetDepHandleObj_ForDefValExpr_inner(a[i].HiddenExpDependants, DepHandleObj, 'HideP', 'HideC');
+            this.GetDepHandleObj_ForDefValExpr_inner(a[i].DisableExpDependants, DepHandleObj, 'DisableP', 'DisableC');
+        }
+
+        if (!this.FO.__fromImport) {
+            for (let i = 0; i < a.length; i++) {
+                let dd = a[i].DrDependents.$values;
+                for (let j = 0; j < dd.length; j++) {
+                    let _ctrl = this.FO.formObject.__getCtrlByPath(dd[j]);
+                    if (_ctrl === 'not found')
+                        continue;
+                    if (_ctrl.ObjType === "TVcontrol") {
+                        if (!DepHandleObj.DrPaths.includes(dd[j])) {
+                            DepHandleObj.DrPaths.push(dd[j]);
+                            DepHandleObj.DrCtrls.push(_ctrl);
+                            _ctrl.__filterControls = [];
+                        }
+                        _ctrl.__filterControls.push(a[i]);
+                    }
+                    else if (_ctrl.ObjType === "DataGrid") {
+                        if (!DepHandleObj.DrPaths.includes(dd[j])) {
+                            DepHandleObj.DrPaths.push(dd[j]);
+                            DepHandleObj.DrCtrls.push(_ctrl);
+                        }
+                    }
+                }
+            }
+            if (ExprName === 'DefaultValueExpression') {
+                for (let i = 0; i < this.FO.DGs.length; i++) {
+                    if (this.FO.DGs[i].Eb__paramControls && this.FO.DGs[i].Eb__paramControls.$values.length === 0) {
+                        DepHandleObj.DrPaths.push('form.' + this.FO.DGs[i].Name);
+                        DepHandleObj.DrCtrls.push(this.FO.DGs[i]);
+                    }
+                }
+            }
+        }
+        this.FO.__fromImport = false;
+        return DepHandleObj;
+    };
+
+    this.GetDepHandleObj_ForDefValExpr_inner = function (ctrlPaths, DepHandleObj, prop1, prop2) {
+        if (ctrlPaths && ctrlPaths.$values) {
+            let a = ctrlPaths.$values;
+            for (let i = 0; i < a.length; i++) {
+                let ctrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (ctrl != 'not found') {
+                    DepHandleObj[prop1].push(a[i]);
+                    DepHandleObj[prop2].push(ctrl);
+                }
+            }
+        }
+    };
+
+    this.execAllValExprForDoNotPersistCtrls = function () {
+        if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
+            console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        let DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DoNotPersistExecOrder, 'ValueExpr');
+        this.ctrlChangeListener_inner0(DepHandleObj);
+    };
+
+    this.execAllDefaultValExpr = function () {
+        let DepHandleObj;
+        if (this.FO.mode != "Clone Mode" && this.FO.mode != "Draft Mode") { // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
+            if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
+                console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
+                return;
+            }
+            DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
+        }
+        else
+            DepHandleObj = this.GetDepHandleObj_ForDefValExpr();
+        this.ctrlChangeListener_inner0(DepHandleObj);
+    };
+
     this.GetDepHandleObj = function (curCtrl) {
         let DepHandleObj = {
             curCtrl: curCtrl,
+            isInitSetup: false,
+            exprName: 'ValueExpr',
             ValueP: [], ValueC: [],
             DrPaths: [], DrCtrls: [],
             HideP: [], HideC: [],
@@ -1167,16 +1264,19 @@
         }
 
         let DepHandleObj = this.GetDepHandleObj(Obj);
+        this.ctrlChangeListener_inner0(DepHandleObj);
+    };
 
-        if (DepHandleObj.ValueP.length > 0 && !Obj.___isNotUpdateValExpDepCtrls) {
-            Obj.__continue2 = this.ctrlChangeListener_inner1.bind(this, DepHandleObj);
+    this.ctrlChangeListener_inner0 = function (DepHandleObj) {
+        if (DepHandleObj.ValueP.length > 0 && !DepHandleObj.curCtrl.___isNotUpdateValExpDepCtrls) {
+            DepHandleObj.curCtrl.__continue2 = this.ctrlChangeListener_inner1.bind(this, DepHandleObj);
             this.UpdateDependency1(DepHandleObj);
         }
         else {
-            Obj.___isNotUpdateValExpDepCtrls = false;
+            DepHandleObj.curCtrl.___isNotUpdateValExpDepCtrls = false;
             this.ctrlChangeListener_inner1(DepHandleObj);
         }
-    }
+    };
 
     //val expr completed
     this.ctrlChangeListener_inner1 = function (DepHandleObj) {
@@ -1228,7 +1328,8 @@
                 EbMessage("show", { Message: `Failed to execute 'ReadOnlyExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
-
+        if (DepHandleObj.isInitSetup)
+            return;
         let chngFn = DepHandleObj.curCtrl.OnChangeFn;
         if (chngFn && chngFn.Code && chngFn.Code.trim() !== "") {
             try {
@@ -1264,17 +1365,17 @@
         let wait = false;
         depCtrl.__continue = null;
 
-        if (depCtrl.ValueExpr && depCtrl.ValueExpr.Code && depCtrl.ValueExpr.Lang === 0) {
+        if (depCtrl[DepHandleObj.exprName] && depCtrl[DepHandleObj.exprName].Code && depCtrl[DepHandleObj.exprName].Lang === 0) {
             let ValueExpr_val = null;
             try {
-                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
                 ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
             }
             catch (e) {
                 console.error(e);
-                EbMessage("show", { Message: `Failed to execute 'ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+                EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
-            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+            if (DepHandleObj.isInitSetup || this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                 // if persist - manual onchange only setValue. DoNotPersist always setValue
                 if (depCtrl.ObjType === 'PowerSelect') {
                     depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
@@ -1297,7 +1398,7 @@
             //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
 
         }
-        else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+        else if (depCtrl[DepHandleObj.exprName] && depCtrl[DepHandleObj.exprName].Lang === 2) {
             let filterValues = [];
             $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {
                 let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
@@ -1307,7 +1408,7 @@
             filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
             filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
             depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
-            this.ExecuteSqlValueExpr(depCtrl, filterValues, 0);
+            this.ExecuteSqlValueExpr(depCtrl, filterValues, DepHandleObj.exprName === 'ValueExpr' ? 0 : 1);
             wait = true;
         }
         if (!wait) {
@@ -1340,7 +1441,12 @@
         depCtrl.__continue = null;
 
         if (depCtrl.ObjType === "TVcontrol") {
-            depCtrl.reloadWithParam(curCtrl);
+            if (DepHandleObj.isInitSetup) {
+                depCtrl.reloadWithParamAll();
+            }
+            else {
+                depCtrl.reloadWithParam(curCtrl);
+            }
         }
         else if (depCtrl.ObjType === "PowerSelect") {
             if (depCtrl.initializer && (!depCtrl.IsDGCtrl || (depCtrl.IsDGCtrl && depCtrl.__DG.RowCount > 0))) {

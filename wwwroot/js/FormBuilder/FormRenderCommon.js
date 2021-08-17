@@ -1097,15 +1097,59 @@
             HideP: [], HideC: [],
             DisableP: [], DisableC: []
         };
-        this.DepHandleObj_create_rec(null, DepHandleObj);
+        this.DepHandleObj_create_rec(null, DepHandleObj, []);
         return DepHandleObj;
     };
 
-    this.DepHandleObj_create_rec = function (depCtrl, DepHandleObj) {
-        this.DepHandleObj_create_rec_inner(depCtrl, 'DependedValExp', DepHandleObj, 'ValueP', 'ValueC', true);
+    this.DepHandleObj_create_rec = function (depCtrl, DepHandleObj, predCtrls) {
+        this.DepHandleObj_create_rec_inner_dup(depCtrl, 'DependedValExp', DepHandleObj, 'ValueP', 'ValueC', predCtrls);
         this.DepHandleObj_create_rec_inner(depCtrl, 'DrDependents', DepHandleObj, 'DrPaths', 'DrCtrls', false);
         this.DepHandleObj_create_rec_inner(depCtrl, 'HiddenExpDependants', DepHandleObj, 'HideP', 'HideC', false);
         this.DepHandleObj_create_rec_inner(depCtrl, 'DisableExpDependants', DepHandleObj, 'DisableP', 'DisableC', false);
+    };
+
+    this.DepHandleObj_create_rec_inner_dup = function (depCtrl, Prop, DepHandleObj, prop1, prop2, predCtrls) {        
+        if (depCtrl === null)
+            depCtrl = DepHandleObj.curCtrl;
+
+        predCtrls.push(depCtrl.__path);//predecessors
+
+        if (depCtrl[Prop] && depCtrl[Prop].$values.length > 0) {
+            let a = depCtrl[Prop].$values;
+            for (let i = 0; i < a.length; i++) {
+                let nxtCtrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (nxtCtrl == 'not found')
+                    continue;
+                if (predCtrls.includes(a[i]))
+                    continue;
+                if (depCtrl.__path === a[i])
+                    continue;
+                nxtCtrl.__lockDependencyExec = false;
+                let indx = DepHandleObj[prop1].indexOf(a[i]);
+                if (indx >= 0) {
+                    let commindx = -1;
+                    for (let j = indx; j <= DepHandleObj[prop1].length; j++) {
+                        if (predCtrls.includes(DepHandleObj[prop1][j])) {
+                            commindx = j;
+                            break;
+                        }
+                    }
+                    if (commindx >= 0) {
+                        let arr1 = DepHandleObj[prop1].splice(indx, commindx - indx);
+                        let arr2 = DepHandleObj[prop2].splice(indx, commindx - indx);
+                        DepHandleObj[prop1] = DepHandleObj[prop1].concat(arr1);
+                        DepHandleObj[prop2] = DepHandleObj[prop2].concat(arr2);
+                    }
+                }
+                else {
+                    DepHandleObj[prop1].push(a[i]);
+                    DepHandleObj[prop2].push(nxtCtrl);
+                    if (!nxtCtrl.___isNotUpdateValExpDepCtrls)
+                        nxtCtrl.__lockDependencyExec = true;
+                    this.DepHandleObj_create_rec(nxtCtrl, DepHandleObj, predCtrls.slice(0));
+                }
+            }
+        }
     };
 
     this.DepHandleObj_create_rec_inner = function (depCtrl, Prop, DepHandleObj, prop1, prop2, rec) {

@@ -1056,7 +1056,7 @@
             let a = ctrlPaths.$values;
             for (let i = 0; i < a.length; i++) {
                 let ctrl = this.FO.formObject.__getCtrlByPath(a[i]);
-                if (ctrl != 'not found') {
+                if (ctrl != 'not found' && !DepHandleObj[prop1].includes(a[i])) {
                     DepHandleObj[prop1].push(a[i]);
                     DepHandleObj[prop2].push(ctrl);
                 }
@@ -1102,13 +1102,13 @@
     };
 
     this.DepHandleObj_create_rec = function (depCtrl, DepHandleObj, predCtrls) {
-        this.DepHandleObj_create_rec_inner_dup(depCtrl, 'DependedValExp', DepHandleObj, 'ValueP', 'ValueC', predCtrls);
+        this.DepHandleObj_create_inner_val(depCtrl, 'DependedValExp', DepHandleObj, 'ValueP', 'ValueC', predCtrls);
         this.DepHandleObj_create_rec_inner(depCtrl, 'DrDependents', DepHandleObj, 'DrPaths', 'DrCtrls', false);
-        this.DepHandleObj_create_rec_inner(depCtrl, 'HiddenExpDependants', DepHandleObj, 'HideP', 'HideC', false);
-        this.DepHandleObj_create_rec_inner(depCtrl, 'DisableExpDependants', DepHandleObj, 'DisableP', 'DisableC', false);
+        this.DepHandleObj_create_inner_HD(depCtrl, 'HiddenExpDependants', DepHandleObj, 'HideP', 'HideC');
+        this.DepHandleObj_create_inner_HD(depCtrl, 'DisableExpDependants', DepHandleObj, 'DisableP', 'DisableC');
     };
 
-    this.DepHandleObj_create_rec_inner_dup = function (depCtrl, Prop, DepHandleObj, prop1, prop2, predCtrls) {        
+    this.DepHandleObj_create_inner_val = function (depCtrl, Prop, DepHandleObj, prop1, prop2, predCtrls) {        
         if (depCtrl === null)
             depCtrl = DepHandleObj.curCtrl;
 
@@ -1147,6 +1147,19 @@
                     if (!nxtCtrl.___isNotUpdateValExpDepCtrls)
                         nxtCtrl.__lockDependencyExec = true;
                     this.DepHandleObj_create_rec(nxtCtrl, DepHandleObj, predCtrls.slice(0));
+                }
+            }
+        }
+    };
+
+    this.DepHandleObj_create_inner_HD = function (depCtrl, Prop, DepHandleObj, prop1, prop2) {
+        if (depCtrl[Prop] && depCtrl[Prop].$values.length > 0) {
+            let a = depCtrl[Prop].$values;
+            for (let i = 0; i < a.length; i++) {
+                let nxtCtrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (nxtCtrl != 'not found' && !DepHandleObj[prop1].includes(a[i])) {
+                    DepHandleObj[prop1].push(a[i]);
+                    DepHandleObj[prop2].push(nxtCtrl);
                 }
             }
         }

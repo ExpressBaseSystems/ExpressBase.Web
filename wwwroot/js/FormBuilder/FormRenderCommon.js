@@ -990,7 +990,7 @@
         EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);
     };
 
-    //#region SingleBinding - New
+    //#region SingleBinding - New ---------------------------------------------------
 
     this.GetDepHandleObj_ForDefValExpr = function (CtrlPaths, ExprName) {
         let DepHandleObj = {
@@ -1108,7 +1108,7 @@
         this.DepHandleObj_create_inner_HD(depCtrl, 'DisableExpDependants', DepHandleObj, 'DisableP', 'DisableC');
     };
 
-    this.DepHandleObj_create_inner_val = function (depCtrl, Prop, DepHandleObj, prop1, prop2, predCtrls) {        
+    this.DepHandleObj_create_inner_val = function (depCtrl, Prop, DepHandleObj, prop1, prop2, predCtrls) {
         if (depCtrl === null)
             depCtrl = DepHandleObj.curCtrl;
 
@@ -1294,9 +1294,6 @@
                 }
             }
         }
-        else {
-            console.log('value not changed: ' + Obj.Name);
-        }
 
         if (valChanged && !this.FO.__fromImport && this.isPsImportFlow(Obj)) {
             console.log('Ps import flow: ' + Obj.Name);
@@ -1325,6 +1322,11 @@
 
         if (Obj.__lockDependencyExec) {
             console.log('dependency execution blocked: ' + Obj.Name);
+            return;
+        }
+
+        if (!valChanged) {
+            console.log('value not changed: ' + Obj.Name);
             return;
         }
 

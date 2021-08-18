@@ -1153,6 +1153,8 @@
     };
 
     this.DepHandleObj_create_inner_HD = function (depCtrl, Prop, DepHandleObj, prop1, prop2) {
+        if (depCtrl === null)
+            depCtrl = DepHandleObj.curCtrl;
         if (depCtrl[Prop] && depCtrl[Prop].$values.length > 0) {
             let a = depCtrl[Prop].$values;
             for (let i = 0; i < a.length; i++) {

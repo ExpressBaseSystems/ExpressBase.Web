@@ -1296,37 +1296,37 @@
         }
 
         if (valChanged && !this.FO.__fromImport && this.isPsImportFlow(Obj)) {
-            console.log('Ps import flow: ' + Obj.Name);
+            //console.log('Ps import flow: ' + Obj.Name);
             this.FO.__fromImport = false;
             return;
         }
 
         if (Obj.__defaultValExprExec) {
-            console.log('default val expr: ' + Obj.Name);
+            //console.log('default val expr: ' + Obj.Name);
             Obj.__defaultValExprExec = false;
             Obj.___isNotUpdateValExpDepCtrls = false;
             return;
         }
 
         if (this.FO.isInitiallyPopulating) {
-            console.log('initial loading: ' + Obj.Name);
+            //console.log('initial loading: ' + Obj.Name);
             Obj.___isNotUpdateValExpDepCtrls = false;
             return;
         }
 
         if (Obj.___isNotUpdateValExpDepCtrls) {
-            console.log('should be from justsetvalue: ' + Obj.Name);
+            //console.log('should be from justsetvalue: ' + Obj.Name);
             Obj.___isNotUpdateValExpDepCtrls = false;
             return;
         }
 
         if (Obj.__lockDependencyExec) {
-            console.log('dependency execution blocked: ' + Obj.Name);
+            //console.log('dependency execution blocked: ' + Obj.Name);
             return;
         }
 
         if (!valChanged) {
-            console.log('value not changed: ' + Obj.Name);
+            //console.log('value not changed: ' + Obj.Name);
             return;
         }
 

@@ -264,7 +264,7 @@
             }
 
             // disble 
-            if (inpCtrl.IsDisable)
+            if (inpCtrl.IsDisable && !inpCtrl.Hidden)
                 inpCtrl.disable();
 
         }

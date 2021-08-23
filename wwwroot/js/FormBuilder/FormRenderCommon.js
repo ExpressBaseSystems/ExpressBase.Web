@@ -1226,17 +1226,19 @@
         let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)
         if (__this === undefined)
             __this = this.FO.formObject.__getCtrlByPath(Obj.__path);
-
+        let valChanged = false;
         if (__this.DataVals !== undefined) {
             let v = __this.getValueFromDOM();
             let d = __this.getDisplayMemberFromDOM();
             if (__this.ObjType === 'Numeric')
                 v = parseFloat(v);
             if (__this.__isEditing) {
+                valChanged = __this.curRowDataVals.Value != v;
                 __this.curRowDataVals.Value = v;
                 __this.curRowDataVals.D = d;
             }
             else {
+                valChanged = __this.DataVals.Value != v;
                 __this.DataVals.Value = v;
                 __this.DataVals.D = d;
 
@@ -1244,16 +1246,21 @@
                     ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
             }
         }
+        if (__this.___isNotUpdateValExpDepCtrls) {
+            __this.___isNotUpdateValExpDepCtrls = false;
+            return;
+        }
+        if (!valChanged)
+            return;
 
         let DepHandleObj = this.GetDepHandleObj(__this);
 
-        if (DepHandleObj.ValueP.length > 0 && !__this.___isNotUpdateValExpDepCtrls) {
+        if (DepHandleObj.ValueP.length > 0) {
             __this.__continue2 = this.ctrlChangeListener_inner1.bind(this, DepHandleObj);
             this.UpdateDependency1(DepHandleObj);
         }
         else {
             this.ctrlChangeListener_inner1(DepHandleObj);
-            __this.___isNotUpdateValExpDepCtrls = false;
         }
 
 

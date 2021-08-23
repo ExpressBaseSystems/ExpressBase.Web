@@ -63,7 +63,7 @@
                 let inpCtrl = new EbObjects_w[inpCtrlType](ctrlEbSid, col);// creates object
                 inpCtrl.__isEditing = false;
                 inpCtrl.DataVals = getObjByval(dataRow.Columns, "Name", col.Name);
-                inpCtrl.curRowDataVals = getObjByval(this.curRowDataMODEL.Columns, "Name", col.Name);
+                inpCtrl.curRowDataVals = JSON.parse(JSON.stringify(getObjByval(this.curRowDataMODEL.Columns, "Name", col.Name)));
                 inpCtrl.curRowDataVals = Object.assign(inpCtrl.curRowDataVals, inpCtrl.DataVals);
                 this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowId);
                 inpCtrl = this.attachFns(inpCtrl, col.ObjType);// attach getValue(), ... methods
@@ -195,7 +195,7 @@
         //if (!this.curRowObjectMODEL[this.colNames[0]].__isEditing)
         this.setcurRowDataMODELWithOldVals(rowId);
         this.changeEditFlagInRowCtrls(true, rowId);
-        
+
         let enabledUiInps = $tr.find("td [ui-inp]:enabled");
         if (enabledUiInps.length > 0)
             $(enabledUiInps[0]).select();
@@ -866,7 +866,7 @@
         {
             $.each(this.objectMODEL[rowid], function (i, ctrl) {
                 let $ctrl = $("#" + ctrl.EbSid_CtxId);
-                if (!this.isRequiredOK(ctrl) || !this.formRenderer.FRC.isValidationsOK(ctrl)|| !this.formRenderer.FRC.sysValidationsOK(ctrl)) {
+                if (!this.isRequiredOK(ctrl) || !this.formRenderer.FRC.isValidationsOK(ctrl) || !this.formRenderer.FRC.sysValidationsOK(ctrl)) {
                     required_valid_flag = false;
                     if (!$notOk1stCtrl)
                         $notOk1stCtrl = $ctrl;
@@ -961,7 +961,7 @@
                 return;
             this.confirmRow(rowId);
         }
-        
+
         if (this.isDGEditable()) {
             $tr.find(".edit-row").trigger("click");
             setTimeout(function () {
@@ -986,7 +986,7 @@
     //external + internal fn
     this.checkActiveRecord = function (e) {
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
-        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 && 
+        if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 &&
             $('.DDdiv:visible').length === 0 && $('.eb-ss-ddup:visible').length === 0 && $('.eb-ss-dd:visible').length === 0) {
             $activeTr.find('.check-row').trigger('click');
         }

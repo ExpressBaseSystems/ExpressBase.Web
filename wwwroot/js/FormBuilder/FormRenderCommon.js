@@ -507,6 +507,7 @@
                 this.FO.hideLoader();
                 val = JSON.parse(val);
                 if (val) {
+                    val.Value = this.getProcessedValue(ctrl, val.Value);
                     depCtrl.justSetValue(val.Value);
                     if (depCtrl.ObjType !== 'PowerSelect' && depCtrl.__continue) {
                         depCtrl.__continue();
@@ -1456,6 +1457,7 @@
             try {
                 let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
                 ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
             }
             catch (e) {
                 console.error(e);
@@ -1559,6 +1561,29 @@
             this.UpdateDependency2(DepHandleObj);
         }
     }.bind(this);
+
+    this.getProcessedValue = function (ctrl, value) {
+        if (value)
+            return value;
+        let _t = ctrl.EbDbType;
+        if (_t === 16 || _t === 0)
+            return '';
+        if (_t === 7 || _t === 8 || _t === 10 || _t === 11 || _t === 12)
+            return 0;
+        if (_t === 3 || _t === 30)
+            return false;
+        if (_t === 5 || _t === 6 || _t === 17) {
+            if (ctrl.IsNullable)
+                return null;
+            if (_t === 5)
+                return moment('0001-01-01').format('YYYY-MM-DD');
+            if (_t === 6)
+                return moment('0001-01-01 00:00:00').format('YYYY-MM-DD HH:mm:ss');
+            if (_t === 17)
+                return moment('00:00:00').format('HH:mm:ss');
+        }
+        return value;
+    };
 
     //#endregion SingleBinding
 };

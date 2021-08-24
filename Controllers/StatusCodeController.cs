@@ -31,11 +31,12 @@ namespace ExpressBase.Web.Controllers
         public StatusCodeController(IServiceClient _ssclient, IRedisClient _rc) : base(_ssclient, _rc) { }
 
         [HttpGet("/StatusCode/{statusCode}")]
-        public IActionResult Index(int statusCode)
+        public IActionResult Index(int statusCode, string m)
         {
-            var reExecute = HttpContext.Features.Get<IStatusCodeReExecuteFeature>(); 
             ViewBag.ErrorResponse = TempData["ErrorResp"] ?? "";// WebForm response object
+            Console.WriteLine("TempData ErrorResp: " + ViewBag.ErrorResponse);
             TempData.Remove("ErrorResp");
+            var reExecute = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
             return View(statusCode);
         }
     }

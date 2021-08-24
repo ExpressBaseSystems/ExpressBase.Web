@@ -1582,6 +1582,8 @@
             if (_t === 17)
                 return moment('00:00:00').format('HH:mm:ss');
         }
+        if (value === undefined)
+            return null;
         return value;
     };
 

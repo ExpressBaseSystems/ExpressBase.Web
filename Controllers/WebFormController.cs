@@ -45,7 +45,7 @@ namespace ExpressBase.Web.Controllers
             if (result.ErrorMessage != null)
             {
                 TempData["ErrorResp"] = GetFormattedErrMsg(result.ErrorMessage);
-                return Redirect(result.RedirectUrl);
+                return RedirectToAction("Index", "StatusCode", new { statusCode = result.ErrorCode, m = GetFormattedErrMsg(result.ErrorMessage, true) });
             }
             ViewBag.EbFormAndDataWrapper = resp;
             return View();
@@ -108,7 +108,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(t);
                 resp.Message = ex.Message;
                 resp.ErrorMessage = t;
-                resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.InternalServerError;
+                resp.ErrorCode = (int)HttpStatusCode.InternalServerError;
                 return JsonConvert.SerializeObject(resp);
             }
 
@@ -117,7 +117,7 @@ namespace ExpressBase.Web.Controllers
 
             ValidateRequest(resp, _mode, _locId, WebForm);
 
-            if (!_dataOnly && resp.RedirectUrl == null)
+            if (!_dataOnly && resp.ErrorCode == 0)
             {
                 if (_randomizeId)
                 {
@@ -134,7 +134,7 @@ namespace ExpressBase.Web.Controllers
                     Console.WriteLine(t);
                     resp.Message = ex.Message;
                     resp.ErrorMessage = t;
-                    resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.InternalServerError;
+                    resp.ErrorCode = (int)HttpStatusCode.InternalServerError;
                     return JsonConvert.SerializeObject(resp);
                 }
 
@@ -161,7 +161,7 @@ namespace ExpressBase.Web.Controllers
             {
                 resp.Message = wdr.Message;
                 resp.ErrorMessage = resp.FormDataWrap;
-                resp.RedirectUrl = "/StatusCode/" + wdr.Status;
+                resp.ErrorCode = wdr.Status;
             }
             else if (ViewBag.wc != TokenConstants.DC)
             {
@@ -180,7 +180,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         resp.Message = "Access denied.";
                         resp.ErrorMessage = $"Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: View/Edit";
-                        resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
+                        resp.ErrorCode = (int)HttpStatusCode.Unauthorized;
                     }
                 }
                 else
@@ -189,7 +189,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         resp.Message = "Access denied.";
                         resp.ErrorMessage = $"Access denied. RefId: {webForm.RefId}, DataId: {RowId}, LocId: {_locId}, Operation: New";
-                        resp.RedirectUrl = "/StatusCode/" + (int)HttpStatusCode.Unauthorized;
+                        resp.ErrorCode = (int)HttpStatusCode.Unauthorized;
                     }
                 }
             }
@@ -271,11 +271,13 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        private string GetFormattedErrMsg(string msg)
+        private string GetFormattedErrMsg(string msg, bool ConvertToB64 = false)
         {
             msg = msg.Replace("`", "");
-            int len = msg.Length > 300 ? 300 : msg.Length;
-            return msg.Substring(0, len).GraveAccentQuoted();
+            int len = msg.Length > 500 ? 500 : msg.Length;
+            if (!ConvertToB64)
+                return msg.Substring(0, len).GraveAccentQuoted();
+            return msg.Substring(0, len).ToBase64();
         }
 
         //[HttpGet("WebFormRender/{refId}/{_params}/{_mode}/{_locId}/{rendermode}")]

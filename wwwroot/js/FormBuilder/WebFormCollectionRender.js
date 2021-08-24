@@ -78,7 +78,7 @@ const WebFormCollectionRender = function (Option) {
             return;
         }
         let randomizeId = this.RenderCollection.findIndex(e => e.formRefId === refId) >= 0;
-        let dataOnly = this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 && randomizeId;
+        let dataOnly = this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 && !randomizeId;
 
         this.showSubFormLoader();
         $.ajax({
@@ -134,30 +134,38 @@ const WebFormCollectionRender = function (Option) {
         this.SetSubFormModal(cxt);
         this.showSubForm(cxt);
         this.CurrentSubForm = null;
-        let WebForm = new WebFormRender({
-            formObj: JSON.parse(_obj.formObj),
-            $formCont: $(`#subForm-cont${cxt}`),
-            headerBtns: this.GetSlaveHeaderBtns(cxt),
-            formRefId: _obj.formRefId,
-            mode: resp.Mode,
-            renderMode: 2,//Partial
-            rowId: resp.RowId,
-            draftId: resp.DraftId,
-            formData: (resp.DraftId > 0 ? JSON.parse(resp.Draft_FormData) : JSON.parse(resp.FormDataWrap).FormData),
-            userObject: ebcontext.user,
-            cid: ebcontext.sid,
-            env: ebcontext.env,
-            isPartial: false,
-            formPermissions: _obj.formPermissions,
-            headerObj: this.subFormHeaderObj,
-            formHTML: _obj.formHTML,
-            disableEditBtn: resp.DisableEditButton,
-            __MultiRenderCxt: cxt
-        });
-        WebForm.__MultiRenderUrl = resp.Url;
-        this.RenderCollection.push(WebForm);
-        this.CurrentSubForm = WebForm;
-        this.maximizeSubForm(cxt, 'e', false, true);
+        try {
+            let WebForm = new WebFormRender({
+                formObj: JSON.parse(_obj.formObj),
+                $formCont: $(`#subForm-cont${cxt}`),
+                headerBtns: this.GetSlaveHeaderBtns(cxt),
+                formRefId: _obj.formRefId,
+                mode: resp.Mode,
+                renderMode: 2,//Partial
+                rowId: resp.RowId,
+                draftId: resp.DraftId,
+                formData: (resp.DraftId > 0 ? JSON.parse(resp.Draft_FormData) : JSON.parse(resp.FormDataWrap).FormData),
+                userObject: ebcontext.user,
+                cid: ebcontext.sid,
+                env: ebcontext.env,
+                isPartial: false,
+                formPermissions: _obj.formPermissions,
+                headerObj: this.subFormHeaderObj,
+                formHTML: _obj.formHTML,
+                disableEditBtn: resp.DisableEditButton,
+                __MultiRenderCxt: cxt
+            });
+            WebForm.__MultiRenderUrl = resp.Url;
+            this.RenderCollection.push(WebForm);
+            this.CurrentSubForm = WebForm;
+            this.maximizeSubForm(cxt, 'e', false, true);
+        }
+        catch (e) {
+            EbMessage("show", { Message: '[F_ERR] Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+            console.error(e);
+            this.RenderCollection.push({ __MultiRenderCxt: cxt, Mode: { isEdit: false }, DISPOSE: function () { } });//DUMMY rendObj
+            this.hideSubForm(cxt);
+        }
     };
 
     this.GetSlaveHeaderBtns = function (cxt) {

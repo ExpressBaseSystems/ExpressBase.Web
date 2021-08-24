@@ -1095,13 +1095,13 @@ const WebFormRender = function (option) {
 
 
     this.SwitchToEditMode = function () {
+        if (!this.S2EmodeReviewCtrl()) // switch to Edit mode  - ReviewCtrl
+            return;
+
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;
         this.Mode.isNew = false;
-
-        if (!this.S2EmodeReviewCtrl()) // switch to Edit mode  - ReviewCtrl
-            return;
 
         this.S2EmodeDGCtrls();// switch to Edit mode  - all DG controls
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);

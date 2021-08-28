@@ -661,7 +661,12 @@
                     let val = '';
                     let ebDbType = 11;
                     let name = "";
-                    if (depCtrl_s === "form.eb_loc_id") {
+                    if (depCtrl != 'not found') {
+                        val = depCtrl.getValue();
+                        name = depCtrl.Name;
+                        ebDbType = depCtrl.EbDbType;
+                    }
+                    else if (depCtrl_s === "form.eb_loc_id") {
                         val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
                         name = "eb_loc_id";
                     }
@@ -676,11 +681,6 @@
                     else if (this.Renderer.FormObj && depCtrl_s == `form.${this.Renderer.FormObj.TableName}_id`) {// in bot FormObj=undefined
                         val = this.Renderer.rowId;
                         name = this.Renderer.FormObj.TableName + "_id";
-                    }
-                    else {
-                        val = depCtrl.getValue();
-                        name = depCtrl.Name;
-                        ebDbType = depCtrl.EbDbType;
                     }
 
                     ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));

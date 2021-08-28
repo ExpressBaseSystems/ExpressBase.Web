@@ -997,6 +997,8 @@
             return;
         if ($(e.target).hasClass('rowc'))
             return;
+        if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
+            return;
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
         let $tr = $(e.currentTarget);

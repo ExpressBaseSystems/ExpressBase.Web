@@ -794,11 +794,12 @@
             }.bind(this))
 
             $el.attr("data-content", content.replace(/, \s*$/, ""));
+            let root_cont_id = $el.closest('[eb-root-obj-container]').attr('id');
             if ($el.attr('set-hover') !== 'true') {
                 $el.popover({
                     trigger: 'hover',
                     html: true,
-                    container: "body [eb-root-obj-container]:first"
+                    container: '#' + root_cont_id
                 });
                 $el.attr('set-hover', 'true');
             }

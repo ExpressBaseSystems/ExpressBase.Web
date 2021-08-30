@@ -667,7 +667,20 @@
                         ebDbType = depCtrl.EbDbType;
                     }
                     else if (depCtrl_s === "form.eb_loc_id") {
-                        val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                        if (this.Renderer.rendererName === 'WebForm' && this.Renderer.rowId > 0) {
+                            let provLocCtrls = getFlatObjOfType(this.Renderer.FormObj, "ProvisionLocation");
+                            if (provLocCtrls.length > 0)
+                                val = provLocCtrls[0].getValue();
+                            else {
+                                let Table = this.Renderer.DataMODEL[this.Renderer.FormObj.TableName];
+                                if (Table && Table.length > 0)
+                                    val = Table[0].LocId;
+                                else
+                                    val = 0;
+                            }
+                        }
+                        else
+                            val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 0;
                         name = "eb_loc_id";
                     }
                     else if (depCtrl_s === "form.eb_currentuser_id") {

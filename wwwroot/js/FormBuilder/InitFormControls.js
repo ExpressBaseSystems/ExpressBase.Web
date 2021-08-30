@@ -661,7 +661,7 @@
                     let val = '';
                     let ebDbType = 11;
                     let name = "";
-                    if (depCtrl != 'not found') {
+                    if (depCtrl && depCtrl != 'not found') {
                         val = depCtrl.getValue();
                         name = depCtrl.Name;
                         ebDbType = depCtrl.EbDbType;

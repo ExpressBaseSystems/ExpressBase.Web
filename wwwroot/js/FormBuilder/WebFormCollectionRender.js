@@ -11,12 +11,13 @@
 
 const WebFormCollectionRender = function (Option) {
     this.RenderCollection = [];//renderer collection
-    this.RenderCounter = 0;
+    this.RenderCounter = 1;
     this.ObjectCollection = [];
     this.MasterHeader = null;
     this.IsMasterAvail = false;
     this.CurrentSubForm = null;//critical - must updated on each event
     this.LastResponse = {};//for debugging
+    this.InterContextObj = [];//inter form communication (eg: export btn save -> tv refresh)
 
     this.Init = function (Op) {
         if (Op === null) return;
@@ -48,7 +49,8 @@ const WebFormCollectionRender = function (Option) {
                 formPermissions: Op._formPermissions,
                 headerObj: this.MasterHeader,
                 formHTML: Op._formHTML,
-                disableEditBtn: Op._disableEditButton
+                disableEditBtn: Op._disableEditButton,
+                __MultiRenderCxt: this.RenderCounter++
             };
 
             let WebForm = new WebFormRender(_options);
@@ -72,7 +74,7 @@ const WebFormCollectionRender = function (Option) {
         $(window).off("keydown").on("keydown", this.windowKeyDownListener);
     };
 
-    this.PopupForm = function (refId, params, mode) {
+    this.PopupForm = function (refId, params, mode, options) {
         if (!refId) {
             console.error('Invalid refId for popup form');
             return;
@@ -97,11 +99,11 @@ const WebFormCollectionRender = function (Option) {
                 this.hideSubFormLoader();
                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
             }.bind(this),
-            success: this.GetFormForRenderingSuccess.bind(this, dataOnly, randomizeId)
+            success: this.GetFormForRenderingSuccess.bind(this, dataOnly, randomizeId, options)
         });
     };
 
-    this.GetFormForRenderingSuccess = function (dataOnly, randomizeId, result) {
+    this.GetFormForRenderingSuccess = function (dataOnly, randomizeId, options, result) {
         this.hideSubFormLoader();
         let resp = JSON.parse(result);
         this.LastResponse = resp;
@@ -159,6 +161,7 @@ const WebFormCollectionRender = function (Option) {
             this.RenderCollection.push(WebForm);
             this.CurrentSubForm = WebForm;
             this.maximizeSubForm(cxt, 'e', false, true);
+            this.TryToAddInterCxtObj(options, cxt);
         }
         catch (e) {
             EbMessage("show", { Message: '[F_ERR] Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
@@ -215,6 +218,7 @@ const WebFormCollectionRender = function (Option) {
                 renObj.DISPOSE();
                 $(`#subFormModal${cxt}`).remove();
                 this.RenderCollection.splice(renIdx, 1);
+                this.refreshRelatedForm(cxt);
             }
             if (this.RenderCollection.length === 0 || (renIdx === 1 && this.IsMasterAvail))
                 this.CurrentSubForm = null;
@@ -412,7 +416,39 @@ const WebFormCollectionRender = function (Option) {
         }
     };
 
-    //#region EXTERNAL_Functions
+    this.TryToAddInterCxtObj = function (options, destCxt) {
+        if (options && options.srcCxt && options.initiator) {
+            this.InterContextObj.push({
+                SourceCxt: options.srcCxt,
+                DestCxt: destCxt,
+                Initiator: options.initiator,
+                ChangeDetected: false
+            });
+        }
+    };
+
+    this.refreshRelatedForm = function (cxt) {
+        let x = this.InterContextObj.find(e => e.DestCxt === cxt);
+        if (!x || !x.ChangeDetected)
+            return;
+        let srcRen = this.RenderCollection.find(e => e.__MultiRenderCxt === x.SourceCxt);
+        if (!srcRen)
+            return;
+        if (x.Initiator.ObjType === 'ExportButton') {
+            let tvCtrls = getFlatObjOfType(srcRen.FormObj, "TVcontrol");
+            for (let i = 0; i < tvCtrls.length; i++) {
+                if (!tvCtrls[i].AssocCtrls || tvCtrls[i].AssocCtrls.$values.length === 0)
+                    continue;
+                let a = tvCtrls[i].AssocCtrls.$values;
+                for (let j = 0; j < a.length; j++) {
+                    if (a[j].ControlName && a[j].ControlName === x.Initiator.Name)
+                        tvCtrls[i].reloadWithParamAll();
+                }
+            }
+        }
+    };
+
+    //#region EXTERNAL_Functions ##############
 
     this.SetPopupFormTitle = function (title, mode, html) {
         title = title + `<span mode="${mode}" class="fmode">${mode}</span>` + html;
@@ -454,7 +490,13 @@ const WebFormCollectionRender = function (Option) {
         }
     };
 
-    //#endregion EXTERNAL_Functions
+    this.UpdateInterCxtObj = function (destCxt) {
+        let x = this.InterContextObj.find(e => e.DestCxt === destCxt);
+        if (x)
+            x.ChangeDetected = true;
+    }.bind(this);
+
+    //#endregion EXTERNAL_Functions #############
 
     this.Init(Option);
 }

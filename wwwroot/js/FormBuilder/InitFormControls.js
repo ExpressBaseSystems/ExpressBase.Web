@@ -1091,7 +1091,7 @@
                 window.open(url, '_blank');
             }
             else {
-                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7);
+                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl });
             }
         }.bind(this);
     };
@@ -1260,7 +1260,7 @@
         //}
         //$("#iFrameForm").attr("src", url);
 
-        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0);
+        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl });
     };
 
     this.SysLocation = function (ctrl) {

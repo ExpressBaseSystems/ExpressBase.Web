@@ -619,6 +619,8 @@ const WebFormRender = function (option) {
             this.renderInAfterSaveMode(respObj);
 
             this.curAfterSavemodeS = this.defaultAfterSavemodeS;
+
+            ebcontext.webform.UpdateInterCxtObj(this.__MultiRenderCxt);
         }
         else {
             EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });

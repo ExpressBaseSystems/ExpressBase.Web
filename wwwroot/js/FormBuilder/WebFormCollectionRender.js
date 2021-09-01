@@ -446,6 +446,9 @@ const WebFormCollectionRender = function (Option) {
                 }
             }
         }
+        else if (x.Initiator.ObjType === 'PowerSelect') {
+            x.Initiator.DDrefresh();
+        }
     };
 
     //#region EXTERNAL_Functions ##############

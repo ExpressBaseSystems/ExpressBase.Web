@@ -1810,7 +1810,7 @@
             if (vms.length > 0) {
                 let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
                 if (psctrl.OpenInNewTab) {
-                    let url = `../WebForm/Index?_r=${psctrl.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.CurrentLoc}`;
+                    let url = `../WebForm/Index?_r=${psctrl.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}`;
                     window.open(url, '_blank');
                 }
                 else

@@ -1493,7 +1493,7 @@
                 let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                 filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
             }.bind(this));
-            filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
+            filterValues.push(new fltr_obj(11, "eb_loc_id", this.FO.getLocId()));
             filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
             filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
             depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);

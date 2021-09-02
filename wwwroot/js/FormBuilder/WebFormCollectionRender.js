@@ -7,6 +7,7 @@
         ebcontext.webform = new WebFormCollectionRender(null);
         ebcontext.webform.Init(Option);
     }
+    ebcontext.webform.locationInit();
 };
 
 const WebFormCollectionRender = function (Option) {
@@ -450,6 +451,24 @@ const WebFormCollectionRender = function (Option) {
             x.Initiator.DDrefresh();
         }
     };
+
+    this.locationInit = function () {
+        if (ebcontext.locations.Listener) {
+            ebcontext.locations.Listener.ChangeLocation = function (o) {
+                let a = this.RenderCollection;
+                for (let i = 0; i < a.length; i++) {
+                    if (a[i].rowId <= 0 && !a[i].FormObj.IsLocIndependent) {
+                        let sysLocCtrls = getFlatObjOfType(a[i].FormObj, "SysLocation");
+                        $.each(sysLocCtrls, function (i, ctrl) {
+                            let oldLocId = ctrl.getValue();
+                            if (oldLocId !== o.LocId)
+                                ctrl.setValue(o.LocId);
+                        }.bind(this));
+                    }
+                }
+            }.bind(this);
+        }
+    }.bind(this);
 
     //#region EXTERNAL_Functions ##############
 

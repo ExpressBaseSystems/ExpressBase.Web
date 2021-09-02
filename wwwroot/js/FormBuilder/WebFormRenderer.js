@@ -601,7 +601,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "My profile updated successfully", AutoHide: true, Background: '#00aa00', Delay: 3000 });
             }
             else {
-                let locName = ebcontext.locations.CurrentLocObj.LongName;
+                let locName = this.getLocObj().LongName;
                 let formName = this.FormObj.DisplayName;
                 if (this.rowId > 0)
                     EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00', Delay: 3000 });
@@ -691,14 +691,14 @@ const WebFormRender = function (option) {
         if (this.renderMode === 1) {
             let stateObj = { id: rowId };
             if (rowId > 0) {
-                let _url = `Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_m=${this.isPartial === 'True' ? 11 : 1}&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
+                let _url = `Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_m=${this.isPartial === 'True' ? 11 : 1}&_l=${this.getLocId()}`;
                 //if (this.rowId > 0)
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
                 //else
                 //    window.history.pushState(stateObj, this.FormObj.DisplayName, _url);
             }
             else {
-                let _url = `Index?_r=${this.formRefId}&_m=${this.isPartial === 'True' ? 12 : 2}&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
+                let _url = `Index?_r=${this.formRefId}&_m=${this.isPartial === 'True' ? 12 : 2}&_l=${this.getLocId()}`;
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
             }
         }
@@ -892,7 +892,7 @@ const WebFormRender = function (option) {
     this.cloneForm = function () {
         let params = [];
         params.push(new fltr_obj(11, "srcRowId", this.rowId));
-        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=9&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
+        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=9&_l=${this.getLocId()}`;
         window.open(url, '_blank');
     };
 
@@ -900,7 +900,7 @@ const WebFormRender = function (option) {
         if (this.formData.SrcDataId > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.formData.SrcDataId));
-            let url = `&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.CurrentLocObj.LocId}`;
+            let url = `&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}`;
             if (this.formData.SrcRefId?.length > 0)
                 url = `../WebForm/Index?_r=${this.formData.SrcRefId}${url}`;
             else if (this.formData.SrcVerId > 0)
@@ -946,7 +946,6 @@ const WebFormRender = function (option) {
 
     this.saveAsDraft = function () {
         this.showLoader();
-        let currentLoc = ebcontext.locations.getCurrent();
         $.ajax({
             type: "POST",
             url: "/WebForm/SaveFormDraft",
@@ -954,7 +953,7 @@ const WebFormRender = function (option) {
                 RefId: this.formRefId,
                 DraftId: this.draftId,
                 Json: JSON.stringify(this.formData),
-                CurrentLoc: currentLoc
+                CurrentLoc: this.getLocId()
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
@@ -966,7 +965,6 @@ const WebFormRender = function (option) {
 
     this.saveForm_call = function () {
         this.showLoader();
-        let currentLoc = ebcontext.locations.getCurrent();
         $.ajax({
             type: "POST",
             url: "/WebForm/InsertWebformData",
@@ -975,7 +973,7 @@ const WebFormRender = function (option) {
                 RefId: this.formRefId,
                 RowId: this.rowId,
                 DraftId: this.draftId,
-                CurrentLoc: currentLoc,
+                CurrentLoc: this.getLocId(),
                 sseChannel: this.sseChannel,
                 sse_subscrId: ebcontext.subscription_id
             },
@@ -1175,7 +1173,6 @@ const WebFormRender = function (option) {
     };
 
     this.deleteForm = function () {
-        let currentLoc = ebcontext.locations.getCurrent();
         EbDialog("show",
             {
                 Message: "Are you sure to delete this data entry?",
@@ -1189,7 +1186,7 @@ const WebFormRender = function (option) {
                         $.ajax({
                             type: "POST",
                             url: "/WebForm/DeleteWebformData",
-                            data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
+                            data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: this.getLocId() },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
                                 this.hideLoader();
@@ -1197,7 +1194,7 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00', Delay: 3000 });
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + this.getLocObj().LongName, AutoHide: true, Background: '#00aa00', Delay: 3000 });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
@@ -1238,7 +1235,7 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + this.getLocObj().LongName, AutoHide: true, Background: '#00aa00', Delay: 4000 });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
@@ -1258,7 +1255,6 @@ const WebFormRender = function (option) {
     };
 
     this.cancelForm = function () {
-        let currentLoc = ebcontext.locations.getCurrent();
         EbDialog("show",
             {
                 Message: `Are you sure to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel'} this data entry?`,
@@ -1275,7 +1271,7 @@ const WebFormRender = function (option) {
                             data: {
                                 RefId: this.formRefId,
                                 RowId: this.rowId,
-                                CurrentLoc: currentLoc,
+                                CurrentLoc: this.getLocId(),
                                 Cancel: !this.formData.IsCancelled
                             },
                             error: function (xhr, ajaxOptions, thrownError) {
@@ -1285,7 +1281,7 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Cancellation Revoked' : 'Canceled'} ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
+                                    EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Cancellation Revoked' : 'Canceled'} ${this.FormObj.DisplayName} entry from ${this.getLocObj().LongName}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
                                     this.formData.IsCancelled = !this.formData.IsCancelled;
                                     this.setHeader(this.mode);
                                 }
@@ -1306,7 +1302,6 @@ const WebFormRender = function (option) {
     };
 
     this.lockUnlockForm = function () {
-        let currentLoc = ebcontext.locations.getCurrent();
         EbDialog("show",
             {
                 Message: `Are you sure to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this data entry?`,
@@ -1323,7 +1318,7 @@ const WebFormRender = function (option) {
                             data: {
                                 RefId: this.formRefId,
                                 RowId: this.rowId,
-                                CurrentLoc: currentLoc,
+                                CurrentLoc: this.getLocId(),
                                 Lock: !this.formData.IsLocked
                             },
                             error: function (xhr, ajaxOptions, thrownError) {
@@ -1334,7 +1329,7 @@ const WebFormRender = function (option) {
                                 this.hideLoader();
                                 if (result > 0) {
                                     this.formData.IsLocked = !this.formData.IsLocked;
-                                    EbMessage("show", { Message: `${this.formData.IsLocked ? 'Locked' : 'Unlocked'} ${this.FormObj.DisplayName} entry from ${ebcontext.locations.CurrentLocObj.LongName}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
+                                    EbMessage("show", { Message: `${this.formData.IsLocked ? 'Locked' : 'Unlocked'} ${this.FormObj.DisplayName} entry from ${this.getLocObj().LongName}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
                                     this.setHeader(this.mode);
                                 }
                                 else if (result === -1) {
@@ -1354,7 +1349,6 @@ const WebFormRender = function (option) {
     };
 
     this.GetAuditTrail = function () {
-        let currentLoc = ebcontext.locations.getCurrent();
         $("#AuditHistoryModal .modal-title").text("Audit Trail - " + this.FormObj.DisplayName);
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
@@ -1362,7 +1356,7 @@ const WebFormRender = function (option) {
         $.ajax({
             type: "POST",
             url: "/WebForm/GetAuditTrail",
-            data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: currentLoc },
+            data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: this.getLocId() },
             error: function () {
                 $("#divAuditTrail").children().remove();
                 $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something unexpected occured </div>`);
@@ -1547,6 +1541,22 @@ const WebFormRender = function (option) {
             $("#eb_common_loader").EbLoader("hide");
     };
 
+    this.getLocId = function () {
+        let d = this.DataMODEL;
+        let t = this.FormObj.TableName;
+        if (this.rowId > 0 && d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+            return d[t][0].LocId;
+        else
+            return ebcontext.locations.getCurrent();
+    };
+
+    this.getLocObj = function () {
+        let locObj = getObjByval(ebcontext.locations.Locations, "LocId", this.getLocId());
+        if (locObj)
+            return locObj;
+        return ebcontext.locations.CurrentLocObj;//
+    };
+
     this.windowKeyDown = function (event) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {// ctrl+S -> save
@@ -1710,7 +1720,7 @@ const WebFormRender = function (option) {
                 type: "POST",
                 url: "/WebForm/GetPushedDataInfo",
                 data: {
-                    RefId: this.formRefId, RowId: this.rowId, CurrentLoc: ebcontext.locations.getCurrent()
+                    RefId: this.formRefId, RowId: this.rowId, CurrentLoc: this.getLocId()
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     $(`#${this.hBtns['Dependent']}-div`).html(contentFn('error'));
@@ -1789,7 +1799,7 @@ const WebFormRender = function (option) {
     };
 
     this.AdjustBtnsVisibility = function (reqstMode) {
-        let currentLoc = ebcontext.locations.getCurrent();
+        let currentLoc = this.getLocId();
         let _html = '';
         this.headerObj.hideElement([this.hBtns['SaveSel'], this.hBtns['New'], this.hBtns['Edit'], this.hBtns['Delete'], this.hBtns['Cancel'], this.hBtns['AuditTrail'], this.hBtns['PrintSel'], this.hBtns['Clone'], this.hBtns['ExcelSel'], this.hBtns['OpenSrc'], this.hBtns['Lock'], this.hBtns['Dependent'], this.hBtns['Discard'], this.hBtns['DraftSave'], this.hBtns['DraftDelete']]);
 
@@ -1921,7 +1931,7 @@ const WebFormRender = function (option) {
 
     this.initSaveMenu = function () {
         let $sel = $(`#${this.hBtns['SaveSel']} .selectpicker`);
-        let loc = ebcontext.locations.getCurrent();
+        let loc = this.getLocId();
         if (this.formPermissions[loc].includes(0) && !this.FormObj.IsDisable)
             $sel.append(`<option data-token="new" data-title="Save and new">Save & New</option>`);
         if (this.formPermissions[loc].includes(2) || (this.formPermissions[loc].includes(8) && this.formData.CreatedBy === this.userObject.UserId))
@@ -1941,69 +1951,82 @@ const WebFormRender = function (option) {
         $sel.selectpicker();
     };
 
-    this.LocationInit = function () {
-        if (ebcontext.locations.Listener && !this.FormObj.IsLocIndependent) {
-            ebcontext.locations.Listener.ChangeLocation = function (o) {
-                if (this.rowId > 0) {
-                    if (this.renderMode !== 4) {
-                        EbDialog("show", {
-                            Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                            Buttons: {
-                                "Ok": {
-                                    Background: "green",
-                                    Align: "right",
-                                    FontColor: "white;"
-                                }
-                            },
-                            CallBack: function (name) {
-                                this.startNewMode();
-                            }.bind(this)
-                        });
-                    }
-                }
-                else {
-                    let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
-                    $.each(sysLocCtrls, function (i, ctrl) {
-                        let oldLocId = ctrl.getValue();
-                        if (oldLocId !== o.LocId)
-                            ctrl.setValue(o.LocId);
-                    }.bind(this));
-                }
-            }.bind(this);
-        }
-    };
+    //this.LocationInit = function () {
+    //    if (ebcontext.locations.Listener && !this.FormObj.IsLocIndependent) {
+    //        ebcontext.locations.Listener.ChangeLocation = function (o) {
+    //            if (this.rowId > 0) {
+    //                if (this.renderMode !== 4) {
+    //                    EbDialog("show", {
+    //                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+    //                        Buttons: {
+    //                            "Ok": { Background: "green", Align: "right", FontColor: "white;" }
+    //                        },
+    //                        CallBack: function (name) {
+    //                            this.startNewMode();
+    //                        }.bind(this)
+    //                    });
+    //                }
+    //            }
+    //            else {
+    //                let sysLocCtrls = getFlatObjOfType(this.FormObj, "SysLocation");
+    //                $.each(sysLocCtrls, function (i, ctrl) {
+    //                    let oldLocId = ctrl.getValue();
+    //                    if (oldLocId !== o.LocId)
+    //                        ctrl.setValue(o.LocId);
+    //                }.bind(this));
+    //            }
+    //        }.bind(this);
+    //    }
+    //};
 
     this.locInit4viewMode = function () {
         if (this.FormObj.IsLocIndependent)
             return;
 
-        let ol = ebcontext.locations.getCurrent().toString();
-        let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
-        if (ol !== nl) {
-            let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
-            let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
-            if (typeof nwlocO === "undefined") {
-                console.error("Unknown location id found. LocId = " + nl);
-                EbDialog("show", {
-                    Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
-                    Buttons: {
-                        "Ok": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: function (name) {
-                        this.startNewMode();
-                    }.bind(this)
-                });
-            }
-            else {
-                EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
-                ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                this.setHeader(this.mode);
-            }
+        let locId = this.getLocId();
+        let locObj = null;
+        if (locId)
+            locObj = getObjByval(ebcontext.locations.Locations, "LocId", locId);
+        if (!locObj) {
+            console.error("Unknown location id found. LocId = " + locId);
+            EbDialog("show", {
+                Message: "This data is no longer available. Redirecting to new mode...",
+                Buttons: {
+                    "Ok": { Background: "green", Align: "right", FontColor: "white;" }
+                },
+                CallBack: function (name) {
+                    this.startNewMode();
+                }.bind(this)
+            });
         }
+
+        //let ol = ebcontext.locations.getCurrent().toString();
+        //let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
+        //if (ol !== nl) {
+        //    let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
+        //    let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
+        //    if (typeof nwlocO === "undefined") {
+        //        console.error("Unknown location id found. LocId = " + nl);
+        //        EbDialog("show", {
+        //            Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
+        //            Buttons: {
+        //                "Ok": {
+        //                    Background: "green",
+        //                    Align: "right",
+        //                    FontColor: "white;"
+        //                }
+        //            },
+        //            CallBack: function (name) {
+        //                this.startNewMode();
+        //            }.bind(this)
+        //        });
+        //    }
+        //    else {
+        //        EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+        //        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+        //        this.setHeader(this.mode);
+        //    }
+        //}
     };
 
 
@@ -2061,11 +2084,11 @@ const WebFormRender = function (option) {
     this.OpenInNewTab = function () {
         let url = this.__MultiRenderUrl;
         if (!url)
-            url = `../WebForm/Index?_r=${this.formRefId}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            url = `../WebForm/Index?_r=${this.formRefId}&_m=1&_l=${this.getLocId()}`;
         if (this.rowId > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.rowId));
-            url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}`;
         }
         window.open(url, '_blank');
     };
@@ -2330,7 +2353,7 @@ const WebFormRender = function (option) {
             this.SwitchToEditMode();
         }
 
-        this.LocationInit();
+        //this.LocationInit();
 
         //console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
 

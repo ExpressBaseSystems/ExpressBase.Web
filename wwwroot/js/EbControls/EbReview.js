@@ -150,7 +150,7 @@
                 Data: this.getDATAMODEL(),
                 RefId: this.formRenderer.formRefId,
                 RowId: this.formRenderer.rowId,
-                CurrentLoc: ebcontext.locations.getCurrent()
+                CurrentLoc: this.formRenderer.getLocId()
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.formRenderer.hideLoader();

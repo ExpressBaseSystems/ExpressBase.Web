@@ -661,8 +661,26 @@
                     let val = '';
                     let ebDbType = 11;
                     let name = "";
-                    if (depCtrl_s === "form.eb_loc_id") {
-                        val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                    if (depCtrl && depCtrl != 'not found') {
+                        val = depCtrl.getValue();
+                        name = depCtrl.Name;
+                        ebDbType = depCtrl.EbDbType;
+                    }
+                    else if (depCtrl_s === "form.eb_loc_id") {
+                        if (this.Renderer.rendererName === 'WebForm' && this.Renderer.rowId > 0) {
+                            let provLocCtrls = getFlatObjOfType(this.Renderer.FormObj, "ProvisionLocation");
+                            if (provLocCtrls.length > 0)
+                                val = provLocCtrls[0].getValue();
+                            else {
+                                let Table = this.Renderer.DataMODEL[this.Renderer.FormObj.TableName];
+                                if (Table && Table.length > 0)
+                                    val = Table[0].LocId;
+                                else
+                                    val = 0;
+                            }
+                        }
+                        else
+                            val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 0;
                         name = "eb_loc_id";
                     }
                     else if (depCtrl_s === "form.eb_currentuser_id") {
@@ -676,11 +694,6 @@
                     else if (this.Renderer.FormObj && depCtrl_s == `form.${this.Renderer.FormObj.TableName}_id`) {// in bot FormObj=undefined
                         val = this.Renderer.rowId;
                         name = this.Renderer.FormObj.TableName + "_id";
-                    }
-                    else {
-                        val = depCtrl.getValue();
-                        name = depCtrl.Name;
-                        ebDbType = depCtrl.EbDbType;
                     }
 
                     ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
@@ -1078,7 +1091,7 @@
                 window.open(url, '_blank');
             }
             else {
-                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7);
+                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl });
             }
         }.bind(this);
     };
@@ -1247,7 +1260,7 @@
         //}
         //$("#iFrameForm").attr("src", url);
 
-        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0);
+        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl });
     };
 
     this.SysLocation = function (ctrl) {

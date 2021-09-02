@@ -1545,7 +1545,7 @@ const WebFormRender = function (option) {
         let d = this.DataMODEL;
         let t = this.FormObj.TableName;
         let p = this.ProvLocCtrls;
-        if (this.rowId > 0 && p && p.length > 0 && p[0].getValue() > 0)
+        if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
             return p[0].getValue();
         else if (this.rowId > 0 && d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
             return d[t][0].LocId;

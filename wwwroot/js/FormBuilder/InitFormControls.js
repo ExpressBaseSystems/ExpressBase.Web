@@ -463,7 +463,7 @@
                 $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             else if (ebcontext.user.wc === "uc") {
                 if (ctrl.LoadCurrentLocation)
-                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.CurrentLocObj.LocId + ']').trigger('click');
+                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.getCurrent() + ']').trigger('click');
                 else
                     $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             }
@@ -526,7 +526,7 @@
             $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
             if (ebcontext.user.wc === "uc") {
                 if (ctrl.LoadCurrentLocation)
-                    $('#' + ctrl.EbSid_CtxId).find('[data-id=' + ebcontext.locations.CurrentLocObj.LocId + '] .sim-tree-checkbox').eq(0).trigger('click');
+                    $('#' + ctrl.EbSid_CtxId).find('[data-id=' + ebcontext.locations.getCurrent() + '] .sim-tree-checkbox').eq(0).trigger('click');
             }
         }
         ctrl.DataVals.Value = ctrl.getValueFromDOM();
@@ -782,7 +782,7 @@
                 $input.children("[name=date]").hide();
                 $input.children("[name=year]").hide();
             }
-            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly" ) {
+            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly") {
                 $input.children("[name=year]").show();
                 $input.children("[name=date]").hide();
                 $input.children("[name=month]").hide();
@@ -1087,7 +1087,7 @@
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
             if (ctrl.OpenInNewTab) {
-                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${ebcontext.locations.CurrentLoc}`;
+                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}`;
                 window.open(url, '_blank');
             }
             else {

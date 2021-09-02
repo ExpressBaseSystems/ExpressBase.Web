@@ -769,7 +769,7 @@
                 $input.children("[name=date]").hide();
                 $input.children("[name=year]").hide();
             }
-            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly") {
+            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly" ) {
                 $input.children("[name=year]").show();
                 $input.children("[name=date]").hide();
                 $input.children("[name=month]").hide();
@@ -804,7 +804,7 @@
             $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
             $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
         }
-        else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly") {
+        else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly" || $input.find("select").val() === "Yearly") {
             let year = $input.find("#year").val();
             startDate = moment([year]);
             endDate = moment([year]).endOf('year');

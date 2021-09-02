@@ -817,6 +817,7 @@ function getValsForViz(formObj) {
         if (obj.ObjType === "CalendarControl") {
             fltr_collection.push(new fltr_obj(obj.EbDbType, "datefrom", value.split(",")[0]));
             fltr_collection.push(new fltr_obj(obj.EbDbType, "dateto", value.split(",")[1]));
+            fltr_collection.push(new fltr_obj(7, "id", value.split(",")[2]));
         }
         else
             fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));

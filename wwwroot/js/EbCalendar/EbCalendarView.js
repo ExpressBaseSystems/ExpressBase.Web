@@ -49,7 +49,7 @@
         if (pname === "DefaultCalendarType") {
             this.ChangeFDParams(newval);
         }
-        if(this.Wc === "dc")
+        if (this.Wc === "dc")
             commonO.Current_obj = this.EbObject;
         if (pname === "Name") {
             $("#objname").text(obj.DisplayName);
@@ -62,7 +62,7 @@
             let id = FilterDialog.FormObj.Controls.$values[0].EbSid_CtxId;
             let $input = $("#" + id);
             newval = getKeyByVal(EbEnums.AttendanceType, newval.toString());
-            $input.find("select option[value='" + newval+"']").attr("selected", "selected");
+            $input.find("select option[value='" + newval + "']").attr("selected", "selected");
             $input.find("select").trigger("change");
         }
     };
@@ -152,7 +152,7 @@
             fltr_collection = getValsForViz(this.filterDialog.FormObj);
             this.ModifyDv = true;
             this.EbObject.DateColumns.$values = [];
-            this.EbObject.Columns.$values = this.EbObject.Columns.$values.filter(col => !col.IsCustomColumn && col.name !=="Total");
+            this.EbObject.Columns.$values = this.EbObject.Columns.$values.filter(col => !col.IsCustomColumn && col.name !== "Total");
         }
         return fltr_collection;
     };
@@ -261,7 +261,7 @@
                     summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][2 * colindex] : 0;
                 }
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
-                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][(2 * colindex)+1] : 0;
+                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][(2 * colindex) + 1] : 0;
                 }
                 if (opScroll !== "")
                     $(ftrtxtScroll).val(summary_val);

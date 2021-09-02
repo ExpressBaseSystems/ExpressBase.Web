@@ -964,7 +964,8 @@
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.FormObj);
-
+        if (this.Source === "Calendar")
+            fltr_collection = getValsForViz(FilterDialog.FormObj);
         let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0) {
             if (this.Source === "Bot")
@@ -1377,7 +1378,7 @@
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm")
+        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm" || this.Source === "popup")
             this.GenerateButtons();
 
         else if (this.Source === "Calendar") {
@@ -2736,7 +2737,7 @@
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-        $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
+        $("#" + this.tableId).off("click", ".tablelink4calendar").on("click", ".tablelink4calendar", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
@@ -3213,18 +3214,24 @@
         }
     };
 
-    this.CalendarLinkClick = function (key, opt, event) {
+    this.CalendarLinkClick = function (key, idx, event) {
         let MapObj = this.ObjectLinks.filter(obj => obj.ObjName === key)[0];
-        var idx = this.Api.row(opt.$trigger.parent().parent()).index();
-        let rowdata = window.atob(opt.$trigger.children("span").attr("hidden-row")).split(",");
-        var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
-        if (MapObj.FormMode === 1) {
-            if (filter[0].Value === "") {
-                MapObj.FormMode = 2;
-                filter = [];
-            }
+        let rowdata;
+        if (event !== undefined) {
+            // var idx = this.Api.row(opt.$trigger.parent().parent()).index();
+            rowdata = window.atob(idx.$trigger.children("span").attr("hidden-row")).split(",");
+        }
+        else {
+            rowdata = this.unformatedData[idx];
         }
         if (MapObj.ObjRefId.split("-")[2] === "0") {
+            var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
+            if (MapObj.FormMode === 1) {
+                if (filter[0].Value === "") {
+                    MapObj.FormMode = 2;
+                    filter = [];
+                }
+            }
             if (parseInt(EbEnums.LinkTypeEnum.Popout) === MapObj.LinkType) {
                 this.WebFormlink(MapObj.ObjRefId, btoa(unescape(encodeURIComponent(JSON.stringify(filter)))), MapObj.FormMode);
             }
@@ -4096,8 +4103,58 @@
         this.Api.columns.adjust();
     };
 
-    this.linkFromCalendar = function () {
+    this.linkFromCalendar = function (e) {
+        this.popup = true;
+        var rows = this.Api.rows(idx).nodes();
+        this.linkDV = $(e.target).closest("a").attr("data-link");
+        colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        var idx = this.Api.row($(e.target).parents().closest("td")).index();
+        let col = this.columns[colindex];
 
+        if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm) {
+            $(".tableviewpopupmodal").remove();
+            $("body").append(`
+            <div class="modal fade tableviewpopupmodal" id="popupmodalContainer${this.tableId}" role="dialog" >
+                <div class="modal-dialog" style="width: 95%; height: 95%;">
+                    <div class="modal-content" style="height: 100%; overflow-y: auto;">
+                        <div class="modal-header">
+                                <div id ="popupheader${this.tableId}">
+                                     <button type="button" class="close" data-dismiss="modal">&times;</button> 
+                                </div>                           
+                        </div>
+                            <div id="tblpopup"></div>
+                        <div class="modal-body"> <table id="popupmodal${this.tableId}"></table></div>
+                    </div>
+                </div>
+            </div>
+            `);
+
+            $(`#popupmodalContainer${this.tableId}`).modal('show');
+            $(`#tblpopup`).EbLoader("show", { maskItem: { Id: "body" } });
+            if (typeof (idx) !== "undefined")
+                this.rowData = this.unformatedData[idx];
+            else {//incomplete...
+                this.rowData = [];
+            }
+            this.filterValues = this.getFilterValues();
+            let rowfilter = this.getfilterFromRowdata().find(ele => ele.Name === "id");
+            this.filterValues[this.filterValues.findIndex(ele => ele.Name === "id")].Value = rowfilter.Value;
+            this.filterValues[0].Value = col.StartDT;
+            this.filterValues[1].Value = col.EndDT;
+            let source = "Calendar";
+
+            this.call2newDv(rows, idx, colindex, source);
+        }
+        else {
+            this.filterValuesforForm = this.getfilterFromRowdata();
+            CallWebFormCollectionRender({
+                _source: 'tv',
+                _refId: this.linkDV,
+                _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
+                _mode: 1,
+                _locId: ebcontext.locations.CurrentLoc
+            });
+        }
     };
 
     this.link2NewTable = function (e) {
@@ -4235,12 +4292,12 @@
         if (action === 'reset') {
             val = $(e.target).attr("data-json");
             val = JSON.parse(atob(val));
-            comments = $(e.target).closest("#resetstage").find(".comment-text").val();   
+            comments = $(e.target).closest("#resetstage").find(".comment-text").val();
         }
         else {
             val = $(e.target).closest("#action").find(".selectpicker").val();
             val = JSON.parse(atob(val));
-            comments = $(e.target).closest("#action").find(".comment-text").val();            
+            comments = $(e.target).closest("#action").find(".comment-text").val();
         }
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
@@ -4264,7 +4321,7 @@
         if (!(resp._data)) {
             let msg = resp.messaage;
             console.error(msg);
-            $td.find('.btn-approval_popover').attr('title', msg.includes(' ### ')? msg.split(' ### ')[0] : msg);
+            $td.find('.btn-approval_popover').attr('title', msg.includes(' ### ') ? msg.split(' ### ')[0] : msg);
             $td.find('.btn-approval_popover i').removeClass('fa-spinner fa-pulse').addClass('fa-exclamation-circle').attr('style', 'color: red !important;');
             return;
         }
@@ -4311,86 +4368,122 @@
         this.rowgroupFilter.push(new fltr_obj(type, name, val));
     };
 
-    this.call2newDv = function (rows, idx, colindex) {
+    this.call2newDv = function (rows, idx, colindex, source) {
         $.ajax({
             type: "POST",
             url: "../DV/getdv",
             data: { refid: this.linkDV },
-            success: this.GetData4InlineDv.bind(this, rows, idx, colindex),
+            success: this.GetData4InlineDv.bind(this, rows, idx, colindex, source),
             error: function (req, status, xhr) {
             }
         });
     };
 
-    this.GetData4InlineDv = function (rows, idx, colindex, result) {
+    this.GetData4InlineDv = function (rows, idx, colindex, source, result) {
         var Dvobj = JSON.parse(result).DsObj;
-        var param = this.Params4InlineTable(Dvobj, idx);
+        var param = this.Params4InlineTable(Dvobj, idx, source);
         $.ajax({
             type: "POST",
             url: "../DV/getData",
             data: param,
-            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex),
+            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex, source),
             error: function (req, status, xhr) {
             }
         });
     };
 
-    this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
-        let colspan = Dvobj.Columns.$values.length;
-        let str = "";
-        $.each(this.rowgroupCols, function (k, obj) {
-            str += "<td>&nbsp;</td>";
-        });
-        $.each(this.extraCol, function (k, obj) {
-            if (obj.bVisible)
-                str += "<td>&nbsp;</td>";
-        });
-
-        $(rows).eq(idx).next(".containerrow").remove();
-        if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
-
-            var o = new Object();
-            o.tableId = "tbl" + idx;
-            o.showFilterRow = false;
-            o.showSerialColumn = true;
-            o.showCheckboxColumn = false;
-            o.Source = "inline";
-            o.scrollHeight = "200px";
-            o.dvObject = Dvobj;
-            o.data = result;
-            o.keys = false;
-            o.IsPaging = false;
-            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
-            this.datatable = new EbCommonDataTable(o);
-            if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
-                $(".inlinetable").css("width", $(window).width() - 115);
-            else
-                $(".inlinetable").css("width", $(window).width() - 175);
-            this.datatable.Api.columns.adjust();
+    this.LoadInlineDv = function (rows, idx, Dvobj, colindex, source, result) {
+        if (this.popup)
+        {
+            $("#popupheader"+this.tableId).append(`
+               <div class="popup-header-name">
+                    ${Dvobj.DisplayName}
+               </div>
+               <div>
+                   Range :  ${moment(new Date(this.filterValues[0].Value)).format('DD-MMM-YYYY') + " - " + moment(new Date(this.filterValues[1].Value)).format('DD-MMM-YYYY')}
+               </div>
+            `); 
+           
+            this.RenderTableviewAsPopup(Dvobj, result);
         }
         else {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
-            o = new Object();
-            o.tableId = "chart" + idx;
-            o.dvObject = Dvobj;
-            o.data = result.data;
-            this.chartApi = new EbBasicChart(o);
-            $(".inlinetable").css("height", "380px");
-            $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
-            $("#canvasDivchart" + idx).css("height", "inherit");
-        }
-        $(".containerrow .close").off("click").on("click", function (e) {
-            $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
-            $(e.target).parents().closest(".containerrow").remove();
-            this.Api.columns.adjust();
-        }.bind(this));
+            let colspan = Dvobj.Columns.$values.length;
+            let str = "";
+            $.each(this.rowgroupCols, function (k, obj) {
+                str += "<td>&nbsp;</td>";
+            });
+            $.each(this.extraCol, function (k, obj) {
+                if (obj.bVisible)
+                    str += "<td>&nbsp;</td>";
+            });
 
-        $("#eb_common_loader").EbLoader("hide");
+            $(rows).eq(idx).next(".containerrow").remove();
+            if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+                $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
+
+                var o = new Object();
+                o.tableId = "tbl" + idx;
+                o.showFilterRow = false;
+                o.showSerialColumn = true;
+                o.showCheckboxColumn = false;
+                o.Source = "inline";
+                o.scrollHeight = "200px";
+                o.dvObject = Dvobj;
+                o.data = result;
+                o.keys = false;
+                o.IsPaging = false;
+                o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+                this.datatable = new EbCommonDataTable(o);
+                if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
+                    $(".inlinetable").css("width", $(window).width() - 115);
+                else
+                    $(".inlinetable").css("width", $(window).width() - 175);
+                this.datatable.Api.columns.adjust();
+            }
+            else {
+                $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
+                o = new Object();
+                o.tableId = "chart" + idx;
+                o.dvObject = Dvobj;
+                o.data = result.data;
+                this.chartApi = new EbBasicChart(o);
+                $(".inlinetable").css("height", "380px");
+                $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
+                $("#canvasDivchart" + idx).css("height", "inherit");
+            }
+            $(".containerrow .close").off("click").on("click", function (e) {
+                $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+                $(e.target).parents().closest(".containerrow").remove();
+                this.Api.columns.adjust();
+            }.bind(this));
+        }
+        if (source === "Calendar") 
+            $("#tblpopup").EbLoader("hide"); 
+        else
+            $("#eb_common_loader").EbLoader("hide");
+
         this.Api.columns.adjust();
     };
 
-    this.Params4InlineTable = function (Dvobj, idx) {
+    this.RenderTableviewAsPopup = function (Dvobj, result) {
+        var o = new Object();
+        o.tableId = `popupmodal${this.tableId}`;
+        o.showFilterRow = false;
+        o.showSerialColumn = true;
+        o.showCheckboxColumn = false;
+        o.Source = "popup";
+        //o.scrollHeight = "200px";
+        o.dvObject = Dvobj;
+        o.data = result;
+        o.keys = false;
+        o.IsPaging = false;
+        o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+        this.datatable = new EbCommonDataTable(o);
+        this.popup = false;
+        this.datatable.Api.columns.adjust();
+    };
+
+    this.Params4InlineTable = function (Dvobj, idx, source) {
         var dq = new Object();
         dq.RefId = Dvobj.DataSourceRefId;
         dq.TFilters = [];
@@ -4398,10 +4491,14 @@
         dq.Start = 0;
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
-        dq.TableId = "tbl" + idx;
+        if (source === "Calendar")
+            dq.TableId = `popupmodal${this.tableId}`;
+        else
+            dq.TableId = "tbl" + idx;
         if (Dvobj.RowGroupCollection.$values.length > 0)
             dq.CurrentRowGroup = JSON.stringify(Dvobj.RowGroupCollection.$values[0]);
         dq.OrderBy = this.getOrderByInfoforInline(Dvobj);
+        dq.Source = source;
         return dq;
     };
 

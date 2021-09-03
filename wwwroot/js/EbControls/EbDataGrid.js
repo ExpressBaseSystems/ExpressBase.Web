@@ -1814,7 +1814,7 @@
                     window.open(url, '_blank');
                 }
                 else
-                    CallWebFormCollectionRender({ _source: 'ps', _refId: psctrl.FormRefId, _params: _params, _mode: 1 });
+                    CallWebFormCollectionRender({ _source: 'ps', _refId: psctrl.FormRefId, _params: _params, _mode: 1, _locId: this.formRenderer.getLocId() });
             }
         }
     };

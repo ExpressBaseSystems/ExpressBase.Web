@@ -1091,7 +1091,7 @@
                 window.open(url, '_blank');
             }
             else {
-                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl });
+                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
             }
         }.bind(this);
     };
@@ -1260,7 +1260,7 @@
         //}
         //$("#iFrameForm").attr("src", url);
 
-        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl });
+        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
     };
 
     this.SysLocation = function (ctrl) {

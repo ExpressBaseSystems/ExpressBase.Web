@@ -1544,7 +1544,7 @@ const WebFormRender = function (option) {
     this.getLocId = function () {
         let d = this.DataMODEL;
         let t = this.FormObj.TableName;
-        let p = this.ProvLocCtrls;
+        let p = getFlatObjOfType(this.FormObj, "ProvisionLocation");
         if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
             return p[0].getValue();
         else if (this.rowId > 0 && d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
@@ -2315,7 +2315,6 @@ const WebFormRender = function (option) {
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        this.ProvLocCtrls = getFlatObjOfType(this.FormObj, "ProvisionLocation");
 
         $(`#${this.FormObj.EbSid_CtxId} [data-toggle="tooltip"]`).tooltip();// init bootstrap tooltip
         if (parseInt(option.disableEditBtn.disableEditButton)) {

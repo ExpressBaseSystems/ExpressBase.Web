@@ -61,7 +61,7 @@ const WebFormCollectionRender = function (Option) {
             this.PopupForm(Op._refId, Op._params, Op._mode);
         }
         else if (Op._source === 'ps') {
-            this.PopupForm(Op._refId, Op._params, Op._mode);
+            this.PopupForm(Op._refId, Op._params, Op._mode, { locId: Op._locId });
         }
 
         window.onbeforeunload = function (e) {
@@ -75,7 +75,7 @@ const WebFormCollectionRender = function (Option) {
         $(window).off("keydown").on("keydown", this.windowKeyDownListener);
     };
 
-    this.PopupForm = function (refId, params, mode, options) {
+    this.PopupForm = function (refId, params, mode, options = {}) {
         if (!refId) {
             console.error('Invalid refId for popup form');
             return;
@@ -91,7 +91,7 @@ const WebFormCollectionRender = function (Option) {
                 _refId: refId,
                 _params: params,
                 _mode: mode,
-                _locId: ebcontext.locations.getCurrent(),
+                _locId: options.locId || ebcontext.locations.getCurrent(),
                 _renderMode: 2,
                 _dataOnly: dataOnly,
                 _randomizeId: randomizeId

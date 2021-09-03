@@ -1401,7 +1401,7 @@ const EbPowerSelect = function (ctrl, options) {
                     window.open(url, '_blank');
                 }
                 else
-                    CallWebFormCollectionRender({ _source: 'ps', _refId: this.ComboObj.FormRefId, _params: _params, _mode: 1 });
+                    CallWebFormCollectionRender({ _source: 'ps', _refId: this.ComboObj.FormRefId, _params: _params, _mode: 1, _locId: this.renderer.getLocId() });
             }
         }
     };

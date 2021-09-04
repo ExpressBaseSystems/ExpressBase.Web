@@ -1547,7 +1547,7 @@ const WebFormRender = function (option) {
         let p = getFlatObjOfType(this.FormObj, "ProvisionLocation");
         if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
             return p[0].getValue();
-        else if (this.rowId > 0 && d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+        else if (d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
             return d[t][0].LocId;
         else
             return ebcontext.locations.getCurrent();

@@ -1264,30 +1264,31 @@
     };
 
     this.SysLocation = function (ctrl) {
-        if (!ebcontext.locations.CurrentLocObj)
+        let locObj = this.Renderer.getLocObj();
+        if (!locObj)
             return;
         if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
-            ctrl.DataVals.Value = ebcontext.locations.CurrentLocObj.LocId;
-            ctrl.DataVals.F = ebcontext.locations.CurrentLocObj.ShortName;
+            ctrl.DataVals.Value = locObj.LocId;
+            ctrl.DataVals.F = locObj.ShortName;
         }
         if (!(ctrl.IsDisable)) {
             $.each(ebcontext.locations.Locations, function (intex, obj) {
                 $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
             });
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
+            $("#" + ctrl.EbSid_CtxId).val(locObj.LocId);
 
             $("#" + ctrl.EbSid_CtxId).on('change', function (e) {
                 let newLocId = ctrl.getValueFromDOM();
                 if (newLocId === 0)
                     return;
-                let newLocObj = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
-                let oldLocObj = ebcontext.locations.CurrentLocObj;
+                let nl = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
+                let ol = this.Renderer.getLocObj();
 
-                if (newLocObj.LocId !== oldLocObj.LocId) {
-                    EbMessage("show", { Message: `Switching from ${oldLocObj.LongName} to ${newLocObj.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
-                    ebcontext.locations.SwitchLocation(newLocObj.LocId);
+                if (nl.LocId !== ol.LocId) {
+                    EbMessage("show", { Message: `Switching from ${ol.LongName} to ${nl.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+                    ebcontext.locations.SwitchLocation(nl.LocId);
                 }
-            });
+            }.bind(this));
         }
     };
 

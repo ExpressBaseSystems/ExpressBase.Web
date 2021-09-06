@@ -4123,7 +4123,7 @@
                                 </div>                           
                         </div>
                             <div id="tblpopup"></div>
-                        <div class="modal-body"> <table id="popupmodal${this.tableId}"></table></div>
+                        <div class="modal-body"> <div id='content_popupmodal${this.tableId}'><table class='table display table-bordered compact' id="popupmodal${this.tableId}"></table></div></div>
                     </div>
                 </div>
             </div>

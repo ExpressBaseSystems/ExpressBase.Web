@@ -650,10 +650,12 @@
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
 
-        if (!ctrl.__filterValues)
-            ctrl.__filterValues = [];
-        if (ctrl.ParamsList) {
-            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+        let initFilterValues = function (ctrl) {
+            if (!ctrl.__filterValues)
+                ctrl.__filterValues = [];
+            if (!ctrl.ParamsList)
+                return false;
+            let paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
             for (let i = 0; i < paramsList.length; i++) {
                 let depCtrl_s = paramsList[i];
                 let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
@@ -699,8 +701,11 @@
                     ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
                 }
             }
+            return true;
+        }.bind(this, ctrl);
+        if (initFilterValues())
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
-        }
+
         ctrl.initializer = new EbCommonDataTable(o);
         ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 

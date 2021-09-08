@@ -509,12 +509,12 @@
                 if (val) {
                     val.Value = this.getProcessedValue(ctrl, val.Value);
                     depCtrl.justSetValue(val.Value);
-                    if (depCtrl.ObjType !== 'PowerSelect' && depCtrl.__continue) {
-                        depCtrl.__continue();
-                    }
                 }
                 else
                     console.error('ExecuteSqlValueExpr did not respond properly: ' + ctrl.Name);
+                if (depCtrl.ObjType !== 'PowerSelect' && depCtrl.__continue) {
+                    depCtrl.__continue();
+                }
             }.bind(this, depCtrl)
         });
     };

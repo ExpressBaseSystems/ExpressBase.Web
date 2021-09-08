@@ -25,6 +25,7 @@
     //this.divFormHeading = $("#divFormHeading");
     this.txtName = $("#txtFullName");
     this.txtNickName = $("#txtNickName");
+    this.spanNickName = $("#spanNickName");
     this.txtEmail = $(".txtEmail");
     this.spanEmail = $("#spanEmail");
     this.pwdPassword = $("#pwdPassword");
@@ -66,8 +67,10 @@
     this.fbName = null;
     this.timer1 = null;
     this.timer2 = null;
+    this.timer3 = null;
     this.isPhoneUnique = false;
     this.isEmailUnique = false;
+    this.isNickNameUnique = false;
     this.emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     this.pwdRegex = /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/;
 
@@ -92,9 +95,11 @@
         this.btnCreateUser = $("#btnCreateUser");
 
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
-        this.txtEmail.on('change', this.validateEmail.bind(this));
+        //this.txtEmail.on('change', this.validateEmail.bind(this));
         this.txtPhPrimary.on('keyup', this.validatePhone.bind(this));
-        this.txtPhPrimary.on('change', this.validatePhone.bind(this));
+        //this.txtPhPrimary.on('change', this.validatePhone.bind(this));
+        this.txtNickName.on('keyup', this.validateNickName.bind(this));
+        //this.txtNickName.on('change', this.validateNickName.bind(this));
         this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, this.pwdRegex); }.bind(this));
         this.pwdPasswordCon.on('keyup', function (e) { this.validateInfo(this.pwdPasswordCon, this.pwdRegex); }.bind(this));
         this.makeAsShowPwdField(this.pwdPasswordCon);
@@ -129,7 +134,7 @@
             this.setReadOnly();
         //this.DpImageUpload();
 
-      //  this.setLocConstraintDiv();////taginput location constraint
+        //  this.setLocConstraintDiv();////taginput location constraint
         this.showConstrainFn();
     };
 
@@ -157,14 +162,14 @@
         var locLength = locItems.length;
         if (locLength > 0) {
             let o = getObjByval(ebcontext.locations.Locations, 'LocId', locItems[0]);
-            var k = (o.LongName === o.ShortName) ? o.LongName : `${o.LongName}(${o.ShortName})`;           
-            if (locLength === 1) {               
+            var k = (o.LongName === o.ShortName) ? o.LongName : `${o.LongName}(${o.ShortName})`;
+            if (locLength === 1) {
                 $('#locWhiteLst').val(k);
             }
             else {
-                $('#locWhiteLst').val(`${k} and ${locLength-1} other locations `)
+                $('#locWhiteLst').val(`${k} and ${locLength - 1} other locations `)
             }
-        }       
+        }
     }
 
     function treeViewGetItem() {
@@ -193,8 +198,8 @@
                 if (getKeyByVal(this.LocCntr.curItems, delItems[j])) {
                     this.LocCntr.options.deleted.push(getKeyByVal(this.LocCntr.curItems, delItems[j]));
                     this.LocId_Deleted.push(delItems[j]);
-                }                
-            }            
+                }
+            }
         }
     };
 
@@ -304,6 +309,7 @@
 
             this.isPhoneUnique = true;
             this.isEmailUnique = true;
+            this.isNickNameUnique = true;
             this.initUserInfo();
             this.initFbConnect();
         }
@@ -355,9 +361,9 @@
             this.selectTimeZone.val(this.Preference.TimeZone);
         }
         else {
-            this.selectLocale.val(ebcontext.user ?.Preference ?.Locale || "en-IN");
+            this.selectLocale.val(ebcontext.user?.Preference?.Locale || "en-IN");
             this.selectLocaleChangeAction();
-            this.selectTimeZone.val(ebcontext.user ?.Preference ?.TimeZone || "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi");
+            this.selectTimeZone.val(ebcontext.user?.Preference?.TimeZone || "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi");
         }
     };
 
@@ -628,7 +634,7 @@
             return;
         }
         if (this.emailRegex.test(val)) {
-            this.timer1 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtEmail, this.spanEmail, 'email', 1); }.bind(this), 1000);
+            this.timer1 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtEmail, this.spanEmail, 'email', 1); }.bind(this), 500);
         }
         else {
             this.txtEmail.css("border-color", "rgb(204, 0, 0)");
@@ -649,7 +655,20 @@
             this.isPhoneUnique = true;
             return;
         }
-        this.timer2 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtPhPrimary, this.spanPhone, 'phone number', 2); }.bind(this), 1000);
+        this.timer2 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtPhPrimary, this.spanPhone, 'phone number', 2); }.bind(this), 500);
+    };
+
+    this.validateNickName = function () {
+        clearTimeout(this.timer3);
+        let val = this.txtNickName.val().trim();
+        if ((this.userinfo && this.userinfo["nickname"] === val) || val === '') {
+            this.txtNickName.css("border-color", "rgb(204, 204, 204)");
+            this.txtNickName.prev().css("border-color", "rgb(204, 204, 204)");
+            this.spanNickName.html(``);
+            this.isNickNameUnique = true;
+            return;
+        }
+        this.timer3 = setTimeout(function () { this.uniqueCheckAjaxCall(this.txtNickName, this.spanNickName, 'nick name', 4); }.bind(this), 500);
     };
 
     this.uniqueCheckAjaxCall = function ($txtCtrl, $span, title, mode) {
@@ -683,6 +702,8 @@
                         this.isEmailUnique = true;
                     else if (mode === 2)
                         this.isPhoneUnique = true;
+                    else if (mode === 4)
+                        this.isNickNameUnique = true;
                 }
                 else {
                     $txtCtrl.css("border-color", "rgb(204, 0, 0)");
@@ -814,6 +835,10 @@
             EbMessage("show", { Message: 'Phone is already exists.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
+        if (this.txtNickName.val().trim() !== '' && !this.isNickNameUnique) {
+            EbMessage("show", { Message: 'Nick Name is already exists.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
         if (this.txtAlternateEmail.val().trim() !== '' && !this.validateInfo(this.txtAlternateEmail, this.emailRegex)) {
             EbMessage("show", { Message: 'Alternate email is not valid.', AutoHide: true, Background: '#bf1e1e' });
             return;
@@ -905,6 +930,8 @@
                     EbMessage("show", { Message: 'Unable to save user. Email already exists.', AutoHide: true, Background: '#1e1ebf' });
                 else if (result === -3)
                     EbMessage("show", { Message: 'Unable to save user. Phone already exists.', AutoHide: true, Background: '#1e1ebf' });
+                else if (result === -4)
+                    EbMessage("show", { Message: 'Unable to save user. Nick Name already exists.', AutoHide: true, Background: '#1e1ebf' });
                 else
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $("#btnCreateUser").removeAttr("disabled");

@@ -616,11 +616,9 @@ const WebFormRender = function (option) {
                 this.printDocument_inner(this.AfterSavePrintDoc, respObj.RowId);
                 this.AfterSavePrintDoc = null;
             }
-            this.renderInAfterSaveMode(respObj);
-
-            this.curAfterSavemodeS = this.defaultAfterSavemodeS;
-
             ebcontext.webform.UpdateInterCxtObj(this.__MultiRenderCxt);
+            this.renderInAfterSaveMode(respObj);
+            this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         }
         else {
             EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });

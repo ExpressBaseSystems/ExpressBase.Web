@@ -718,6 +718,7 @@
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
             ctrl.initializer.Api.ajax.reload();
+            //ctrl.initializer.getColumnsSuccess();
         };
 
         ctrl.reloadWithParamAll = function () {
@@ -731,7 +732,8 @@
             }
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
-            ctrl.initializer.Api.ajax.reload();
+            //ctrl.initializer.Api.ajax.reload();
+            ctrl.initializer.getColumnsSuccess();
         };
 
         $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {

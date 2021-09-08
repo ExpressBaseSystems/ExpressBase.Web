@@ -153,7 +153,11 @@
                     </div>
                     <div class="form-group" style="">
                         <label class="label-custom-style">Nick Name</label>
-                        <input id="txtNickName" class="form-control input-custom-style" type="text" title="Nick Name" autocomplete="off">
+                        <div class="input-group">
+                            <span class="input-group-addon span-custom-style"><i class="fa fa-user" aria-hidden="true"></i></span>
+                            <input style="padding-right: 25px; border-radius: 0 4px 4px 0;" id="txtNickName" class="form-control input-custom-style" type="text" title="Nick Name" autocomplete="off">
+                            <span class="span-custom-feedback form-control-feedback" id="spanNickName"></span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="label-custom-style">Email ID</label>

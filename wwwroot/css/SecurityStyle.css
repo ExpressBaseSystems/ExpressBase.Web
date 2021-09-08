@@ -408,7 +408,7 @@
         background-color: rgb(255,255,255) !important;
     }*/
 
-.dataTable tr {
+#divCommonList .dataTable tr {
     height: 40px;
 }
 

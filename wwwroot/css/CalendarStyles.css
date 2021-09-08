@@ -35,16 +35,17 @@
     background-color: transparent;
     border: 0;
     text-decoration: none;
-    cursor:pointer;
+    cursor: pointer;
 }
 
-#ShowDataColumndd .dropdown-item:hover {
-    background-color: #f4f4f4;
-}
+    #ShowDataColumndd .dropdown-item:hover {
+        background-color: #f4f4f4;
+    }
 
 #ShowDataColumndd span {
     margin-left: 5px;
 }
+
 .param-div-cont {
     top: 0px;
     left: 0px;
@@ -55,22 +56,26 @@
     height: 100%;
     z-index: 3;
 }
+
 th.public-holiday {
     background-color: #f98d8d;
 }
+
 th.week-holiday {
     background-color: #efb9b9;
 }
+
 .current_date_class {
     background-color: #f3f9f1;
 }
+
 #calendar-user-view .DTFC_ScrollWrapper, #calendar-user-view .DTFC_LeftBodyWrapper, #calendar-user-view .DTFC_RightBodyWrapper {
     height: calc(100% - 18px);
 }
 
 #calendar-user-view .DTFC_LeftHeadWrapper, #calendar-user-view .DTFC_RightHeadWrapper {
-     padding-bottom: 0px !important; 
-     margin-bottom: 0px !important; 
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
 }
 
 .highlighted {
@@ -112,8 +117,39 @@ th.week-holiday {
     border-radius: 4px;
 }
 
-.popup-header-name{
+.popup-header-name {
     font-size: 16px;
     font-weight: 500;
 }
 
+.cal-percent {
+    font-size: 90%;
+    /*float: right;*/
+}
+
+.cal-percent-red {
+    color: red;
+}
+
+.cal-percent-green {
+    color: green;
+}
+
+.cal-percent-caret-red {
+    font-size: 85%;
+    color: red;
+    padding-left: 2px;
+    float: right;
+}
+
+.cal-percent-caret-green {
+    font-size: 85%;
+    color: green;
+    padding-left: 2px;
+    float: right;
+}
+
+.cal-percent-container {
+    /* float: right;*/
+    padding-left: 5px;
+}

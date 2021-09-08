@@ -1,9 +1,18 @@
 ﻿body {
 }
 .view-log-pane {
-    padding: 10px 30px 10px 0px;
+    padding: 10px 30px 10px 30px;
 }
 
+#show-sms-logs {
+    margin-top: 7%;
+}
+
+.nav-item {
+    width: 15%;
+    text-align: center;
+    background-color: ghostwhite;
+}
 #SchedulerModal .modal-dialog {
     width: 35%;
 }

@@ -24,8 +24,8 @@
     this.getSmsList = function () {
         $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
         let Refid = $("#select-sms-template").children("option:selected").val();
-        let fromDate = $("#from-date").val();
-        let toDate = $("#to-date").val();
+        let fromDate = $("#sms-from-date").val();
+        let toDate = $("#sms-to-date").val();
         if (fromDate !== "" && toDate !== "" && Refid !== null) {
             $.ajax(
                 {
@@ -81,8 +81,7 @@
         var month = d.getMonth() + 1;
         var day = d.getDate();
         var output = (day < 10 ? '0' : '') + day + '-' + (month < 10 ? '0' : '') + month + '-' + d.getFullYear();
-        $("#from-date").val(output);
-        $("#to-date").val(output);
+        $(".date-cntrl").val(output); 
     };   
 
     this.init = function () {

@@ -37,27 +37,33 @@
 
 </script>
 <div id="show-scheduler"></div>
-<div class="container-fluid" style="margin-top:50px">
+<div class="container-fluid" style="margin-top:50px; background-color:white; height:100%">
     <div class="row">
-
-
-        <div class="col-sm-12">
-            <div> View SMS Logs</div>           
-            <div class="dropdown view-log-pane" id="sms-objs" style="width:20%"> </div>
-            <div id="menu1">
-                <div class="row">
-                    <div class="col-sm-12" style="display:flex">
-                        <div class="view-log-pane">
-                            <div> Date From </div>
-                            <input type="text" class="form-control" id="from-date" placeholder="MM/DD/YY">
-                        </div>
-                        <div class="view-log-pane">
-                            <div> Date To </div>
-                            <input type="text" class="form-control" id="to-date" placeholder="MM/DD/YY">
-                        </div>
-                        <div></div>
-                        <div class="view-log-pane"><button id="show-sms-logs" class="btn btn-primary"> Show SMS</button></div>
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="border-bottom: 1px solid #ddd">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#smstab" role="tab" aria-controls="smstab" aria-selected="true">Sms Log</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Email Log</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">System Notifications Log</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane  show active" id="smstab" role="tabpanel" aria-labelledby="pills-home-tab" style="display:flex">
+                <div id="menu1" class=" row col-sm-12">
+                    <div class="dropdown view-log-pane col-sm-3" id="sms-objs" style="width:20%"> <div>Template</div></div>
+                    <div class="view-log-pane col-sm-3">
+                        <div> Date From </div>
+                        <input type="text" class="form-control date-cntrl" id="sms-from-date" placeholder="MM/DD/YY">
                     </div>
+                    <div class="view-log-pane col-sm-3">
+                        <div> Date To </div>
+                        <input type="text" class="form-control date-cntrl" id="sms-to-date" placeholder="MM/DD/YY">
+                    </div>
+                    <div></div>
+                    <div class="view-log-pane col-sm-3"><button id="show-sms-logs" class="btn btn-primary"> Show SMS</button></div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -65,7 +71,30 @@
                     </div>
                 </div>
             </div>
+            @*<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <div id="menu1" class=" row col-sm-12">
+                    <div class="dropdown view-log-pane col-sm-3" id="email-objs" style="width:20%"> <div>Template</div></div>
+                    <div class="view-log-pane col-sm-3">
+                        <div> Date From </div>
+                        <input type="text" class="form-control date-cntrl" id="email-from-date" placeholder="MM/DD/YY">
+                    </div>
+                    <div class="view-log-pane col-sm-3">
+                        <div> Date To </div>
+                        <input type="text" class="form-control date-cntrl" id="email-to-date" placeholder="MM/DD/YY">
+                    </div>
+                    <div></div>
+                    <div class="view-log-pane col-sm-3"><button id="show-email-logs" class="btn btn-primary"> Show SMS</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="list-of-email"> </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>*@
         </div>
+
+
     </div>
 </div>
 

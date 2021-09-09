@@ -4285,20 +4285,31 @@
 
     this.ExecuteApproval = function ($td, action, e) {
         //$("#eb_common_loader").EbLoader("show");
+        let val, comments;
+        if (action === 'reset') {
+            comments = $(e.target).closest("#resetstage").find(".comment-text").val();
+            if (!comments.trim()) {
+                EbMessage("show", { Message: "Comments required", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                return;
+            }
+            val = $(e.target).attr("data-json");
+            val = JSON.parse(atob(val));
+        }
+        else {
+            comments = $(e.target).closest("#action").find(".comment-text").val();
+            let req = $(e.target).closest("#action").find(".selectpicker :selected").attr('req');
+            if (!comments.trim() && req === 'y') {
+                EbMessage("show", { Message: "Comments required", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                return;
+            }
+            val = $(e.target).closest("#action").find(".selectpicker").val();
+            val = JSON.parse(atob(val));
+        }
+
         $('.btn-approval_popover').popover('hide');
         $td.find('.btn-approval_popover').popover('destroy');
         $td.find('.btn-approval_popover i').removeClass('fa-history').removeClass('fa-pencil').addClass('fa-spinner fa-pulse');
-        let val, comments;
-        if (action === 'reset') {
-            val = $(e.target).attr("data-json");
-            val = JSON.parse(atob(val));
-            comments = $(e.target).closest("#resetstage").find(".comment-text").val();
-        }
-        else {
-            val = $(e.target).closest("#action").find(".selectpicker").val();
-            val = JSON.parse(atob(val));
-            comments = $(e.target).closest("#action").find(".comment-text").val();
-        }
+
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
@@ -4393,17 +4404,16 @@
     };
 
     this.LoadInlineDv = function (rows, idx, Dvobj, colindex, source, result) {
-        if (this.popup)
-        {
-            $("#popupheader"+this.tableId).append(`
+        if (this.popup) {
+            $("#popupheader" + this.tableId).append(`
                <div class="popup-header-name">
                     ${Dvobj.DisplayName}
                </div>
                <div>
                    Range :  ${moment(new Date(this.filterValues[0].Value)).format('DD-MMM-YYYY') + " - " + moment(new Date(this.filterValues[1].Value)).format('DD-MMM-YYYY')}
                </div>
-            `); 
-           
+            `);
+
             this.RenderTableviewAsPopup(Dvobj, result);
         }
         else {
@@ -4457,8 +4467,8 @@
                 this.Api.columns.adjust();
             }.bind(this));
         }
-        if (source === "Calendar") 
-            $("#tblpopup").EbLoader("hide"); 
+        if (source === "Calendar")
+            $("#tblpopup").EbLoader("hide");
         else
             $("#eb_common_loader").EbLoader("hide");
 

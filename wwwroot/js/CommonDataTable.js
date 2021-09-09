@@ -4289,7 +4289,7 @@
         if (action === 'reset') {
             comments = $(e.target).closest("#resetstage").find(".comment-text").val();
             if (!comments.trim()) {
-                EbMessage("show", { Message: "Comments required", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
                 return;
             }
             val = $(e.target).attr("data-json");
@@ -4299,7 +4299,7 @@
             comments = $(e.target).closest("#action").find(".comment-text").val();
             let req = $(e.target).closest("#action").find(".selectpicker :selected").attr('req');
             if (!comments.trim() && req === 'y') {
-                EbMessage("show", { Message: "Comments required", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
                 return;
             }
             val = $(e.target).closest("#action").find(".selectpicker").val();

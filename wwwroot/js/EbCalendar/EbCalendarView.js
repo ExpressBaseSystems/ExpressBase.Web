@@ -192,6 +192,7 @@
         o.RowHeight = this.EbObject.RowHeight;
         o.ObjectLinks = this.EbObject.ObjectLinks.$values;
         this.dt = new EbCommonDataTable(o);
+
         $("#eb_common_loader").EbLoader("hide");
         this.VisibleDataCols = this.EbObject.DataColumns.$values.filter(col => col.bVisible);
         if (this.VisibleDataCols.length > 0)
@@ -228,7 +229,7 @@
         $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].name);
         $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${firstSymbol}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
-        this.dt.Api.columns.adjust();
+        //this.dt.Api.columns.adjust();
     };
 
     this.showDatColumn = function (e) {
@@ -271,7 +272,7 @@
                     $(ftrtxtRF).val(summary_val);
             }
         }.bind(this));
-        this.dt.Api.columns.adjust();
+        //this.dt.Api.columns.adjust();
     };
 
     this.RemoveColumnRef = function () {

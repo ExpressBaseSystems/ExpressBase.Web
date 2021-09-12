@@ -123,7 +123,7 @@ th.week-holiday {
 }
 
 .cal-percent {
-    font-size: 90%;
+    font-size: 85%;
     /*float: right;*/
 }
 
@@ -138,18 +138,27 @@ th.week-holiday {
 .cal-percent-caret-red {
     font-size: 85%;
     color: red;
-    padding-left: 2px;
+    padding-left: 1px;
     float: right;
 }
 
 .cal-percent-caret-green {
     font-size: 85%;
     color: green;
-    padding-left: 2px;
+    padding-left: 1px;
     float: right;
 }
 
 .cal-percent-container {
-    /* float: right;*/
-    padding-left: 5px;
+    float: right;
+    padding-left: 3px;
+}
+
+.cal-data {
+    text-align: right !important;
+   /* padding-left: 2%;*/
+}
+
+tbody > tr > td > .cal-data {
+    font-size: 14px;
 }

@@ -1443,8 +1443,8 @@
             }
             if (Option.initCompleteCallback)
                 Option.initCompleteCallback();
-
-            this.Api.columns.adjust();
+            if (this.Source !== "Calendar")
+                this.Api.columns.adjust();
         }.bind(this), 0);
     };
 
@@ -1894,7 +1894,8 @@
             Option.drawCallBack();
         if (this.Api === null)
             this.Api = $("#" + this.tableId).DataTable();
-        this.Api.columns.adjust();
+        if (this.Source !== "Calendar")
+            this.Api.columns.adjust();
     };
 
     this.headerCallback = function (thead, data, start, end, display) {
@@ -3884,7 +3885,9 @@
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
             }
         }
-        this.Api.columns.adjust();
+
+        if (this.Source !== "Calendar")
+            this.Api.columns.adjust();
         e.preventDefault();
     };
 
@@ -4393,17 +4396,16 @@
     };
 
     this.LoadInlineDv = function (rows, idx, Dvobj, colindex, source, result) {
-        if (this.popup)
-        {
-            $("#popupheader"+this.tableId).append(`
+        if (this.popup) {
+            $("#popupheader" + this.tableId).append(`
                <div class="popup-header-name">
                     ${Dvobj.DisplayName}
                </div>
                <div>
                    Range :  ${moment(new Date(this.filterValues[0].Value)).format('DD-MMM-YYYY') + " - " + moment(new Date(this.filterValues[1].Value)).format('DD-MMM-YYYY')}
                </div>
-            `); 
-           
+            `);
+
             this.RenderTableviewAsPopup(Dvobj, result);
         }
         else {
@@ -4457,8 +4459,8 @@
                 this.Api.columns.adjust();
             }.bind(this));
         }
-        if (source === "Calendar") 
-            $("#tblpopup").EbLoader("hide"); 
+        if (source === "Calendar")
+            $("#tblpopup").EbLoader("hide");
         else
             $("#eb_common_loader").EbLoader("hide");
 

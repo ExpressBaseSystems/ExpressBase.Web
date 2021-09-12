@@ -2792,7 +2792,7 @@
         $('.btn-approval_popover').popover({
             container: 'body',
             trigger: 'click',
-            placement: this.PopoverPlacement,
+            placement: this.ApprovalPopoverPlacement,
             html: true,
             template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
             content: function (e, i) {
@@ -2861,6 +2861,15 @@
         else {
             return "right";
         }
+    };
+
+    this.ApprovalPopoverPlacement = function (context, source) {
+        var position = $(source).offset();
+        let w = $(window).width();
+        if (position.left + 600 > w)
+            return "left";
+        else
+            return "right";
     };
 
     this.GenerateButtons = function () {
@@ -4288,20 +4297,31 @@
 
     this.ExecuteApproval = function ($td, action, e) {
         //$("#eb_common_loader").EbLoader("show");
+        let val, comments;
+        if (action === 'reset') {
+            comments = $(e.target).closest("#resetstage").find(".comment-text").val();
+            if (!comments.trim()) {
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                return;
+            }
+            val = $(e.target).attr("data-json");
+            val = JSON.parse(atob(val));
+        }
+        else {
+            comments = $(e.target).closest("#action").find(".comment-text").val();
+            let req = $(e.target).closest("#action").find(".selectpicker :selected").attr('req');
+            if (!comments.trim() && req === 'y') {
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                return;
+            }
+            val = $(e.target).closest("#action").find(".selectpicker").val();
+            val = JSON.parse(atob(val));
+        }
+
         $('.btn-approval_popover').popover('hide');
         $td.find('.btn-approval_popover').popover('destroy');
         $td.find('.btn-approval_popover i').removeClass('fa-history').removeClass('fa-pencil').addClass('fa-spinner fa-pulse');
-        let val, comments;
-        if (action === 'reset') {
-            val = $(e.target).attr("data-json");
-            val = JSON.parse(atob(val));
-            comments = $(e.target).closest("#resetstage").find(".comment-text").val();
-        }
-        else {
-            val = $(e.target).closest("#action").find(".selectpicker").val();
-            val = JSON.parse(atob(val));
-            comments = $(e.target).closest("#action").find(".comment-text").val();
-        }
+
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
@@ -4312,11 +4332,11 @@
             url: "../dv/PostWebformData",
             data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: ebcontext.locations.CurrentLoc },
             success: this.cccccc.bind(this, $td),
-            error: function (xhr, error) {
+            error: function ($td, xhr, error) {
                 console.log(xhr); console.log(error);
                 console.debug(xhr); console.debug(error);
-
-            },
+                this.cccccc.bind(this, $td, { messaage: 'Something went wrong ### error' })();
+            }.bind(this, $td),
         });
     };
 
@@ -4326,21 +4346,22 @@
             console.error(msg);
             $td.find('.btn-approval_popover').attr('title', msg.includes(' ### ') ? msg.split(' ### ')[0] : msg);
             $td.find('.btn-approval_popover i').removeClass('fa-spinner fa-pulse').addClass('fa-exclamation-circle').attr('style', 'color: red !important;');
-            return;
+            //return;
         }
-
-        $td.html(resp._data);
-        //if ($td.find(".status-label").text() === "Review Completed")
-        //    EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
-        var cell = this.Api.cell($td);
-        cell.data($td.html());
+        else {
+            $td.html(resp._data);
+            //if ($td.find(".status-label").text() === "Review Completed")
+            //    EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
+            var cell = this.Api.cell($td);
+            cell.data($td.html());
+        }
 
         let $popoverBtn = $td.find('.btn-approval_popover');
 
         $popoverBtn.popover({
             container: 'body',
             trigger: 'click',
-            placement: this.PopoverPlacement,
+            placement: this.ApprovalPopoverPlacement,
             html: true,
             template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
             content: function (e, i) {

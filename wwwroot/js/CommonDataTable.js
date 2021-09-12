@@ -1443,8 +1443,7 @@
             }
             if (Option.initCompleteCallback)
                 Option.initCompleteCallback();
-            if (this.Source !== "Calendar")
-                this.Api.columns.adjust();
+            this.Api.columns.adjust();
         }.bind(this), 0);
     };
 
@@ -1894,8 +1893,7 @@
             Option.drawCallBack();
         if (this.Api === null)
             this.Api = $("#" + this.tableId).DataTable();
-        if (this.Source !== "Calendar")
-            this.Api.columns.adjust();
+        this.Api.columns.adjust();
     };
 
     this.headerCallback = function (thead, data, start, end, display) {
@@ -3895,8 +3893,7 @@
             }
         }
 
-        if (this.Source !== "Calendar")
-            this.Api.columns.adjust();
+        this.Api.columns.adjust();
         e.preventDefault();
     };
 

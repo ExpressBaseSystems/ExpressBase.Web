@@ -229,7 +229,7 @@
         $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].name);
         $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${firstSymbol}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
-        //this.dt.Api.columns.adjust();
+        this.dt.Api.columns.adjust();
     };
 
     this.showDatColumn = function (e) {
@@ -272,7 +272,7 @@
                     $(ftrtxtRF).val(summary_val);
             }
         }.bind(this));
-        //this.dt.Api.columns.adjust();
+        this.dt.Api.columns.adjust();
     };
 
     this.RemoveColumnRef = function () {

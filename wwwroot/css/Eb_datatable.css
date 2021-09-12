@@ -812,6 +812,10 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
         margin-top: 30px;
     }
 
+    .approval-popover #history > div{
+        padding: 20px;
+    }
+
 .stage_actions button {
     padding: 3px 30px 3px 10px;
     font-size: 12px;

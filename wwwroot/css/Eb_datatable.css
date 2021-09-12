@@ -801,15 +801,16 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     width: 600px;
 
 }
-.approval-popover #history {
-    max-height: 250px;
-    overflow-y: auto;
-}
+
 .approval-popover #history table {
-    height: 100%;
+    /*height: 100%;*/
     margin-bottom: 0px !important;
     padding-bottom: 1px;
 }
+
+    .approval-popover #resetstage table {
+        margin-top: 30px;
+    }
 
 .stage_actions button {
     padding: 3px 30px 3px 10px;
@@ -818,7 +819,7 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 }
  .stage_actions  {
     width: 100% !important;
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 
  .stage_actions a {
@@ -861,8 +862,8 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .tdheight .selectpicker {
     display: none !important;
 }
-.action-table, .comment-text{
-    width:100%
+.action-table, .comment-text {
+    width: 100%;
 }
 .comment-td {
     width: 175px;
@@ -899,9 +900,9 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     font-weight: 900;
 }
 
-.size11{
+/*.size11{
     font-size:11px;
-}
+}*/
 
 .status-icon, .status-label {
     margin-right: 5px;
@@ -968,11 +969,12 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 }
 
 .approval-popover .tab-pane {
-    padding: 10px 0;
+    height: 175px;
+    overflow-y: auto;
 }
 
 .approval-popover .tab-content {
-    padding: 5px
+    /*padding: 5px;*/
 }
 
 .approval-popover .nav-tabs > li {

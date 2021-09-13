@@ -949,7 +949,7 @@
 //            SolutionId: ebcontext.sid,
 //            Container: "onboarding_logo",
 //            Multiple: false,
-//            ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.site',
+//            ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
 //            //EnableTag: ctrl.EnableTag,
 //            EnableTag: false,
 //            EnableCrop: false,

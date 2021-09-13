@@ -51,7 +51,7 @@ namespace ExpressBase.Web.BaseControllers
                 }
                 else
                 {
-                    controller.ViewBag.Root = "https://eb-test.site";
+                    controller.ViewBag.Root = "https://eb-test.xyz";
                 }
 
             }

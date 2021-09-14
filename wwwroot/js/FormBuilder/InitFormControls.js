@@ -717,8 +717,8 @@
             }
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
-            ctrl.initializer.Api.ajax.reload();
-            //ctrl.initializer.getColumnsSuccess();
+            //ctrl.initializer.Api.ajax.reload();
+            ctrl.initializer.getColumnsSuccess();
         };
 
         ctrl.reloadWithParamAll = function () {

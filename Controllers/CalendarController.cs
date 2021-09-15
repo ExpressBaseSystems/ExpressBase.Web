@@ -44,6 +44,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.VersionNumber = Resp.Data[0].VersionNumber;
             ViewBag.ObjType = Resp.Data[0].EbObjectType;
             ViewBag.dsObj = Resp.Data[0].Json;
+            ViewBag.DisplayName = Resp.Data[0].DisplayName;
             ViewBag.Status = Resp.Data[0].Status;
             return View();
         }

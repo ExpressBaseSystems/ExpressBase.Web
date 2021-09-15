@@ -951,7 +951,7 @@
         if (rowId === new_rowId) {
             let UiInps = $e.closest("td").find("[ui-inp]");
             if (UiInps.length > 0) {
-                $e.closest("td").find("[ui-inp]").select();
+                setTimeout(function ($e) { $e.closest("td").find("[ui-inp]").select(); }.bind(this, $e), 1);
             }
             return;
         }
@@ -1342,11 +1342,16 @@
 
     this.dg_rowKeydown = function (e) {
         let $e = $(e.target);
-        let $tr = $e.closest("tr");
-        if (e.which === 40)//down arrow
-            $e.next().focus();
-        if (e.which === 38)//up arrow
-            $e.prev().focus();
+        let $tr = $(e.currentTarget);
+        if (e.which === 40 || e.which === 38) {//down arrow //up arrow
+            if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"]').length === 0)
+                return;
+            let func = e.which === 40 ? 'next' : 'prev';
+            let indx = $(e.target).closest('td').index();
+            let $nxtTd = $($(e.currentTarget)[func]().find('td')[indx]);
+            $nxtTd.trigger('focusin');
+            $nxtTd.trigger('click');
+        }
         if (e.which === 27) {//esc
             if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")
                 $tr.find(".cancel-row").trigger("click");

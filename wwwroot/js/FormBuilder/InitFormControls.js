@@ -378,6 +378,8 @@
             $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
                 let $el = $(e.target);
                 let $DDbScont = $DD.closest(".bs-container");
+                if ($DDbScont.length === 0)
+                    return;
                 //$DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
                 $DDbScont.offset({ left: $el.closest(".ctrl-cover").offset().left });
 
@@ -2398,6 +2400,8 @@
             $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
                 let $el = $(e.target);
                 let $DDbScont = $DD.closest(".bs-container");
+                if ($DDbScont.length === 0)
+                    return;
                 $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
 
                 if ($DDbScont.hasClass("dropup")) {

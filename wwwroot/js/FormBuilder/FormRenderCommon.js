@@ -1083,10 +1083,8 @@
                 return;
             }
             DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
+            this.ctrlChangeListener_inner0(DepHandleObj);
         }
-        else
-            DepHandleObj = this.GetDepHandleObj_ForDefValExpr();
-        this.ctrlChangeListener_inner0(DepHandleObj);
     };
 
     this.GetDepHandleObj = function (curCtrl) {

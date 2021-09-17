@@ -49,6 +49,9 @@
     this.$CountryCode = $("#selCountryCode");
     this.$CustomerCategory = $("#selCustomerCategory");
     this.$LastModifiedBy = $("#txtLastModifiedBy");
+    this.$GoogleReview = $("#selGoogleReview");
+    this.$Stars = $("#selStars");
+    this.$Comments = $("#txtComments");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -888,6 +891,9 @@
         this.$CountryCode.val(this.CustomerInfo["country_code"]);
         this.$CustomerCategory.val(this.CustomerInfo["cust_category"]);
         this.$LastModifiedBy.val(this.CustomerInfo["eb_modifiedby"]);
+        this.$GoogleReview.val(this.CustomerInfo["google_review"]);
+        this.$Stars.val(this.CustomerInfo["stars"]);
+        this.$Comments.val(this.CustomerInfo["comment"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
             $("#divCustomerDp").children().remove();
@@ -987,6 +993,9 @@
         this.pushToList("htpreviously", this.$HtPreviously.val());
         this.pushToList("country_code", this.$CountryCode.val());
         this.pushToList("cust_category", this.$CustomerCategory.val());
+        this.pushToList("google_review", this.$GoogleReview.val());
+        this.pushToList("stars", this.$Stars.val());
+        this.pushToList("comment", this.$Comments.val());
 
         this.pushToList("consdate", this.$ConsultedDate.val());
         this.pushToList("consultingdoctor", this.$Doctor.val());

@@ -1348,9 +1348,13 @@
                 return;
             let func = e.which === 40 ? 'next' : 'prev';
             let indx = $(e.target).closest('td').index();
-            let $nxtTd = $($(e.currentTarget)[func]().find('td')[indx]);
-            $nxtTd.trigger('focusin');
-            $nxtTd.trigger('click');
+            let $nxtTr = $(e.currentTarget)[func]();
+            if ($nxtTr.length > 0) {
+                let $nxtTd = $($nxtTr.find('td')[indx]);
+                document.activeElement.blur();
+                $nxtTd.trigger('focusin');
+                $nxtTd.trigger('click');
+            }
         }
         if (e.which === 27) {//esc
             if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")

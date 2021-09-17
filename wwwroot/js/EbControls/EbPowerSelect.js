@@ -491,8 +491,10 @@ const EbPowerSelect = function (ctrl, options) {
             $.each(this.dmNames, this.popDmValues.bind(this));
         }
         if (e.which === 40) {
-            this.Vobj.showDD();
-            this.focus1stRow();
+            if (search) {
+                this.Vobj.showDD();
+                this.focus1stRow();
+            }
         }
         if (e.which === 32) {
             if (this.Vobj.DDstate)

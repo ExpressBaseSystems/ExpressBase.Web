@@ -1543,12 +1543,38 @@ const WebFormRender = function (option) {
         let d = this.DataMODEL;
         let t = this.FormObj.TableName;
         let p = getFlatObjOfType(this.FormObj, "ProvisionLocation");
-        if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
-            return p[0].getValue();
-        else if (d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
-            return d[t][0].LocId;
-        else
-            return ebcontext.locations.getCurrent();
+        if (this.rowId > 0) {//edit mode
+            if (p && p.length > 0) {
+                if (p[0].getValue && p[0].getValue() > 0)
+                    return p[0].getValue();
+                else {
+                    console.error('Invalid Prov location value');
+                    return 0;
+                }
+            }
+            else {
+                if (d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+                    return d[t][0].LocId;
+                else {
+                    console.error('Invalid location id');
+                    return 0;
+                }
+            }
+        }
+        else {//new mode
+            if (p && p.length > 0) {
+                return 0;
+            }
+            else {
+                return ebcontext.locations.getCurrent();
+            }
+        }
+        //if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
+        //    return p[0].getValue();
+        //else if (d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+        //    return d[t][0].LocId;
+        //else
+        //    return ebcontext.locations.getCurrent();
     };
 
     this.getLocObj = function () {

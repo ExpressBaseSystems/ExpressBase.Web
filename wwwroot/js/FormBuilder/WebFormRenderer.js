@@ -1549,7 +1549,8 @@ const WebFormRender = function (option) {
                     return p[0].getValue();
                 else {
                     console.error('Invalid Prov location value');
-                    return 0;
+                    //return 0;
+                    return ebcontext.locations.getCurrent();
                 }
             }
             else {
@@ -1557,13 +1558,15 @@ const WebFormRender = function (option) {
                     return d[t][0].LocId;
                 else {
                     console.error('Invalid location id');
-                    return 0;
+                    //return 0;
+                    return ebcontext.locations.getCurrent();
                 }
             }
         }
         else {//new mode
             if (p && p.length > 0) {
-                return 0;
+                //return 0;
+                return ebcontext.locations.getCurrent();
             }
             else {
                 return ebcontext.locations.getCurrent();

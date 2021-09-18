@@ -1346,6 +1346,12 @@
         if (e.which === 40 || e.which === 38) {//down arrow //up arrow
             if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"]').length === 0)
                 return;
+
+            let temp = performance.now();
+            if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 300)
+                return;
+            this.lastUpDownArrowTs = performance.now();
+
             let func = e.which === 40 ? 'next' : 'prev';
             let indx = $(e.target).closest('td').index();
             let $nxtTr = $(e.currentTarget)[func]();

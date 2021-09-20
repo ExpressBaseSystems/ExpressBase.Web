@@ -390,8 +390,13 @@ const EbPowerSelect = function (ctrl, options) {
         //this.clearValues();
         let triggerChange = (StrValues === "" || StrValues === undefined || StrValues === 0);// trigger if set with nothing
         this.clearValues(triggerChange);
-        if (StrValues === "" || StrValues === null || StrValues === 0)
+        if (StrValues === "" || StrValues === null || StrValues === 0) {
+            if (this.ComboObj.__continue) {
+                this.ComboObj.___isNotUpdateValExpDepCtrls = false;
+                this.ComboObj.__continue();
+            }
             return;
+        }
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.ComboObj.IsPreload) { // if preLoad

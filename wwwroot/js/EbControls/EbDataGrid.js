@@ -35,7 +35,7 @@
     }.bind(this);
     this.resetBuffers();
 
-    this.populateDGWithDataModel = function (dataModel) {
+    this.populateDGWithDataModel = function (dataModel, fromRefresh) {
         this.DataMODEL = dataModel;
         //this.curRowDataMODEL = this.getRowDataModel_();
         this.curRowDataMODEL = JSON.parse(JSON.stringify(this.RowDataModel_empty));
@@ -43,7 +43,7 @@
         this.fixValExpInDataModel();
         this.drawHTMLView();
         this.callOnRowPaintFns();
-        this.updateAggCols(false);
+        this.updateAggCols(fromRefresh);
         if (this.DataMODEL.length > 1 && this.DataMODEL[this.DataMODEL.length - 1].RowId < 0)
             this.newRowCounter = this.DataMODEL[this.DataMODEL.length - 1].RowId; // for clone or import
     }.bind(this);
@@ -439,8 +439,12 @@
     };
 
     this.tryAddRow = function () {
-        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable)
+        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable) {
             this.addRow();
+            let a = $(`#${this.TableId}>tbody tr[is-editing="true"] td [ui-inp]:enabled:visible`);
+            if (a.length > 0)
+                $(a[0]).focus();
+        }
         //if (this.Mode.isEdit)
         //    $(`.ctrlstd[mode] `).attr("mode", "edit");
         //if (this.Mode.isNew)
@@ -924,8 +928,9 @@
         if ($curentRow.length === 0 || $curentRow.attr("is-editing") === "false")// for editmode first click
             this.tryAddRow();
         else {
-            let td = $curentRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td }, true, false);
+            if (this.checkRow_click_New({ target: $curentRow.find(".ctrlstd")[0] })) {
+                this.tryAddRow();
+            }
             //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
             //    this.tryAddRow();
         }
@@ -1367,7 +1372,7 @@
                 $tr.find(".cancel-row").trigger("click");
         }
         //alt + enter
-        if ((event.altKey || event.metaKey) && event.which === 13) {
+        if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
             if (this.$table.has(document.activeElement).length === 1) {
                 document.activeElement.blur();
                 this.addRowBtn_click();
@@ -1783,7 +1788,7 @@
         this.formRenderer.DataMODEL[this.ctrl.TableName] = dataModel;// attach to master model object
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.populateDGWithDataModel(dataModel);
+        this.populateDGWithDataModel(dataModel, true);
 
         for (let i = 0; i < lastModel.length; i++) {
             if (lastModel[i].RowId > 0) {

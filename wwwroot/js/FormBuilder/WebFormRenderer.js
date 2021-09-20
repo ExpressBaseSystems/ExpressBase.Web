@@ -543,8 +543,13 @@ const WebFormRender = function (option) {
             try {
                 let FnString = atob(Script.Code);
                 for (let i = 0; i < Table.length; i++) {
-                    DGB.setCurRow(Table[i].RowId);
-                    let res = new Function("form", "user", FnString).bind(DGB.ctrl.currentRow, this.formObject, this.userObject)();
+                    let res = false;
+                    if (DGB.objectMODEL[Table[i].RowId]) {
+                        DGB.setCurRow(Table[i].RowId);
+                        res = new Function("form", "user", FnString).bind(DGB.ctrl.currentRow, this.formObject, this.userObject)();
+                    }
+                    else
+                        res = true;
                     if (res)
                         NwTable.push(Table[i]);
                     else if (Table[i].RowId > 0) {
@@ -2246,7 +2251,11 @@ const WebFormRender = function (option) {
     };
 
     this.selectUIinpOnFocus = function () {
+        if (!event)
+            return;
         let el = event.target;
+        if (!el.hasAttribute('ui-inp'))
+            return;
         if (event && event.target &&
             !(el.getAttribute("type") === "search" &&
                 ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))

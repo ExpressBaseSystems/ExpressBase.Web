@@ -388,9 +388,9 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
         //this.clearValues();
-        let triggerChange = (StrValues === "" || StrValues === undefined);// trigger if set with nothing
+        let triggerChange = (StrValues === "" || StrValues === undefined || StrValues === 0);// trigger if set with nothing
         this.clearValues(triggerChange);
-        if (StrValues === "" || StrValues === null)
+        if (StrValues === "" || StrValues === null || StrValues === 0)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -484,7 +484,7 @@ const EbPowerSelect = function (ctrl, options) {
         let search = $e.val().toString();
         //if (mobileAndTabletCheck())
         //    alert(e.which);
-        if (e.which === 13)
+        if (e.which === 13 && search)
             this.Vobj.showDD();
         if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
             this.Vobj.valueMembers.pop();

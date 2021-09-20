@@ -1324,9 +1324,17 @@
                         oper = $('#' + table + '_' + colobj.name + '_hdr_sel').text().trim();
                         if (api.columns(i).visible()[0]) {
                             if (oper !== '' && $(textid).val() !== '') {
-                                if (oper === 'B') {
-                                    val1 = $(textid).val();
+                                val1 = $(textid).val();
+                                if (oper === 'B')
                                     val2 = $(textid).siblings('input').val();
+                                if (Rtype === 5 || Rtype === 6) {
+                                    if (!val1 || !moment(val1, 'DD-MM-YYYY', true).isValid())
+                                        return;
+                                    if (oper === 'B' && (!val2 || !moment(val2, 'DD-MM-YYYY', true).isValid()))
+                                        return;
+                                }
+
+                                if (oper === 'B') {
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
                                         if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(paracolum, ">=", Math.min(val1, val2)));
@@ -2833,7 +2841,10 @@
             dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
             beforeShow: function (elem, obj) {
                 $(".ui-datepicker").addClass("datecolumn-picker");
-            }
+            },
+            onSelect: function () {
+                this.call_filter({ keyCode: 10 });
+            }.bind(this)
         });
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
@@ -3922,25 +3933,42 @@
                 else
                     $(e.target).css("border-color", "#ccc");
             }
+            if ($(e.target).data('ui-autocomplete') != undefined)
+                $(e.target).autocomplete('close');
 
             if (flag) {
-                this.columnSearch = this.repopulate_filter_arr();
-                $('#' + this.tableId).DataTable().ajax.reload();
-                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+                this.reloadDataTable();
             }
         }
         else {
             $("[data-coltyp=date]").datepicker("hide");
-            this.columnSearch = this.repopulate_filter_arr();
             if (typeof (e.key) === "undefined") {
-                $('#' + this.tableId).DataTable().ajax.reload();
-                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+                this.reloadDataTable();
+            }
+            else {
+                let nam = $(e.target).attr('data-colum');
+                let obj = this.columnSearch.find(e => e.Column === nam);
+                let filter = this.repopulate_filter_arr();
+                if ((obj && obj.Value != $(e.target).val().trim()) || this.columnSearch.length != filter.length) {
+                    this.columnSearch = filter;
+                    clearTimeout(this.realoadDtTimer);
+                    this.realoadDtTimer = setTimeout(this.reloadDataTable.bind(this, e), 700);
+                }
             }
         }
 
     }.bind(this);
+
+    this.reloadDataTable = function (e) {
+        if (e && $(e.target).data('ui-autocomplete') != undefined) {
+            clearTimeout(this.clearAutoCompleteTimer);
+            this.clearAutoCompleteTimer = setTimeout(function (e) { $(e.target).autocomplete('close'); }.bind(this, e), 2000);
+        }
+        this.columnSearch = this.repopulate_filter_arr();
+        $('#' + this.tableId).DataTable().ajax.reload();
+        if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+            $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+    };
 
     this.dblclickDateColumn = function () {
         this.type = "text";

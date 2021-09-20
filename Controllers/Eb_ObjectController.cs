@@ -54,49 +54,48 @@ namespace ExpressBase.Web.Controllers
                 {
                     ViewBag.Obj_id = objid;
                     EbObjectExploreObjectResponse resultlist = ServiceClient.Get(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
-                    List<EbObjectWrapper> objectlist = resultlist.Data;
-                    if (objectlist.Count > 0)
-                        foreach (EbObjectWrapper element in objectlist)
-                        {
-                            ViewBag.IsNew = "false";
-                            ViewBag.ObjectName = element.DisplayName;
-                            ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = element.DisplayName });//regional languages not support in ViewBag
-                            ViewBag.ObjectDesc = element.Description;
-                            ViewBag.Status = element.Status;
-                            ViewBag.VersionNumber = element.VersionNumber;
-                            ViewBag.ObjType = objtype;
-                            ViewBag.Refid = element.RefId;
-                            ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
-                            ViewBag.Tags = element.Tags;
-                            ViewBag.AppId = element.Apps;
-                            ViewBag.DashboardTiles = element.Dashboard_Tiles;
-                            ViewBag.IsLogEnabled = element.IsLogEnabled;
-                            ViewBag.IsPublic = element.IsPublic;
-                            ViewBag.workingMode = element.WorkingMode;
+                    EbObjectWrapper element = resultlist.Data;
+                    if (element != null)
+                    {
+                        ViewBag.IsNew = "false";
+                        ViewBag.ObjectName = element.DisplayName;
+                        ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = element.DisplayName });//regional languages not support in ViewBag
+                        ViewBag.ObjectDesc = element.Description;
+                        ViewBag.Status = element.Status;
+                        ViewBag.VersionNumber = element.VersionNumber;
+                        ViewBag.ObjType = objtype;
+                        ViewBag.Refid = element.RefId;
+                        ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                        ViewBag.Tags = element.Tags;
+                        ViewBag.AppId = element.Apps;
+                        ViewBag.DashboardTiles = element.Dashboard_Tiles;
+                        ViewBag.IsLogEnabled = element.IsLogEnabled;
+                        ViewBag.IsPublic = element.IsPublic;
+                        ViewBag.workingMode = element.WorkingMode;
 
-                            if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                            {
-                                ViewBag.ReadOnly = true;
-                                _object = EbSerializers.Json_Deserialize(element.Json_lc);
-                                ViewBag.dsObj = _object;
-                                _object.Status = element.Status;
-                                _object.RefId = element.RefId;
-                                _object.VersionNumber = element.VersionNumber;
-                                _object.DisplayName = element.DisplayName;
-                                ViewBag.Workingcopy = element.Wc_All;
-                            }
-                            else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
-                            {
-                                ViewBag.ReadOnly = false;
-                                _object = EbSerializers.Json_Deserialize(element.Json_wc);
-                                ViewBag.dsObj = _object;
-                                _object.Status = element.Status;
-                                _object.RefId = element.RefId;
-                                _object.VersionNumber = element.VersionNumber;
-                                _object.DisplayName = element.DisplayName;
-                                ViewBag.Workingcopy = element.Wc_All;
-                            }
+                        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                        {
+                            ViewBag.ReadOnly = true;
+                            _object = EbSerializers.Json_Deserialize(element.Json_lc);
+                            ViewBag.dsObj = _object;
+                            _object.Status = element.Status;
+                            _object.RefId = element.RefId;
+                            _object.VersionNumber = element.VersionNumber;
+                            _object.DisplayName = element.DisplayName;
+                            ViewBag.Workingcopy = element.Wc_All;
                         }
+                        else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
+                        {
+                            ViewBag.ReadOnly = false;
+                            _object = EbSerializers.Json_Deserialize(element.Json_wc);
+                            ViewBag.dsObj = _object;
+                            _object.Status = element.Status;
+                            _object.RefId = element.RefId;
+                            _object.VersionNumber = element.VersionNumber;
+                            _object.DisplayName = element.DisplayName;
+                            ViewBag.Workingcopy = element.Wc_All;
+                        }
+                    }
                 }
                 else
                 {
@@ -180,41 +179,6 @@ namespace ExpressBase.Web.Controllers
                     _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
                     if (_object != null)
                     {
-                        ////-------------------------temp fix to copy old prop value (string) to new prop value (EbScript)----------------------------
-                        //foreach (EbReportDetail dt in (_object as EbReport).Detail)
-                        //{
-                        //    foreach (EbReportField field in dt.Fields)
-                        //    {
-                        //        if (field is EbDataField)
-                        //        {
-                        //            var _new = (field as EbDataField).AppearExpression;
-                        //            var old = (field as EbDataField).AppearanceExpression;
-                        //            if (_new == null)
-                        //            {
-                        //                if (!string.IsNullOrEmpty(old))
-                        //                    _new = new EbScript { Code = old, Lang = ScriptingLanguage.CSharp };
-                        //                else
-                        //                    _new = new EbScript();
-                        //                (field as EbDataField).AppearExpression = _new;
-                        //            }
-                        //            if (field is EbCalcField)
-                        //            {
-                        //                var __new = (field as EbCalcField).ValExpression;
-                        //                var _old = (field as EbCalcField).ValueExpression;
-                        //                if (__new == null)
-                        //                {
-                        //                    if (!string.IsNullOrEmpty(_old))
-                        //                        __new = new EbScript { Code = _old, Lang = ScriptingLanguage.CSharp };
-                        //                    else
-                        //                        __new = new EbScript();
-                        //                    (field as EbCalcField).ValExpression = __new;
-                        //                }
-                        //            }
-                        //        }
-                        //    }
-                        //}
-                        ////----------------------------------------------------------------------------------------------------------------------------
-
                         _object.AfterRedisGet(Redis, ServiceClient);
                         ViewBag.dsObj = _object;
                     }
@@ -369,12 +333,10 @@ namespace ExpressBase.Web.Controllers
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
                 obj.BeforeSave(ServiceClient, Redis);
 
-                var temp = obj.DiscoverRelatedRefids();
-                if (temp != null && temp.Count > 0)
+                List<string> temp = obj.DiscoverRelatedRefids();
+                if (temp?.Count > 0)
                     _rel_obj_tmp = string.Join(",", temp);
 
-                if (_rel_obj_tmp.Length > 0)
-                    _rel_obj_tmp = _rel_obj_tmp.Substring(0, _rel_obj_tmp.Length - 1);//removing excess comma
                 if (obj is EbDataReader)
                 {
                     bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
@@ -460,8 +422,8 @@ namespace ExpressBase.Web.Controllers
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
                 obj.BeforeSave(ServiceClient, Redis);
 
-                var temp = obj.DiscoverRelatedRefids();
-                if (temp != null && temp.Count > 0)
+                List<string> temp = obj.DiscoverRelatedRefids();
+                if (temp?.Count > 0)
                     _rel_obj_tmp = string.Join(",", temp);
 
                 if (obj is EbDataReader)
@@ -775,8 +737,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult UpdateObjectDashboard(string refid, bool versioning)
         {
-            List<EbObjectWrapper> objlist = ServiceClient.Get(new EbObjectUpdateDashboardRequest { Refid = refid }).Data;
-            EbObjectWrapper w = objlist[0];
+            EbObjectWrapper obj = ServiceClient.Get(new EbObjectUpdateDashboardRequest { Refid = refid }).Data;
+            EbObjectWrapper w = obj;
             ViewBag.IsPublic = w.IsPublic;
             ViewBag.workingMode = w.WorkingMode;
             return ViewComponent("ObjectDashboard", new { refid, objname = w.Name, w.Status, vernum = w.VersionNumber, workcopies = w.Wc_All, _tags = w.Tags, _apps = w.Apps, _dashbord_tiles = w.Dashboard_Tiles, _versioning = versioning });
@@ -909,7 +871,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public string EnableLogging(bool ProfilerValue, int objid)
         {
-            var response = ServiceClient.Post(new EnableLogRequest { Islog = ProfilerValue, ObjId = objid });
+            EnableLogResponse response = ServiceClient.Post(new EnableLogRequest { Islog = ProfilerValue, ObjId = objid });
             string msg = "";
             if (response.RowsDeleted > 0)
             {

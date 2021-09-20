@@ -299,65 +299,65 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Eb_formBuilder(int i, int objtype)
-        {
-            //var req = this.HttpContext.Request.Form;
-            //ViewBag.Objtype = req["objtype"];
-            //ViewBag.Objid = req["objid"];
+        //[HttpPost]
+        //public IActionResult Eb_formBuilder(int i, int objtype)
+        //{
+        //    //var req = this.HttpContext.Request.Form;
+        //    //ViewBag.Objtype = req["objtype"];
+        //    //ViewBag.Objid = req["objid"];
 
-            //BuilderType _BuilderType = (BuilderType)Convert.ToInt32(ViewBag.Objtype);
+        //    //BuilderType _BuilderType = (BuilderType)Convert.ToInt32(ViewBag.Objtype);
 
-            //EbObjectWrapper FormObj = GetFormObj(req["objid"].ToString(), Convert.ToInt32(req["objtype"]));
-            //ViewBag.Json = FormObj.Json;
-            //ViewBag.Name = FormObj.Name;
-            //ViewBag.html = GetHtml2Render(_BuilderType, ViewBag.Objid);
-            //return View();
+        //    //EbObjectWrapper FormObj = GetFormObj(req["objid"].ToString(), Convert.ToInt32(req["objtype"]));
+        //    //ViewBag.Json = FormObj.Json;
+        //    //ViewBag.Name = FormObj.Name;
+        //    //ViewBag.html = GetHtml2Render(_BuilderType, ViewBag.Objid);
+        //    //return View();
 
-            //================
+        //    //================
 
-            ViewBag.Header = "Edit WebForm";
-            var req = this.HttpContext.Request.Form;
-            int obj_id = Convert.ToInt32(req["objid"]);
+        //    ViewBag.Header = "Edit WebForm";
+        //    var req = this.HttpContext.Request.Form;
+        //    int obj_id = Convert.ToInt32(req["objid"]);
 
-            ViewBag.Obj_id = obj_id;
-            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
-            var rlist = resultlist.Data;
-            foreach (var element in rlist)
-            {
-                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                ViewBag.LifeCycle = lifeCycle;
-                ViewBag.IsNew = "false";
-                ViewBag.ObjType = objtype;
-                ViewBag.ObjectName = element.Name;
-                ViewBag.ObjectDesc = element.Description;
-                ViewBag.Status = element.Status;
-                ViewBag.VersionNumber = element.VersionNumber;
-                ViewBag.Icon = "fa fa-database";
-                ViewBag.Refid = element.RefId;
-                ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
-                ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
-                ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
+        //    ViewBag.Obj_id = obj_id;
+        //    var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
+        //    var rlist = resultlist.Data;
+        //    foreach (var element in rlist)
+        //    {
+        //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+        //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+        //        ViewBag.LifeCycle = lifeCycle;
+        //        ViewBag.IsNew = "false";
+        //        ViewBag.ObjType = objtype;
+        //        ViewBag.ObjectName = element.Name;
+        //        ViewBag.ObjectDesc = element.Description;
+        //        ViewBag.Status = element.Status;
+        //        ViewBag.VersionNumber = element.VersionNumber;
+        //        ViewBag.Icon = "fa fa-database";
+        //        ViewBag.Refid = element.RefId;
+        //        ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+        //        ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+        //        ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
 
-                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                {
-                    EbWebForm dsobj = EbSerializers.Json_Deserialize<EbWebForm>(element.Json_lc);
-                    ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_lc;
-                    ViewBag.html = dsobj.GetHtml();
-                }
-                else
-                {
-                    EbWebForm dsobj = EbSerializers.Json_Deserialize<EbWebForm>(element.Json_wc);
-                    ViewBag.Name = dsobj.Name;
-                    ViewBag.Json = element.Json_wc;
-                    ViewBag.html = dsobj.GetHtml();
-                }
-            }
+        //        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+        //        {
+        //            EbWebForm dsobj = EbSerializers.Json_Deserialize<EbWebForm>(element.Json_lc);
+        //            ViewBag.Name = dsobj.Name;
+        //            ViewBag.Json = element.Json_lc;
+        //            ViewBag.html = dsobj.GetHtml();
+        //        }
+        //        else
+        //        {
+        //            EbWebForm dsobj = EbSerializers.Json_Deserialize<EbWebForm>(element.Json_wc);
+        //            ViewBag.Name = dsobj.Name;
+        //            ViewBag.Json = element.Json_wc;
+        //            ViewBag.html = dsobj.GetHtml();
+        //        }
+        //    }
 
-            return View();
-        }
+        //    return View();
+        //}
 
         public string CommitFormBuilder()
         {
@@ -619,56 +619,56 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Eb_EmailBuilder(string Htmlcode)
-        {
-            ViewBag.Header = "Edit Email";
-            var req = this.HttpContext.Request.Form;
-            int obj_id = Convert.ToInt32(req["objid"]);
-            ViewBag.Obj_id = Convert.ToInt32(req["objid"]);
-            var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
-            var rlist = resultlist.Data;
+        //[HttpPost]
+        //public IActionResult Eb_EmailBuilder(string Htmlcode)
+        //{
+        //    ViewBag.Header = "Edit Email";
+        //    var req = this.HttpContext.Request.Form;
+        //    int obj_id = Convert.ToInt32(req["objid"]);
+        //    ViewBag.Obj_id = Convert.ToInt32(req["objid"]);
+        //    var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
+        //    var rlist = resultlist.Data;
 
-            foreach (var element in rlist)
-            {
-                ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-                List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-                ViewBag.LifeCycle = lifeCycle;
-                ViewBag.IsNew = "false";
-                ViewBag.ObjectName = element.Name;
-                ViewBag.ObjectDesc = element.Description;
-                ViewBag.Status = element.Status;
-                ViewBag.VersionNumber = element.VersionNumber;
-                ViewBag.Icon = "fa fa-database";
-                ViewBag.ObjType = EbObjectTypes.EmailBuilder.IntCode;
-                ViewBag.Refid = element.RefId;
-                ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
-                ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
-                ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
-                if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                {
-                    ViewBag.ReadOnly = true;
-                    var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_lc);
-                    ViewBag.dsobj = dsobj;
-                    ViewBag.html = dsobj.Body;
-                }
-                else
-                {
-                    ViewBag.ReadOnly = false;
-                    var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_wc);
-                    ViewBag.dsobj = dsobj;
-                    ViewBag.html = dsobj.Body;
-                }
-                var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
+        //    foreach (var element in rlist)
+        //    {
+        //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
+        //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
+        //        ViewBag.LifeCycle = lifeCycle;
+        //        ViewBag.IsNew = "false";
+        //        ViewBag.ObjectName = element.Name;
+        //        ViewBag.ObjectDesc = element.Description;
+        //        ViewBag.Status = element.Status;
+        //        ViewBag.VersionNumber = element.VersionNumber;
+        //        ViewBag.Icon = "fa fa-database";
+        //        ViewBag.ObjType = EbObjectTypes.EmailBuilder.IntCode;
+        //        ViewBag.Refid = element.RefId;
+        //        ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+        //        ViewBag.Minorv = element.Dashboard_Tiles.MinorVersionNumber;
+        //        ViewBag.Patchv = element.Dashboard_Tiles.PatchVersionNumber;
+        //        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+        //        {
+        //            ViewBag.ReadOnly = true;
+        //            var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_lc);
+        //            ViewBag.dsobj = dsobj;
+        //            ViewBag.html = dsobj.Body;
+        //        }
+        //        else
+        //        {
+        //            ViewBag.ReadOnly = false;
+        //            var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_wc);
+        //            ViewBag.dsobj = dsobj;
+        //            ViewBag.html = dsobj.Body;
+        //        }
+        //        var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
 
-                Context2Js _jsResult = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
+        //        Context2Js _jsResult = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
 
-                ViewBag.Meta = _jsResult.AllMetas;
-                ViewBag.JsObjects = _jsResult.JsObjects;
-                ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-            }
-            return View();
-        }
+        //        ViewBag.Meta = _jsResult.AllMetas;
+        //        ViewBag.JsObjects = _jsResult.JsObjects;
+        //        ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+        //    }
+        //    return View();
+        //}
 
 
         public string EmailTemplateCommit(string _Refid, string Htmlcode, string PropObj, string ChangeLog)

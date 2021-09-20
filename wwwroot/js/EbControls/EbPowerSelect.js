@@ -388,10 +388,15 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
         //this.clearValues();
-        let triggerChange = (StrValues === "" || StrValues === undefined);// trigger if set with nothing
+        let triggerChange = (StrValues === "" || StrValues === undefined || StrValues === 0);// trigger if set with nothing
         this.clearValues(triggerChange);
-        if (StrValues === "" || StrValues === null)
+        if (StrValues === "" || StrValues === null || StrValues === 0) {
+            if (this.ComboObj.__continue) {
+                this.ComboObj.___isNotUpdateValExpDepCtrls = false;
+                this.ComboObj.__continue();
+            }
             return;
+        }
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.ComboObj.IsPreload) { // if preLoad
@@ -484,15 +489,17 @@ const EbPowerSelect = function (ctrl, options) {
         let search = $e.val().toString();
         //if (mobileAndTabletCheck())
         //    alert(e.which);
-        if (e.which === 13)
+        if (e.which === 13 && search)
             this.Vobj.showDD();
         if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
             this.Vobj.valueMembers.pop();
             $.each(this.dmNames, this.popDmValues.bind(this));
         }
         if (e.which === 40) {
-            this.Vobj.showDD();
-            this.focus1stRow();
+            if (search) {
+                this.Vobj.showDD();
+                this.focus1stRow();
+            }
         }
         if (e.which === 32) {
             if (this.Vobj.DDstate)

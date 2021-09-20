@@ -543,8 +543,13 @@ const WebFormRender = function (option) {
             try {
                 let FnString = atob(Script.Code);
                 for (let i = 0; i < Table.length; i++) {
-                    DGB.setCurRow(Table[i].RowId);
-                    let res = new Function("form", "user", FnString).bind(DGB.ctrl.currentRow, this.formObject, this.userObject)();
+                    let res = false;
+                    if (DGB.objectMODEL[Table[i].RowId]) {
+                        DGB.setCurRow(Table[i].RowId);
+                        res = new Function("form", "user", FnString).bind(DGB.ctrl.currentRow, this.formObject, this.userObject)();
+                    }
+                    else
+                        res = true;
                     if (res)
                         NwTable.push(Table[i]);
                     else if (Table[i].RowId > 0) {
@@ -1543,12 +1548,41 @@ const WebFormRender = function (option) {
         let d = this.DataMODEL;
         let t = this.FormObj.TableName;
         let p = getFlatObjOfType(this.FormObj, "ProvisionLocation");
-        if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
-            return p[0].getValue();
-        else if (d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
-            return d[t][0].LocId;
-        else
-            return ebcontext.locations.getCurrent();
+        if (this.rowId > 0) {//edit mode
+            if (p && p.length > 0) {
+                if (p[0].getValue && p[0].getValue() > 0)
+                    return p[0].getValue();
+                else {
+                    console.error('Invalid Prov location value');
+                    //return 0;
+                    return ebcontext.locations.getCurrent();
+                }
+            }
+            else {
+                if (d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+                    return d[t][0].LocId;
+                else {
+                    console.error('Invalid location id');
+                    //return 0;
+                    return ebcontext.locations.getCurrent();
+                }
+            }
+        }
+        else {//new mode
+            if (p && p.length > 0) {
+                //return 0;
+                return ebcontext.locations.getCurrent();
+            }
+            else {
+                return ebcontext.locations.getCurrent();
+            }
+        }
+        //if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
+        //    return p[0].getValue();
+        //else if (d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+        //    return d[t][0].LocId;
+        //else
+        //    return ebcontext.locations.getCurrent();
     };
 
     this.getLocObj = function () {
@@ -2217,7 +2251,11 @@ const WebFormRender = function (option) {
     };
 
     this.selectUIinpOnFocus = function () {
+        if (!event)
+            return;
         let el = event.target;
+        if (!el.hasAttribute('ui-inp'))
+            return;
         if (event && event.target &&
             !(el.getAttribute("type") === "search" &&
                 ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))

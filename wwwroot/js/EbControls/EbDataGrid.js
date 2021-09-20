@@ -35,7 +35,7 @@
     }.bind(this);
     this.resetBuffers();
 
-    this.populateDGWithDataModel = function (dataModel) {
+    this.populateDGWithDataModel = function (dataModel, fromRefresh) {
         this.DataMODEL = dataModel;
         //this.curRowDataMODEL = this.getRowDataModel_();
         this.curRowDataMODEL = JSON.parse(JSON.stringify(this.RowDataModel_empty));
@@ -43,7 +43,7 @@
         this.fixValExpInDataModel();
         this.drawHTMLView();
         this.callOnRowPaintFns();
-        this.updateAggCols(false);
+        this.updateAggCols(fromRefresh);
         if (this.DataMODEL.length > 1 && this.DataMODEL[this.DataMODEL.length - 1].RowId < 0)
             this.newRowCounter = this.DataMODEL[this.DataMODEL.length - 1].RowId; // for clone or import
     }.bind(this);
@@ -439,8 +439,12 @@
     };
 
     this.tryAddRow = function () {
-        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable)
+        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable) {
             this.addRow();
+            let a = $(`#${this.TableId}>tbody tr[is-editing="true"] td [ui-inp]:enabled:visible`);
+            if (a.length > 0)
+                $(a[0]).focus();
+        }
         //if (this.Mode.isEdit)
         //    $(`.ctrlstd[mode] `).attr("mode", "edit");
         //if (this.Mode.isNew)
@@ -924,8 +928,9 @@
         if ($curentRow.length === 0 || $curentRow.attr("is-editing") === "false")// for editmode first click
             this.tryAddRow();
         else {
-            let td = $curentRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td }, true, false);
+            if (this.checkRow_click_New({ target: $curentRow.find(".ctrlstd")[0] })) {
+                this.tryAddRow();
+            }
             //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
             //    this.tryAddRow();
         }
@@ -1346,18 +1351,28 @@
         if (e.which === 40 || e.which === 38) {//down arrow //up arrow
             if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"]').length === 0)
                 return;
+
+            let temp = performance.now();
+            if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 300)
+                return;
+            this.lastUpDownArrowTs = performance.now();
+
             let func = e.which === 40 ? 'next' : 'prev';
             let indx = $(e.target).closest('td').index();
-            let $nxtTd = $($(e.currentTarget)[func]().find('td')[indx]);
-            $nxtTd.trigger('focusin');
-            $nxtTd.trigger('click');
+            let $nxtTr = $(e.currentTarget)[func]();
+            if ($nxtTr.length > 0) {
+                let $nxtTd = $($nxtTr.find('td')[indx]);
+                document.activeElement.blur();
+                $nxtTd.trigger('focusin');
+                $nxtTd.trigger('click');
+            }
         }
         if (e.which === 27) {//esc
             if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")
                 $tr.find(".cancel-row").trigger("click");
         }
         //alt + enter
-        if ((event.altKey || event.metaKey) && event.which === 13) {
+        if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
             if (this.$table.has(document.activeElement).length === 1) {
                 document.activeElement.blur();
                 this.addRowBtn_click();
@@ -1773,7 +1788,7 @@
         this.formRenderer.DataMODEL[this.ctrl.TableName] = dataModel;// attach to master model object
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.populateDGWithDataModel(dataModel);
+        this.populateDGWithDataModel(dataModel, true);
 
         for (let i = 0; i < lastModel.length; i++) {
             if (lastModel[i].RowId > 0) {

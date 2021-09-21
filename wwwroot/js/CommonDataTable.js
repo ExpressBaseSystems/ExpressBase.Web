@@ -3611,6 +3611,8 @@
                 terms.push(ui.item.value);
                 terms.push("");
                 this.value = terms.join(" | ");
+                var e = $.Event("keyup", { which: 13, keyCode: 13, target: this });
+                $(this).trigger(e);
                 return false;
             },
             search: function (event, ui) {
@@ -3945,9 +3947,7 @@
                 this.reloadDataTable();
             }
         }
-        else {
-            if ($(e.target).data('ui-autocomplete') != undefined)
-                return;
+        else {            
             $("[data-coltyp=date]").datepicker("hide");
             if (typeof (e.key) === "undefined") {
                 this.reloadDataTable();
@@ -3955,9 +3955,14 @@
             else {
                 let nam = $(e.target).attr('data-colum');
                 let obj = this.columnSearch.find(e => e.Column === nam);
-                if ((obj && obj.Value != $(e.target).val().trim())) {
+                if ((obj && obj.Value != $(e.target).val().trim()) || !obj) {
                     clearTimeout(this.realoadDtTimer);
-                    this.realoadDtTimer = setTimeout(this.reloadDataTable.bind(this, e), 1000);
+                    this.realoadDtTimer = setTimeout(function (e) {
+                        let ac = $(e.target).data('ui-autocomplete');
+                        if ((ac && $(ac.menu.activeMenu[0]).is(':visible')) || !ac)
+                            return;
+                        this.reloadDataTable(e);
+                    }.bind(this, e), 1500);
                 }
             }
         }

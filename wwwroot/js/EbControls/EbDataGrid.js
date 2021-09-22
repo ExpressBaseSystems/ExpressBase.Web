@@ -1705,8 +1705,8 @@
 
         if (isFull)
             this.refreshDG(paramsColl, lastCtrlName);
-        else
-            this.clearDG(false);
+        //else
+        //    this.clearDG(false);
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;
@@ -1785,17 +1785,49 @@
         }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
         let lastModel = this.DataMODEL;
-        this.formRenderer.DataMODEL[this.ctrl.TableName] = dataModel;// attach to master model object
+
+        let newModel = [], delModel = [], rowCntr = -501;
+        if (this.ctrl.MergeData && lastModel.length > 0 && dataModel.length > 0) {
+            let keyIdx1 = 0;
+            let keyIdx2 = lastModel[0].Columns.findIndex(e => e.Name === dataModel[0].Columns[keyIdx1].Name);
+
+            while (lastModel.length > 0) {
+                let oldRow = lastModel.splice(0, 1)[0];
+                oldRow.IsDelete = false;
+                let newIdx = dataModel.findIndex(e => e.Columns[keyIdx1].Value === oldRow.Columns[keyIdx2].Value);
+                if (newIdx >= 0) {
+                    dataModel.splice(newIdx, 1);
+                    if (oldRow.RowId <= 0)
+                        oldRow.RowId = rowCntr--;
+                    newModel.push(oldRow);
+                }
+                else if (oldRow.RowId > 0) {
+                    delModel.push(oldRow);
+                }
+            }
+            for (let i = 0; i < dataModel.length; i++) {
+                if (dataModel[i].RowId <= 0)
+                    dataModel[i].RowId = rowCntr--;
+                newModel.push(dataModel[i]);
+            }
+        }
+        else {
+            newModel = dataModel;
+        }
+
+        this.formRenderer.DataMODEL[this.ctrl.TableName] = newModel;// attach to master model object
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.populateDGWithDataModel(dataModel, true);
+        this.populateDGWithDataModel(newModel, true);
 
+        lastModel = lastModel.concat(delModel);
         for (let i = 0; i < lastModel.length; i++) {
             if (lastModel[i].RowId > 0) {
                 lastModel[i].IsDelete = true;
                 this.DataMODEL.push(lastModel[i]);
             }
         }
+
         if (this.ctrl.__continue) this.ctrl.__continue();
     };
 

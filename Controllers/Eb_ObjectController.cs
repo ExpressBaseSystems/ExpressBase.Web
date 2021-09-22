@@ -95,6 +95,7 @@ namespace ExpressBase.Web.Controllers
                             _object.DisplayName = element.DisplayName;
                             ViewBag.Workingcopy = element.Wc_All;
                         }
+                        ViewBag.Types = this.GetObjectType(); 
                     }
                 }
                 else
@@ -917,6 +918,22 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.ToString());
             }
             return resultlist1;
+        }
+        private Dictionary<int, EbObjectTypeWrap> GetObjectType()
+        {
+            Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
+            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            {
+                _dict.Add(objectType.IntCode, new EbObjectTypeWrap
+                {
+                    Name = objectType.Alias,
+                    IntCode = objectType.IntCode,
+                    BMW = objectType.BMW,
+                    IsUserFacing = objectType.IsUserFacing,
+                    Icon = objectType.Icon
+                });
+            }
+            return _dict;
         }
     }
     public class EbRootObjectResponse

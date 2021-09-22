@@ -187,17 +187,16 @@
                 </div>
                 <div class="card_body">
                     @{
+                        Dictionary<int, EbObjectTypeWrap> t = ViewBag.Types;
                         if (tile.Dependants != null)
                         {
                             foreach (RelatedObject rel in tile.Dependants)
                             {
                                 <div class="">
-                                    <div class="">
-                                        <a href="/Eb_Object/Index?objid=@rel.Refid.Split("-")[3]&objtype=@rel.Refid.Split("-")[2]"  target="_blank" class="open_rel_obj" data-id="@rel.Refid">@rel.DisplayName</a>
-                                        <span>- @rel.VersionNumber</span>
-                                    </div>
+                                    <span> <i class="fa @t[rel.ObjectType]?.Icon"></i></span>
+                                    <a href="/Eb_Object/Index?objid=@rel.Refid.Split("-")[3]&objtype=@rel.Refid.Split("-")[2]" target="_blank" class="open_rel_obj" data-id="@rel.Refid">@rel.DisplayName</a>
+                                    <span>- @rel.VersionNumber</span>
                                 </div>
-
                             }
                         }
                     }
@@ -214,174 +213,172 @@
                             foreach (RelatedObject rel in tile.Dominants)
                             {
                                 <div class="">
-                                    <div class="">
-                                        <a href="/Eb_Object/Index?objid=@rel.Refid.Split("-")[3]&objtype=@rel.Refid.Split("-")[2]"  target="_blank" class="open_rel_obj" data-id="@rel.Refid">@rel.DisplayName</a>
-                                        <span>- @rel.VersionNumber</span>
-                                    </div>
-                                </div>
-
-                                }
-                                }
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="box2">
-                        @{
-                            if (ViewBag.Refid.Length > 0)
-                            {
-                                if (ViewBag.versioning)
-                                {
-
-                                    <div class="card1">
-                                        <div class="head">
-                                            Working Copy(s)
-                                        </div>
-                                        <div class="count text-center workcopies">
-                                            @using Newtonsoft.Json;
-                                            @{
-
-                                                if (wrkcpy != null || wrkcpy.Count() < 1 || wrkcpy[0] == "")
-                                                {
-                                                    <p>No working copies</p>
-                                                }
-                                                else
-                                                {
-                                                    foreach (string w in wrkcpy)
-                                                    {
-                                                        if (!string.IsNullOrEmpty(w))
-                                                        {
-                                                            var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
-                                                            foreach (KeyValuePair<string, string> k in wcpy)
-                                                            {<a href="#" class="wrkcpylink tag label label-primary" data-id="@k.Value" data-verNum="@k.Key">@k.Key.Replace(".w", " w")</a>}
-                                                    }
-                                                }
-                                            }
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="card1">
-                                        <div class="head">
-                                            Last Commit
-                                        </div>
-                                        <div class="card_body">
-                                            @{
-                                                if (tile.LastCommitedVersionRefid != "")
-                                                {
-                                                    <div class="card1-mid">
-                                                        <div class="count text-right">
-                                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LastCommitedVersionRefid" data-verNum="@tile.LastCommitedVersionNumber">@tile.LastCommitedVersionNumber</a>
-                                                            @tile.LastCommitedVersion_Status
-                                                        </div>
-                                                    </div>
-                                                    <div class="card1-botm" style="display:block">
-                                                        <div class="userimg">
-                                                            @*<img src="../static/dp/dp_@(tile.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
-                                                        </div>
-                                                        <div class="profileInfo">
-                                                            <h6 class="xtrasmall">@tile.LastCommitedby_Name</h6>
-                                                            <h6 class="xtrasmall"> @tile.LastCommitedVersionCommit_ts</h6>
-                                                        </div>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <p class="count text-center">No Committed Version</p>
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="card1">
-                                        <div class="head">
-                                            Live Version
-                                        </div>
-                                        <div class="card_body">
-                                            @{
-                                                if (tile.LiveVersionRefid != "")
-                                                {
-                                                    <div class="card1-mid">
-                                                        <div class="count text-right">
-                                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LiveVersionRefid" data-verNum="@tile.LiveVersionNumber">@tile.LiveVersionNumber</a>
-                                                            @tile.LiveVersion_Status
-                                                        </div>
-                                                    </div>
-                                                    <div class="card1-botm" style="display:block">
-                                                        <div class="userimg">
-                                                            @*<img src="../static/dp/dp_@(tile.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
-                                                        </div>
-                                                        <div class="profileInfo">
-                                                            <h6 class="xtrasmall">@tile.LiveVersionCommitby_Name</h6>
-                                                            <h6 class="xtrasmall">@tile.LiveVersionCommit_ts</h6>
-                                                        </div>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <p class="count text-center">No Live Version</p>
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                }
-                                <div class="card1">
-                                    <div class="head">
-                                        <i class="fa fa-bug" aria-hidden="true"></i> Issues
-                                    </div>
-                                    <div class="card1-mid card_body">
-                                        <div class="count text-center" style="font-size:25px">
-                                            0
-                                        </div>
-                                    </div>
+                                    <span> <i class="fa @t[rel.ObjectType]?.Icon"></i></span>
+                                    <a href="/Eb_Object/Index?objid=@rel.Refid.Split("-")[3]&objtype=@rel.Refid.Split("-")[2]" target="_blank" class="open_rel_obj" data-id="@rel.Refid">@rel.DisplayName</a>
+                                    <span>- @rel.VersionNumber</span>
                                 </div>
                             }
                         }
-                    </div>
-
-                    <div class="card1">
-                        <div class="head">
-                            <i class="fa fa-tags" aria-hidden="true"></i> Tags
-                        </div>
-                        <div class="card_body tag-container">
-                            <input type="text" class="typeahead form-control" id="tags" data-role="tagsinput" />
-                        </div>
-                    </div>
-                    @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
-                    {
-                        <div class="card1">
-                            <div class="head">
-                                <div class="profilerOnOff">
-                                    <i class="ProfilerToggle" aria-hidden="true"></i> Profiler
-                                </div>
-                            </div>
-                            <label class="profilerswitch">
-                                <input type="checkbox" id="profiler">
-                                <span class="proslider round"></span>
-                            </label>
-                        </div>
                     }
                 </div>
             </div>
-            <div class="changLog-container" id="changelogPopup">
-                <div class="chlog-top">
-                    <div class="ch-l-title">Change Log</div>
-                    <button class="btn btn-sm" id="close_popup"><i class="fa fa-times"></i></button>
+        </div>
+
+        <div class="box2">
+            @{
+                if (ViewBag.Refid.Length > 0)
+                {
+                    if (ViewBag.versioning)
+                    {
+
+                        <div class="card1">
+                            <div class="head">
+                                Working Copy(s)
+                            </div>
+                            <div class="count text-center workcopies">
+                                @using Newtonsoft.Json;
+                                @{
+
+                                    if (wrkcpy != null || wrkcpy.Count() < 1 || wrkcpy[0] == "")
+                                    {
+                                        <p>No working copies</p>
+                                    }
+                                    else
+                                    {
+                                        foreach (string w in wrkcpy)
+                                        {
+                                            if (!string.IsNullOrEmpty(w))
+                                            {
+                                                var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
+                                                foreach (KeyValuePair<string, string> k in wcpy)
+                                                {<a href="#" class="wrkcpylink tag label label-primary" data-id="@k.Value" data-verNum="@k.Key">@k.Key.Replace(".w", " w")</a>}
+                                        }
+                                    }
+                                }
+                                }
+                            </div>
+                        </div>
+                        <div class="card1">
+                            <div class="head">
+                                Last Commit
+                            </div>
+                            <div class="card_body">
+                                @{
+                                    if (tile.LastCommitedVersionRefid != "")
+                                    {
+                                        <div class="card1-mid">
+                                            <div class="count text-right">
+                                                <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LastCommitedVersionRefid" data-verNum="@tile.LastCommitedVersionNumber">@tile.LastCommitedVersionNumber</a>
+                                                @tile.LastCommitedVersion_Status
+                                            </div>
+                                        </div>
+                                        <div class="card1-botm" style="display:block">
+                                            <div class="userimg">
+                                                @*<img src="../static/dp/dp_@(tile.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                            </div>
+                                            <div class="profileInfo">
+                                                <h6 class="xtrasmall">@tile.LastCommitedby_Name</h6>
+                                                <h6 class="xtrasmall"> @tile.LastCommitedVersionCommit_ts</h6>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="count text-center">No Committed Version</p>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="card1">
+                            <div class="head">
+                                Live Version
+                            </div>
+                            <div class="card_body">
+                                @{
+                                    if (tile.LiveVersionRefid != "")
+                                    {
+                                        <div class="card1-mid">
+                                            <div class="count text-right">
+                                                <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LiveVersionRefid" data-verNum="@tile.LiveVersionNumber">@tile.LiveVersionNumber</a>
+                                                @tile.LiveVersion_Status
+                                            </div>
+                                        </div>
+                                        <div class="card1-botm" style="display:block">
+                                            <div class="userimg">
+                                                @*<img src="../static/dp/dp_@(tile.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                            </div>
+                                            <div class="profileInfo">
+                                                <h6 class="xtrasmall">@tile.LiveVersionCommitby_Name</h6>
+                                                <h6 class="xtrasmall">@tile.LiveVersionCommit_ts</h6>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="count text-center">No Live Version</p>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                    <div class="card1">
+                        <div class="head">
+                            <i class="fa fa-bug" aria-hidden="true"></i> Issues
+                        </div>
+                        <div class="card1-mid card_body">
+                            <div class="count text-center" style="font-size:25px">
+                                0
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="card1">
+            <div class="head">
+                <i class="fa fa-tags" aria-hidden="true"></i> Tags
+            </div>
+            <div class="card_body tag-container">
+                <input type="text" class="typeahead form-control" id="tags" data-role="tagsinput" />
+            </div>
+        </div>
+        @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
+        {
+            <div class="card1">
+                <div class="head">
+                    <div class="profilerOnOff">
+                        <i class="ProfilerToggle" aria-hidden="true"></i> Profiler
+                    </div>
                 </div>
-                <div class="txt-area" id="obj_changelog" placeholder="Write here..." contenteditable="true"></div>
-                <button class="btn btn-primary pull-right commit-btn" id="commit">Commit</button>
+                <label class="profilerswitch">
+                    <input type="checkbox" id="profiler">
+                    <span class="proslider round"></span>
+                </label>
             </div>
+        }
+    </div>
+</div>
+<div class="changLog-container" id="changelogPopup">
+    <div class="chlog-top">
+        <div class="ch-l-title">Change Log</div>
+        <button class="btn btn-sm" id="close_popup"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="txt-area" id="obj_changelog" placeholder="Write here..." contenteditable="true"></div>
+    <button class="btn btn-primary pull-right commit-btn" id="commit">Commit</button>
+</div>
 
-            <div id="url-container" class="url-container">
-                <div>External URL</div>
-                <textarea id="public_url" class="url_area" readonly>  @external_form_url</textarea>
-                <button class="btn btn-sm pull-right" id="close_url_popup"><i class="fa fa-times"></i></button>
-                <button class="btn btn-sm pull-right" data-toggle="tooltip" title="Copy to clipboard" onclick="$('#public_url').select();document.execCommand('copy');">
-                    <i class="fa fa-files-o" aria-hidden="true"></i>
-                </button>
-            </div>
+<div id="url-container" class="url-container">
+    <div>External URL</div>
+    <textarea id="public_url" class="url_area" readonly>  @external_form_url</textarea>
+    <button class="btn btn-sm pull-right" id="close_url_popup"><i class="fa fa-times"></i></button>
+    <button class="btn btn-sm pull-right" data-toggle="tooltip" title="Copy to clipboard" onclick="$('#public_url').select();document.execCommand('copy');">
+        <i class="fa fa-files-o" aria-hidden="true"></i>
+    </button>
+</div>
 
 
-            <script>
+<script>
      window.ebcontext.header = new EbHeader();@*added amal*@
 
     var data = @appdata;
@@ -537,4 +534,4 @@
             _form.submit();
             document.body.removeChild(_form);
         }
-            </script>
+</script>

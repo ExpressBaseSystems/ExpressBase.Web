@@ -333,6 +333,9 @@
         else {
             if (o.FileCategory === 0) {
                 src = `/files/${o.FileRefId}`;
+                let arr = o.FileName.split('.');
+                if (arr[arr.length - 1] === 'pdf')
+                    src += '.pdf';
             }
             else if (o.FileCategory === 1) {
                 src = `/images/small/${o.FileRefId}.jpg`;
@@ -362,12 +365,11 @@
             var arr = o.FileName.split('.');
             var exten = arr[arr.length - 1];
             if (exten !== 'pdf') {
-                return `<img src="/images/file-image.png" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
+                return `<img src="/images/file-image.png" data-src="${src}" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
             else {
-                return `<img src="/images/pdf-image.png" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
+                return `<img src="/images/pdf-image.png" data-src="${src}" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
-
         }
         else {
             return `<img src="${src}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
@@ -926,43 +928,48 @@
     }
 
     contextMenu() {
-        this.DefaultLinks = {
-            "fold2": {
-                "name": "Move to Category", icon: "fa-list",
-                "items": this.getCateryLinks()
-            },
-            "fold3": {
-                "name": "Open in New Tab", icon: "fa-external-link",
-                callback: function (eType, selector, action, originalEvent) {
-                    let url = $(selector.$trigger).find("img").attr("src") || $(selector.$trigger).find("iframe").attr("src");
-                    if ($(selector.$trigger).attr("recent") == "true") {                       
-                        var newTab = window.open();
-                        newTab.document.body.innerHTML = `<img style="max-height: 100vh;" src="${url}">`
-                    }
-                    else {
-                        var win = window.open(url, '_blank');
-                        win.focus();
-                    }
-                    
-                   
-                }
-            }
-        };
-
         $.contextMenu({
             selector: `.${this.Options.Container}_eb_Gal_thumb`,
             autoHide: true,
             className: "ebfup-context-menu",
             build: function ($trigger, e) {
                 return {
-                    items: $.extend({}, this.DefaultLinks, this.getCustomMenu())
+                    items: $.extend({}, this.getDefaultLinks(), this.getCustomMenu())
                 };
             }.bind(this)
         });
         //$('.ebfup-context-menu_RE').attr('ebfup-context-menutitle_RE', "Yet to save Form");
     }
 
+    getDefaultLinks() {
+        let o = {};
+        let a = this.Options.Renderer;
+        if (!(a && a.mode === 'View Mode'))
+            o["fold2"] = {
+                "name": "Move to Category", icon: "fa-list",
+                "items": this.getCateryLinks()
+            };
+        o["fold3"] = {
+            "name": "Open in New Tab", icon: "fa-external-link",
+            callback: function (eType, selector, action, originalEvent) {
+                let url = $(selector.$trigger).find("img").attr("data-src") || $(selector.$trigger).find("iframe").attr("src");
+                if ($(selector.$trigger).attr("recent") == "true") {
+                    var newTab = window.open();
+                    newTab.document.body.innerHTML = `<img style="max-height: 100vh;" src="${url}">`
+                }
+                else {
+                    var win = window.open(url, '_blank');
+                    win.focus();
+                }
+            }
+        };
+        return o;
+    }
+
     getCustomMenu() {
+        let a = this.Options.Renderer;
+        if (a && a.mode === 'View Mode')
+            return {};
         let o = {};
         if ("CustomMenu" in this.Options && this.Options.CustomMenu.length > 0) {
             for (let i = 0; i < this.Options.CustomMenu.length; i++) {

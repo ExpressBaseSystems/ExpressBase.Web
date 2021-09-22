@@ -2635,7 +2635,7 @@ input.locinp {
     .sub-form-header .sfh-toolbar {
         width: 50%;
         white-space: nowrap;
-        overflow: hidden;
+        /*overflow: hidden;*/
         text-overflow: ellipsis;
     }
 

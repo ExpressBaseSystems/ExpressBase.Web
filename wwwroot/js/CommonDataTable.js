@@ -2842,8 +2842,9 @@
             beforeShow: function (elem, obj) {
                 $(".ui-datepicker").addClass("datecolumn-picker");
             },
-            onSelect: function () {
-                this.call_filter({ keyCode: 10 });
+            onSelect: function (d, i) {
+                if (d !== i.lastVal)
+                    this.call_filter({ keyCode: 10 });
             }.bind(this)
         });
         $("[data-coltyp=date]").on("click", function () {
@@ -3610,6 +3611,8 @@
                 terms.push(ui.item.value);
                 terms.push("");
                 this.value = terms.join(" | ");
+                var e = $.Event("keyup", { which: 13, keyCode: 13, target: this });
+                $(this).trigger(e);
                 return false;
             },
             search: function (event, ui) {
@@ -3883,7 +3886,11 @@
                         dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {
                             $(".ui-datepicker").addClass("datecolumn-picker");
-                        }
+                        },
+                        onSelect: function (d, i) {
+                            if (d !== i.lastVal)
+                                this.call_filter({ keyCode: 10 });
+                        }.bind(this)
                     });
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("click", function () {
                         $(this).datepicker("show");
@@ -3940,7 +3947,7 @@
                 this.reloadDataTable();
             }
         }
-        else {
+        else {            
             $("[data-coltyp=date]").datepicker("hide");
             if (typeof (e.key) === "undefined") {
                 this.reloadDataTable();
@@ -3948,11 +3955,14 @@
             else {
                 let nam = $(e.target).attr('data-colum');
                 let obj = this.columnSearch.find(e => e.Column === nam);
-                let filter = this.repopulate_filter_arr();
-                if ((obj && obj.Value != $(e.target).val().trim()) || this.columnSearch.length != filter.length) {
-                    this.columnSearch = filter;
+                if ((obj && obj.Value != $(e.target).val().trim()) || !obj) {
                     clearTimeout(this.realoadDtTimer);
-                    this.realoadDtTimer = setTimeout(this.reloadDataTable.bind(this, e), 700);
+                    this.realoadDtTimer = setTimeout(function (e) {
+                        let ac = $(e.target).data('ui-autocomplete');
+                        if ((ac && $(ac.menu.activeMenu[0]).is(':visible')) || !ac)
+                            return;
+                        this.reloadDataTable(e);
+                    }.bind(this, e), 1500);
                 }
             }
         }
@@ -3960,14 +3970,13 @@
     }.bind(this);
 
     this.reloadDataTable = function (e) {
-        if (e && $(e.target).data('ui-autocomplete') != undefined) {
-            clearTimeout(this.clearAutoCompleteTimer);
-            this.clearAutoCompleteTimer = setTimeout(function (e) { $(e.target).autocomplete('close'); }.bind(this, e), 2000);
+        let filter = this.repopulate_filter_arr();
+        if (JSON.stringify(filter) != JSON.stringify(this.columnSearch)) {
+            this.columnSearch = filter;
+            $('#' + this.tableId).DataTable().ajax.reload();
+            if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+                $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
         }
-        this.columnSearch = this.repopulate_filter_arr();
-        $('#' + this.tableId).DataTable().ajax.reload();
-        if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-            $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
     };
 
     this.dblclickDateColumn = function () {

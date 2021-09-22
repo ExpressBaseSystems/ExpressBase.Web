@@ -441,7 +441,7 @@
     this.tryAddRow = function () {
         if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable) {
             this.addRow();
-            let a = $(`#${this.TableId}>tbody tr[is-editing="true"] td [ui-inp]:enabled:visible`);
+            let a = $(`#${this.TableId}>tbody tr[is-editing="true"] td input:enabled:visible`);
             if (a.length > 0)
                 $(a[0]).focus();
         }

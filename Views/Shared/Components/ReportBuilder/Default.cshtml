@@ -12,6 +12,8 @@
 
 <link rel="stylesheet" type="text/css" href="~/css/ReportBuilder/Eb_ReportBuilder.css" asp-append-version=@bApnd />
 
+<script type="text/javascript" src="~/js/EbControls/eb_html.tree.js" asp-append-version=@bApnd></script>
+
 <environment include="Development">
     <script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilder.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilderExtended.js" asp-append-version=@bApnd></script>
@@ -24,70 +26,7 @@
     <script src="~/js/Bundles/eb-pdfreport.bundle.js" type="text/javascript" asp-append-version=@bApnd></script>
 </environment>
 
-<script>
-    PosOBjOFdrag = {};
-    $.fn.extend({
-        treed: function (o) {
-            var openedClass = 'fa-minus-square-o';
-            var closedClass = 'fa-plus-square-o';
-            var ic = o || 'fa-plus-square-o';
-
-            if (typeof o !== 'undefined') {
-                if (typeof o.openedClass !== 'undefined') {
-                    //openedClass = o.openedClass;
-                }
-                if (typeof o.closedClass !== 'undefined') {
-                    //closedClass = o.closedClass;
-                }
-            }
-            var tree = $(this);
-            tree.addClass("tree");
-            tree.find('li').has("ul").each(function () {
-                var branch = $(this);
-                branch.prepend("<i class='indicator fa " + ic + "'></i>");
-                branch.addClass('branch');
-                branch.off("click").on('click', function (e) {
-                    if (this === e.target) {
-                        var icon = $(this).children('i:first');
-                        icon.toggleClass(openedClass + " " + closedClass);
-                        $(this).children().children().toggle();
-                    }
-                });
-                branch.children().children().toggle();
-            });
-            tree.find('.branch .indicator').each(function () {
-                $(this).off("click").on('click', function (e) {
-                    $(this).closest('li').click();
-                });
-            });
-            tree.find('.branch>a').each(function () {
-                $(this).off("click").on('click', function (e) {
-                    $(this).closest('li').click();
-                    e.preventDefault();
-                });
-            });
-            tree.find('.branch>button').each(function () {
-                $(this).off("off").on('click', function (e) {
-                    $(this).closest('li').click();
-                    e.preventDefault();
-                });
-            });
-        }
-    });
-    $.fn.extend({
-        killTree: function (o) {
-            var tree = $(this);
-            tree.removeClass("tree");
-            tree.find('li').has("ul").each(function () {
-                var branch = $(this);
-                branch.children().children().show();
-                branch.children("i").remove();
-                branch.removeClass('branch');
-                branch.off("click");
-            });
-        }
-    });
-</script>
+<script> PosOBjOFdrag = {}; </script>
 
 <div class="container-fluid">
     <div class="Scheduler_main">
@@ -225,7 +164,7 @@
                 <div class="toolbox_footer"></div>
             </div>
         </div>
-        <div class="page-outer-cont" id="page-outer-cont">
+        <div class="report-paper-frame" id="page-outer-cont">
             <div class="page-outer-container">
                 <div class="tracker_drag track_line_vert1"></div>
                 <div class="tracker_drag track_line_vert2"></div>
@@ -361,7 +300,7 @@
     </div>
 </div>
 
-`<div class="modal fade" id="eb_calcF_summarry" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="eb_calcF_summarry" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog" style="height:100%;display:flex;align-items:center;">
         <div class="summarry-editor-container">
             <div class="close_md" data-dismiss="modal"><i class="fa fa-close"></i></div>
@@ -382,30 +321,25 @@
 </div>
 <script>
     $(document).ready(function () {
-    $('#running-summary').treed();
-    $('#calcFields').treed();
-    $('#special-fields').treed();
-    $('#other-fields').treed();
-    $('#data-table-list').treed();
-    $('#ds_parameter_list').treed();
-    $("#eb-Location-config").treed();
 
-    if (@ViewBag.tabnum === 0) {
-        var commonO = $("#layout_div").data("commonObj");
-    }
-     var RBobj = new RptBuilder({
-        RefId: '@ViewBag.Refid',
-        Version: '@ViewBag.VersionNumber',
-        ObjType: @ViewBag.ObjType,
-        DsObj: @Html.Raw(ViewBag.dsObj),
-        Status: '@ViewBag.Status',
-        TabNum: @ViewBag.tabnum,
-        ServiceUrl: '@ViewBag.ServiceUrl',
-        Wc: '@ViewBag.wc',
-        Cid: '@ViewBag.cid',
-        LocationConfig: @Html.Raw(ViewBag.LocConfig),
-    });
+        $('#running-summary,#calcFields,#special-fields,#other-fields,#data-table-list,#ds_parameter_list,#eb-Location-config').treed();
 
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
+        if (@ViewBag.tabnum === 0) {
+            var commonO = $("#layout_div").data("commonObj");
+        }
+         var RBobj = new RptBuilder({
+            RefId: '@ViewBag.Refid',
+            Version: '@ViewBag.VersionNumber',
+            ObjType: @ViewBag.ObjType,
+            DsObj: @Html.Raw(ViewBag.dsObj),
+            Status: '@ViewBag.Status',
+            TabNum: @ViewBag.tabnum,
+            ServiceUrl: '@ViewBag.ServiceUrl',
+            Wc: '@ViewBag.wc',
+            Cid: '@ViewBag.cid',
+            LocationConfig: @Html.Raw(ViewBag.LocConfig),
+        });
+
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
     });
 </script>

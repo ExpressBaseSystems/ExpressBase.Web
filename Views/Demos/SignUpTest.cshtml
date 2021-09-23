@@ -112,7 +112,7 @@
                 xhr.setRequestHeader("rToken", getrToken());
             },
             data: {
-                export: false
+                export: true
             }
         }).done(function (data) {
             info.regid = data;

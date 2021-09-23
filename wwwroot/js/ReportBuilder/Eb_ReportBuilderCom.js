@@ -281,15 +281,16 @@
         $td.find(".dropped").each(function (k, ebctrl) {
             if ($(ebctrl).length >= 1) {
                 var eb_type = this.RbObj.objCollection[$(ebctrl).attr("id")].$type.split(",")[0].split(".").pop().substring(2);
+                var id = $(ebctrl).attr("id");
                 if (eb_type === "Table_Layout")
                     this.innerTableOnEdit(this.RbObj.objCollection[$(ebctrl).attr("id")]);
                 else {
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Width = $(ebctrl).innerWidth();
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Height = $(ebctrl).innerHeight();
-                    eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
-                    this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+                    this.RbObj.objCollection[id].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
+                    this.RbObj.objCollection[id].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
+                    this.RbObj.objCollection[id].Width = $(ebctrl).innerWidth();
+                    this.RbObj.objCollection[id].Height = $(ebctrl).innerHeight();
+                    eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[id]);
+                    //this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
                 }
             }
         }.bind(this));

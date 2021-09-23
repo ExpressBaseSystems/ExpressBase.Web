@@ -58,19 +58,25 @@
         $('#schedulerlistmodal').modal('show');
     };
 
-    this.RefreshControl = function (obj) {
+    this.RefreshControl = function (obj, pname) {
+
         var NewHtml = obj.$Control.outerHTML();
+
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
+        
+        if (pname && metas && !metas.find(m => m.name === pname)?.IsUIproperty) { return; }
+
         $.each(metas, function (i, meta) {
             var name = meta.name;
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
             }
         });
+
         $("#" + obj.EbSid).replaceWith(NewHtml);
 
-        if ('Font' in obj)
-            this.repExtern.setFontProp(obj);
+        if ('Font' in obj) { this.repExtern.setFontProp(obj); }
+            
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
                 cursor: "crosshair", containment: this.containment, appendTo: "body", zIndex: 100,
@@ -78,6 +84,7 @@
             });
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
         }
+
         if ('SectionHeight' in obj) {
             $("#" + obj.EbSid).droppable({
                 accept: ".draggable,.dropped,.coloums",
@@ -86,6 +93,7 @@
                 drop: this.onDropFn.bind(this)
             });
         }
+
         $("#" + obj.EbSid).attr("tabindex", "1");
         $("#" + obj.EbSid).not(".locked").off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
@@ -119,7 +127,7 @@
         var pxlabel = this.rulertype === "px" ? 5 : 1;
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
-        for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
+        for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++, step++) {
             var $tick = $('<div>');
             if (step === 0) {
                 if (this.rulertype === "px")
@@ -139,7 +147,7 @@
         }
 
         var $rulerleft = $('.rulerleft').css({ "height": "calc(100% - 20px)" });
-        for (i = 0, step = 0; i < 300; i++ , step++) {
+        for (i = 0, step = 0; i < 300; i++, step++) {
             $tick = $('<div>');
             if (step === 0) {
                 if (this.rulertype === "px")
@@ -274,7 +282,7 @@
         this.makeSecResizable(`#${fid}`);
         this.makeSecResizable(`#${hid}`);
 
-        this.appendMSplitGroup(h, f,c);
+        this.appendMSplitGroup(h, f, c);
 
         return { header: h, footer: f };
     };
@@ -287,7 +295,7 @@
         this.syncHeight();
     };
 
-    this.appendMSplitSec = function (sections, obj,_new) {
+    this.appendMSplitSec = function (sections, obj, _new) {
         let h = $(`.page .${sections}`).height();
         if (_new) {
             $(`.multiSplit .${sections}_sub`).last().after(`<div class='multiSplitHboxSub ${sections}_sub' eb-type='MultiSplitBox' style='height:${obj.SectionHeight}'>
@@ -771,7 +779,7 @@
         else if (obj.constructor.name === "EbReport" && pname === "BackColor")
             $(".page-reportLayer").css("background-color", obj.BackColor);
         else {
-            this.RefreshControl(obj);
+            this.RefreshControl(obj, pname);
         }
     }.bind(this);
 

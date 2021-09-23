@@ -25,7 +25,6 @@
         this.makeResizable(id);
         this.makeTLayoutDroppable(id);
         this.InitColResize(id);
-        //this.InitColResizable();
     };
 
     this.createTableOnEdit = function () {
@@ -52,17 +51,6 @@
         this.setCells();
         this.isNew = true;
     };
-
-    //this.InitColResizable = function () {
-    //    this.Table.find("tr").eq(0).find("td").each(function (i, o) {
-    //        if (!$(o).is(':last-child'))
-    //            $(o).resizable({ handles: "e", resize: this.onResizeTd.bind(this) });
-    //    }.bind(this));
-    //};
-
-    //this.onResizeTd = function (event, ui) {
-
-    //};
 
     this.setCells = function () {
         let coll = this.EditCtrl.CellCollection.$values;
@@ -114,7 +102,9 @@
     this.draggableT = function (id) {
         $(`#${id}`).draggable({
             cursor: "crosshair", containment: ".page", appendTo: "body", zIndex: 100,
-            start: this.Report.onDrag_Start.bind(this.Report), stop: this.Report.onDrag_stop.bind(this.Report), drag: this.Report.ondragControl.bind(this.Report)
+            start: this.Report.onDrag_Start.bind(this.Report),
+            stop: this.Report.onDrag_stop.bind(this.Report),
+            drag: this.Report.ondragControl.bind(this.Report)
         });
     };
 
@@ -170,12 +160,12 @@
         let trlen = $(`#${id} table tr`).length;
         $(`#${id} table tr`).eq(0).find("td").each(function (i, o) {
             if (!$(o).is(":last-child"))
-                $(o).css({ width: this.calcPercent($(o).outerWidth()) + "%" });
+                $(o).css({ width: this.calcPercent($(o).innerWidth()) + "%" });
         }.bind(this));
 
         $(`#${id} table tr`).each(function (i, ob) {
             if (!$(ob).is(":last-child"))
-                $(ob).css({ height: this.calcPercentTop($(ob).outerHeight()) + "%" });
+                $(ob).css({ height: this.calcPercentTop($(ob).innerHeight()) + "%" });
         }.bind(this));
 
         for (let i = 0; i < tdlen - 1; i++) {
@@ -194,7 +184,7 @@
 
     this.getPos = function (i) {
         let it = this.Table.find("tr").eq(0).find("td").eq(i);
-        let tdleft = it.position().left + it.outerWidth();
+        let tdleft = it.position().left + it.innerWidth();
         return this.calcPercent(tdleft);
     };
 
@@ -205,7 +195,7 @@
     };
 
     this.calcPercent = function (val) {
-        let per = val / this.Table.outerWidth() * 100;
+        let per = val / this.Table.innerWidth() * 100;
         return per;
     };
 
@@ -226,13 +216,13 @@
 
     this.setTrPixelH = function () {
         this.Table.find("tr").each(function (k, o) {
-            $(o).css({ height: $(o).height() });
+            $(o).css({ height: $(o).innerHeight() });
         }.bind(this));
     };
 
     this.setTdPixelW = function () {
         this.Table.find("tr").eq(0).find("td").each(function (k, o) {
-            $(o).css({ width: $(o).width() });
+            $(o).css({ width: $(o).innerWidth() });
         }.bind(this));
     };
 
@@ -278,7 +268,7 @@
                 this.Table.find("tr").each(function (i, o) {
                     lastnode = $(o).find("td:last-child");
                     if (lastnode.closest("tr").index() === 0)
-                        this.Table.width($(`#${obj.EbSid}`).width() - lastnode.width());
+                        this.Table.width($(`#${obj.EbSid}`).innerWidth() - lastnode.innerWidth());
                     lastnode.remove();
                 }.bind(this));
             }
@@ -289,7 +279,7 @@
             this.setTrPixelH();
             for (let y = 0; y < this.RowCount - obj.RowCount; y++) {
                 lastnode = this.Table.find("tr:last-child");
-                this.Table.height(this.Table.height() - lastnode.height() - 2);
+                this.Table.height(this.Table.innerHeight() - lastnode.innerHeight() - 2);
                 lastnode.remove();
             }
             this.RowCount = obj.RowCount;
@@ -303,7 +293,7 @@
         let index = $td.index();
         if (type === "row") {
             this.setTrPixelH();
-            this.Table.height(this.Table.height() - $td.height() - 2);
+            this.Table.height(this.Table.innerHeight() - $td.innerHeight() - 2);
             $td.closest("tr").remove();
             this.RowCount = this.RowCount - 1;
             this.EbCtrl.RowCount = this.EbCtrl.RowCount - 1;
@@ -313,7 +303,7 @@
             this.setTdPixelW();
             this.Table.find("tr").each(function (i, o) {
                 let node = $(o).find("td").eq(index);
-                this.Table.width(this.Table.width() - node.width());
+                this.Table.width(this.Table.innerWidth() - node.innerWidth());
                 node.remove();
             }.bind(this));
             this.ColCount = this.ColCount - 1; this.EbCtrl.ColoumCount = this.EbCtrl.ColoumCount - 1;

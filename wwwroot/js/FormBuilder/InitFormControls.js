@@ -98,7 +98,8 @@
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,
             ShowUploadDate: ctrl.ShowUploadDate,
-            ViewByCategory: ctrl.ViewByCategory
+            ViewByCategory: ctrl.ViewByCategory,
+            Renderer: this.Renderer
         });
 
         //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -112,7 +113,7 @@
 
         imgup.windowClose = function () {
             if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
-                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                EbMessage("show", { Message: 'Changes affect only if form is saved', AutoHide: true, Background: '#0000aa', Delay: 3000 });
         }.bind(this);
 
         imgup.customTrigger = function (DpControlsList, name, refids) {
@@ -139,7 +140,7 @@
                                         }
                                     }
                                     if (initLen < this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length) {
-                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                        EbMessage("show", { Message: 'Changes affect only if form is saved', AutoHide: true, Background: '#0000aa', Delay: 3000 });
                                     }
                                     imgup.deleteFromGallery(refids);
                                     imgup.customMenuCompleted("Delete", refids);

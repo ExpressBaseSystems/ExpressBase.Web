@@ -124,7 +124,7 @@
 
         this.platformSearch = function () {
             let $srch = this.isSimpleSearch ? this.$toolbSrchBx : $('#exampleModalCenter .srch-bx');
-            let searchkey = $srch.val();
+            let searchkey = $srch.val().replace('\\n', '');
             if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
                 //do ajax call
                 $('.search-dd').slideUp(100);

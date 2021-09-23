@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections.Generic; 
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -14,13 +13,11 @@ using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
 using System.Text;
-using ExpressBase.Common.Structures;
-using ExpressBase.Common.JsonConverters;
+using ExpressBase.Common.Structures; 
 using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
 using ExpressBase.Web.Filters;
-using ExpressBase.Objects.Objects.SmsRelated;
-using ExpressBase.Common.Extensions;
+using ExpressBase.Objects.Objects.SmsRelated; 
 using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
@@ -94,8 +91,7 @@ namespace ExpressBase.Web.Controllers
                             _object.VersionNumber = element.VersionNumber;
                             _object.DisplayName = element.DisplayName;
                             ViewBag.Workingcopy = element.Wc_All;
-                        }
-                        ViewBag.Types = this.GetObjectType(); 
+                        }                        
                     }
                 }
                 else
@@ -918,22 +914,6 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.ToString());
             }
             return resultlist1;
-        }
-        private Dictionary<int, EbObjectTypeWrap> GetObjectType()
-        {
-            Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
-            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
-            {
-                _dict.Add(objectType.IntCode, new EbObjectTypeWrap
-                {
-                    Name = objectType.Alias,
-                    IntCode = objectType.IntCode,
-                    BMW = objectType.BMW,
-                    IsUserFacing = objectType.IsUserFacing,
-                    Icon = objectType.Icon
-                });
-            }
-            return _dict;
         }
     }
     public class EbRootObjectResponse

@@ -13,6 +13,7 @@ using ExpressBase.Common.Constants;
 using System.Text;
 using ExpressBase.Common;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Structures;
 
 namespace ExpressBase.Web.Components
 {
@@ -49,7 +50,25 @@ namespace ExpressBase.Web.Components
                 ViewBag.tile = new EbObj_Dashboard { OwnerUid = ViewBag.Uid, OwnerName = u.FullName, OwnerTs = DateTime.UtcNow };
             }
             ViewBag.versioning = _versioning;
+            ViewBag.Types = this.GetObjectType();
             return View();
+        }
+
+        private Dictionary<int, EbObjectTypeWrap> GetObjectType()
+        {
+            Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
+            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            {
+                _dict.Add(objectType.IntCode, new EbObjectTypeWrap
+                {
+                    Name = objectType.Alias,
+                    IntCode = objectType.IntCode,
+                    BMW = objectType.BMW,
+                    IsUserFacing = objectType.IsUserFacing,
+                    Icon = objectType.Icon
+                });
+            }
+            return _dict;
         }
     }
 }

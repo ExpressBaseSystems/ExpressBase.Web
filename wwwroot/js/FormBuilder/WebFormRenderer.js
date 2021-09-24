@@ -583,6 +583,7 @@ const WebFormRender = function (option) {
 
     this.saveSuccess = function (_respObj) {
         this.hideLoader();
+        this.LockSave = false;
         let respObj = JSON.parse(_respObj);
         ebcontext._formSaveResponse = respObj;
 
@@ -915,20 +916,30 @@ const WebFormRender = function (option) {
     };
 
     this.saveForm = function () {
+        if (this.LockSave)
+            return;
+        this.LockSave = true;
         this.AfterSavePrintDoc = null;
         this.BeforeSave();
 
         setTimeout(function () {// temp
+            let ret = false;
             if (!this.FRC.AllRequired_valid_Check())
+                ret = true;
+            else if (!this.isAllUniqOK())
+                ret = true;
+            else if (!this.DGsB4Save())
+                ret = true;
+            else if (!this.DGsNewB4Save())
+                ret = true;
+            else if (!this.MeetingB4Save())
+                ret = true;
+
+            if (ret) {
+                this.LockSave = false;
                 return;
-            if (!this.isAllUniqOK())
-                return;
-            if (!this.DGsB4Save())
-                return;
-            if (!this.DGsNewB4Save())
-                return;
-            if (!this.MeetingB4Save())
-                return;
+            }
+
             //this.FRC.checkUnique4All_save(this.flatControls, true);
 
             EbProvUserUniqueChkJs({
@@ -945,6 +956,8 @@ const WebFormRender = function (option) {
         if (ok) {
             this.FRC.checkUnique4All_save(this.flatControls, true);
         }
+        else
+            this.LockSave = false;
     };
 
     this.saveAsDraft = function () {
@@ -982,6 +995,7 @@ const WebFormRender = function (option) {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
+                this.LockSave = false;
                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
             }.bind(this),
             success: this.saveSuccess.bind(this)

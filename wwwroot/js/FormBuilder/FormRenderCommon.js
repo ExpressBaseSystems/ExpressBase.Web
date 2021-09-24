@@ -835,8 +835,10 @@
             }
         }.bind(this));
 
-        if (UniqObjs.length === 0 && !isSaveAfter)
+        if (UniqObjs.length === 0 && !isSaveAfter) {
+            this.FO.LockSave = false;
             return true;
+        }
 
         if (UniqObjs.length === 0 && isSaveAfter) {
             this.FO.saveForm_call();
@@ -888,6 +890,8 @@
                     //this.FO.DGsB4SaveActions();
                     this.FO.saveForm_call();
                 }
+                else
+                    this.FO.LockSave = false;
             }.bind(this),
             error: function (error) {
                 if (isFromCtrl) {
@@ -898,6 +902,7 @@
                     this.FO.hideLoader();
                     EbMessage("show", { Message: `Unique check failed`, AutoHide: true, Background: '#aa0000' });
                 }
+                this.FO.LockSave = false;
             }.bind(this)
         });
     };

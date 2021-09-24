@@ -390,12 +390,12 @@
                 else {
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                 }
-                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                ebcontext.webform.hideLoader();
                 //$("#iFramePdfModal").modal("show");
             }
         }
         catch (e) {
-            $("#eb_common_loader").EbLoader("hide");
+            ebcontext.webform.hideLoader();
             EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
         }
     });

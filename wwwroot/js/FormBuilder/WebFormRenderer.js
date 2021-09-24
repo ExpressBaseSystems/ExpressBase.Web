@@ -1609,76 +1609,72 @@ const WebFormRender = function (option) {
     this.windowKeyDown = function (event) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {// ctrl+S -> save
-                if (this.Mode.isEdit || this.Mode.isNew) {
-                    event.preventDefault();
+                if ((this.Mode.isEdit || this.Mode.isNew) && this.preventCheck(event)) {
                     this.saveForm();
                 }
             }
             else if (event.which === 69) {// ctrl+E -> edit
-                if (this.$editBtn.css("display") !== "none") {
-                    event.preventDefault();
+                if (this.$editBtn.css("display") !== "none" && this.preventCheck(event)) {
                     if ($(`#${this.hBtns['Edit']}:enabled`).length > 0)
                         this.SwitchToEditMode();
                 }
             }
             else if (event.which === 81) {// ctrl+Q -> discard
-                if ($(`#${this.hBtns['Discard']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['Discard']}`).css("display") !== "none" && this.preventCheck(event)) {
                     this.DiscardChanges();
                 }
             }
             else if (event.which === 80) {// ctrl+P //check in no print form
-                if ($(`#${this.hBtns['Print']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['Print']}`).css("display") !== "none" && this.preventCheck(event)) {
                     $(`#${this.hBtns['Print']}`).trigger('click');
                 }
             }
         }
         else if (event.altKey || event.metaKey) {// alt+N -> new
             if (event.which === 78) {
-                if ($(`#${this.hBtns['New']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['New']}`).css("display") !== "none" && this.preventCheck(event)) {
                     this.startNewMode();
                 }
             }
             else if (event.which === 80) {// alt+P - Print dd
-                if ($(`#${this.hBtns['PrintSel']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['PrintSel']}`).css("display") !== "none" && this.preventCheck(event)) {
                     $(`#${this.hBtns['PrintSel']} .selectpicker`).selectpicker('toggle');
                 }
             }
             else if (event.which === 83) {// alt+S - Save dd
-                if ($(`#${this.hBtns['SaveSel']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['SaveSel']}`).css("display") !== "none" && this.preventCheck(event)) {
                     $(`#${this.hBtns['SaveSel']} .selectpicker`).selectpicker('toggle');
                 }
             }
             else if (event.which === 67) {// alt+C - Cancel
-                if ($(`#${this.hBtns['Cancel']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['Cancel']}`).css("display") !== "none" && this.preventCheck(event)) {
                     $(`#${this.hBtns['Cancel']}`).trigger('click');
                 }
             }
             else if (event.which === 68) {// alt+D - Delete
-                if ($(`#${this.hBtns['Delete']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['Delete']}`).css("display") !== "none" && this.preventCheck(event)) {
                     $(`#${this.hBtns['Delete']}`).trigger('click');
                 }
             }
             else if (event.which === 76) {// alt+L - Lock
-                if ($(`#${this.hBtns['Lock']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['Lock']}`).css("display") !== "none" && this.preventCheck(event)) {
                     $(`#${this.hBtns['Lock']}`).trigger('click');
                 }
             }
             else if (event.which === 72) {// alt+H - AuditTrail
-                if ($(`#${this.hBtns['AuditTrail']}`).css("display") !== "none") {
-                    event.preventDefault();
+                if ($(`#${this.hBtns['AuditTrail']}`).css("display") !== "none" && this.preventCheck(event)) {
                     $(`#${this.hBtns['AuditTrail']}`).trigger('click');
                 }
             }
         }
     }.bind(this);
+
+    this.preventCheck = function (event) {
+        event.preventDefault();
+        if ($('.loader_mask_EB .lds-spinner').length > 0)// quick fix
+            return false;
+        return true;
+    };
 
     this.disableformEditbtn = function () {
         //$("#webformedit").addClass('eb-disablebtn')
@@ -1975,7 +1971,7 @@ const WebFormRender = function (option) {
 
     this.printDocument_inner = function (rptRefid, rowId) {
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowId);
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+        ebcontext.webform.showLoader();
     };
 
     this.initSaveMenu = function () {

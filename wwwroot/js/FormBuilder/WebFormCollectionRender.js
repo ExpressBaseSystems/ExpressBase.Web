@@ -489,6 +489,20 @@ const WebFormCollectionRender = function (Option) {
             this.RenderCollection[0].windowKeyDown(event);
     }.bind(this);
 
+    this.showLoader = function () {
+        if (this.CurrentSubForm)
+            this.showSubFormLoader(this.CurrentSubForm.__MultiRenderCxt);
+        else
+            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    }.bind(this);
+
+    this.hideLoader = function () {
+        if (this.CurrentSubForm)
+            this.hideSubFormLoader(this.CurrentSubForm.__MultiRenderCxt);
+        else
+            $("#eb_common_loader").EbLoader("hide");
+    }.bind(this);
+
     this.subFormHeaderObj = {
         showElement: function (arr) {
             if (!arr)

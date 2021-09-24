@@ -4282,7 +4282,7 @@
                 _source: 'tv',
                 _refId: this.linkDV,
                 _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
-                _mode: 1,
+                _mode: this.dvformMode,
                 _locId: ebcontext.locations.CurrentLoc
             });
             //$("#iFrameFormPopupModal").modal("show");

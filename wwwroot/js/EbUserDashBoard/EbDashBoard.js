@@ -918,7 +918,7 @@ var DashBoardWrapper = function (options) {
                             let designHtml = this.MakeLinks(object);
                             $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
                             this.labelstyleApply(this.CurrentTile);
-                            LinkStyle(obj, this.CurrentTile, this.TabNum);
+                            LinkStyle(obj, this.CurrentTile, this.TabNum, this.GetFilterValuesForDataSource());
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
                         }.bind(this));
                     }

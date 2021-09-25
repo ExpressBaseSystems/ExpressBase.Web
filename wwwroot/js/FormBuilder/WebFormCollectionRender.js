@@ -493,7 +493,7 @@ const WebFormCollectionRender = function (Option) {
         if (this.CurrentSubForm)
             this.showSubFormLoader(this.CurrentSubForm.__MultiRenderCxt);
         else
-            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "body" } });
     }.bind(this);
 
     this.hideLoader = function () {

@@ -278,22 +278,35 @@
     };
 
     this.getTdCtrls = function ($td, eb_obj) {
+
         $td.find(".dropped").each(function (k, ebctrl) {
+
             if ($(ebctrl).length >= 1) {
-                var eb_type = this.RbObj.objCollection[$(ebctrl).attr("id")].$type.split(",")[0].split(".").pop().substring(2);
+
                 var id = $(ebctrl).attr("id");
+
+                var control = this.RbObj.objCollection[id];
+
+                var eb_type = control.$type.split(",")[0].split(".").pop().substring(2);    
+                
                 if (eb_type === "Table_Layout")
-                    this.innerTableOnEdit(this.RbObj.objCollection[$(ebctrl).attr("id")]);
+                    this.innerTableOnEdit(control);
                 else {
-                    this.RbObj.objCollection[id].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
-                    this.RbObj.objCollection[id].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
-                    this.RbObj.objCollection[id].Width = $(ebctrl).innerWidth();
-                    this.RbObj.objCollection[id].Height = $(ebctrl).innerHeight();
-                    eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[id]);
-                    //this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+                    control.Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
+                    control.Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
+                    control.LeftPt = this.RbObj.repExtern.convertTopoints(control.Left);
+                    control.TopPt = this.RbObj.repExtern.convertTopoints(control.Top);
+
+                    control.Width = $(ebctrl).innerWidth();
+                    control.Height = $(ebctrl).innerHeight();
+                    control.WidthPt = this.RbObj.repExtern.convertTopoints(control.Width);
+                    control.HeightPt = this.RbObj.repExtern.convertTopoints(control.Height);         
+
+                    eb_obj.ControlCollection.$values.push(control);
                 }
             }
         }.bind(this));
+
         this._table.CellCollection.$values.push(eb_obj);
     };
 

@@ -857,7 +857,7 @@ input:checked + .proslider:before {
     display: none;
     position: absolute;
     background-color: white;
-    top: 26px;
+    top: 31px;
     border-radius: 8px;
     box-shadow: 0px 25px 64px 0px #3d43413d;
     width: 300%;
@@ -866,12 +866,14 @@ input:checked + .proslider:before {
     overflow: hidden;
 }
 
+    .search-dd .metadtlsWrap {
+        display: flex;
+    }
+
     .search-dd .ctrldtlsWrap {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 8px;
-        background: #c7cfd514;
-        padding: 5px 16px;
+        padding: 5px 0px;
         border-radius: 4px;
         outline: none;
         cursor: alias;
@@ -883,7 +885,7 @@ input:checked + .proslider:before {
     }
 
     .search-dd table.ctrldtls {
-        /*margin: 0 0 3px 20px;*/
+        width: 50%;
     }
 
     .search-dd .ctrldtls td {
@@ -895,18 +897,19 @@ input:checked + .proslider:before {
         font-size: 12.45px;
         color: #5889c7eb;
         max-width: 108px;
-        font-family: sans-serif;
+        font-size: 9px;
     }
 
     .search-dd .value, .search-dd .key {
+        font-family: Roboto,sans-serif;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .search-dd .value {
-        color: #150731;
-        font-size: 14px;
+        color: #150731ad;
+        font-size: 12px;
         max-width: 170px !important;
     }
 
@@ -960,20 +963,16 @@ input:checked + .proslider:before {
 
 .search-dd .srch-body-cont .srch-li {
     position: relative;
-    padding: 11px 13px 4px 18px;
+    padding: 8px;
     border: solid 3px transparent;
     box-shadow: 0 1px 0 0 #f5f5fa;
 }
 
-.srch-li:hover {
-    background-color: #eceef2;
-}
-
-.search-dd .srch-body-cont .srch-li:focus-within {
-    border-right-color: #3f95c0;
-    border-left-color: #3f95c0;
-    border-bottom: 3px dotted #ffffff00;
-}
+    .search-dd .srch-body-cont .srch-li:focus-within {
+        border-right-color: #3f95c0;
+        border-left-color: #3f95c0;
+        border-bottom: 3px dotted #ffffff00;
+    }
 
 .search-dd .srch-res-a:focus, .search-dd .srch-res-a:hover {
     color: #2a6583;
@@ -983,7 +982,7 @@ input:checked + .proslider:before {
 .search-dd .srch-res-a {
     padding-left: 8px;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.1;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -1028,40 +1027,36 @@ input:checked + .proslider:before {
     }
 
     .srch-body-cont .srch-li-block {
-        color: #555;
+        color: #666;
+        background-color: #fbfbff;
+        border-radius: 5px;
+        padding: 7px 5px;
     }
 
-    .srch-body-cont table.metadtls {
-        color: #7f8283;
-        font-size: 12.2px;
-    }
-
-        .srch-body-cont table.metadtls .am_pm {
-            font-size: 10.4px;
+        .srch-body-cont .srch-li-block:hover {
+            background-color: #eceef2;
         }
 
-
+    .srch-body-cont .metadtls {
+        color: #7f8283;
+        font-size: 12.2px;
+        line-height: 1;
+        margin: auto;
+        margin-right: 0;
+        text-align: right;
+    }
 
 .search-dd .li-summary {
     display: flex;
-}
-
-.search-dd .metalbl {
-    font-size: 11px;
-    padding-right: 4px;
-    font-style: italic;
+    position: absolute;
+    width: 100%;
+    z-index: 999;
+    background: #fffc;
 }
 
 .search-dd .metaval {
-    padding-right: 4px;
-}
-
-.search-dd .metauname {
-    padding-right: 4px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 79px;
-    overflow: hidden;
+    font-size: 9px;
+    color: #afafaf;
 }
 
 .search-dd .srch-body-cont .srch-ul {
@@ -1075,10 +1070,10 @@ input:checked + .proslider:before {
 
 .srch-body-cont .srch-ul-outer {
     width: 100%;
-    padding: 5px 0px 0px 0px;
+    padding: 40px 0px 0px 0px;
     margin: 0;
     list-style-type: none;
-    max-height: calc(100vh - 32px);
+    max-height: calc(100vh - 38px);
     overflow-y: auto;
 }
 
@@ -1105,7 +1100,15 @@ input:checked + .proslider:before {
     width: calc( 100% - 20px );
 }
 
+.srch-summary-title {
+    margin: auto;
+}
+
 .srch-summary-text {
     color: #445;
     margin: auto 10px auto auto;
+    position: absolute;
+    right: 5px;
+    font-size: 12px;
+    top: 10px;
 }

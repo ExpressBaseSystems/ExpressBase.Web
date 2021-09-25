@@ -158,10 +158,13 @@
             $('.srch-body-cont').empty();
 
 
-            let html = `<ul class="srch-ul-outer">
-                        <li class="li-summary">
-                            <div class='srch-summary-text'><b>${dataItems.length}</b> / <b>${data.RowCount}</b> matches</div>
-                        </li>`;
+            let html = `
+                        <div class="li-summary">
+                            <div class='srch-summary-title'><h5>Global search</h5></div>
+                            <div class='srch-summary-text'>${dataItems.length} / ${data.RowCount} matches</div>
+                        </div>
+                        <ul class="srch-ul-outer">`;
+
             if (dataItems.length > 0) {
                 $.each(DataItemsG, function (formName, items) {
                     html += this.getUlHtml(items, true);
@@ -192,7 +195,7 @@
             let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
             let html =
                 `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
-                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</h5>
+                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> &nbsp; ${dataItems[0].DisplayName} (${dataItems.length})</h5>
             </li>
             <li id='${idfromDN}' class='collapse in'>
                 <ul class="srch-ul">`;
@@ -210,7 +213,7 @@
                                 <table class='ctrldtls'>
                                     <tbody>`;
                     }
-                    html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
+                    html += `<tr><td class='key'>${name}</td> <td class='value'>${(val === "" ? "-" : val)}</td></tr>`
                     if (j % 3 === 0) {
                         html += `
                                     </tbody>
@@ -225,22 +228,10 @@
                             </div>
 
                             <div class="metadtlsWrap">
-                                <table class='metadtls'>
-                                    <tbody>
-                                        <tr>
-                                            <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
-                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
-                                        <tr>    
-                                    </tbody>
-                                </table>
-                                <table class='metadtls'>
-                                    <tbody>
-                                        <tr>
-                                            <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
-                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class='metadtls'>
+                                    <div> <span class='metaval'>Created by ${obj.CreatedBy} on ${createdAtArr[0]}</span></div>
+                                    <div> <span class='metaval'>Last updated by ${obj.ModifiedBy} on ${modifiedAtarr[0]}</span></div>
+                                </div>
                             </div>
                         </div>`;
                 html += '   </li>'

@@ -159,9 +159,9 @@
 
 
             let html = `
-                        <div class="li-summary">
-                            <div class='srch-summary-title'><h5>Global search</h5></div>
-                            <div class='srch-summary-text'>${dataItems.length} / ${data.RowCount} matches</div>
+                        <div class="srch-header">
+                            <div class='srch-header-title'><h5>Global Search</h5></div>
+                            <div class='srch-grpby-wraper'><div class='srch-header-grpby'>Group by</div></div>
                         </div>
                         <ul class="srch-ul-outer">`;
 
@@ -180,7 +180,10 @@
                     </li>`;
             }
 
-            html += `</ul>`;
+            html += `   </ul>
+                        <div class="srch-header srch-footer">
+                            <div class='srch-footer-summary'>${dataItems.length} / ${data.RowCount} matches</div>
+                        </div>`;
 
             //$('.srch-body-cont').append(html);
             $cont.append(html);
@@ -213,10 +216,10 @@
                                     <div class='keyval-cont col-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2'>
                                         <div class='keyval-wrap'>
                                             <div class='key'>${name}</div>
-                                            <div class='value'>${(val === "" ? "-" : val)}</div>
+                                            <div class='value'>${(val === "" ? "&nbsp;" : val)}</div>
                                         </div>
                                     </div>`;
-                    if (j === 6)
+                    if (j === 12)
                         return false;
                 });
                 html += `

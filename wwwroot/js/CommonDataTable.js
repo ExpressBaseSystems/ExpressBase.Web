@@ -200,7 +200,7 @@
             }
             //this.InitializeColumns();
             this.SetColumnRef();
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.PcFlag === true)
                 this.compareAndModifyRowGroup();
 
@@ -232,8 +232,8 @@
             this.PcFlag = false;
 
             if (this.propGrid !== null) {
-                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-                this.CreatePgButton();
+                //this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+                //this.CreatePgButton();
             }
         }
         else {
@@ -333,7 +333,7 @@
         }
 
         $("#objname").text(this.EbObject.DisplayName);
-        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
         $("title").text(this.EbObject.DisplayName);
         if (this.EbObject.DataSourceRefId) {
@@ -1872,7 +1872,7 @@
 
     this.drawCallBackFunc = function (settings) {
         if (this.Source === "EbDataTable") {
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.ImageArray.length > 0) {
                 $("#test12").remove();
                 $("body").append("<div id='test12'></div>");
@@ -2927,7 +2927,7 @@
                     dvcontainerObj.modifyNavigation();
                 }
             }
-            this.CreatePgButton();
+            //this.CreatePgButton();
             this.excelbtn = $("#btnExcel" + this.tableId);
         }
         else {
@@ -3947,7 +3947,7 @@
                 this.reloadDataTable();
             }
         }
-        else {            
+        else {
             $("[data-coltyp=date]").datepicker("hide");
             if (typeof (e.key) === "undefined") {
                 this.reloadDataTable();

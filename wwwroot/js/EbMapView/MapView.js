@@ -194,21 +194,23 @@ var mapView = function (option) {
                 split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap", prevfocusedId);
             else
                 split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap");
-            if (this.propGrid === null) {
-                this.CreatePg();
-            }
-            else {
-                $(".form-group #ppt-grid").remove();
-                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+            if (this.login === "dc") {
+                if (this.propGrid === null) {
+                    this.CreatePg();
+                }
+                else {
+                    $(".form-group #ppt-grid").remove();
+                    $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
                                     <i class="fa fa-cog" aria-expanded="false"></i>
                                 </button>`);
-                $(".stickBtn").hide();
-                this.PropertyDiv = $("#pp_inner");
-                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
-                $("#pp_inner .pull-right.pgpin").remove();
-                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                    $(".stickBtn").hide();
+                    this.PropertyDiv = $("#pp_inner");
+                    $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+                    $("#pp_inner .pull-right.pgpin").remove();
+                    $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
                 <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
-                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+                    $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+                }
             }
             this.InitParamWindow();
             if (this.Mode === BuilderMode.EDIT)
@@ -442,8 +444,9 @@ var mapView = function (option) {
         if (this.login === "uc") {
             this.collapseGraph();
         }
+        else
+            this.PropertyDiv.hide();
         //this.propGrid.ClosePG();
-        this.PropertyDiv.hide();
         if (this.FD) {
             this.FilterToggle();
             //this.stickBtn.minimise();
@@ -712,7 +715,8 @@ var mapView = function (option) {
             accepts: this.acceptDrop1.bind(this)
         });
         this.drake.off("drop").on("drop", this.colDrop.bind(this));
-        this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+        if (this.login === "dc")
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
     };
 
     this.acceptDrop1 = function (el, target, source, sibling) {

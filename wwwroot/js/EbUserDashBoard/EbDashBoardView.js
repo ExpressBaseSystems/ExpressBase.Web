@@ -94,6 +94,17 @@
                 `);
         $('#paramdiv' + this.TabNum).append(result);
         this.FilterObj = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
+        if (this.FilterVal.length > 0) {
+            //this.filterValues = this.FilterVal;
+            //this.placefiltervalues();
+            $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+                var mapobj = getObjByval(this.FilterVal, "Name", obj.Name);
+                if (typeof mapobj !== "undefined") {
+                    let val = mapobj.Value;
+                    obj.setValue(val);
+                }
+            }.bind(this));
+        }
         $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
         $("#btnGo").empty().append("Apply");
@@ -131,8 +142,8 @@
     };
 
     this.placefiltervalues = function () {
-        $.each(getFlatControls(this.filterDialog.FormObj), function (i, obj) {
-            var mapobj = getObjByval(this.filtervalues, "Name", obj.Name);
+        $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+            var mapobj = getObjByval(this.FilterVal, "Name", obj.Name);
             if (typeof mapobj !== "undefined") {
                 let val = mapobj.Value;
                 obj.setValue(val);
@@ -373,7 +384,7 @@
                             $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
                             $(`#${tile_id}`).removeClass('ext-linktoform').addClass('ext-linktoform');
                             this.labelstyleApply(this.CurrentTile);
-                            LinkStyle(obj, this.CurrentTile, this.TabNum);
+                            LinkStyle(obj, this.CurrentTile, this.TabNum, this.GetFilterValuesForDataSource());
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
                             this.loader.EbLoader("hide");
                             $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
@@ -648,7 +659,7 @@
     this.TileRefidChangesuccess = function (id, data) {
         if (this.FilterVal.length > 0) {
             this.filterValues = this.FilterVal;
-            this.placefiltervalues();
+            //this.placefiltervalues();
         }
         else if (this.filtervalues.length === 0 || this.filtervalues === undefined) {
             this.GetFilterValuesForDataSource();

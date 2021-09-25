@@ -197,7 +197,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             }
             else {
                 this.FDCont.show();
-                this.CreatePgButton();
+                if (this.login === "dc")
+                    this.CreatePgButton();
             }
             $("#eb_common_loader").EbLoader("hide");
         }
@@ -237,9 +238,11 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.call2FD();
         }
         $("#obj_icons").empty();
-        this.CreatePgButton();
-        this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        if (this.login === "dc") {
+            this.CreatePgButton();
+            this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        }
     };
 
     this.CreatePgButton = function () {
@@ -401,7 +404,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.GenerateButtons = function () {
-        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        if (this.login === "dc")
+            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         $("#objname").text(this.EbObject.DisplayName);
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
@@ -463,8 +467,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             <i class="fa fa-cogs" aria-hidden="true"></i>
             </button>`);
         //}
-
-        this.CreatePgButton();
+        if (this.login === "dc")
+            this.CreatePgButton();
         if (this.EbObject !== null && this.EbObject.Type !== "") {
             if (this.EbObject.Type !== "line")
                 $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons[this.EbObject.Type]}'></i>&nbsp;<span class = 'caret'></span>`);
@@ -869,8 +873,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 this.EbObject.DSColumns = columns;
                 this.EbObject.Columns = columns;
                 this.EbObject.Pippedfrom = pipe;
-
-                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+                if (this.login === "dc")
+                    this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 this.EbObject = this.EbObject;
                 this.gdata = null;
                 this.updateDragula();
@@ -891,7 +895,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.EbObject.DSColumns = columns;
             this.EbObject.Columns = columns;
             this.EbObject.Pippedfrom = pipe;
-            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            if (this.login === "dc")
+                this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             this.EbObject = this.EbObject;
 
             this.updateDragula();
@@ -1104,7 +1109,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.drake.off("drop").on("drop", this.colDropRef.bind(this));
         if (this.type === "")
             this.type = "bar";
-        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        if (this.login === "dc")
+            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         $("#graphDropdown_tab" + this.tableId).show();
 
     };

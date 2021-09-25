@@ -871,7 +871,6 @@ input:checked + .proslider:before {
     }
 
     .search-dd .ctrldtlsWrap {
-        display: flex;
         justify-content: space-between;
         padding: 5px 0px;
         border-radius: 4px;
@@ -884,34 +883,41 @@ input:checked + .proslider:before {
         justify-content: space-between;
     }
 
-    .search-dd table.ctrldtls {
-        width: 50%;
-    }
-
-    .search-dd .ctrldtls td {
-        padding: 0px 7px;
-        letter-spacing: 0.25px;
-    }
-
     .search-dd .key {
-        font-size: 12.45px;
         color: #5889c7eb;
         max-width: 108px;
+        position: absolute;
         font-size: 9px;
+        top: -5.5px;
+        background-color: #fbfbff;
+        padding: 0px 3px;
     }
 
-    .search-dd .value, .search-dd .key {
-        font-family: Roboto,sans-serif;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .search-dd .keyval-wrap {
+        border: solid 1px #efefef;
+        border-radius: 3px;
+        margin: 0 3px;
+        padding: 1px 5px;
+        padding-top: 6px;
     }
 
-    .search-dd .value {
-        color: #150731ad;
-        font-size: 12px;
-        max-width: 170px !important;
-    }
+.srch-body-cont .srch-li-block:hover .keyval-wrap {
+    border: solid 1px #dedede;
+}
+
+
+.search-dd .value, .search-dd .key {
+    font-family: Roboto,sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-dd .value {
+    color: #150731ad;
+    font-size: 12px;
+    max-width: 170px !important;
+}
 
 .srch-hdr-cont .srch-hdr-wrpr:focus-within, .toolb-srchbx-wrpr:focus-within {
     border: solid 1px #0075ff;
@@ -1031,20 +1037,25 @@ input:checked + .proslider:before {
         background-color: #fbfbff;
         border-radius: 5px;
         padding: 7px 5px;
+        padding-top: 10px;
     }
 
-        .srch-body-cont .srch-li-block:hover {
-            background-color: #eceef2;
-        }
+.search-dd .keyval-cont {
+    margin: 5px 0;
+}
 
-    .srch-body-cont .metadtls {
-        color: #7f8283;
-        font-size: 12.2px;
-        line-height: 1;
-        margin: auto;
-        margin-right: 0;
-        text-align: right;
-    }
+.srch-body-cont .srch-li-block:hover, .srch-body-cont .srch-li-block:hover .key {
+    background-color: #eceef2;
+}
+
+.srch-body-cont .metadtls {
+    color: #7f8283;
+    font-size: 12.2px;
+    line-height: 1;
+    margin: auto;
+    margin-right: 0;
+    text-align: right;
+}
 
 .search-dd .li-summary {
     display: flex;

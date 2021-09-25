@@ -206,25 +206,21 @@
                 html += `
                     <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
                         <div class='srch-li-block'>
-                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">`;
+                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">
+                                <div class='row'>`;
                 $.each(obj.Data, function (name, val) {
-                    if (j++ % 3 === 0) {
-                        html += `
-                                <table class='ctrldtls'>
-                                    <tbody>`;
-                    }
-                    html += `<tr><td class='key'>${name}</td> <td class='value'>${(val === "" ? "-" : val)}</td></tr>`
-                    if (j % 3 === 0) {
-                        html += `
-                                    </tbody>
-                                </table>`;
-                    }
+                    html += `
+                                    <div class='keyval-cont col-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2'>
+                                        <div class='keyval-wrap'>
+                                            <div class='key'>${name}</div>
+                                            <div class='value'>${(val === "" ? "-" : val)}</div>
+                                        </div>
+                                    </div>`;
                     if (j === 6)
                         return false;
                 });
                 html += `
-                                    </tbody>
-                                </table>
+                                </div>
                             </div>
 
                             <div class="metadtlsWrap">

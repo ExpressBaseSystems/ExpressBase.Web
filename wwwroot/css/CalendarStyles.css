@@ -122,43 +122,68 @@ th.week-holiday {
     font-weight: 500;
 }
 
-.cal-percent {
-    font-size: 85%;
-    /*float: right;*/
+
+.per-cont {
+    float: right;
+    padding-left: 5px;
 }
 
-.cal-percent-red {
+.red {
     color: red;
 }
 
-.cal-percent-green {
+.green {
     color: green;
 }
 
-.cal-percent-caret-red {
+
+.per-cont > span {
     font-size: 85%;
-    color: red;
+}
+
+.per-cont > i {
+    font-size: 85%;
     padding-left: 1px;
     float: right;
 }
-
-.cal-percent-caret-green {
-    font-size: 85%;
-    color: green;
-    padding-left: 1px;
-    float: right;
-}
-
-.cal-percent-container {
-    float: right;
-    padding-left: 3px;
+.val-perc {
+    min-width: 3em;
+    font-size: 12px!important;
 }
 
 .cal-data {
     text-align: right !important;
-   /* padding-left: 2%;*/
 }
 
 tbody > tr > td > .cal-data {
     font-size: 14px;
+}
+
+.tablelink4calendar {
+    cursor: pointer;
+}
+
+#calendar-user-view {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.calendar_wrapper {
+    height: calc(100vh - 90px);
+    margin-top: 38px;
+}
+
+.calendar-user-view-cont .info-search-cont {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.calendar-user-view-cont .info-search-cont .dataTables_info {
+    margin-left: 0px;
+}
+
+.calendar-user-view-cont .info-search-cont .dataTables_filters {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 7px;
 }

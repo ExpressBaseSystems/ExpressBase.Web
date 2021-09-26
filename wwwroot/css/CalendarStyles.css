@@ -150,7 +150,7 @@ th.week-holiday {
 }
 
 .cal-percent-container {
-    float: right;
+    /*float: right;*/
     padding-left: 3px;
 }
 
@@ -160,5 +160,30 @@ th.week-holiday {
 }
 
 tbody > tr > td > .cal-data {
-    font-size: 14px;
+    font-size: 12px;
+}
+
+#calendar-user-view {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.calendar_wrapper {
+    height: calc(100vh - 90px);
+    margin-top: 38px;
+}
+
+.calendar-user-view-cont .info-search-cont {
+    padding-left:0px;
+    padding-right:0px;
+}
+
+.calendar-user-view-cont .info-search-cont .dataTables_info {
+    margin-left: 0px;
+}
+
+.calendar-user-view-cont .info-search-cont .dataTables_filters {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 7px;
 }

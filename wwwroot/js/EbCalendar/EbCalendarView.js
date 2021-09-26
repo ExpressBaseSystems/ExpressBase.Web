@@ -47,7 +47,7 @@
             $("#obj_icons").append(this.$filter);
             this.$filter.click(this.CloseParamDiv.bind(this));
         }
-        if (this.login === "dc")
+        if (this.Wc === "dc")
             this.CreatePgButton();
     };
 
@@ -139,7 +139,7 @@
             this.EbObject.DataColumns.$values = _.cloneDeep(this.EbObject.LinesColumns.$values);
         }
         if (this.Wc === "dc") {
-            this.CreatePgButton();
+            //this.CreatePgButton();
             this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
         }
         this.ChangeFDParams(this.EbObject.DefaultCalendarType);

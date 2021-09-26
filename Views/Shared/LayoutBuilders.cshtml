@@ -278,31 +278,8 @@
             }
             if (ViewBag.wc == "uc")
             {
-                <div id="eb-locswitch_wraper">
-                    <div class="loc_switchModal_fade"></div>
-                    <div class="loc_switchModal" id="loc_switchModal">
-                        <div class="loc_switchModal_outer">
-                            <div class="loc_switchModal_box">
-                                <div class="locs_head">
-                                    <button type="button" id="loc_switchModal_close" class="loc_switchModal_close">&times;</button>
-                                    <div class="loc_searchInput col-md-5 col-lg-5">
-                                        <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
-                                    </div>
-                                    <h4>Switch Location</h4>
-
-                                    <div class="loc_current_wrp ">
-                                        <span><i class="fa fa-check-circle-o "></i></span>  <span id="current_loc" loc_id="" style="font-size: 12px; cursor:pointer"> </span>
-                                    </div>
-                                </div>
-                                <div class="locs_bdy treeviewMdlBody"></div>
-                                <div class="locs_foot">
-                                    <span id="loc_tot_count" class=" loc_count pull-left"></span>
-                                    <button class="ebbtn eb_btnblue eb_btn-sm loc-switchbtn pull-right" id="setLocSub">Switch</button>
-                                </div>
-                                <div class="no_loc_config">No Locations.</div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="eb-location-switch">
+                    @{ await Html.RenderPartialAsync("EbLocationSwitch");}
                 </div>
             }
         }
@@ -352,7 +329,7 @@
                 Uid:'@ViewBag.UId',
                 Current:@ViewBag.CurrentLocation
             });
-            window.ebcontext.locations = loc__;            
+            window.ebcontext.locations = loc__;
             window.ebcontext.finyears = new FinYearPicker({
                 FinYears: @Html.Raw(ViewBag.FinYears),
                 Tid: '@ViewBag.cid',

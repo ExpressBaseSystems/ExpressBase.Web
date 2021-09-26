@@ -641,11 +641,12 @@
 }
 
 #UserDashBoardSwitchBtn {
-    background: #fff;
-    border: solid 0px #d6d4d4;
+    background-color: transparent;
+    border: none;
     font-size: 12px;
     height: 19px;
     border-radius: 2px;
+    padding: 0;
 }
 
 .Btn4SwitchDB {
@@ -2226,8 +2227,12 @@ td {
     white-space: nowrap;
 }
 
-table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
-    color: white !important;
+table.dataTable tbody tr.selected[eb-void=T] {
+    color: #b30000 !important;
+}
+
+table.dataTable tbody tr.selected:not([eb-void=T]), table.dataTable tbody th.selected, table.dataTable tbody td.selected {
+    color: white !important;    
 }
 
 .eb_finput {
@@ -2827,15 +2832,20 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     width: 600px;
 
 }
-.approval-popover #history {
-    max-height: 250px;
-    overflow-y: auto;
-}
+
 .approval-popover #history table {
-    height: 100%;
+    /*height: 100%;*/
     margin-bottom: 0px !important;
     padding-bottom: 1px;
 }
+
+    .approval-popover #resetstage table {
+        margin-top: 30px;
+    }
+
+    .approval-popover #history > div{
+        padding: 20px;
+    }
 
 .stage_actions button {
     padding: 3px 30px 3px 10px;
@@ -2844,7 +2854,7 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 }
  .stage_actions  {
     width: 100% !important;
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 
  .stage_actions a {
@@ -2887,8 +2897,8 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .tdheight .selectpicker {
     display: none !important;
 }
-.action-table, .comment-text{
-    width:100%
+.action-table, .comment-text {
+    width: 100%;
 }
 .comment-td {
     width: 175px;
@@ -2925,9 +2935,9 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     font-weight: 900;
 }
 
-.size11{
+/*.size11{
     font-size:11px;
-}
+}*/
 
 .status-icon, .status-label {
     margin-right: 5px;
@@ -2938,8 +2948,8 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     font-weight: 500;
 }
 .status-time {
-    font-size: 13px;
-    color: #041982;
+    font-size: 10px;
+    /*color: #555;*/
     margin: 0;
 }
 
@@ -2994,11 +3004,12 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 }
 
 .approval-popover .tab-pane {
-    padding: 10px 0;
+    height: 175px;
+    overflow-y: auto;
 }
 
 .approval-popover .tab-content {
-    padding: 5px
+    /*padding: 5px;*/
 }
 
 .approval-popover .nav-tabs > li {

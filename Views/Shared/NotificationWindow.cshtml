@@ -1,7 +1,7 @@
 ﻿
 <div class="eb-notification-window" id="nf-window">
-    <div class="notification-inner h-100" style="padding-top: 37px;display: flex; flex-flow: column nowrap;">
-        <ul class="nav nav-tabs eb-styledTab" style="padding-top:10px;background:white;">
+    <div class="notification-inner h-100" style="padding-top: 38px;display: flex; flex-flow: column nowrap;">
+        <ul class="nav nav-tabs eb-styledTab" style="height:41px;">
             <li class="nav-item active">
                 <a class="nav-link nf-window-tabstyle" data-toggle="tab" role="tab" href="#allnotification-tab">
                     Notifications <span id="nf-notification-count"></span>
@@ -18,20 +18,21 @@
                 </a>
             </li>
         </ul>
-        <div class="tab-content" style="flex:1;height:calc(100% - 45px);overflow-y:auto;background: #f2f2f2;">
+        <div class="tab-content" style="flex:1;height:calc(100% - 40px);overflow-y:auto;background: white;">
             <div id="allnotification-tab" class="tab-pane h-100 active">
                 <div class='allnotification-tab-inner h-100' style="display:flex;flex-flow:column nowrap;">
                     <ul class="new_notifications nf-link-container" id="nf-container">
                     </ul>
                     <div class='nf-seemore'>
-                        <div style="width: 50%; float:left">
-                            <a href="/Notifications/GetAllNotifications" target="_blank">See All Notifications</a>
-                        </div>
 
-                        <div style="width: 50%; float:right">
-                            <a style="cursor: pointer;" id="closeAll_nf" disabled >Clear All Notifications</a>
-                        </div>
-                       
+                        <a href="/Notifications/GetAllNotifications" target="_blank" class="footer-btn">
+                            <i class="fa fa-external-link" aria-hidden="true"></i> View All
+                        </a>
+
+                        <button id="closeAll_nf" class="footer-btn" style="margin-right:5px">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i> Clear All
+                        </button>
+
                     </div>
                 </div>
             </div>
@@ -40,7 +41,9 @@
                     <ul class="pendingactions nf-link-container" id="actn_container">
                     </ul>
                     <div class='nf-seemore'>
-                        <a href="/Notifications/GetAllActions" target="_blank">See All Actions</a>
+                        <a href="/Notifications/GetAllActions" target="_blank" class="footer-btn">
+                            <i class="fa fa-external-link" aria-hidden="true"></i> View All
+                        </a>
                     </div>
                 </div>
             </div>

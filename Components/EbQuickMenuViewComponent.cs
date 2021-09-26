@@ -72,6 +72,7 @@ namespace ExpressBase.Web.Components
                 ViewBag.menu = string.Empty;
             }
 
+            ViewBag.AppCount = resultlist.Data == null ? 0 : resultlist.Data.Keys.Count;
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.Role = this.UserObject.Roles;
         }
@@ -88,6 +89,7 @@ namespace ExpressBase.Web.Components
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.menu = sb.ToString();
             ViewBag.Object = resultlist;
+            ViewBag.AppCount = resultlist.AppList == null ? 0 : resultlist.AppList.Keys.Count;
         }
 
         private Dictionary<int, EbObjectTypeWrap> GetObjectType()

@@ -1,11 +1,7 @@
-﻿using ExpressBase.Common;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Filters
 {
@@ -48,9 +44,9 @@ namespace ExpressBase.Web.Filters
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             var _context = context.HttpContext;
-            string brd = string.Empty;
             var controller = context.Controller as Controller;
 
+            string brd;
             if (_context.Items[this.Key] != null)
             {
                 brd = this.Param + _context.Items[this.Key];
@@ -58,8 +54,7 @@ namespace ExpressBase.Web.Filters
             else
                 brd = this.ParamTemp;
 
-            //controller.ViewBag.BrdPath = brd;
-            controller.ViewBag.BreadCrumb = GetBrdCrumb(_context.Request.Host.ToString(), brd).ToString();
+            controller.ViewBag.BreadCrumb = GetBrdCrumb(brd);
             base.OnActionExecuted(context);
         }
 
@@ -79,28 +74,28 @@ namespace ExpressBase.Web.Filters
             base.OnActionExecuting(context);
         }
 
-        public StringBuilder GetBrdCrumb(string host, string path)
+        public string GetBrdCrumb(string path)
         {
-            string[] patharray;
-            string url = string.Empty;
-            StringBuilder brd = new StringBuilder();
-            if (path != null)
-                patharray = path.Split("/");
-            else
-                patharray = new string[] { };
+            if (string.IsNullOrEmpty(path))
+            {
+                return path;
+            }
 
+            string[] patharray = path.Split("/");
+
+            StringBuilder brd = new StringBuilder();
 
             for (int i = 0; i < patharray.Length; i++)
             {
+                string url;
                 if (this.Urls != null && i < this.Urls.Length)
                     url = this.Urls[i];
                 else
                     url = "#";
 
-                brd.Append(@"<span class='eb_slash'>/</span><span class='eb_context'><a href='" + url + "'>" + patharray[i] + "</a></span>");
+                brd.Append(@"<span class='eb_slash'>&#65310;</span><span class='eb_context'><a href='" + url + "'>" + patharray[i] + "</a></span>");
             }
-
-            return brd;
+            return brd.ToString();
         }
     }
 }

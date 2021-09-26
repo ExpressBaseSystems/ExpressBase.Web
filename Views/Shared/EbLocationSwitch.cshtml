@@ -1,0 +1,30 @@
+﻿<div class="EbMsideBaroverlay_fade" id="eb-location-switch-fade"></div>
+<div class="EbQuickMoverlaySideWRpr" id="eb-location-switch-overlay" style="min-width:600px;">
+    <div class="EbQuickMoverlaySideWRpr-inner">
+        <div class="header" id="eb-location-switch-head">
+            <h5 style="margin:0;margin-left:10px;">Locations</h5>
+            <div class="ebmSearchBox search-box">
+                <input type="text" class="form-control" id="loc-search" autocomplete="off" autofocus="autofocus" placeholder="Search..." style="padding-left: 30px;padding-right: 0px;" />
+            </div>
+            <button class="btn c_btn" title="Close" id="eb-location-switch-close" style="margin-right:5px;">
+                <i class="material-icons">close</i>
+            </button>
+        </div>
+        <div class="InnerBlock loc_switchModal_outer">
+            <div class="loc_switchModal_box h-100 w-100" style="padding-top:10px;">
+                <div class="locs_bdy treeviewMdlBody h-100" style="overflow-y:auto;padding-right:10px;">
+
+                </div>
+            </div>
+        </div>
+        <div class="FooterBlock" style="padding: 0 10px;">
+            <div class="footer-buttons w-100">
+                <small id="loc_tot_count" class="loc_count pull-left"></small>
+                <a href="@Url.Action("EbLocations","TenantUser")" class="footer-btn ml-auto" target="_blank" style="margin-right:10px;">
+                    <i class="fa fa-code-fork fa-rotate-180"></i> Manage Locations
+                </a>
+                <button class="footer-btn" id="setLocSub" style="color:white;background-color:#508bf9;">Switch Location</button>
+            </div>
+        </div>
+    </div>
+</div>

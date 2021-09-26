@@ -1,4 +1,5 @@
 ﻿let LocationPicker = function (options) {
+
     try {
         this.data = [];
         this.TreeApi = null;
@@ -10,7 +11,7 @@
         const SetLoc = "#setLocSub";
         const container = ".loc_switchModal_outer";
         const EmptyLocs = ".no_loc_config";
-        const Loc_close = "#loc_switchModal_close";
+        const Loc_close = "#eb-location-switch-close,#eb-location-switch-fade";
         this.EbHeader = new EbHeader();
         this.loc_parents = {};
         this.loc_parent_id = {};
@@ -25,7 +26,7 @@
             if (this.loc_count > 20) {
                 $(".locs_bdy").css('min-height', '70vh');
             }
-            $("#loc_tot_count").text(this.loc_count + " location");
+            $("#loc_tot_count").text(this.loc_count + " locations");
             this.CurrentLoc = this.getCurrent();
             this.PrevLocation = this.CurrentLoc;
             this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
@@ -73,7 +74,11 @@
         this.ModifyLocationObject = function () {
             for (let i = 0; i < this.Locations.length; i++) {
                 let type = `<span class="loc_typ">${this.Locations[i].TypeName}</span>`;
-                this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: (this.Locations[i].LongName === this.Locations[i].ShortName) ? (this.Locations[i].LongName + type) : (this.Locations[i].LongName + `  (${this.Locations[i].ShortName + type})`) });
+                this.data.push({
+                    id: this.Locations[i].LocId,
+                    pid: this.Locations[i].ParentId,
+                    name: (this.Locations[i].LongName === this.Locations[i].ShortName) ? (this.Locations[i].LongName + type) : (this.Locations[i].LongName + `  (${this.Locations[i].ShortName + type})`)
+                });
             }
             this.Tempdata = JSON.parse(JSON.stringify(this.data));
             this.Tempdata.sort(function (a, b) {
@@ -98,7 +103,7 @@
             }
             else {
                 $(EmptyLocs).show();
-                $("#loc_tot_count").text("0 of " + this.loc_count + " location");
+                $("#loc_tot_count").text("0 of " + this.loc_count + " locations");
             }
         };
 
@@ -260,64 +265,64 @@
                     y = y.find("a:first")
                     y.trigger('click');
                     y.focus();
-
                 }
-
-
-
             }
-
         }
-
 
         this.showSwitcher = function (e) {
 
+            let $overlay = $("#eb-location-switch-overlay");
 
-            $(LocModId).toggle("fast", function () {
-                if ($(LocModId).is(":visible")) {
-                    // $(".html-root").style("overflow", "hidden", "important");
-                    $(".loc_switchModal_fade").show();
+            ebcontext.menu.close();
 
+            if (!$overlay.is(":visible")) {
+                $("#eb-location-switch-fade").show();
+                $overlay.show('slide', { direction: 'left' }, function () {
+                    this.locWindowOnOpen();
+                }.bind(this));
+            }
+            else {
+                $("#eb-location-switch-fade").hide();
+                $overlay.hide();
+            }
+        };
 
-                    $("#loc-search").val("");
-                    $(".locs_bdy").empty();
+        this.locWindowOnOpen = function () {
 
-                    this.CurrentLoc = this.getCurrent();
-                    this.PrevLocation = this.CurrentLoc;
-                    this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-                    if (typeof this.CurrentLocObj === 'undefined' || this.CurrentLocObj === null) {
-                        this.CurrentLocObj = this.Locations[0];
-                        this.CurrentLoc = this.CurrentLocObj.LocId;
-                        this.PrevLocation = this.CurrentLoc;
-                    }
-                    this.prev_loc_name = this.CurrentLocObj.LongName;
-                    this.prev_loc = this.CurrentLoc;
-                    this.Tempdata = this.loc_data;
-                    this.drawLocsTree();
-                    this.setDefault();
+            $(".locs_bdy").empty();
 
-                    this.setIcon(this.CurrentLoc);
-                    var scrollTo = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
-                    scrollTo.trigger('click');
-                    var container = $('.locs_bdy');
-                    // //$(".locs_bdy").scrollTo(scrollTo);
-                    container.animate({
-                        scrollTop: scrollTo.offset().top - container.offset().top +
-                            container.scrollTop() - 100
-                    }, 'medium');
-                    scrollTo.focus();
-                    $(SetLoc).prop("disabled", true);
-                }
-                else {
-                    //  $(".html-root").style("overflow", "visible", "important");
-                    $(".loc_switchModal_fade").hide();
-                }
+            this.CurrentLoc = this.getCurrent();
+            this.PrevLocation = this.CurrentLoc;
+            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+            if (!this.CurrentLocObj) {
+                this.CurrentLocObj = this.Locations[0];
+                this.CurrentLoc = this.CurrentLocObj.LocId;
+                this.PrevLocation = this.CurrentLoc;
+            }
+            this.prev_loc_name = this.CurrentLocObj.LongName;
+            this.prev_loc = this.CurrentLoc;
+            this.Tempdata = this.loc_data;
+            this.drawLocsTree();
+            this.setDefault();
 
-            }.bind(this));
+            this.setIcon(this.CurrentLoc);
+            var scrollTo = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
+            scrollTo.trigger('click');
+            //var container = $('.locs_bdy');
+            //container.animate({
+            //    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 100
+            //}, 'medium');
+            scrollTo.focus();
+            $(SetLoc).prop("disabled", true);
         };
 
         this.close_LocSwitch = function () {
             this.showSwitcher();
+        }
+
+        this.close = function () {
+            $("#eb-location-switch-fade").hide();
+            $("#eb-location-switch-overlay").hide();
         }
 
         this.searchLoc = function (e) {
@@ -330,7 +335,7 @@
                 return textA.localeCompare(textB);
             });
             if ($("#loc-search").val() == "") {
-                $("#loc_tot_count").text(this.loc_count + " location");
+                $("#loc_tot_count").text(this.loc_count + " locations");
             }
             this.drawLocsTree();
             this.setDefault();
@@ -439,28 +444,27 @@
                     $(k).prepend(`<span><span class="parent_path">${p}</span></span>`);
                 }
             }
-            $("#loc_tot_count").text(temoloc.length + " of " + this.loc_count + " location");
+            $("#loc_tot_count").text(temoloc.length + " of " + this.loc_count + " locations");
         };
 
         this.confirmLocFn = function () {
             if (this.prev_loc != this.CurrentLoc) {
                 $("#confirmLoc").remove();
                 let m = `<div class="modal fade" id="confirmLoc"  style="position: absolute;top: 58%;left: 50%;transform: translate(-50%, -50%);display: block;padding-right: 16px;" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-body" style="display: flex;justify-content: center;">
-          <span id="confirmLocspan" style=" text-align:center; font-size:16px;">Change location from <strong> ${this.prev_loc_name} </strong> to <strong> ${this.CurrentLocObj.LongName}</strong>.</span>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="loc_cancel" style="background:red;color:white;" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-          <button type="button" id="loc_confirm" style="background:green;color:white;" class="btn btn-default pull-right" data-dismiss="modal">Confirm</button>
-        </div>
-      </div>
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-body" style="display: flex;justify-content: center;">
+                                  <span id="confirmLocspan" style=" text-align:center; font-size:16px;">Change location from <strong> ${this.prev_loc_name} </strong> to <strong> ${this.CurrentLocObj.LongName}</strong>.</span>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" id="loc_cancel" style="background:red;color:white;" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                                  <button type="button" id="loc_confirm" style="background:green;color:white;" class="btn btn-default pull-right" data-dismiss="modal">Confirm</button>
+                                </div>
+                              </div>
       
-    </div>
-  </div>`
+                            </div>
+                          </div>`;
                 $('body').append(m);
-
 
                 $('#confirmLoc').modal('show');
                 $("#loc_confirm").off("click").on("click", this.confirm_LocSwitch.bind(this));
@@ -476,7 +480,6 @@
         }.bind(this);
 
         this.Init();
-
     }
     catch (er) {
         console.log(er);
@@ -649,24 +652,23 @@ let FinYearPicker = function (options) {
         }.bind(this);
 
         this.appendModal = function () {
-            $('body').prepend(`
-<div id="finyear_switch_warp">
-    <div class="finyear_switchModal_fade" id="finyear_modal_fade"></div>
-    <div class="finyear_switchModal" id="finyear_modal">
-        <div class="finyear_switchModal_outer">
-            <div class="finyear_switchModal_box">
-                <div class="fin_head">
-                    <button type="button" id="finyear_modal_close" class="finyear_switchModal_close">&times;</button>                    
-                    <h4>Switch Financial Years</h4>
-                </div>
-                <div class="fin_bdy"></div>
-                <div class="fin_foot">
-                    <button class="btn btn-sm fin-switchbtn pull-right" id="setfinyear">Switch</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`);
+            $('body').prepend(`<div id="finyear_switch_warp">
+                                    <div class="finyear_switchModal_fade" id="finyear_modal_fade"></div>
+                                    <div class="finyear_switchModal" id="finyear_modal">
+                                        <div class="finyear_switchModal_outer">
+                                            <div class="finyear_switchModal_box">
+                                                <div class="fin_head">
+                                                    <button type="button" id="finyear_modal_close" class="finyear_switchModal_close">&times;</button>                    
+                                                    <h5 style="color:#333;">Switch Financial Years</h5>
+                                                </div>
+                                                <div class="fin_bdy"></div>
+                                                <div class="fin_foot">
+                                                    <button class="btn btn-sm fin-switchbtn pull-right" id="setfinyear">Switch</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`);
             this.$modal = $("#finyear_modal");
             this.$fade = $("#finyear_modal_fade");
             this.$modalClose = $("#finyear_modal_close");
@@ -674,23 +676,25 @@ let FinYearPicker = function (options) {
             this.$switchBtn = $("#setfinyear");
 
             let tableHtm = `<table class='table'>
-    <tr style='background-color: #d3d3d3;'>
-        <th></th>
-        <th>Year Start</th>
-        <th>Year End</th>
-        <th>Active Period</th>
-    </tr>`;
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Year Start</th>
+                                        <th>Year End</th>
+                                        <th>Active Period</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
             for (let i = 0; i < this.finyears.List.length; i++) {
                 let fy = this.finyears.List[i];
-                tableHtm += `
-<tr data-id='${fy.Id}' lock='${(fy.Locked && !this.finyears.SysUser) ? "true" : "false"}' active='false'>
-    <td style="text-align: left;"><i class="fa fa-globe" title='Global location'></i> ${fy.Locked ? '<i class="fa fa-lock" title="Locked"></i>' : ''}</td>
-    <td>${fy.FyStart_sl}</td>
-    <td>${fy.FyEnd_sl}</td>
-    <td>(${fy.ActStart_sl} &nbsp <i>to</i> &nbsp ${fy.ActEnd_sl})</td>
-</tr>`;
+                tableHtm += `<tr data-id='${fy.Id}' lock='${(fy.Locked && !this.finyears.SysUser) ? "true" : "false"}' active='false'>
+                                <td style="text-align: left;"><i class="fa fa-globe" title='Global location'></i> ${fy.Locked ? '<i class="fa fa-lock" title="Locked"></i>' : ''}</td>
+                                <td>${fy.FyStart_sl}</td>
+                                <td>${fy.FyEnd_sl}</td>
+                                <td>(${fy.ActStart_sl} &nbsp <i>to</i> &nbsp ${fy.ActEnd_sl})</td>
+                            </tr>`;
             }
-            tableHtm += `</table>`;
+            tableHtm += `</tbody></table>`;
             this.$modalbody.html(tableHtm);
             this.$modalTbl = this.$modalbody.find('table');
         };
@@ -701,3 +705,5 @@ let FinYearPicker = function (options) {
         console.error(e);
     }
 };
+
+

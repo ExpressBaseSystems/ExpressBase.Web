@@ -48,7 +48,7 @@
 
 .param-div-cont {
     top: 0px;
-    left: 0px;
+    right: 0px;
     width: 350px;
     position: fixed;
     display: block;
@@ -122,43 +122,39 @@ th.week-holiday {
     font-weight: 500;
 }
 
-.cal-percent {
-    font-size: 85%;
-    /*float: right;*/
-}
 
-.cal-percent-red {
-    color: red;
-}
-
-.cal-percent-green {
-    color: green;
-}
-
-.cal-percent-caret-red {
-    font-size: 85%;
-    color: red;
-    padding-left: 1px;
-    float: right;
-}
-
-.cal-percent-caret-green {
-    font-size: 85%;
-    color: green;
-    padding-left: 1px;
-    float: right;
-}
-
-.cal-percent-container {
+.per-cont {
     float: right;
     padding-left: 3px;
 }
 
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+
+.per-cont > span {
+    font-size: 85%;
+}
+
+.per-cont > i {
+    font-size: 85%;
+    padding-left: 1px;
+    float: right;
+}
+
 .cal-data {
-    text-align: right !important;
-   /* padding-left: 2%;*/
+    text-align: right !important; 
 }
 
 tbody > tr > td > .cal-data {
     font-size: 14px;
+}
+
+.tablelink4calendar {
+    cursor: pointer;
 }

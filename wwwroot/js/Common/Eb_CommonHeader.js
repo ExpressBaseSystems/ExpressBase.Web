@@ -158,10 +158,13 @@
             $('.srch-body-cont').empty();
 
 
-            let html = `<ul class="srch-ul-outer">
-                        <li class="li-summary">
-                            <div class='srch-summary-text'><b>${dataItems.length}</b> / <b>${data.RowCount}</b> matches</div>
-                        </li>`;
+            let html = `
+                        <div class="srch-header">
+                            <div class='srch-header-title'><h5>Global Search</h5></div>
+                            <div class='srch-grpby-wraper'><div class='srch-header-grpby'>Group by</div></div>
+                        </div>
+                        <ul class="srch-ul-outer">`;
+
             if (dataItems.length > 0) {
                 $.each(DataItemsG, function (formName, items) {
                     html += this.getUlHtml(items, true);
@@ -177,7 +180,10 @@
                     </li>`;
             }
 
-            html += `</ul>`;
+            html += `   </ul>
+                        <div class="srch-header srch-footer">
+                            <div class='srch-footer-summary'>${dataItems.length} / ${data.RowCount} matches</div>
+                        </div>`;
 
             //$('.srch-body-cont').append(html);
             $cont.append(html);
@@ -192,7 +198,7 @@
             let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
             let html =
                 `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
-                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</h5>
+                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> &nbsp; ${dataItems[0].DisplayName} (${dataItems.length})</h5>
             </li>
             <li id='${idfromDN}' class='collapse in'>
                 <ul class="srch-ul">`;
@@ -203,44 +209,28 @@
                 html += `
                     <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
                         <div class='srch-li-block'>
-                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">`;
+                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">
+                                <div class='row'>`;
                 $.each(obj.Data, function (name, val) {
-                    if (j++ % 3 === 0) {
-                        html += `
-                                <table class='ctrldtls'>
-                                    <tbody>`;
-                    }
-                    html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
-                    if (j % 3 === 0) {
-                        html += `
-                                    </tbody>
-                                </table>`;
-                    }
-                    if (j === 6)
+                    html += `
+                                    <div class='keyval-cont col-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2'>
+                                        <div class='keyval-wrap'>
+                                            <div class='key'>${name}</div>
+                                            <div class='value'>${(val === "" ? "&nbsp;" : val)}</div>
+                                        </div>
+                                    </div>`;
+                    if (j === 12)
                         return false;
                 });
                 html += `
-                                    </tbody>
-                                </table>
+                                </div>
                             </div>
 
                             <div class="metadtlsWrap">
-                                <table class='metadtls'>
-                                    <tbody>
-                                        <tr>
-                                            <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
-                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
-                                        <tr>    
-                                    </tbody>
-                                </table>
-                                <table class='metadtls'>
-                                    <tbody>
-                                        <tr>
-                                            <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
-                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class='metadtls'>
+                                    <div> <span class='metaval'>Created by ${obj.CreatedBy} on ${createdAtArr[0]}</span></div>
+                                    <div> <span class='metaval'>Last updated by ${obj.ModifiedBy} on ${modifiedAtarr[0]}</span></div>
+                                </div>
                             </div>
                         </div>`;
                 html += '   </li>'

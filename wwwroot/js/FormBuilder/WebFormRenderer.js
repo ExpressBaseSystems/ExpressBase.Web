@@ -1971,7 +1971,11 @@ const WebFormRender = function (option) {
 
     this.printDocument_inner = function (rptRefid, rowId) {
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowId);
-        ebcontext.webform.showLoader();
+        if (this.curAfterSavemodeS === 'close')
+            setTimeout(function () { ebcontext.webform.showLoader(); }, 100);
+        else
+            ebcontext.webform.showLoader();
+            
     };
 
     this.initSaveMenu = function () {

@@ -23,13 +23,13 @@
 
 @await Component.InvokeAsync("PageHeaderCommon")
 
-<div class="container-fluid calendar_wrapper" style="height: calc(100vh - 92px);margin-top: 38px;">
+<div class="calendar_wrapper">
     <div class="row calendar-user-view-cont" style="height:inherit;">
         <div class="col-sm-12" id="calendar-user-view" style="height:inherit">
         </div>
     </div>
 
-    <div id="ppt-calendar-view" class="PGgrid"> <div id="propGridView"> </div></div>
+    @*<div id="ppt-calendar-view" class="PGgrid"> <div id="propGridView"> </div></div>*@
 </div>
 <script type="text/javascript">
      $('title').text('@ViewBag.DisplayName');

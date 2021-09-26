@@ -549,6 +549,7 @@
         <div class="icon4 eb-full-height" id="${obj.EbSid}_icon"><i></i></div>
     </div>
 </div>`;
+        }
         return a;
     };
 

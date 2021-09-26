@@ -507,15 +507,48 @@
         </div></div>`;
         }
         else if (obj.LabelStyle == 3) {
-            a = `<div class="display-block label4-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
-        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
-        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div><div class='lb4-data'>
-        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
-        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
-        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
-        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
-        </div></div></div>`;
+            a = `<div class="row display-block datalabel4 eb-full-width" id="${obj.EbSid}" eb-type="DataLabel">
+            <div class="col-lg-4 col-sm-4 col-md-4 eb-full-height eb-nopadding icon-pane">
+            <div class="icon4 eb-full-height" id="${obj.EbSid}_icon"><i></i></div></div>
+            <div class="col-lg-8 col-sm-8 col-md-8 eb-full-height body-pane">
+                <div class="card" id="${obj.EbSid}_Data_pane" style="width: 100%;">
+                    <h5 class="card-header lbl" id="${obj.EbSid}_static"> ${obj.StaticLabel} </h5>
+                    <div class="card-body">
+<p class="card-text" id="${obj.EbSid}_description lbl"></p>
+<p class="card-text" id="${obj.EbSid}_dynamic lbl">${obj.DynamicLabel}</p>
+                    </div>
+                <div class="card-footer text-muted" id="${obj.EbSid}_footer">
+                <div class="row">
+<div class="col-sm-3"><i class="fa fa-address-book" aria-hidden="true"></i></div>
+<div class="col-sm-9 eb-nopadding"> <label></label></div>
+                </div>
+             </div>
+            </div>
+            </div> `;
         }
+        else if (obj.LabelStyle == 4) {
+            a = `<div class="row display-block datalabel5 eb-full-width" id="${obj.EbSid}" eb-type="DataLabel">
+    <div class="col-lg-8 col-sm-8 col-md-8 eb-full-height body-pane">
+        <div class="card eb-full-width" id="${obj.EbSid}_Data_pane" style="width: 100%;">
+            <h5 class="card-header lbl" id="${obj.EbSid}_static"> ${obj.StaticLabel} </h5>
+            <div class="card-body">
+                <p class="card-text lbl" id="${obj.EbSid}_description">  </p>
+                <p class="card-text" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</p>
+            </div>
+            <div class="card-footer text-muted" id="${obj.EbSid}_footer">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <i class="fa fa-address-book" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-9 eb-nopadding"> <label></label></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-4 col-md-4 eb-full-height eb-nopadding icon-pane">
+        <div class="icon4 eb-full-height" id="${obj.EbSid}_icon"><i></i></div>
+    </div>
+</div>`;
         return a;
     };
 

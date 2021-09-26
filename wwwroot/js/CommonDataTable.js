@@ -4152,8 +4152,8 @@
     this.linkFromCalendar = function (e) {
         this.popup = true;
         var rows = this.Api.rows(idx).nodes();
-        this.linkDV = $(e.target).closest("a").attr("data-link");
-        colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        this.linkDV = this.ObjectLinks[0].ObjRefId; //$(e.target).closest("a").attr("data-link");
+        colindex = parseInt($(e.target).closest("a").attr("idx"));
         var idx = this.Api.row($(e.target).parents().closest("td")).index();
         let col = this.columns[colindex];
 

@@ -646,11 +646,12 @@
 }
 
 #UserDashBoardSwitchBtn {
-    background: #fff;
-    border: solid 0px #d6d4d4;
+    background-color: transparent;
+    border: none;
     font-size: 12px;
     height: 19px;
     border-radius: 2px;
+    padding: 0;
 }
 
 .Btn4SwitchDB {

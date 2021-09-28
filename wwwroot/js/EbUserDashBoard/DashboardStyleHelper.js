@@ -305,6 +305,7 @@ function LinkStyle(Obj, tile, TabNum, filtervalues) {
     if (Obj.HoverText) {
         $(`#${Obj.EbSid}_link`).attr("data-toggle", `Link-hover_${Obj.EbSid}`);
         $(`#${Obj.EbSid}_link`).attr("title", Obj.HoverText);
+        $(`#${Obj.EbSid}_link`).attr("data-placement", "bottom");
         $(`[data-toggle="Link-hover_${Obj.EbSid}"]`).tooltip();
     }
     if (Obj.BackgroundColor) {

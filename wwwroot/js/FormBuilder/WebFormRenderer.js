@@ -567,6 +567,7 @@ const WebFormRender = function (option) {
 
         //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
+        WebformData.Ts = this.formData.Ts;
         console.log("form data --");
 
         //console.log("old data --");
@@ -627,7 +628,11 @@ const WebFormRender = function (option) {
             this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         }
         else {
-            EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+            //EbDialog("show", {
+            //    Message: respObj.Message,
+            //    Buttons: { "Ok": { Background: "green", Align: "right", FontColor: "white;" } }
+            //});
+            EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000', Delay: 5000 });
             console.error(respObj.MessageInt);
         }
     }.bind(this);
@@ -1625,8 +1630,18 @@ const WebFormRender = function (option) {
                 }
             }
             else if (event.which === 80) {// ctrl+P //check in no print form
-                if ($(`#${this.hBtns['Print']}`).css("display") !== "none" && this.preventCheck(event)) {
-                    $(`#${this.hBtns['Print']}`).trigger('click');
+                if (this.preventCheck(event)) {
+                    if (this.Mode.isNew) {
+                        let prOps = $(`#${this.hBtns['SaveSel']} .selectpicker`).find("option[data-ref]");
+                        if (prOps.length > 0) {
+                            this.saveForm();
+                            this.curAfterSavemodeS = $(prOps[0]).attr("data-token");
+                            this.AfterSavePrintDoc = $(prOps[0]).attr("data-ref");
+                        }
+                    }
+                    else if ($(`#${this.hBtns['PrintSel']}`).css("display") !== "none") {
+                        $(`#${this.hBtns['Print']}`).trigger('click');
+                    }
                 }
             }
         }

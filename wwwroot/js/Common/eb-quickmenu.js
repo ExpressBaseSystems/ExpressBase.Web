@@ -62,8 +62,10 @@
         let $overlay = $("#ebquickmsideoverlay");
 
         if (!$overlay.is(":visible")) {
-
-            ebcontext.locations.close();
+         
+            if (ebcontext.locations && ebcontext.locations.hasOwnProperty('close')) {
+                ebcontext.locations.close();
+            }
 
             $("#ebm-overlayfade").show();
 
@@ -94,7 +96,9 @@
     };
 
     this.LoadApps = function () {
+
         let o = store.get("EbMenuObjects_" + this.Tid + this.Uid + this.login) || {};
+
         let locId = store.get("Eb_Loc-" + this.Tid + this.Uid) || null;
 
         if ($.isEmptyObject(o)) {

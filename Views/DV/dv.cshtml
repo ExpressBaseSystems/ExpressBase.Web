@@ -158,6 +158,22 @@
 <script>
 
     $("body").prepend(`
+<div class="modal fade" id="AuditHistoryModal" role="dialog">
+    <div class="modal-dialog" style="width: 100%; margin: 0px;">
+        <div class="modal-content" style="border: none; border-radius: 0px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
+                <h4 class="modal-title">Audit Trail</h4>
+            </div>
+            <div class="modal-body" style="height:calc(100vh - 60px); overflow: auto; padding: 15px 100px;">
+                <div id="divAuditTrail" style="height:calc(100vh - 90px);"> </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+
+    $("body").prepend(`
 <div class="modal fade" id="iFramePdfModal" role="dialog">
     <div class="modal-dialog" style="width: 100%; margin: 38px 0 0 0;">
         <div class="modal-content" style="border-radius: 0; border: none;">

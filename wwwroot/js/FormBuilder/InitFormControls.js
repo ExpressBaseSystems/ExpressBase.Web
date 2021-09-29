@@ -1090,8 +1090,8 @@
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
-            //if (!this.Renderer.FRC.AllRequired_valid_Check())
-            //    return;
+            if (this.Renderer.Mode.isNew)
+                return;
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
@@ -1104,6 +1104,12 @@
                 ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
             }
         }.bind(this);
+        $ctrl.on('mouseenter', function (ctrl, e) {
+            if (this.Renderer.Mode.isNew)
+                ctrl.attr('title', 'Not available in New Mode');
+            else
+                ctrl.removeAttr('title');
+        }.bind(this, $ctrl));
     };
 
     this.Review = function (ctrl, ctrlOpts) {

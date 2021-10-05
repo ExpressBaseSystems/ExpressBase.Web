@@ -673,6 +673,12 @@ const WebFormRender = function (option) {
                 ebcontext.webform.hideSubForm(this.__MultiRenderCxt);
             }
             else {
+                try {
+                    window.top.close();
+                }
+                catch (e) {
+                    console.log(e);
+                }
                 this.showLoader();
                 document.location.href = "/";
             }
@@ -1990,7 +1996,7 @@ const WebFormRender = function (option) {
             setTimeout(function () { ebcontext.webform.showLoader(); }, 100);
         else
             ebcontext.webform.showLoader();
-            
+
     };
 
     this.initSaveMenu = function () {
@@ -2007,7 +2013,7 @@ const WebFormRender = function (option) {
             let printHtml = '<optgroup label="Save & Print">';
             for (let i = 0; i < this.FormObj.PrintDocs.$values.length; i++) {
                 let tle = this.FormObj.PrintDocs.$values[i].Title || this.FormObj.PrintDocs.$values[i].ObjDisplayName;
-                printHtml += `<option data-token="${this.defaultAfterSavemodeS}" data-ref="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`;
+                printHtml += `<option data-token="${(this.renderMode === 2 ? this.defaultAfterSavemodeS : 'view')}" data-ref="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`;
             }
             printHtml += '</optgroup>';
             $sel.append(printHtml);

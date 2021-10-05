@@ -3947,7 +3947,7 @@
                 this.reloadDataTable();
             }
         }
-        else {            
+        else {
             $("[data-coltyp=date]").datepicker("hide");
             if (typeof (e.key) === "undefined") {
                 this.reloadDataTable();
@@ -4351,8 +4351,9 @@
             val = $(e.target).closest("#action").find(".selectpicker").val();
             val = JSON.parse(atob(val));
         }
-
-        $('.btn-approval_popover').popover('hide');
+        if ($td.find('.btn-approval_popover:visible').length === 0)
+            return;
+        $td.find('.btn-approval_popover').popover('hide');
         $td.find('.btn-approval_popover').popover('destroy');
         $td.find('.btn-approval_popover i').removeClass('fa-history').removeClass('fa-pencil').addClass('fa-spinner fa-pulse');
 

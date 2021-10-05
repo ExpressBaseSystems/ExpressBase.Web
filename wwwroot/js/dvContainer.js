@@ -13,7 +13,7 @@ var DvContainerObj = function (settings) {
     this.ver_num = settings.ver_num;
     this.cur_status = settings.cur_status;
     this.type = settings.type;
-    this.rowData = ( settings.rowData !== null) ? settings.rowData : null;
+    this.rowData = (settings.rowData !== null) ? settings.rowData : null;
     this.filterValues = settings.filterValues;
     this.tabnum = settings.tabnum;
     this.RelatedDvlist = settings.DvList;
@@ -46,14 +46,14 @@ var DvContainerObj = function (settings) {
         _style = { top: "100px" };
     else
         _style = { top: "77px" };
-
-    this.PGobj = new Eb_PropertyGrid({
-        id: "pp_inner",
-        wc: "uc",
-        cid: this.cid,
-        $extCont: $(".ppcont"),
-        style: _style
-    });
+    this.PGobj = null;
+    //this.PGobj = new Eb_PropertyGrid({
+    //    id: "pp_inner",
+    //    wc: "uc",
+    //    cid: this.cid,
+    //    $extCont: $(".ppcont"),
+    //    style: _style
+    //});
     //this.stickBtn = new EbStickButton({
     //    $wraper: $(".filterCont"),
     //    $extCont: $(".filterCont"),
@@ -95,25 +95,25 @@ var DvContainerObj = function (settings) {
 
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             this.dvcol[focusedId] = new EbCommonDataTable({
-                refid : this.dvRefid,
-                ver_num : this.ver_num,
-                type : this.type,
-                dvObject : this.currentObj,
-                cur_status : this.cur_status,
-                tabNum : this.tabnum,
-                ss_url : this.ssurl,
-                login : this.wc,
-                counter : counter,
-                data : this.MainData,
-                rowData : this.rowData,
-                filterValues : this.filterValues,
-                url : this.url,
-                cellData : this.cellData,
-                PGobj : this.PGobj,
-                datePattern : settings.datePattern,
-                TenantId : this.TenantId,
+                refid: this.dvRefid,
+                ver_num: this.ver_num,
+                type: this.type,
+                dvObject: this.currentObj,
+                cur_status: this.cur_status,
+                tabNum: this.tabnum,
+                ss_url: this.ssurl,
+                login: this.wc,
+                counter: counter,
+                data: this.MainData,
+                rowData: this.rowData,
+                filterValues: this.filterValues,
+                url: this.url,
+                cellData: this.cellData,
+                PGobj: this.PGobj,
+                datePattern: settings.datePattern,
+                TenantId: this.TenantId,
                 UserId: this.UserId,
-                showCheckboxColumn:false
+                showCheckboxColumn: false
             }
             );
         }
@@ -141,24 +141,24 @@ var DvContainerObj = function (settings) {
 
         else if (this.currentObj.$type.indexOf("EbOpenStreetMap") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
             this.dvcol[focusedId] = new mapView({
-                googlekey : this.googlekey,
-                refid : this.dvRefid,
-                ver_num : this.ver_num,
-                type : this.type,
-                dsobj : this.currentObj,
-                cur_status : this.cur_status,
-                tabNum : this.tabnum,
-                ss_url : this.ssurl,
-                login : this.wc,
-                counter : counter,
-                data : this.MainData,
-                rowData : this.rowData,
-                filterValues : this.filterValues,
-                cellData : this.cellData,
-                PGobj : this.PGobj,
-                TenantId : this.TenantId,
-                UserId : this.UserId
-                }
+                googlekey: this.googlekey,
+                refid: this.dvRefid,
+                ver_num: this.ver_num,
+                type: this.type,
+                dsobj: this.currentObj,
+                cur_status: this.cur_status,
+                tabNum: this.tabnum,
+                ss_url: this.ssurl,
+                login: this.wc,
+                counter: counter,
+                data: this.MainData,
+                rowData: this.rowData,
+                filterValues: this.filterValues,
+                cellData: this.cellData,
+                PGobj: this.PGobj,
+                TenantId: this.TenantId,
+                UserId: this.UserId
+            }
             );
         }
         console.log("xxxxx", this.dvcol[focusedId]);
@@ -182,7 +182,7 @@ var DvContainerObj = function (settings) {
     };
 
     this.saveSuccess = function () {
-    }    
+    }
 
     this.drawDv = function (e) {
         this.rowData = undefined;
@@ -265,7 +265,7 @@ var DvContainerObj = function (settings) {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
         $("#obj_icons .btn").prop("disabled", true);
         if (this.dvRefid !== null) {
-            if (this.dvRefid.split("-")[2] === "3") { 
+            if (this.dvRefid.split("-")[2] === "3") {
                 if (!$(".dv-body2").hasClass("dv-pdf"))
                     $(".dv-body2").addClass("dv-pdf");
                 if ($(`#reportIframe_${copycelldata}`).length === 0) {
@@ -301,7 +301,7 @@ var DvContainerObj = function (settings) {
                             focusedId = key;
                     }.bind(this));
                     $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"));
-                    
+
                     $("#eb_common_loader").EbLoader("hide");
                     $("#obj_icons .btn").prop("disabled", false);
                 }
@@ -577,7 +577,7 @@ var DvContainerObj = function (settings) {
                 nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 15px;' aria-hidden='true'></i>"
             });
             $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
-            if ($("#" + focusedId).length >0)
+            if ($("#" + focusedId).length > 0)
                 $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
         }
         else {
@@ -591,7 +591,7 @@ var DvContainerObj = function (settings) {
         $("#Relateddiv").hide();
         $(".ppcont").hide();
         $(".filterCont").hide();
-        if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) 
+        if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id"))
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
 
         var __count = focusedId.split("_")[5];
@@ -606,8 +606,8 @@ var DvContainerObj = function (settings) {
             $("#Pipped").text("");
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                this.PGobj.setObject(this.currentObj, AllMetas["EbTableVisualization"]);
-                if (this.dvcol[focusedId].isSecondTime) 
+                //this.PGobj.setObject(this.currentObj, AllMetas["EbTableVisualization"]);
+                if (this.dvcol[focusedId].isSecondTime)
                     this.dvcol[focusedId].GenerateButtons();
                 $("#Common_obj_icons").hide();
                 $("#obj_icons").show();
@@ -637,11 +637,11 @@ var DvContainerObj = function (settings) {
             if (!$(".dv-body2").hasClass("dv-pdf"))
                 $(".dv-body2").addClass("dv-pdf");
         }
-        
+
         if (this.dvcol[focusedId].cellData !== null && this.dvcol[focusedId].cellData !== "")
             $("#objname").text(this.currentObj.DisplayName + " - " + this.dvcol[focusedId].cellData);
         else
-			$("#objname").text(this.currentObj.DisplayName);
+            $("#objname").text(this.currentObj.DisplayName);
         this.focusDot();
     };
     this.pgChanged = function (obj, Pname, CurDTobj) {
@@ -661,7 +661,7 @@ var DvContainerObj = function (settings) {
                 }
             }
             else if (Pname == "Name") {
-				$("#objname").text(obj.DisplayName);
+                $("#objname").text(obj.DisplayName);
                 console.log(obj);
             }
             else if (Pname == "Columns") {
@@ -673,9 +673,9 @@ var DvContainerObj = function (settings) {
         }
     };
 
-    this.PGobj.PropertyChanged = function (obj, Pname) {
-        this.pgChanged(obj, Pname, this.dvcol[focusedId]);
-    }.bind(this);
+    //this.PGobj.PropertyChanged = function (obj, Pname) {
+    //    this.pgChanged(obj, Pname, this.dvcol[focusedId]);
+    //}.bind(this);
 
     this.modifydivDots = function () {
         $(".dotstable").empty();
@@ -699,30 +699,30 @@ var DvContainerObj = function (settings) {
             //    }
             //}
             //else {
-                //if (counter === 0) {
-                if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                }
-                else if (obj.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
-                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                }
-                else {
-                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true" style='color:black;'></i></a></div>`);
-                }
-                //}
-                //else {
-                //    if (this.dvcol[focusedId].EbObject.$type.indexOf("EbChartVisualization") !== -1 || this.dvcol[focusedId].EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                //        $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                //    }
-                //    else {
-                //        $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                //    }
+            //if (counter === 0) {
+            if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+                $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+            }
+            else if (obj.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
+                $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+            }
+            else {
+                $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true" style='color:black;'></i></a></div>`);
+            }
+            //}
+            //else {
+            //    if (this.dvcol[focusedId].EbObject.$type.indexOf("EbChartVisualization") !== -1 || this.dvcol[focusedId].EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+            //        $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+            //    }
+            //    else {
+            //        $("[data-mapid=" + prevfocusedId + "]").after(`<div class='dot dottool' data-mapid='${focusedId}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+            //    }
 
 
-                //}
-                //if (obj.isContextual)
-                if (firstKey !== key)
-                    $(".dotstable .dot[data-mapid=" + key + "]").css("margin-left", "12px");
+            //}
+            //if (obj.isContextual)
+            if (firstKey !== key)
+                $(".dotstable .dot[data-mapid=" + key + "]").css("margin-left", "12px");
             //}
             //}
         }.bind(this));
@@ -816,7 +816,7 @@ var DvContainerObj = function (settings) {
                 $("#copydiv_" + temp).append(image);
             }
             else {
-                curdiv.next().children(".popover-title").text("Report-"+dvObj.EbObject.cellData);
+                curdiv.next().children(".popover-title").text("Report-" + dvObj.EbObject.cellData);
                 curdiv.next().children().find(".dotsnapshot").empty();
                 curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
                 $("#copydiv_" + temp).append(`<img src="../images/pdf.png" style='width:inherit;'>`);
@@ -862,9 +862,9 @@ var DvContainerObj = function (settings) {
         $('.splitdiv_parent').slick('slickGoTo', (index - 1), true);
         this.modifyNavigation();
         $.each($(".slick-track").children(), function (i, sub) {
-            $(sub).attr("data-slick-index",i);
+            $(sub).attr("data-slick-index", i);
         });
-        
+
     }
 
     this.init();

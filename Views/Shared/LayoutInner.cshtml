@@ -27,6 +27,8 @@
     <link rel="stylesheet" href="~/css/LayoutCommon/jquery.contextMenu.min.css">
     <link rel="stylesheet" href="~/css/Common/croppie.min.css" />
     <link rel="stylesheet" type="text/css" href="~/css/simTree.css" />
+    @*jith*@
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
     <environment include="Development">
         @*COMMON CSS*@
@@ -110,6 +112,7 @@
     <script src="~/js/FormBuilder/MeetingScheduler.js" asp-append-version=@bApnd></script>
     <script src="~/js/EbUserDashBoard/Combodate.js" asp-append-version=@bApnd></script>
     <script src="~/js/FormBuilder/AudioInput.js" asp-append-version=@bApnd></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
     @if (ViewBag.wc == "uc")
     {
@@ -163,31 +166,8 @@
             {
                 if (ViewBag.UId > 1 || ViewBag.cide == "demo")
                 {
-                    <div id="eb-locswitch_wraper">
-                        <div class="loc_switchModal_fade"></div>
-                        <div class="loc_switchModal" id="loc_switchModal">
-                            <div class="loc_switchModal_outer">
-                                <div class="loc_switchModal_box">
-                                    <div class="locs_head">
-                                        <button type="button" id="loc_switchModal_close" class="loc_switchModal_close">&times;</button>
-                                        <div class="loc_searchInput col-md-5 col-lg-5">
-                                            <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
-                                        </div>
-                                        <h4>Switch Location</h4>
-
-                                        <div class="loc_current_wrp ">
-                                            <span><i class="fa fa-check-circle-o "></i></span>  <span id="current_loc" loc_id="" style="font-size: 12px; cursor:pointer"> </span>
-                                        </div>
-                                    </div>
-                                    <div class="locs_bdy treeviewMdlBody"></div>
-                                    <div class="locs_foot">
-                                        <span id="loc_tot_count" class=" loc_count pull-left"></span>
-                                        <button class="btn btn-sm loc-switchbtn pull-right" id="setLocSub">Switch</button>
-                                    </div>
-                                    <div class="no_loc_config">No Locations.</div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="eb-location-switch">
+                        @{ await Html.RenderPartialAsync("EbLocationSwitch");}
                     </div>
                 }
             }

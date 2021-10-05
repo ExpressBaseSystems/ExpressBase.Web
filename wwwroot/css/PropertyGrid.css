@@ -367,6 +367,7 @@
     background-image: none;
     border-radius: unset;
     user-select: none;
+    font-family: sans-serif;
 }
 
 [pg-editor-type='7'] .colTile {
@@ -614,7 +615,7 @@
     padding: 7px 14px 5px 13px;
     background-color: white;
     color: #444;
-    font-weight: bold;
+    font-weight: 500;
     transition-duration: 0.2s;
 }
 

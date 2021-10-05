@@ -10,9 +10,11 @@
     this.start = function () {
 
         $(document).bind('keypress', function (event) {
-            if (event.which === 10 && event.ctrlKey)
+            if (event.which === 10 && event.ctrlKey) {
                 this.showMenuOverlay();
+            }
         }.bind(this));
+
         $('#quik_menu').off("click").on("click", this.showMenuOverlay.bind(this));
         $("#ebm-close").off("click").on("click", this.closeMenuOverlay.bind(this));
 
@@ -23,7 +25,6 @@
         if (this.login !== "tc") {
             $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
             $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
-            $("body").on("click", ".EbQuickMoverlaySideWRpr .backbtn", this.closeSingle.bind(this));
 
             if (this.login === "uc") {
                 $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
@@ -57,9 +58,18 @@
     };
 
     this.showMenuOverlay = function (e) {
-        if (!$("#ebquickmsideoverlay").is(":visible")) {
+
+        let $overlay = $("#ebquickmsideoverlay");
+
+        if (!$overlay.is(":visible")) {
+         
+            if (ebcontext.locations && ebcontext.locations.hasOwnProperty('close')) {
+                ebcontext.locations.close();
+            }
+
             $("#ebm-overlayfade").show();
-            $("#ebquickmsideoverlay").show('slide', { direction: 'left' }, function () {
+
+            $overlay.show('slide', { direction: 'left' }, function () {
                 if (this.attempt <= 0 && this.login === "dc") {
                     this.LoadApps();
                     this.attempt = 1;
@@ -72,7 +82,7 @@
         }
         else {
             $("#ebm-overlayfade").hide();
-            $("#ebquickmsideoverlay").hide();
+            $overlay.hide();
         }
     };
 
@@ -86,7 +96,9 @@
     };
 
     this.LoadApps = function () {
+
         let o = store.get("EbMenuObjects_" + this.Tid + this.Uid + this.login) || {};
+
         let locId = store.get("Eb_Loc-" + this.Tid + this.Uid) || null;
 
         if ($.isEmptyObject(o)) {
@@ -101,6 +113,7 @@
                 store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", result);
                 $("#quick_menu_load").EbLoader("hide");
                 $("#ebquickmsideoverlay #appList").html(result);
+                $("#ebquickmsideoverlay #menu-app-count").text()
                 $(`li[trigger='menu']`).off("click").on("click", this.appendObType.bind(this));
                 if (this.login === "uc") {
                     $('li[trigger="security"]').off("click").on("click", this.showSecurity.bind(this));
@@ -185,9 +198,6 @@
         }
         $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item" klink="true">
                                                         <a href='${this.decideUrl(_obj)}' objid='${_obj.Id}'>
-                                                            <span class="obj-icon">
-                                                                <i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i>
-                                                            </span>
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}
@@ -197,7 +207,7 @@
     this.decideUrl = function (_obj) {
         var _url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
         if (this.login === "uc") {
-            if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "MapView" || _obj.EbType ==="OpenStreetMap") {
+            if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "MapView" || _obj.EbType === "OpenStreetMap") {
                 _url = "../DV/dv?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "Report") {
@@ -279,11 +289,6 @@
         else {
             $("#ebm-objectcontainer").show();
         }
-    };
-
-    this.closeSingle = function (e) {
-        $(e.target).closest("[slider='true']").next().hide();
-        $(e.target).closest("[slider='true']").hide();
     };
 
     this.active = function ($el) {
@@ -450,6 +455,12 @@
             }
         }
     };
+
+    this.close = function () {
+        if ($("#ebquickmsideoverlay").is(':visible')) {
+            this.closeMenuOverlay();
+        }
+    }
 
     this.refresh = function () {
         store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");

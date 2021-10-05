@@ -48,7 +48,7 @@
 
 .param-div-cont {
     top: 0px;
-    left: 0px;
+    right: 0px;
     width: 350px;
     position: fixed;
     display: block;
@@ -125,7 +125,7 @@ th.week-holiday {
 
 .per-cont {
     float: right;
-    padding-left: 3px;
+    padding-left: 5px;
 }
 
 .red {
@@ -146,9 +146,13 @@ th.week-holiday {
     padding-left: 1px;
     float: right;
 }
+.val-perc {
+    min-width: 3em;
+    font-size: 12px!important;
+}
 
 .cal-data {
-    text-align: right !important; 
+    text-align: right !important;
 }
 
 tbody > tr > td > .cal-data {
@@ -157,4 +161,29 @@ tbody > tr > td > .cal-data {
 
 .tablelink4calendar {
     cursor: pointer;
+}
+
+#calendar-user-view {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.calendar_wrapper {
+    height: calc(100vh - 90px);
+    margin-top: 38px;
+}
+
+.calendar-user-view-cont .info-search-cont {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.calendar-user-view-cont .info-search-cont .dataTables_info {
+    margin-left: 0px;
+}
+
+.calendar-user-view-cont .info-search-cont .dataTables_filters {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 7px;
 }

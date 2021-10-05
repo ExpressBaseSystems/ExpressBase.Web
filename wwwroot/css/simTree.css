@@ -5,6 +5,10 @@
     padding-left: 0px;
 }
 
+.ml-auto{
+    margin-left:auto;
+}
+
     .sim-tree ul,
     .sim-tree li {
         margin: 0;
@@ -18,30 +22,30 @@
         font-size: 0;
     }
 
-        .sim-tree li ul {
-            display: none;
-            margin-left: 15px;
-        }
+    .sim-tree li ul {
+        display: none;
+        margin-left: 15px;
+    }
 
-        .sim-tree ul.show, .sim-tree li.show {
-            display: block;
-        }
+    .sim-tree ul.show, .sim-tree li.show {
+        display: block;
+    }
 
-        .sim-tree ul.none, .sim-tree li.none {
-            display: none;
-        }
+    .sim-tree ul.none, .sim-tree li.none {
+        display: none;
+    }
 
-        .sim-tree li.disabled > a {
-            color: #aaa;
-            cursor: not-allowed;
-        }
+    .sim-tree li.disabled > a {
+        color: #aaa;
+        cursor: not-allowed;
+    }
 
-            .sim-tree li.disabled > a .sim-tree-checkbox {
-                border-color: #eee;
-            }
+        .sim-tree li.disabled > a .sim-tree-checkbox {
+            border-color: #eee;
+        }
 
     .sim-tree a {
-        font-size: 14px;
+        font-size: 13px;
         color: #333;
         text-decoration: none;
         vertical-align: top;
@@ -171,6 +175,7 @@
             font-size: 16px;
             color: green;
         }
+
 .treeviewMdlBox .treeviewMdlHder .treeviewMdlClose {
     float: right;
     font-size: 28px;
@@ -184,25 +189,25 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .treeviewMdlBox .treeviewMdlHder .treeview_search input {
     height: 30px;
     padding-left: 35px;
 }
+
 .treeviewMdlBox .treeviewMdlHder .treeview_search_div {
     display: flex;
     align-items: center;
     float: right;
 }
+
 .treeviewMdlBody ul.sim-tree a {
     margin: 3px 0px;
-    padding: 6px 3px;
-    width: 95%;
+    padding: 5px 3px;
     border-radius: 4px;
-    border: 1px solid #e1e1e2;
-    letter-spacing: 0.03em;
     background-color: #f5f5f5bd;
     cursor: pointer;
-    /*box-shadow: -1px 2px 4px 1px #b5b5b547;*/
+    width: calc(100% - 20px);
 }
 
     .treeviewMdlBody ul.sim-tree a:focus {
@@ -211,7 +216,7 @@
 
     .treeviewMdlBody ul.sim-tree a:hover {
         border-radius: 4px;
-        background: #3586cc;
+        background: #508bf9;
         color: white;
     }
 
@@ -237,8 +242,7 @@
     overflow: hidden !important;
     text-overflow: ellipsis;
     float: right;
-    padding-left: 10%;
-    width: 30%;
+    padding: 0 10px;
 }
 
 

@@ -2447,7 +2447,7 @@ body {
         display: block;
     }
 /*locswitch*/
-.loc_switchModal {
+.loc_switchModal, .finyear_switchModal {
     display: none;
     position: fixed;
     width: 100%;
@@ -2467,7 +2467,7 @@ body {
     display: flex;
 }
 
-.loc_switchModal_box {
+.finyear_switchModal_box {
     background: white;
     box-shadow: var(--eb-shadow);
     min-width: 40%;
@@ -2477,7 +2477,7 @@ body {
     max-width: 50%;
 }
 
-.loc_switchModal_outer {
+.finyear_switchModal_outer {
     width: 100%;
     height: 100%;
     display: flex;
@@ -2486,13 +2486,12 @@ body {
     background-color: #000000b8;
 }
 
-.loc_switchModal_box .locs_head {
+.loc_switchModal_box .locs_head, .finyear_switchModal_box .fin_head {
     padding: 5px 20px;
     padding-top: 10px;
     background: #ececec;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    border-bottom: 1px solid #e2e0e0;
     position: relative;
 }
 
@@ -2533,7 +2532,7 @@ body {
                 color: green;
             }
 
-.loc_switchModal_close {
+.loc_switchModal_close, .finyear_switchModal_close {
     float: right;
     font-size: 28px;
     font-weight: 700;
@@ -2547,7 +2546,7 @@ body {
     margin-bottom: 10px;
 }
 
-    .loc_switchModal_close:hover {
+    .loc_switchModal_close:hover, .finyear_switchModal_close:hover {
         color: #000;
         text-decoration: none;
         cursor: pointer;
@@ -2618,30 +2617,72 @@ body {
         color: white;
     }
 
-.loc_switchModal_box .locs_bdy {
+#eb-location-switch .search-box {
+    max-width: 200px;
+    margin-left:auto;
+}
+
+#eb-location-switch .locs_bdy::-webkit-scrollbar {
+    width: 10px;
+}
+
+    #eb-location-switch .locs_bdy::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    #eb-location-switch .locs_bdy::-webkit-scrollbar-thumb {
+        background-color: #ececec;
+        border-radius: 100px;
+    }
+
+.finyear_switchModal_box .fin_bdy {
     overflow: auto;
-    padding: 15px 15px 15px 15px;
     max-height: 50vh;
     overflow-y: auto;
     min-height: 50vh;
     border: .5px solid #d4d4d4;
 }
 
+    .finyear_switchModal_box .fin_bdy .table > thead > tr > th {
+        border-bottom: none;
+    }
+
     .loc_switchModal_box .locs_bdy li.active-loc a:first-child {
         background-color: #e5f5f3;
     }
 
-.loc_switchModal_box .locs_foot {
-    padding: 7px 20px 7px 10px
+    .finyear_switchModal_box .fin_bdy tr[lock='false']:hover {
+        background-color: #f0f8ff;
+        cursor: pointer;
+    }
+    .finyear_switchModal_box .fin_bdy tr[lock='true'] {
+        pointer-events: none;
+        background-color: #fff8dc;
+        color: #bc8f8f;
+        cursor: not-allowed;
+    }
+    .finyear_switchModal_box .fin_bdy tr[active='true'] {
+        background-color: #e6e6fa;
+        color: #0000aa;
+    }
+    .finyear_switchModal_box .fin_bdy table, .finyear_switchModal_box .fin_bdy th {
+        text-align: center;
+    }
+
+.loc_switchModal_box .locs_foot, .finyear_switchModal_box .fin_foot {
+    padding: 7px 20px 7px 10px;
+    background: #ececec;
 }
 
     .loc_switchModal_box .locs_foot .loc_count {
         padding: 2px 5px;
     }
 
-    .loc_switchModal_box .locs_foot .loc-switchbtn {
+    .loc_switchModal_box .locs_foot .loc-switchbtn, .finyear_switchModal_box .fin_foot .fin-switchbtn {
         letter-spacing: 0.1em;
         font-weight: 500;
+        background-color: #508bf9;
+        color: white;
     }
 
         .loc_switchModal_box .locs_foot .loc-switchbtn[disabled] {
@@ -2649,7 +2690,7 @@ body {
             background: #8a8a8a;
         }
 
-.loc_switchModal_fade {
+.loc_switchModal_fade, .finyear_switchModal_fade {
     display: none;
     position: fixed;
     top: 0;
@@ -3394,6 +3435,7 @@ pd-10 {
         left: unset;
         padding: 0;
         border-radius: 6px;
+        top: 40px;
     }
 
 .drp_ul {
@@ -3843,7 +3885,6 @@ input:checked + .proslider:before {
     justify-content: center;
     /*align-items: center;*/
     padding: 0 10px;
-    font-family: Montserrat;
     font-weight: 500;
     cursor: pointer;
 }
@@ -3892,7 +3933,6 @@ input:checked + .proslider:before {
     z-index: 8;
     width: 350px;
     background: white;
-    border-right: 1px solid #ddd;
 }
 
     .eb-notification-window .nf-window-tabstyle {
@@ -3932,10 +3972,24 @@ input:checked + .proslider:before {
         }
 
     .eb-notification-window .nf-seemore {
-        text-align: center;
-        font-size: 13px;
-        margin-bottom: 15px;
+        height: 40px;
+        background-color: #ececec;
+        border-top: 1px solid #dedede;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 5px;
     }
+
+        .eb-notification-window .nf-seemore .footer-btn {
+            padding: 5px;
+            font-size: 12px;
+            color: #508bf9;
+            border-radius: 5px;
+            background: white;
+            border: 1px solid #508bf9;
+            text-decoration: none;
+        }
 
 .blink-when-new {
     animation: blinker 1s linear infinite;
@@ -4281,20 +4335,35 @@ input:checked + .proslider:before {
     list-style: none;
     padding: 0;
 }
+
+    .EbQuickMoverlaySideWRpr .sub-menuObj li {
+        padding:2px 5px;
+    }
+
 .EbQuickMoverlaySideWRpr .menuwrapper_ul_outer {
     padding-left: 0;
     list-style: none;
 }
 
+    .EbQuickMoverlaySideWRpr .menuwrapper_ul_outer .menu-group-title {
+        font-size: 15px;
+        padding: 0px 5px;
+    }
+        .EbQuickMoverlaySideWRpr .menuwrapper_ul_outer .menu-group-title .menu-group-title-inner {
+            background: #ececec;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size:14px;
+        }
+
 .EbQuickMoverlaySideWRpr .inner_li {
-    border-radius: 0 !important;
+    border-radius: 5px;
     border: none;
-    font-size: 13px;
     background-color: transparent;
     color: #333;
-    border-bottom: 1px solid #ccc;
-    padding: 15px 15px;
+    padding: 6px 10px;
 }
+
 .EbQuickMoverlaySideWRpr .securityContainer .inner_li {
     border-style: none;
     padding: 10px 10px;
@@ -4306,13 +4375,13 @@ input:checked + .proslider:before {
 }
 
 .EbQuickMoverlaySideWRpr .c_btn {
+    display: flex;
     background-color: transparent;
-    color: black;
-    padding: 5px 12px 0px 12px;
-    font-size: 18px;
+    padding: 0px 0px 0px 10px;
 }
 
 .EbQuickMoverlaySideWRpr .closebtn {
+    margin-right:5px;
 }
 
     .EbQuickMoverlaySideWRpr .closebtn:focus, Eb_quick_menu .closebtn:active {
@@ -4320,7 +4389,7 @@ input:checked + .proslider:before {
     }
 
 .EbQuickMoverlaySideWRpr .c_btn .material-icons {
-    font-size: 21px;
+    font-size: 20px;
 }
 
 .EbQuickMoverlaySideWRpr .apibox {
@@ -4335,14 +4404,20 @@ input:checked + .proslider:before {
 }
 
 .EbQuickMoverlaySideWRpr .ObjType-item {
-    margin-bottom: 5px;
-    padding: 8px 10px;
+    padding: 6px 5px;
     cursor: pointer;
+    margin: 2px 5px;
+    border-radius: 5px;
 }
 
-    .EbQuickMoverlaySideWRpr .ObjType-item i {
-        color: #508bf9;
+    .EbQuickMoverlaySideWRpr .ObjType-item .obtypeic {
+        width: 20px;
     }
+
+.EbQuickMoverlaySideWRpr .ObjType-item i {
+    color: #508bf9;
+    font-size: inherit;
+}
 
     .EbQuickMoverlaySideWRpr .ObjType-item:hover, .EbQuickMoverlaySideWRpr .ObjType-item:hover i {
         background: #508bf9;
@@ -4367,21 +4442,52 @@ input:checked + .proslider:before {
     z-index: 10;
     display: none;
     background: white;
-    max-width:100%;
+    max-width: 100%;
 }
 
     .EbQuickMoverlaySideWRpr .EbQuickMoverlaySideWRpr-inner {
         display: flex;
         flex-flow: column nowrap;
         height: 100%;
-        padding-top: 37px;
+        padding-top: 38px;
     }
 
     .EbQuickMoverlaySideWRpr .InnerBlock {
         display: flex;
         flex-grow: 1;
-        max-height: calc(100% - 46px);
+        max-height: calc(100% - 80px);
+        font-size:13px;
     }
+
+    .EbQuickMoverlaySideWRpr .FooterBlock {
+        height: 40px;
+        background-color: #ececec;
+        border-top: 1px solid #dedede;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 5px;
+    }
+        .EbQuickMoverlaySideWRpr .FooterBlock .powered-by-exp {
+            color: #484848;
+        }
+
+        .EbQuickMoverlaySideWRpr .FooterBlock .footer-buttons {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            align-items: center;
+        }
+
+            .EbQuickMoverlaySideWRpr .FooterBlock .footer-buttons .footer-btn {
+                padding: 5px;
+                font-size: 12px;
+                color: #508bf9;
+                border-radius: 5px;
+                background: white;
+                border: 1px solid #508bf9;
+                text-decoration: none;
+            }
 
     .EbQuickMoverlaySideWRpr .AppContainer {
         width: 350px;
@@ -4390,147 +4496,184 @@ input:checked + .proslider:before {
         display: flex;
         flex-flow: column;
     }
+
     .EbQuickMoverlaySideWRpr .TenantMenu-wraper {
         width: 350px;
         height: 100%;
         background: white;
         display: flex;
         flex-flow: column;
-        overflow-y:auto;
+        overflow-y: auto;
     }
 
-.EbQuickMoverlaySideWRpr .header {
-    padding: 5px 0;
-    background: #ececec;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    flex-flow: row;
-    position: relative;
-}
+    .EbQuickMoverlaySideWRpr .header {
+        display: flex;
+        padding: 5px 0;
+        flex-flow: row;
+        position: relative;
+        align-items: center;
+        background: #ececec;
+        border-bottom: 1px solid #e6e3e3;
+    }
 
     .EbQuickMoverlaySideWRpr .AppContainer .body {
         height: 100%;
-        overflow-y: auto;
+        overflow-y: scroll;
     }
+
+        .EbQuickMoverlaySideWRpr .AppContainer .body::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .EbQuickMoverlaySideWRpr .AppContainer .body::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        .EbQuickMoverlaySideWRpr .AppContainer .body::-webkit-scrollbar-thumb {
+            background-color: #ececec;
+            border-radius: 100px;
+        }
+
 
     .EbQuickMoverlaySideWRpr .ObjectTypeContainer {
         width: 250px;
         height: 100%;
         display: none;
-        background: white;
+        border-left: 1px solid #ececec;
         overflow-y: auto;
-        border-left: 1px solid #ccc;
     }
+
+        .EbQuickMoverlaySideWRpr .ObjectTypeContainer::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .EbQuickMoverlaySideWRpr .ObjectTypeContainer::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        .EbQuickMoverlaySideWRpr .ObjectTypeContainer::-webkit-scrollbar-thumb {
+            background-color: #ececec;
+            border-radius: 100px;
+        }
 
     .EbQuickMoverlaySideWRpr .objListContainer {
         background: white;
         display: none;
         min-width: 250px;
-        border-left: 1px solid #ccc;
+        border-left: 1px solid #ececec;
     }
 
         .EbQuickMoverlaySideWRpr .objListContainer .obj-item {
             display: flex;
             align-items: center;
+            margin: 2px 5px;
+            border-radius: 5px;
         }
 
-            .EbQuickMoverlaySideWRpr .objListContainer .obj-item a {
-                padding: 8px 20px 8px 5px;
-                cursor: pointer;
-            }
-
-            .EbQuickMoverlaySideWRpr .objListContainer .obj-item .obj-icon {
-                margin-right: 10px;
-                color: #508bf9;
-            }
-
-            .EbQuickMoverlaySideWRpr .objListContainer .obj-item a {
-                text-decoration: none;
-                color: inherit;
-                width: 100%;
-            }
-
-            .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover, .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .obj-icon {
-                background: #508bf9;
-                color: #f5f3f3;
-            }
-
-                .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .btn-setfav {
-                    display: block;
-                }
-
-        .EbQuickMoverlaySideWRpr .objListContainer .ebm-objlist {
-            overflow-y: auto;
-            height: 100%;
-            padding-bottom: 20px;
+        .EbQuickMoverlaySideWRpr .objListContainer .obj-item a {
+            padding: 5px 20px 5px 5px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            width: 100%;
         }
 
-    .EbQuickMoverlaySideWRpr .newObjectContainer {
-        background: white;
-        display: none;
-        flex-flow: column nowrap;
-        border-left: 1px solid #ccc;
+        .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover, .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .obj-icon {
+            background: #508bf9;
+            color: #f5f3f3;
+        }
+
+            .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .btn-setfav {
+                display: block;
+            }
+
+    .EbQuickMoverlaySideWRpr .objListContainer .ebm-objlist {
+        overflow-y: auto;
+        height: 100%;
     }
 
-        .EbQuickMoverlaySideWRpr .newObjectContainer .newObjectContainer-inner {
-            height: 100%;
-            overflow-y: auto;
-            display: inline-grid;
-            grid-auto-flow: column;
-            border-top: 1px solid #ccc;
-            grid-template-rows: repeat(6, auto);
+        .EbQuickMoverlaySideWRpr .objListContainer .ebm-objlist::-webkit-scrollbar {
+            width: 10px;
         }
 
-        .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob {
-            text-align: center;
-            padding: 5px 5px;
-            width: 150px;
-            border: 1px solid #ccc;
-            border-top: none;
-            border-left: none;
-            text-decoration: none;
-            position:relative;
+        .EbQuickMoverlaySideWRpr .objListContainer .ebm-objlist::-webkit-scrollbar-track {
+            background-color: transparent;
         }
-            .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob a {
-                width:100%;
-                height:100%;
-                display: flex;
-                justify-content: center;
-                flex-flow:column wrap;
-                align-items: center;
-                text-decoration:none;
-            }
-        .EbQuickMoverlaySideWRpr .newObjectContainer .eb-newobj-comingsoon-frmenu:after {
-            content: "";
-            position: absolute;
+
+        .EbQuickMoverlaySideWRpr .objListContainer .ebm-objlist::-webkit-scrollbar-thumb {
+            background-color: #ececec;
+            border-radius: 100px;
+        }
+
+.EbQuickMoverlaySideWRpr .newObjectContainer {
+    background: white;
+    display: none;
+    flex-flow: column nowrap;
+    border-left: 1px solid #ccc;
+}
+
+    .EbQuickMoverlaySideWRpr .newObjectContainer .newObjectContainer-inner {
+        height: 100%;
+        overflow-y: auto;
+        display: inline-grid;
+        grid-auto-flow: column;
+        border-top: 1px solid #ccc;
+        grid-template-rows: repeat(6, auto);
+    }
+
+    .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob {
+        text-align: center;
+        padding: 5px 5px;
+        width: 150px;
+        border: 1px solid #ccc;
+        border-top: none;
+        border-left: none;
+        text-decoration: none;
+        position: relative;
+    }
+
+        .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob a {
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
             display: flex;
             justify-content: center;
+            flex-flow: column wrap;
             align-items: center;
-            font-size: 18px;
-            font-weight: 300;
-            pointer-events: none;
+            text-decoration: none;
         }
 
-.EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob:hover, .newObjectContainer .ebm_newob:hover .ebm-newob-icon, .newObjectContainer .ebm_newob:hover .ebm-newob-text {
-    background: #508bf9;
-    color: white;
-}
+    .EbQuickMoverlaySideWRpr .newObjectContainer .eb-newobj-comingsoon-frmenu:after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 300;
+        pointer-events: none;
+    }
+
+    .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob:hover, .newObjectContainer .ebm_newob:hover .ebm-newob-icon, .newObjectContainer .ebm_newob:hover .ebm-newob-text {
+        background: #508bf9;
+        color: white;
+    }
+
         .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob:hover.eb-newobj-comingsoon-frmenu:after {
             content: "Coming Soon";
             background: #508bf9;
         }
 
-        .EbQuickMoverlaySideWRpr .newObjectContainer .ebm-newob-icon {
-            font-size: 20px;
-        }
+    .EbQuickMoverlaySideWRpr .newObjectContainer .ebm-newob-icon {
+        font-size: 20px;
+    }
 
-        .EbQuickMoverlaySideWRpr .newObjectContainer .ebm-newob-text {
-            color: #5a5858;
-        }
+    .EbQuickMoverlaySideWRpr .newObjectContainer .ebm-newob-text {
+        color: #5a5858;
+    }
 
     .EbQuickMoverlaySideWRpr .ebmSearchBox {
         display: flex;
@@ -4539,113 +4682,115 @@ input:checked + .proslider:before {
         max-width: 330px;
     }
 
-    .EbQuickMoverlaySideWRpr .securityContainer {
-        display: none;
-        width: 250px;
+    .EbQuickMoverlaySideWRpr .ebmSearchBox .form-control {
+        height: 30px !important;
+    }
+
+.EbQuickMoverlaySideWRpr .securityContainer {
+    display: none;
+    width: 250px;
+    height: 100%;
+    background-color: white;
+    border-left: 1px solid #ccc;
+}
+
+    .EbQuickMoverlaySideWRpr .securityContainer .securityContainer-inner {
         height: 100%;
-        background-color: white;
-        border-left: 1px solid #ccc;
+        width: 100%;
     }
 
-        .EbQuickMoverlaySideWRpr .securityContainer .securityContainer-inner {
-            height: 100%;
-            width: 100%;
-        }
+.EbQuickMoverlaySideWRpr .active_link {
+    background-color: #508bf9;
+    color: white;
+}
 
-    .EbQuickMoverlaySideWRpr .backbtn {
-        color: #428bca;
-        padding: 2px 0 2px 14px;
-        font-size: 15px;
-        cursor: pointer;
-    }
-
-        .EbQuickMoverlaySideWRpr .backbtn:hover {
-            background: #eaf5ff;
-            font-weight: 500;
-        }
-
-    .EbQuickMoverlaySideWRpr .active_link {
-        background-color: #508bf9;
-        color: white;
-    }
-    .EbQuickMoverlaySideWRpr .active_link i{
+    .EbQuickMoverlaySideWRpr .active_link i {
         background-color: #508bf9;
         color: white;
     }
 
-        .EbQuickMoverlaySideWRpr .active_link .apibox {
-            color: white;
-        }
-
-        .EbQuickMoverlaySideWRpr .active_link::before {
-            font-family: FontAwesome;
-            content: "\f178";
-            float: right;
-        }
-
-    .EbQuickMoverlaySideWRpr .btn-setfav {
-        margin-left: auto;
-        color: #d0c7c7;
-        margin-right: 10px;
-        border-radius: 3px;
-        background: white;
-        border-style: none;
+    .EbQuickMoverlaySideWRpr .active_link .apibox {
+        color: white;
     }
 
-    .EbQuickMoverlaySideWRpr .favourited {
-        color: #f35353;
-        margin-left: auto;
-        margin-right: 10px;
-        border-radius: 3px;
-        background-color:transparent;
-        border-style: none;
-        cursor:default;
-    }
-
-    .EbQuickMoverlaySideWRpr .ebmSearchBox:before {
-        content: "\f002";
+    .EbQuickMoverlaySideWRpr .active_link::before {
         font-family: FontAwesome;
-        position: absolute;
-        margin-left: 10px;
+        content: "\f054";
+        float: right;
     }
-    .EbQuickMoverlaySideWRpr .obj-item-categorised {
-        
+
+.EbQuickMoverlaySideWRpr .btn-setfav {
+    margin-left: auto;
+    color: #d0c7c7;
+    margin-right: 5px;
+    border-radius: 3px;
+    background: white;
+    border-style: none;
+}
+
+.EbQuickMoverlaySideWRpr .favourited {
+    color: #f35353;
+    margin-left: auto;
+    margin-right: 5px;
+    background-color: transparent;
+    border-style: none;
+    cursor: default;
+}
+
+.EbQuickMoverlaySideWRpr .ebmSearchBox:before {
+    content: "\f002";
+    font-family: FontAwesome;
+    position: absolute;
+    margin-left: 10px;
+}
+
+.EbQuickMoverlaySideWRpr .obj-item-categorised {
+}
+
+    .EbQuickMoverlaySideWRpr .obj-item-categorised .head {
+        padding: 5px 10px;
+        color: #2c69da;
+        font-weight: 400;
     }
-        .EbQuickMoverlaySideWRpr .obj-item-categorised .head {
-            padding: 5px 10px;
-            color: #2c69da;
-            font-weight: 500;
+
+        .EbQuickMoverlaySideWRpr .obj-item-categorised .head i {
+            color: #508bf9;
+            width: 20px;
         }
-            .EbQuickMoverlaySideWRpr .obj-item-categorised .head i {
-                color: #508bf9;
-                width: 20px;
-            }
-        .EbQuickMoverlaySideWRpr .obj-item-categorised .body {
-            
+
+    .EbQuickMoverlaySideWRpr .obj-item-categorised .body {
+    }
+
+        .EbQuickMoverlaySideWRpr .obj-item-categorised .body .obj-item {
+            padding-left: 23px;
         }
-            .EbQuickMoverlaySideWRpr .obj-item-categorised .body .obj-item {
-                padding-left: 30px;
-            }
-        .EbQuickMoverlaySideWRpr .obj-item-categorised .head .category_objCount {
-            margin-left: 5px;
-        }
-    .EbQuickMoverlaySideWRpr [klink='true']:focus {
-        background-color: #508bf9;
+
+    .EbQuickMoverlaySideWRpr .obj-item-categorised .head .category_objCount {
+        margin-left: 5px;
+    }
+
+.EbQuickMoverlaySideWRpr [klink='true']:focus {
+    background-color: #508bf9;
+    color: white;
+    outline: none;
+}
+
+    .EbQuickMoverlaySideWRpr [klink='true']:focus a {
         color: white;
-        outline:none;
     }
-        .EbQuickMoverlaySideWRpr [klink='true']:focus a {
-            color: white;
-        }
-        .EbQuickMoverlaySideWRpr [klink='true']:focus i {
-            color: white;
-        }
-    .EbQuickMoverlaySideWRpr .objListContainer [klink='true']:focus i {
-        color: #d0c7c7;
+
+    .EbQuickMoverlaySideWRpr [klink='true']:focus i {
+        color: white;
     }
-    .EbQuickMoverlaySideWRpr .objListContainer [klink='true']:focus .favourited {
-        color: #f35353;
-    }
-    .EbQuickMoverlaySideWRpr .obj_count {
-        margin-left: 0.4em;
-    }
+
+.EbQuickMoverlaySideWRpr .objListContainer [klink='true']:focus i {
+    color: #d0c7c7;
+}
+
+.EbQuickMoverlaySideWRpr .objListContainer [klink='true']:focus .favourited {
+    color: #f35353;
+}
+
+.EbQuickMoverlaySideWRpr .obj_count {
+    margin-left: 0.4em;
+}

@@ -100,6 +100,7 @@
                 on: 'Date',
                 off: 'Doc Type'
             });
+
             $('#srch_chkToggle').change(function () {
                 this.isGroupByDate = $('#srch_chkToggle').prop('checked');
                 this.drawResultList(this.g_srcg_data);

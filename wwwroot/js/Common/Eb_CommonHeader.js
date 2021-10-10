@@ -93,7 +93,7 @@
                             <div class='srch-grpby-wraper'>
                                 <div class='srch-header-grpby'><span class="align-middle" style="margin: auto;">Group by</span></div>
                                 <input id='srch_chkToggle' type="checkbox" data-toggle="toggle" data-size="xs">
-                                <div class="srch-close" data-toggle='tooltip' title="close" id="g_srch_close"><i style="margin:auto;" onclick="$('.search-dd').slideUp(100);" class="material-icons">close</i></div>
+                                <div class="srch-close" data-toggle='tooltip' title="close" id="g_srch_close"><i style="margin:auto; font-size: 20px;" onclick="$('.search-dd').slideUp(100);" class="material-icons">close</i></div>
                             </div>
                         </div>`);
             $('#srch_chkToggle').bootstrapToggle({
@@ -203,7 +203,7 @@
             }
 
             html += `   </ul>
-                        <div class="srch-header srch-footer">
+                        <div class="srch-footer">
                             <div class='srch-footer-summary'>${dataItems.length} / ${data.RowCount} matches</div>
                         </div>`;
 

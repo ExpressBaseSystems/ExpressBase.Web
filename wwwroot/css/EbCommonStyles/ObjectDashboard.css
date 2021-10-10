@@ -1080,21 +1080,22 @@ input:checked + .proslider:before {
         margin-bottom: 0;
     }
 
-.search-dd .srch-header {
+.search-dd .srch-header, .search-dd .srch-footer {
     color: #000;
     display: flex;
     position: absolute;
     width: 100%;
     z-index: 999;
-    height: 40px;
+    height: 41px;
     background: #fffc;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #e6e3e3;
     background-color: #ececec;
 }
 
-.search-dd .srch-footer{
+.search-dd .srch-footer {
     border-top: 1px solid #ccc;
     bottom: 0;
+    height: 39px;
 }
 
 .search-dd .srch-grpby-wraper {
@@ -1113,7 +1114,7 @@ input:checked + .proslider:before {
     }
 .search-dd .srch-close {
     display: flex;
-    margin-left: 6px;
+    margin-left: 20px;
     cursor: pointer;
 }
 

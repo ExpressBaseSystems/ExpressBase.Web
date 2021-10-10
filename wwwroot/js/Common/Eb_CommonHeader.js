@@ -62,10 +62,10 @@
             //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
             $('#platformsearch').on('click', this.platformSearch);
 
-            this.$toolbSrchBx.on('focus', function () {
-                if (this.isSearchedOnce)
-                    $('.search-dd').slideDown(100);
-            }.bind(this));
+            //this.$toolbSrchBx.on('focus', function () {
+            //    if (this.isSearchedOnce)
+            //        $('.search-dd').slideDown(100);
+            //}.bind(this));
 
             this.$toolbSrchBx.on('keyup', function () {
                 this.isSimpleSearch = true;

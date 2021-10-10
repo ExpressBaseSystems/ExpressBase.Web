@@ -92,7 +92,7 @@
                             <div class='srch-header-title'><h5>Global Search</h5></div>
                             <div class='srch-grpby-wraper'>
                                 <div class='srch-header-grpby'><span class="align-middle" style="margin: auto;">Group by</span></div>
-                                <input id='srch_chkToggle' type="checkbox" checked data-toggle="toggle" data-size="xs">
+                                <input id='srch_chkToggle' type="checkbox" data-toggle="toggle" data-size="xs">
                                 <div class="srch-close" data-toggle='tooltip' title="close" id="g_srch_close"><i style="margin:auto;" onclick="$('.search-dd').slideUp(100);" class="material-icons">close</i></div>
                             </div>
                         </div>`);

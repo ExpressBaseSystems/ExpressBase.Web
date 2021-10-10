@@ -69,8 +69,11 @@
 
             this.$toolbSrchBx.on('keyup', function () {
                 this.isSimpleSearch = true;
-                if (event.keyCode === 13)
+                if (event.keyCode === 13) {
                     this.platformSearch();
+                    if (this.isSearchedOnce)
+                        $('.search-dd').slideDown(100);
+                }
                 else if (event.keyCode === 27)
                     $('.search-dd').slideUp(50);
             }.bind(this));

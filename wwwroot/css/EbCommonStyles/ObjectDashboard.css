@@ -875,7 +875,7 @@ input:checked + .proslider:before {
     width: 49%;
     z-index: 9;
     right: 0px;
-    height: calc(100vh - 36px);
+    height: calc(100vh - 38px);
     overflow: hidden;
 }
 
@@ -1093,7 +1093,8 @@ input:checked + .proslider:before {
 }
 
 .search-dd .srch-footer {
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #e6e3e3;
+    border-bottom: none;
     bottom: 0;
     height: 39px;
 }

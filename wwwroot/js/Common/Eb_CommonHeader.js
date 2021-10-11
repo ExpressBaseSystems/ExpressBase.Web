@@ -95,7 +95,7 @@
                             <div class='srch-header-title'><h5>Global Search</h5></div>
                             <div class='srch-grpby-wraper'>
                                 <div class='srch-header-grpby'><span class="align-middle" style="margin: auto;">Group by</span></div>
-                                <input id='srch_chkToggle' type="checkbox" data-toggle="toggle" data-size="xs">
+                                <input id='srch_chkToggle' type="checkbox" data-toggle="toggle" data-size="sm">
                                 <div class="srch-close" data-toggle='tooltip' title="close" id="g_srch_close"><i style="margin:auto; font-size: 20px;" onclick="$('.search-dd').slideUp(100);" class="material-icons">close</i></div>
                             </div>
                         </div>`);
@@ -197,10 +197,10 @@
             }
             else {
 
-                html += `<li class="srch-li">
-                            <div class='srch-li-block'>
-                                <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
-                                <div class="ctrldtlsWrap">Try some other keyword</div>
+                html += `<li class="srch-li" style="height:100%">
+                            <div class="nores-cont">
+                                <div class="gs-noresult-img"></div>
+                            <div><h3 style="color: #6c63ff;"><center> No match found :(</center></h3></div>
                             </div>
                         </li>`;
             }

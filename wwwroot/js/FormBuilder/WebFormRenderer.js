@@ -1710,6 +1710,7 @@ const WebFormRender = function (option) {
     //};
 
     this.appendRelatedSubmissions = function ($div) {
+        $div.html(`<div style="color: #ccc;"><i class="fa fa-spinner fa-pulse"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
             url: "/WebForm/GetPushedDataInfo",
@@ -1718,9 +1719,11 @@ const WebFormRender = function (option) {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.error('GetPushedDataInfo: Failed to load');
+                $div.empty();
             }.bind(this),
             success: function ($div, _resp) {
                 try {
+                    $div.empty();
                     let _respObj = JSON.parse(_resp);
                     if ($.isEmptyObject(_respObj)) {
                         console.warn('GetPushedDataInfo: Nothing to display');
@@ -1731,7 +1734,7 @@ const WebFormRender = function (option) {
                             html += `<span data-link='${v}'>${k}</span><br>`;
                         });
                         html += '</div>';
-                        $div.append(html);
+                        $div.html(html);
                         $div.find('span').off('click').on('click', function (e) {
                             //this.hideInfoWindow();
                             window.open($(e.target).attr('data-link'));

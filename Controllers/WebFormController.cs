@@ -240,6 +240,7 @@ namespace ExpressBase.Web.Controllers
                     resp.FormDataWrap = Resp.DataWrapper;
                     resp.Draft_FormData = Resp.FormDatajson;
                     resp.DraftId = DraftId;
+                    resp.DraftInfo = Resp.DraftInfo;
                     resp.Mode = WebFormModes.Draft_Mode.ToString().Replace("_", " ");
                 }
             }

@@ -42,6 +42,7 @@ const WebFormCollectionRender = function (Option) {
                 renderMode: Op._renderMode,
                 rowId: Op._rowId,
                 draftId: Op._draftId,
+                draftInfo: Op._draftInfo,
                 formData: Op._formData,
                 userObject: Op._userObject,
                 cid: Op._cid,
@@ -147,6 +148,7 @@ const WebFormCollectionRender = function (Option) {
                 renderMode: 2,//Partial
                 rowId: resp.RowId,
                 draftId: resp.DraftId,
+                draftInfo: resp.DraftInfo,
                 formData: (resp.DraftId > 0 ? JSON.parse(resp.Draft_FormData) : JSON.parse(resp.FormDataWrap).FormData),
                 userObject: ebcontext.user,
                 cid: ebcontext.sid,

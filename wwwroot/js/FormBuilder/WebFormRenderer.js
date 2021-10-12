@@ -1256,7 +1256,7 @@ const WebFormRender = function (option) {
         this.hideInfoWindow();
         EbDialog("show",
             {
-                Message: "Are you sure to delete this data entry?",
+                Message: "Are you sure to delete this draft entry?",
                 Buttons: {
                     "Yes": { Background: "green", Align: "left", FontColor: "white;" },
                     "No": { Background: "violet", Align: "right", FontColor: "white;" }
@@ -1274,18 +1274,13 @@ const WebFormRender = function (option) {
                             }.bind(this),
                             success: function (result) {
                                 this.hideLoader();
-                                if (result > 0) {
-                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + this.getLocObj().LongName, AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                                let resp = JSON.parse(result);
+                                if (resp.Status === 200) {
+                                    EbMessage("show", { Message: "Draft entry Deleted successfully", AutoHide: true, Background: '#00aa00', Delay: 4000 });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
-                                else if (result === -1) {
-                                    EbMessage("show", { Message: 'Delete operation failed due to validation failure.', AutoHide: true, Background: '#aa0000', Delay: 4000 });
-                                }
-                                else if (result === -2) {
-                                    EbMessage("show", { Message: 'Access denied to delete this entry.', AutoHide: true, Background: '#aa0000', Delay: 4000 });
-                                }
                                 else {
-                                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                                    EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });
                                 }
                             }.bind(this)
                         });
@@ -1908,6 +1903,8 @@ const WebFormRender = function (option) {
         }
         else if (this.Mode.isNew) {
             this.headerObj.showElement(this.filterHeaderBtns([this.hBtns['SaveSel'], this.hBtns['ExcelSel']], currentLoc, "New Mode"));
+            if (this.draftId > 0)
+                this.headerObj.showElement([this.hBtns['Details']]);
         }
         else if (this.Mode.isView) {
             let btnsArr = [this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['Clone']];
@@ -1967,7 +1964,7 @@ const WebFormRender = function (option) {
             return this.formPermissions[loc].includes(op['New']) && this.FormObj.CanSaveAsDraft && this.Mode.isNew;
         if (opStr === 'DraftDelete')
             return this.FormObj.CanSaveAsDraft && this.draftId > 0 && this.Mode.isNew;
-        if (op[opStr])
+        if (op[opStr] && !this.Mode.isNew)
             return this.formPermissions[loc].includes(op[opStr]);
         return false;
     };
@@ -2256,10 +2253,15 @@ const WebFormRender = function (option) {
 
         let $cont = $(`#${id}cont .wfd-inner-cont`);
         $cont.empty();
-        $cont.append(`<div class='wfd-info'> Created By <br/> ${this.formData.Info.CreBy} at ${this.formData.Info.CreAt}</div>`);
-        $cont.append(`<div class='wfd-info'> Last Modified By <br/> ${this.formData.Info.ModBy} at ${this.formData.Info.ModAt}</div>`);
-        $cont.append(`<div class='wfd-info'> Created From Location: ${this.formData.Info.CreFrom} </div>`);
-
+        let info = this.draftId > 0 ? (this.draftInfo ? JSON.parse(this.draftInfo) : {}) : this.formData.Info;
+        if (info) {
+            if (info.CreBy)
+                $cont.append(`<div class='wfd-info'> Created By <br/> ${info.CreBy} at ${info.CreAt}</div>`);
+            if (info.ModBy)
+                $cont.append(`<div class='wfd-info'> Last Modified By <br/> ${info.ModBy} at ${info.ModAt}</div>`);
+            if (info.CreFrom)
+                $cont.append(`<div class='wfd-info'> Created From Location: ${info.CreFrom} </div>`);
+        }
         if (this.formData.IsReadOnly)
             $cont.append(`<div class='wfd-linkdiv'> This is a <b> Read Only </b> record. </div>`);
 
@@ -2494,6 +2496,7 @@ const WebFormRender = function (option) {
         this.formRefId = option.formRefId || "";
         this.rowId = option.rowId;
         this.draftId = option.draftId;
+        this.draftInfo = option.draftInfo;
         this.mode = option.mode;
         this.renderMode = option.renderMode;
         this.userObject = option.userObject;

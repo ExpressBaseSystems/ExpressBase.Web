@@ -567,7 +567,7 @@ const WebFormRender = function (option) {
 
         //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
-        WebformData.Ts = this.formData.Ts;
+        //WebformData.Ts = this.formData.Ts;
         console.log("form data --");
 
         //console.log("old data --");
@@ -655,7 +655,7 @@ const WebFormRender = function (option) {
         this.draftId = respObj.DraftId;
         option.draftId = this.draftId;
         this.headerObj.setFormMode(`<span mode="Draft Mode" class="fmode">Draft</span>`);
-        this.AdjustDraftBtnsVisibility();
+        //this.AdjustDraftBtnsVisibility();
     }.bind(this);
 
     this.renderInAfterSaveMode = function (respObj) {
@@ -706,14 +706,14 @@ const WebFormRender = function (option) {
         if (this.renderMode === 1) {
             let stateObj = { id: rowId };
             if (rowId > 0) {
-                let _url = `Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_m=${this.isPartial === 'True' ? 11 : 1}&_l=${this.getLocId()}`;
+                let _url = `/WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_m=${this.isPartial === 'True' ? 11 : 1}&_l=${this.getLocId()}`;
                 //if (this.rowId > 0)
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
                 //else
                 //    window.history.pushState(stateObj, this.FormObj.DisplayName, _url);
             }
             else {
-                let _url = `Index?_r=${this.formRefId}&_m=${this.isPartial === 'True' ? 12 : 2}&_l=${this.getLocId()}`;
+                let _url = `/WebForm/Index?_r=${this.formRefId}&_m=${this.isPartial === 'True' ? 12 : 2}&_l=${this.getLocId()}`;
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
             }
         }
@@ -1142,48 +1142,58 @@ const WebFormRender = function (option) {
         this.DynamicTabObject.switchToEditMode();// febin
     };
 
+    this.isBtnDisableFor_eb_default = function () {
+        this.flatControls = getFlatCtrlObjs(this.FormObj);
+        // if eb_default control is true disable some operations on form entry
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let ctrl = this.flatControls[i];
+            if (ctrl.ObjType === "RadioButton" && ctrl.Name === "eb_default") {
+                let c = getObjByval(this.DataMODEL[this.FormObj.TableName][0].Columns, "Name", "eb_default");
+                if (c !== undefined && c.Value === "T") {
+                    if (!(this.userObject.Roles.contains("SolutionOwner") || this.userObject.Roles.contains("SolutionAdmin") || this.userObject.Roles.contains("SolutionPM")))
+                        return true;
+                }
+                return false;
+            }
+        }
+    };
+
+    this.isDisableDelete = function () {
+        // EbSQLValidator conditions for form entry delete permission
+        for (let k in this.FormObj.DisableDelete.$values) {
+            let obj = this.FormObj.DisableDelete.$values[k];
+            if (!obj.IsDisabled && !obj.IsWarningOnly) {
+                if (this.DisableDeleteData[obj.Name])
+                    return true;
+            }
+        }
+        return false;
+    };
+
+    this.isDisableCancel = function () {
+        // EbSQLValidator conditions for form entry cancel permission
+        for (let k in this.FormObj.DisableCancel.$values) {
+            let obj = this.FormObj.DisableCancel.$values[k];
+            if (!obj.IsDisabled && !obj.IsWarningOnly) {
+                if (this.DisableCancelData[obj.Name])
+                    return true;
+            }
+        }
+        return false;
+    };
+
     this.BeforeModeSwitch = function (newMode) {
         if (this.renderMode === 2) return;
 
         if (newMode === "View Mode") {
-            this.flatControls = getFlatCtrlObjs(this.FormObj);
-
             // if eb_default control is true disable some operations on form entry
-            $.each(this.flatControls, function (k, ctrl) {
-                if (ctrl.ObjType === "RadioButton" && ctrl.Name === "eb_default") {
-                    let c = getObjByval(this.DataMODEL[this.FormObj.TableName][0].Columns, "Name", "eb_default");
-                    if (c !== undefined && c.Value === "T") {
-                        if (this.userObject.Roles.contains("SolutionOwner") || this.userObject.Roles.contains("SolutionAdmin") || this.userObject.Roles.contains("SolutionPM"))
-                            return;
-                        this.$saveBtn.prop("disabled", true);
-                        this.$deleteBtn.prop("disabled", true);
-                        this.$editBtn.prop("disabled", true);
-                        this.$cancelBtn.prop("disabled", true);
-                        //this.$saveBtn.prop("title", "Save Disabled");                        
-                    }
-                    return;
-                }
-            }.bind(this));
-
-            // EbSQLValidator conditions for form entry delete permission
-            $.each(this.FormObj.DisableDelete.$values, function (k, EbSQLValidator) {
-                if (!EbSQLValidator.IsDisabled && !EbSQLValidator.IsWarningOnly) {
-                    if (this.DisableDeleteData[EbSQLValidator.Name]) {
-                        this.$deleteBtn.prop("disabled", true);
-                        return;
-                    }
-                }
-            }.bind(this));
-
-            // EbSQLValidator conditions for form entry Disable permission
-            $.each(this.FormObj.DisableCancel.$values, function (k, EbSQLValidator) {
-                if (!EbSQLValidator.IsDisabled && !EbSQLValidator.IsWarningOnly) {
-                    if (this.DisableCancelData[EbSQLValidator.Name]) {
-                        this.$cancelBtn.prop("disabled", true);
-                        return;
-                    }
-                }
-            }.bind(this));
+            if (this.isBtnDisableFor_eb_default()) {
+                this.$saveBtn.prop("disabled", true);
+                //this.$deleteBtn.prop("disabled", true);
+                this.$editBtn.prop("disabled", true);
+                //this.$cancelBtn.prop("disabled", true);
+                //this.$saveBtn.prop("title", "Save Disabled");  
+            }
 
             $.each(this.formData.DisableEdit, function (k, status) {
                 if (status) {
@@ -1193,14 +1203,15 @@ const WebFormRender = function (option) {
             }.bind(this));
         }
         else {
-            this.$saveBtn.prop("disabled", false);
-            this.$deleteBtn.prop("disabled", false);
-            this.$editBtn.prop("disabled", false);
-            this.$cancelBtn.prop("disabled", false);
+            //this.$saveBtn.prop("disabled", false);
+            //this.$deleteBtn.prop("disabled", false);
+            //this.$editBtn.prop("disabled", false);
+            //this.$cancelBtn.prop("disabled", false);
         }
     };
 
     this.deleteForm = function () {
+        this.hideInfoWindow();
         EbDialog("show",
             {
                 Message: "Are you sure to delete this data entry?",
@@ -1242,6 +1253,7 @@ const WebFormRender = function (option) {
     };
 
     this.deleteDraft = function () {
+        this.hideInfoWindow();
         EbDialog("show",
             {
                 Message: "Are you sure to delete this data entry?",
@@ -1283,6 +1295,7 @@ const WebFormRender = function (option) {
     };
 
     this.cancelForm = function () {
+        this.hideInfoWindow();
         EbDialog("show",
             {
                 Message: `Are you sure to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel'} this data entry?`,
@@ -1330,9 +1343,10 @@ const WebFormRender = function (option) {
     };
 
     this.lockUnlockForm = function () {
+        this.hideInfoWindow();
         EbDialog("show",
             {
-                Message: `Are you sure to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this data entry?`,
+                Message: `Are you sure to ${this.formData.IsLocked ? 'UNLOCK' : 'LOCK'} this data entry?`,
                 Buttons: {
                     "Yes": { Background: "green", Align: "left", FontColor: "white;" },
                     "No": { Background: "violet", Align: "right", FontColor: "white;" }
@@ -1377,6 +1391,7 @@ const WebFormRender = function (option) {
     };
 
     this.GetAuditTrail = function () {
+        this.hideInfoWindow();
         $("#AuditHistoryModal .modal-title").text("Audit Trail - " + this.FormObj.DisplayName);
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
@@ -1667,26 +1682,6 @@ const WebFormRender = function (option) {
                     $(`#${this.hBtns['SaveSel']} .selectpicker`).selectpicker('toggle');
                 }
             }
-            else if (event.which === 67) {// alt+C - Cancel
-                if ($(`#${this.hBtns['Cancel']}`).css("display") !== "none" && this.preventCheck(event)) {
-                    $(`#${this.hBtns['Cancel']}`).trigger('click');
-                }
-            }
-            else if (event.which === 68) {// alt+D - Delete
-                if ($(`#${this.hBtns['Delete']}`).css("display") !== "none" && this.preventCheck(event)) {
-                    $(`#${this.hBtns['Delete']}`).trigger('click');
-                }
-            }
-            else if (event.which === 76) {// alt+L - Lock
-                if ($(`#${this.hBtns['Lock']}`).css("display") !== "none" && this.preventCheck(event)) {
-                    $(`#${this.hBtns['Lock']}`).trigger('click');
-                }
-            }
-            else if (event.which === 72) {// alt+H - AuditTrail
-                if ($(`#${this.hBtns['AuditTrail']}`).css("display") !== "none" && this.preventCheck(event)) {
-                    $(`#${this.hBtns['AuditTrail']}`).trigger('click');
-                }
-            }
         }
     }.bind(this);
 
@@ -1711,116 +1706,153 @@ const WebFormRender = function (option) {
         $(`#${this.hBtns['Edit']}`).attr("disabled", false);
     };
 
-    this.AdjustDraftBtnsVisibility = function () {
-        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew) {
-            this.headerObj.showElement([this.hBtns['DraftSave']]);
-            if (this.draftId > 0)
-                this.headerObj.showElement([this.hBtns['DraftDelete']]);
-        }
-    };
+    //this.AdjustDraftBtnsVisibility = function () {
+    //    if (this.FormObj.CanSaveAsDraft && this.Mode.isNew) {
+    //        this.headerObj.showElement([this.hBtns['DraftSave']]);
+    //        if (this.draftId > 0)
+    //            this.headerObj.showElement([this.hBtns['DraftDelete']]);
+    //    }
+    //};
 
-    this.DataPushedPopover = function () {
-        $(`#${this.hBtns['Dependent']}`).show();
-        let timer1;
-        let contentHtml = null;
-
-        let contentFn = function (type) {
-            let _html = '';
-            if (type === 'loader') {
-                _html += `<div style='color: #888;'><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`;
-            }
-            else if (type === 'init') {
-                if (contentHtml)
-                    _html += contentHtml;
-                else
-                    _html += `<div ><button class='btn' id='${this.hBtns['Dependent']}_btn'><i class="fa fa-refresh"></i> Refresh</button></div>`;
-            }
-            else if (type === 'error') {
-                _html += `<div><button class='btn' id='${this.hBtns['Dependent']}_btn'><i class="fa fa-refresh"></i> Refresh</button><div style="color: #a88;">Error in loading!</div></div>`;
-            }
-            return _html;
-        };
-
-        let $poTrig = $(`#${this.hBtns['Dependent']}`).popover({
-            trigger: 'manual',
-            html: true,
-            container: "body",
-            placement: 'bottom',
-            content: `<div id='${this.hBtns['Dependent']}-div' style = 'min-height: 80px; min-width: 250px; display: flex; justify-content: center; align-items: center;'></div>`,
-            delay: { "hide": 100 }
-        });
-
-        let OnMouseEnter = function () {
-            clearTimeout(timer1);
-            let _this = this;
-            let $poDiv = $('#' + $(_this).attr('aria-describedby'));
-            if (!$poDiv.length) {
-                $(_this).popover("show");
-                $poDiv = $('#' + $(_this).attr('aria-describedby'));
-            }
-            $poDiv.off("mouseleave").on("mouseleave", function () {
-                timer1 = setTimeout(function () { $(_this).popover('hide'); }, 300);
-            });
-
-            $poDiv.off("mouseenter").on("mouseenter", function () {
-                clearTimeout(timer1);
-            });
-        };
-
-        let OnMouseLeave = function () {
-            let _this = this;
-            timer1 = setTimeout(function () {
-                if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
-                    $(_this).popover("hide");
+    this.appendRelatedSubmissions = function ($div) {
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/GetPushedDataInfo",
+            data: {
+                RefId: this.formRefId, RowId: this.rowId, CurrentLoc: this.getLocId()
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.error('GetPushedDataInfo: Failed to load');
+            }.bind(this),
+            success: function ($div, _resp) {
+                try {
+                    let _respObj = JSON.parse(_resp);
+                    if ($.isEmptyObject(_respObj)) {
+                        console.warn('GetPushedDataInfo: Nothing to display');
+                    }
+                    else {
+                        let html = '<div>Related Form Submissions</div><div>';
+                        $.each(_respObj, function (k, v) {
+                            html += `<span data-link='${v}'>${k}</span><br>`;
+                        });
+                        html += '</div>';
+                        $div.append(html);
+                        $div.find('span').off('click').on('click', function (e) {
+                            //this.hideInfoWindow();
+                            window.open($(e.target).attr('data-link'));
+                        }.bind(this));
+                    }
                 }
-            }, 300);
-        };
-
-        let LoadData = function () {
-            if (contentHtml) {
-                $(`#${this.hBtns['Dependent']}-div`).html(contentFn('init'));
-                return;
-            }
-            $(`#${this.hBtns['Dependent']}-div`).html(contentFn('loader'));
-            $.ajax({
-                type: "POST",
-                url: "/WebForm/GetPushedDataInfo",
-                data: {
-                    RefId: this.formRefId, RowId: this.rowId, CurrentLoc: this.getLocId()
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    $(`#${this.hBtns['Dependent']}-div`).html(contentFn('error'));
-                }.bind(this),
-                success: function (_resp) {
-                    try {
-                        let _respObj = JSON.parse(_resp);
-                        if ($.isEmptyObject(_respObj)) {
-                            contentHtml = '<div style="color: #888;">Nothing to Display</div>'
-                            $(`#${this.hBtns['Dependent']}-div`).html(contentHtml);
-                        }
-                        else {
-                            contentHtml = '<div>'
-                            $.each(_respObj, function (k, v) {
-                                contentHtml += `<div style='padding: 2px 0px;'><a href='${v}' target='_blank'>${k}</a></div>`;
-                            });
-                            contentHtml += '</div>';
-                            $(`#${this.hBtns['Dependent']}-div`).html(contentHtml);
-                        }
-                    }
-                    catch (e) {
-                        $(`#${this.hBtns['Dependent']}-div`).html(contentFn('error'));
-                        console.log(_resp);
-                        console.error(e);
-                    }
-                }.bind(this)
-            })
-        };
-
-        $poTrig.on('click', OnMouseEnter.bind($poTrig));
-        $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
-        $(`#${this.hBtns['Dependent']}`).off('shown.bs.popover').on('shown.bs.popover', LoadData.bind(this));
-        $('body').off('click', `#${this.hBtns['Dependent']}_btn`).on('click', `#${this.hBtns['Dependent']}_btn`, LoadData.bind(this));
+                catch (e) {
+                    console.log(_resp);
+                    console.error(e);
+                }
+            }.bind(this, $div)
+        });
     };
+
+    //this.DataPushedPopover = function () {
+    //    $(`#${this.hBtns['Dependent']}`).show();
+    //    let timer1;
+    //    let contentHtml = null;
+
+    //    let contentFn = function (type) {
+    //        let _html = '';
+    //        if (type === 'loader') {
+    //            _html += `<div style='color: #888;'><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`;
+    //        }
+    //        else if (type === 'init') {
+    //            if (contentHtml)
+    //                _html += contentHtml;
+    //            else
+    //                _html += `<div ><button class='btn' id='${this.hBtns['Dependent']}_btn'><i class="fa fa-refresh"></i> Refresh</button></div>`;
+    //        }
+    //        else if (type === 'error') {
+    //            _html += `<div><button class='btn' id='${this.hBtns['Dependent']}_btn'><i class="fa fa-refresh"></i> Refresh</button><div style="color: #a88;">Error in loading!</div></div>`;
+    //        }
+    //        return _html;
+    //    };
+
+    //    let $poTrig = $(`#${this.hBtns['Dependent']}`).popover({
+    //        trigger: 'manual',
+    //        html: true,
+    //        container: "body",
+    //        placement: 'bottom',
+    //        content: `<div id='${this.hBtns['Dependent']}-div' style = 'min-height: 80px; min-width: 250px; display: flex; justify-content: center; align-items: center;'></div>`,
+    //        delay: { "hide": 100 }
+    //    });
+
+    //    let OnMouseEnter = function () {
+    //        clearTimeout(timer1);
+    //        let _this = this;
+    //        let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+    //        if (!$poDiv.length) {
+    //            $(_this).popover("show");
+    //            $poDiv = $('#' + $(_this).attr('aria-describedby'));
+    //        }
+    //        $poDiv.off("mouseleave").on("mouseleave", function () {
+    //            timer1 = setTimeout(function () { $(_this).popover('hide'); }, 300);
+    //        });
+
+    //        $poDiv.off("mouseenter").on("mouseenter", function () {
+    //            clearTimeout(timer1);
+    //        });
+    //    };
+
+    //    let OnMouseLeave = function () {
+    //        let _this = this;
+    //        timer1 = setTimeout(function () {
+    //            if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+    //                $(_this).popover("hide");
+    //            }
+    //        }, 300);
+    //    };
+
+    //    let LoadData = function () {
+    //        if (contentHtml) {
+    //            $(`#${this.hBtns['Dependent']}-div`).html(contentFn('init'));
+    //            return;
+    //        }
+    //        $(`#${this.hBtns['Dependent']}-div`).html(contentFn('loader'));
+    //        $.ajax({
+    //            type: "POST",
+    //            url: "/WebForm/GetPushedDataInfo",
+    //            data: {
+    //                RefId: this.formRefId, RowId: this.rowId, CurrentLoc: this.getLocId()
+    //            },
+    //            error: function (xhr, ajaxOptions, thrownError) {
+    //                $(`#${this.hBtns['Dependent']}-div`).html(contentFn('error'));
+    //            }.bind(this),
+    //            success: function (_resp) {
+    //                try {
+    //                    let _respObj = JSON.parse(_resp);
+    //                    if ($.isEmptyObject(_respObj)) {
+    //                        contentHtml = '<div style="color: #888;">Nothing to Display</div>'
+    //                        $(`#${this.hBtns['Dependent']}-div`).html(contentHtml);
+    //                    }
+    //                    else {
+    //                        contentHtml = '<div>'
+    //                        $.each(_respObj, function (k, v) {
+    //                            contentHtml += `<div style='padding: 2px 0px;'><a href='${v}' target='_blank'>${k}</a></div>`;
+    //                        });
+    //                        contentHtml += '</div>';
+    //                        $(`#${this.hBtns['Dependent']}-div`).html(contentHtml);
+    //                    }
+    //                }
+    //                catch (e) {
+    //                    $(`#${this.hBtns['Dependent']}-div`).html(contentFn('error'));
+    //                    console.log(_resp);
+    //                    console.error(e);
+    //                }
+    //            }.bind(this)
+    //        })
+    //    };
+
+    //    $poTrig.on('click', OnMouseEnter.bind($poTrig));
+    //    $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
+    //    $(`#${this.hBtns['Dependent']}`).off('shown.bs.popover').on('shown.bs.popover', LoadData.bind(this));
+    //    $('body').off('click', `#${this.hBtns['Dependent']}_btn`).on('click', `#${this.hBtns['Dependent']}_btn`, LoadData.bind(this));
+    //};
 
     this.setHeader = function (reqstMode) {
         if (this.isPartial === "True") {
@@ -1830,7 +1862,7 @@ const WebFormRender = function (option) {
                 $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
                 $("#quik_menu").remove();
             }
-            this.headerObj.showElement(["webformclose"]);
+            //this.headerObj.showElement(["webformclose"]);
         }
 
         let _html = this.AdjustBtnsVisibility(reqstMode);
@@ -1867,63 +1899,41 @@ const WebFormRender = function (option) {
     this.AdjustBtnsVisibility = function (reqstMode) {
         let currentLoc = this.getLocId();
         let _html = '';
-        this.headerObj.hideElement([this.hBtns['SaveSel'], this.hBtns['New'], this.hBtns['Edit'], this.hBtns['Delete'], this.hBtns['Cancel'], this.hBtns['AuditTrail'], this.hBtns['PrintSel'], this.hBtns['Clone'], this.hBtns['ExcelSel'], this.hBtns['OpenSrc'], this.hBtns['Lock'], this.hBtns['Dependent'], this.hBtns['Discard'], this.hBtns['DraftSave'], this.hBtns['DraftDelete']]);
+        this.headerObj.hideElement([this.hBtns['SaveSel'], this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['Clone'], this.hBtns['ExcelSel'], this.hBtns['Discard'], this.hBtns['Details']]);
 
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (this.Mode.isEdit) {
             this.headerObj.showElement(this.filterHeaderBtns([this.hBtns['New'], this.hBtns['SaveSel']], currentLoc, reqstMode));
-            this.headerObj.showElement([this.hBtns['Discard']]);
+            this.headerObj.showElement([this.hBtns['Discard'], this.hBtns['Details']]);
         }
         else if (this.Mode.isNew) {
             this.headerObj.showElement(this.filterHeaderBtns([this.hBtns['SaveSel'], this.hBtns['ExcelSel']], currentLoc, "New Mode"));
         }
         else if (this.Mode.isView) {
-
-            if (this.FormObj.DataPushers && this.FormObj.DataPushers.$values.length > 0) {
-                let aValidDP = this.FormObj.DataPushers.$values.find(e => e.$type.includes('EbFormDataPusher') || e.$type.includes('EbBatchFormDataPusher'));
-                if (aValidDP && this.formPermissions[currentLoc].includes(5))
-                    this.DataPushedPopover();
-            }
-
-            let btnsArr = [this.hBtns['New'], this.hBtns['Edit'], this.hBtns['Delete'], this.hBtns['Cancel'], this.hBtns['AuditTrail'], this.hBtns['PrintSel'], this.hBtns['Clone'], this.hBtns['Lock']];
+            let btnsArr = [this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['Clone']];
+            if (this.formData.IsReadOnly || this.formData.IsLocked || this.formData.IsCancelled)
+                btnsArr.splice(1, 1);//
             if (this.formData.IsReadOnly) {
-                btnsArr = [this.hBtns['New'], this.hBtns['AuditTrail'], this.hBtns['PrintSel'], this.hBtns['Clone']];
                 console.warn("ReadOnly record!.............");
                 _html += "<span class='fmode' style='background-color: gray;'><i class='fa fa-eye'></i> ReadOnly</span>";
             }
-            else {
-                if (this.formData.IsLocked) {
-                    btnsArr.splice(1, 2);//
-                    console.warn("Locked record!.............");
-                    $(`#${this.hBtns['Lock']}`).prop("title", "Unlock (Alt+L)");
-                    _html += "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
-                }
-                else {
-                    $(`#${this.hBtns['Lock']}`).prop("title", "Lock (Alt+L)");
-                }
-                if (this.formData.IsCancelled) {
-                    if (!this.formData.IsLocked)
-                        btnsArr.splice(1, 1);//
-                    console.warn("Cancelled record!.............");
-                    $(`#${this.hBtns['Cancel']}`).prop("title", "Revoke Cancel (Alt+C)");
-                    _html += "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";
-                }
-                else {
-                    $(`#${this.hBtns['Cancel']}`).prop("title", "Cancel (Alt+C)");
-                }
+            if (this.formData.IsLocked) {
+                console.warn("Locked record!.............");
+                _html += "<span class='fmode' style='background-color: blue;'><i class='fa fa-lock'></i> Locked</span>";
             }
-            if (this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0)) {
-                btnsArr.push(this.hBtns['OpenSrc']);
+            if (this.formData.IsCancelled) {
+                console.warn("Cancelled record!.............");
+                _html += "<span class='fmode' style='background-color: red;'><i class='fa fa-ban'></i> Cancelled</span>";
             }
+
             this.headerObj.showElement(this.filterHeaderBtns(btnsArr, currentLoc, reqstMode));
+            this.headerObj.showElement([this.hBtns['Details']]);
         }
         return _html;
     };
 
     this.filterHeaderBtns = function (btns, loc, mode) {
         let r = [];
-        // ["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
-        // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
         if (this.renderMode === 4) {
             if (mode === 'View Mode')
                 r.push(this.hBtns['Edit']);
@@ -1937,12 +1947,6 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['Edit'] && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)))
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['Delete'] && this.formPermissions[loc].includes(op.Delete))
-                    r.push(btns[i]);
-                else if (btns[i] === this.hBtns['Cancel'] && ((this.formPermissions[loc].includes(op.Cancel) && !this.formData.IsCancelled) || (this.formPermissions[loc].includes(op.RevokeCancel) && this.formData.IsCancelled)))
-                    r.push(btns[i]);
-                else if (btns[i] === this.hBtns['AuditTrail'] && this.formPermissions[loc].includes(op.AuditTrail))
-                    r.push(btns[i]);
                 else if (btns[i] === this.hBtns['New'] && this.formPermissions[loc].includes(op.New) && !this.FormObj.IsDisable)
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['PrintSel'] && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
@@ -1951,24 +1955,50 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['Clone'] && this.formPermissions[loc].includes(op.Clone) && mode === 'View Mode' && !this.FormObj.IsDisable)
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['OpenSrc'] && this.formPermissions[loc].includes(op.View) && mode === 'View Mode')
-                    r.push(btns[i]);
-                else if (btns[i] === this.hBtns['Lock'] && this.formPermissions[loc].includes(op.LockUnlock) && mode === 'View Mode')
-                    r.push(btns[i]);
-                else if (btns[i] === this.hBtns['DraftSave'] && this.formPermissions[loc].includes(op.New) && this.FormObj.CanSaveAsDraft && this.Mode.isNew)
-                    r.push(btns[i]);
-                else if (btns[i] === this.hBtns['DraftDelete'] && this.FormObj.CanSaveAsDraft && this.draftId > 0 && this.Mode.View)
-                    r.push(btns[i]);
             }
         }
         return r;
     };
 
+    this.checkPermission = function (opStr) {
+        let loc = this.getLocId();
+        let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11 };
+        if (opStr === 'DraftSave')
+            return this.formPermissions[loc].includes(op['New']) && this.FormObj.CanSaveAsDraft && this.Mode.isNew;
+        if (opStr === 'DraftDelete')
+            return this.FormObj.CanSaveAsDraft && this.draftId > 0 && this.Mode.isNew;
+        if (op[opStr])
+            return this.formPermissions[loc].includes(op[opStr]);
+        return false;
+    };
+
+    //this.filterHeaderBtns_split = function () {
+    //    if (btns[i] === this.hBtns['Delete'] && this.formPermissions[loc].includes(op.Delete))
+    //        r.push(btns[i]);
+    //    else if (btns[i] === this.hBtns['Cancel'] && ((this.formPermissions[loc].includes(op.Cancel) && !this.formData.IsCancelled) || (this.formPermissions[loc].includes(op.RevokeCancel) && this.formData.IsCancelled)))
+    //        r.push(btns[i]);
+    //    else if (btns[i] === this.hBtns['AuditTrail'] && this.formPermissions[loc].includes(op.AuditTrail))
+    //        r.push(btns[i]);
+    //    else if (btns[i] === this.hBtns['OpenSrc'] && this.formPermissions[loc].includes(op.View) && mode === 'View Mode')
+    //        r.push(btns[i]);
+    //    else if (btns[i] === this.hBtns['Lock'] && this.formPermissions[loc].includes(op.LockUnlock) && mode === 'View Mode')
+    //        r.push(btns[i]);
+    //    else if (btns[i] === this.hBtns['DraftSave'] && this.formPermissions[loc].includes(op.New) && this.FormObj.CanSaveAsDraft && this.Mode.isNew)
+    //        r.push(btns[i]);
+    //    else if (btns[i] === this.hBtns['DraftDelete'] && this.FormObj.CanSaveAsDraft && this.draftId > 0 && this.Mode.View)
+    //        r.push(btns[i]);
+    //};
+
     this.saveSelectChange = function () {
-        this.saveForm();
         let selOpt = $(`#${this.hBtns['SaveSel']} .selectpicker`).find("option:selected");
-        this.curAfterSavemodeS = selOpt.attr("data-token");
-        this.AfterSavePrintDoc = selOpt.attr("data-ref");
+        if (selOpt.attr("data-token") === 'draft') {
+            this.saveAsDraft();
+        }
+        else {
+            this.saveForm();
+            this.curAfterSavemodeS = selOpt.attr("data-token");
+            this.AfterSavePrintDoc = selOpt.attr("data-ref");
+        }
     }.bind(this);
 
     this.initPrintMenu = function () {
@@ -2008,6 +2038,8 @@ const WebFormRender = function (option) {
             $sel.append(`<option data-token="edit" data-title="Save and edit">Save & Continue</option>`);
         $sel.append(`<option data-token="view" data-title="Save and view">Save & View</option>`);
         $sel.append(`<option data-token="close" data-title="Save and close">Save & Close</option>`);
+        if (this.checkPermission('DraftSave'))
+            $sel.append(`<option data-token="draft" data-title="Save as Draft">Save as Draft</option>`);
 
         if (this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0) {
             let printHtml = '<optgroup label="Save & Print">';
@@ -2118,35 +2150,36 @@ const WebFormRender = function (option) {
         else {
             this.$exceleBtn = $('#' + this.hBtns['Excel']);
             this.$excelSelBtn = $('#' + this.hBtns['ExcelSel']);
-            this.$draftDeleteBtn = $('#' + this.hBtns['DraftDelete']);
 
             this.$excelSelBtn.off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.excelExportImport.bind(this));
             $(`#${this.hBtns['ExcelSel']} .selectpicker`).selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
             $("#excelfile").off('change').on('change', this.excelUpload.bind(this));
-            $('#' + this.hBtns['DraftDelete']).off("click").on("click", this.deleteDraft);
+            //this.$draftDeleteBtn = $('#' + this.hBtns['DraftDelete']);
+            ///$('#' + this.hBtns['DraftDelete']).off("click").on("click", this.deleteDraft);
         }
 
         this.$saveSelBtn = $('#' + this.hBtns['SaveSel']);
-        this.$deleteBtn = $('#' + this.hBtns['Delete']);
-        this.$cancelBtn = $('#' + this.hBtns['Cancel']);
-        this.$auditBtn = $('#' + this.hBtns['AuditTrail']);
         this.$cloneBtn = $('#' + this.hBtns['Clone']);
-        this.$lockBtn = $('#' + this.hBtns['Lock']);
         this.$printBtn = $('#' + this.hBtns['Print']);
         this.$printSelBtn = $('#' + this.hBtns['PrintSel']);
-        this.$draftSaveBtn = $('#' + this.hBtns['DraftSave']);
         this.$gotoInvalidBtn = $('#' + this.hBtns['GotoInvalid']);
-        this.$openSrcBtn = $('#' + this.hBtns['OpenSrc']);
+        //this.$deleteBtn = $('#' + this.hBtns['Delete']);
+        //this.$cancelBtn = $('#' + this.hBtns['Cancel']);
+        //this.$auditBtn = $('#' + this.hBtns['AuditTrail']);
+        //this.$lockBtn = $('#' + this.hBtns['Lock']);
+        //this.$draftSaveBtn = $('#' + this.hBtns['DraftSave']);
+        //this.$openSrcBtn = $('#' + this.hBtns['OpenSrc']);
+        //this.$deleteBtn.off("click").on("click", this.deleteForm.bind(this));
+        //this.$cancelBtn.off("click").on("click", this.cancelForm.bind(this));
+        //this.$auditBtn.off("click").on("click", this.GetAuditTrail.bind(this));
+        //this.$lockBtn.off("click").on("click", this.lockUnlockForm.bind(this));
+        //$('#' + this.hBtns['DraftSave']).off("click").on("click", this.saveAsDraft);
+        //this.$openSrcBtn.off("click").on("click", this.openSourceForm.bind(this));
 
         this.$saveSelBtn.off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.saveSelectChange);
-        this.$deleteBtn.off("click").on("click", this.deleteForm.bind(this));
-        this.$cancelBtn.off("click").on("click", this.cancelForm.bind(this));
-        this.$auditBtn.off("click").on("click", this.GetAuditTrail.bind(this));
         this.$cloneBtn.off("click").on("click", this.cloneForm.bind(this));
-        this.$lockBtn.off("click").on("click", this.lockUnlockForm.bind(this));
-        $('#' + this.hBtns['DraftSave']).off("click").on("click", this.saveAsDraft);
-        this.$openSrcBtn.off("click").on("click", this.openSourceForm.bind(this));
         $('#' + this.hBtns['Discard']).off("click").on("click", this.DiscardChanges.bind(this));
+        $('#' + this.hBtns['Details']).off("click").on("click", this.toggleFormDetails.bind(this));////////////////
 
         $("body").off("focus", "[ui-inp]").on("focus", "[ui-inp]", this.selectUIinpOnFocus);
     };
@@ -2181,6 +2214,115 @@ const WebFormRender = function (option) {
                     }
                 }.bind(this)
             });
+    };
+
+    this.hideInfoWindow = function () {
+        $(`#${this.hBtns['Details']}cont`).hide("slide", { direction: 'right' });
+        this.$formCont.children('.wfd-overlay').hide();
+    };
+
+    this.toggleFormDetails = function () {
+        let id = this.hBtns['Details'];
+        if (this.$formCont.children('.webformdetails').length === 0) {
+            this.$formCont.append(`
+<div class='webformdetails' id='${id}cont'> 
+    <div class='wfd-header'>Details & More Options
+        <button class="btn wfd-close" title="Close">
+            <i class="material-icons">close</i>
+        </button>
+    </div>
+    <div class='wfd-inner-cont'>
+        
+    </div>
+    <div class='wfd-footer'>
+        <div>Form Version: ${this.formData.FormVersionId}</div>
+        <div>Internal Id: ${this.rowId}</div>
+    </div>
+</div>`);
+            this.$formCont.append(`<div class="wfd-overlay" style="position: relative;top: -100%;width: 100%;height: 100%;z-index: 7;background: black;opacity: 0.4;"></div>`);
+            this.$formCont.children('.wfd-overlay').off("click").on("click", this.hideInfoWindow.bind(this));
+        }
+
+        if ($(`#${id}cont:visible`).length === 0) {
+            $(`#${id}cont`).show("slide", { direction: 'right' });
+            $(`#${id}cont`).find('.wfd-close').off("click").on("click", this.hideInfoWindow.bind(this));
+            this.$formCont.children('.wfd-overlay').show();
+        }
+        else {
+            $(`#${id}cont`).hide("slide", { direction: 'right' });
+            this.$formCont.children('.wfd-overlay').hide();
+            return;
+        }
+
+        let $cont = $(`#${id}cont .wfd-inner-cont`);
+        $cont.empty();
+        $cont.append(`<div class='wfd-info'> Created By <br/> ${this.formData.Info.CreBy} at ${this.formData.Info.CreAt}</div>`);
+        $cont.append(`<div class='wfd-info'> Last Modified By <br/> ${this.formData.Info.ModBy} at ${this.formData.Info.ModAt}</div>`);
+        $cont.append(`<div class='wfd-info'> Created From Location: ${this.formData.Info.CreFrom} </div>`);
+
+        if (this.formData.IsReadOnly)
+            $cont.append(`<div class='wfd-linkdiv'> This is a <b> Read Only </b> record. </div>`);
+
+        if (this.formData.IsLocked) {
+            let $el = $(`<div class='wfd-lock wfd-linkdiv'> This is a <b> Locked </b> Form Submission </div>`);
+            if (!this.formData.IsReadOnly && this.checkPermission('LockUnlock')) {
+                $el.append(`<span> Unlock </span>`);
+            }
+            $cont.append($el);
+        }
+        else if (!this.formData.IsReadOnly && this.checkPermission('LockUnlock')) {
+            $cont.append(`<div class='wfd-lock wfd-linkdiv'><span>Lock</span> this Form Submission</div>`);
+        }
+
+        if (this.formData.IsCancelled) {
+            let $el = $(`<div class='wfd-cancel wfd-linkdiv'> This is a <b> Cancelled </b> Form Submission </div>`);
+            if (!this.formData.IsReadOnly && this.checkPermission('RevokeCancel')) {
+                $el.append(`<span> Undo </span>`);
+            }
+            $cont.append($el);
+        }
+        else if (!this.formData.IsReadOnly && this.checkPermission('Cancel')) {
+            if (!(this.isBtnDisableFor_eb_default() || this.isDisableCancel()))
+                $cont.append(`<div class='wfd-cancel wfd-linkdiv'><span>Cancel</span> this Form Submission</div>`);
+        }
+
+        if (this.checkPermission('AuditTrail')) {
+            $cont.append(`<div class='wfd-audtrail wfd-btndiv'>
+                <div> Detailed Audit Trail</div>
+            </div>`);
+        }
+
+        $cont.find('.wfd-lock span').off("click").on("click", this.lockUnlockForm.bind(this));
+        $cont.find('.wfd-cancel span').off("click").on("click", this.cancelForm.bind(this));
+        $cont.find('.wfd-audtrail div').off("click").on("click", this.GetAuditTrail.bind(this));
+
+        if (this.FormObj.DataPushers && this.FormObj.DataPushers.$values.length > 0) {
+            let aValidDP = this.FormObj.DataPushers.$values.find(e => e.$type.includes('EbFormDataPusher') || e.$type.includes('EbBatchFormDataPusher'));
+            if (aValidDP && this.checkPermission('AuditTrail')) {
+                $cont.append(`<div class='wfd-depend wfd-linkdiv'></div>`);
+                this.appendRelatedSubmissions($cont.find('.wfd-depend'));
+            }
+        }
+
+        if (this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0)) {
+            $cont.append(`<div class='wfd-source wfd-depend wfd-linkdiv'><span>Open</span> Source Form Submission</div>`);
+            $cont.find('.wfd-source span').off("click").on("click", this.openSourceForm.bind(this));
+        }
+
+        if (this.checkPermission('DraftDelete')) {
+            $cont.append(`<div class='wfd-delete wfd-btndiv'>
+                <div>Delete Draft</div>
+            </div>`);
+            $cont.find('.wfd-delete div').off("click").on("click", this.deleteDraft.bind(this));
+        }
+        else if (this.checkPermission('Delete')) {
+            if (!(this.isBtnDisableFor_eb_default() || this.isDisableDelete())) {
+                $cont.append(`<div class='wfd-delete wfd-btndiv'>
+                    <div>Delete the Submission</div>
+                </div>`);
+                $cont.find('.wfd-delete div').off("click").on("click", this.deleteForm.bind(this));
+            }
+        }
     };
 
     this.IsAnyChangesInFormData = function () {

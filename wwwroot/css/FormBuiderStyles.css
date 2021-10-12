@@ -3791,6 +3791,117 @@ input.locinp {
 }
 /*#endregion AuditTrail*/
 
+/*#region WebformDetails*/
+
+.webformdetails {
+    position: relative;
+    float: right;
+    height: 100%;
+    top: -100%;
+    z-index: 8;
+    width: 350px;
+    background: #ffffff;
+    box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+    overflow: auto;
+    font-size: 13px;
+    display: none;
+}
+
+    .webformdetails .wfd-close {
+        position: relative;
+        float: right;
+        top: -3px;
+        padding: 0px;
+    }
+
+    .webformdetails .wfd-header, .webformdetails .wfd-footer {
+        height: 40px;
+        background-color: #ececec;
+    }
+
+    .webformdetails .wfd-header {
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .webformdetails .wfd-footer {
+        position: absolute;
+        bottom: 0;
+        padding: 8px 20px;
+        font-size: 9px;
+        width: 100%;
+        text-align: right;
+    }
+
+    .webformdetails .wfd-inner-cont {
+        padding: 20px 20px 40px 20px;
+        overflow: auto;
+        height: calc(100% - 80px);
+    }
+
+    .webformdetails .wfd-info {
+        padding: 0 0 10px 0;
+    }
+
+    .webformdetails .wfd-linkdiv {
+        padding: 5px 0 5px 0;
+    }
+
+        .webformdetails .wfd-linkdiv span {
+            color: #337ab7;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+            .webformdetails .wfd-linkdiv span:hover {
+                color: #23527c;
+                text-decoration: underline;
+            }
+
+    .webformdetails .wfd-btndiv {
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .webformdetails .wfd-delete {
+        bottom: 40px;
+        position: absolute;
+        width: calc(100% - 40px);
+    }
+
+    .webformdetails .wfd-btndiv > div {
+        background-color: #ccc;
+        padding: 5px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: 1px solid #8c97cd;
+    }
+
+        .webformdetails .wfd-btndiv > div:hover {
+            box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+        }
+
+    .webformdetails .wfd-audtrail > div {
+        background-color: #ccc;
+    }
+
+    .webformdetails .wfd-delete > div {
+        background-color: #e9c0c0;
+    }
+
+    .webformdetails .wfd-depend {
+        padding: 15px 0 15px 0;
+    }
+
+        .webformdetails .wfd-depend div:nth-child(2) {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+/*#endregion WebformDetails*/
+
 /*#startregion EbAudioInput*/
 .audio-input-container button {
     font-size: 20px;

@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Inde(int _r, string _p, int _m, int _l, int _rm)
         {
             GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = _r });
-            return RedirectToAction("Index", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm });
+            return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm });
         }
 
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]

@@ -3760,35 +3760,114 @@ input.locinp {
 /*#endregion EbProvisionUser*/
 
 /*#region AuditTrail*/
-#divAuditTrail .table-title-tr th {
+
+#AuditHistoryModal .modal-header {
+    background-color: #eaeff1;
+    color: #483d8b;
+    padding: 8px 15px;
+    border-radius: 4px 4px 0 0;
+}
+
+#AuditHistoryModal .modal-dialog {
+    width: 90%;
+}
+
+#AuditHistoryModal .modal-body {
+    height: calc(100vh - 125px);
+    overflow: auto;
+    padding: 15px;
+    background-color: #f4f6f7;
+    border-radius: 0 0 4px 4px;
+}
+
+#AuditHistoryModal #divAuditTrail {
+    height: calc(100vh - 155px);
+}
+
+#divAuditTrail .at-loaderdiv {
+    text-align: center;
+    position: relative;
+    top: 45%;
+}
+
+#divAuditTrail .at-infodiv {
+    text-align: center;
+    position: relative;
+    top: 45%;
+    font-size: 20px;
+    color: #aaa;
+}
+
+#divAuditTrail .at-colaparrow {
+    display: inline-block;
+    width: 20px;
+}
+
+#divAuditTrail .at-dp {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+#divAuditTrail .at-trans-head.at-updatetr {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    #divAuditTrail .at-trans-head.at-updatetr:hover {
+        box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+    }
+
+#divAuditTrail .at-first-tbl, #divAuditTrail .at-second-tbl {
+    width: 100%;
+    margin: 0px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 0 4px 0 rgb(0 0 0 / 35%);
+}
+
+#divAuditTrail .at-tr-added {
+    color: #0a9f0f;
+}
+
+#divAuditTrail .at-tr-deleted {
+    color: #ff5e20;
+}
+
+#divAuditTrail .at-title-tr th {
+    font-weight: 500;
+    padding: 6px 8px;
+}
+
+#divAuditTrail tr:hover {
+    background-color: #cce5ff !important;
+}
+
+#divAuditTrail .at-second-tbl td, #divAuditTrail .at-first-tbl td {
     padding: 4px 8px;
 }
 
-#divAuditTrail tr:nth-child(even):hover {
-    background-color: white !important;
-}
-
-#divAuditTrail .second-table td, #divAuditTrail .first-table td {
-    padding: 4px 8px;
-}
-
-#divAuditTrail .trans-head {
+#divAuditTrail .at-trans-head {
     padding: 3px 0px;
-    background-color: #ccc;
+    border: 1px solid #d7d1ff;
+    background-color: #eaeff1;
+    color: #483d8b;
     width: 100%;
     margin: 0 0 15px 0;
     border-radius: 4px;
 }
 
-#divAuditTrail .line-table-div {
+#divAuditTrail .at-table-div {
     margin: 0 15px 15px 15px;
 }
 
-#divAuditTrail .form-table-div {
-    width: 50%;
+#divAuditTrail .at-inline-div {
+    width: calc(50% - 2px);
     padding: 0 15px 15px 15px;
     display: inline-block;
+    vertical-align: top;
 }
+
 /*#endregion AuditTrail*/
 
 /*#region WebformDetails*/

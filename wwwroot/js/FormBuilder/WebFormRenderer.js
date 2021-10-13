@@ -1390,19 +1390,19 @@ const WebFormRender = function (option) {
         $("#AuditHistoryModal .modal-title").text("Audit Trail - " + this.FormObj.DisplayName);
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
-        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
+        $("#divAuditTrail").append(`<div class="at-loaderdiv"><i class="fa fa-spinner fa-pulse"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
             url: "/WebForm/GetAuditTrail",
             data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: this.getLocId() },
             error: function () {
                 $("#divAuditTrail").children().remove();
-                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something unexpected occured </div>`);
+                $("#divAuditTrail").append(`<div class="at-infodiv"> Something unexpected occured </div>`);
             },
             success: function (result) {
                 if (result === "{}") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 45%; font-size: 20px; color: #aaa; "> Nothing to Display </div>`);
+                    $("#divAuditTrail").append(`<div class="at-infodiv"> Nothing to Display </div>`);
                     return;
                 }
                 let auditObj;
@@ -1411,7 +1411,7 @@ const WebFormRender = function (option) {
                 }
                 catch (e) {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> ${result} </div>`);
+                    $("#divAuditTrail").append(`<div class="at-infodiv"> ${result} </div>`);
                     return;
                 }
                 this.drawAuditTrailTest(auditObj);
@@ -1424,116 +1424,107 @@ const WebFormRender = function (option) {
         let $transAll = $(`<div></div>`);
 
         $.each(auditObj, function (idx, Obj) {
-            let $trans = $(`<div class="single-trans"></div>`);
+            let $trans = $(`<div></div>`);
             let temptitle = Obj.ActionType + " by " + Obj.CreatedBy + " at " + Obj.CreatedAt;
-            let chevronIcon = Obj.ActionType === 'Updated' ? `<div style="display:inline-block; width: 20px;"><i class="fa fa-chevron-down"></i></div>` : '';
-            $trans.append(` <div class="trans-head row">
+            let chevronIcon = Obj.ActionType === 'Updated' ? `<div class="at-colaparrow"><i class="fa fa-chevron-down"></i></div>` : '';
+            $trans.append(` <div class="at-trans-head row ${(Obj.ActionType === 'Updated' ? 'at-updatetr' : '')}">
                                 <div class="col-md-10" style="padding: 5px 8px;">
                                     ${chevronIcon}
                                     <div style="display:inline-block;">${temptitle}</div>
                                 </div>
                                 <div class="col-md-2">
                                     <div style="float: right;">
-                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; width: 30px; border-radius: 50%;">
+                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/proimg.jpg';" class="at-dp">
                                     </div>
                                 </div>
-                            </div>`);
+                            </div>
+                            <div class="at-trans-body collapse in"></div>`);
 
-            if (Obj.ActionType === 'Updated') {
-                $trans.find('.trans-head').css('cursor', 'pointer');
-                $trans.find('.trans-head').hover(function () {
-                    $(this).css("background-color", "#ddd");
-                }, function () {
-                    $(this).css("background-color", "#ccc");
-                });
-            }
-            $trans.append(`<div class="trans-body collapse in"></div>`);
-            let tempHtml = ``;
-            let tempHtml2 = ``;
+            let trArr = [];
 
             $.each(Obj.Tables, function (i, Tbl) {
-                let indx = 0;
                 $.each(Tbl.Columns, function (j, Col) {
                     let temp = `
                         <tr>
-                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Col.Title}</td>
-                            <td class="col-md-4 col-sm-4">${Col.NewValue}</td>                            
-                        </tr>
-                        <tr>
-                            <td class="col-md-4 col-sm-4" style="${Col.IsModified ? 'text-decoration: line-through;' : ''}">${Col.OldValue}</td>
+                            <td>${Col.Title}</td>
+                            <td style="text-decoration: line-through; ${Col.IsModified ? 'color: #ff5e20;' : ''}">${Col.OldValue}</td>
+                            <td>${Col.NewValue}</td>                            
                         </tr>`;
-                    if (indx++ % 2 === 0)
-                        tempHtml += temp;
-                    else
-                        tempHtml2 += temp;
+                    trArr.push(temp);
                 });
             });
-            if (tempHtml.length !== 0) {
-                let temp = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
-                     <tbody>`
-                    + '@replacethis@' +
-                    `</tbody>
-                            </table></div>`;
-                tempHtml = temp.replace('@replacethis@', tempHtml);
-                if (tempHtml2.length !== 0)
-                    tempHtml += temp.replace('@replacethis@', tempHtml2);
-                else
-                    tempHtml += `<div class="form-table-div"></div>`;
-                $trans.children(".trans-body").append(tempHtml);
+            if (trArr.length > 0) {
+                let temp = `
+                    <div class="at-inline-div">
+                        <table class="table at-first-tbl">
+                                <thead><tr class="at-title-tr"><th></th><th>Old value</th><th>New value</th></tr></thead>
+                                <tbody> @replacethis@ </tbody>
+                        </table>
+                    </div>`;
+
+                let trArr1 = trArr.splice(0, (trArr.length + 1) / 2);
+                let tmpHtml = temp.replace('@replacethis@', trArr1.join(''));
+                tmpHtml += temp.replace('@replacethis@', trArr.join(''));
+
+                $trans.children(".at-trans-body").append(tmpHtml);
             }
 
-            tempHtml = ``;
+            let tempHtml = ``;
 
             $.each(Obj.GridTables, function (i, Tbl) {
                 let isTrAvail = false;
-                let tableHtml = `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                let tableHtml = `<div class="at-table-div"><div>${Tbl.Title}</div><table class="table at-second-tbl">
                                 <thead>
-                                    <tr class="table-title-tr">
+                                    <tr class="at-title-tr">
                                         <th></th>`;
                 $.each(Tbl.ColumnMeta, function (j, cmeta) {
-                    tableHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
+                    tableHtml += `<th style='${(cmeta.IsNumeric ? 'text-align: right;' : '')}'>${cmeta.Title}</th>`;
                 });
                 tableHtml += `     </tr>
                                 </thead><tbody>`;
+
+                let slno = 1;
                 $.each(Tbl.NewRows, function (m, Cols) {
-                    let newRow = `<tr><td>Added</td>`;
+                    let newRow = `<tr class='at-tr-added'><td style='color: #555;'>${slno++}. Added</td>`;
                     $.each(Cols.Columns, function (n, Col) {
-                        newRow += `<td>${Col.NewValue}</td>`;
+                        newRow += `<td ${(Col.IsNumeric ? "style='text-align: right;'" : '')}>${Col.NewValue}</td>`;
                     });
                     newRow += `</tr>`;
                     tableHtml += newRow;
                     isTrAvail = true;
                 });
 
+                slno = 1;
                 $.each(Tbl.DeletedRows, function (m, Cols) {
-                    let oldRow = `<tr><td>Deleted</td>`;
+                    let oldRow = `<tr class='at-tr-deleted'><td style='color: #555;'>${slno++}. Deleted</td>`;
                     $.each(Cols.Columns, function (n, Col) {
-                        oldRow += `<td>${Col.OldValue}</td>`;
+                        oldRow += `<td style='text-decoration: line-through;${(Col.IsNumeric ? 'text-align: right;' : '')}'>${Col.OldValue}</td>`;
                     });
                     oldRow += `</tr>`;
                     tableHtml += oldRow;
                     isTrAvail = true;
                 });
 
+                slno = 1;
                 $.each(Tbl.EditedRows, function (m, Cols) {
-                    let newRow = `<tr><td rowspan='2' style='vertical-align: middle;'>Edited</td>`;
-                    let oldRow = `<tr>`;
+                    let oldRow = `<tr class='at-tr-edited'><td></td>`;
+                    let newRow = `<tr class='at-tr-edited'><td style = 'border: 0;color: #555;'>${slno++}. Edited</td>`;
                     let changeFound = false;
                     $.each(Cols.Columns, function (n, Col) {
                         if (Col.IsModified) {
-                            newRow += `<td>${Col.NewValue}</td>`;
-                            oldRow += `<td style="text-decoration: line-through;">${Col.OldValue}</td>`;
+                            oldRow += `<td style="color: #ff5e20; text-decoration: line-through; ${(Col.IsNumeric ? 'text-align: right;' : '')}">${Col.OldValue}</td>`;
+                            newRow += `<td style='border: 0; ${(Col.IsNumeric ? 'text-align: right;' : '')}'>${Col.NewValue}</td>`;
                             changeFound = true;
                         }
                         else {
-                            newRow += `<td>${Col.NewValue}</td>`;
-                            oldRow += `<td>${Col.OldValue}</td>`;
+                            oldRow += `<td></td>`;
+                            newRow += `<td style = 'border: 0; ${(Col.IsNumeric ? 'text-align: right;' : '')}'>${Col.NewValue}</td>`;
                         }
                     });
                     newRow += `</tr>`;
                     oldRow += `</tr>`;
                     if (changeFound) {
-                        tableHtml += newRow + oldRow;
+                        tableHtml += oldRow + newRow;
                         isTrAvail = true;
                     }
                 });
@@ -1542,16 +1533,16 @@ const WebFormRender = function (option) {
                 if (isTrAvail)
                     tempHtml += tableHtml;
             });
-            $trans.children(".trans-body").append(tempHtml);
+            $trans.children(".at-trans-body").append(tempHtml);
             $transAll.append($trans);
         });
 
         $("#divAuditTrail").children().remove();
         $("#divAuditTrail").append($transAll);
 
-        $("#divAuditTrail .trans-head").off("click").on("click", function (e) {
-            $(e.target).closest(".trans-head").next().collapse('toggle');
-            let $iele = $(e.target).closest(".trans-head").find("i");
+        $("#divAuditTrail .at-trans-head").off("click").on("click", function (e) {
+            $(e.target).closest(".at-trans-head").next().collapse('toggle');
+            let $iele = $(e.target).closest(".at-trans-head").find("i");
 
             if ($iele.hasClass("fa-chevron-right")) {
                 $iele.removeClass("fa-chevron-right");

@@ -519,8 +519,8 @@
         }
         this.isSecondTime = false;
         this.totalcount = 0;
-        if (this.login === "uc")
-            $(".dv-body1").show();
+        //if (this.login === "uc")
+        //    $(".dv-body1").show();
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
@@ -1787,28 +1787,28 @@
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 52px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader)
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 62px)", "important");
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 25px)", "important");
             else {
                 if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//multilineonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 59px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//pagingonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 88px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 68px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filteronly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 86px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 66px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//paging & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 104px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 84px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//filter & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filetr & paging
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 112px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 92px)", "important");
                 }
                 else {
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 107px)", "important");//filter && paging & multiline
                 }
             }
             //this.stickBtn.$stickBtn.css("top", "46px");
@@ -3788,7 +3788,7 @@
             " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> B </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Between</span></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' placeholder='" + this.datePattern + "' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' placeholder='&#xf073;' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -3872,7 +3872,7 @@
         if (selText.trim() === 'B') {
             if ($(elemnt).parents('.input-group').find("input").length == 1) {
                 if (ctype === "date") {
-                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='" + this.datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='&#xf073;' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
                         dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {

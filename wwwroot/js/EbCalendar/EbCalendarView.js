@@ -289,36 +289,35 @@
     this.setFooterVals = function (e) {
         let colindex = $(e.target).attr("data-index");
         let tableId = "table1";
+        let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_ftr_sel0').text().trim();
+        let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_ftr_sel0').text().trim();
+        let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_ftr_sel0').text().trim();
         $.each(this.dt.eb_agginfo, function (index, agginfo) {
             if (agginfo.colname) {
-                let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                //let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();               
                 let ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
                 let ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
                 let ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
                 var col = this.dt.Api.column(agginfo.colname + ':name');
                 var summary_val = 0;
                 if (opScroll === '∑' || opLF === '∑' || opRF === '∑') {
-                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][2 * colindex] : 0;
+                    //summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][2 * colindex] : 0; even no. for sum, odd for avg
+                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][colindex] : 0;
                 }
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
                     summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][(2 * colindex) + 1] : 0;
                 }
                 if (opScroll !== "")
-                    $(ftrtxtScroll).val(summary_val);
+                    $(ftrtxtScroll).text(summary_val);
                 if (opLF !== "")
-                    $(ftrtxtLF).val(summary_val);
+                    $(ftrtxtLF).text(summary_val);
                 if (opRF !== "")
-                    $(ftrtxtRF).val(summary_val);
+                    $(ftrtxtRF).text(summary_val);
             }
         }.bind(this));
         this.dt.Api.columns.adjust();
     };
-
     this.RemoveColumnRef = function () {
         this.EbObject.__oldValues = null;
         this.__KeyOSElist = [];

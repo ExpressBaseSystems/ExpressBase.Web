@@ -1055,6 +1055,12 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     cursor: not-allowed;
 }
 
+[data-coltyp=date]::placeholder {
+    font-family: Arial, FontAwesome;
+    text-align: left;
+    margin-left:2px;
+}
+
 
 
 

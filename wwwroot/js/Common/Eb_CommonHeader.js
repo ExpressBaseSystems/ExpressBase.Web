@@ -62,15 +62,18 @@
             //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
             $('#platformsearch').on('click', this.platformSearch);
 
-            this.$toolbSrchBx.on('focus', function () {
-                if (this.isSearchedOnce)
-                    $('.search-dd').slideDown(100);
-            }.bind(this));
+            //this.$toolbSrchBx.on('focus', function () {
+            //    if (this.isSearchedOnce)
+            //        $('.search-dd').slideDown(100);
+            //}.bind(this));
 
             this.$toolbSrchBx.on('keyup', function () {
                 this.isSimpleSearch = true;
-                if (event.keyCode === 13)
+                if (event.keyCode === 13) {
                     this.platformSearch();
+                    if (this.isSearchedOnce)
+                        $('.search-dd').slideDown(100);
+                }
                 else if (event.keyCode === 27)
                     $('.search-dd').slideUp(50);
             }.bind(this));
@@ -92,14 +95,15 @@
                             <div class='srch-header-title'><h5>Global Search</h5></div>
                             <div class='srch-grpby-wraper'>
                                 <div class='srch-header-grpby'><span class="align-middle" style="margin: auto;">Group by</span></div>
-                                <input id='srch_chkToggle' type="checkbox" checked data-toggle="toggle" data-size="xs">
-                                <div class="srch-close" data-toggle='tooltip' title="close" id="g_srch_close"><i style="margin:auto;" onclick="$('.search-dd').slideUp(100);" class="material-icons">close</i></div>
+                                <input id='srch_chkToggle' type="checkbox" data-toggle="toggle" data-size="sm">
+                                <div class="srch-close" data-toggle='tooltip' title="close" id="g_srch_close"><i style="margin:auto; font-size: 20px;" onclick="$('.search-dd').slideUp(100);" class="material-icons">close</i></div>
                             </div>
                         </div>`);
             $('#srch_chkToggle').bootstrapToggle({
                 on: 'Date',
                 off: 'Doc Type'
             });
+
             $('#srch_chkToggle').change(function () {
                 this.isGroupByDate = $('#srch_chkToggle').prop('checked');
                 this.drawResultList(this.g_srcg_data);
@@ -193,16 +197,16 @@
             }
             else {
 
-                html += `<li class="srch-li">
-                            <div class='srch-li-block'>
-                                <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
-                                <div class="ctrldtlsWrap">Try some other keyword</div>
+                html += `<li class="srch-li" style="height:100%">
+                            <div class="nores-cont">
+                                <div class="gs-noresult-img"></div>
+                            <div><h3 style="color: #6c63ff;"><center> No match found :(</center></h3></div>
                             </div>
                         </li>`;
             }
 
             html += `   </ul>
-                        <div class="srch-header srch-footer">
+                        <div class="srch-footer">
                             <div class='srch-footer-summary'>${dataItems.length} / ${data.RowCount} matches</div>
                         </div>`;
 

@@ -618,6 +618,7 @@ const WebFormRender = function (option) {
 
             respObj.FormData = JSON.parse(respObj.FormData);//======
             //this.DynamicTabObject.disposeDynamicTab();// febin
+            this.relatedSubmissionsHtml = null;
 
             if (this.AfterSavePrintDoc) {
                 this.printDocument_inner(this.AfterSavePrintDoc, respObj.RowId);
@@ -748,7 +749,7 @@ const WebFormRender = function (option) {
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             if (typeof this[key] !== typeof function () { }) {
-                if (!(key == "emptyFormDataModel_copy" || key == "__fromImport" || key == "__IsDGctxMenuSet" || key == "__MultiRenderCxt"))// persist
+                if (!(key == "emptyFormDataModel_copy" || key == "__fromImport" || key == "__IsDGctxMenuSet" || key == "__MultiRenderCxt" || key == "relatedSubmissionsHtml"))// persist
                     delete this[key];
             }
         }
@@ -1704,6 +1705,10 @@ const WebFormRender = function (option) {
     //};
 
     this.appendRelatedSubmissions = function ($div) {
+        if (this.relatedSubmissionsHtml) {
+            $div.append(this.relatedSubmissionsHtml);
+            return;
+        }
         $div.html(`<div style="color: #ccc;"><i class="fa fa-spinner fa-pulse"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
@@ -1729,6 +1734,7 @@ const WebFormRender = function (option) {
                         });
                         html += '</div>';
                         $div.html(html);
+                        this.relatedSubmissionsHtml = html;
                         $div.find('span').off('click').on('click', function (e) {
                             //this.hideInfoWindow();
                             window.open($(e.target).attr('data-link'));

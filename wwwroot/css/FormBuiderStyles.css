@@ -3834,6 +3834,10 @@ input.locinp {
     color: #ff5e20;
 }
 
+#divAuditTrail .at-tr-edited {
+    color: #2222e7;
+}
+
 #divAuditTrail .at-title-tr th {
     font-weight: 500;
     padding: 6px 8px;

@@ -567,7 +567,7 @@ const WebFormRender = function (option) {
 
         //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
-        //WebformData.Ts = this.formData.Ts;
+        WebformData.ModifiedAt = this.formData.ModifiedAt;
         console.log("form data --");
 
         //console.log("old data --");
@@ -632,7 +632,7 @@ const WebFormRender = function (option) {
             //    Message: respObj.Message,
             //    Buttons: { "Ok": { Background: "green", Align: "right", FontColor: "white;" } }
             //});
-            EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+            EbMessage("show", { Message: respObj.Message, AutoHide: false, Background: '#aa0000' });
             console.error(respObj.MessageInt);
         }
     }.bind(this);
@@ -1316,15 +1316,16 @@ const WebFormRender = function (option) {
                             }.bind(this),
                             success: function (result) {
                                 this.hideLoader();
-                                if (result > 0) {
+                                if (result.item1 > 0) {
                                     EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Cancellation Revoked' : 'Canceled'} ${this.FormObj.DisplayName} entry from ${this.getLocObj().LongName}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
                                     this.formData.IsCancelled = !this.formData.IsCancelled;
+                                    this.formData.ModifiedAt = result.item2;
                                     this.setHeader(this.mode);
                                 }
-                                else if (result === -1) {
+                                else if (result.item1 === -1) {
                                     EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Revoke Cancel' : 'Cancel'} operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
                                 }
-                                else if (result === -2) {
+                                else if (result.item1 === -2) {
                                     EbMessage("show", { Message: `Access denied to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel'} this entry.`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
                                 }
                                 else {
@@ -1364,15 +1365,16 @@ const WebFormRender = function (option) {
                             }.bind(this),
                             success: function (result) {
                                 this.hideLoader();
-                                if (result > 0) {
+                                if (result.item1 > 0) {
                                     this.formData.IsLocked = !this.formData.IsLocked;
+                                    this.formData.ModifiedAt = result.item2;
                                     EbMessage("show", { Message: `${this.formData.IsLocked ? 'Locked' : 'Unlocked'} ${this.FormObj.DisplayName} entry from ${this.getLocObj().LongName}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
                                     this.setHeader(this.mode);
                                 }
-                                else if (result === -1) {
+                                else if (result.item1 === -1) {
                                     EbMessage("show", { Message: `${this.formData.IsLocked ? 'Unlock' : 'Lock'} operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
                                 }
-                                else if (result === -2) {
+                                else if (result.item1 === -2) {
                                     EbMessage("show", { Message: `Access denied to ${this.formData.IsLocked ? 'Unlock' : 'Lock'} this entry.`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
                                 }
                                 else {
@@ -1448,7 +1450,7 @@ const WebFormRender = function (option) {
                         <tr>
                             <td>${Col.Title}</td>
                             <td style="text-decoration: line-through; ${Col.IsModified ? 'color: #ff5e20;' : ''}">${Col.OldValue}</td>
-                            <td>${Col.NewValue}</td>                            
+                            <td style="color: #2222e7;">${Col.NewValue}</td>                            
                         </tr>`;
                     trArr.push(temp);
                 });
@@ -1464,7 +1466,8 @@ const WebFormRender = function (option) {
 
                 let trArr1 = trArr.splice(0, (trArr.length + 1) / 2);
                 let tmpHtml = temp.replace('@replacethis@', trArr1.join(''));
-                tmpHtml += temp.replace('@replacethis@', trArr.join(''));
+                if (trArr.length > 0)
+                    tmpHtml += temp.replace('@replacethis@', trArr.join(''));
 
                 $trans.children(".at-trans-body").append(tmpHtml);
             }
@@ -1485,7 +1488,7 @@ const WebFormRender = function (option) {
 
                 let slno = 1;
                 $.each(Tbl.NewRows, function (m, Cols) {
-                    let newRow = `<tr class='at-tr-added'><td style='color: #555;'>${slno++}. Added</td>`;
+                    let newRow = `<tr class='at-tr-added'><td style=''>Added(${slno++})</td>`;
                     $.each(Cols.Columns, function (n, Col) {
                         newRow += `<td ${(Col.IsNumeric ? "style='text-align: right;'" : '')}>${Col.NewValue}</td>`;
                     });
@@ -1496,7 +1499,7 @@ const WebFormRender = function (option) {
 
                 slno = 1;
                 $.each(Tbl.DeletedRows, function (m, Cols) {
-                    let oldRow = `<tr class='at-tr-deleted'><td style='color: #555;'>${slno++}. Deleted</td>`;
+                    let oldRow = `<tr class='at-tr-deleted'><td style=''>Deleted(${slno++})</td>`;
                     $.each(Cols.Columns, function (n, Col) {
                         oldRow += `<td style='text-decoration: line-through;${(Col.IsNumeric ? 'text-align: right;' : '')}'>${Col.OldValue}</td>`;
                     });
@@ -1508,7 +1511,7 @@ const WebFormRender = function (option) {
                 slno = 1;
                 $.each(Tbl.EditedRows, function (m, Cols) {
                     let oldRow = `<tr class='at-tr-edited'><td></td>`;
-                    let newRow = `<tr class='at-tr-edited'><td style = 'border: 0;color: #555;'>${slno++}. Edited</td>`;
+                    let newRow = `<tr class='at-tr-edited'><td style = 'border: 0;'>Edited(${slno++})</td>`;
                     let changeFound = false;
                     $.each(Cols.Columns, function (n, Col) {
                         if (Col.IsModified) {

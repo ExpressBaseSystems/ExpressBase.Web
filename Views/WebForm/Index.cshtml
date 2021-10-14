@@ -157,6 +157,7 @@
         height: calc(100vh - 38px);*/
         margin-left: -15px;
         width: calc(100% + 30px);
+        height: 100vh;
     }
 
     .form-buider-form {
@@ -282,21 +283,19 @@
 <style>
 </style>
 
-<div id='WebForm-cont' class="webform-cont">
-
-</div>
+<div id='WebForm-cont' class="webform-cont"> </div>
 
 <script>
     $("body").prepend(`
 <div class="modal fade" id="AuditHistoryModal" role="dialog">
-    <div class="modal-dialog" style="width: 100%; margin: 0px;">
-        <div class="modal-content" style="border: none; border-radius: 0px;">
+    <div class="modal-dialog">
+        <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
                 <h4 class="modal-title">Audit Trail</h4>
             </div>
-            <div class="modal-body" style="height:calc(100vh - 60px); overflow: auto; padding: 15px 100px;">
-                <div id="divAuditTrail" style="height:calc(100vh - 90px);"> </div>
+            <div class="modal-body">
+                <div id="divAuditTrail"> </div>
             </div>
         </div>
     </div>
@@ -347,6 +346,7 @@
         _formObj: __resp.WebFormObj,
         _rowId: __resp.RowId,
         _draftId: __resp.DraftId,
+        _draftInfo: __resp.DraftInfo,
 
         _formData: (__resp.DraftId > 0 ? JSON.parse(__resp.Draft_FormData) : JSON.parse(__resp.FormDataWrap).FormData),
 

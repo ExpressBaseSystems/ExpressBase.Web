@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Inde(int _r, string _p, int _m, int _l, int _rm)
         {
             GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = _r });
-            return RedirectToAction("Index", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm });
+            return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm });
         }
 
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
@@ -240,6 +240,7 @@ namespace ExpressBase.Web.Controllers
                     resp.FormDataWrap = Resp.DataWrapper;
                     resp.Draft_FormData = Resp.FormDatajson;
                     resp.DraftId = DraftId;
+                    resp.DraftInfo = Resp.DraftInfo;
                     resp.Mode = WebFormModes.Draft_Mode.ToString().Replace("_", " ");
                 }
             }
@@ -638,20 +639,20 @@ namespace ExpressBase.Web.Controllers
             return Resp.RowAffected;
         }
 
-        public int CancelWebformData(string RefId, int RowId, int CurrentLoc, bool Cancel)
+        public (int, string) CancelWebformData(string RefId, int RowId, int CurrentLoc, bool Cancel)
         {
             if (!this.HasPermission(RefId, OperationConstants.CANCEL, CurrentLoc))
-                return -2; //Access Denied
+                return (-2, null); //Access Denied
             CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, Cancel = Cancel });
-            return Resp.RowAffected;
+            return (Resp.RowAffected, Resp.ModifiedAt);
         }
 
-        public int LockUnlockWebformData(string RefId, int RowId, int CurrentLoc, bool Lock)
+        public (int, string) LockUnlockWebformData(string RefId, int RowId, int CurrentLoc, bool Lock)
         {
             if (!this.HasPermission(RefId, OperationConstants.LOCK_UNLOCK, CurrentLoc))
-                return -2; //Access Denied
+                return (-2, null); //Access Denied
             LockUnlockWebFormDataResponse Resp = ServiceClient.Post<LockUnlockWebFormDataResponse>(new LockUnlockWebFormDataRequest { RefId = RefId, RowId = RowId, Lock = Lock });
-            return Resp.Status;
+            return (Resp.Status, Resp.ModifiedAt);
         }
 
         public string GetPushedDataInfo(string RefId, int RowId, int CurrentLoc)

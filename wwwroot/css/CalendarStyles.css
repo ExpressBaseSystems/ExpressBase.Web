@@ -122,6 +122,9 @@ th.week-holiday {
     font-weight: 500;
 }
 
+.tableviewpopupmodal {
+    overflow-y: hidden !important;
+}
 
 .per-cont {
     float: right;

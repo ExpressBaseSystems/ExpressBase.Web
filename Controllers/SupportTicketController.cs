@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-using System.Net.Http.Formatting;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Specialized;
 using System.IO;

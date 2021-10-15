@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Html;
 
 namespace ExpressBase.Web.Filters
 {
@@ -17,7 +18,7 @@ namespace ExpressBase.Web.Filters
             return new HtmlString("");
         }
 
-        public static IHtmlString RenderJsCode(this IHtmlHelper htmlHelper)
+        public static HtmlString RenderJsCode(this IHtmlHelper htmlHelper)
         {
             foreach (object key in htmlHelper.ViewContext.HttpContext.Items.Keys)
             {
@@ -39,7 +40,7 @@ namespace ExpressBase.Web.Filters
             return new HtmlString("");
         }
 
-        public static IHtmlString RenderScripts(this IHtmlHelper htmlHelper)
+        public static HtmlString RenderScripts(this IHtmlHelper htmlHelper)
         {
             foreach (object key in htmlHelper.ViewContext.HttpContext.Items.Keys)
             {
@@ -61,7 +62,7 @@ namespace ExpressBase.Web.Filters
             return new HtmlString("");
         }
 
-        public static IHtmlString RenderStyles(this IHtmlHelper htmlHelper)
+        public static HtmlString RenderStyles(this IHtmlHelper htmlHelper)
         {
             foreach (object key in htmlHelper.ViewContext.HttpContext.Items.Keys)
             {

@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,17 +19,12 @@ namespace ExpressBase.Web2
 {
 	public class Startup
 	{
-		public Startup(IHostingEnvironment env)
+		public Startup(IWebHostEnvironment env)
 		{
 			var builder = new ConfigurationBuilder()
 				.SetBasePath(env.ContentRootPath)
 				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 				.AddEnvironmentVariables();
-
-			if (env.IsDevelopment())
-			{
-				builder.AddApplicationInsightsSettings(developerMode: true);
-			}
 			Configuration = builder.Build();
 		}
 
@@ -41,7 +34,6 @@ namespace ExpressBase.Web2
 		public void ConfigureServices(IServiceCollection services)
 		{
 			// Add framework services.
-			services.AddApplicationInsightsTelemetry(Configuration);
 
 			services.AddDataProtection(opts =>
 			{
@@ -57,12 +49,8 @@ namespace ExpressBase.Web2
 					.AllowAnyMethod());
 			});
 
-			services.AddMvc();
+			services.AddMvc(options => options.EnableEndpointRouting = false);
 
-			services.Configure<MvcOptions>(options =>
-			{
-				options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
-			});
 			services.Configure<ForwardedHeadersOptions>(options =>
 			{
 				options.ForwardedHeaders =
@@ -81,7 +69,6 @@ namespace ExpressBase.Web2
 				options.ValueLengthLimit = 1024 * 1024 * 100; // 100MB max len form data
 			});
 
-			services.AddSingleton<AreaRouter>();
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			// Added - uses IOptions<T> for your settings.
 			services.AddOptions();
@@ -144,10 +131,8 @@ namespace ExpressBase.Web2
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AreaRouter areaRouter)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-			loggerFactory.AddDebug();
 
 			//app.UseForwardedHeaders(new ForwardedHeadersOptions
 			//{
@@ -156,28 +141,13 @@ namespace ExpressBase.Web2
 
 			app.UseForwardedHeaders();
 
-			app.UseApplicationInsightsRequestTelemetry();
-
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-				app.UseBrowserLink();
-				//app.UseHsts();
-			}
-			else
-			{
-				app.UseExceptionHandler("/Home/Error");
-			}
-
-			app.UseApplicationInsightsExceptionTelemetry();
-
 			app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
 			app.UseStaticFiles();
 
 			app.UseMvc(routes =>
 			{
-				routes.DefaultHandler = areaRouter;
+				routes.Routes.Add(new AreaRouter(routes.DefaultHandler));
 				//routes.MapRoute(
 				// name: "developer",
 				// template: "dev",
@@ -191,19 +161,6 @@ namespace ExpressBase.Web2
 			});
 
 			app.UseCors("AllowSpecificOrigin");
-
-			app.Use(async (context, next) =>
-			{
-				context.Response.Headers.Remove("X-Frame-Options");
-				if (env.IsStaging())
-				{
-					context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.eb-test.xyz");
-					context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.xyz *.eb-test.xyz;");
-				}
-				if (env.IsProduction())
-					context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN");
-				await next();
-			}); // for web forwarding with masking
 		}
 	}
 }

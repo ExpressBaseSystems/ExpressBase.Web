@@ -1,47 +1,30 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Enums;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Internal;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Routing;
 
 namespace ExpressBase.Web.Filters
 {
-    public class AreaRouter : MvcRouteHandler, IRouter
+    public class AreaRouter : IRouter
     {
-        private IActionContextAccessor _actionContextAccessor;
-        private IActionInvokerFactory _actionInvokerFactory;
-        private IActionSelector _actionSelector;
-        private ILogger _logger;
-        private DiagnosticSource _diagnosticSource;
+        private IRouter _routeHandler;
 
-        public AreaRouter(
-            IActionInvokerFactory actionInvokerFactory,
-            IActionSelector actionSelector,
-            DiagnosticSource diagnosticSource,
-            ILoggerFactory loggerFactory)
-            : this(actionInvokerFactory, actionSelector, diagnosticSource, loggerFactory, actionContextAccessor: null)
+        public AreaRouter(IRouter routeHandler)
         {
+            _routeHandler = routeHandler;
         }
 
-        public AreaRouter(IActionInvokerFactory actionInvokerFactory, IActionSelector actionSelector, DiagnosticSource diagnosticSource,
-            ILoggerFactory loggerFactory, IActionContextAccessor actionContextAccessor)
-            : base(actionInvokerFactory, actionSelector, diagnosticSource,
-            loggerFactory, actionContextAccessor)
+        public VirtualPathData GetVirtualPath(VirtualPathContext context)
         {
-            _actionContextAccessor = actionContextAccessor;
-            _actionInvokerFactory = actionInvokerFactory;
-            _actionSelector = actionSelector;
-            _diagnosticSource = diagnosticSource;
-            _logger = loggerFactory.CreateLogger<MvcRouteHandler>();
+            return _routeHandler.GetVirtualPath(context);
         }
 
         public new async Task RouteAsync(RouteContext context)
-        { 
+        {
             var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 
@@ -59,7 +42,7 @@ namespace ExpressBase.Web.Filters
                 }
             }
 
-            await base.RouteAsync(context);
+            await _routeHandler.RouteAsync(context);
         }
 
         private void RouteToCorrectPage(RouteContext context, bool isGoing2SignIn2UC)

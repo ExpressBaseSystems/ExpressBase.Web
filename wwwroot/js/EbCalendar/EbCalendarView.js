@@ -11,21 +11,23 @@
     this.propGrid = null;
     this.ModifyDv = true;
     this.filterDialog = null;
+    this.tableId = "table1";
 
     this.init = function () {
         if (!this.EbObject)
             this.EbObject = new EbObjects.EbCalendarView(`EbCalendar${Date.now()}`);
-        this.propGrid = new Eb_PropertyGrid({
-            id: "propGridView",
-            wc: this.Wc,
-            cid: this.Cid,
-            $extCont: $("#ppt-calendar-view"),
-            isDraggable: true
-        });
-        if (this.Wc === "dc")
+        if (this.Wc === "dc") {
+            this.propGrid = new Eb_PropertyGrid({
+                id: "pp_inner",
+                wc: this.Wc,
+                cid: this.Cid,
+                $extCont: $(".ppcont"),
+                isDraggable: true
+            });
             commonO.Current_obj = this.EbObject;
-        this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
-        this.propGrid.PropertyChanged = this.popChanged.bind(this);
+            this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
+            this.propGrid.PropertyChanged = this.popChanged.bind(this);
+        }
         if (this.EbObject.KeyColumns.$values.length > 0) {
             this.changeColumn = false;
             this.getColumns();
@@ -39,6 +41,14 @@
         this.$submit = $("<button id='run' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#obj_icons").append(this.$submit);
         this.$submit.click(this.getData.bind(this));
+        if (this.filterDialog) {
+            this.filterid = "filter" + this.tableId;
+            this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+            $("#obj_icons").append(this.$filter);
+            this.$filter.click(this.CloseParamDiv.bind(this));
+        }
+        if (this.Wc === "dc")
+            this.CreatePgButton();
     };
 
     this.popChanged = function (obj, pname, newval, oldval) {
@@ -80,7 +90,7 @@
 
     this.AppendFD = function (result) {
         $('.param-div-cont').remove();
-        $(".calendar_wrapper").prepend(`
+        $(".calendar_wrapper").append(`
                 <div id='paramdiv-Cont${this.TabNum}' class='param-div-cont'>
                 <div id='paramdiv${this.TabNum}' class='param-div fd'>
                     <div class='pgHead'>
@@ -94,15 +104,16 @@
         $('#paramdiv' + this.TabNum).append(result);
         $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.getData.bind(this));
+        this.FDCont = $(".param-div-cont");
         if (typeof FilterDialog !== "undefined") {
-            $(".param-div-cont").show();
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".param-div-cont"),
-                $extCont: $(".param-div-cont"),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters"
-            });
+            this.FDCont.show();
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: $(".param-div-cont"),
+            //    $extCont: $(".param-div-cont"),
+            //    icon: "fa-filter",
+            //    dir: "right",
+            //    label: "Parameters"
+            //});
             this.filterDialog = FilterDialog;
             let id = FilterDialog.FormObj.Controls.$values[0].EbSid_CtxId;
             let $input = $("#" + id);
@@ -111,9 +122,13 @@
                 let newval = EbEnums.AttendanceType[$(e.target).val()];
                 this.EbObject.CalendarType = parseInt(newval);
             }.bind(this));
+            this.filterid = "filter" + this.tableId;
+            this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+            $("#obj_icons").append(this.$filter);
+            this.$filter.click(this.CloseParamDiv.bind(this));
         }
         else {
-            $(".param-div-cont").hide();
+            this.FDCont.hide();
             this.filterDialog = null;
         }
         if (this.changeColumn) {
@@ -123,18 +138,47 @@
             this.EbObject.LinesColumns.$values = this.returnobj.LinesColumns.$values;
             this.EbObject.DataColumns.$values = _.cloneDeep(this.EbObject.LinesColumns.$values);
         }
-        this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
+        if (this.Wc === "dc") {
+            //this.CreatePgButton();
+            this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
+        }
         this.ChangeFDParams(this.EbObject.DefaultCalendarType);
     };
 
     this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+        //this.stickBtn.minimise();
+        this.FDCont.toggle('drop', { direction: 'right' }, 150);
+        if (this.FDCont.is(":visible"))
+            $(".ppcont").hide();
+    };
+
+    this.CreatePgButton = function () {
+        $("#obj_icons").append(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
+        $(".stickBtn").hide();
+        this.PropertyDiv = $("#pp_inner");
+        $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+        $("#pp_inner").find(".pgpin").remove();
+        $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right pgpin" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+        $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+    };
+
+    this.togglePG = function (e) {
+        $(".ppcont").toggle();
+        if ($(".ppcont").is(":visible"))
+            this.FDCont.hide();
+        e.stopPropagation();
     };
 
     this.getData = function () {
-        this.propGrid.ClosePG();
-        if (this.filterDialog)
-            this.stickBtn.minimise();
+        if (this.Wc === "dc")
+            this.propGrid.ClosePG();
+        //if (this.filterDialog)
+        //    this.stickBtn.minimise();
+        $(".ppcont").hide();
+        this.FDCont.hide();
         $("#eb_common_loader").EbLoader("show");
         this.filtervalues = this.getFilterValues();
         this.RemoveColumnRef();
@@ -163,22 +207,22 @@
         if (result) {
             this.result = result;
             this.EbObject = JSON.parse(result.returnObjString);
-            this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
+            if (this.Wc === "dc")
+                this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
             this.formatteddata = result.formattedData;
             this.drawCalendar();
         }
     };
 
     this.drawCalendar = function () {
-        let id = "table1";
         $("#calendar-user-view").empty();
-        $("#calendar-user-view").append(`<table id="${id}" class="table display table-bordered compact"></table>`);
+        $("#calendar-user-view").append(`<table id="${this.tableId}" class="table display table-bordered compact"></table>`);
         this.CustomDataCols = this.EbObject.DataColumns.$values.filter(col => col.IsCustomColumn);
         let _AllColumns = this.EbObject.KeyColumns.$values.concat(this.EbObject.LinesColumns.$values, this.CustomDataCols, this.EbObject.DateColumns.$values);
         _AllColumns.push(this.EbObject.Columns.$values[this.EbObject.Columns.$values.length - 1]);
         var o = {};
         o.dsid = this.EbObject.DataSourceRefId;
-        o.tableId = id;
+        o.tableId = this.tableId;
         o.containerId = "calendar-user-view";
         o.columns = _AllColumns;
         o.IsPaging = false;
@@ -245,36 +289,35 @@
     this.setFooterVals = function (e) {
         let colindex = $(e.target).attr("data-index");
         let tableId = "table1";
+        let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_ftr_sel0').text().trim();
+        let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_ftr_sel0').text().trim();
+        let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_ftr_sel0').text().trim();
         $.each(this.dt.eb_agginfo, function (index, agginfo) {
             if (agginfo.colname) {
-                let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                //let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();               
                 let ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
                 let ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
                 let ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
                 var col = this.dt.Api.column(agginfo.colname + ':name');
                 var summary_val = 0;
                 if (opScroll === '∑' || opLF === '∑' || opRF === '∑') {
-                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][2 * colindex] : 0;
+                    //summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][2 * colindex] : 0; even no. for sum, odd for avg
+                    summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][colindex] : 0;
                 }
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
                     summary_val = (typeof this.dt.summary[agginfo.data] !== "undefined") ? this.dt.summary[agginfo.data][(2 * colindex) + 1] : 0;
                 }
                 if (opScroll !== "")
-                    $(ftrtxtScroll).val(summary_val);
+                    $(ftrtxtScroll).text(summary_val);
                 if (opLF !== "")
-                    $(ftrtxtLF).val(summary_val);
+                    $(ftrtxtLF).text(summary_val);
                 if (opRF !== "")
-                    $(ftrtxtRF).val(summary_val);
+                    $(ftrtxtRF).text(summary_val);
             }
         }.bind(this));
         this.dt.Api.columns.adjust();
     };
-
     this.RemoveColumnRef = function () {
         this.EbObject.__oldValues = null;
         this.__KeyOSElist = [];

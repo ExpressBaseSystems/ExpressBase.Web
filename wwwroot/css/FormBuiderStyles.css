@@ -1519,25 +1519,19 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
-[isrendermode=true][eb-form="true"] [ctype="ExportButton"] {
-    display: none;
-}
-
-
-[isrendermode=true][eb-form="true"][mode="view"] [ctype="ExportButton"] {
-    display: block;
+[isrendermode=true][eb-form="true"][mode="new"] [ctype="ExportButton"] .ctrl-cover div {
+    background-color: #afafaf !important;
+    cursor: not-allowed !important;
 }
 
 [eb-form="true"] [ctype="ExportButton"] .ctrl-cover {
     border: none;
 }
 
-
 [isrendermode="false"] [ctype="RenderQuestionsControl"] .qrender-wrap .fa {
     font-size: 160px;
     padding: 0px 25px;
 }
-
 
 [eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
     border: none;
@@ -3764,6 +3758,233 @@ input.locinp {
         box-shadow: 1px 1px 6px 2px #bbb;
     }
 /*#endregion EbProvisionUser*/
+
+/*#region AuditTrail*/
+
+#AuditHistoryModal .modal-header {
+    background-color: #eaeff1;
+    color: #483d8b;
+    padding: 8px 15px;
+    border-radius: 4px 4px 0 0;
+}
+
+#AuditHistoryModal .modal-dialog {
+    width: 90%;
+}
+
+#AuditHistoryModal .modal-body {
+    height: calc(100vh - 125px);
+    overflow: auto;
+    padding: 15px;
+    background-color: #f4f6f7;
+    border-radius: 0 0 4px 4px;
+}
+
+#AuditHistoryModal #divAuditTrail {
+    height: calc(100vh - 155px);
+}
+
+#divAuditTrail .at-loaderdiv {
+    text-align: center;
+    position: relative;
+    top: 45%;
+}
+
+#divAuditTrail .at-infodiv {
+    text-align: center;
+    position: relative;
+    top: 45%;
+    font-size: 20px;
+    color: #aaa;
+}
+
+#divAuditTrail .at-colaparrow {
+    display: inline-block;
+    width: 20px;
+}
+
+#divAuditTrail .at-dp {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+#divAuditTrail .at-trans-head.at-updatetr {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    #divAuditTrail .at-trans-head.at-updatetr:hover {
+        box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+    }
+
+#divAuditTrail .at-first-tbl, #divAuditTrail .at-second-tbl {
+    width: 100%;
+    margin: 0px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 0 4px 0 rgb(0 0 0 / 35%);
+}
+
+#divAuditTrail .at-tr-added {
+    color: #0a9f0f;
+}
+
+#divAuditTrail .at-tr-deleted {
+    color: #ff5e20;
+}
+
+#divAuditTrail .at-tr-edited {
+    color: #2222e7;
+}
+
+#divAuditTrail .at-title-tr th {
+    font-weight: 500;
+    padding: 6px 8px;
+}
+
+#divAuditTrail tr:hover {
+    background-color: #cce5ff !important;
+}
+
+#divAuditTrail .at-second-tbl td, #divAuditTrail .at-first-tbl td {
+    padding: 4px 8px;
+}
+
+#divAuditTrail .at-trans-head {
+    padding: 3px 0px;
+    border: 1px solid #d7d1ff;
+    background-color: #eaeff1;
+    color: #483d8b;
+    width: 100%;
+    margin: 0 0 15px 0;
+    border-radius: 4px;
+}
+
+#divAuditTrail .at-table-div {
+    margin: 0 15px 15px 15px;
+}
+
+#divAuditTrail .at-inline-div {
+    width: calc(50% - 2px);
+    padding: 0 15px 15px 15px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/*#endregion AuditTrail*/
+
+/*#region WebformDetails*/
+
+.webformdetails {
+    position: relative;
+    float: right;
+    height: 100%;
+    top: -100%;
+    z-index: 8;
+    width: 350px;
+    background: #ffffff;
+    box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+    overflow: auto;
+    font-size: 13px;
+    display: none;
+}
+
+    .webformdetails .wfd-close {
+        position: relative;
+        float: right;
+        top: -3px;
+        padding: 0px;
+    }
+
+    .webformdetails .wfd-header, .webformdetails .wfd-footer {
+        height: 40px;
+        background-color: #ececec;
+    }
+
+    .webformdetails .wfd-header {
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .webformdetails .wfd-footer {
+        position: absolute;
+        bottom: 0;
+        padding: 8px 20px;
+        font-size: 9px;
+        width: 100%;
+        text-align: right;
+    }
+
+    .webformdetails .wfd-inner-cont {
+        padding: 20px 20px 40px 20px;
+        overflow: auto;
+        height: calc(100% - 80px);
+        width: 100%;
+    }
+
+    .webformdetails .wfd-info {
+        padding: 0 0 10px 0;
+    }
+
+    .webformdetails .wfd-linkdiv {
+        padding: 5px 0 5px 0;
+    }
+
+        .webformdetails .wfd-linkdiv span {
+            color: #337ab7;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+            .webformdetails .wfd-linkdiv span:hover {
+                color: #23527c;
+                text-decoration: underline;
+            }
+
+    .webformdetails .wfd-btndiv {
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .webformdetails .wfd-delete {
+        bottom: 40px;
+        position: absolute;
+        width: calc(100% - 40px);
+    }
+
+    .webformdetails .wfd-btndiv > div {
+        background-color: #ccc;
+        padding: 5px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: 1px solid #8c97cd;
+    }
+
+        .webformdetails .wfd-btndiv > div:hover {
+            box-shadow: 0 0 5px 0 rgb(0 0 0 / 35%);
+        }
+
+    .webformdetails .wfd-audtrail > div {
+        background-color: #ccc;
+    }
+
+    .webformdetails .wfd-delete > div {
+        background-color: #e9c0c0;
+    }
+
+    .webformdetails .wfd-depend {
+        padding: 15px 0 15px 0;
+    }
+
+        .webformdetails .wfd-depend div:nth-child(2) {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+/*#endregion WebformDetails*/
 
 /*#startregion EbAudioInput*/
 .audio-input-container button {

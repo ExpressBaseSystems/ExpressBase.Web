@@ -6,8 +6,8 @@
 <div class="EbQuickMoverlaySideWRpr Eb_quick_menu" id="ebquickmsideoverlay">
     <div class="EbQuickMoverlaySideWRpr-inner">
         <div class="header" id="ebm-wrprhead">
-            <div class="ebmSearchBox" style="margin-left:10px">
-                <input type="text" class="form-control" id="ebm-objsearch"  autocomplete="off" autofocus="autofocus" placeholder="Search..." style="padding-left: 30px;padding-right: 0px;" />
+            <div class="ebmSearchBox" style="margin-left: 5px;">
+                <input type="text" class="form-control" id="ebm-objsearch" autocomplete="off" autofocus="autofocus" placeholder="Search..." style="padding-left: 30px;padding-right: 0px;" />
             </div>
             @{
                 if (ViewBag.wc == "dc")
@@ -77,13 +77,11 @@
                         </div>
                     </div>
                     <div class="ObjectTypeContainer" id="ebm-objtcontainer" slider='true'>
-                        <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
                         <div class="ObjectTypeContainer-inner objtypes">
 
                         </div>
                     </div>
                     <div class="objListContainer" id="ebm-objectcontainer" slider='true'>
-                        <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
                         <div class="objListContainer-inner ebm-objlist">
 
                         </div>
@@ -92,7 +90,6 @@
                     @if (ViewBag.wc == "dc")
                     {
                         <div class="newObjectContainer" id="ebm-newobject" slider='true'>
-                            <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
                             <div class="newObjectContainer-inner">
 
                                 @{
@@ -127,7 +124,6 @@
                     @if (ViewBag.wc == "uc")
                     {
                         <div class="securityContainer" id="ebm-security" slider='true'>
-                            <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
                             <div class="securityContainer-inner security">
                                 <ul class="sub-menuObj">
                                     <li klink='true'>
@@ -156,6 +152,22 @@
                     }
                 }
             }
+        </div>
+        <div id="ebm-wrprfooter" class="FooterBlock">
+            <div class="footer-buttons">
+                <a href="/SupportTicket/BugSupport" target="_blank" class="footer-btn" style="margin-right:5px">
+                    <i class="fa fa-life-ring"></i> Support
+                </a>
+                @*@if (ViewBag.wc == "uc")
+                {
+                    <a href="/SMSLog/SMSLogConsole" target="_blank" class="footer-btn">
+                        <i class="fa fa-commenting-o"></i> Communication Console
+                    </a>
+                }*@
+            </div>
+            <small class="powered-by-exp">
+                <img height="30" src="~/images/EB_Logo-png.png" />
+            </small>
         </div>
     </div>
 </div>

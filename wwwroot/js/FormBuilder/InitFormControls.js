@@ -770,9 +770,17 @@
         $input.find("#month").MonthPicker({
             OnAfterChooseMonth: this.SetDateFromDateTo.bind(this, $input)
         });
-        $input.find("#year").datetimepickers({
-            format: "YYYY",
+        $input.find("#fromyear").datepicker({
+            format: "yyyy",
             viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $input.find("#toyear").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
         });
 
         $input.find("#date").next(".input-group-addon").off('click').on('click', function () {
@@ -785,15 +793,18 @@
             if (this.value === "Hourly") {
                 $input.children("[name=date]").show();
                 $input.children("[name=month]").hide();
-                $input.children("[name=year]").hide();
+                $input.children("[name=fromyear]").hide();
+                $input.children("[name=toyear]").hide();
             }
             else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
                 $input.children("[name=month]").show();
                 $input.children("[name=date]").hide();
-                $input.children("[name=year]").hide();
+                $input.children("[name=fromyear]").hide();
+                $input.children("[name=toyear]").hide();
             }
             else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly") {
-                $input.children("[name=year]").show();
+                $input.children("[name=fromyear]").show();
+                $input.children("[name=toyear]").show();
                 $input.children("[name=date]").hide();
                 $input.children("[name=month]").hide();
             }
@@ -801,7 +812,8 @@
 
         $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
 
-        $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#fromyear").on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#toyear").on('change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select").selectpicker({///////////////////////////////////////////////////////////
             dropupAuto: false,
@@ -828,10 +840,11 @@
             $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
         }
         else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly" || $input.find("select").val() === "Yearly") {
-            let year = $input.find("#year").val();
+            let year = $input.find("#fromyear").val();
             startDate = moment([year]);
-            endDate = moment([year]).endOf('year');
             $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
+            year = $input.find("#toyear").val();
+            endDate = moment([year]).endOf('year');
             $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
         }
 
@@ -1090,8 +1103,8 @@
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
-            //if (!this.Renderer.FRC.AllRequired_valid_Check())
-            //    return;
+            if (this.Renderer.Mode.isNew)
+                return;
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
@@ -1104,6 +1117,12 @@
                 ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
             }
         }.bind(this);
+        $ctrl.on('mouseenter', function (ctrl, e) {
+            if (this.Renderer.Mode.isNew)
+                ctrl.attr('title', 'Not available in New Mode');
+            else
+                ctrl.removeAttr('title');
+        }.bind(this, $ctrl));
     };
 
     this.Review = function (ctrl, ctrlOpts) {

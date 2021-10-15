@@ -200,7 +200,7 @@
             }
             //this.InitializeColumns();
             this.SetColumnRef();
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.PcFlag === true)
                 this.compareAndModifyRowGroup();
 
@@ -232,8 +232,8 @@
             this.PcFlag = false;
 
             if (this.propGrid !== null) {
-                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-                this.CreatePgButton();
+                //this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+                //this.CreatePgButton();
             }
         }
         else {
@@ -333,7 +333,7 @@
         }
 
         $("#objname").text(this.EbObject.DisplayName);
-        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
         $("title").text(this.EbObject.DisplayName);
         if (this.EbObject.DataSourceRefId) {
@@ -519,8 +519,8 @@
         }
         this.isSecondTime = false;
         this.totalcount = 0;
-        if (this.login === "uc")
-            $(".dv-body1").show();
+        //if (this.login === "uc")
+        //    $(".dv-body1").show();
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
@@ -1289,7 +1289,7 @@
         });
         $.each(this.EbObject.Columns.$values, function (i, col) {
             if (col.bVisible)
-                ftr_part += "<th></th>";
+                ftr_part += "<th data-col='"+col.name+"'></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
         });
@@ -1787,28 +1787,28 @@
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 52px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader)
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 62px)", "important");
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 25px)", "important");
             else {
                 if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//multilineonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 59px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//pagingonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 88px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 68px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filteronly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 86px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 66px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//paging & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 104px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 84px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//filter & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filetr & paging
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 112px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 92px)", "important");
                 }
                 else {
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 107px)", "important");//filter && paging & multiline
                 }
             }
             //this.stickBtn.$stickBtn.css("top", "46px");
@@ -1872,7 +1872,7 @@
 
     this.drawCallBackFunc = function (settings) {
         if (this.Source === "EbDataTable") {
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.ImageArray.length > 0) {
                 $("#test12").remove();
                 $("body").append("<div id='test12'></div>");
@@ -2406,8 +2406,6 @@
             for (let j = 0; j < eb_footer_controls_scrollfoot.length; j++)
                 scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]);
         }
-
-
         if (lfoot.length !== 0 || rfoot.length !== 0) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
             if (lfoot.length !== 0) {
@@ -2432,6 +2430,17 @@
             $(lfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
             $(rfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
         }
+        if (this.eb_agginfo.length > 0) {
+            var footer_select_id = this.tableId + "_ftr_sel" + ps;
+            let _ls = "<div class='input-group-btn dropup'>" +
+                "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='"+footer_select_id +"'>&sum;</button>" +
+                " <ul class='dropdown-menu'>" +
+                "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
+                "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
+                " </ul>" +
+                " </div>";
+            scrollfoot.find(".addedbyeb th").eq(0).html(_ls);
+        }
         this.summarize2();
     };
 
@@ -2450,12 +2459,7 @@
             var temp = $.grep(this.eb_agginfo, function (agg) { return agg.colname === col.name });
             //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
             if (col.Aggregate || col.AggregateFun === 0 || col.AggregateFun === 1) {
-                var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
-                var fselect_class = this.tableId + "_fselect";
-                var data_colum = "data-column=" + col.name;
-                var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                var data_decip = "data-decip=" + this.Api.settings().init().aoColumns[i].DecimalPlaces;
                 var style = "";
                 if (col.Align.toString() === EbEnums.Align.Left)
                     style = "text-align: left;";
@@ -2464,16 +2468,8 @@
                 else
                     style = "text-align: center;";
 
-                _ls = "<div class='input-group input-group-sm'>" +
-                    "<div class='input-group-btn dropup'>" +
-                    "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
-                    " <ul class='dropdown-menu'>" +
-                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + "> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
-                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
-                    " </ul>" +
-                    " </div>" +
-                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='z-index:" + zidx.toString() + ";" + style + "'>" +
-                    " </div>";
+                //_ls = `<input type='text' class='' id='${footer_txt}' disabled style='z-index:${zidx.toString()};${style}'/>`;
+                _ls = `<div style='z-index:${zidx.toString()};text-align: center;'><p id='${footer_txt}' disabled style='${style} margin: 10px 0;'></p><div>`;
             }
             else
                 _ls = "&nbsp;";
@@ -2489,19 +2485,14 @@
         if (isUpdatable) {
             var api = this.Api;
             var tableId = this.tableId;
-            var scrollY = this.EbObject.scrollY;
-            var opScroll;
-            var ftrtxtScroll;
+            let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_ftr_sel0').text().trim();
+            let opLF = $('.DTFC_LeftFootWrapper #' + tableId +  '_ftr_sel0').text().trim();
+            let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_ftr_sel0').text().trim();
             $.each(this.eb_agginfo, function (index, agginfo) {
                 if (agginfo.colname) {
-                    opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                    opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                    opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
                     var col = api.column(agginfo.colname + ':name');
                     var summary_val = 0;
@@ -2518,11 +2509,11 @@
                             summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
                     }
                     if (opScroll !== "")
-                        $(ftrtxtScroll).val(summary_val);
+                        $(ftrtxtScroll).text(summary_val);
                     if (opLF !== "")
-                        $(ftrtxtLF).val(summary_val);
+                        $(ftrtxtLF).text(summary_val);
                     if (opRF !== "")
-                        $(ftrtxtRF).val(summary_val);
+                        $(ftrtxtRF).text(summary_val);
                 }
             }.bind(this));
         }
@@ -2927,7 +2918,7 @@
                     dvcontainerObj.modifyNavigation();
                 }
             }
-            this.CreatePgButton();
+            //this.CreatePgButton();
             this.excelbtn = $("#btnExcel" + this.tableId);
         }
         else {
@@ -3797,7 +3788,7 @@
             " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> B </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Between</span></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' placeholder='" + this.datePattern + "' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' placeholder='&#xf073;' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -3881,7 +3872,7 @@
         if (selText.trim() === 'B') {
             if ($(elemnt).parents('.input-group').find("input").length == 1) {
                 if (ctype === "date") {
-                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='" + this.datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='&#xf073;' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
                         dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {
@@ -3947,7 +3938,7 @@
                 this.reloadDataTable();
             }
         }
-        else {            
+        else {
             $("[data-coltyp=date]").datepicker("hide");
             if (typeof (e.key) === "undefined") {
                 this.reloadDataTable();
@@ -4040,36 +4031,33 @@
 
     this.fselect_func = function (e) {
         let element = ($(e.target).is("a")) ? $(e.target) : $(e.target).siblings("a");
-        var selValue = $(element).text().trim();
-        $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
-        var table = $(element).attr('data-table');
-        var colum = $(element).attr('data-column');
-        var decip = parseInt($(element).attr('data-decip'));
-        var col = this.Api.column(colum + ':name');
-        var ftrtxt;
-        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; })[0];
-        ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
-        if ($(ftrtxt).length === 0)
-            ftrtxt = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
-        if ($(ftrtxt).length === 0)
-            ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
+        var opScroll = $(element).text().trim();
+        $(element).parents('.input-group-btn').find('.dropdown-toggle').html(opScroll);
+        $.each(this.eb_agginfo, function (index, agginfo) {
+            if (agginfo.colname) {
+                ftrtxtScroll = '.dataTables_scrollFootInner #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
+                ftrtxtLF = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
+                ftrtxtRF = '.DTFC_RightFootWrapper #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-        if (selValue === '∑') {
-            if (this.Source === "datagrid")
-                pageTotal = col.data().sum().toFixed(agginfo.deci_val);
-            else
-                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
-        }
-        else if (selValue === 'x̄') {
-            if (this.Source === "datagrid")
-                pageTotal = col.data().average().toFixed(agginfo.deci_val);
-            else
-                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
-        }
-
-        $(ftrtxt).val(pageTotal);
+                var col = this.Api.column(agginfo.colname + ':name');
+                var summary_val = 0;
+                if (opScroll === '∑' ) {
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().sum().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+                }
+                if (opScroll === 'x̄' ) {
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().average().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                }
+                if (opScroll !== "")
+                    $(ftrtxtScroll).text(summary_val);
+            }
+        }.bind(this));
         e.preventDefault();
-        //e.stopPropagation();
     };
 
     this.clickAlSlct = function (e) {
@@ -4152,8 +4140,8 @@
     this.linkFromCalendar = function (e) {
         this.popup = true;
         var rows = this.Api.rows(idx).nodes();
-        this.linkDV = $(e.target).closest("a").attr("data-link");
-        colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        this.linkDV = this.ObjectLinks[0].ObjRefId; //$(e.target).closest("a").attr("data-link");
+        colindex = parseInt($(e.target).closest("a").attr("idx"));
         var idx = this.Api.row($(e.target).parents().closest("td")).index();
         let col = this.columns[colindex];
 
@@ -4351,8 +4339,9 @@
             val = $(e.target).closest("#action").find(".selectpicker").val();
             val = JSON.parse(atob(val));
         }
-
-        $('.btn-approval_popover').popover('hide');
+        if ($td.find('.btn-approval_popover:visible').length === 0)
+            return;
+        $td.find('.btn-approval_popover').popover('hide');
         $td.find('.btn-approval_popover').popover('destroy');
         $td.find('.btn-approval_popover i').removeClass('fa-history').removeClass('fa-pencil').addClass('fa-spinner fa-pulse');
 

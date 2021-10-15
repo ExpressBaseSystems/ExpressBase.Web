@@ -42,6 +42,7 @@ const WebFormCollectionRender = function (Option) {
                 renderMode: Op._renderMode,
                 rowId: Op._rowId,
                 draftId: Op._draftId,
+                draftInfo: Op._draftInfo,
                 formData: Op._formData,
                 userObject: Op._userObject,
                 cid: Op._cid,
@@ -147,6 +148,7 @@ const WebFormCollectionRender = function (Option) {
                 renderMode: 2,//Partial
                 rowId: resp.RowId,
                 draftId: resp.DraftId,
+                draftInfo: resp.DraftInfo,
                 formData: (resp.DraftId > 0 ? JSON.parse(resp.Draft_FormData) : JSON.parse(resp.FormDataWrap).FormData),
                 userObject: ebcontext.user,
                 cid: ebcontext.sid,
@@ -179,18 +181,11 @@ const WebFormCollectionRender = function (Option) {
             Save: "subformsave" + cxt,
             SaveSel: "subformsave-selbtn" + cxt,
             OpenInNewTab: "subformopen" + cxt,
-            Close: "subformclose" + cxt,//& Open in new tab//&& Cancel editing.
-            Delete: "subformdelete" + cxt,
-            Cancel: "subformcancel" + cxt,
-            AuditTrail: "subformaudittrail" + cxt,
             Clone: "subformclone" + cxt,
-            Lock: "subformlock" + cxt,
             Print: "subformprint" + cxt,
             PrintSel: "subformprint-selbtn" + cxt,
-            DraftSave: "subformsavedraft" + cxt,
-            OpenSrc: "subformopensrc" + cxt,
             Discard: "subformdiscardedit" + cxt,
-            Dependent: "subformpusheddata" + cxt
+            Details: "subformdetails" + cxt
         };
     };
 
@@ -277,23 +272,15 @@ const WebFormCollectionRender = function (Option) {
 
     this.GetMasterHeaderBtns = function (Op) {
         let header = new EbHeader();
+        header.insertButton(`<button id="webformdetails" class='btn' title='Details & More Options' style='display: none;'><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformdiscardedit" class='btn' title='Discard Changes (Ctrl+Q)' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformclone" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformopensrc" class='btn' title='Open source record' style='display: none;'><i class="fa fa-external-link" aria-hidden="true"></i></button>`);
-
-        header.insertButton(`<button id="webformclose" class='btn' title='Close' style='display: none;'><i class="fa fa-times" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformdelete" class='btn' title='Delete (Alt+D)' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformlock" class='btn' title='Lock/Unlock' style='display: none;'><i class="fa fa-unlock-alt" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformcancel" class='btn' title='Cancel (Alt+C)' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformnew" class="btn" title="New form (Alt+N)"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformedit" class='btn' title='Edit (Ctrl+E)' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
         header.insertButton(`<div id="webformsave-selbtn"  style='display: none;' class="btn-select btn">
                                 <button id="webformsave" class="savebtn" title="Save form (Ctrl+S)"><i class="fa fa-save" aria-hidden="true"></i></button>
-                                <select class="selectpicker">
-                                  
-                                </select>
+                                <select class="selectpicker"></select>
                             </div>`);
-
         header.insertButton(`<div id="webformexcel-selbtn"  style='display: none;' class="btn-select btn">
                                 <button id="webformexcel" class="savebtn" title="Excel form"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
                                 <select class="selectpicker">
@@ -301,17 +288,10 @@ const WebFormCollectionRender = function (Option) {
                                   <option data-token="template-export" data-title="Form template" data-icon="fa-download"> Form template</option>
                                 </select>
                             </div>`);
-
         header.insertButton(`<div id="webformprint-selbtn" style='display: none;' class="btn-select btn">
                                 <button id="webformprint" class="savebtn" title="Print (Ctrl+P)"><i class="fa fa-print" aria-hidden="true"></i></button>
                                 <select class="selectpicker"></select>
                             </div>`);
-
-        header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail (Alt+H)" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformpusheddata" class="btn" title="Dependent Form Submissions" style='display: none;'><i class="fa fa-tags" aria-hidden="true"></i></button>`);
-
-        header.insertButton(`<button id="webformsavedraft" role="save-draft" class="btn" title="Save as draft"><i class="icofont-ui-clip-board"></i></button>`);
-        header.insertButton(`<button id="webformdeletedraft" role="delete-draft" class="btn" title="Delete draft"><i class="icofont-bin"></i></i></button>`);
         header.insertButton(`<button id="webforminvalidmsgs" onclick='ebcontext.webform.RenderCollection[0].FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>`);
 
         header.addRootObjectHelp(Op._formObj);
@@ -322,23 +302,14 @@ const WebFormCollectionRender = function (Option) {
             Edit: "webformedit",
             Save: "webformsave",
             SaveSel: "webformsave-selbtn",
-            Delete: "webformdelete",
-            Cancel: "webformcancel",
-            AuditTrail: "webformaudittrail",
-            Close: "webformclose",//& Open in new tab//&& Cancel editing.
             Clone: "webformclone",
-            Lock: "webformlock",
-
             Excel: "webformexcel",
             ExcelSel: "webformexcel-selbtn",
             Print: "webformprint",
             PrintSel: "webformprint-selbtn",
-            DraftSave: "webformsavedraft",
-            DraftDelete: "webformdeletedraft",
             GotoInvalid: "webforminvalidmsgs",
-            OpenSrc: "webformopensrc",
             Discard: "webformdiscardedit",
-            Dependent: "webformpusheddata"
+            Details: "webformdetails"
         }
         return headerBtns;
     };
@@ -360,9 +331,6 @@ const WebFormCollectionRender = function (Option) {
             <div class='sfh-toolbar'> 
                 <div class='sfh-tool-btns'>
                     <button id="subforminvalidmsgs${cxt}" style='display: none;' onclick='ebcontext.webform.RenderCollection[${this.RenderCollection.length}].FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>
-                    <button id="subformsavedraft${cxt}" role="save-draft" class="btn" title="Save as draft" style='display: none;'><i class="icofont-ui-clip-board"></i></button>
-                    <button id="subformpusheddata${cxt}" class="btn" title="Dependent Form Submissions" style='display: none;'><i class="fa fa-tags" aria-hidden="true"></i></button>
-                    <button id="subformaudittrail${cxt}" class="btn" title="Audit Trail (Alt+H)" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>
                     <div id="subformprint-selbtn${cxt}" style='display: none;' class="btn-select btn">
                         <button id="subformprint${cxt}" class="savebtn" title="Print (Ctrl+P)"><i class="fa fa-print" aria-hidden="true"></i></button>
                         <select class="selectpicker"></select>
@@ -373,13 +341,10 @@ const WebFormCollectionRender = function (Option) {
                     </div>                    
                     <button id="subformedit${cxt}" class='btn' title='Edit (Ctrl+E)' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>
                     <button id="subformnew${cxt}" class="btn" title="New (Alt+N)" style='display: none;'><i class="fa fa-plus" aria-hidden="true"></i></button>
-                    <button id="subformcancel${cxt}" class='btn' title='Cancel (Alt+C)' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>
-                    <button id="subformlock${cxt}" class='btn' title='Lock/Unlock' style='display: none;'><i class="fa fa-unlock-alt" aria-hidden="true"></i></button>
-                    <button id="subformdelete${cxt}" class='btn' title='Delete (Alt+D)' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>
-                    <button id="subformdelete${cxt}" class='btn' title='Delete (Alt+D)' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>
-                    <button id="subformopensrc${cxt}" class='btn' title='Open source record' style='display: none;'><i class="fa fa-external-link" aria-hidden="true"></i></button>
                     <button id="subformclone${cxt}" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>
                     <button id="subformdiscardedit${cxt}" class='btn' title='Discard Changes (Ctrl+Q)' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                    <button id="subformdetails${cxt}" class='btn' title='Details & More Options'><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>
+
                     <button id="subformopen${cxt}" class='' title='Open in new tab'><i class="fa fa-external-link" aria-hidden="true"></i></button>
                     <button id="subformmaximize${cxt}" class='' title='Maximize'><i class="fa fa-window-maximize" aria-hidden="true"></i></button>
                     <button id="subformclose${cxt}" class='' title='Close' data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></button>
@@ -493,7 +458,7 @@ const WebFormCollectionRender = function (Option) {
         if (this.CurrentSubForm)
             this.showSubFormLoader(this.CurrentSubForm.__MultiRenderCxt);
         else
-            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "body" } });
     }.bind(this);
 
     this.hideLoader = function () {

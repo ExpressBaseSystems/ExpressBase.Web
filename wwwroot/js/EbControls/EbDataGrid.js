@@ -1348,18 +1348,27 @@
     this.dg_rowKeydown = function (e) {
         let $e = $(e.target);
         let $tr = $(e.currentTarget);
+
         if (e.which === 40 || e.which === 38) {//down arrow //up arrow
             if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"]').length === 0)
                 return;
+            e.preventDefault();
 
             let temp = performance.now();
             if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 300)
                 return;
             this.lastUpDownArrowTs = performance.now();
-
-            let func = e.which === 40 ? 'next' : 'prev';
             let indx = $(e.target).closest('td').index();
-            let $nxtTr = $(e.currentTarget)[func]();
+            let $nxtTr;
+            if (event.altKey || event.metaKey) {//alt
+                let sel = e.which === 40 ? ':last' : ':first';
+                $nxtTr = $(e.currentTarget).siblings(sel);
+            }
+            else {
+                let func = e.which === 40 ? 'next' : 'prev';
+                $nxtTr = $(e.currentTarget)[func]();
+            }
+
             if ($nxtTr.length > 0) {
                 let $nxtTd = $($nxtTr.find('td')[indx]);
                 document.activeElement.blur();
@@ -1367,17 +1376,18 @@
                 $nxtTd.trigger('click');
             }
         }
-        if (e.which === 27) {//esc
+        else if (e.which === 27) {//esc
             if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")
                 $tr.find(".cancel-row").trigger("click");
         }
         //alt + enter
-        if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
+        else if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
             if (this.$table.has(document.activeElement).length === 1) {
                 document.activeElement.blur();
                 this.addRowBtn_click();
             }
         }
+
     }.bind(this);
 
     this.initAgg = function () {

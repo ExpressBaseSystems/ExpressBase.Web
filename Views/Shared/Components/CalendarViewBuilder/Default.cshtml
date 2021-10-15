@@ -13,6 +13,7 @@
 <link rel="stylesheet" type="text/css" href="~/css/CalendarStyles.css" asp-append-version=@bApnd/>
 <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd/>
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" asp-append-version=@bApnd/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
 @*<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.5/jquery.inputmask.min.js"></script>
 <script src="~/js/EbCalendar/EbCalendarView.js" asp-append-version=@bApnd></script>
@@ -22,6 +23,8 @@
 @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>*@
 <script type="text/javascript" src="~/js/LayoutCommon/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+
 
 <div class="container-fluid calendar_wrapper" style="height: calc( 100vh - 126px )">
     <div class="row calendar-user-view-cont" style="height:inherit">
@@ -29,7 +32,7 @@
         </div>
     </div>
 
-    <div id="ppt-calendar-view" class="PGgrid"> <div id="propGridView"> </div></div>
+    <div id="ppt-calendar-view" class="ppcont"> <div id="pp_inner"> </div></div>
 </div>
 <script type="text/javascript">
 

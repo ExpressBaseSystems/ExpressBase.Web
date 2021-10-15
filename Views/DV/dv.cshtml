@@ -153,9 +153,25 @@
         <div id="parent" class="parent"><div class="splitdiv_parent" id="parent-div0"></div></div>
     </div>
     @*<div class='filterCont fd' id='filterDiv'></div>*@
-    <div class="ppcont"><div id="pp_inner"></div></div>
+    @*<div class="ppcont"><div id="pp_inner"></div></div>*@
 </div>
 <script>
+
+    $("body").prepend(`
+<div class="modal fade" id="AuditHistoryModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
+                <h4 class="modal-title">Audit Trail</h4>
+            </div>
+            <div class="modal-body">
+                <div id="divAuditTrail"> </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
 
     $("body").prepend(`
 <div class="modal fade" id="iFramePdfModal" role="dialog">

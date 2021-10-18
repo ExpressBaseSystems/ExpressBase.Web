@@ -1735,10 +1735,6 @@ const WebFormRender = function (option) {
                         html += '</div>';
                         $div.html(html);
                         this.relatedSubmissionsHtml = html;
-                        $div.find('span').off('click').on('click', function (e) {
-                            //this.hideInfoWindow();
-                            window.open($(e.target).attr('data-link'));
-                        }.bind(this));
                     }
                 }
                 catch (e) {
@@ -2306,6 +2302,11 @@ const WebFormRender = function (option) {
             if (aValidDP && this.checkPermission('AuditTrail')) {
                 $cont.append(`<div class='wfd-depend wfd-linkdiv'></div>`);
                 this.appendRelatedSubmissions($cont.find('.wfd-depend'));
+
+                $cont.off('click', '.wfd-depend span').on('click', '.wfd-depend span', function (e) {
+                    //this.hideInfoWindow();
+                    window.open($(e.target).attr('data-link'));
+                }.bind(this));
             }
         }
 

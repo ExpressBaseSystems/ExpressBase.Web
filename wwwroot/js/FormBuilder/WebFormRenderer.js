@@ -2462,20 +2462,6 @@ const WebFormRender = function (option) {
             this.Mode.isEdit = true;
     };
 
-    this.initConnectionCheck = function () {
-        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
-        //Offline.options = {checks: {xhr: {url: '/WebForm/Status'}}};
-        setInterval(this.connectionPing, 10000);///////////////////////////////////////////////////////////////
-    };
-
-    this.connectionPing = function () {
-        Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
-        //Offline.options = { checks: { xhr: { url: '/WebForm/Status' } } };
-        if (Offline.state === 'up')
-            Offline.check();
-        console.log(Offline.state);
-    };
-
     this.init = function (option) {
         //let t0 = performance.now();
 
@@ -2589,7 +2575,6 @@ const WebFormRender = function (option) {
         //    right: 24,
         //    onClose: this.FRC.invalidBoxOnClose
         //});
-        this.initConnectionCheck();
 
         //window.onbeforeunload = function (m, e) {
         //    if (this.Mode.isEdit) {

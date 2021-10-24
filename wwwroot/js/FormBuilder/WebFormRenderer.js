@@ -1405,7 +1405,7 @@ const WebFormRender = function (option) {
             success: function (result) {
                 if (result === "{}") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div class="at-infodiv"> Nothing to Display </div>`);
+                    $("#divAuditTrail").append(`<div class="at-infodiv"> Audit Trail data is not found. Contact Admin. </div>`);
                     return;
                 }
                 let auditObj;

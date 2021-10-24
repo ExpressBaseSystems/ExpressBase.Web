@@ -4221,7 +4221,7 @@
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
         this.linkDVColumn = $(e.target).closest("a").attr("data-column");
-        var idx = this.Api.row($(e.target).parents().closest("td")).index();
+        var idx = this.Api.row($(e.target).closest("tr")).index();
         if (typeof (idx) !== "undefined")
             this.rowData = this.unformatedData[idx];
         else {//incomplete...

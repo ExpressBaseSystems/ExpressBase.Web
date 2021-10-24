@@ -906,7 +906,8 @@
         if (dq.length === -1)
             dq.length = this.totalcount;
         this.RemoveColumnRef();
-        //dq.DataVizObjString = JSON.stringify(this.EbObject);
+        if (!this.Refid)
+            dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;

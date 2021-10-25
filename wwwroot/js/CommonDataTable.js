@@ -1101,10 +1101,14 @@
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation") {
-                    if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
+                    let $sel = $(ctrl).find('select');
+                    let allsld = $sel.next('div').find('[value=multiselect-all').prop('checked');
+                    if (allsld && $sel.attr('isglobal') === 'y')
                         o.value = "Global";
+                    else if (allsld)
+                        o.value = "Selected all";
                     else
-                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join(",");
+                        o.value = $(ctrl).find('ul').find(".active:not(.multiselect-all)").text().trim().split(" ").join(",");
                 }
                 else
                     o.value = $($(ctrl).children()[1]).val();
@@ -1290,7 +1294,7 @@
         });
         $.each(this.EbObject.Columns.$values, function (i, col) {
             if (col.bVisible)
-                ftr_part += "<th data-col='"+col.name+"'></th>";
+                ftr_part += "<th data-col='" + col.name + "'></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
         });
@@ -2434,7 +2438,7 @@
         if (this.eb_agginfo.length > 0) {
             var footer_select_id = this.tableId + "_ftr_sel" + ps;
             let _ls = "<div class='input-group-btn dropup'>" +
-                "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='"+footer_select_id +"'>&sum;</button>" +
+                "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
                 " <ul class='dropdown-menu'>" +
                 "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
                 "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
@@ -2487,7 +2491,7 @@
             var api = this.Api;
             var tableId = this.tableId;
             let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_ftr_sel0').text().trim();
-            let opLF = $('.DTFC_LeftFootWrapper #' + tableId +  '_ftr_sel0').text().trim();
+            let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_ftr_sel0').text().trim();
             let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_ftr_sel0').text().trim();
             $.each(this.eb_agginfo, function (index, agginfo) {
                 if (agginfo.colname) {
@@ -4042,13 +4046,13 @@
 
                 var col = this.Api.column(agginfo.colname + ':name');
                 var summary_val = 0;
-                if (opScroll === '∑' ) {
+                if (opScroll === '∑') {
                     if (this.Source === "datagrid")
                         summary_val = col.data().sum().toFixed(agginfo.deci_val);
                     else
                         summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
                 }
-                if (opScroll === 'x̄' ) {
+                if (opScroll === 'x̄') {
                     if (this.Source === "datagrid")
                         summary_val = col.data().average().toFixed(agginfo.deci_val);
                     else

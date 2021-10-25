@@ -2120,6 +2120,20 @@ input.locinp {
     margin-right: 5px !important;
 }
 
+
+.Eb-ctrlContainer[ctype="UserLocation"] .ctrl-cover {
+    border: none;
+}
+
+    .Eb-ctrlContainer[ctype="UserLocation"] .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
+        border: 1px solid var(--eb-bluishgray);
+        background: transparent;
+    }
+
+    .Eb-ctrlContainer[ctype="UserLocation"] .ctrl-cover .dropdown-menu {
+        width: 100%;
+    }
+
 .user-ctrl {
     /*padding: 5px;
     border: solid 1px rgba(96, 98, 185, 0.2);

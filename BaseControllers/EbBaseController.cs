@@ -167,7 +167,7 @@ namespace ExpressBase.Web.BaseControllers
 
             ExtSolutionId = Host.Replace(RoutingConstants.DASHDEV, string.Empty);
             IntSolutionId = this.GetIsolutionId(ExtSolutionId);
-            WhichConsole = Host.EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : (IntSolutionId == CoreConstants.EXPRESSBASE) ? RoutingConstants.TC : RoutingConstants.UC;
+            WhichConsole = Host.Contains(RoutingConstants.DASHDEV) ? RoutingConstants.DC : (IntSolutionId == CoreConstants.EXPRESSBASE) ? RoutingConstants.TC : RoutingConstants.UC;
 
             Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole);
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);

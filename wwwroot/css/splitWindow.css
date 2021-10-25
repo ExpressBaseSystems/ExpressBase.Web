@@ -253,7 +253,7 @@
 }
 
 .dv-body2 {
-    height: calc( 100vh - 58px );
+    height: calc( 100vh - 38px );
     padding: 0 1px;
     width: 100%;
 }

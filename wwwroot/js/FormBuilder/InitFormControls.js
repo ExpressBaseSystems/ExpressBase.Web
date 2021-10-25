@@ -455,38 +455,45 @@
             includeSelectAllOption: true
         });
 
-        $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
-
-        if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-            $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        if (ebcontext.user.wc === "uc") {
+            if (ctrl.LoadCurrentLocation)
+                $('#' + ctrl.EbSid_CtxId).val([ebcontext.locations.getCurrent()]).multiselect('refresh');
         }
-        else {
-            $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
-            if (ebcontext.user.wc === "dc")
-                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-            else if (ebcontext.user.wc === "uc") {
-                if (ctrl.LoadCurrentLocation)
-                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.getCurrent() + ']').trigger('click');
-                else
-                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-            }
-        }
+        else if (ebcontext.user.wc === "dc")
+            ctrl.setValue('-1');
 
         ctrl.DataVals.Value = ctrl.getValueFromDOM();
+
+        //$("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
+        //ebcontext.locations.getCurrent();
+        //if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+        //    $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        //}
+        //else {
+        //    $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
+        //    if (ebcontext.user.wc === "dc")
+        //        $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+        //    else if (ebcontext.user.wc === "uc") {
+        //        if (ctrl.LoadCurrentLocation)
+        //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.getCurrent() + ']').trigger('click');
+        //        else
+        //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+        //    }
+        //}
     };
 
-    this.UserLocationCheckboxChanged = function (ctrl) {
-        if ($(event.target).prop("checked")) {
-            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
-            $('#' + ctrl.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
-        }
-        else {
-            $('#' + ctrl.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
-            if ($('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
-                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //this.UserLocationCheckboxChanged = function (ctrl) {
+    //    if ($(event.target).prop("checked")) {
+    //        $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //        $('#' + ctrl.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
+    //    }
+    //    else {
+    //        $('#' + ctrl.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
+    //        if ($('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
+    //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
 
-        }
-    };
+    //    }
+    //};
 
     this.LocationSelector = function (ctrl) {
         let $input = "#" + ctrl.EbSid_CtxId;
@@ -770,9 +777,17 @@
         $input.find("#month").MonthPicker({
             OnAfterChooseMonth: this.SetDateFromDateTo.bind(this, $input)
         });
-        $input.find("#year").datetimepickers({
-            format: "YYYY",
+        $input.find("#fromyear").datepicker({
+            format: "yyyy",
             viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $input.find("#toyear").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
         });
 
         $input.find("#date").next(".input-group-addon").off('click').on('click', function () {
@@ -785,15 +800,18 @@
             if (this.value === "Hourly") {
                 $input.children("[name=date]").show();
                 $input.children("[name=month]").hide();
-                $input.children("[name=year]").hide();
+                $input.children("[name=fromyear]").hide();
+                $input.children("[name=toyear]").hide();
             }
             else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
                 $input.children("[name=month]").show();
                 $input.children("[name=date]").hide();
-                $input.children("[name=year]").hide();
+                $input.children("[name=fromyear]").hide();
+                $input.children("[name=toyear]").hide();
             }
             else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly") {
-                $input.children("[name=year]").show();
+                $input.children("[name=fromyear]").show();
+                $input.children("[name=toyear]").show();
                 $input.children("[name=date]").hide();
                 $input.children("[name=month]").hide();
             }
@@ -801,7 +819,8 @@
 
         $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
 
-        $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#fromyear").on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#toyear").on('change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select").selectpicker({///////////////////////////////////////////////////////////
             dropupAuto: false,
@@ -828,10 +847,11 @@
             $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
         }
         else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly" || $input.find("select").val() === "Yearly") {
-            let year = $input.find("#year").val();
+            let year = $input.find("#fromyear").val();
             startDate = moment([year]);
-            endDate = moment([year]).endOf('year');
             $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
+            year = $input.find("#toyear").val();
+            endDate = moment([year]).endOf('year');
             $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
         }
 

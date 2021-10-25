@@ -390,7 +390,7 @@ var EbDataTable = function (Option) {
             this.filterValues = this.getFilterValues("filter");
         }
         this.isSecondTime = false;
-        if(this.login === "uc")
+        if (this.login === "uc")
             $(".dv-body1").show();
         $("#eb_common_loader").EbLoader("show");
         this.extraCol = [];
@@ -411,7 +411,7 @@ var EbDataTable = function (Option) {
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
         let CurR_RowG = this.CurrentRowGroup;
-        if (rowG_coll.length>0 &&  !this.EbObject.DisableRowGrouping) {
+        if (rowG_coll.length > 0 && !this.EbObject.DisableRowGrouping) {
             if (CurR_RowG === null) {
                 CurR_RowG = rowG_coll.find(obj => obj.RowGrouping.$values.length > 0);
                 this.CurrentRowGroup = CurR_RowG;
@@ -930,10 +930,14 @@ var EbDataTable = function (Option) {
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation") {
-                    if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
+                    let $sel = $(ctrl).find('select');
+                    let allsld = $sel.next('div').find('[value=multiselect-all').prop('checked');
+                    if (allsld && $sel.attr('isglobal') === 'y')
                         o.value = "Global";
+                    else if (allsld)
+                        o.value = "Selected all";
                     else
-                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join(",");
+                        o.value = $(ctrl).find('ul').find(".active:not(.multiselect-all)").text().trim().split(" ").join(",");
                 }
                 else
                     o.value = $($(ctrl).children()[1]).val();
@@ -1030,7 +1034,7 @@ var EbDataTable = function (Option) {
 
     this.receiveAjaxData = function (dd) {
         if (dd.responseStatus.message !== null) {
-            EbPopBox("show", { Message: dd.responseStatus.message, Title:"Error" });
+            EbPopBox("show", { Message: dd.responseStatus.message, Title: "Error" });
         }
         this.isRun = true;
         if (this.login === "uc") {
@@ -2221,7 +2225,7 @@ var EbDataTable = function (Option) {
 
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
-        if (e.keyCode === 13 && text.length >3) {
+        if (e.keyCode === 13 && text.length > 3) {
             //window.find(text, false, false, true);
             if (window.find && window.getSelection) {
                 document.designMode = "on";
@@ -2278,9 +2282,9 @@ var EbDataTable = function (Option) {
             container: 'body',
             trigger: 'hover',
             placement: this.PopoverPlacement,
-            html:true,
-            content: function (e,i) {
-                return atob($(this).attr("data-contents"));                
+            html: true,
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
             },
         });
         //$('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
@@ -3663,7 +3667,7 @@ var EbDataTable = function (Option) {
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === "T" ) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {
@@ -3786,7 +3790,7 @@ var EbDataTable = function (Option) {
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         //else
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
-        
+
         return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg'/>`;
     };
 

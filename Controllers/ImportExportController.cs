@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult GetStore()
         {
-            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
@@ -103,7 +103,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult ShareToPublic()
         {
-            var form = HttpContext.Request.Form;
+            IFormCollection form = HttpContext.Request.Form;
             AppStore store = new AppStore
             {
                 Id = Convert.ToInt32(form["appid"]),
@@ -160,23 +160,22 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult ExportOSE(string _objdict, string Appdict)
         {
+            Dictionary<int, ObjectVersionsDictionary> AppObjMap = new Dictionary<int, ObjectVersionsDictionary>();
+            ObjectVersionsDictionary objdict = null;
             Dictionary<int, List<string>> appIdObjIdCollection = JsonConvert.DeserializeObject<Dictionary<int, List<string>>>(_objdict);
             Dictionary<int, string> appNameCollection = JsonConvert.DeserializeObject<Dictionary<int, string>>(Appdict);
             String ids = String.Join(", ", appIdObjIdCollection.Select(x => String.Join(", ", x.Value)));
-
             EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
-            Dictionary<int, ObjectVersionsDictionary> AppObjMap = new Dictionary<int, ObjectVersionsDictionary>();
-            ObjectVersionsDictionary objdict = null;
-            foreach (var app in appIdObjIdCollection)
+            foreach (KeyValuePair<int, List<string>> app in appIdObjIdCollection)
             {
                 if (!AppObjMap.ContainsKey(app.Key))
                 {
                     objdict = new ObjectVersionsDictionary();
                     AppObjMap.Add(app.Key, objdict);
                 }
-                foreach (var objid in app.Value)
+                foreach (string objid in app.Value)
                 {
-                    if (resultlist.Data.ContainsKey(objid))
+                    if (resultlist.Data.ContainsKey(objid) && !objdict.ContainsKey(Convert.ToInt32(objid)))
                         objdict.Add(Convert.ToInt32(objid), resultlist.Data[objid]);
                 }
             }

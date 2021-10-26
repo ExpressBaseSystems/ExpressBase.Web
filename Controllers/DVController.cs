@@ -236,24 +236,33 @@ namespace ExpressBase.Web.Controllers
         {
             EbApi _api = this.Redis.Get<EbApi>(apirefid);
             DataSourceColumnsResponse columnresp = new DataSourceColumnsResponse();
-            var dsrefid = _api.Resources.First(res => res is EbSqlReader).Reference;
+            string dsrefid = _api?.Resources?.First(res => res is EbSqlReader)?.Reference;
             ReturnColumns returnobj = new ReturnColumns();
             try
             {
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = dsrefid, SolnId = ViewBag.cid, Params = null });
-                if (columnresp == null || columnresp.Columns.Count == 0)
+                if (!string.IsNullOrEmpty(dsrefid))
                 {
-                    Console.WriteLine("Column Object from SS is null or count 0");
-                    throw new Exception("Object Not found(Redis + SS)");
+                    EbDataReader dr = Redis.Get<EbDataReader>(dsrefid);
+                    List<Param> _ps = dr?.FilterDialog.GetDefaultParams();
+                    columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = dsrefid, SolnId = ViewBag.cid, Params = _ps });
+                    if (columnresp == null || columnresp.Columns.Count == 0)
+                    {
+                        Console.WriteLine("Column Object from SS is null or count 0");
+                        throw new Exception("Object Not found(Redis + SS)");
+                    }
+                    DSController dscont = new DSController(this.ServiceClient, this.Redis);
+                    returnobj.ColumnsCollection = dscont.GetDVColumnCollection(columnresp.Columns);
+                    returnobj.Paramlist = _ps;
+                    var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                    DVColumnCollection Columns = GetDVcolumns(__columns);
+                    returnobj.ColumnOrginal = Columns;
+                    returnobj.Columns = Columns;
+                    returnobj.DsColumns = Columns;
                 }
-                DSController dscont = new DSController(this.ServiceClient, this.Redis);
-                returnobj.ColumnsCollection = dscont.GetDVColumnCollection(columnresp.Columns);
-                returnobj.Paramlist = null;
-                var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
-                DVColumnCollection Columns = GetDVcolumns(__columns);
-                returnobj.ColumnOrginal = Columns;
-                returnobj.Columns = Columns;
-                returnobj.DsColumns = Columns;
+                else
+                { 
+                    throw new Exception("No DS found");
+                }
             }
             catch (Exception e)
             {
@@ -443,7 +452,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                 {
-                    res.Messaage = Resp.Message + " ### " +Resp.MessageInt;
+                    res.Messaage = Resp.Message + " ### " + Resp.MessageInt;
                 }
 
             }

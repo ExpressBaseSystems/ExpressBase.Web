@@ -160,26 +160,26 @@
                     <h6 class="smallfont">Owner/Assignee</h6>
                     <div style="display:block">
                         <div class="userimg">
-                            <img src="../static/dp/dp_@(tile.Owner_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle"/>
+                            <img src="../static/dp/dp_@(tile.OwnerUid)_micro.jpg" class="prof_dp img-thumbnail img-circle" />
                         </div>
                         <div class="profileInfo">
-                            <h6 class="xtrasmall">@tile.Owner_Name</h6>
-                            <h6 class="xtrasmall">@tile.Owner_Ts</h6>
+                            <h6 class="xtrasmall">@tile.OwnerName</h6>
+                            <h6 class="xtrasmall">@tile.OwnerTs</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-1 box4">
-                    <h6 class="smallfont">Application</h6>
-                    <select class="selectpicker btn" id="apps" name="Apps">
-                        <option id="" value="0">Select Application</option>
-                        @{
-                            foreach (KeyValuePair<string, object> entry in ViewBag.Apps)
-                            {
-                                <option id="" value="@entry.Key">@entry.Value</option>
+                        <h6 class="smallfont">Application</h6>
+                        <select class="selectpicker btn" id="apps" name="Apps">
+                            <option id="" value="0">Select Application</option>
+                            @{
+                                foreach (KeyValuePair<string, object> entry in ViewBag.Apps)
+                                {
+                                    <option id="" value="@entry.Key">@entry.Value</option>
+                                }
                             }
-                        }
-                    </select>
-                </div>*@
+                        </select>
+                    </div>*@
 
             <div class="card1">
                 <div class="head">
@@ -192,7 +192,7 @@
                         {
                             foreach (RelatedObject rel in tile.Dependants)
                             {
-                                <div class="">
+                                <div class="rel-items">
                                     <span> <i class="fa @t[rel.ObjectType]?.Icon"></i></span>
                                     <a href="/Eb_Object/Index?objid=@rel.Refid.Split("-")[3]&objtype=@rel.Refid.Split("-")[2]" target="_blank" class="open_rel_obj" data-id="@rel.Refid">@rel.DisplayName</a>
                                     <span>- @rel.VersionNumber</span>
@@ -212,7 +212,7 @@
                         {
                             foreach (RelatedObject rel in tile.Dominants)
                             {
-                                <div class="">
+                                <div class="rel-items">
                                     <span> <i class="fa @t[rel.ObjectType]?.Icon"></i></span>
                                     <a href="/Eb_Object/Index?objid=@rel.Refid.Split("-")[3]&objtype=@rel.Refid.Split("-")[2]" target="_blank" class="open_rel_obj" data-id="@rel.Refid">@rel.DisplayName</a>
                                     <span>- @rel.VersionNumber</span>

@@ -366,7 +366,7 @@
     };
 
     this.getColumnsSuccess = function (e) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         if (this.Source === "EbDataTable") {
             this.Do4EbdataTable();
             this.Done4All();
@@ -610,12 +610,16 @@
 
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
-                $("#obj_icons .btn").prop("disabled", true);
-                $("#eb_common_loader").EbLoader("show");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", true);
+                    $("#eb_common_loader").EbLoader("show");
+                }
             }
             else {
-                $("#obj_icons .btn").prop("disabled", false);
-                $("#eb_common_loader").EbLoader("hide");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
+                }
                 $("[data-coltyp=date]").datepicker("hide");
             }
         }.bind(this));
@@ -632,7 +636,7 @@
                 $("#" + settings.sTableId + "_processing").text("Something went wrong..");
             else
                 EbPopBox("show", { Message: "Table View Error Occured....", Title: "Error" });
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
         }.bind(this);
 
         if (this.Source === "datagrid")
@@ -857,7 +861,7 @@
                             $("#" + this.tableId + "_processing").text("Timeout Expired..");
                         else
                             EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
-                        $("#eb_common_loader").EbLoader("hide");
+                        this.hideEbLoader();
                     }.bind(this)
                 };
             }
@@ -1427,7 +1431,7 @@
             if (this.Source !== "Calendar" || this.EbObject.IsDataFromApi)
                 this.placeFilterInText();
 
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
             if (this.login === "uc") {
                 if (!this.EbObject.DisableCopy)
                     $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
@@ -4304,7 +4308,7 @@
     };
 
     this.drawInlinedv = function (rows, e, idx, colindex) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-caret-up").addClass("fa-caret-down");
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
@@ -4511,7 +4515,7 @@
         if (source === "Calendar")
             $("#tblpopup").EbLoader("hide");
         else
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
 
         this.Api.columns.adjust();
     };
@@ -4979,6 +4983,17 @@
 
         return gradient[val];
     };
+
+    this.showEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("show");
+    };
+
+    this.hideEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("hide");
+    };
+
     if (this.Source === "EbDataTable" || this.Source === "PivotTable")
         this.start4EbDataTable();
     else

@@ -1405,7 +1405,7 @@ const WebFormRender = function (option) {
             success: function (result) {
                 if (result === "{}") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div class="at-infodiv"> Nothing to Display </div>`);
+                    $("#divAuditTrail").append(`<div class="at-infodiv"> Audit Trail data not found. Contact Admin. </div>`);
                     return;
                 }
                 let auditObj;
@@ -1735,10 +1735,6 @@ const WebFormRender = function (option) {
                         html += '</div>';
                         $div.html(html);
                         this.relatedSubmissionsHtml = html;
-                        $div.find('span').off('click').on('click', function (e) {
-                            //this.hideInfoWindow();
-                            window.open($(e.target).attr('data-link'));
-                        }.bind(this));
                     }
                 }
                 catch (e) {
@@ -2306,6 +2302,11 @@ const WebFormRender = function (option) {
             if (aValidDP && this.checkPermission('AuditTrail')) {
                 $cont.append(`<div class='wfd-depend wfd-linkdiv'></div>`);
                 this.appendRelatedSubmissions($cont.find('.wfd-depend'));
+
+                $cont.off('click', '.wfd-depend span').on('click', '.wfd-depend span', function (e) {
+                    //this.hideInfoWindow();
+                    window.open($(e.target).attr('data-link'));
+                }.bind(this));
             }
         }
 
@@ -2461,20 +2462,6 @@ const WebFormRender = function (option) {
             this.Mode.isEdit = true;
     };
 
-    this.initConnectionCheck = function () {
-        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
-        //Offline.options = {checks: {xhr: {url: '/WebForm/Status'}}};
-        setInterval(this.connectionPing, 10000);///////////////////////////////////////////////////////////////
-    };
-
-    this.connectionPing = function () {
-        Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
-        //Offline.options = { checks: { xhr: { url: '/WebForm/Status' } } };
-        if (Offline.state === 'up')
-            Offline.check();
-        console.log(Offline.state);
-    };
-
     this.init = function (option) {
         //let t0 = performance.now();
 
@@ -2588,7 +2575,6 @@ const WebFormRender = function (option) {
         //    right: 24,
         //    onClose: this.FRC.invalidBoxOnClose
         //});
-        this.initConnectionCheck();
 
         //window.onbeforeunload = function (m, e) {
         //    if (this.Mode.isEdit) {

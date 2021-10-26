@@ -365,12 +365,12 @@ namespace ExpressBase.Web.Controllers
             {
                 request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = true;
-                if (request.DataVizObjString != null)
-                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
-                if (request.CurrentRowGroup != null)
-                    (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
-                request.DataVizObjString = null;
-                request.UserInfo = this.LoggedInUser;
+                //if (request.DataVizObjString != null)
+                //    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+                //if (request.CurrentRowGroup != null)
+                //    (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
+                //request.DataVizObjString = null;
+                //request.UserInfo = this.LoggedInUser;
                 if (request.TFilters != null)
                 {
                     foreach (TFilters para in request.TFilters)
@@ -509,9 +509,9 @@ namespace ExpressBase.Web.Controllers
             {
                 request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = false;
-                if (request.DataVizObjString != null)
-                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
-                request.DataVizObjString = null;
+                //if (request.DataVizObjString != null)
+                //    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+                //request.DataVizObjString = null;
                 request.UserInfo = this.LoggedInUser;
                 if (request.TFilters != null)
                 {

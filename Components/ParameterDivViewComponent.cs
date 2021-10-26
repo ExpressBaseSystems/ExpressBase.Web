@@ -48,7 +48,7 @@ namespace ExpressBase.Web.Components
                             _sol = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
                         if (_user == null)
                             _user = JsonConvert.DeserializeObject<User>(ViewBag.UserObject);
-                        ctrl.InitFromDataBase(this.ServiceClient, _user, _sol, ParentRefid);
+                        ctrl.InitFromDataBase(_user, _sol, ParentRefid);
                     }
                     else if (control is EbLocationSelector)
                     {
@@ -56,7 +56,7 @@ namespace ExpressBase.Web.Components
                     }
                 }
                 ViewBag.HtmlHead = FilterDialogObj.GetHead();
-                if(!noCtrlOps)
+                if (!noCtrlOps)
                     ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(FilterDialogObj as EbControlContainer, BuilderType.FilterDialog);
                 ViewBag.HtmlBody = FilterDialogObj.GetHtml();
 

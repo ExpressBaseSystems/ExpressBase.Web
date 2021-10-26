@@ -37,7 +37,7 @@ namespace ExpressBase.Web.Components
             //int timeStampInt = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
 
             //WebForm.SetContextId("ctx_" + timeStampInt);
-            
+
             WebForm.IsRenderMode = true;//this property must set before AfterRedisGet //userctrl using this prop
             WebForm.RefId = refid;
             WebForm.UserObj = ViewBag.__User;
@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Components
                 EbWebForm WebForm_L = WebForm;
                 //*******************************************************************
 
-                foreach(EbControl control in WebForm_L.Controls.FlattenAllEbControls().ToList().FindAll(e => e is EbDataGrid_New))// for old objects
+                foreach (EbControl control in WebForm_L.Controls.FlattenAllEbControls().ToList().FindAll(e => e is EbDataGrid_New))// for old objects
                 {
                     (control as EbDataGrid_New).ProcessDvColumnCollection();
                 }
@@ -86,7 +86,7 @@ namespace ExpressBase.Web.Components
                     }
                     else if (control is EbUserLocation)
                     {
-                        (control as EbUserLocation).InitFromDataBase(this.ServiceClient, ViewBag.__User, ViewBag.__Solution, ViewBag.formRefId);
+                        (control as EbUserLocation).InitFromDataBase(ViewBag.__User, ViewBag.__Solution, ViewBag.formRefId);
                     }
                     else if ((control is EbRadioButton) && control.Name.Equals("eb_default"))
                     {
@@ -121,19 +121,19 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbInputGeoLocation).GetDefaultApikey(this.ServiceClient);
                     }
-					else if (control is EbTagInput)
-					{
-						(control as EbTagInput).InitFromDataBase(this.ServiceClient);
-					}
-					else if (control is EbQuestionnaireConfigurator)
-					{
-						(control as EbQuestionnaireConfigurator).InitFromDataBase(this.ServiceClient);
-					}
-                    else if(control is EbRenderQuestionsControl)
+                    else if (control is EbTagInput)
+                    {
+                        (control as EbTagInput).InitFromDataBase(this.ServiceClient);
+                    }
+                    else if (control is EbQuestionnaireConfigurator)
+                    {
+                        (control as EbQuestionnaireConfigurator).InitFromDataBase(this.ServiceClient);
+                    }
+                    else if (control is EbRenderQuestionsControl)
                     {
                         (control as EbRenderQuestionsControl).InitFromDataBase(this.ServiceClient);
                     }
-				}
+                }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();
                 ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(WebForm_L as EbControlContainer, BuilderType.WebForm);

@@ -366,7 +366,7 @@
     };
 
     this.getColumnsSuccess = function (e) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         if (this.Source === "EbDataTable") {
             this.Do4EbdataTable();
             this.Done4All();
@@ -610,12 +610,16 @@
 
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
-                $("#obj_icons .btn").prop("disabled", true);
-                $("#eb_common_loader").EbLoader("show");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", true);
+                    $("#eb_common_loader").EbLoader("show");
+                }
             }
             else {
-                $("#obj_icons .btn").prop("disabled", false);
-                $("#eb_common_loader").EbLoader("hide");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
+                }
                 $("[data-coltyp=date]").datepicker("hide");
             }
         }.bind(this));
@@ -632,7 +636,7 @@
                 $("#" + settings.sTableId + "_processing").text("Something went wrong..");
             else
                 EbPopBox("show", { Message: "Table View Error Occured....", Title: "Error" });
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
         }.bind(this);
 
         if (this.Source === "datagrid")
@@ -857,7 +861,7 @@
                             $("#" + this.tableId + "_processing").text("Timeout Expired..");
                         else
                             EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
-                        $("#eb_common_loader").EbLoader("hide");
+                        this.hideEbLoader();
                     }.bind(this)
                 };
             }
@@ -906,7 +910,8 @@
         if (dq.length === -1)
             dq.length = this.totalcount;
         this.RemoveColumnRef();
-        dq.DataVizObjString = JSON.stringify(this.EbObject);
+        if (!this.Refid)
+            dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;
@@ -1100,10 +1105,14 @@
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation") {
-                    if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
+                    let $sel = $(ctrl).find('select');
+                    let allsld = $sel.next('div').find('[value=multiselect-all').prop('checked');
+                    if (allsld && $sel.attr('isglobal') === 'y')
                         o.value = "Global";
+                    else if (allsld)
+                        o.value = "Selected all";
                     else
-                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join(",");
+                        o.value = $(ctrl).find('ul').find(".active:not(.multiselect-all)").text().trim().split(" ").join(",");
                 }
                 else
                     o.value = $($(ctrl).children()[1]).val();
@@ -1289,7 +1298,7 @@
         });
         $.each(this.EbObject.Columns.$values, function (i, col) {
             if (col.bVisible)
-                ftr_part += "<th data-col='"+col.name+"'></th>";
+                ftr_part += "<th data-col='" + col.name + "'></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
         });
@@ -1422,7 +1431,7 @@
             if (this.Source !== "Calendar" || this.EbObject.IsDataFromApi)
                 this.placeFilterInText();
 
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
             if (this.login === "uc") {
                 if (!this.EbObject.DisableCopy)
                     $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
@@ -2433,7 +2442,7 @@
         if (this.eb_agginfo.length > 0) {
             var footer_select_id = this.tableId + "_ftr_sel" + ps;
             let _ls = "<div class='input-group-btn dropup'>" +
-                "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='"+footer_select_id +"'>&sum;</button>" +
+                "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
                 " <ul class='dropdown-menu'>" +
                 "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
                 "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
@@ -2486,7 +2495,7 @@
             var api = this.Api;
             var tableId = this.tableId;
             let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_ftr_sel0').text().trim();
-            let opLF = $('.DTFC_LeftFootWrapper #' + tableId +  '_ftr_sel0').text().trim();
+            let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_ftr_sel0').text().trim();
             let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_ftr_sel0').text().trim();
             $.each(this.eb_agginfo, function (index, agginfo) {
                 if (agginfo.colname) {
@@ -4048,13 +4057,13 @@
 
                 var col = this.Api.column(agginfo.colname + ':name');
                 var summary_val = 0;
-                if (opScroll === '∑' ) {
+                if (opScroll === '∑') {
                     if (this.Source === "datagrid")
                         summary_val = col.data().sum().toFixed(agginfo.deci_val);
                     else
                         summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
                 }
-                if (opScroll === 'x̄' ) {
+                if (opScroll === 'x̄') {
                     if (this.Source === "datagrid")
                         summary_val = col.data().average().toFixed(agginfo.deci_val);
                     else
@@ -4227,7 +4236,7 @@
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
         this.linkDVColumn = $(e.target).closest("a").attr("data-column");
-        var idx = this.Api.row($(e.target).parents().closest("td")).index();
+        var idx = this.Api.row($(e.target).closest("tr")).index();
         if (typeof (idx) !== "undefined")
             this.rowData = this.unformatedData[idx];
         else {//incomplete...
@@ -4306,7 +4315,7 @@
     };
 
     this.drawInlinedv = function (rows, e, idx, colindex) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-caret-up").addClass("fa-caret-down");
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
@@ -4513,7 +4522,7 @@
         if (source === "Calendar")
             $("#tblpopup").EbLoader("hide");
         else
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
 
         this.Api.columns.adjust();
     };
@@ -4981,6 +4990,17 @@
 
         return gradient[val];
     };
+
+    this.showEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("show");
+    };
+
+    this.hideEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("hide");
+    };
+
     if (this.Source === "EbDataTable" || this.Source === "PivotTable")
         this.start4EbDataTable();
     else

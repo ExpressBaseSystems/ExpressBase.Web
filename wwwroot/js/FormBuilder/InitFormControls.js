@@ -455,38 +455,45 @@
             includeSelectAllOption: true
         });
 
-        $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
-
-        if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-            $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        if (ebcontext.user.wc === "uc") {
+            if (ctrl.LoadCurrentLocation)
+                $('#' + ctrl.EbSid_CtxId).val([ebcontext.locations.getCurrent()]).multiselect('refresh');
         }
-        else {
-            $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
-            if (ebcontext.user.wc === "dc")
-                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-            else if (ebcontext.user.wc === "uc") {
-                if (ctrl.LoadCurrentLocation)
-                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.getCurrent() + ']').trigger('click');
-                else
-                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-            }
-        }
+        else if (ebcontext.user.wc === "dc")
+            ctrl.setValue('-1');
 
         ctrl.DataVals.Value = ctrl.getValueFromDOM();
+
+        //$("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
+        //ebcontext.locations.getCurrent();
+        //if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+        //    $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        //}
+        //else {
+        //    $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
+        //    if (ebcontext.user.wc === "dc")
+        //        $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+        //    else if (ebcontext.user.wc === "uc") {
+        //        if (ctrl.LoadCurrentLocation)
+        //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.getCurrent() + ']').trigger('click');
+        //        else
+        //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+        //    }
+        //}
     };
 
-    this.UserLocationCheckboxChanged = function (ctrl) {
-        if ($(event.target).prop("checked")) {
-            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
-            $('#' + ctrl.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
-        }
-        else {
-            $('#' + ctrl.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
-            if ($('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
-                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //this.UserLocationCheckboxChanged = function (ctrl) {
+    //    if ($(event.target).prop("checked")) {
+    //        $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //        $('#' + ctrl.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
+    //    }
+    //    else {
+    //        $('#' + ctrl.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
+    //        if ($('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
+    //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
 
-        }
-    };
+    //    }
+    //};
 
     this.LocationSelector = function (ctrl) {
         let $input = "#" + ctrl.EbSid_CtxId;

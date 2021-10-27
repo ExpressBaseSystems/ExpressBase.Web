@@ -1574,18 +1574,20 @@ const WebFormRender = function (option) {
             $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.getLocId = function () {
+    this.getLocId = function (strictMode = false) {
         let d = this.DataMODEL;
         let t = this.FormObj.TableName;
         let p = getFlatObjOfType(this.FormObj, "ProvisionLocation");
+        let loc = ebcontext.locations ? ebcontext.locations.getCurrent() : 0;
         if (this.rowId > 0) {//edit mode
             if (p && p.length > 0) {
                 if (p[0].getValue && p[0].getValue() > 0)
                     return p[0].getValue();
+                else if (!strictMode && d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+                    return d[t][0].LocId;
                 else {
                     console.error('Invalid Prov location value');
-                    //return 0;
-                    return ebcontext.locations.getCurrent();
+                    return strictMode ? 0 : loc;
                 }
             }
             else {
@@ -1593,19 +1595,16 @@ const WebFormRender = function (option) {
                     return d[t][0].LocId;
                 else {
                     console.error('Invalid location id');
-                    //return 0;
-                    return ebcontext.locations.getCurrent();
+                    return strictMode ? 0 : loc;
                 }
             }
         }
         else {//new mode
-            if (p && p.length > 0) {
-                //return 0;
-                return ebcontext.locations.getCurrent();
-            }
-            else {
-                return ebcontext.locations.getCurrent();
-            }
+            if (p && p.length > 0 && strictMode)
+                return 0;
+            if (this.mode === 'Export Mode' && d && t && d[t] && d[t].length > 0 && d[t][0].LocId > 0)
+                return d[t][0].LocId;
+            return loc;
         }
         //if (this.rowId > 0 && p && p.length > 0 && p[0].getValue && p[0].getValue() > 0)
         //    return p[0].getValue();
@@ -1935,6 +1934,8 @@ const WebFormRender = function (option) {
                 r.push(this.hBtns['Edit']);
         }
         else {
+            if (!this.formPermissions[loc])
+                return r;
             let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11 };
             for (let i = 0; i < btns.length; i++) {
                 if (btns[i] === this.hBtns['SaveSel'] && this.formPermissions[loc].includes(op.New) && (mode === 'New Mode'))
@@ -1958,6 +1959,8 @@ const WebFormRender = function (option) {
 
     this.checkPermission = function (opStr) {
         let loc = this.getLocId();
+        if (!this.formPermissions[loc])
+            return false;
         let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11 };
         if (opStr === 'DraftSave')
             return this.formPermissions[loc].includes(op['New']) && this.FormObj.CanSaveAsDraft && this.Mode.isNew;
@@ -2028,9 +2031,9 @@ const WebFormRender = function (option) {
     this.initSaveMenu = function () {
         let $sel = $(`#${this.hBtns['SaveSel']} .selectpicker`);
         let loc = this.getLocId();
-        if (this.formPermissions[loc].includes(0) && !this.FormObj.IsDisable)
+        if (this.formPermissions[loc] && this.formPermissions[loc].includes(0) && !this.FormObj.IsDisable)
             $sel.append(`<option data-token="new" data-title="Save and new">Save & New</option>`);
-        if (this.formPermissions[loc].includes(2) || (this.formPermissions[loc].includes(8) && this.formData.CreatedBy === this.userObject.UserId))
+        if (this.formPermissions[loc] && (this.formPermissions[loc].includes(2) || (this.formPermissions[loc].includes(8)) && this.formData.CreatedBy === this.userObject.UserId))
             $sel.append(`<option data-token="edit" data-title="Save and edit">Save & Continue</option>`);
         $sel.append(`<option data-token="view" data-title="Save and view">Save & View</option>`);
         $sel.append(`<option data-token="close" data-title="Save and close">Save & Close</option>`);

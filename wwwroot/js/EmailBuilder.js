@@ -211,19 +211,20 @@
     };
 
     this.columnsshadow = function (el, container, source) {
-            return true;
+        return true;
     };
 
     this.columnsdrop = function (el, target, source, sibling) {
         this.col = $(el);
         el.remove();
-        if (target == $(".note-editable")[0]) {
+        let tbl;
+        if (target === $(".note-editable")[0]) {
             $('#summernot_container' + tabNum + '.note-editable').focus();
             this.dropLoc = target;
             var id = "DataField" + this.ObjId++;
             var obj = new EbObjects["DsColumns"](id);
             this.pasteHtmlAtCaret(obj.$Control.outerHTML());
-            var tbl = $('#' + this.col.text()).data('mytbl');
+            tbl = $('#' + this.col.text()).data('mytbl');
             obj.Title = "{{" + tbl + this.col.text() + "}}";
             this.ObjCollect[id] = obj;
             this.RefreshControl(obj);
@@ -238,22 +239,22 @@
             this.placeCaretAtEnd(document.getElementById(id));
             $('#' + id).attr('contenteditable', 'false');
         }
-        else if (target == $(`#mail_to${tabNum}`)[0]) {
-            var tbl = $('#' + this.col.text()).data('mytbl');
+        else if (target === $(`#mail_to${tabNum}`)[0]) {
+            tbl = $('#' + this.col.text()).data('mytbl');
             let Title = "{{" + tbl + this.col.text() + "}}";
-            $(`#mail_to${tabNum}`).val(Title)
-        } else if (target == $(`#cc_to${tabNum}`)[0]) {
-            var tbl = $('#' + this.col.text()).data('mytbl');
+            $(`#mail_to${tabNum}`).val(Title);
+        } else if (target === $(`#cc_to${tabNum}`)[0]) {
+            tbl = $('#' + this.col.text()).data('mytbl');
             let Title = "{{" + tbl + this.col.text() + "}}";
-            $(`#cc_to${tabNum}`).val(Title)
-        } else if (target == $(`#bcc_to${tabNum}`)[0]) {
-            var tbl = $('#' + this.col.text()).data('mytbl');
+            $(`#cc_to${tabNum}`).val(Title);
+        } else if (target === $(`#bcc_to${tabNum}`)[0]) {
+            tbl = $('#' + this.col.text()).data('mytbl');
             let Title = "{{" + tbl + this.col.text() + "}}";
-            $(`#bcc_to${tabNum}`).val(Title)
-        } else if (target == $(`#sub_to${tabNum}`)[0]) {
-            var tbl = $('#' + this.col.text()).data('mytbl');
-            let Title = "{{" + tbl + this.col.text() + "}}";
-            $(`#sub_to${tabNum}`).val(Title)
+            $(`#bcc_to${tabNum}`).val(Title);
+        } else if (target === $(`#sub_to${tabNum}`)[0]) {
+            tbl = $('#' + this.col.text()).data('mytbl');
+            let Title = $(`#sub_to${tabNum}`).val() + " " + "{{" + tbl + this.col.text() + "}}";
+            $(`#sub_to${tabNum}`).val(Title);
         }
     }
 

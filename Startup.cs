@@ -77,7 +77,7 @@ namespace ExpressBase.Web2
 
 			services.Configure<FormOptions>(options =>
 			{
-				options.ValueCountLimit = 200; // 200 items max
+				options.ValueCountLimit = 512; // 512 items max
 				options.ValueLengthLimit = 1024 * 1024 * 100; // 100MB max len form data
 			});
 

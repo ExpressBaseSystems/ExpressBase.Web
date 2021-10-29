@@ -2,6 +2,7 @@
 @using ExpressBase.Common.LocationNSolution;
 @using Newtonsoft.Json;
 @using ExpressBase.Security;
+@using ExpressBase.Common.Helpers;
 @{
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
 
@@ -41,7 +42,7 @@
                 @{
                     if (ViewBag.wc == "tc")
                     {
-                        <img src="~/images/EB_Logo.png" class="solution_logo" />
+                        <img src="@UrlHelper.GetSmallLogoPath(ViewBag.BrowserURLContext)" class="solution_logo" />
                     }
                     else
                     {
@@ -63,10 +64,10 @@
                             <span style="margin-left:5px;" class="fa fa-caret-down"></span>
                         </div>
                     </div>
-                    <div class="LocInfCr" id="switch_finyear" title="Switch Financial Year" style="display:none;">                        
+                    <div class="LocInfCr" id="switch_finyear" title="Switch Financial Year" style="display:none;">
                         <div>
                             <span>
-                                <i class="fa fa-usd"  style="font-size: 12px;"></i>                                
+                                <i class="fa fa-usd" style="font-size: 12px;"></i>
                                 <i class="fa fa-calendar-check-o" style="font-size: 20px;"></i>
                             </span>
                             <span style="margin-left:5px;" class="fa fa-caret-down"></span>
@@ -101,7 +102,8 @@
                 <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
             </div>
         </div>
-        @if (ViewBag.UId > 1 || ViewBag.cide == "demo") { 
+        @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+        {
             <div class="toolbar-buttons-Container comon_header_dy pd-0">
                 <div class='toolicons form-inline'>
                     <div id="obj_icons" style="display:inline"></div>

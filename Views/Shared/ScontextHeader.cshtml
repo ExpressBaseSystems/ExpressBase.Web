@@ -1,10 +1,10 @@
-﻿
+﻿@using ExpressBase.Common.Helpers;
 <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12" style="position:fixed;border-bottom: 1px solid #e7e7e7;">
     <div class="container toolbar objectDashB-toolbar">
         <div class="row">
             <div class="col-md-5 pd-0">
                 <a class="solution_logo_cont pull-left" href="/">
-                    <img src="~/images/EB_Logo.png" class="solution_logo" />
+                    <img src="@UrlHelper.GetSmallLogoPath(ViewBag.BrowserURLContext)" class="solution_logo" />
                 </a>
                 <div class="brd_cr_t EbHeadTitle">
                 </div>

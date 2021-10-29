@@ -1,4 +1,5 @@
 ﻿@using ExpressBase.Common.Structures;
+@using ExpressBase.Common.Helpers;
 @{
     string mrl = "0px";
 }
@@ -166,7 +167,7 @@
                 }*@
             </div>
             <small class="powered-by-exp">
-                <img height="30" src="~/images/EB_Logo-png.png" />
+                <img height="30" src="@UrlHelper.GetLogoPath(ViewBag.BrowserURLContext)" />
             </small>
         </div>
     </div>

@@ -169,6 +169,12 @@ const EbPowerSelect = function (ctrl, options) {
                 });
             }
 
+            if (this.ComboObj.RefreshDpndcy && this.renderer.rendererName === 'WebForm') {
+                $(`#${this.ComboObj.EbSid_CtxId}_rfshbtn`).off('click').on('click', function () {
+                    this.renderer.FRC.ctrlChangeListener_in(this.ComboObj);
+                }.bind(this));
+            }
+
             //set id for searchBox
             $('#' + this.name + 'Container  [type=search]').each(this.srchBoxIdSetter.bind(this));
 

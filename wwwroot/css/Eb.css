@@ -393,8 +393,8 @@
         opacity: 1;
     }
 
-.ps-addbtn {
-    width: 32px !important;
+.ps-addbtn, .ps-rfshbtn {
+    width: 25px !important;
     z-index: 1;
     position: absolute;
     background: transparent;
@@ -403,9 +403,14 @@
     right: 0;
     font-size: 14px;
     height: 100%;
+    cursor: pointer;
 }
 
-    .ps-addbtn > .fa {
+    .ps-addbtn:hover, .ps-rfshbtn:hover {
+        color: #0000ff;
+    }
+
+    .ps-addbtn > .fa, .ps-rfshbtn > .fa {
         margin: auto;
     }
 

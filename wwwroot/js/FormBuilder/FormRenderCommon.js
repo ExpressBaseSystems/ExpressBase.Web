@@ -1346,6 +1346,13 @@
         this.ctrlChangeListener_inner0(DepHandleObj);
     };
 
+    this.ctrlChangeListener_in = function (Obj) {
+        if (Obj.ObjType === 'PowerSelect' && Obj.RefreshDpndcy) {
+            let DepHandleObj = this.GetDepHandleObj(Obj);
+            this.ctrlChangeListener_inner0(DepHandleObj);
+        }
+    }; 
+
     this.isPsImportFlow = function (ctrl) {
         let b = !1;
         if (ctrl.ObjType === 'PowerSelect' && (ctrl.DataImportId || (ctrl.IsImportFromApi && ctrl.ImportApiUrl)) && this.FO.Mode.isNew) {

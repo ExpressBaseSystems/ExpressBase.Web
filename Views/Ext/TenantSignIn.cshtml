@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ExpressBase.Common.Helpers;
+@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
     string home = string.Empty;
     string sociallink = string.Empty;
@@ -31,6 +32,7 @@
             transition: all 0.3s ease !important;
             left: 4px !important;
         }
+
             .grecaptcha-badge:hover {
                 width: 256px !important;
             }
@@ -43,27 +45,27 @@
 <!-- Load Facebook SDK for JavaScript -->
 @*<div id="fb-root"></div>*@
 @*<script>
-    window.fbAsyncInit = function () {
-        FB.init({
-            xfbml: true,
-            version: 'v4.0'
-        });
-    };
+        window.fbAsyncInit = function () {
+            FB.init({
+                xfbml: true,
+                version: 'v4.0'
+            });
+        };
 
-    (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12"
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-</script>*@
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12"
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>*@
 
 <!-- Your customer chat code -->
 @*<div class="fb-customerchat"
-     attribution=setup_tool
-     page_id="1616632595309068">
-</div>*@
+         attribution=setup_tool
+         page_id="1616632595309068">
+    </div>*@
 
 <script>
     //load the JavaScript SDK
@@ -161,7 +163,7 @@
     <div class="header hidden-xs">
         <div class="container-fluid">
             <div class="callFrAction" style="display: flex;align-items: center;">
-                <a href="@home"><img src="~/images/EB_Logo.png" class="log-eblogo" /></a>
+                <a href="@home"><img src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" class="log-eblogo" /></a>
                 <spn style="margin-left: auto;font-size: 13px;">
                     New to EXPRESSbase?
                 </spn>
@@ -210,7 +212,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="continue_with" value="@ViewBag.ContinueWith" />
-                        @if ((ViewBag.Env == "Production")||(ViewBag.Env == "Development"))
+                        @if ((ViewBag.Env == "Production") || (ViewBag.Env == "Development"))
                         {
                             <div class="g-recaptcha"
                                  data-sitekey="@ViewBag.ReCaptchaKey"

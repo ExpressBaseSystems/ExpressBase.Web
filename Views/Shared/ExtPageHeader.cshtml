@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ExpressBase.Common.Helpers;
+@{
     string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
     if (ViewBag.Env == "Development")
     {
@@ -28,7 +29,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="@home"><img class="img-responsive" src="~/images/EB_Logo.png"></a>
+                <a class="navbar-brand" href="@home"><img class="img-responsive" src="@UrlHelper.GetSmallLogoPath(ViewBag.BrowserURLContext)"></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -72,7 +73,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                     <a href="@home/Products/Documents" class="drop-link">
+                                                    <a href="@home/Products/Documents" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/docs.png" class="attachment-full" alt="media-entertainment" width="16">
                                                         </span>

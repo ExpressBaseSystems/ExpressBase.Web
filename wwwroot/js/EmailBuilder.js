@@ -186,8 +186,9 @@
         containers.push(document.getElementById("email_body"));
         containers.push(document.getElementById(`mail_to${tabNum}`));
         containers.push(document.getElementById(`cc_to${tabNum}`));
-        containers.push(document.getElementById(`bcc_to${tabNum}`));
+        containers.push(document.getElementById(` {tabNum}`));
         containers.push(document.getElementById(`sub_to${tabNum}`));
+        containers.push(document.getElementById(`reply_to${tabNum}`));
         this.drake = dragula(containers, {
             copy: true,
             accepts: this.acceptfn,
@@ -243,15 +244,23 @@
             tbl = $('#' + this.col.text()).data('mytbl');
             let Title = "{{" + tbl + this.col.text() + "}}";
             $(`#mail_to${tabNum}`).val(Title);
-        } else if (target === $(`#cc_to${tabNum}`)[0]) {
+        }
+        else if (target === $(`#cc_to${tabNum}`)[0]) {
             tbl = $('#' + this.col.text()).data('mytbl');
             let Title = "{{" + tbl + this.col.text() + "}}";
             $(`#cc_to${tabNum}`).val(Title);
-        } else if (target === $(`#bcc_to${tabNum}`)[0]) {
+        }
+        else if (target === $(`#bcc_to${tabNum}`)[0]) {
             tbl = $('#' + this.col.text()).data('mytbl');
             let Title = "{{" + tbl + this.col.text() + "}}";
             $(`#bcc_to${tabNum}`).val(Title);
-        } else if (target === $(`#sub_to${tabNum}`)[0]) {
+        }
+        else if (target === $(`reply_to${tabNum}`)[0]) {
+            tbl = $('#' + this.col.text()).data('mytbl');
+            let Title = "{{" + tbl + this.col.text() + "}}";
+            $(`#reply_to${tabNum}`).val(Title);
+        }
+        else if (target === $(`#sub_to${tabNum}`)[0]) {
             tbl = $('#' + this.col.text()).data('mytbl');
             let Title = $(`#sub_to${tabNum}`).val() + " " + "{{" + tbl + this.col.text() + "}}";
             $(`#sub_to${tabNum}`).val(Title);
@@ -264,6 +273,7 @@
         this.EbObject.To = $("#mail_to" + tabNum).val();
         this.EbObject.Cc = $("#cc_to" + tabNum).val();
         this.EbObject.Bcc = $("#bcc_to" + tabNum).val();
+        this.EbObject.ReplyTo = $("#reply_to" + tabNum).val();
         this.EbObject.Subject = $("#sub_to" + tabNum).val();
         $('.note-editable').children().find('span').each(function (i, obj) {
             var text = $(obj).text();

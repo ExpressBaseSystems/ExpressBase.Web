@@ -1,11 +1,13 @@
 ﻿@{
     @using ExpressBase.Common;
-    var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
-    var body = (dsObj != null) ? dsObj.Body : String.Empty;
-    var to = (dsObj != null) ? dsObj.To : String.Empty;
-    var sub = (dsObj != null) ? dsObj.Subject : String.Empty;
-    var cc = (dsObj != null) ? dsObj.Cc : String.Empty;
-    var bcc = (dsObj != null) ? dsObj.Bcc : String.Empty;
+    @using ExpressBase.Objects;
+    EbEmailTemplate dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
+    String body = (dsObj != null) ? dsObj.Body : String.Empty;
+    String to = (dsObj != null) ? dsObj.To : String.Empty;
+    String sub = (dsObj != null) ? dsObj.Subject : String.Empty;
+    String cc = (dsObj != null) ? dsObj.Cc : String.Empty;
+    String bcc = (dsObj != null) ? dsObj.Bcc : String.Empty;
+    String replyto = (dsObj != null) ? dsObj.ReplyTo : String.Empty;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -92,6 +94,12 @@
                     <label class="btn btn-default to" type="submit">Bcc</label>
                 </div>
                 <input id="bcc_to@(ViewBag.tabnum)" class="form-control" value="@bcc" />
+            </div>
+            <div class="input-group ">
+                <div class="input-group-btn">
+                    <label class="btn btn-default to" type="submit">Reply-To</label>
+                </div>
+                <input id="reply_to@(ViewBag.tabnum)" class="form-control" value="@replyto" />
             </div>
             <div class="input-group ">
                 <div class="input-group-btn">

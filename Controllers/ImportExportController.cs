@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections;
+using System.Web;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Common.Constants;
@@ -21,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
+using System.IO.Compression;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -122,6 +125,55 @@ namespace ExpressBase.Web.Controllers
             ShareToPublicResponse resp = ServiceClient.Post(new ShareToPublicRequest { Store = store });
             return RedirectToAction("AppStore");
         }
+
+        public FileContentResult DownloadPackageJson(int id)
+        {
+            GetOneFromAppstoreResponse packageresponse = ServiceClient.Get(new GetOneFromAppStoreRequest
+            {
+                Id = id,
+            });
+            string packageJson = EbSerializers.Json_Serialize4AppWraper(packageresponse.Package);
+            Byte[] bytea = Encoding.ASCII.GetBytes(packageJson);
+            string filename = (packageresponse.Title == "") ? packageresponse.Package.Name : packageresponse.Title;
+            return File(bytea, "application/json", filename + ".json");
+        }
+
+        [HttpPost("UploadFiles")]
+        public string UploadPackageJson(List<IFormFile> file)
+        {
+            string message="no response";
+            try
+            {
+                StringBuilder result = new StringBuilder();
+                using (StreamReader reader = new StreamReader(file[0]?.OpenReadStream()))
+                {
+                    while (reader.Peek() >= 0)
+                        result.AppendLine(reader.ReadLine());
+                }
+                ExportPackage package = EbSerializers.Json_Deserialize<ExportPackage>(result.ToString());
+                if (package != null)
+                {
+                    ImportApplicationResponse res = ServiceClient.Post<ImportApplicationResponse>(new ImportApplicationMqRequest
+                    {
+                        IsDemoApp = false,
+                        SelectedSolutionId = ViewBag.cid,
+                        Package = package,
+                        UserId = this.ViewBag.uid,
+                        UserAuthId = ViewBag.UAuthId,
+                        WhichConsole = ViewBag.wc
+                    });
+                    message = "Success";
+                }
+            }
+
+            catch (Exception e)
+            {
+                message = "Something went wrong";
+            }
+            return message;
+        }
+
+
 
         public IActionResult Export(ExportPackageCollection App)
         {

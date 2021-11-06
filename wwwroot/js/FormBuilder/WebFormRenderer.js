@@ -626,7 +626,6 @@ const WebFormRender = function (option) {
             }
             ebcontext.webform.UpdateInterCxtObj(this.__MultiRenderCxt);
             this.renderInAfterSaveMode(respObj);
-            this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         }
         else {
             //EbDialog("show", {
@@ -660,7 +659,13 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.renderInAfterSaveMode = function (respObj) {
-        let mode_s = this.curAfterSavemodeS.charAt(0).toUpperCase() + this.curAfterSavemodeS.slice(1) + " Mode"
+        if (!this.afterSavemodeS) {
+            if (this.rowId > 0)
+                this.afterSavemodeS = 'view';
+            else
+                this.afterSavemodeS = this.defaultAfterSavemodeS;
+        }
+        let mode_s = this.afterSavemodeS.charAt(0).toUpperCase() + this.afterSavemodeS.slice(1) + " Mode"
         if (mode_s === "Edit Mode" || mode_s === "View Mode") {
             this.FORCE_RELOAD(respObj.RowId, respObj.FormData, mode_s);
         }
@@ -1621,6 +1626,7 @@ const WebFormRender = function (option) {
         return ebcontext.locations.CurrentLocObj;//
     };
 
+    //key event listener
     this.windowKeyDown = function (event) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {// ctrl+S -> save
@@ -1645,7 +1651,7 @@ const WebFormRender = function (option) {
                         let prOps = $(`#${this.hBtns['SaveSel']} .selectpicker`).find("option[data-ref]");
                         if (prOps.length > 0) {
                             this.saveForm();
-                            this.curAfterSavemodeS = $(prOps[0]).attr("data-token");
+                            this.afterSavemodeS = $(prOps[0]).attr("data-token");
                             this.AfterSavePrintDoc = $(prOps[0]).attr("data-ref");
                         }
                     }
@@ -1995,7 +2001,7 @@ const WebFormRender = function (option) {
         }
         else {
             this.saveForm();
-            this.curAfterSavemodeS = selOpt.attr("data-token");
+            this.afterSavemodeS = selOpt.attr("data-token");
             this.AfterSavePrintDoc = selOpt.attr("data-ref");
         }
     }.bind(this);
@@ -2016,12 +2022,12 @@ const WebFormRender = function (option) {
 
     this.printDocument = function () {
         let rptRefid = $(`#${this.hBtns['PrintSel']} .selectpicker`).find("option:selected").attr("data-token");
-        this.printDocument_inner(rptRefid, this.rowId);;
+        this.printDocument_inner(rptRefid, this.rowId);
     };
 
     this.printDocument_inner = function (rptRefid, rowId) {
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowId);
-        if (this.curAfterSavemodeS === 'close')
+        if (this.defaultAfterSavemodeS === 'close')
             setTimeout(function () { ebcontext.webform.showLoader(); }, 100);
         else
             ebcontext.webform.showLoader();
@@ -2542,7 +2548,7 @@ const WebFormRender = function (option) {
         });
         this.isInitiallyPopulating = true;
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums_w.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
-        this.curAfterSavemodeS = this.defaultAfterSavemodeS;
+        this.afterSavemodeS = null;
         this.initWebFormCtrls();
         this.initPrintMenu();
         this.initSaveMenu();

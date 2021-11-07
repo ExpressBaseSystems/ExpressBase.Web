@@ -1565,67 +1565,142 @@ const EbPowerSelect = function (ctrl, options) {
         let $ctrl = $('#' + this.name + 'Container');
         if ($ctrl.length === 0)
             return;
-        //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
-        let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
-        let $form_div = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
-        let $scrollBody = this.$DDdiv.find('.dataTables_scrollBody');
-        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
+        let $FORMdiv = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
 
-        let ctrlContOffset = $ctrlCont.offset();
-        let ctrlHeight = $ctrlCont.outerHeight();
-        let ctrlWidth = $ctrl.width();
-        let ctrlBottom = ctrlHeight + ctrlContOffset.top;
-        let formScrollTop = $form_div.scrollTop();
-        let formTopOffset = $form_div.offset().top;
-        let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
+        let $ctrlCont = $(`#${this.ComboObj.EbSid_CtxId}Wraper`);
+        let showHeader = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;
+        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 300 : this.ComboObj.DropdownHeight) + (showHeader ? 100 : 25);
 
-        let LEFT = $ctrl.offset().left - $form_div.offset().left;
-        let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
-        let windowWidth = $(window).width();
-        let windowHeight = $(window).height();
+        //Control related
+        let curLeftw = $ctrlCont.offset().left;
+        let curTopw = $ctrlCont.offset().top;
+        let cWidth = $ctrlCont.width();
+        let cHeight = $ctrlCont.outerHeight();
 
-        let topDist = ctrlContOffset.top - formTopOffset;
-        let bottomDist = windowHeight - ctrlBottom;
+        //Form container related
+        let formLeftw = $FORMdiv.offset().left;
+        let formTopw = $FORMdiv.offset().top;
+        let fWidth = $FORMdiv[0].scrollWidth;
+        let fHeight = $FORMdiv[0].scrollHeight;
+        let scrollLeft = $FORMdiv[0].scrollLeft;
+        let scrollTop = $FORMdiv[0].scrollTop;
 
-        if (WIDTH > windowWidth) {
-            WIDTH = windowWidth - 20;
-            LEFT = 10;
+        //window related
+        let winWidth = $(window).width();
+        let winHeight = $(window).height();
+
+        //Estimated
+        let _TOP = 0, _LEFT = 0;
+        let HEIGHT = DD_height;
+        let WIDTH = this.ComboObj.DropdownWidth === 0 ? cWidth : (this.ComboObj.DropdownWidth / 100) * cWidth;
+
+        let DOWNflow = true;
+
+        //check where is more space (up or down)
+        let topSpace = curTopw - formTopw + scrollTop;
+        //let bottomSpace =  formTopw + fHeight - curTopw + scrollTop - cHeight;
+        let bottomSpace = fHeight - topSpace - cHeight;
+        if (DD_height < bottomSpace) {
+            DOWNflow = true;
+            _TOP = curTopw + cHeight + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = DD_height;
         }
-        else if ((WIDTH + LEFT) > windowWidth)
-            LEFT = ($ctrl.offset().left + ctrlWidth) - WIDTH;
-        else if (LEFT < 10)
-            LEFT = 10;
-
-
-        if (ctrlBottom + DD_height > windowHeight && topDist < DD_height && topDist > bottomDist) {
-            this.$DDdiv.addClass("dd-ctrl-top");
-            let pageHeight = $form_div.outerHeight() + formTopOffset,
-                cotrolTop = $ctrl.offset().top + formScrollTop,
-                BOTTOM = (pageHeight - cotrolTop) + 1;
-            this.$DDdiv.css("top", "unset").css("bottom", BOTTOM);
-            if (topDist < DD_height) {
-                this.$DDdiv.css("height", topDist + 'px').css("top", formScrollTop + 'px').css("bottom", "unset");
-                if ($scrollBody.length === 0)
-                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(topDist - 32); }.bind(this);
-                else
-                    $scrollBody.height(topDist - 32);
-            }
-
+        else if (DD_height > bottomSpace && DD_height < topSpace) {
+            DOWNflow = false;
+            _TOP = curTopw - DD_height + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = DD_height;
+        }
+        else if (bottomSpace > topSpace) {
+            DOWNflow = true;
+            _TOP = curTopw + cHeight + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = bottomSpace;
         }
         else {
-            this.$DDdiv.css("bottom", "unset").css("top", TOP).removeClass("dd-ctrl-top");
-
-            if (bottomDist < DD_height) {
-                this.$DDdiv.css("height", bottomDist + 'px');
-                if ($scrollBody.length === 0)
-                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(bottomDist - 32); }.bind(this);
-                else
-                    $scrollBody.height(bottomDist - 32);
-            }
+            DOWNflow = false;
+            _TOP = curTopw - topSpace + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = topSpace;
         }
 
-        this.$DDdiv.css("left", LEFT).width(WIDTH);
+        if (DOWNflow)
+            this.$DDdiv.css("box-shadow", "3px 8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222)");
+        else
+            this.$DDdiv.css("box-shadow", "3px -8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222)");
+
+        this.$DDdiv.css('top', 'unset').css('left', 'unset');
+        this.$DDdiv.css('height', HEIGHT + 'px').width(WIDTH);
+
+        this.$DDdiv.offset({ top: _TOP, left: _LEFT });
     };
+
+    //this.adjustDDposition_OLD = function () {
+    //    let $ctrl = $('#' + this.name + 'Container');
+    //    if ($ctrl.length === 0)
+    //        return;
+    //    //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+    //    let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
+    //    let $form_div = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
+    //    let $scrollBody = this.$DDdiv.find('.dataTables_scrollBody');
+    //    let DD_height = (this.ComboObj.DropdownHeight === 0 ? 300 : this.ComboObj.DropdownHeight) + 100;
+
+    //    let ctrlContOffset = $ctrlCont.offset();
+    //    let ctrlHeight = $ctrlCont.outerHeight();
+    //    let ctrlWidth = $ctrl.width();
+    //    let ctrlBottom = ctrlHeight + ctrlContOffset.top;
+    //    let formScrollTop = $form_div.scrollTop();
+    //    let formTopOffset = $form_div.offset().top;
+    //    let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
+
+    //    let LEFT = $ctrl.offset().left - $form_div.offset().left;
+    //    let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
+    //    let windowWidth = $(window).width();
+    //    let windowHeight = $(window).height();
+
+    //    let topDist = ctrlContOffset.top - formTopOffset;
+    //    let bottomDist = windowHeight - ctrlBottom;
+
+    //    if (WIDTH > windowWidth) {
+    //        WIDTH = windowWidth - 20;
+    //        LEFT = 10;
+    //    }
+    //    else if ((WIDTH + LEFT) > windowWidth)
+    //        LEFT = ($ctrl.offset().left + ctrlWidth) - WIDTH;
+    //    else if (LEFT < 10)
+    //        LEFT = 10;
+
+
+    //    if (ctrlBottom + DD_height > windowHeight && topDist < DD_height && topDist > bottomDist) {
+    //        this.$DDdiv.addClass("dd-ctrl-top");
+    //        let pageHeight = $form_div.outerHeight() + formTopOffset,
+    //            cotrolTop = $ctrl.offset().top + formScrollTop,
+    //            BOTTOM = (pageHeight - cotrolTop) + 1;
+    //        this.$DDdiv.css("top", "unset").css("bottom", BOTTOM);
+    //        if (topDist < DD_height) {
+    //            this.$DDdiv.css("height", topDist + 'px').css("top", formScrollTop + 'px').css("bottom", "unset");
+    //            if ($scrollBody.length === 0)
+    //                this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(topDist - 32); }.bind(this);
+    //            else
+    //                $scrollBody.height(topDist - 32);
+    //        }
+
+    //    }
+    //    else {
+    //        this.$DDdiv.css("bottom", "unset").css("top", TOP).removeClass("dd-ctrl-top");
+
+    //        if (bottomDist < DD_height) {
+    //            this.$DDdiv.css("height", bottomDist + 'px');
+    //            if ($scrollBody.length === 0)
+    //                this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(bottomDist - 32); }.bind(this);
+    //            else
+    //                $scrollBody.height(bottomDist - 32);
+    //        }
+    //    }
+
+    //    this.$DDdiv.css("left", LEFT).width(WIDTH);
+    //};
 
     this.appendDD2Body = function () {
         if (this.fromReloadWithParams)

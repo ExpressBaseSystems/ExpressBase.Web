@@ -456,7 +456,9 @@
         });
 
         if (ebcontext.user.wc === "uc") {
-            if (ctrl.LoadCurrentLocation)
+            if (ctrl.TryToLoadGlobal && $input.attr('isglobal') === 'y')
+                ctrl.setValue('-1');
+            else if (ctrl.LoadCurrentLocation)
                 $('#' + ctrl.EbSid_CtxId).val([ebcontext.locations.getCurrent()]).multiselect('refresh');
         }
         else if (ebcontext.user.wc === "dc")
@@ -1293,6 +1295,7 @@
         let locObj = this.Renderer.getLocObj();
         if (!locObj)
             return;
+        //if (ctrl.DataVals && !ctrl.DataVals.Value && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
         if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
             ctrl.DataVals.Value = locObj.LocId;
             ctrl.DataVals.F = locObj.ShortName;

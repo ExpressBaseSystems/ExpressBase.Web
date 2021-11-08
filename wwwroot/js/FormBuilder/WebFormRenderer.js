@@ -1677,6 +1677,11 @@ const WebFormRender = function (option) {
                     $(`#${this.hBtns['SaveSel']} .selectpicker`).selectpicker('toggle');
                 }
             }
+            else if (event.which === 82) {// alt+R - Grid add row
+                if ((this.Mode.isEdit || this.Mode.isNew) && this.preventCheck(event)) {
+                    this.AddRowToGrid();
+                }
+            }
         }
     }.bind(this);
 
@@ -1685,6 +1690,15 @@ const WebFormRender = function (option) {
         if ($('.loader_mask_EB .lds-spinner').length > 0)// quick fix
             return false;
         return true;
+    };
+
+    this.AddRowToGrid = function () {
+        $.each(this.DGBuilderObjs, function (key, val) {
+            if (val.$table.is(":visible")) {
+                document.activeElement.blur();
+                val.addRowBtn_click();
+            }
+        }.bind(this));
     };
 
     this.disableformEditbtn = function () {

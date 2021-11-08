@@ -1345,6 +1345,7 @@
         return (this.Mode.isEdit || this.Mode.isNew);
     };
 
+    //key event listener
     this.dg_rowKeydown = function (e) {
         let $e = $(e.target);
         let $tr = $(e.currentTarget);
@@ -1381,12 +1382,12 @@
                 $tr.find(".cancel-row").trigger("click");
         }
         //alt + enter
-        else if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
-            if (this.$table.has(document.activeElement).length === 1) {
-                document.activeElement.blur();
-                this.addRowBtn_click();
-            }
-        }
+        //else if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
+        //    if (this.$table.has(document.activeElement).length === 1) {
+        //        document.activeElement.blur();
+        //        this.addRowBtn_click();
+        //    }
+        //}
 
     }.bind(this);
 

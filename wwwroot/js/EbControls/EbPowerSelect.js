@@ -93,6 +93,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.datatable = null;
     this.clmAdjst = 0;
     this.onDataLoadCallBackFns = [];
+    this.getDataCounter = 0;
 
     this.scrollableContSelectors = options.scrollableContSelectors;
 
@@ -301,7 +302,8 @@ const EbPowerSelect = function (ctrl, options) {
             this.delayedSearchFN(e);
         }
         else {
-            debounce(this.delayedSearchFN.bind(this), 600)(e);
+            clearTimeout(this.timer1);
+            this.timer1 = setTimeout(this.delayedSearchFN.bind(this, e), 600);
         }
     };
 
@@ -554,13 +556,14 @@ const EbPowerSelect = function (ctrl, options) {
 
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
+        this.getDataCounter++;
         let params = this.ajaxData();
         let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect" : "../dv/getData4PowerSelect";
         $.ajax({
             url: url,
             type: 'POST',
             data: params,
-            success: this.getDataSuccess.bind(this),
+            success: this.getDataSuccess.bind(this, this.getDataCounter),
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
                 this.V_hideDD();
@@ -570,9 +573,10 @@ const EbPowerSelect = function (ctrl, options) {
         });
     };
 
-    this.getDataSuccess = function (result) {
+    this.getDataSuccess = function (getDataCntr, result) {
         if (result === undefined || result.data === null) {
-            this.hideLoader();
+            if (this.getDataCounter === getDataCntr)
+                this.hideLoader();
             this.V_hideDD();
             if (result === undefined)
                 console.warn("PS: getData4PowerSelect ajax call returned undefined");
@@ -610,7 +614,8 @@ const EbPowerSelect = function (ctrl, options) {
                 let value = this.unformattedData[0][VMidx];
                 this.setValues2PSFromData([value]);
                 this.filterArray.clear();
-                this.hideLoader();
+                if (this.getDataCounter === getDataCntr)
+                    this.hideLoader();
                 this.V_hideDD();
                 return;
             }
@@ -631,7 +636,8 @@ const EbPowerSelect = function (ctrl, options) {
 
             //this.focus1stRow();
         }
-        this.hideLoader();
+        if (this.getDataCounter === getDataCntr)
+            this.hideLoader();
     };
 
     this.isDMSearchEmpty = function () {
@@ -1567,9 +1573,9 @@ const EbPowerSelect = function (ctrl, options) {
             return;
         let $FORMdiv = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
 
-        let $ctrlCont = $(`#${this.ComboObj.EbSid_CtxId}Wraper`);
+        let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $(`#${this.ComboObj.EbSid_CtxId}Wraper`);
         let showHeader = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;
-        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 300 : this.ComboObj.DropdownHeight) + (showHeader ? 100 : 25);
+        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 300 : this.ComboObj.DropdownHeight) + (showHeader ? 100 : 32);
 
         //Control related
         let curLeftw = $ctrlCont.offset().left;
@@ -1629,11 +1635,13 @@ const EbPowerSelect = function (ctrl, options) {
             this.$DDdiv.css("box-shadow", "3px 8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222)");
         else
             this.$DDdiv.css("box-shadow", "3px -8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222)");
-
-        this.$DDdiv.css('top', 'unset').css('left', 'unset');
         this.$DDdiv.css('height', HEIGHT + 'px').width(WIDTH);
 
-        this.$DDdiv.offset({ top: _TOP, left: _LEFT });
+        let curoffset = this.$DDdiv.offset();
+        if (curoffset.top != _TOP && curoffset.left != _LEFT) {
+            this.$DDdiv.css('top', 'unset').css('left', 'unset');
+            this.$DDdiv.offset({ top: _TOP, left: _LEFT });
+        }
     };
 
     //this.adjustDDposition_OLD = function () {

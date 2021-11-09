@@ -120,7 +120,7 @@ const WebFormCollectionRender = function (Option) {
             let FormObj = JSON.parse(resp.WebFormObj);
             if (!FormObj.MakeEbSidUnique) {
                 console.error('MakeEbSidUnique must be true for popup form');
-                EbMessage("show", { Message: "Form rendering failed. Contact admin.", AutoHide: true, Background: '#aa0000' });
+                EbMessage("show", { Message: "Form rendering failed. Contact admin. [MakeEbSidUnique]", AutoHide: false, Background: '#aa0000' });
                 return;
             }
             _obj = {

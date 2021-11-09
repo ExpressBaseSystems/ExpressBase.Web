@@ -94,6 +94,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.clmAdjst = 0;
     this.onDataLoadCallBackFns = [];
     this.getDataCounter = 0;
+    this.initAt = performance.now();
 
     this.scrollableContSelectors = options.scrollableContSelectors;
 
@@ -499,22 +500,20 @@ const EbPowerSelect = function (ctrl, options) {
         //    alert(e.which);
         if (e.which === 13 && search)
             this.Vobj.showDD();
-        if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
+        if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {//backspace || delete
             this.Vobj.valueMembers.pop();
             $.each(this.dmNames, this.popDmValues.bind(this));
         }
-        if (e.which === 40) {
-            if (search) {
-                this.Vobj.showDD();
-                this.focus1stRow();
-            }
+        if (e.which === 40) {//down arrow
+            this.Vobj.showDD();
+            this.focus1stRow();
         }
-        if (e.which === 32) {
+        if (e.which === 32) {//space
             if (this.Vobj.DDstate)
                 return;
             this.Vobj.showDD();
         }
-        if (e.which === 27)
+        if (e.which === 27)//escape
             this.Vobj.hideDD();
     };
 
@@ -1266,6 +1265,9 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.V_showDD = function (e) {
         if (this.Vobj.DDstate)
+            return;
+        let ts = performance.now();
+        if (ts - this.initAt < 600)
             return;
         let searchVal = this.getMaxLenVal();
         if (this.ComboObj.MinSearchLength > searchVal.length) {

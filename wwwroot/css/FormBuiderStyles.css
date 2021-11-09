@@ -624,7 +624,7 @@ eb-disable {
 }
 
 .ctrlstd[mode='view'] .rowc {
-    color: gray;
+    color: #ddd;
     pointer-events: none;
 }
 

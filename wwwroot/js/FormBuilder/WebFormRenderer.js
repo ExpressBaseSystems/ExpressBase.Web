@@ -139,16 +139,13 @@ const WebFormRender = function (option) {
 
     this.ctxBuildFn = function (DG, $trigger, e) {
         let cxtMnuItems = {};
-
-        if (!DG.DisableRowDelete) {
-            cxtMnuItems["deleteRow"] = {
-                name: "Delete row",
-                icon: "fa-trash",
-                callback: this.del
-            };
-        }
-
         if (DG.IsAddable) {
+            cxtMnuItems["duplicateRow"] = {
+                name: "Duplicate row",
+                icon: "fa-files-o",
+                callback: this.duplicateRow,
+                //disabled: this.insertRowBelowDisableFn
+            };
             cxtMnuItems["insertRowAbove"] = {
                 name: "Insert row above",
                 icon: "fa-angle-up",
@@ -161,7 +158,13 @@ const WebFormRender = function (option) {
                 //disabled: this.insertRowBelowDisableFn
             };
         }
-
+        if (!DG.DisableRowDelete) {
+            cxtMnuItems["deleteRow"] = {
+                name: "Delete row",
+                icon: "fa-trash",
+                callback: this.del
+            };
+        }
         return { items: cxtMnuItems };
     }.bind(this);
 
@@ -205,6 +208,37 @@ const WebFormRender = function (option) {
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");
         $tr.find(".del-row").trigger("click");
+    }.bind(this);
+
+    this.duplicateRow = function (eType, selector, action, originalEvent) {
+        try {
+            let $e = selector.$trigger;
+            let $tr = $e.closest("tr");
+            let clickedDGEbSid_CtxId = $tr.closest("[ctype=DataGrid]").attr("ebsid");
+            let clickedDGB = this.DGBuilderObjs[clickedDGEbSid_CtxId];
+
+            let $activeRow = $(`#${clickedDGB.TableId} tbody tr[is-editing="true"]`);
+            if ($activeRow.length === 1) {
+                if (clickedDGB.RowRequired_valid_Check($activeRow.attr("rowid")))
+                    clickedDGB.confirmRow();
+                else
+                    return;
+            }
+            let rowId = $tr.attr("rowid");
+            let rowDataModel = getObjByval(clickedDGB.DataMODEL, "RowId", rowId);
+            let _rowdata = {};
+            for (let i = 0; i < rowDataModel.Columns.length; i++)
+                _rowdata[rowDataModel.Columns[i].Name] = rowDataModel.Columns[i].Value;
+            document.activeElement.blur();
+            clickedDGB.AddRowWithData(_rowdata);
+            if (clickedDGB.ctrl.AscendingOrder)
+                clickedDGB.$DGbody.scrollTo(clickedDGB.$DGbody[0].scrollHeight);
+            else
+                clickedDGB.$DGbody.scrollTo(0);
+        }
+        catch (e) {
+            console.error(e);
+        }
     }.bind(this);
 
     this.initNCs = function () {
@@ -1697,6 +1731,7 @@ const WebFormRender = function (option) {
             if (val.$table.is(":visible")) {
                 document.activeElement.blur();
                 val.addRowBtn_click();
+                return false;
             }
         }.bind(this));
     };

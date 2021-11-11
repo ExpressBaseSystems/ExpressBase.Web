@@ -1572,27 +1572,27 @@
         //    }
         //});
 
-        {// temp for hairo craft
-            $input.blur(function () {
-                var val = $input.val();
-                let decLen = 2;
+        //{// temp for hairo craft
+        //    $input.blur(function () {
+        //        var val = $input.val();
+        //        let decLen = 2;
 
-                if (val.trim() === "") {
-                    $input.val("0.00");
-                }
-                else if (!val.trim().includes(".")) {
-                    let newVal = val + ".00";
-                    $input.val(newVal);
-                }
-                else {
-                    let p1 = val.split(".")[0];
-                    let p2 = val.split(".")[1];
-                    zerolen = decLen - p2.length;
-                    let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
-                    $input.val(newVal);
-                }
-            });
-        }
+        //        if (val.trim() === "") {
+        //            $input.val("0.00");
+        //        }
+        //        else if (!val.trim().includes(".")) {
+        //            let newVal = val + ".00";
+        //            $input.val(newVal);
+        //        }
+        //        else {
+        //            let p1 = val.split(".")[0];
+        //            let p2 = val.split(".")[1];
+        //            zerolen = decLen - p2.length;
+        //            let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
+        //            $input.val(newVal);
+        //        }
+        //    });
+        //}
         //$input.keypress(function (e) {
 
         //    var val = $input.val();

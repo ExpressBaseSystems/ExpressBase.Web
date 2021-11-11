@@ -474,8 +474,10 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
-                    throw new FormException("Refid and TriggerCtrl must be set");
+                if (_refid.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0120);
+                if (_triggerctrl.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0121);
                 GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
                 {
                     RefId = _refid,
@@ -490,9 +492,9 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
-                    Message = "Error in loading data...",
+                    Message = ex.Message,
                     Status = (int)HttpStatusCode.InternalServerError,
-                    MessageInt = ex.Message,
+                    MessageInt = "Exception in PSImportFormData",
                     StackTraceInt = ex.StackTrace
                 });
             }
@@ -503,8 +505,10 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
-                    throw new FormException("Refid and TriggerCtrl must be set");
+                if (_refid.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0122);
+                if (_triggerctrl.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0123);
                 GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
                 {
                     RefId = _refid,
@@ -520,9 +524,9 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
-                    Message = "Error in loading data...",
+                    Message = ex.Message,
                     Status = (int)HttpStatusCode.InternalServerError,
-                    MessageInt = ex.Message,
+                    MessageInt = "Exception in ImportFormData",
                     StackTraceInt = ex.StackTrace
                 });
             }
@@ -532,8 +536,13 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (_refid.IsNullOrEmpty() || _srcid.IsNullOrEmpty() || _target.Length == 0)
-                    throw new FormException("Refid, SrcId and Target must be set.");
+                if (_refid.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0124);
+                if (_srcid.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0125);
+                if (_target.Length == 0)
+                    throw new FormException(FormErrors.E0126);
+
                 GetDynamicGridDataResponse Resp = ServiceClient.Post<GetDynamicGridDataResponse>(new GetDynamicGridDataRequest { RefId = _refid, RowId = _rowid, SourceId = _srcid, Target = _target });
                 return Resp.FormDataWrap;
             }
@@ -542,9 +551,9 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception in GetDynamicGridData. Message: " + ex.Message);
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
-                    Message = "Error in loading data...",
+                    Message = ex.Message,
                     Status = (int)HttpStatusCode.InternalServerError,
-                    MessageInt = ex.Message,
+                    MessageInt = "Exception in GetDynamicGridData",
                     StackTraceInt = ex.StackTrace
                 });
             }
@@ -606,7 +615,7 @@ namespace ExpressBase.Web.Controllers
                 EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
                 bool neglectLocId = WebForm.IsLocIndependent;
                 if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
-                    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied to save this data entry!", MessageInt = "Access denied" });
+                    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = FormErrors.E0127, MessageInt = $"Access denied. Info: [{RefId}, {Operation}, {CurrentLoc}, {neglectLocId}]" });
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
                 InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
@@ -627,7 +636,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
-                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.InternalServerError, Message = FormErrors.E0128 + ex.Message, MessageInt = "Exception in InsertWebformData[web]", StackTraceInt = ex.StackTrace });
             }
         }
 

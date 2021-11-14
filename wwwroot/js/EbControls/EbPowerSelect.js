@@ -1639,11 +1639,13 @@ const EbPowerSelect = function (ctrl, options) {
             this.$DDdiv.css("box-shadow", "3px -8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222)");
         this.$DDdiv.css('height', HEIGHT + 'px').width(WIDTH);
 
-        let curoffset = this.$DDdiv.offset();
-        if (curoffset.top != _TOP && curoffset.left != _LEFT) {
-            this.$DDdiv.css('top', 'unset').css('left', 'unset');
-            this.$DDdiv.offset({ top: _TOP, left: _LEFT });
-        }
+        this.$DDdiv.css('top', _TOP + 'px').css('left', _LEFT + 'px');
+
+        //let curoffset = this.$DDdiv.offset();
+        //if ((curoffset.top != _TOP || _TOP === 0) && (curoffset.left != _LEFT || _LEFT === 0)) {
+        //this.$DDdiv.css('top', 'unset').css('left', 'unset');
+        //this.$DDdiv.offset({ top: _TOP, left: _LEFT });
+        //}
     };
 
     //this.adjustDDposition_OLD = function () {

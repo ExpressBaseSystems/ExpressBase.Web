@@ -606,13 +606,13 @@
     border: none !important;
     border-radius: 2px !important;
     padding: 2px 5px;
-    margin: 3px 0px 3px 3px !important;
+    margin: 3px !important;
     font-size: 13px;
     border-radius: 8px !important;
     padding-right: 19px !important;
     transition-duration: 0.2s;
     outline: none;
-    max-width: calc(100% - 13px);
+    max-width: calc(100% - 4px);
     cursor: default;
 }
 
@@ -622,7 +622,7 @@
 }
 
 .tdtxt [iblock] {
-    width: auto;
+    width: 100%;
     display: inline-flex;
 }
 
@@ -666,7 +666,7 @@
 [iblock] .selected-tag {
     /*padding: 0.1em .45em 0.15em 0.45em !important;*/
     /*padding: 5px 8px;*/
-    padding: 2px 8px;
+    padding: 4px 8px;
     padding-right: 8px !important;
 }
 

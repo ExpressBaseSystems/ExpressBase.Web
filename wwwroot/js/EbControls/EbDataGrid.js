@@ -303,9 +303,10 @@
         let rowId = inpCtrl.__rowid;
         let cellObj = inpCtrl.DataVals;
         let col = inpCtrl.__Col;
-        if (col.RenderAsSimpleSelect)
-            return this.getSSDispMembrs(cellObj, rowId, col);
-
+        if (col.RenderAsSimpleSelect) {
+            let v = this.getSSDispMembrs(cellObj, rowId, col)
+            return `<span style='padding: 8px 6px; display: flex;'>${v}</span>`;
+        }
         if (!cellObj.Value && cellObj.Value !== 0)
             return "";
 

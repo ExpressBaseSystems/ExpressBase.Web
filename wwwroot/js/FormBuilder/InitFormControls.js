@@ -458,8 +458,16 @@
         if (ebcontext.user.wc === "uc") {
             if (ctrl.TryToLoadGlobal && $input.attr('isglobal') === 'y')
                 ctrl.setValue('-1');
-            else if (ctrl.LoadCurrentLocation)
-                $('#' + ctrl.EbSid_CtxId).val([ebcontext.locations.getCurrent()]).multiselect('refresh');
+            else if (ctrl.LoadCurrentLocation) {
+                let curLoc = false;
+                if (ebcontext.locations.getCurrent)
+                    curLoc = ebcontext.locations.getCurrent();
+                else if (ebcontext.sid && ebcontext.user.UserId)
+                    curLoc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+
+                if (curLoc)
+                    $('#' + ctrl.EbSid_CtxId).val([curLoc]).multiselect('refresh');
+            }
         }
         else if (ebcontext.user.wc === "dc")
             ctrl.setValue('-1');

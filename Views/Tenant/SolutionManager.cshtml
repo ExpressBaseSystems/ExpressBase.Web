@@ -63,6 +63,7 @@
     .eb-sdash-longdivcontainer .toggle {
         width: 128px !important;
     }
+
     .left-sec {
         text-align: justify;
     }
@@ -130,6 +131,10 @@
                         General
                     </a>
                 </li>
+
+                <a class="btn-sm pull-right btn-warning" style="margin-right:1%;text-decoration:none;" href="../upgrade/@ViewBag.Connections.SolutionInfo.EsolutionId">
+                    <i class="fa fa-pencil" aria-hidden="true"></i> Edit Solution
+                </a>
             </ul>
             <div class="tab-content" style="margin-bottom:0px;">
                 <div class="tab-pane active" id="Integrations" role="tabpanel">
@@ -546,21 +551,21 @@
                 <div class="tab-pane" id="home" role="tabpanel">
                     <div class="eb-sdash-general-container flex-center">
                         @*<div class="eb-sdash-longdiv w-100" style="margin-bottom:20px;">
-                            <div class="eb-sdash-upgradecont">
-                                <div class="col-md-8">
-                                    <p>Change your solution info</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
-                                </div>
-                             </div>
-                        </div>*@
+                                <div class="eb-sdash-upgradecont">
+                                    <div class="col-md-8">
+                                        <p>Change your solution info</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
+                                    </div>
+                                 </div>
+                            </div>*@
 
                         @*logo*@
                         <div class="eb-sdash-longdiv col-md-12 col-sm-12" style="margin-bottom:20px;">
                             <div class="eb-sdash-longdivhead">
                                 <label>Solution Logo</label>
-                            </div> 
+                            </div>
                             <div class="eb-sdash-longdivcontainer col-md-12 col-sm-12">
                                 <div class="left-sec" style="display:flex;justify-content:center;min-width:25%;">
                                     <img src="~/images/your_company_logo.png" data-src=@Logourl class="Eb_Image" style="max-width:200px;align-self:center;" />
@@ -608,7 +613,7 @@
                                                 </div>
                                                 <div class="form-check form-check-inline">
                                                 </div>
-                                                <input id="otpsigninswitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" @*data-on="Otp sign-in On" data-off="Otp sign-in Off"*@>
+                                                <input id="otpsigninswitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle">
                                             }
                                             else
                                             {
@@ -694,10 +699,10 @@
                                     <div class="uname-advanced-sec">
                                         @*<label>Switch Versioning</label>*@
                                         @*<label class="switch">
-                                <input type="checkbox" id="VersioningSwitch" style="display:inline">
-                                <span class="slider round"></span>
-                            </label>
-                        <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>*@
+                                                    <input type="checkbox" id="VersioningSwitch" style="display:inline">
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>*@
                                         <input id="VersioningSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" @*data-on="Versioning On" data-off="Versioning Off"*@>
                                     </div>
                                 </div>
@@ -721,8 +726,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> 
-    
+                        </div>
+
                         @*Cleanup Solution*@
                         <div class="eb-sdash-longdiv col-md-12 col-sm-12">
                             <div class="eb-sdash-longdivhead">

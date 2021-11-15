@@ -428,10 +428,10 @@
         if (version !== undefined) {
             this.tabchangeFlag = true;
             var target = $(e.target).attr("href");
-            this.ObjWrapper = this.ObjCollection[target];
-            this.ver_Refid = this.ObjWrapper.Refid;
+            this.ObjWrapper = this.ObjCollection[target];           
             this.Current_obj = this.ObjWrapper.EbObject;
-            //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
+            if (this.ObjWrapper.EbObject.RefId)
+                this.ver_Refid = this.ObjWrapper.EbObject.RefId;
             this.UpdateCreateVersionDD();
             this.ObjWrapper.GenerateButtons();
             if (version.slice(-1) === 'w') {

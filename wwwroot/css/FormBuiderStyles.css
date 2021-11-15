@@ -322,11 +322,11 @@ body {
     position: absolute;
     top: 1px;
     /*width: 16.5px;*/
-    padding-top: 5px;
+    /*padding-top: 5px;*/
 }
 
 .del-row, .cancel-row {
-    left: 23.5px;
+    left: 20px;
     color: #f55d5d;
     /*border-radius: 0 50px 50px 0;*/
     direction: rtl;
@@ -358,10 +358,11 @@ body {
 
 .rowc {
     text-align: center;
-    padding-top: 3px;
+    /*padding-top: 3px;*/
     background-color: transparent;
     border: none;
-    width: calc(50% - 2px);
+    width: 50%;
+    min-height: 34px;
     height: 100%;
     flex-grow: 1;
 }
@@ -458,7 +459,7 @@ body {
 
 
 .dgtbl .row-no-td {
-    width: 34px;
+    width: 30px;
     text-align: center;
     padding: 0px !important;
 }
@@ -647,7 +648,8 @@ eb-disable {
         border: none !important;
         padding: 0 !important;
         border-right: dotted 1px rgb(200, 200, 220) !important;
-        height: 34px;
+        min-height: 34px;
+        margin: 1px 0;
         vertical-align: middle;
     }
 
@@ -1031,7 +1033,7 @@ eb-disable {
 }
 
 .dgtbl > tbody > tr td:last-child {
-    width: 50px;
+    width: 40px;
 }
 
 .dgtbl > tbody > tr[agg='true'] {
@@ -1057,7 +1059,7 @@ eb-disable {
 
 tr[agg='true'] [coltype='DGNumericColumn'] span {
     position: absolute;
-    top: -7px;
+    /*top: -7px;*/
     right: 0;
     /*border-top: solid 1px #585858;*/
 }
@@ -1453,7 +1455,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [coltype=DGPowerSelectColumn] {
     padding: 0;
-    width: calc(100% - 28px);
+    width: 100%;
+    /*width: calc(100% - 28px);*/
 }
 
 .ctrl-cover > .input-group > .nullable-check [type="checkbox"] {
@@ -2195,7 +2198,9 @@ input.locinp {
 }
 
     .Dg_footer > .dgtbl > tbody > .dgtr > td {
-        padding: 8px 6px !important;
+        padding: 6px !important;
+        height: 28px;
+        min-height: 28px;
     }
 
 .dgtbl > thead > tr > th:last-child {
@@ -2211,7 +2216,7 @@ input.locinp {
 
     .Dg_head .dgtbl > thead > tr > th:first-child {
         font-size: 11px;
-        width: 34px;
+        width: 30px;
         border-left: 0;
         padding: 0.5px;
         vertical-align: middle;

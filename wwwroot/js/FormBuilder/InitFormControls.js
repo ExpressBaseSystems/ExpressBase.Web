@@ -458,8 +458,16 @@
         if (ebcontext.user.wc === "uc") {
             if (ctrl.TryToLoadGlobal && $input.attr('isglobal') === 'y')
                 ctrl.setValue('-1');
-            else if (ctrl.LoadCurrentLocation)
-                $('#' + ctrl.EbSid_CtxId).val([ebcontext.locations.getCurrent()]).multiselect('refresh');
+            else if (ctrl.LoadCurrentLocation) {
+                let curLoc = false;
+                if (ebcontext.locations.getCurrent)
+                    curLoc = ebcontext.locations.getCurrent();
+                else if (ebcontext.sid && ebcontext.user.UserId)
+                    curLoc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+
+                if (curLoc)
+                    $('#' + ctrl.EbSid_CtxId).val([curLoc]).multiselect('refresh');
+            }
         }
         else if (ebcontext.user.wc === "dc")
             ctrl.setValue('-1');
@@ -1572,27 +1580,27 @@
         //    }
         //});
 
-        {// temp for hairo craft
-            $input.blur(function () {
-                var val = $input.val();
-                let decLen = 2;
+        //{// temp for hairo craft
+        //    $input.blur(function () {
+        //        var val = $input.val();
+        //        let decLen = 2;
 
-                if (val.trim() === "") {
-                    $input.val("0.00");
-                }
-                else if (!val.trim().includes(".")) {
-                    let newVal = val + ".00";
-                    $input.val(newVal);
-                }
-                else {
-                    let p1 = val.split(".")[0];
-                    let p2 = val.split(".")[1];
-                    zerolen = decLen - p2.length;
-                    let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
-                    $input.val(newVal);
-                }
-            });
-        }
+        //        if (val.trim() === "") {
+        //            $input.val("0.00");
+        //        }
+        //        else if (!val.trim().includes(".")) {
+        //            let newVal = val + ".00";
+        //            $input.val(newVal);
+        //        }
+        //        else {
+        //            let p1 = val.split(".")[0];
+        //            let p2 = val.split(".")[1];
+        //            zerolen = decLen - p2.length;
+        //            let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
+        //            $input.val(newVal);
+        //        }
+        //    });
+        //}
         //$input.keypress(function (e) {
 
         //    var val = $input.val();

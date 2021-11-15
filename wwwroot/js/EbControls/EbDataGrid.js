@@ -147,7 +147,7 @@
 
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@;' form-link='@form-link@'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@; display: inline-block;' form-link='@form-link@'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
                       <span>${this.getDispMembr(inpCtrl)}</span>
@@ -161,9 +161,9 @@
     };
 
     this.getTdHtml = function (inpCtrl, col, i) {
-        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}' form-link='@form-link@'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;' form-link='@form-link@'>
                     <div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
-                    <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
+                    <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>
                 </td>`
             .replace("@isReadonly@", col.IsDisable)
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
@@ -303,9 +303,10 @@
         let rowId = inpCtrl.__rowid;
         let cellObj = inpCtrl.DataVals;
         let col = inpCtrl.__Col;
-        if (col.RenderAsSimpleSelect)
-            return this.getSSDispMembrs(cellObj, rowId, col);
-
+        if (col.RenderAsSimpleSelect) {
+            let v = this.getSSDispMembrs(cellObj, rowId, col)
+            return `<span style='padding: 8px 6px; display: flex;'>${v}</span>`;
+        }
         if (!cellObj.Value && cellObj.Value !== 0)
             return "";
 
@@ -317,7 +318,7 @@
         let dispKeys = Object.keys(dispDict0);
         for (let j = 0; j < dispKeys.length; j++) {
             let dispKey = dispKeys[j]
-            let widthStyle = `style="width: auto; pointer-events: auto;"`;
+            let widthStyle = `style="width: 100%; pointer-events: auto;"`;
             if (inpCtrl.DisplayMembers) {
                 let widthper = inpCtrl.DisplayMembers.$values.find(e => e.name == dispKey).Width;
                 if (widthper > 0 && widthper <= 100)
@@ -590,7 +591,7 @@
         return `@cogs@
                 </tr>`
             .replace("@cogs@", `
-                <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
+                <td class='ctrlstd' mode='${this.mode_s}'>
                     @editBtn@
                     <button type='button' class='check-row rowc' tabindex='-1'><span class='fa fa-check'></span></button>
                     <button type='button' class='cancel-row rowc' tabindex='-1'><span class='fa fa-times'></span></button>
@@ -603,7 +604,14 @@
     };
 
     this.getTdWidth = function (i, col) {
-        return (col.Width <= 0 || (this.DGcols[this.DGcols.length - 1] === col)) ? "auto" : (i === 0 ? col.Width : col.Width) + "%";
+        //let lastCtrl = null;
+        //for (let x = 0; x < this.DGcols.length; x++) {
+        //    if (!this.DGcols[x].Hidden)
+        //        lastCtrl = this.DGcols[x];
+        //}
+        //return lastCtrl === col ? `calc(${col.Width}% - 60px)` : `${col.Width}%`;
+
+        return `${col.Width}%`;
     };
 
     this.getAggTrHTML = function () {
@@ -612,7 +620,7 @@
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;'>
                         <div class='tdtxt-agg' coltype='${col.ObjType}'><span></span></div>                        
                    </td>`;
 
@@ -1687,25 +1695,25 @@
     };
 
     this.makeColsResizable = function () {
-        $(`#${this.TableId}_head .ebResizable`).resizable({
-            handles: 'e',
-            resize: function (event, ui) {
-                let $curTd = ui.element;
-                let tdWidth = $curTd.outerWidth();
-                let $bodyTbl = $curTd.closest(".grid-cont").closestInner(".Dg_body");
-                let $footerTbl = $curTd.closest(".grid-cont").closestInner(".grid-cont>.Dg_footer");
+        //$(`#${this.TableId}_head .ebResizable`).resizable({
+        //    handles: 'e',
+        //    resize: function (event, ui) {
+        //        let $curTd = ui.element;
+        //        let tdWidth = $curTd.outerWidth();
+        //        let $bodyTbl = $curTd.closest(".grid-cont").closestInner(".Dg_body");
+        //        let $footerTbl = $curTd.closest(".grid-cont").closestInner(".grid-cont>.Dg_footer");
 
-                $bodyTbl.find(`td[colname=${$curTd.attr("name")}]:first`).outerWidth(tdWidth);
-                $footerTbl.find(`td[colname=${$curTd.attr("name")}]:first`).outerWidth(tdWidth);
+        //        $bodyTbl.find(`td[colname=${$curTd.attr("name")}]:first`).outerWidth(tdWidth);
+        //        $footerTbl.find(`td[colname=${$curTd.attr("name")}]:first`).outerWidth(tdWidth);
 
-                getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = (tdWidth / $bodyTbl.outerWidth()) * 100;
-                //getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = tdWidth;
-                //if ($curTd.attr("type") === "DGCreatedByColumn" || $curTd.next().attr("type") === "DGCreatedByColumn") {
-                //    let width = $curTd.width() - 34;
-                //    $(`#${this.TableId} [tdcoltype='DGCreatedByColumn']`).css("width", width + "px");                    
-                //}
-            }.bind(this)
-        });
+        //        getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = (tdWidth / $bodyTbl.outerWidth()) * 100;
+        //        //getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = tdWidth;
+        //        //if ($curTd.attr("type") === "DGCreatedByColumn" || $curTd.next().attr("type") === "DGCreatedByColumn") {
+        //        //    let width = $curTd.width() - 34;
+        //        //    $(`#${this.TableId} [tdcoltype='DGCreatedByColumn']`).css("width", width + "px");                    
+        //        //}
+        //    }.bind(this)
+        //});
     };
 
     this.setSuggestionVals = function () {

@@ -669,7 +669,7 @@ const WebFormRender = function (option) {
             //    Message: respObj.Message,
             //    Buttons: { "Ok": { Background: "green", Align: "right", FontColor: "white;" } }
             //});
-            EbMessage("show", { Message: respObj.Message, AutoHide: false, Background: '#aa0000' });
+            EbMessage("show", { Message: respObj.Message, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: respObj.MessageInt + ' ' + respObj.StackTraceInt });
             console.error(respObj.MessageInt);
         }
     }.bind(this);

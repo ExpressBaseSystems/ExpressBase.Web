@@ -1259,7 +1259,7 @@
         let $tr = $(e.target).closest("tr");
         let rowId = $tr.attr("rowid");
         let rowDataModel = getObjByval(this.DataMODEL, "RowId", rowId);
-        if ($tr.attr("is-added") === "false")
+        if (rowId > 0)
             rowDataModel.IsDelete = true;
         else {
             let index = this.DataMODEL.indexOf(rowDataModel);

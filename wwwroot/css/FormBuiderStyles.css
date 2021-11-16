@@ -2193,7 +2193,7 @@ input.locinp {
 
 .Dg_footer {
     display: none;
-    border-right: 1px solid #dddddf;
+    /*border-right: 1px solid #dddddf;*/
     /*border-left: 1px solid #dddddf;*/
 }
 

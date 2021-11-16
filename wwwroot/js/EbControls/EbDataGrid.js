@@ -1363,10 +1363,10 @@
                 return;
             e.preventDefault();
 
-            let temp = performance.now();
-            if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 300)
-                return;
-            this.lastUpDownArrowTs = performance.now();
+            //let temp = performance.now();
+            //if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 50)
+            //    return;
+            //this.lastUpDownArrowTs = performance.now();
             let indx = $(e.target).closest('td').index();
             let $nxtTr;
             if (event.altKey || event.metaKey) {//alt

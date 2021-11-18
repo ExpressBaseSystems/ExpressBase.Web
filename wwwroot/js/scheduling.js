@@ -336,8 +336,8 @@
 
     this.DeleteSchedule = function () {
         $.post("../Scheduler/DeleteJob", {
-            "jobkey": window.Schedule[0].JobKey,
-            "id": window.Schedule[0].Id
+            "jobkey": this.currentO.JobKey,
+            "id": this.currentO.Id
         }, function () {
         });
     };

@@ -921,18 +921,25 @@
             EbMessage("hide", "");// reset EbMakeValid
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
-            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            let valRes = func();
-            if (valRes === false) {
-                if (!Validator.IsWarningOnly) {
-                    EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
-                    formValidationflag = false;
-                    return false;// break; from loop if one validation failed
+            try {
+                let valRes = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+                if (valRes !== true) {
+                    if (!Validator.IsWarningOnly) {
+                        EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
+                        formValidationflag = false;
+                        return false;// break; from loop if one validation failed
+                    }
+                    //this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
+                    EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: 'rgb(245, 144, 58)' });
                 }
-                //this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
-                EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: 'rgb(245, 144, 58)' });
-            } else if (valRes !== true && valRes !== undefined) {
-                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                else if (valRes !== false) {
+                    console.warn(`Validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                }
+            }
+            catch (e) {
+                formValidationflag = false;
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'FormValidator': ${Validator.Name}. `, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: e.message });
             }
         }.bind(this));
         return formValidationflag;
@@ -947,17 +954,24 @@
             this.removeInvalidStyle(ctrl);// reset EbMakeValid
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
-            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            let valRes = func();
-            if (valRes === false) {
-                //EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
-                this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
-                if (!Validator.IsWarningOnly) {
-                    formValidationflag = false;
-                    return false;// break; from loop if one validation failed
+            try {
+                let valRes = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+                if (valRes !== true) {
+                    //EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
+                    this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
+                    if (!Validator.IsWarningOnly) {
+                        formValidationflag = false;
+                        return false;// break; from loop if one validation failed
+                    }
                 }
-            } else if (valRes !== true && valRes !== undefined) {
-                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                else if (valRes !== false) {
+                    console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                }
+            }
+            catch (e) {
+                formValidationflag = false;
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'Validator': ${Validator.Name}('${ctrl.Name}'). `, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: e.message });
             }
         }.bind(this));
         return formValidationflag;
@@ -1351,7 +1365,7 @@
             let DepHandleObj = this.GetDepHandleObj(Obj);
             this.ctrlChangeListener_inner0(DepHandleObj);
         }
-    }; 
+    };
 
     this.isPsImportFlow = function (ctrl) {
         let b = !1;

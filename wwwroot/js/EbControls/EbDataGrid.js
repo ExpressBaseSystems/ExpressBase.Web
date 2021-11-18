@@ -1259,7 +1259,7 @@
         let $tr = $(e.target).closest("tr");
         let rowId = $tr.attr("rowid");
         let rowDataModel = getObjByval(this.DataMODEL, "RowId", rowId);
-        if ($tr.attr("is-added") === "false")
+        if (rowId > 0)
             rowDataModel.IsDelete = true;
         else {
             let index = this.DataMODEL.indexOf(rowDataModel);
@@ -1363,10 +1363,10 @@
                 return;
             e.preventDefault();
 
-            let temp = performance.now();
-            if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 300)
-                return;
-            this.lastUpDownArrowTs = performance.now();
+            //let temp = performance.now();
+            //if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 50)
+            //    return;
+            //this.lastUpDownArrowTs = performance.now();
             let indx = $(e.target).closest('td').index();
             let $nxtTr;
             if (event.altKey || event.metaKey) {//alt

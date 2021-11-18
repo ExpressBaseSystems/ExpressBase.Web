@@ -3954,7 +3954,7 @@
                 this.reloadDataTable();
             }
         }
-        else {
+        else if (!this.EbObject.DisableAutoSearch){
             $("[data-coltyp=date]").datepicker("hide");
             if (typeof (e.key) === "undefined") {
                 this.reloadDataTable();

@@ -1314,18 +1314,18 @@
             });
             $("#" + ctrl.EbSid_CtxId).val(locObj.LocId);
 
-            $("#" + ctrl.EbSid_CtxId).on('change', function (e) {
-                let newLocId = ctrl.getValueFromDOM();
-                if (newLocId === 0)
-                    return;
-                let nl = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
-                let ol = this.Renderer.getLocObj();
+            //$("#" + ctrl.EbSid_CtxId).on('change', function (e) {
+            //    let newLocId = ctrl.getValueFromDOM();
+            //    if (newLocId === 0)
+            //        return;
+            //    let nl = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
+            //    let ol = this.Renderer.getLocObj();
 
-                if (nl.LocId !== ol.LocId) {
-                    EbMessage("show", { Message: `Switching from ${ol.LongName} to ${nl.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
-                    ebcontext.locations.SwitchLocation(nl.LocId);
-                }
-            }.bind(this));
+            //    if (nl.LocId !== ol.LocId) {
+            //        EbMessage("show", { Message: `Switching from ${ol.LongName} to ${nl.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+            //        ebcontext.locations.SwitchLocation(nl.LocId);
+            //    }
+            //}.bind(this));
         }
     };
 

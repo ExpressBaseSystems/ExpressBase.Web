@@ -134,22 +134,12 @@
 .eb_stacklayout {
     margin: 10px 0;
     cursor: pointer;
-    position:relative;
+    position: relative;
+    border: 2px solid transparent;
+    border-radius: 6px;
 }
-    .eb_stacklayout:after {
-        content: "";
-        position: absolute;
-        width: calc(100% + 10px);
-        height: calc(100% + 10px);
-        top: -5px;
-        left: -5px;
-        bottom: -5px;
-        border: 2px solid #0046bb;
-        border-radius: 6px;
-        display: none;
-    }
-    .eb_stacklayout:focus:after, .eb_stacklayout:hover:after {
-        display: block;
+    .eb_stacklayout:focus, .eb_stacklayout:hover {
+        border-color: #0046bb;
     }
 
 .ctrl_label {
@@ -189,7 +179,7 @@
     width: 100%;
     height: 100%;
     border: 2px dashed #ccc;
-    padding: 0 10px;
+    padding: 0 5px;
     overflow-y: auto;
     display: flex;
     flex-flow: column;
@@ -463,6 +453,9 @@
     left: 0;
     cursor:pointer;
 }
+    .data_column:focus {
+        background: #e7e7e7;
+    }
 
     .data_column .data_column_inner {
         display: flex;

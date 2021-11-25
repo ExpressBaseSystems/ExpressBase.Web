@@ -311,7 +311,7 @@
         zoomed: null
     };
 
-    var TEMPLATE = '<div class="viewer-container" touch-action="none">' + '<div class="viewer-canvas"></div>' + '<div class="viewer-footer">' + '<div class="viewer-title"></div>' + '<div class="viewer-toolbar"></div>' + '<div class="viewer-navbar">' + '<ul class="viewer-list"></ul>' + '</div>' + '</div>' + '<div class="viewer-tooltip"></div>' + '<div role="button" class="viewer-button" data-viewer-action="mix"></div>' + '<div class="viewer-player"></div>' + '</div>';
+    var TEMPLATE = '<div class="viewer-container" touch-action="none">' + '<div class="viewer-canvas"></div>' + '<div class="viewer-footer">' + '<div class="viewer-title"></div>' + '<div class="viewer-toolbar"></div>' + '<div class="viewer-navbar">' + '<ul class="viewer-list"></ul>' + '</div>' + '</div>' + '<div class="viewer-tooltip"></div>' + '<div role="button" class="viewer-button" data-viewer-action="mix"></div>' + '<div class="viewer-eb-button"><i class="fa fa-long-arrow-right"></i></div>' + '<div class="viewer-player"></div>' + '</div>';
 
     var IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
     var WINDOW = IS_BROWSER ? window : {};
@@ -997,7 +997,7 @@
         },
         initContainer: function initContainer() {
             this.containerData = {
-                width: window.innerWidth,
+                width: this.eb_half_width ? (window.innerWidth / 2) : window.innerWidth,
                 height: window.innerHeight
             };
         },
@@ -1081,16 +1081,16 @@
 
                     _this.loadImage(event);
                 }, {
-                        once: true
-                    });
+                    once: true
+                });
             });
 
             if (options.transition) {
                 addListener(element, EVENT_VIEWED, function () {
                     addClass(list, CLASS_TRANSITION);
                 }, {
-                        once: true
-                    });
+                    once: true
+                });
             }
         },
         renderList: function renderList(index) {
@@ -1247,6 +1247,31 @@
             if (options.toggleOnDblclick) {
                 addListener(canvas, EVENT_DBLCLICK, this.onDblclick = this.dblclick.bind(this));
             }
+
+            //eb_edited
+            $(viewer).off('click', '.viewer-eb-button').on('click', '.viewer-eb-button', function (e) {
+                let $v = $(this.viewer);
+                let $i = $(e.currentTarget).find('i');
+                $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
+                if (this.viewer.style.width === '50%') {
+                    if (this.viewer.style.left === '50%') {
+                        $v.css('left', '0');
+                        $i.addClass('fa-arrows-h');
+                    }
+                    else {
+                        $v.css('width', '100%').css('left', '0');
+                        $i.addClass('fa-long-arrow-right');
+                        this.eb_half_width = false;
+                        this.resize();
+                    }
+                }
+                else {
+                    $v.css('width', '50%').css('left', '50%');
+                    $i.addClass('fa-long-arrow-left');
+                    this.eb_half_width = true;
+                    this.resize();
+                }
+            }.bind(this));
         },
         unbind: function unbind() {
             var options = this.options,
@@ -1299,7 +1324,7 @@
                         this.hide();
                         imgdivremove();
                         this.infono = 1;
-                       // $(".viewer-container").remove();
+                        // $(".viewer-container").remove();
                     }
 
                     break;
@@ -1308,7 +1333,7 @@
                     this.hide();
                     imgdivremove();
                     this.infono = 1;
-                   // $(".viewer-container").remove();
+                    // $(".viewer-container").remove();
                     break;
 
                 case 'view':
@@ -1488,7 +1513,7 @@
                     } else {
                         this.hide();
                         imgdivremove();
-                       // $(".viewer-container").remove();
+                        // $(".viewer-container").remove();
                     }
 
                     break;
@@ -2322,7 +2347,7 @@
                 var image = document.createElement('img');
                 image.src = getData(img, 'originalUrl');
                 image.alt = img.getAttribute('alt');
-             //   image.dtls = img.getAttribute('dtls');
+                //   image.dtls = img.getAttribute('dtls');
                 total += 1;
                 addClass(image, CLASS_FADE);
                 toggleClass(image, CLASS_TRANSITION, options.transition);
@@ -2514,8 +2539,8 @@
                         removeClass(tooltipBox, CLASS_TRANSITION);
                         _this7.fading = false;
                     }, {
-                            once: true
-                        });
+                        once: true
+                    });
                     removeClass(tooltipBox, CLASS_IN);
                     _this7.fading = true;
                 } else {
@@ -2555,7 +2580,7 @@
                 let indx = this.index;
                 var obj = this.$images[indx];
                 if (!(Object.keys(obj).length == 0)) {
-                    
+
                     var ky = "";
                     $(".viewer-footer").prepend(`<div class='imgDetail'></div>`);
                     Object.entries(obj).forEach(([key, value]) => {
@@ -2937,8 +2962,8 @@
                     this.isImg = isImg;
                     this.length = images.length;
                     this.images = images;
-// this.$images - to store .data(), ie meta from ebfileviewerplugin to use in info click
-                    this.$images=$imgarr;
+                    // this.$images - to store .data(), ie meta from ebfileviewerplugin to use in info click
+                    this.$images = $imgarr;
                     var ownerDocument = element.ownerDocument;
                     var body = ownerDocument.body || ownerDocument.documentElement;
                     this.body = body;

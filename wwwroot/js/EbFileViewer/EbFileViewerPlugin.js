@@ -52,8 +52,8 @@
                             filesrc = obj.FileB64;
                         }
                         else {
-                             filethumbnail = `/images/small/${obj.FileRefId}.jpg`;
-                             filesrc = `/images/${obj.FileRefId}.jpg`;
+                            filethumbnail = `/images/small/${obj.FileRefId}.jpg`;
+                            filesrc = `/images/${obj.FileRefId}.jpg`;
                         }
 
 
@@ -76,7 +76,7 @@
             }
             else {
                 ////commented because in fup control incase of single image after delete it shows this dailoguebox
-               // EbMessage("show", { Message: "No image found", Background: 'red' });
+                // EbMessage("show", { Message: "No image found", Background: 'red' });
             }
         }
 
@@ -107,6 +107,7 @@
 
                         let html = $(`<div id='ebfileview_ContDiv' class='eb_fileview-Cont' style=''>
                                     <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i>
+                                    <button id='' class="btn resize-ebfileview_Cont" style=''><i class="fa fa-long-arrow-right"></i>
                                     </button>
                                     </div>`);
                         //$("body").append(` <iframe id="display_file" src="${src}.${exten}" frameborder="0" style=" bottom: 0;direction: ltr; font-size: 0; left: 0; line-height: 0;  overflow: hidden;position: absolute;right: 0;"></iframe>`);
@@ -114,7 +115,8 @@
                                     <iframe id='ebfileview_Iframe' class='ebfileview_Iframe' src="${url}" class='' style=''></iframe>
                                     </div>`);
                         $("body").append(html[0]);
-                        $('.close-ebfileview_Cont').on('click', this.CloseFileviewFn.bind(this));
+                        $('.close-ebfileview_Cont').off('click').on('click', this.CloseFileviewFn.bind(this));
+                        $('.resize-ebfileview_Cont').off('click').on('click', this.ResizeFileviewFn.bind(this));
                         console.log("need pdf viewer");
                     }
                     else {
@@ -154,6 +156,28 @@
                 target.remove();
             }
         }
+
+        this.ResizeFileviewFn = function (e) {
+            let $c = $("#ebfileview_ContDiv");
+            let $i = $(e.currentTarget).find('i');
+            $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
+            if ($c[0].style.width === '50%') {
+                if ($c[0].style.left === '50%') {
+                    $c.css('left', '0');
+                    $i.addClass('fa-arrows-h');
+                }
+                else {
+                    $c.css('width', '100%').css('left', '0');
+                    $i.addClass('fa-long-arrow-right');
+                }
+            }
+            else {
+                $c.css('width', '50%').css('left', '50%');
+                $i.addClass('fa-long-arrow-left');
+            }
+
+        }
+
         this.addToImagelist = function (file) {
             if (file.hasOwnProperty('Recent')) {
                 if (file.FileCategory == 1) {

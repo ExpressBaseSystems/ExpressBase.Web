@@ -13,14 +13,18 @@
     /*background-color: rgba(0, 0, 0, 0.5);*/
     opacity: 1;
     z-index: 2015;
-    padding-top: 38px;
+    /*padding-top: 38px;*/
 }
 
     .eb_fileview-Cont .ebclx_fileview-Cont {
         float: right;
-        border-radius: 50%;
-        background-color: #aaaaad;
+        border-radius: 0 0 0 100%;
+        background-color: #7c7c7c;
         color: white;
+        position: absolute;
+        right: 0px;
+        /*top: 38px;*/
+        padding: 6px 8px;
     }
 
     .eb_fileview-Cont .eb_iframe-Cont {
@@ -29,12 +33,22 @@
         background-color: rgba(0, 0, 0, 0.5);
     }
 
+    .eb_fileview-Cont .resize-ebfileview_Cont {
+        border-radius: 0 0 100% 0;
+        background-color: #7c7c7c;
+        color: white;
+        position: absolute;
+        left: 0px;
+        /*top: 38px;*/
+        padding: 6px;
+    }
+
 button.btn.close-ebfileview_Cont.ebclx_fileview-Cont:hover {
     cursor: pointer;
 }
 
 .eb_fileview-Cont .eb_iframe-Cont .ebfileview_Iframe {
-    height: 95%;
+    height: 100%;
     width: 100%;
     border: 1px solid #666464;
 }
@@ -640,3 +654,20 @@ button.btn.close-ebfileview_Cont.ebclx_fileview-Cont:hover {
         font-size: 14px;
         line-height: 1.6;
     }
+
+.viewer-eb-button {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    height: 80px;
+    overflow: hidden;
+    position: absolute;
+    left: -40px;
+    top: -40px;
+    -webkit-transition: background-color 0.15s;
+    transition: background-color 0.15s;
+    width: 80px;
+    color: white;
+    padding: 50px 0 0 50px;
+    font-size: 12px;
+}

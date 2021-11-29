@@ -1309,9 +1309,19 @@
             ctrl.DataVals.F = locObj.ShortName;
         }
         if (!(ctrl.IsDisable)) {
+            let temp = [];
             $.each(ebcontext.locations.Locations, function (intex, obj) {
-                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
+                temp.push({ k: obj.LocId, v: obj.ShortName || '' });
             });
+            temp.sort(function (a, b) {
+                let v1 = a.v.toLowerCase();
+                let v2 = b.v.toLowerCase();
+                return ((v1 < v2) ? -1 : ((v1 > v2) ? 1 : 0));
+            });
+            $.each(temp, function (i, obj) {
+                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.k}"> ${obj.v}</option>`);
+            });
+
             $("#" + ctrl.EbSid_CtxId).val(locObj.LocId);
 
             //$("#" + ctrl.EbSid_CtxId).on('change', function (e) {

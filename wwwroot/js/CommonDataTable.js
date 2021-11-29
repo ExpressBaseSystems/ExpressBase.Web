@@ -3613,15 +3613,18 @@
                 return false;
             },
             select: function (event, ui) {
-                var terms = splitval(this.value);
+                let inp = event.target;
+                var terms = splitval($(inp).val());
                 terms.pop();
                 terms.push(ui.item.value);
                 terms.push("");
-                this.value = terms.join(" | ");
-                var e = $.Event("keyup", { which: 13, keyCode: 13, target: this });
-                $(this).trigger(e);
+                $(inp).val(terms.join(" | "));
+                if (!this.EbObject.DisableAutoSearch) {
+                    var e = $.Event("keyup", { which: 13, keyCode: 13, target: inp });
+                    $(inp).trigger(e);
+                }
                 return false;
-            },
+            }.bind(this),
             search: function (event, ui) {
             }
         });

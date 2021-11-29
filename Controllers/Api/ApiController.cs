@@ -1297,6 +1297,39 @@ namespace ExpressBase.Web.Controllers
             }
             return resp;
         }
+
+        [HttpGet("api/get_pdf")]
+        public ActionResult<ReportRenderResponse> GetPdfReport(string refid, string param)
+        {
+            if (!Authenticated) {
+                return Unauthorized();
+            }
+
+            if (string.IsNullOrEmpty(refid))
+            {
+                return BadRequest("parameter refid not found");
+            }
+
+            try
+            {
+                ReportRenderRequest request = new ReportRenderRequest
+                {
+                    Refid = refid,
+                    ReadingUserAuthId = this.LoggedInUser.AuthId,
+                    RenderingUserAuthId = this.LoggedInUser.AuthId
+                };
+
+                if (!string.IsNullOrEmpty(param))
+                {
+                    request.Params = JsonConvert.DeserializeObject<List<Param>>(param);
+                }
+                return this.ServiceClient.Get(request);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        } 
     }
 }
 

@@ -223,7 +223,7 @@ namespace ExpressBase.Web.Controllers
                 else if (type.Equals(EbObjectTypes.MobilePage))
                 {
                     Type[] typeArray = typeof(EbMobilePageBase).GetTypeInfo().Assembly.GetTypes();
-                    _c2js = new Context2Js(typeArray, BuilderType.MobilePage, typeof(EbMobilePageBase));
+                    _c2js = new Context2Js(typeArray, BuilderType.MobilePage, typeof(EbMobilePageBase), typeof(EbObject));
                     if (_object != null)
                     {
                         _object.AfterRedisGet(Redis);

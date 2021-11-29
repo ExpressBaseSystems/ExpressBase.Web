@@ -265,7 +265,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "SubmitButton") {
                 opt.renderMode = this.renderMode;
             }
-            else if (Obj.ObjType === "SimpleSelect" || Obj.ObjType === "BooleanSelect") {
+            else if (Obj.ObjType === "PowerSelect" || Obj.ObjType === "SimpleSelect" || Obj.ObjType === "BooleanSelect") {
                 opt.parentCont = this.FormObj.EbSid_CtxId;
             }
             this.initControls.init(Obj, opt);

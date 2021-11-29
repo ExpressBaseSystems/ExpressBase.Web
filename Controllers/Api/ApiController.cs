@@ -944,7 +944,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost("api/get_data")]
         [HttpGet("api/get_data")]
-        public ActionResult<MobileDataResponse> GetData(string refid, int limit, int offset, string param, string sort_order, string search, bool is_powerselect)
+        public ActionResult<MobileDataResponse> GetData(string refid, int limit, int offset, string param, string sort_order, string search, bool is_powerselect, bool no_wrap)
         {
             if (!Authenticated) return Unauthorized();
 
@@ -958,7 +958,8 @@ namespace ExpressBase.Web.Controllers
                     DataSourceRefId = refid,
                     Limit = limit,
                     Offset = offset,
-                    IsPowerSelect = is_powerselect
+                    IsPowerSelect = is_powerselect,
+                    NoWrap = no_wrap
                 };
 
                 if (param != null)

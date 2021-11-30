@@ -2317,7 +2317,7 @@ const WebFormRender = function (option) {
         if (info) {
             if (info.CreBy)
                 $cont.append(`<div class='wfd-info'> Created By <br/> ${info.CreBy} at ${info.CreAt}</div>`);
-            if (info.ModBy)
+            if (info.ModBy && info.ModAt)
                 $cont.append(`<div class='wfd-info'> Last Modified By <br/> ${info.ModBy} at ${info.ModAt}</div>`);
             if (info.CreFrom)
                 $cont.append(`<div class='wfd-info'> Created From Location: ${info.CreFrom} </div>`);

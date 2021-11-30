@@ -249,6 +249,9 @@
 
     @Html.RenderScripts()
     <script>
+        if (Offline.options)
+            Offline.options.requests = false;
+
             reload_if_session_expired();
             AllMetasRoot = {};
             window.ebcontext = {

@@ -1324,7 +1324,9 @@ namespace ExpressBase.Web.Controllers
                 {
                     request.Params = JsonConvert.DeserializeObject<List<Param>>(param);
                 }
-                return this.ServiceClient.Get(request);
+
+                ReportRenderResponse resp = this.ServiceClient.Get(request);
+                return resp;
             }
             catch (Exception ex)
             {

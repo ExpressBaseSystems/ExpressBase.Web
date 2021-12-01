@@ -1301,7 +1301,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("api/get_pdf")]
         public ActionResult<ReportRenderResponse> GetPdfReport(string refid, string param)
         {
-            if (!Authenticated) {
+            if (!Authenticated)
+            {
                 return Unauthorized();
             }
 
@@ -1325,11 +1326,12 @@ namespace ExpressBase.Web.Controllers
                 }
                 return this.ServiceClient.Get(request);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return NotFound(ex.Message);
             }
-        } 
+        }
     }
 }
 

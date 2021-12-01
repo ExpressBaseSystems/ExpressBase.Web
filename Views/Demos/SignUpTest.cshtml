@@ -65,10 +65,11 @@
 
     function testAjax() {
         $.ajax({
-            url: "/api/get_actions/863",
+            url: "/api/get_pdf",
             type: "GET",
             data: {
-                id: 0,
+                refid: "alarz-alarz-3-87-125-87-125",
+                param:""
             },
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("bToken", getTok());

@@ -40,7 +40,6 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
-                //User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
                 Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUserAuthId = this.LoggedInUser.AuthId, ReadingUserAuthId = this.LoggedInUser.AuthId,Params = Params });
                 Res.StreamWrapper.Memorystream.Position = 0;
             }

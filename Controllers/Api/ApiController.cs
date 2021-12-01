@@ -1324,8 +1324,9 @@ namespace ExpressBase.Web.Controllers
                 {
                     request.Params = JsonConvert.DeserializeObject<List<Param>>(param);
                 }
-
-                ReportRenderResponse resp = this.ServiceClient.Get(request);
+                ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);                
+                ReportRenderResponse resp = pclient.Get(request);
+                resp.StreamWrapper = null;
                 return resp;
             }
             catch (Exception ex)

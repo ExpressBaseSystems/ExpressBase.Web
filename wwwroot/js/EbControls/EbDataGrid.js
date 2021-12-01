@@ -191,13 +191,14 @@
         this.$addRowBtn.addClass("eb-disablebtn");
         $tr.attr("is-editing", "true");
         this.spanToCtrl_row($tr);
-        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
+        //$(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
         //if (!this.curRowObjectMODEL[this.colNames[0]].__isEditing)
         this.setcurRowDataMODELWithOldVals(rowId);
         this.changeEditFlagInRowCtrls(true, rowId);
 
+        this.focusOnFirstInput($tr);
         let enabledUiInps = $tr.find("td [ui-inp]:enabled");
-        if (enabledUiInps.length > 0)
+        if (enabledUiInps.length > 0) 
             $(enabledUiInps[0]).select();
     }.bind(this);
 
@@ -442,14 +443,22 @@
     this.tryAddRow = function () {
         if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable) {
             this.addRow();
-            let a = $(`#${this.TableId}>tbody tr[is-editing="true"] td input:enabled:visible`);
-            if (a.length > 0)
-                $(a[0]).focus();
+            this.focusOnFirstInput($(`#${this.TableId}>tbody tr[is-editing="true"]`));
         }
         //if (this.Mode.isEdit)
         //    $(`.ctrlstd[mode] `).attr("mode", "edit");
         //if (this.Mode.isNew)
         //    $(`.ctrlstd[mode] `).attr("mode", "new");
+    };
+
+    this.focusOnFirstInput = function ($tr) {
+        let a = $tr.find('td input:enabled:visible');
+        if (a.length > 0) {
+            if (!(this.DGcols[0].Hidden || this.DGcols[0].IsDisable))
+                $(a[0]).focus();
+            else if (a.filter('[ui-inp]').length > 0)
+                $(a.filter('[ui-inp]')[0]).focus();
+        }
     };
 
     this.SwitchToEditMode = function () {
@@ -888,7 +897,7 @@
 
         if ($notOk1stCtrl) {
             setTimeout(function () {
-                $notOk1stCtrl.select();
+                $notOk1stCtrl.focus();
             }.bind(this), 500);
         }
         return required_valid_flag;
@@ -964,7 +973,9 @@
         if (rowId === new_rowId) {
             let UiInps = $e.closest("td").find("[ui-inp]");
             if (UiInps.length > 0) {
-                setTimeout(function ($e) { $e.closest("td").find("[ui-inp]").select(); }.bind(this, $e), 1);
+                setTimeout(function ($e) {
+                    $e.closest("td").find("[ui-inp]").focus();
+                }.bind(this, $e), 1);
             }
             return;
         }
@@ -980,7 +991,7 @@
             setTimeout(function () {
                 let UiInps = $e.closest("td").find("[ui-inp]");
                 if (UiInps.length > 0) {
-                    $e.closest("td").find("[ui-inp]").select();
+                    $e.closest("td").find("[ui-inp]").focus();
                 }
             }, 310);
         }
@@ -1049,7 +1060,7 @@
 
         this.ctrlToSpan_row(rowId);
         $activeTr.attr("is-checked", "true").attr("is-editing", "false");
-        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
+        //$(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:enabled:visible:first`).focus();
         this.onRowPaintFn($activeTr, "check", event);
         return true;
     };
@@ -1079,7 +1090,7 @@
         else
             this.setCurRow($addRow.attr("rowid"));
         $tr.attr("is-checked", "true").attr("is-editing", "false");
-        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
+        //$(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:enabled:visible:first`).focus();
         return true;
     }.bind(this);
 
@@ -1363,10 +1374,10 @@
                 return;
             e.preventDefault();
 
-            //let temp = performance.now();
-            //if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 50)
-            //    return;
-            //this.lastUpDownArrowTs = performance.now();
+            let temp = performance.now();
+            if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 100)
+                return;
+            this.lastUpDownArrowTs = performance.now();
             let indx = $(e.target).closest('td').index();
             let $nxtTr;
             if (event.altKey || event.metaKey) {//alt

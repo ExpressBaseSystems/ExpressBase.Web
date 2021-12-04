@@ -206,7 +206,7 @@
                 $countdef.text("(" + $portdef.children().length + ")");
             }
             else {
-                if ((renderFiles[i].Meta.Category[0] === "Category") || (!renderFiles[i].Meta.Category[0]) || (!this.Options.Categories.includes(renderFiles[i].Meta.Category[0]))) {
+                if ((renderFiles[i].Meta.Category[0] === "Category") || (!renderFiles[i].Meta.Category[0]) || (!this.Options.Categories.find(e => e.toLowerCase() === renderFiles[i].Meta.Category[0].toLowerCase()))) {
                     $portdef.append(this.thumbNprevHtml(renderFiles[i]));
                     $countdef.text("(" + $portdef.children().length + ")");
                 }
@@ -232,7 +232,7 @@
         if (!recentUpload) {
             $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
             $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
-            $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));           
+            $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
         }
         this.contextMenu();
         $(`.${this.Options.Container}_FUP_TagLi`).off("click").on("click", this.sortByTagFn.bind(this));
@@ -922,7 +922,7 @@
         try {
             return s.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/g, "").replace(/\s/g, "");
         }
-        catch{
+        catch {
             return s.replace(".", "").replace(/\s/g, "");
         }
     }
@@ -1006,11 +1006,11 @@
 
     contextMcallback(eType, selector, action, originalEvent) {
         let refids = [];
-            refids = [eval($(selector.$trigger).attr("filref"))];
-            this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
-                if (!refids.Contains(eval($(o).attr("refid"))))
-                    refids.push(eval($(o).attr("refid")));
-            }.bind(this));
+        refids = [eval($(selector.$trigger).attr("filref"))];
+        this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
+            if (!refids.Contains(eval($(o).attr("refid"))))
+                refids.push(eval($(o).attr("refid")));
+        }.bind(this));
         this.changeCatAjax(eType, refids);
     }
 
@@ -1058,7 +1058,7 @@
         $(".eb_uplGal_thumbO").find(".select-fade").hide();
     }
 
-    
+
 
     deleteFromGallery(filerefs) {
         for (let i = 0; i < filerefs.length; i++) {

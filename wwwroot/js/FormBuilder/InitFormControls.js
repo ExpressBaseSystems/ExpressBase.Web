@@ -1966,8 +1966,8 @@
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,
-            dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px",
-            utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
+            dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px"//,
+            //utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
         });
 
         if (ctrl.Sendotp) {

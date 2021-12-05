@@ -198,7 +198,7 @@
 
         this.focusOnFirstInput($tr);
         let enabledUiInps = $tr.find("td [ui-inp]:enabled");
-        if (enabledUiInps.length > 0) 
+        if (enabledUiInps.length > 0)
             $(enabledUiInps[0]).select();
     }.bind(this);
 
@@ -1796,7 +1796,10 @@
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
-                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: false, Background: '#aa0000' });
+                console.warn(`Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`);
+                if (this.formRenderer.rowId === 0)
+                    this.clearDG(false);
                 if (this.ctrl.__continue) this.ctrl.__continue();
             }.bind(this),
             success: this.reloadDG.bind(this)

@@ -972,7 +972,6 @@ namespace ExpressBase.Web.Controllers
                     request.SearchColumns.AddRange(JsonConvert.DeserializeObject<List<Param>>(search));
 
                 response = this.ServiceClient.Get(request);
-                response.Message = "Success";
             }
             catch (Exception ex)
             {
@@ -980,6 +979,37 @@ namespace ExpressBase.Web.Controllers
                 response.Message = ex.Message;
 
                 Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return response;
+        }
+
+        [HttpPost("api/get_data_ps")]
+        public ActionResult<MobileDataResponse> GetDataPs(string refid, int limit, int offset, string param, string search)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            if (string.IsNullOrEmpty(refid)) return BadRequest();
+
+            MobileDataResponse response = null;
+            try
+            {
+                MobilePsDataRequest request = new MobilePsDataRequest()
+                {
+                    DataSourceRefId = refid,
+                    Limit = limit,
+                    Offset = offset,
+                    Params = param,
+                    Search = search
+                };
+                response = this.ServiceClient.Post(request);
+            }
+            catch (Exception ex)
+            {
+                response = response ?? new MobileDataResponse();
+                response.Message = ex.Message;
+
+                Console.WriteLine("EXCEPTION AT get_data_ps API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
             return response;
@@ -1324,7 +1354,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     request.Params = JsonConvert.DeserializeObject<List<Param>>(param);
                 }
-                ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);                
+                ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
                 ReportRenderResponse resp = pclient.Get(request);
                 resp.StreamWrapper = null;
                 return resp;

@@ -101,12 +101,21 @@
     };
 
     this.replaceProp = function (source, destination) {
+        let ar1 = ['Width', 'Height', 'Left', 'Top'];
+        let ar2 = ['Detail', 'PageFooters', 'PageHeaders', 'ReportFooters', 'ReportGroups', 'ReportHeaders', 'ReportObjects', 'CellCollection', '$Control'];
         for (var objPropIndex in source) {
-            if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
-                if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1)
-                    source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
-                else
-                    source[objPropIndex] = destination[objPropIndex];
+            //if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
+            //    if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1)
+            //        source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
+            //    else
+            //        source[objPropIndex] = destination[objPropIndex];
+            //}
+
+            if (typeof source[objPropIndex] !== "object" && ar1.indexOf(objPropIndex) > -1) {
+                source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
+            }
+            else if (ar2.indexOf(objPropIndex) === -1) {
+                source[objPropIndex] = destination[objPropIndex];
             }
         }
     };

@@ -162,10 +162,13 @@ function EbMobStudio(config) {
             $.extend(o, edit_obj);
             $container.append(o.$Control.outerHTML());
             this.refreshControl(o);
-            let tobj = o.trigger(this);
+            let tobj = o.trigger(this, null, this.ContainerType);
             if (ebtype === "EbMobileDataGrid") {
                 tobj.fillControls(tobj.CellCollection.$values, this);
                 this.setCtrls($(`#${o.EbSid} .ctrl_as_container .control_container`), o.ChildControls.$values);
+            }
+            else if (ebtype === "EbMobileTableLayout") {
+                o.fillControls(o.CellCollection.$values, this);
             }
         }
     };
@@ -226,7 +229,7 @@ function EbMobStudio(config) {
         let o = this.makeElement(ebtype, ctrlname);
         $(event.target).append(o.$Control.outerHTML());
         this.refreshControl(o);
-        o.trigger(this, 'drop');
+        o.trigger(this, 'drop', this.ContainerType);
         if (this.ContainerType === "EbMobileForm") {
             this.Controls.refreshColumnTree();
         }
@@ -327,7 +330,7 @@ function EbMobStudio(config) {
     this.findFormContainerItems = function (i, o, ebContainer) {
         let jsobj = this.Procs[o.id];
         let ebtype = this.getType(jsobj.$type);
-        if (ebtype === "EbMobileDataGrid")
+        if (ebtype === "EbMobileDataGrid" || ebtype === "EbMobileTableLayout")
             jsobj.setObject(this);
         ebContainer.$values.push(jsobj);
     };

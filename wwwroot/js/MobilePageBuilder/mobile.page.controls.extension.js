@@ -19,7 +19,7 @@
         let constructor = o.constructor.name;
         let common = {
             tab: "",
-            trigger: function (root) {
+            trigger: function (root, event, containerType) {
                 this.tab = root.Conf.TabNum || "";
             },
             setObject: function () { return null; },
@@ -88,10 +88,10 @@
             }
         },
         EbMobileTableLayout: {
-            trigger: function (root) {
+            trigger: function (root, event, containerType) {
                 this.tab = "Tab" + root.Conf.TabNum;
                 $(`#${this.EbSid} .eb_mob_tablelayout_inner`).append(this.getHtml());
-                this.droppable();
+                this.droppable(containerType);
                 this.resizable();
             },
             getHtml: function () {
@@ -107,9 +107,14 @@
                 html.push(`</table>`);
                 return html.join("");
             },
-            droppable: function () {
+            droppable: function (containerType) {
+                if (containerType === 'EbMobileForm')
+                    accept = [Constants.FORM_CONTROL];
+                else
+                    accept = [Constants.DS_COLUMN, Constants.LIST_CONTROL];
+
                 $(`#${this.EbSid} .eb_tablelayout_td`).droppable({
-                    accept: [Constants.DS_COLUMN, Constants.LIST_CONTROL].join(","),
+                    accept: accept.join(","),
                     hoverClass: "drop-hover-td",
                     drop: this.onDrop.bind(this)
                 });
@@ -192,7 +197,7 @@
                     if (tobj.ColumCount <= 0) tobj.ColumCount = 2;
                     tobj.CellCollection = this.DataLayout.CellCollection;
                 }
-                tobj.trigger(root);
+                tobj.trigger(root, null, 'EbMobileDataGrid');
                 return tobj;
             },
             setObject: function (root) {
@@ -340,7 +345,7 @@
             trigger: function (root) {
                 this.propertyChanged("HorrizontalAlign");
             },
-            propertyChanged: function (propname,root) {
+            propertyChanged: function (propname, root) {
                 if (propname === "HorrizontalAlign") {
                     window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
                 }

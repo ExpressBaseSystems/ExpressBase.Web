@@ -314,8 +314,8 @@ const EbPowerSelect = function (ctrl, options) {
         let searchVal = $e.val().trim();
         let MaxSearchVal = this.getMaxLenVal();
 
-        if (!isPrintable(e) && e.which !== 8)
-            return;
+        //if (!isPrintable(e) && e.which !== 8)
+        //    return;
 
         if (this.ComboObj.MinSearchLength > MaxSearchVal.length) {
             this.showCtrlMsg();

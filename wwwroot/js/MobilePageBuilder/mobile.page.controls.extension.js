@@ -116,7 +116,8 @@
                 $(`#${this.EbSid} .eb_tablelayout_td`).droppable({
                     accept: accept.join(","),
                     hoverClass: "drop-hover-td",
-                    drop: this.onDrop.bind(this)
+                    drop: this.onDrop.bind(this),
+                    greedy: true
                 });
             },
             onDrop: function (event, ui) {

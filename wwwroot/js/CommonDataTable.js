@@ -42,6 +42,7 @@
     this.settingsbtn = null;
     this.OuterModalDiv = null;
     this.settings_tbl = null;
+    this.ajaxCallCounter = 0;
 
     this.eb_filter_controls_4fc = [];
     this.eb_filter_controls_4sb = [];
@@ -917,6 +918,7 @@
         dq.dvRefId = this.Refid;
         dq.TableId = this.tableId;
         dq.showCheckboxColumn = this.showCheckboxColumn;
+        dq.counter = ++this.ajaxCallCounter;
         return dq;
     };
 
@@ -1220,6 +1222,10 @@
                 else
                     EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
             }
+        }
+        if (this.ajaxCallCounter != dd.counter && this.MainData) {
+            console.warn(`Mismatch in counter value: ${this.ajaxCallCounter}, ${dd.counter}`);
+            dd = this.MainData;
         }
         if (!this.isSecondTime)
             this.totalcount = dd.recordsFiltered;
@@ -3957,7 +3963,7 @@
                 this.reloadDataTable();
             }
         }
-        else if (!this.EbObject.DisableAutoSearch){
+        else if (!this.EbObject.DisableAutoSearch) {
             $("[data-coltyp=date]").datepicker("hide");
             if (typeof (e.key) === "undefined") {
                 this.reloadDataTable();

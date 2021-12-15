@@ -533,6 +533,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
                     resultlist1 = this.ServiceClient.Post(request);
+                    resultlist1.counter = request.counter;
                 }
                 catch (Exception e)
                 {

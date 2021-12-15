@@ -1223,7 +1223,7 @@
                     EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
             }
         }
-        if (this.ajaxCallCounter != dd.counter && this.MainData) {
+        if (dd.counter && this.ajaxCallCounter != dd.counter && this.MainData) {
             console.warn(`Mismatch in counter value: ${this.ajaxCallCounter}, ${dd.counter}`);
             dd = this.MainData;
         }

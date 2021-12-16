@@ -1537,7 +1537,7 @@
 
 
 
-        if (ctrl.InputMode == 1) {
+        if (ctrl.InputMode == 1) { //Currency
             $input.inputmask({
                 alias: "numeric",
                 _mask: function _mask(opts) {
@@ -1943,7 +1943,9 @@
 
         var phninput = document.querySelector(`#${ctrl.EbSid}`);
 
-
+        let onlyCtrs = (ctrl.CountriesList && ctrl.CountriesList.length > 0) ? ctrl.CountriesList.split(",") : [];
+        let preferredCtrs = (ctrl.PreferredCountries && ctrl.PreferredCountries.length > 0) ? ctrl.PreferredCountries.split(",") : [];
+        let initCtry = preferredCtrs.length > 0 ? preferredCtrs[0] : (onlyCtrs.length > 0 ? onlyCtrs[0] : 'in');
 
         var iti = window.intlTelInput(phninput, {
             allowDropdown: true,
@@ -1952,19 +1954,19 @@
             // dropdownContainer: "body",
             //defaultCountry: "auto",
             formatOnDisplay: true,
-            geoIpLookup: function (callback) {
-                $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
-                    var countryCode = (resp && resp.country) ? resp.country : "";
-                    callback(countryCode);
-                });
-            },
-            initialCountry: "auto",
+            //geoIpLookup: function (callback) {
+            //    $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
+            //        var countryCode = (resp && resp.country) ? resp.country : "";
+            //        callback(countryCode);
+            //    });
+            //},
+            //initialCountry: "auto",
+            initialCountry: initCtry,
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
-            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
+            onlyCountries: onlyCtrs,
             //placeholderNumberType: "MOBILE",
-            preferredCountries: [],
+            preferredCountries: preferredCtrs,
             separateDialCode: true,
             dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px"//,
             //utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"

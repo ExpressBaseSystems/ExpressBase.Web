@@ -60,8 +60,14 @@
 
     function showMsg() {
         div();
-        $(`#eb_messageBox_container`).fadeIn();
-        settings.AutoHide ? setTimeout(function () { hideMsg(); }, settings.Delay) : null;
+        let $cont = $(`#eb_messageBox_container`);
+        $cont.fadeIn();
+        if (settings.AutoHide) {
+            let tmr = $cont.data('data-tmr');
+            if (tmr) clearTimeout(tmr);
+            tmr = setTimeout(hideMsg, settings.Delay);
+            $cont.data('data-tmr', tmr);
+        }
         if (options.onShow)
             onShow();
     };

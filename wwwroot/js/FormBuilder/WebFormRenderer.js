@@ -743,6 +743,7 @@ const WebFormRender = function (option) {
         this.$formCont.empty();
         this.Mode = {};
         this.mode = '';
+        $("#EbFnOuterCont").remove();
     };
 
     this.FORCE_RELOAD = function (rowId, formData, mode_s) {
@@ -781,7 +782,7 @@ const WebFormRender = function (option) {
 
         this.resetBuilderVariables(forceRelaodOptions);
         this.init(option);
-
+        $("#EbFnOuterCont").remove();
         //console.dev_log("WebFormRender : FORCE_RELOAD took " + (performance.now() - t0) + " milliseconds.");
 
     };
@@ -1428,6 +1429,138 @@ const WebFormRender = function (option) {
                     }
                 }.bind(this)
             });
+    };
+
+    this.NotifyBtnClicked = function () {
+        this.hideInfoWindow();
+        //EbFormNotification 2nd
+        $("#EbFnOuterCont").remove();
+        this.ebfn_usersTile = null;
+
+        if ($("#EbFnModal").length === 0) {
+            $("body").append(`
+<div id="EbFnOuterCont">
+    <div class="modal fade" id="EbFnModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
+                    <h4 class="modal-title">Send Message</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="EbFnInnerCont"> <div class="ebfn-loaderdiv"><i class="fa fa-spinner fa-pulse"></i> Loading...</div> </div>
+                    <div class='ebfn-msg-cont'>
+                        <div>Message</div>
+                        <textarea id="ebfn-msg">Please check '${this.FormObj.DisplayName}'</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">                    
+                    <button id="EbFnSend" class="ebbtn eb_btn-sm eb_btnblue">Send</button>
+                    <button class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="EbFnCont2"></div>
+</div>
+`)
+        }
+
+        $("#EbFnSend").off("click").on("click", this.SendNoificationClicked.bind(this));
+        $("#EbFnModal").modal("show");
+
+        if (this.ebfn_usersTile) {
+            this.ebfn_usersTile.clearItems();
+            this.ebfn_usersTile.onClickBtnAddModal();
+        }
+        else {
+            this.getUsersList();
+        }
+    };
+
+    this.SendNoificationClicked = function () {
+        let msg = $('#ebfn-msg').val();
+        if (!(typeof (msg) == "string" && msg.trim())) {
+            alert('Message is required');
+            return;
+        }
+        if (!this.rowId) {
+            alert('Validation failed: Not a valid record.');
+            return;
+        }
+        if (!this.ebfn_usersTile) {
+            alert('Something went wrong in user selection');
+            return;
+        }
+        let ids = this.ebfn_usersTile.getItemIds();
+        if (!ids) {
+            alert('Validation failed: select atleast one user.');
+            return;
+        }
+        $("#EbFnModal").modal("hide");
+        this.showLoader();
+        EbMessage("show", { Message: `Sending message...`, AutoHide: true, Background: '#0000aa', Delay: 1000 });
+        let params = [];
+        params.push(new fltr_obj(11, "id", this.rowId));
+        let uurl = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}`;
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/SendNotification",
+            data: {
+                link: uurl,
+                message: msg,
+                uids: ids
+            },
+            error: function () {
+                this.hideLoader();
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+            },
+            success: function (result) {
+                this.hideLoader();
+                if (result == 'success')
+                    EbMessage("show", { Message: `Message sent successfully!`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
+                else
+                    EbMessage("show", { Message: 'Exception: ' + result, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+            }.bind(this)
+        });
+    };
+
+    this.getUsersList = function () {
+        $.ajax({
+            type: "POST",
+            url: "/Security/GetUsersList",
+            data: {},
+            error: function () {
+                $("#EbFnModal").modal("hide");
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+            },
+            success: function (result) {
+                try {
+                    let allus = JSON.parse(result);
+                    let $modal = $("#EbFnModal");
+                    let metadata2 = ['Id', 'Name', 'Email', 'ProfilePicture', '_simpleClose'];
+
+                    this.ebfn_usersTile = new TileSetupJs({
+                        $container: $modal.find("#EbFnInnerCont"),
+                        title: "Add",
+                        initObjList: [],
+                        searchObjList: allus,
+                        objMetadata: metadata2,
+                        modalContainer: '#EbFnCont2',
+                        outerSearch: false,
+                        longTitle: 'Selected users',
+                        col_md: 'col-md-6',
+                        confirmDelete: false,
+                        addItemModalTitle: 'Select user(s)'
+                    });
+                    this.ebfn_usersTile.onClickBtnAddModal();
+                }
+                catch (e) {
+                    $("#EbFnModal").modal("hide");
+                    EbMessage("show", { Message: e, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                }
+            }.bind(this)
+        });
     };
 
     this.GetAuditTrail = function () {
@@ -2350,13 +2483,18 @@ const WebFormRender = function (option) {
 
         if (this.checkPermission('AuditTrail')) {
             $cont.append(`<div class='wfd-audtrail wfd-btndiv'>
-                <div> Detailed Audit Trail</div>
+                <div><i class="fa fa-info-circle"></i> Detailed Audit Trail</div>
             </div>`);
         }
+
+        $cont.append(`<div class='wfd-notify wfd-btndiv'>
+            <div><i class="fa fa-paper-plane"></i> Send Message</div>
+        </div>`);
 
         $cont.find('.wfd-lock span').off("click").on("click", this.lockUnlockForm.bind(this));
         $cont.find('.wfd-cancel span').off("click").on("click", this.cancelForm.bind(this));
         $cont.find('.wfd-audtrail div').off("click").on("click", this.GetAuditTrail.bind(this));
+        $cont.find('.wfd-notify div').off("click").on("click", this.NotifyBtnClicked.bind(this));
 
         if (this.FormObj.DataPushers && this.FormObj.DataPushers.$values.length > 0) {
             let aValidDP = this.FormObj.DataPushers.$values.find(e => e.$type.includes('EbFormDataPusher') || e.$type.includes('EbBatchFormDataPusher'));
@@ -2378,14 +2516,14 @@ const WebFormRender = function (option) {
 
         if (this.checkPermission('DraftDelete')) {
             $cont.append(`<div class='wfd-delete wfd-btndiv'>
-                <div>Delete Draft</div>
+                <div><i class="fa fa-trash"></i> Delete Draft</div>
             </div>`);
             $cont.find('.wfd-delete div').off("click").on("click", this.deleteDraft.bind(this));
         }
         else if (this.checkPermission('Delete')) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableDelete())) {
                 $cont.append(`<div class='wfd-delete wfd-btndiv'>
-                    <div>Delete the Submission</div>
+                    <div><i class="fa fa-trash"></i> Delete the Submission</div>
                 </div>`);
                 $cont.find('.wfd-delete div').off("click").on("click", this.deleteForm.bind(this));
             }

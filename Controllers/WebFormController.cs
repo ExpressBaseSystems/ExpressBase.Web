@@ -532,6 +532,26 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        public string SendNotification(string link, string message, string uids)
+        {
+            string msg;
+            try
+            {
+                NotifyByUserIDsResponse Resp = ServiceClient.Post<NotifyByUserIDsResponse>(new NotifyByUserIDsRequest
+                {
+                    Link = link,
+                    Title = message,
+                    UserIDs = uids
+                });
+                msg = Resp.Message;
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+            }
+            return msg;
+        }
+
         public string GetDynamicGridData(string _refid, int _rowid, string _srcid, string[] _target)
         {
             try

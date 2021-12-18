@@ -3980,6 +3980,8 @@ input.locinp {
         border-radius: 5px;
         cursor: pointer;
         border: 1px solid #8c97cd;
+        min-width: 65%;
+        text-align: center;
     }
 
         .webformdetails .wfd-btndiv > div:hover {
@@ -3987,7 +3989,7 @@ input.locinp {
         }
 
     .webformdetails .wfd-audtrail > div {
-        background-color: #ccc;
+        background-color: #e7ebff;
     }
 
     .webformdetails .wfd-delete > div {
@@ -4004,6 +4006,36 @@ input.locinp {
         }
 
 /*#endregion WebformDetails*/
+
+
+/*#region formNotification*/
+
+#EbFnOuterCont .modal-body {
+    height: calc(100vh - 180px);
+    max-height: 400px;
+}
+
+#EbFnOuterCont #EbFnInnerCont {
+    height: 70%;
+}
+
+#EbFnOuterCont .ebfn-msg-cont {
+    height: 30%;
+}
+
+    #EbFnOuterCont .ebfn-msg-cont textarea {
+        width: 100%;
+        height: calc(100% - 20px);
+        border-color: #ddd;
+    }
+
+#EbFnOuterCont .ebfn-loaderdiv {
+    text-align: center;
+    position: relative;
+    top: 45%;
+}
+/*#endregion formNotification*/
+
 
 /*#startregion EbAudioInput*/
 .audio-input-container button {

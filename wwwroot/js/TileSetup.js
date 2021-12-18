@@ -1,17 +1,34 @@
-﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, objMetadata, searchAjax, chkUnChkItemCustomFunc, parentThis, options) {
+﻿var TileSetupJs = function (options) {
+
+    this.options = $.extend({
+        $container: null,
+        title: '',
+        initObjList: [],
+        searchObjList: [],
+        objMetadata: [],
+        searchAjax: null,
+        chkUnChkItemCustomFunc: null,
+        parentThis: null,
+        longTitle: '',
+        tileDivHeight: 'auto',
+        col_md: 'col-md-4',
+        modalContainer: 'body',//
+        outerSearch: true,
+        confirmDelete: true,
+        addItemModalTitle: null
+    }, options);
 
     //PARAMETERS COMMON
-    this.parentDiv = parentDiv;
-    this.title = title;
-    this.options = options || {};
+    this.parentDiv = this.options.$container;
+    this.title = this.options.title;
     this.resultObject = [];
-    this.initObjectList = initObjList === null ? [] : initObjList;
-    this.objectList = searchObjList === null ? [] : searchObjList;//all
+    this.initObjectList = this.options.initObjList === null ? [] : this.options.initObjList;
+    this.objectList = this.options.searchObjList === null ? [] : this.options.searchObjList;//all
     this.systemRolesObjeList = [];
-    this.objectMetadata = objMetadata;
-    this.searchAjaxUrl = searchAjax;
-    this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
-    this.parentthis = parentThis;
+    this.objectMetadata = this.options.objMetadata;
+    this.searchAjaxUrl = this.options.searchAjax;
+    this.doChkUnChkItemCustomFunc = this.options.chkUnChkItemCustomFunc;
+    this.parentthis = this.options.parentThis;
 
     //DOM ELEMENTS COMMON
     this.txtDemoSearch = null;
@@ -55,6 +72,9 @@
     this.isSrchRsltInitialized = false;
 
     this.init = function () {
+        this.options.$container.find('.ts-head-div, .ts-body-disp').remove();
+        //$(this.options.modalContainer).find('.ts-body-div').remove();
+
         this.createBody.bind(this)(this.parentDiv, this.title);
     };
 
@@ -182,7 +202,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" style="font-weight:400; line-height:1.0;">${this.title}</h4>
+                            <h4 class="modal-title" style="font-weight:400; line-height:1.0;">${this.options.addItemModalTitle || this.title}</h4>
                         </div>   
                         <div class="modal-body">
                             <div class="input-group md-search-box">
@@ -210,20 +230,26 @@
 
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
-        $(parent).append(`
+        $(parent).html(`
         <div class="ts-head-div">
-            <div class="col-md-7"><div class="ts-head-text">${this.options.longTitle || ""}</div></div>
-            <div class="col-md-3" style="margin-left:auto;">
-                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to search" />
-                <span id="spanSrch${t}" class="form-control-feedback ts-head-span"><i class="fa fa-search" aria-hidden="true"></i></span>
-                <span id="spanRemv${t}" class="form-control-feedback ts-head-span" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></span>
+            <div style='width: 55%;'><div class="ts-head-text">${this.options.longTitle || ""}</div></div>
+            <div style='width: calc(45% - 4px);'>
+                <div style='float: right; padding-left: 10px;'>
+                    <button class="ts-head-add-btn" id="btnAddModal${t}">
+                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}
+                    </button>
+                </div>
+                <div style='position: relative; float: right;'>
+                ${(this.options.outerSearch ? `<input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to search" style='height: 30px;' />
+                    <span id="spanSrch${t}" class="ts-head-span"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    <span id="spanRemv${t}" class="ts-head-span" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></span>` : '')}
+                </div>
             </div>
-            <button class="ts-head-add-btn" id="btnAddModal${t}">
-                <i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}
-            </button>
         </div>
-        <div class="container ts-body-div">${this.getPresetModalBody()}</div>
-        <div id="divSelectedDisplay${t}" class="ts-body-disp" style="Height: ${this.options.tileDivHeight || 'auto'}"> </div>`);
+        
+        <div id="divSelectedDisplay${t}" class="ts-body-disp" > </div>`);//style="Height: ${this.options.tileDivHeight || 'auto'}"
+
+        $(this.options.modalContainer).append(`<div class="container ts-body-div" id="tsSelCont${t}">${this.getPresetModalBody()}</div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.spanSrch = $('#spanSrch' + t);
@@ -263,8 +289,8 @@
             this.divSelected = $('#divSelected' + t);
             this.pageInfo = $('#pageInfo' + t);
 
-            $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
-            $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
+            $(this.options.modalContainer).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
+            $(this.options.modalContainer).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
             //$(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
             $(this.divSelectedDisplay).on('click', ".dropDownViewClass", this.onClickViewFromSelected.bind(this));
 
@@ -311,9 +337,9 @@
 
         $(this.parentDiv).on('keyup', '#txtDemoSearch' + t, this.keyUpTxtDemoSearch.bind(this));
         $(this.parentDiv).on('click', '#spanRemv' + t, this.onClickbtnClearDemoSearch.bind(this));
-        $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
-        $(this.parentDiv).on('shown.bs.modal', '#addModal' + t, this.initModal.bind(this));
-        $(this.parentDiv).on('hidden.bs.modal', '#addModal' + t, function () {
+        $(this.options.modalContainer).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
+        $(this.options.modalContainer).on('shown.bs.modal', '#addModal' + t, this.initModal.bind(this));
+        $(this.options.modalContainer).on('hidden.bs.modal', '#addModal' + t, function () {
             if (this.title !== 'New IP' && this.title !== 'New DateTime') {
                 $(this.txtSearch).val("");
 
@@ -500,7 +526,7 @@
             $(this.spanRemv).show();
         }
 
-        $($(divSelectedDisplay).children("div.col-md-4")).each(function () {
+        $($(divSelectedDisplay).children(`div.${this.options.col_md}`)).each(function () {
             $(this).children().css('box-shadow', '1px 1px 2px 1px #fff');
             if ($(this).attr('data-name').toLowerCase().substring(0, txt.length) === txt.toLowerCase() && txt !== "") {
                 $(this).children().css('box-shadow', '1px 1px 2px 1px #5bc0de');
@@ -574,7 +600,7 @@
                 $(obj).find('input').prop('checked', false);
             }.bind(this));
 
-            if (this.parentthis.roleId > 0 && this.title === 'Add Roles') {
+            if (this.parentthis && this.parentthis.roleId > 0 && this.title === 'Add Roles') {
                 let role_ids = this.getBaseRoles(this.parentthis.roleId);
                 for (let j = 0; j < role_ids.length; j++) {
                     let $srchRsltTemp = this.divSearchResults.children(`[data-id='${role_ids[j]}']`);
@@ -762,7 +788,7 @@
 
         if (false)//this.profilePicStatus === true
             temp += `   <div class='col-md-2'>
-                            <img class='img-thumbnail pull-right' src='/images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />
+                            <img class='img-thumbnail pull-right' src='/images/dp/${obj.Id}.png' onerror="this.src = '/images/proimg.jpg';" />
                         </div>`;
         temp += `         <div class='col-md-8'>
                             <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
@@ -822,7 +848,7 @@
         });
     };
     this.drawSelected = function () {
-        var t = title.replace(/\s/g, "_");
+        var t = this.title.replace(/\s/g, "_");
         let _extendedObj = {};
         if (this.title === 'New IP') {
             _extendedObj = { Ip: this.txtIpAddress.val().trim(), Description: this.txtIpDescription.val() };
@@ -883,19 +909,19 @@
         if (itempresent.length === 0)
             this.resultObject.push(obj);
 
-        var temp = `<div class="col-md-4 container-md-4" data-id='${obj.Id}' data-name='${obj.Name}'>
-                        <div class="mydiv1" style="overflow:visible;">
-                            <div class="icondiv1">`;
+        var temp = `<div class="${this.options.col_md} container-md-4" data-id='${obj.Id}' data-name='${obj.Name}'>
+                        <div class="ts-sltd-cont" style="overflow:visible;">
+                            <div class="ts-sltd-icon">`;
         if (this.profilePicStatus === true)
-            temp += `<img style = "width:52px" class='img-thumbnail pull-right' src='../images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />`;
+            temp += `<img style = "width:48px;" class='img-thumbnail pull-right' src='../images/dp/${obj.Id}.png' onerror="this.src = '/images/proimg.jpg';" />`;
         else
             temp += `<b>${obj.Name.substring(0, 1).toUpperCase()}</b>`;
         temp += `     </div>
-                    <div class="textdiv1">
+                    <div class="ts-sltd-text">
                         <b>${obj.Name}</b>
                         <div style="font-size: smaller;">&nbsp${obj.Data1}</div>
                     </div>
-                    <div class="closediv1">`;
+                    <div class="ts-sltd-close">`;
         if (this.objectMetadata.indexOf('_simpleClose') > -1)
             temp += `   <i class="fa fa-times dropDownRemoveClass" aria-hidden="true"></i>`;
         else if (this.objectMetadata.indexOf('_hideClose') > -1)
@@ -922,36 +948,45 @@
             return;
         }
 
-        EbDialog("show",
-            {
-                Message: "Click OK to Remove",
-                Buttons: {
-                    "OK": {
-                        Background: "green",
-                        Align: "left",
-                        FontColor: "white;"
-                    },
-                    "Cancel": {
-                        Background: "violet",
-                        Align: "right",
-                        FontColor: "white;"
-                    }
-                },
-                CallBack: function (name) {
-                    if (name === "OK") {
-                        var parent = $(e.target).parents("div.col-md-4");
-                        for (var i = 0; i < this.resultObject.length; i++) {
-                            if (this.resultObject[i].Id == parent.attr('data-id')) {
-                                this.resultObject.splice(i, 1);
-                                parent.remove();
-                                break;
-                            }
+        if (this.options.confirmDelete) {
+            EbDialog("show",
+                {
+                    Message: "Click OK to Remove",
+                    Buttons: {
+                        "OK": {
+                            Background: "green",
+                            Align: "left",
+                            FontColor: "white;"
+                        },
+                        "Cancel": {
+                            Background: "violet",
+                            Align: "right",
+                            FontColor: "white;"
                         }
-                        if (this.resultObject.length === 0)
-                            this.divSelectedDisplay.append(`<div class="ts-body-nothing-text"> Nothing to display </div>`);
-                    }
-                }.bind(this)
-            });
+                    },
+                    CallBack: function (name) {
+                        if (name === "OK") {
+                            this.removeFromSelected(e);
+                        }
+                    }.bind(this)
+                });
+        }
+        else {
+            this.removeFromSelected(e);
+        }
+    };
+
+    this.removeFromSelected = function (e) {
+        var parent = $(e.target).parents(`div.${this.options.col_md}`);
+        for (var i = 0; i < this.resultObject.length; i++) {
+            if (this.resultObject[i].Id == parent.attr('data-id')) {
+                this.resultObject.splice(i, 1);
+                parent.remove();
+                break;
+            }
+        }
+        if (this.resultObject.length === 0)
+            this.divSelectedDisplay.append(`<div class="ts-body-nothing-text"> Nothing to display </div>`);
     };
 
     this.onClickViewFromSelected = function (e) {
@@ -959,7 +994,7 @@
             EbMessage("show", { Message: 'Not Available in ReadOnly Mode', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
-        var id = $(e.target).parents("div.col-md-4").attr('data-id');
+        var id = $(e.target).parents(`div.${this.options.col_md}`).attr('data-id');
         if (this.title === 'Add Users') {
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");

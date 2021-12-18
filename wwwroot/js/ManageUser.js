@@ -607,7 +607,16 @@
             for (let i = 0; i < this.customRoles.length; i++)
                 if (this.U_Roles.indexOf(this.customRoles[i].Id) !== -1)
                     initroles.push(this.customRoles[i]);
-        this.rolesTile = new TileSetupJs($("#menu1"), "Add Roles", initroles, this.customRoles, metadata1, null, this.chkItemCustomFunc, this);
+        this.rolesTile = new TileSetupJs({
+            $container: $("#menu1"),
+            title: "Add Roles",
+            initObjList: initroles,
+            searchObjList: this.customRoles,
+            objMetadata: metadata1,
+            searchAjax: null,
+            chkUnChkItemCustomFunc: this.chkItemCustomFunc,
+            parentThis: this
+        });
 
         //INIT USER GROUPS
         var initgroups = [];
@@ -615,7 +624,16 @@
             for (let i = 0; i < this.userGroup.length; i++)
                 if (this.U_Groups.indexOf(this.userGroup[i].Id) !== -1)
                     initgroups.push(this.userGroup[i]);
-        this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
+        this.userGroupTile = new TileSetupJs({
+            $container: $("#menu3"),
+            title: "Add User Group",
+            initObjList: initgroups,
+            searchObjList: this.userGroup,
+            objMetadata: metadata1,
+            searchAjax: null,
+            chkUnChkItemCustomFunc: null,
+            parentThis: this
+        });
 
         if (this.whichMode === 3) {
             this.rolesTile.setReadOnly();
@@ -1066,7 +1084,16 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList, userLis
             document.title = "New User Group";
         }
         if (this.usersTile === null) {
-            this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, userListAll, metadata2, null, null, this);
+            this.usersTile = new TileSetupJs({
+                $container: $("#divusers"),
+                title: "Add Users",
+                initObjList: initUserList,
+                searchObjList: userListAll,
+                objMetadata: metadata2,
+                searchAjax: null,
+                chkUnChkItemCustomFunc: null,
+                parentThis: this
+            });
         }
         //-----------------------------------------------
 
@@ -1074,12 +1101,32 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList, userLis
 
         var metadata3 = ['Id', 'Title', 'Description', '_simpleClose'];
         if (this.ipAddTile === null) {
-            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "auto" };
-            this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", this.ipconsList, null, metadata3, null, null, null, options);
+            this.ipAddTile = new TileSetupJs({
+                $container: $("#divIp"),
+                title: "New IP",
+                initObjList: this.ipconsList,
+                searchObjList: null,
+                objMetadata: metadata3,
+                searchAjax: null,
+                chkUnChkItemCustomFunc: null,
+                parentThis: null,
+                longTitle: "IP Address Whitelist",
+                tileDivHeight: "auto"
+            });
         }
         if (this.timeAddTile === null) {
-            let options = { longTitle: "DateTime Whitelist", tileDivHeight: "auto" };
-            this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", this.dtconsList, null, metadata3, null, null, null, options);
+            this.timeAddTile = new TileSetupJs({
+                $container: $("#divTime"),
+                title: "New DateTime",
+                initObjList: this.dtconsList,
+                searchObjList: null,
+                objMetadata: metadata3,
+                searchAjax: null,
+                chkUnChkItemCustomFunc: null,
+                parentThis: null,
+                longTitle: "DateTime Whitelist",
+                tileDivHeight: "auto"
+            });
         }
 
         //--------------------------------------------------------

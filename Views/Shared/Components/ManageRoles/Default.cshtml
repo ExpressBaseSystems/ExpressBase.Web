@@ -17,6 +17,7 @@
 }
 
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/TileSetup.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/DV/bootstrap-toggle.min.css" />
 @*<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>*@
 <script type="text/javascript" src="~/js/LayoutCommon/bootstrap-toggle.min.js"></script>
@@ -55,7 +56,7 @@
             <li><a data-toggle="tab" href="#divusers"><i class="fa fa-user"></i> Users</a></li>
             <li><a data-toggle="tab" href="#divconstraints"><i class="fa fa-ban"></i> Constraints</a></li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content" style="height: 100%;">
             <div id="settings" class="tab-pane fade in active">
                 <div class="form-group">
                     <label class="label-custom-style" style="display:inline-block">Role Type</label>
@@ -77,8 +78,8 @@
                 </div>
             </div>
             <div id="divObjList" class="tab-pane fade"></div>
-            <div id="divroles" class="tab-pane fade"></div>
-            <div id="divusers" class="tab-pane fade"></div>
+            <div id="divroles" class="tab-pane fade" style="height: 100%;"></div>
+            <div id="divusers" class="tab-pane fade" style="height: 100%;"></div>
             <div id="divconstraints" class="tab-pane fade">
                 <div class="nothing-text" style="padding-top: 150px;"> Coming Soon </div>
             </div>

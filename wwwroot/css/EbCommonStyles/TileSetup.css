@@ -1,0 +1,165 @@
+﻿/*----------------------------------TILE SETUP---------------------------------------*/
+.md-search-box button {
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.md-search-box input {
+    border-left: none;
+}
+
+.ts-sltd-cont {
+    border: 1px solid #ccc;
+    background-color: #fdfdfd;
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 10px 13px;
+    margin-top: 15px;
+    box-shadow: 2px 2px 8px #ccc;
+    display: flex;
+}
+
+    .ts-sltd-cont b {
+        font-weight: 400;
+    }
+
+    .ts-sltd-cont:hover {
+        background-color: #f5f5f5;
+    }
+
+    .ts-sltd-cont .dropdown-toggle:hover {
+        font-size: 16px;
+        color: blue;
+    }
+
+.ts-sltd-icon {
+    display: inline-block;
+    font-size: xx-large;
+    padding-right: 10px;
+    vertical-align: top;
+    color: #555;
+    height: 48px;
+}
+
+.ts-sltd-text {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.ts-sltd-close {
+    display: inline-block;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+}
+
+.ts-body-disp {
+    flex-flow: row wrap;
+    height: calc(100% - 32px);
+    overflow-y: auto;
+}
+
+.ts-body-nothing-text {
+    text-align: center;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #bbb;
+    font-weight: 300;
+    width: 100%;
+}
+
+.ts-head-div {
+    width: 100%;
+}
+
+    .ts-head-div div, .ts-head-div button {
+        display: inline-block;
+    }
+
+    .ts-head-div > .ts-head-text {
+        font-size: 18px;
+        color: #585555;
+    }
+
+    .ts-head-div .ts-head-span {
+        top: 0;
+        right: 0;
+        pointer-events: all;
+        position: absolute;
+        padding: 4px 6px;
+    }
+
+    .ts-head-div .ts-head-add-btn {
+        background: #4987fb;
+        color: #fff;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 3px;
+        -webkit-transition: .2s;
+        transition: .2s;
+        -webkit-user-select: none;
+        user-select: none;
+        letter-spacing: 0.5px;
+        font-weight: 400;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+.ts-body-div .modal-body {
+    padding-bottom: 0px;
+    height: calc(100vh - 180px);
+}
+
+.ts-body-md-msg {
+    padding-top: calc((100vh/2) - 150px);
+    font-size: 18px;
+    text-align: center;
+    color: #bbb;
+    display: none;
+}
+
+.ts-body-md-loader {
+    margin-left: 45%;
+    margin-top: 25%;
+    display: none;
+}
+
+.ts-body-md-rslt {
+    height: calc(100% - 50px);
+    overflow-y: auto;
+}
+
+.ts-body-md-pageinfo {
+    color: #aaa;
+    font-size: 12px;
+    text-align: right;
+    font-style: italic;
+}
+
+.ts-body-md-srch-rslt {
+    margin-left: 5px;
+    margin-right: 5px;
+    display: none;
+    cursor: pointer;
+    /*pointer-events: none;
+    opacity: 0.5;*/
+}
+
+    .ts-body-md-srch-rslt:hover {
+        background-color: #eee;
+    }
+
+#NotifyModal .modal-body {
+    height: calc(100vh - 200px);
+    overflow: auto;
+    padding: 15px;
+    background-color: #f4f6f7;
+    border-radius: 0 0 4px 4px;
+}

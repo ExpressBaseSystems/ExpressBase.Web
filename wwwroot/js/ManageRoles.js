@@ -253,7 +253,7 @@
                     }
                 }
             });
-            if (st !== '') {                
+            if (st !== '') {
                 if (confirm("Continuing this Operation will Remove the following Item(s)" + st + "\n\nClick OK to Continue")) {
                     for (i = 0; i < itemid.length; i++) {
                         this.divSelectedDisplay.children("[data-id='" + itemid[i] + "']").remove();
@@ -515,7 +515,15 @@
         }
 
         if (this.subRolesTile === null)
-            this.subRolesTile = new TileSetupJs($("#divroles"), "Add Roles", subRoles, objAll, metadata1, null, this.chkItemCustomFunc, this);
+            this.subRolesTile = new TileSetupJs({
+                $container: $("#divroles"),
+                title: "Add Roles",
+                initObjList: subRoles,
+                searchObjList: objAll,
+                objMetadata: metadata1,
+                chkUnChkItemCustomFunc: this.chkItemCustomFunc,
+                parentThis: this
+            });
         else
             this.subRolesTile.setObjectList(objAll);
 
@@ -530,7 +538,7 @@
         var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
         for (let i = 0; i < this.usersListAll.length; i++) {
             let _name = this.usersListAll[i].Name || this.usersListAll[i].Email || this.usersListAll[i].Phone;
-            userListAll.push({ id: this.usersListAll[i].Id, name: _name, email: this.usersListAll[i].Email });            
+            userListAll.push({ id: this.usersListAll[i].Id, name: _name, email: this.usersListAll[i].Email });
         }
         if (this.roleId > 0) {
             initUserList = [];
@@ -540,7 +548,14 @@
             }
         }
         if (this.usersTile === null) {
-            this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, userListAll, metadata2, null, null, this);
+            this.usersTile = new TileSetupJs({
+                $container: $("#divusers"),
+                title: "Add Users",
+                initObjList: initUserList,
+                searchObjList: userListAll,
+                objMetadata: metadata2,
+                parentThis: this
+            });
         }
         //-----------------------------------------------
     };
@@ -585,7 +600,7 @@
             strSelectedLocs += this.selectedLocations[i] + ",";
         strSelectedLocs = strSelectedLocs.substring(0, strSelectedLocs.length - 1);
         strSelectedLocs = this.selectedLocations.indexOf('-1') === -1 ? strSelectedLocs : "-1";
-                
+
         $(this.btnSaveAll).attr("disabled", "true");
         $("#eb_common_loader").EbLoader("show");
         $.ajax({

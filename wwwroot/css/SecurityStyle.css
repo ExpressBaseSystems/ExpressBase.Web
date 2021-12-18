@@ -1,147 +1,4 @@
-﻿/*----------------------------------TILE SETUP---------------------------------------*/
-.md-search-box button {
-    background: white;
-    border: 1px solid #ccc;
-}
-
-.md-search-box input {
-    border-left: none;
-}
-
-.mydiv1 {
-    border: 1px solid #ccc;
-    background-color: #fdfdfd;
-    border-radius: 4px;
-    overflow: hidden;
-    padding: 10px 13px;
-    margin-top: 15px;
-    box-shadow: 2px 2px 8px #ccc;
-}
-
-    .mydiv1 b {
-        font-weight: 400;
-    }
-
-    .mydiv1:hover {
-        background-color: #f5f5f5;
-    }
-
-    .mydiv1 .dropdown-toggle:hover {
-        font-size: 16px;
-        color: blue;
-    }
-
-.icondiv1 {
-    display: inline-block;
-    font-size: xx-large;
-    padding-right: 10px;
-    vertical-align: top;
-    color: #555;
-}
-
-.textdiv1 {
-    width: 65%;
-    display: inline-block;
-    vertical-align: top;
-}
-
-.closediv1 {
-    display: inline-block;
-    float: right;
-    cursor: pointer;
-    vertical-align: top;
-}
-
-.ts-body-disp {
-    display: flex;
-    flex-flow: row wrap;
-}
-
-.ts-body-nothing-text {
-    text-align: center;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    color: #bbb;
-    font-weight: 300;
-    width: 100%;
-    padding-top: 120px;
-}
-
-.ts-head-div {
-    display: flex;
-}
-    .ts-head-div > .ts-head-text {
-        font-size: 18px;
-        color: #585555;
-    }
-    .ts-head-div .ts-head-span {
-        top: 0;
-        right: 16px;
-        pointer-events: all;
-    }
-    .ts-head-div .ts-head-add-btn {
-        background: #4987fb;
-        color: #fff;
-        padding: 5px 10px;
-        font-size: 12px;
-        border-radius: 3px;
-        -webkit-transition: .2s;
-        transition: .2s;
-        -webkit-user-select: none;
-        user-select: none;
-        letter-spacing: 0.5px;
-        font-weight: 400;
-        text-decoration: none;
-        cursor: pointer;
-        border: 1px solid transparent;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-.ts-body-div .modal-body {
-    padding-bottom: 0px;
-    height: calc(100vh - 180px);
-}
-.ts-body-md-msg {
-    padding-top: calc((100vh/2) - 150px);
-    font-size: 18px;
-    text-align: center;
-    color: #bbb;
-    display: none;
-}
-.ts-body-md-loader {
-    margin-left: 45%;
-    margin-top: 25%;
-    display: none;
-}
-.ts-body-md-rslt {
-    height: calc(100vh - 246px);
-    overflow-y: auto;
-}
-.ts-body-md-pageinfo {
-    color: #aaa;
-    font-size: 12px;
-    text-align: right;
-    font-style: italic;
-}
-
-.ts-body-md-srch-rslt {
-    margin-left: 5px;
-    margin-right: 5px;
-    display: none;
-    cursor: pointer;
-    /*pointer-events: none;
-    opacity: 0.5;*/
-}
-    .ts-body-md-srch-rslt:hover {
-        background-color: #eee;
-    }
-
-
+﻿
 /*---------------------------------CREATE USER-------------------------------------*/
 #divVisibility .toggle {
     width: 100px !important;
@@ -165,18 +22,17 @@
     padding-top: 30px;
     min-height: 100%;
 }
+
 .btn-resetpw {
     background: #e65f66;
-    color:white;
+    color: white;
 }
 
-    .mu-parent-div .tab-pane {
-       
-    }
+.mu-parent-div .tab-pane {
+}
 
-    .mu-parent-div .home-tab-cont {
-       
-    }
+.mu-parent-div .home-tab-cont {
+}
 
 
 .label-custom-style {
@@ -185,67 +41,75 @@
 }
 
 .input-custom-style {
-    height:44px;
+    height: 44px;
 }
+
 .input-group .input-custom-style {
-    border-left:none;
+    border-left: none;
 }
 
 .mu-parent-div .span-custom-style {
     background: white;
 }
 
-    .mu-parent-div .btn-custom-style {
-        height: 28px;
-        border-radius: 0px !important;
-        padding: 0px 12px;
-    }
+.mu-parent-div .btn-custom-style {
+    height: 28px;
+    border-radius: 0px !important;
+    padding: 0px 12px;
+}
 
-    .mu-parent-div .ctrl-custom-feedback {
-        top: -3px;
-        right: 16px;
-        display: block;
-    }
+.mu-parent-div .ctrl-custom-feedback {
+    top: -3px;
+    right: 16px;
+    display: block;
+}
 
-    .mu-parent-div .bootstrap-tagsinput {
-        width: 100%;
-        min-height: 150px;
-        border-radius: 0px;
-    }
+.mu-parent-div .bootstrap-tagsinput {
+    width: 100%;
+    min-height: 150px;
+    border-radius: 0px;
+}
 
 .mu-parent-div .checkbox {
     padding-left: 25px;
     font-weight: 300;
 }
-.mu-parent-div .checkbox:hover {
-    cursor: pointer;
-    background-color: #EEE;
-}
+
+    .mu-parent-div .checkbox:hover {
+        cursor: pointer;
+        background-color: #EEE;
+    }
 
 
 /*----------------------------------ROLES---------------------------------------*/
 .mr-parent-div {
     display: flex;
 }
+
 .role-tab-pane {
     display: flex;
     flex-flow: column;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
 .mr-parent-div .tab-pane {
 }
-.eb-perm-wrapper{
-    margin-bottom:15px;
+
+.eb-perm-wrapper {
+    margin-bottom: 15px;
 }
-.eb-perm-wrapper .dataTable tr {
-    border: 1px solid #ccc;
-    border-top: none;
-    border-bottom: none;
-}
-    .eb-perm-wrapper .dataTable th{
-        font-weight:500;
+
+    .eb-perm-wrapper .dataTable tr {
+        border: 1px solid #ccc;
+        border-top: none;
+        border-bottom: none;
     }
+
+    .eb-perm-wrapper .dataTable th {
+        font-weight: 500;
+    }
+
     .eb-perm-wrapper .dataTable tr:last-child {
         border-bottom: 1px solid #ccc;
     }
@@ -346,8 +210,9 @@
 /*----------------------------------USER GROUP---------------------------------------*/
 
 .mug-parent-div {
-   
+    width: 100%;
 }
+
 .eb-usrgrp-pane {
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -366,13 +231,14 @@
     }
 
 .mug-parent-div .tab-pane {
-    
 }
+
 .eb-user-listview {
     border: 1px solid #ccc;
     border-radius: 4px;
     padding-bottom: 25px;
 }
+
     .eb-user-listview .dataTables_scrollHead {
         background: #eae9e9;
     }

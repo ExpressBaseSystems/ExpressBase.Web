@@ -206,7 +206,13 @@ const EbPowerSelect = function (ctrl, options) {
         }
     }.bind(this);
 
-    this.getColumn = function (colName) { return this.ComboObj.MultiSelect ? this.columnVals[colName] : this.columnVals[colName][0]; }.bind(this);
+    this.getColumn = function (colName) {
+        if (this.ComboObj.MultiSelect)
+            return this.columnVals ? this.columnVals[colName] : null;
+        if (this.columnVals && this.columnVals[colName])
+            return this.columnVals[colName][0];
+        return null;
+    }.bind(this);
 
     //this.getColumn = function (colName) {
     //    let columnVals = getEbFormatedPSRows(this.ComboObj);

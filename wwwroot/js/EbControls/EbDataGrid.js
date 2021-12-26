@@ -77,8 +77,9 @@
             this.setCurRow(rowId);
             for (let i = 0; i < inpCtrls.length; i++) {
                 let inpCtrl = inpCtrls[i];
-                let ValueExpr_val = getValueExprValue(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-                if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined) {
+                if (inpCtrl.DoNotPersist && inpCtrl.ValueExpr && inpCtrl.ValueExpr.Lang === 0 && inpCtrl.ValueExpr.Code) {
+                    let ValueExpr_val = getValueExprValue(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                    ValueExpr_val = this.formRenderer.FRC.getProcessedValue(inpCtrl, ValueExpr_val);
                     inpCtrl.DataVals.Value = ValueExpr_val;
                     if (inpCtrl.ObjType === "Numeric")
                         inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
@@ -258,9 +259,15 @@
             if (!IsNoValExp) {
                 // DefaultValueExpression
                 if (inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
-                    let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-                    let val = fun();
-                    inpCtrl.setValue(val);
+                    try {
+                        let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                        let val = fun();
+                        inpCtrl.setValue(val);
+                    }
+                    catch (e) {
+                        console.error('error in grid default value expr: ' + inpCtrl.Name);
+                        console.warn(e);
+                    }
                 }
             }
 
@@ -1127,9 +1134,15 @@
 
     this.onRowPaintFn = function ($tr, action, event) {
         if ((this.ctrl.OnRowPaint && this.ctrl.OnRowPaint.Code && this.ctrl.OnRowPaint.Code.trim() !== '')) {
-            let FnString = atob(this.ctrl.OnRowPaint.Code);
-            DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event };
-            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();
+            try {
+                let FnString = atob(this.ctrl.OnRowPaint.Code);
+                DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event };
+                new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();
+            }
+            catch (e) {
+                console.error('error in onRowPaintFn: ' + this.ctrl.Name);
+                console.warn(e);
+            }
         }
     };
 

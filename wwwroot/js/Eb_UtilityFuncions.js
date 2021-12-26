@@ -60,11 +60,18 @@ function isAllValuesTrue(Obj) {
 
 function getValueExprValue(ctrl, formObject, userObject) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code) {
-        let fun = new Function("form", "user", `event`, atob(ctrl.ValueExpr.Code)).bind(ctrl, formObject, userObject);
-        let val = fun();
-        val = EbConvertValue(val, ctrl.ObjType);
-        return val;
+        try {
+            let fun = new Function("form", "user", `event`, atob(ctrl.ValueExpr.Code)).bind(ctrl, formObject, userObject);
+            let val = fun();
+            val = EbConvertValue(val, ctrl.ObjType);
+            return val;
+        }
+        catch (e) {
+            console.error('Error in grid value expression: ' + ctrl.Name);
+            console.warn(e);
+        }
     }
+    return null;
 }
 
 function EbRunValueExpr_n(ctrl, formObject, userObject, formObj) {

@@ -461,6 +461,8 @@ const WebFormRender = function (option) {
                 ctrl.setDisplayMember(val);
             }
             else if (ctrl.ObjType === "TextBox") {
+                if (val)
+                    val = val.replace(/\r/g, '');
                 ctrl.justSetValue(val);
                 if (ctrl.getValueFromDOM() !== val) {
                     ctrl.__EbAlert.alert({

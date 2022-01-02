@@ -171,6 +171,8 @@
                 $(`#${this.EbSid} .eb_tablelayout_td`).each(function (i, td) {
                     totalwidth += $(td).width();
                 }.bind(this));
+                if (this.RowCount > 1)
+                    totalwidth /= this.RowCount;
                 $(`#${this.EbSid} .eb_tablelayout_td`).each(function (i, td) {
                     let rowindex = $(td).closest(".eb_tablelayout_tr").index();
                     let colindex = $(td).index();
@@ -264,7 +266,7 @@
             }
         },
         EbMobileVisualization: {
-            LinkSettingsProps: ["FormMode", "RenderAsPopup", "FormId", "LinkFormParameters", "ContextToControlMap"],
+            LinkSettingsProps: ["FormMode", "RenderAsPopup", "FormId", "LinkFormParameters"],//"ContextToControlMap"
             propertyChanged: function (propname, root) {
                 if (propname == "DataSourceRefId") {
                     if (!this.DataSourceRefId) {

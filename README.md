@@ -4,12 +4,13 @@
 
 **ExpressBase.Web** is the repository that holds the web/front-end micro-service (it is huge currently, we will be breaking it down to smaller services in near future).
 
-### Dependencies
+### EXPRESSbase Micro-Services & Libraries
 
 * [ExpressBase.CoreBase](https://github.com/ExpressBaseSystems/ExpressBase.CoreBase)
 * [ExpressBase.Common](https://github.com/ExpressBaseSystems/ExpressBase.Common)
 * [ExpressBase.Objects](https://github.com/ExpressBaseSystems/ExpressBase.Objects)
 * [ExpressBase.ServiceStack](https://github.com/ExpressBaseSystems/ExpressBase.ServiceStack)
+* [ExpressBase.Web](https://github.com/ExpressBaseSystems/ExpressBase.Web)
 * [ExpressBase.AuthServer](https://github.com/ExpressBaseSystems/ExpressBase.AuthServer)
 * [ExpressBase.FileWeb](https://github.com/ExpressBaseSystems/ExpressBase.FileWeb)
 * [ExpressBase.FileServer](https://github.com/ExpressBaseSystems/ExpressBase.FileServer)
@@ -17,7 +18,7 @@
 * [ExpressBase.ServerEvents](https://github.com/ExpressBaseSystems/ExpressBase.ServerEvents)
 * [ExpressBase.Scheduler](https://github.com/ExpressBaseSystems/ExpressBase.Scheduler)
 
-## Built With
+## EXPRESSbase Low-Code Platform is Built With
 
 * [.NET Core](https://dotnet.microsoft.com/en-us/download/dotnet)
 * [ServiceStack.NET](https://servicestack.net/)
@@ -27,6 +28,7 @@
 * [RabbitMQ](https://www.rabbitmq.com/) - Message Queue
 * [Quartz.NET](https://www.quartz-scheduler.net/) - Scheduler
 * [iTextSharp](https://github.com/itext/itextsharp) - Data-driven PDF generation
+* [Xamarin](https://dotnet.microsoft.com/en-us/apps/xamarin) - Mobile
 
 ## Authors / Contributors
 

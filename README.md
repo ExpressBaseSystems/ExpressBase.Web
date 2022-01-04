@@ -4,22 +4,18 @@
 
 **ExpressBase.Web** is the repository that holds the web/front-end micro-service (it is huge currently, we will be breaking it down to smaller services
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Dependencies
 
-* [ExpressBase.ServiceStack]
-* [ExpressBase.Objects]
-* [ExpressBase.AuthServer]
-* [ExpressBase.Common]
-* [ExpressBase.MessageQueue]
-* [ExpressBase.FileWeb]
-* [ExpressBase.FileServer]
-* [ExpressBase.CoreBase]
-* [ExpressBase.ServerEvents]
-* [ExpressBase.Scheduler]
+* [ExpressBase.CoreBase](https://github.com/ExpressBaseSystems/ExpressBase.CoreBase)
+* [ExpressBase.Common](https://github.com/ExpressBaseSystems/ExpressBase.Common)
+* [ExpressBase.Objects](https://github.com/ExpressBaseSystems/ExpressBase.Objects)
+* [ExpressBase.ServiceStack](https://github.com/ExpressBaseSystems/ExpressBase.ServiceStack)
+* [ExpressBase.AuthServer](https://github.com/ExpressBaseSystems/ExpressBase.AuthServer)
+* [ExpressBase.FileWeb](https://github.com/ExpressBaseSystems/ExpressBase.FileWeb)
+* [ExpressBase.FileServer](https://github.com/ExpressBaseSystems/ExpressBase.FileServer)
+* [ExpressBase.MessageQueue](https://github.com/ExpressBaseSystems/ExpressBase.MessageQueue)
+* [ExpressBase.ServerEvents](https://github.com/ExpressBaseSystems/ExpressBase.ServerEvents)
+* [ExpressBase.Scheduler](https://github.com/ExpressBaseSystems/ExpressBase.Scheduler)
 
 ## Built With
 

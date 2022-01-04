@@ -1,6 +1,6 @@
 # ExpressBase.Web
 
-[EXPRESSbase](https://expressbase.com) is an open-source, Low-Code Rapid application development platform on the cloud for fast-growing SME (Small to Mid-sized business) to build & run internal process apps on web/mobile 10x faster. It is a truly multi-tenant, multi-database, cloud-native platform developed using micro-services architecture (not micro yet).
+[EXPRESSbase](https://expressbase.com) is an open-source, Low-Code Rapid application development platform on the cloud for fast-growing SME (Small to Mid-sized business) to build & run internal process apps on web/mobile 10x faster. It is a truly multi-tenant, multi-database, cloud-native platform developed using micro-services architecture (not truly micro-services yet :D).
 
 **ExpressBase.Web** is the repository that holds the web/front-end micro-service (it is huge currently, we will be breaking it down to smaller services
 

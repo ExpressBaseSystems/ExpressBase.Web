@@ -461,6 +461,8 @@ const WebFormRender = function (option) {
                 ctrl.setDisplayMember(val);
             }
             else if (ctrl.ObjType === "TextBox") {
+                if (val)
+                    val = val.replace(/\r/g, '');
                 ctrl.justSetValue(val);
                 if (ctrl.getValueFromDOM() !== val) {
                     ctrl.__EbAlert.alert({
@@ -1278,7 +1280,12 @@ const WebFormRender = function (option) {
                                 this.hideLoader();
                                 if (result > 0) {
                                     EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + this.getLocObj().LongName, AutoHide: true, Background: '#00aa00', Delay: 3000 });
-                                    setTimeout(function () { window.close(); }, 3000);
+                                    setTimeout(function () {
+                                        if (this.renderMode === 2)
+                                            ebcontext.webform.hideSubForm(this.__MultiRenderCxt);
+                                        else
+                                            window.top.close();
+                                    }.bind(this), 3000);
                                 }
                                 else if (result === -1) {
                                     EbMessage("show", { Message: 'Delete operation failed due to validation failure.', AutoHide: true, Background: '#aa0000', Delay: 4000 });
@@ -1321,7 +1328,12 @@ const WebFormRender = function (option) {
                                 let resp = JSON.parse(result);
                                 if (resp.Status === 200) {
                                     EbMessage("show", { Message: "Draft entry Deleted successfully", AutoHide: true, Background: '#00aa00', Delay: 4000 });
-                                    setTimeout(function () { window.close(); }, 3000);
+                                    setTimeout(function () {
+                                        if (this.renderMode === 2)
+                                            ebcontext.webform.hideSubForm(this.__MultiRenderCxt);
+                                        else
+                                            window.top.close();
+                                    }.bind(this), 3000);
                                 }
                                 else {
                                     EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });

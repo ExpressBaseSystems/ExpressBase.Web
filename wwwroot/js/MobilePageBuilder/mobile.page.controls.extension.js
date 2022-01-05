@@ -166,7 +166,13 @@
                 this.CellCollection.$values.length = 0;
                 this.RowCount = $(`#${this.EbSid} .eb_tablelayout_tr`).length;
                 this.ColumCount = $(`#${this.EbSid} .eb_tablelayout_tr:first-child .eb_tablelayout_td`).length;
-
+                let widthAdjustement = 0.0;
+                let totalwidth = 0;
+                $(`#${this.EbSid} .eb_tablelayout_td`).each(function (i, td) {
+                    totalwidth += $(td).width();
+                }.bind(this));
+                if (this.RowCount > 1)
+                    totalwidth /= this.RowCount;
                 $(`#${this.EbSid} .eb_tablelayout_td`).each(function (i, td) {
                     let rowindex = $(td).closest(".eb_tablelayout_tr").index();
                     let colindex = $(td).index();
@@ -174,7 +180,13 @@
                     let cell = new EbObjects.EbMobileTableCell(`TableCell_${rowindex}_${colindex}`);
                     cell.RowIndex = rowindex;
                     cell.ColIndex = colindex;
-                    cell.Width = parseFloat($(td).width() / $(`#${this.EbSid}`).width() * 100);
+                    let floatwidth = ($(td).width() * 100.0) / totalwidth;
+                    widthAdjustement += floatwidth % 1;
+                    cell.Width = parseInt(floatwidth);
+                    if (widthAdjustement >= 1) {
+                        cell.Width += 1;
+                        widthAdjustement--;
+                    }
 
                     $(td).find(".mob_control").each(function (i, ctrl) {
                         let ebo = window.MobilePage[this.tab].Creator.Procs[ctrl.id];
@@ -254,7 +266,7 @@
             }
         },
         EbMobileVisualization: {
-            LinkSettingsProps: ["FormMode", "RenderAsPopup", "FormId", "LinkFormParameters", "ContextToControlMap"],
+            LinkSettingsProps: ["FormMode", "RenderAsPopup", "FormId", "LinkFormParameters"],//"ContextToControlMap"
             propertyChanged: function (propname, root) {
                 if (propname == "DataSourceRefId") {
                     if (!this.DataSourceRefId) {

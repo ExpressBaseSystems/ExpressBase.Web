@@ -660,7 +660,9 @@
                                                     {
                                                         <tr>
                                                             <td><input type="text" class="import_reftable_input" value="@di.TableName" name="@(di.RefId + "_input")" /></td>
-                                                            <td>@di.DisplayName</td>
+                                                            <td>
+                                                                <a href="/Eb_Object/Index?objid=@di.RefId.Split("-")[3]&objtype=@di.RefId.Split("-")[2]" target="_blank">@di.DisplayName</a>
+                                                            </td>
                                                             <td class="text-center"><button class="rm_refbtn pull-right" ref="@di.RefId"><i class="fa fa-close"></i></button></td>
                                                         </tr>
                                                     }

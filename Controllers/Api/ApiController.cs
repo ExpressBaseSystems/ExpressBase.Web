@@ -910,6 +910,24 @@ namespace ExpressBase.Web.Controllers
             return data;
         }
 
+
+        [HttpPost("api/pull_latest_autoid")]
+        public ActionResult<EbMobileAutoIdDataResponse> GetOfflineDataForMobile(string data)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            EbMobileAutoIdDataResponse resp = this.ServiceClient.Post(new EbMobileAutoIdDataRequest()
+            {
+                AutoIdData = data
+            });
+
+            if (resp == null)
+            {
+                return NotFound();
+            }
+            return resp;
+        }
+
         [HttpPost("api/push_data")]
         public ActionResult<InsertDataFromWebformResponse> WebFormSaveCommonApi([FromForm] Dictionary<string, string> form)
         {

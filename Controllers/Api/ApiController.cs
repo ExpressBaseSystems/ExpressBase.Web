@@ -910,9 +910,25 @@ namespace ExpressBase.Web.Controllers
             return data;
         }
 
+        [HttpPost("api/get_solution_datav2")]
+        public ActionResult<EbMobileSolutionData> GetOfflineDataAll(string metadata)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            EbMobileSolutionData resp = this.ServiceClient.Post(new MobileSolutionDataRequestV2()
+            {
+                MetaData = metadata
+            });
+
+            if (resp == null)
+            {
+                return NotFound();
+            }
+            return resp;
+        }
 
         [HttpPost("api/pull_latest_autoid")]
-        public ActionResult<EbMobileAutoIdDataResponse> GetOfflineDataForMobile(string data)
+        public ActionResult<EbMobileAutoIdDataResponse> GetLatestAutoId(string data)
         {
             if (!Authenticated) return Unauthorized();
 

@@ -256,7 +256,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/auth")]
         [HttpPost("/api/auth")]
-        public ApiAuthResponse ApiLoginByMd5(string username, string password, bool anonymous = false)
+        public ApiAuthResponse ApiLoginByMd5(string username, string password, string deviceid, bool anonymous = false)
         {
             ApiAuthResponse response = null;
             try
@@ -270,7 +270,8 @@ namespace ExpressBase.Web.Controllers
                         { RoutingConstants.WC, RoutingConstants.MC },
                         { TokenConstants.CID, this.IntSolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
-                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                        { RoutingConstants.USER_AGENT, this.UserAgent},
+                        { "deviceid", deviceid}
                     },
                     RememberMe = true
                 };

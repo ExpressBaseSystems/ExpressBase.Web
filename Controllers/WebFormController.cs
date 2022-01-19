@@ -236,7 +236,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Console.WriteLine("GetFormForRendering - Draft mode requested.");
                     int DraftId = Convert.ToInt32(ob.Find(e => e.Name == "id")?.ValueTo ?? 0);
-                    GetFormDraftResponse Resp = ServiceClient.Post<GetFormDraftResponse>(new GetFormDraftRequest { RefId = refId, DraftId = DraftId });
+                    GetFormDraftResponse Resp = ServiceClient.Post<GetFormDraftResponse>(new GetFormDraftRequest { RefId = refId, DraftId = DraftId, CurrentLoc = _locId });
                     resp.FormDataWrap = Resp.DataWrapper;
                     resp.Draft_FormData = Resp.FormDatajson;
                     resp.DraftId = DraftId;
@@ -447,8 +447,8 @@ WHERE COALESCE(ES.eb_del,'F') = 'F' AND COALESCE(ES.is_submitted,'F') = 'F' AND 
                 new DVStringColumn { Data = 2, Name = "form_ref_id", sTitle = "Ref id", Type = EbDbTypes.String, bVisible = false },
                 new DVStringColumn { Data = 3, Name = "display_name", sTitle = "Form name", Type = EbDbTypes.String, bVisible = true, RenderAs = StringRenderType.LinkFromColumn, RefidColumn = new DVBaseColumn(), IdColumn = new DVBaseColumn()  },
 
-                new DVStringColumn { Data = 4, Name = "message", sTitle = "Message", Type = EbDbTypes.String, bVisible = true },
-                new DVStringColumn { Data = 5, Name = "stack_trace", sTitle = "Stacktrace", Type = EbDbTypes.String, bVisible = true },
+                new DVStringColumn { Data = 4, Name = "message", sTitle = "Message", Type = EbDbTypes.String, bVisible = true, AllowedCharacterLength = 40 },
+                new DVStringColumn { Data = 5, Name = "stack_trace", sTitle = "Stacktrace", Type = EbDbTypes.String, bVisible = true, AllowedCharacterLength = 50 },
                 new DVNumericColumn { Data = 6, Name = "eb_created_by", sTitle = "Created By", Type = EbDbTypes.Int32, bVisible = true },
 
                 new DVDateTimeColumn { Data = 7, Name = "eb_created_at", sTitle = "Created at", Type = EbDbTypes.Date, bVisible = true,Format = DateFormat.DateTime, ConvretToUsersTimeZone = true },
@@ -469,7 +469,7 @@ WHERE COALESCE(ES.eb_del,'F') = 'F' AND COALESCE(ES.is_submitted,'F') = 'F' AND 
                 }
             }
 
-            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true };
+            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true, RowHeight = 38 };
             //List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("eb_lastmodified_at") };
             //(Visualization as EbTableVisualization).RowGroupCollection.Add(new SingleLevelRowGroup { RowGrouping = RowGroupingColumns, Name = "singlelevel" });
             //(Visualization as EbTableVisualization).CurrentRowGroup = (Visualization as EbTableVisualization).RowGroupCollection[0];

@@ -1036,7 +1036,7 @@
             this.PEHelper();
     };
 
-    this.DRColumnsSuccessfn = function (cols) { 
+    this.DRColumnsSuccessfn = function (cols) {
         this.PGobj.PropsObj[this.PGobj.CurProp].DRColumns = JSON.parse(cols);
         this.PGobj.PropsObj[this.PGobj.CurProp].DSColumns = JSON.parse(cols);
         this.PEHelper();
@@ -1694,6 +1694,10 @@
                 if (RObj === colObj)/// if already reference exit
                     return false;
                 let idx = this.selectedCols.indexOf(RObj);
+
+                if (this.editor === 35 && colObj.FormControl)/// fix for columns to control map in mob table view
+                    $.extend(colObj.FormControl, this.selectedCols[idx].FormControl)
+
                 this.selectedCols[idx] = colObj;
             }
         }.bind(this));

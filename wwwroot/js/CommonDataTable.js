@@ -749,7 +749,7 @@
         o.scrollX = true;
         //o.scrollXInner = "110%";
         o.scrollCollapse = true;
-        if (this.Source === "EbDataTable") {
+        if (this.Source === "EbDataTable" || this.Source === "Draft") {
             if (this.EbObject.PageLength !== 0) {
                 o.lengthMenu = this.generateLengthMenu();
             }

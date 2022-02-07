@@ -436,7 +436,8 @@ FROM eb_form_drafts ES
 LEFT JOIN eb_objects_ver EOV ON ES.form_ref_id = EOV.refid
 LEFT JOIN eb_objects EO ON EOV.eb_objects_id = EO.id
 WHERE COALESCE(ES.eb_del,'F') = 'F' AND COALESCE(ES.is_submitted,'F') = 'F' AND ES.draft_type={(int)FormDraftTypes.ErrorBin}
-; ";//ORDER BY ES.eb_lastmodified_at DESC
+ORDER BY ES.eb_created_at DESC, ES.eb_created_by
+; ";
 
             List<Param> _params = new List<Param>();
 
@@ -469,7 +470,17 @@ WHERE COALESCE(ES.eb_del,'F') = 'F' AND COALESCE(ES.is_submitted,'F') = 'F' AND 
                 }
             }
 
-            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true, RowHeight = 38 };
+            EbDataVisualization Visualization = new EbTableVisualization
+            {
+                Sql = query,
+                ParamsList = _params,
+                Columns = DVColumnCollection,
+                AutoGen = false,
+                IsPaging = true,
+                PageLength = 500,
+                RowHeight = 38
+            };
+
             //List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("eb_lastmodified_at") };
             //(Visualization as EbTableVisualization).RowGroupCollection.Add(new SingleLevelRowGroup { RowGrouping = RowGroupingColumns, Name = "singlelevel" });
             //(Visualization as EbTableVisualization).CurrentRowGroup = (Visualization as EbTableVisualization).RowGroupCollection[0];

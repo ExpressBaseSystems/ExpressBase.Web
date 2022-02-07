@@ -2168,7 +2168,7 @@ const WebFormRender = function (option) {
         if (opStr === 'DraftSave')
             return this.formPermissions[loc].includes(op['New']) && this.FormObj.CanSaveAsDraft && this.Mode.isNew;
         if (opStr === 'DraftDelete')
-            return this.FormObj.CanSaveAsDraft && this.draftId > 0 && this.Mode.isNew;
+            return this.draftId > 0 && this.Mode.isNew;
         if (op[opStr] && !this.Mode.isNew)
             return this.formPermissions[loc].includes(op[opStr]);
         return false;

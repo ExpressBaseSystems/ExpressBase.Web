@@ -215,6 +215,7 @@
         </div>
         <div class="mobile-settings-container w-100" style="padding:10px 15px">
             <h5>Mobile settings</h5>
+            <div style="text-align: right;"><input type="checkbox" id="chkMobMaintenance" @mobile_settings.IsMaintenanceMode()> Maintenance Mode</div>
             <div class="settings-container display-flex">
                 <div class="mobile_signup_set w-100 display-flex h-100">
                     <div class="solution_cons">
@@ -432,6 +433,7 @@
     function setMobileSettings() {
         MobileSettings.SignUpPageRefId = $('#mobile-signup-refid').val() || null;
         MobileSettings.UserTypeForms = getMobileProfilePages();
+        MobileSettings.MaintenanceMode = $("#chkMobMaintenance").prop("checked");
     }
 
     function EbProfileUserType(id,name,refid) {

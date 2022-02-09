@@ -22,11 +22,11 @@
                             <div class="apibox"><i class="fa fa-file-text"></i></div> Drafts
                         </a>
                     </li>
-                    @*<li klink='true'>
-                            <a href="@Url.Action("ErrorBin","WebForm")" class="list-group-item inner_li Obj_link for_brd">
-                                <div class="apibox"><i class="fa fa-cart-arrow-down"></i></div> Error Bin
-                            </a>
-                        </li>*@
+                    <li klink='true'>
+                        <a href="@Url.Action("ErrorBin","WebForm")" class="list-group-item inner_li Obj_link for_brd">
+                            <div class="apibox"><i class="fa fa-cart-arrow-down"></i></div> Error Bin
+                        </a>
+                    </li>
                 }
 
                 @if (ViewBag.wc.Equals("uc") && (ViewBag.Role.Contains("SolutionOwner") || ViewBag.Role.Contains("SolutionAdmin")))

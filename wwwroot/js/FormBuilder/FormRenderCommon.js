@@ -1588,9 +1588,14 @@
     }.bind(this);
 
     this.getProcessedValue = function (ctrl, value) {
-        if (value)
-            return value;
         let _t = ctrl.EbDbType;
+        if (value) {
+            if (ctrl.ObjType == 'Numeric') {
+                value = parseFloat(value).toFixed(ctrl.DecimalPlaces);
+                value = parseFloat(value);
+            }
+            return value;
+        }
         if (_t === 16 || _t === 0)
             return '';
         if (_t === 7 || _t === 8 || _t === 10 || _t === 11 || _t === 12)

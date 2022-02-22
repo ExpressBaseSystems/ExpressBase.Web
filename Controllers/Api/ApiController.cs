@@ -283,7 +283,6 @@ namespace ExpressBase.Web.Controllers
                 }
 
                 response = this.Authenticate(authRequest, out MyAuthenticateResponse myAuthResponse);
-                response.Message = "authentication success";
 
                 if (response != null && response.IsValid)
                 {
@@ -347,7 +346,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                 {
-                    response.Message = "authentication failed, user object null, user does not exist";
+                    response.Message = "Authentication failed: user does not exist";
                     response.IsValid = false;
                 }
             }
@@ -355,6 +354,7 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Authenticate internal error");
                 Console.WriteLine(ex.Message);
+                response.Message = ex.Message;
             }
             return response;
         }

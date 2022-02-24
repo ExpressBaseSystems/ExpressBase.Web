@@ -173,15 +173,15 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/LastAccess")]
-        public string LastAccess()
+        public FileContentResult LastAccess()
         {
             if (ViewBag.cid == "admin")
                 if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
                 {
-                    this.ServiceClient.Post(new LastSolnAccessRequest { SolnId = ViewBag.cid });
-                    return "Servicestack is processing your request. Check mail after sometime.";
+                    LastSolnAccessResponse res = this.ServiceClient.Post(new LastSolnAccessRequest { SolnId = ViewBag.cid });
+                    return File(res.FileBytea, "application/json", "LastAccess" + ".csv");
                 }
-            return "No prmission";
+            return null;
         }
 
     }

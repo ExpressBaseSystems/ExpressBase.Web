@@ -4354,6 +4354,7 @@
             comments = $(e.target).closest("#resetstage").find(".comment-text").val();
             if (!comments.trim()) {
                 EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
                 return;
             }
             val = $(e.target).attr("data-json");
@@ -4364,6 +4365,7 @@
             let req = $(e.target).closest("#action").find(".selectpicker :selected").attr('req');
             if (!comments.trim() && req === 'y') {
                 EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
                 return;
             }
             val = $(e.target).closest("#action").find(".selectpicker").val();

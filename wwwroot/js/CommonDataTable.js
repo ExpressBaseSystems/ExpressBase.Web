@@ -4344,6 +4344,11 @@
 
     this.ExecuteApproval = function ($td, action, e) {
         //$("#eb_common_loader").EbLoader("show");
+        if ($(e.target).attr('action-clicked') == 'true') {// to avoid multi click
+            console.warn('multi click blocked');
+            return;
+        }
+        $(e.target).attr('action-clicked', 'true');
         let val, comments;
         if (action === 'reset') {
             comments = $(e.target).closest("#resetstage").find(".comment-text").val();

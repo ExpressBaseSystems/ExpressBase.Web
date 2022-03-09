@@ -1,4 +1,5 @@
-﻿const EbDataGrid = function (ctrl, options) {
+﻿//test
+const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
     this.DGcols = this.ctrl.Controls.$values;
     this.ctrl.formObject = options.formObject;

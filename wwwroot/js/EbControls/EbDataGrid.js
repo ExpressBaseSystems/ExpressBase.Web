@@ -89,6 +89,32 @@
         }.bind(this));
     };
 
+    this.execDisableExpr = function () {
+        if (!this.ctrl.currentRow)
+            return;
+        $.each(this.ctrl.currentRow, function (rowId, inpCtrl) {
+            try {
+                if (!inpCtrl.Hidden && inpCtrl.DisableExpr && inpCtrl.DisableExpr.Lang === 0 && inpCtrl.DisableExpr.Code) {
+                    let isDisable = new Function("form", "user", `event`, atob(inpCtrl.DisableExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject)();
+                    if (isDisable) {
+                        inpCtrl.disable();
+                        inpCtrl.__IsDisableByExp = true;
+                    }
+                    else {
+                        if (!this.formRenderer.Mode.isView) {
+                            inpCtrl.enable();
+                            inpCtrl.__IsDisableByExp = false;
+                        }
+                    }
+                    inpCtrl.IsDisable = val ? true : false;
+                }
+            }
+            catch (e) {
+                console.error(e);
+            }
+        }.bind(this));
+    };
+
     this.callOnRowPaintFns = function () {
         $.each(this.objectMODEL, function (rowId, inpCtrls) {
             this.setCurRow(rowId);
@@ -201,6 +227,7 @@
         let enabledUiInps = $tr.find("td [ui-inp]:enabled");
         if (enabledUiInps.length > 0)
             $(enabledUiInps[0]).select();
+        this.execDisableExpr();
     }.bind(this);
 
     this.changeEditFlagInRowCtrls = function (val, rowId) {
@@ -367,11 +394,11 @@
             return col.FalseText;
     };
 
-    this.getBooleanDispMembrs = function (cellObj, rowId, col) {
-        if (cellObj.Value === true)
-            return "✔";
+    this.getBooleanDispMembrs = function (val) {
+        if (val === true)
+            return "<span style='text-align: center;'><i class='fa fa-check-square-o' style='width: 100%;'></i></span>";
         else
-            return "✖";
+            return "<span style='text-align: center;'><i class='fa fa-square-o' style='width: 100%;'></i></span>";
     };
 
     this.getDispMembr = function (inpCtrl) {
@@ -393,7 +420,7 @@
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGBooleanColumn") {
-            dspMmbr = this.getBooleanDispMembrs(cellObj, rowId, col);
+            dspMmbr = this.getBooleanDispMembrs(cellObj.Value || false);
         }
         else if (col.ObjType === "DGNumericColumn") {
             dspMmbr = col.InputMode == 1 ? cellObj.Value.toLocaleString('en-IN', { maximumFractionDigits: col.DecimalPlaces, minimumFractionDigits: col.DecimalPlaces }) : cellObj.Value.toFixed(col.DecimalPlaces);// cellObj.F || (col.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(col.DecimalPlaces))); // temporary fix
@@ -691,6 +718,7 @@
 
         this.bindReq_Vali_UniqRow($tr);
         this.updateAggCols();
+        this.execDisableExpr();
         return [$tr, rowCtrls];
 
     }.bind(this);
@@ -870,6 +898,10 @@
             let val = ctrl.getDisplayMemberFromDOM() || "0.00";// temporary fix
             $td.find(".tdtxt span").text(val);
         }
+        else if (ctrl.ObjType === "CheckBox") {
+            let val = ctrl.getValue();
+            $td.find(".tdtxt span").html(this.getBooleanDispMembrs(val));
+        }
         else {
             //let t0 = performance.now();
             let val = ctrl.getDisplayMemberFromDOM() || ctrl.getValue();
@@ -981,7 +1013,10 @@
             let UiInps = $e.closest("td").find("[ui-inp]");
             if (UiInps.length > 0) {
                 setTimeout(function ($e) {
-                    $e.closest("td").find("[ui-inp]").focus();
+                    let $td = $e.closest("td");
+                    //if ($td.attr('tdcoltype') == "DGBooleanColumn")
+                    //$td.find("[ui-inp]").click();
+                    $td.find("[ui-inp]").focus();
                 }.bind(this, $e), 1);
             }
             return;
@@ -1383,7 +1418,7 @@
         let $tr = $(e.currentTarget);
 
         if (e.which === 40 || e.which === 38) {//down arrow //up arrow
-            if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"]').length === 0)
+            if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"], [tdcoltype="DGBooleanColumn"]').length === 0)
                 return;
             e.preventDefault();
 

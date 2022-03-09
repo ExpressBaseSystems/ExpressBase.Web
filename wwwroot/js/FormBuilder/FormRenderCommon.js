@@ -1423,15 +1423,17 @@
             let depCtrl_s = DepHandleObj.DisableP[i];
             try {
                 let code = atob(depCtrl.DisableExpr.Code);
-                let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                if (hideExpVal) {
-                    depCtrl.disable();
-                    depCtrl.__IsDisableByExp = true;
-                }
-                else {
-                    if (!this.FO.Mode.isView) {
-                        depCtrl.enable();
-                        depCtrl.__IsDisableByExp = false;
+                if (!(!DepHandleObj.curCtrl.IsDGCtrl && depCtrl.IsDGCtrl)) {// not form to grid
+                    let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    if (hideExpVal) {
+                        depCtrl.disable();
+                        depCtrl.__IsDisableByExp = true;
+                    }
+                    else {
+                        if (!this.FO.Mode.isView) {
+                            depCtrl.enable();
+                            depCtrl.__IsDisableByExp = false;
+                        }
                     }
                 }
             }
@@ -1478,38 +1480,39 @@
         depCtrl.__continue = null;
 
         if (depCtrl[DepHandleObj.exprName] && depCtrl[DepHandleObj.exprName].Code && depCtrl[DepHandleObj.exprName].Lang === 0) {
-            let ValueExpr_val = null;
-            try {
-                let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
-                ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
-            }
-            catch (e) {
-                console.error(e);
-                EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
-            }
-            if (DepHandleObj.isInitSetup || this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                // if persist - manual onchange only setValue. DoNotPersist always setValue
-                if (depCtrl.ObjType === 'PowerSelect') {
-                    depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
-                    depCtrl.justSetValue(ValueExpr_val);
-                    EbBlink(depCtrl);
-                    wait = true;
+            if (!(!curCtrl.IsDGCtrl && depCtrl.IsDGCtrl)) {// not form to grid
+                let ValueExpr_val = null;
+                try {
+                    let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
+                    ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
+                }
+                catch (e) {
+                    console.error(e);
+                    EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+                }
+                if (DepHandleObj.isInitSetup || this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                    // if persist - manual onchange only setValue. DoNotPersist always setValue
+                    if (depCtrl.ObjType === 'PowerSelect') {
+                        depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
+                        depCtrl.justSetValue(ValueExpr_val);
+                        EbBlink(depCtrl);
+                        wait = true;
+                    }
+                    else {
+                        depCtrl.justSetValue(ValueExpr_val);
+                        this.validateCtrl(depCtrl);
+                        EbBlink(depCtrl);
+                    }
                 }
                 else {
-                    depCtrl.justSetValue(ValueExpr_val);
-                    this.validateCtrl(depCtrl);
-                    EbBlink(depCtrl);
+                    $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                        row[depCtrl.Name].setValue(ValueExpr_val);
+                    }.bind(this));
                 }
+                //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
             }
-            else {
-                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
-                    row[depCtrl.Name].setValue(ValueExpr_val);
-                }.bind(this));
-            }
-            //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
-            //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
-
         }
         else if (depCtrl[DepHandleObj.exprName] && depCtrl[DepHandleObj.exprName].Lang === 2) {
             let filterValues = [];
@@ -1530,6 +1533,25 @@
         }
 
     };
+
+    //this.execDgValueExpr = function (DepHandleObj, depCtrl) {
+    //    try {
+    //        $.each(depCtrl.__DG.Rows, function (rowId, inpCtrls) {
+    //            depCtrl.__DG.currentRow = inpCtrls;
+    //            let inpCtrl = inpCtrls[depCtrl.Name];
+    //            if (inpCtrl && inpCtrl[DepHandleObj.exprName] && inpCtrl[DepHandleObj.exprName].Lang === 0 && inpCtrl[DepHandleObj.exprName].Code) {
+    //                let ValueExpr_val = new Function("form", "user", `event`, atob(inpCtrl[DepHandleObj.exprName].Code)).bind(inpCtrl, this.FO.formObject, this.FO.userObject)();
+    //                ValueExpr_val = this.getProcessedValue(inpCtrl, ValueExpr_val);
+    //                inpCtrl.___isNotUpdateValExpDepCtrls = true;
+    //                inpCtrl.justSetValue(ValueExpr_val);
+    //            }
+    //        }.bind(this));
+    //    }
+    //    catch (e) {
+    //        console.error(e);
+    //        EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+    //    }
+    //};
 
     //resume dr dependency
     this.resumeExec2 = function (depCtrl, DepHandleObj) {

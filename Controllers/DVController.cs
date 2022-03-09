@@ -260,7 +260,7 @@ namespace ExpressBase.Web.Controllers
                     returnobj.DsColumns = Columns;
                 }
                 else
-                { 
+                {
                     throw new Exception("No DS found");
                 }
             }
@@ -459,7 +459,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception ex)
             {
-                res.Messaage = "EXCEPTION AT Approval in DV ---" + Resp.Message + "----" + ex.Message;
+                res.Messaage = "EXCEPTION AT Approval in DV ---" + Resp?.Message + "----" + ex.Message;
                 Console.WriteLine("EXCEPTION AT Approval in DV" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }

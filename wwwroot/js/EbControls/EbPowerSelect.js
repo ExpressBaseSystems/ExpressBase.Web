@@ -1288,6 +1288,8 @@ const EbPowerSelect = function (ctrl, options) {
         else
             this.adjustDDposition();
 
+        this.hideOldDD();
+
         this.Vobj.DDstate = true;
 
         if (!this.IsDatatableInit)
@@ -1300,6 +1302,13 @@ const EbPowerSelect = function (ctrl, options) {
         this.V_updateCk();
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         this.colAdjust();
+    };
+
+    this.hideOldDD = function () {
+        $.each($('.DDdiv:visible'), function (i, obj) {
+            if (!this.$DDdiv.is(obj))
+                $(obj).hide();
+        }.bind(this));
     };
 
     this.focus1stRow = function () {

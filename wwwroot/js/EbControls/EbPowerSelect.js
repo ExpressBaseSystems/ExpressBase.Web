@@ -788,7 +788,7 @@ const EbPowerSelect = function (ctrl, options) {
 
                 try {
                     this.Vobj.valueMembers.push(...tempVMs);
-                    //if (this.ComboObj.__continue) this.ComboObj.__continue();
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                 }
                 catch (e) {
                     console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);

@@ -1,8 +1,8 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
     this.DGcols = this.ctrl.Controls.$values;
-    this.ctrl.formObject = options.formObject;
-    this.formObject_Full = options.formObject_Full;
+    this.ctrl.formObject = options.formObject; //'form' in JsScript
+    this.formObject_Full = options.formObject_Full; //original object
     this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
@@ -1795,29 +1795,33 @@
         let params = [];
         let lastCtrlName;
         $.each(dependantCtrls, function (i, ctrlName) {
-            let val;
+            let val = null;
 
-            if (ctrlName === "eb_currentuser_id") {
+            if (ctrlName === "eb_currentuser_id")
                 val = ebcontext.user.UserId;
-                let obj = { Name: ctrlName, Value: val };
-                params.push(obj);
-                return;
-            }
-            else if (ctrlName === "eb_loc_id") {
+            else if (ctrlName === "eb_loc_id")
                 val = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+            else if (ctrlName === "id")
+                val = this.formRenderer.rowId;
+
+            if (val !== null) {
                 let obj = { Name: ctrlName, Value: val };
                 params.push(obj);
                 return;
             }
-
 
             let ctrl = this.ctrl.formObject[ctrlName];
-            val = ctrl.getValue();
+            if (ctrl) {
+                val = ctrl.getValue();
+                lastCtrlName = ctrlName;
+            }
+            else
+                console.error('Dg dr parameter control not found: ' + ctrlName);
+
             let obj = { Name: ctrlName, Value: val };
-            //let obj = { Name: ctrlName, Value: "2026" };
-            lastCtrlName = ctrlName;
             params.push(obj);
-            if (isFull && ctrl.isEmpty())
+
+            if (isFull && ctrl && ctrl.isEmpty())
                 isFull = false;
         }.bind(this));
         return [params, lastCtrlName, isFull];

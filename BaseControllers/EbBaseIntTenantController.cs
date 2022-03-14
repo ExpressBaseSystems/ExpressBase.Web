@@ -170,18 +170,21 @@ namespace ExpressBase.Web.BaseControllers
             try
             {
                 Eb_Solution s_obj = GetSolutionObject(contrlr.ViewBag.cid);
-                if (this.LoggedInUser.LocationIds.Contains(-1) || this.LoggedInUser.Roles.Contains("SolutionAdmin"))
-                    list = s_obj.Locations.Values.ToList();
-                else
+                if (!(s_obj is null))
                 {
-                    Console.WriteLine("==============Solution Obj Location Ids: ");
-                    foreach (int key in s_obj.Locations.Keys)
-                        Console.WriteLine(key + "====");
-                    Console.WriteLine("================ User Object Location Ids: ");
-                    foreach (int id in this.LoggedInUser.LocationIds)
+                    if (this.LoggedInUser.LocationIds.Contains(-1) || this.LoggedInUser.Roles.Contains("SolutionAdmin"))
+                        list = s_obj?.Locations.Values.ToList();
+                    else
                     {
-                        Console.WriteLine(id + "====");
-                        list.Add(s_obj.Locations[id]);
+                        Console.WriteLine("==============Solution Obj Location Ids: ");
+                        foreach (int key in s_obj?.Locations.Keys)
+                            Console.WriteLine(key + "====");
+                        Console.WriteLine("================ User Object Location Ids: ");
+                        foreach (int id in this.LoggedInUser.LocationIds)
+                        {
+                            Console.WriteLine(id + "====");
+                            list.Add(s_obj.Locations[id]);
+                        }
                     }
                 }
                 _json = JsonConvert.SerializeObject(list);

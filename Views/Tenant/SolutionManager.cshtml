@@ -50,6 +50,8 @@
     Image_url.Add("SmsBuddy", "<img class='img-responsive' src='../images/smsbuddy.png' align='middle' style='height:26px' />");
     Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
     Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
+    Image_url.Add("IMAP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
+    Image_url.Add("POP3", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
 
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
     <script>
@@ -1402,21 +1404,36 @@
                         </div>
                         <div class="connection-data-holder">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>NickName</label>
                                         <input id="EmailInputNickname" type="text" name="NickName" class="form-control Inputclear eb_input-h" value="" required />
+                                    </div>
+                                </div>
+                                <input type="hidden" id="IntegrationId" name="IntegrationId"/>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Protocol</label>
+                                        <select id="EmailInputProtocol" name="protocol" class="form-control Inputclear eb_input-h" value="" required>
+                                            <option value="" selected="selected">Select Protocol</option>
+                                            @foreach (int pro in Enum.GetValues(typeof(EmailProtocols)))
+                                            {
+                                                <option value=@pro> @(((EmailProtocols)pro).ToString()) </option>
+                                            }
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input name="DatabaseVendor" value="SMTP" class="form-control Vendor" type="hidden" readonly />
                                         <label>Provider</label>
                                         <select id="InputEmailvendor" name="Emailvendor" class="form-control Inputclear eb_input-h">
-                                            <option value="1">Gmail</option>
-                                            <option value="2">Yahoo</option>
+                                            <option value="" selected="selected">Select Provider</option>
+                                            @foreach (int prov in Enum.GetValues(typeof(EmailProviders)))
+                                            {
+                                                <option value=@prov> @(((EmailProviders)prov).ToString()) </option>
+                                            }
                                         </select>
                                         @*<input id="InputEmailvendor" type="text" name="Emailvendor" class="form-control Inputclear" value="Gmail" required />*@
                                     </div>

@@ -174,12 +174,12 @@ namespace ExpressBase.Web.BaseControllers
             {
                 Eb_Solution s_obj = GetSolutionObject(contrlr.ViewBag.cid);
                 if (this.LoggedInUser.LocationIds.Contains(-1) || this.LoggedInUser.Roles.Contains("SolutionAdmin"))
-                    list = s_obj.Locations.Values.ToList();
+                    list = s_obj?.Locations.Values.ToList();
                 else
                 {
                     foreach (int id in this.LoggedInUser.LocationIds)
                     {
-                        list.Add(s_obj.Locations[id]);
+                        list.Add(s_obj?.Locations[id]);
                     }
                 }
                 _json = JsonConvert.SerializeObject(list);

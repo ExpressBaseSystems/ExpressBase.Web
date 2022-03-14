@@ -22,6 +22,8 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         "SmsBuddy": "<img class='img- responsive image-vender' src='../images/smsbuddy.png' style='width:75%' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio_l.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
+        "IMAP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
+        "POP3": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
         "SendGrid": "<img class='img- responsive image-vender' src='../images/send_grid.png' style='width: 100 %' />",
         "GoogleDrive": "<img class='img- responsive image-vender' src='../images/google_drive-logo.png' style='width:68%' />",
@@ -71,7 +73,6 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         });
     };
-
 
     this.editconnection = function (i, obj) {
         var input = $(obj).attr("field");
@@ -304,7 +305,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/AddSMTP",
+            url: "../ConnectionManager/AddEmail",
             data: postData,
             beforeSend: function () {
                 $("#email_loader").EbLoader("show", { maskItem: { Id: "#email_mask", Style: { "left": "0" } } });
@@ -492,6 +493,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
     //        $("#MyIntegration").trigger("click");
     //    }.bind(this));
     //}; 
+
     this.MobileConfigConnectionSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -659,8 +661,6 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         }.bind(this));
     };
 
-
-
     this.getgoogledrivefile = function (evt) {
         evt.preventDefault();
         let files = document.getElementById("GoogleDriveInputJSONUpload").files[0];
@@ -715,7 +715,6 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         }.bind(this));
     };
 
-
     this.objectifyForm = function (formArray) {//serialize data function
         var returnArray = {};
         for (var i = 0; i < formArray.length; i++) {
@@ -723,6 +722,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         }
         return returnArray;
     };
+
     this.showAdvanced = function (e) {
         if ($(e.target).prop("checked"))
             $(".advanced-tr").show();
@@ -813,6 +813,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.CloudinaryinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#cldnry_conEdit').modal('toggle');
@@ -829,6 +830,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.SMTPinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#EmailconnectionEdit').modal('toggle');
@@ -842,11 +844,51 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 $('#EmailInputPassword').val(temp1["Password"]);
                 $('#EmailInputSMTP').val(temp1["Host"]);
                 $('#EmailInputPort').val(temp1["Port"]);
-                //$('#SMTPInputIntConfId').val(temp1["Id"]);
                 $('#EmailIsSSL').prop('checked', temp1["EnableSsl"]);
             }
         }
     };
+
+    this.IMAPinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#EmailconnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#EmailInputNickname').val(temp[obj].NickName);
+                $('#SMTPInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#InputEmailvendor').val(temp1["ProviderName"]);
+                $('#EmailInputProtocol').val(temp1["Protocol"]);
+                $('#EmailInputEmail').val(temp1["EmailAddress"]);
+                $('#EmailInputPassword').val(temp1["Password"]);
+                $('#EmailInputSMTP').val(temp1["Host"]);
+                $('#EmailInputPort').val(temp1["Port"]);
+                $('#EmailIsSSL').prop('checked', temp1["EnableSsl"]);
+                $('#IntegrationId').val((this.Connections.Integrations["IMAP"].find(o => o.ConfId === temp[obj].Id.toString())).Id);
+            }
+        }
+    };
+
+    this.POP3inteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#EmailconnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#EmailInputNickname').val(temp[obj].NickName);
+                $('#SMTPInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#InputEmailvendor').val(temp1["ProviderName"]);
+                $('#EmailInputProtocol').val(temp1["Protocol"]);
+                $('#EmailInputEmail').val(temp1["EmailAddress"]);
+                $('#EmailInputPassword').val(temp1["Password"]);
+                $('#EmailInputSMTP').val(temp1["Host"]);
+                $('#EmailInputPort').val(temp1["Port"]);
+                $('#EmailIsSSL').prop('checked', temp1["EnableSsl"]);
+                $('#IntegrationId').val((this.Connections.Integrations["POP3"].find(o => o.ConfId === temp[obj].Id.toString())).Id);
+            }
+        }
+    };
+
     this.UnifonicinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#UnifonicConnectionEdit').modal('toggle');
@@ -862,6 +904,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.TwiliointeConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TwilioConnectionEdit').modal('toggle');
@@ -877,6 +920,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.ExpertTextinginteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#ExpertTextingConnectionEdit').modal('toggle');
@@ -893,6 +937,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.TextLocalinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TextLocalConnectionEdit').modal('toggle');
@@ -908,6 +953,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.SmsBuddyinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SmsBuddyConnectionEdit').modal('toggle');
@@ -922,6 +968,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.GoogleMapinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#MapConnectionEdit').modal('toggle');
@@ -934,6 +981,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.DropBoxinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#DropBoxConnectionEdit').modal('toggle');
@@ -946,6 +994,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.AWSS3inteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#AWSS3ConnectionEdit').modal('toggle');
@@ -961,6 +1010,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.SendGridinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SentGridConnectionEdit').modal('toggle');
@@ -975,6 +1025,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.GoogleDriveinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#GoogleDriveConnectionEdit').modal('toggle');
@@ -989,6 +1040,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.SlackinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SlackConnectionEdit').modal('toggle');
@@ -1002,6 +1054,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             }
         }
     };
+
     this.FacebookinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#facebookConnectionEdit').modal('toggle');
@@ -1221,7 +1274,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             html.push('<img class="img-responsive" src="../images/mongodb.png" style="height: 50px;" />');
         } else if (type === "Cloudinary") {
             html.push('<img class="img-responsive" src="../images/cloudnary.png" style="height: 25px;" />');
-        } else if (type === "SMTP") {
+        } else if (type === "SMTP" || type === "IMAP" || type === "POP3") {
             html.push('<img class="img-responsive" src="../images/svg/email.svg" style="height:50px" />');
         } else if (type === "Twilio") {
             html.push('<img class="img-responsive" src="../images/twilio.png" style="height: 50px;" />');
@@ -1244,7 +1297,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             $('#filesDbConnectEdit').modal('toggle');
         } else if (which === "Cloudinary") {
             $('#cldnry_conEdit').modal('toggle');
-        } else if (which === "SMTP") {
+        } else if (which === "SMTP" || which === "IMAP" || which === "POP3") {
             $('#EmailconnectionEdit').modal('toggle');
         } else if (which === "Twilio") {
             $('#TwilioConnectionEdit').modal('toggle');
@@ -1468,6 +1521,14 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 else if ($trigger.hasClass('SMTPedit')) {
                     options.items.SMTP = { name: "Set as SMTP" },
                         options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('IMAPedit')) {
+                    options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('POP3edit')) {
+                    options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('Cloudinaryedit')) {
@@ -1783,12 +1844,33 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         $('#Integration_files').empty().append("File Store (" + count + ")");
     }.bind(this);
 
-    this.integration_SMTP_all = function () {
+    this.integration_Email_all = function () {
         let html = [];
         var count = 0;
+
+        html.push(`<ul class="nav nav-tabs">
+                        <li class="nav-item active">
+                            <a id="smtp_integ_head" class="nav-link" data-toggle="tab" href="#smtp_integs" role="tab">
+                                SMTP (${this.Connections.Integrations["SMTP"] ? this.Connections.Integrations["SMTP"].length : 0})
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="imap_integ_head" class="nav-link" data-toggle="tab" href="#imap_integs" role="tab">
+                                IMAP (${this.Connections.Integrations["IMAP"] ? this.Connections.Integrations["IMAP"].length : 0})
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="pop3_integ_head" class="nav-link" data-toggle="tab" href="#pop3_integs" role="tab">
+                                POP3 (${this.Connections.Integrations["POP3"] ? this.Connections.Integrations["POP3"].length : 0})
+                            </a>
+                        </li>
+                   </ul>`);
+
         Integrations = this.Connections.Integrations["SMTP"];
+        html.push(`<div class="tab-content">
+                    <div class="tab-pane active" id="smtp_integs" role="tabpanel">`);
+
         $.each(Integrations, function (i, rows) {
-            //$.each(rows, function (j, rowss) {
             html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" data-whatever="${rows.Type}" conf_NN="${rows.NickName}" id="${rows.Id}" dataConffId="${rows.ConfId}">
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
@@ -1803,12 +1885,59 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 html.push(`<span  class="PF_span">Fallback</span>`);
             }
             html.push(`</div>
-                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </div>
-                          </div>`);
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                     </div>`);
             count += 1;
         }.bind(this));
+        html.push(`</div>`);
+
+
+        Integrations = this.Connections.Integrations["IMAP"];
+        html.push(`<div class="tab-pane" id="imap_integs" role="tabpanel">`);
+
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" data-whatever="${rows.Type}" conf_NN="${rows.NickName}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                <span>${rows.NickName}</span>
+                            `);
+            html.push(`</div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`);
+            count += 1;
+        }.bind(this));
+        html.push(`</div>`);
+
+
+
+        Integrations = this.Connections.Integrations["POP3"];
+        html.push(`<div class="tab-pane" id="pop3_integs" role="tabpanel">`);
+
+        $.each(Integrations, function (i, rows) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" data-whatever="${rows.Type}" conf_NN="${rows.NickName}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                <span>${rows.NickName}</span>
+                            `);
+            html.push(`</div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`);
+            count += 1;
+        }.bind(this));
+        html.push(`</div>`);
+
+
+        html.push(`</div>`);
         $('#SMTP-All').empty().append(html.join(''));
         $('#Integration_SMTP').empty().append("Email (" + count + ")");
     }.bind(this);
@@ -1959,7 +2088,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         let html = [];
         var count = 0;
         InteConfig = this.Connections.IntegrationsConfig;
-        $.each(InteConfig, function (i, rows) {
+        $.each(InteConfig, function (i, rows) { 
             $.each(rows, function (j, rowss) {
                 html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rowss.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
                                 <div id = "nm" class="inteConfContainer_Image ">
@@ -1992,7 +2121,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         this.integration_config_all();
         this.integration_EbData_all();
         this.integration_EbFiles_all();
-        this.integration_SMTP_all();
+        this.integration_Email_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
         this.integration_Map_all();
@@ -2011,15 +2140,15 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
     };
 
 
-    this.SMTPautoFill = function (e) {
-        var target = e.target.options.selectedIndex;
-        if (target === 0) {
-            $('#EmailInputSMTP').val("smtp.gmail.com");
-        } else if (target === 1) {
-            $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
-        }
-        $('#EmailInputPort').val("587");
-    }.bind(this);
+    //this.SMTPautoFill = function (e) {
+    //    var target = e.target.options.selectedIndex;
+    //    if (target === 0) {
+    //        $('#EmailInputSMTP').val("smtp.gmail.com");
+    //    } else if (target === 1) {
+    //        $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
+    //    }
+    //    $('#EmailInputPort').val("587");
+    //}.bind(this);
 
     this.integration_SUPPORTINGDATA_all = function () {
         let html = [];
@@ -2433,7 +2562,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 $("#smscheckbox_signin").prop("disabled", true);
             }
         }
-        $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));
+        /* $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));*/
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#2faSwitch").change(this.TwoFASwitch.bind(this));
         $("#otpsigninswitch").change(this.OtpSigninSwitch.bind(this));
@@ -2490,7 +2619,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         this.integration_config_all();
         this.integration_EbData_all();
         this.integration_EbFiles_all();
-        this.integration_SMTP_all();
+        this.integration_Email_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
         this.integration_Map_all();

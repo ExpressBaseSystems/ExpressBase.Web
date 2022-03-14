@@ -350,7 +350,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbFinancialYears GetFinancialYearsObject(Eb_Solution s_obj, User user)
         {
-            EbFinancialYears fys = s_obj.FinancialYears ?? new EbFinancialYears();
+            EbFinancialYears fys = s_obj?.FinancialYears ?? new EbFinancialYears();
             if (WhichConsole == RoutingConstants.UC)
             {
                 string s = this.LoggedInUser.Preference.GetShortDatePattern();

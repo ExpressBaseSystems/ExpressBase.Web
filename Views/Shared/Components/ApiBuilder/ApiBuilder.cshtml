@@ -21,12 +21,15 @@
     <link rel="stylesheet" href="~/css/Bundles/eb-api.bundle.min.css" asp-append-version=@bApnd />
     <script src="~/js/Bundles/eb-api.bundle.js" type="text/javascript" asp-append-version=@bApnd></script>
 </environment>
-
+ 
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
+    if (!ebcontext.EmailRetrieveConnections)
+        ebcontext.EmailRetrieveConnections = @Html.Raw(ViewBag.EmailRetrieveConnections);
 </script>
+
 <div class="container-fluid api_body" id="@("apiversion-body"+ViewBag.tabnum)">
     <div class="row">
         <div class="eb_apiWrper">
@@ -67,6 +70,9 @@
                         </div>
                         <div eb-type="PivotTable" ctrname="PivotTable" class="resource_items draggable">
                             <div class="resource_items-inner"><i class="fa fa-table "></i>PivotTable</div>
+                        </div>
+                        <div eb-type="EmailRetriever" ctrname="EmailRetriever" class="resource_items draggable">
+                            <div class="resource_items-inner"><i class="fa fa-envelope-o "></i>EmailRetriever</div>
                         </div>
                     </div>
                 </div>

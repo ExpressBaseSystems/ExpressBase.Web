@@ -749,7 +749,7 @@
         o.scrollX = true;
         //o.scrollXInner = "110%";
         o.scrollCollapse = true;
-        if (this.Source === "EbDataTable") {
+        if (this.Source === "EbDataTable" || this.Source === "Draft") {
             if (this.EbObject.PageLength !== 0) {
                 o.lengthMenu = this.generateLengthMenu();
             }
@@ -4344,11 +4344,17 @@
 
     this.ExecuteApproval = function ($td, action, e) {
         //$("#eb_common_loader").EbLoader("show");
+        if ($(e.target).attr('action-clicked') == 'true') {// to avoid multi click
+            console.warn('multi click blocked');
+            return;
+        }
+        $(e.target).attr('action-clicked', 'true');
         let val, comments;
         if (action === 'reset') {
             comments = $(e.target).closest("#resetstage").find(".comment-text").val();
             if (!comments.trim()) {
                 EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
                 return;
             }
             val = $(e.target).attr("data-json");
@@ -4359,6 +4365,7 @@
             let req = $(e.target).closest("#action").find(".selectpicker :selected").attr('req');
             if (!comments.trim() && req === 'y') {
                 EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
                 return;
             }
             val = $(e.target).closest("#action").find(".selectpicker").val();

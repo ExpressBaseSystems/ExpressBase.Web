@@ -11,7 +11,7 @@ html {
 }
 
 :focus {
-    outline: none !important;
+    /*outline: none !important;*/
 }
 
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"]:focus,
@@ -2384,7 +2384,8 @@ input.locinp {
 }
 
 .webform-cont .dgtr .radio-wrap {
-    padding: 1px 5px;
+    padding: 8px 6px;
+    justify-content: center;
 }
 
 .webform-cont ::-webkit-scrollbar {

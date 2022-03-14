@@ -53,7 +53,7 @@ namespace ExpressBase.Web.Controllers
             }
             return Columns;
         }
-        
+
         public List<DVColumnCollection> GetDVColumnCollection(List<ColumnColletion> _ColumnColl)
         {
             List<DVColumnCollection> dvColumnCollection = new List<DVColumnCollection>();
@@ -95,7 +95,25 @@ namespace ExpressBase.Web.Controllers
         {
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", DataSourceRefId));
             if (columnresp == null || columnresp.Columns.Count == 0)
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = DataSourceRefId, SolnId = ViewBag.cid });
+            {
+                List<Param> FilterParams;
+                EbDataReader ds = EbFormHelper.GetEbObject<EbDataReader>(DataSourceRefId, this.ServiceClient, this.Redis, null);
+                if (!string.IsNullOrEmpty(ds.FilterDialogRefId))
+                {
+                    ds.AfterRedisGet(this.Redis, this.ServiceClient);
+                    FilterParams = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
+                }
+                else
+                {
+                    FilterParams = ds.GetParams(this.Redis);
+                }
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest
+                {
+                    RefId = DataSourceRefId,
+                    SolnId = ViewBag.cid,
+                    Params = FilterParams
+                });
+            }
 
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
@@ -112,8 +130,8 @@ namespace ExpressBase.Web.Controllers
                 DataSourceDataSetResponse columnresp = this.ServiceClient.Post<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = DataSourceRefId, Params = param });
                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
-                 var Columns = GetColumns(__columns);
-                if (columnresp != null && columnresp.DataSet != null && columnresp.DataSet.Tables[0] !=null && columnresp.DataSet.Tables[0].Rows[0] !=null &&  columnresp.DataSet.Tables[0].Rows[0].Count > 0 )
+                var Columns = GetColumns(__columns);
+                if (columnresp != null && columnresp.DataSet != null && columnresp.DataSet.Tables[0] != null && columnresp.DataSet.Tables[0].Rows[0] != null && columnresp.DataSet.Tables[0].Rows[0].Count > 0)
                 {
                     var _row = columnresp.DataSet.Tables[0].Rows[0];
                     obj = new DashboardControlReturn { Columns = EbSerializers.Json_Serialize(Columns), Row = _row };
@@ -124,10 +142,10 @@ namespace ExpressBase.Web.Controllers
                     foreach (var abc in __columns)
                     {
                         if (abc.Type == EbDbTypes.Int32 || abc.Type == EbDbTypes.Int64 || abc.Type == EbDbTypes.Int16 || abc.Type == EbDbTypes.Int)
-                            row.Add(0); 
+                            row.Add(0);
                         else if (abc.Type == EbDbTypes.UInt16 || abc.Type == EbDbTypes.UInt32 || abc.Type == EbDbTypes.UInt64)
                             row.Add(0);
-                        else if (abc.Type == EbDbTypes.Decimal || abc.Type == EbDbTypes.Double )
+                        else if (abc.Type == EbDbTypes.Decimal || abc.Type == EbDbTypes.Double)
                             row.Add(0.0);
                         else if (abc.Type == EbDbTypes.Boolean || abc.Type == EbDbTypes.BooleanOriginal || abc.Type == EbDbTypes.Byte)
                             row.Add(false);
@@ -136,7 +154,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     obj = new DashboardControlReturn { Columns = EbSerializers.Json_Serialize(Columns), Row = row };
                 }
-                
+
             }
             catch (Exception e)
             {

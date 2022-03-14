@@ -138,7 +138,7 @@
         background-color: #eee;
         margin: 10px 15px;
     }
-    
+
     .query-container {
         border: 1px solid #ccc;
         border-radius: 6px;
@@ -215,6 +215,13 @@
         </div>
         <div class="mobile-settings-container w-100" style="padding:10px 15px">
             <h5>Mobile settings</h5>
+            <div style="text-align: right;">
+                <label style="font-weight: 200">Latest version: </label>
+                <input type="text" id="txtMobVersion" style="border: 1px solid #ccc; width: 100px;" value="@mobile_settings.LatestAppVersion">
+                <label style="font-weight: 200; margin-left: 30px;">Maintenance message: </label>
+                <input type="text" id="txtMobMessage" style="border: 1px solid #ccc; width: 300px;" value="@mobile_settings.MaintenanceMessage">
+                <input type="checkbox" id="chkMobMaintenance" @mobile_settings.IsMaintenanceMode()> Maintenance Mode
+            </div>
             <div class="settings-container display-flex">
                 <div class="mobile_signup_set w-100 display-flex h-100">
                     <div class="solution_cons">
@@ -288,7 +295,7 @@
             </div>
         </div>
         <div class="web-settings w-100" style="padding:10px 15px">
-            <div class="container"><div class="row" ><div class="col-sm-10"><h5>Webform Style</h5></div><div class="col-sm-2"> <button class="btn btn-default" id="webform-style-reset"> Reset</button></div></div></div>
+            <div class="container"><div class="row"><div class="col-sm-10"><h5>Webform Style</h5></div><div class="col-sm-2"> <button class="btn btn-default" id="webform-style-reset"> Reset</button></div></div></div>
             <div class="web-settings-container display-flex">
                 <div class="col-lg-6 col-sm-6">
                     <form>
@@ -374,7 +381,7 @@
         if ("@signupFormRefid" != "") {
             $("#signup_object").val("@signupFormRefid");
         }
-        
+
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
         drake.off("drop").on("drop", function () {});
@@ -432,6 +439,9 @@
     function setMobileSettings() {
         MobileSettings.SignUpPageRefId = $('#mobile-signup-refid').val() || null;
         MobileSettings.UserTypeForms = getMobileProfilePages();
+        MobileSettings.MaintenanceMode = $("#chkMobMaintenance").prop("checked");
+        MobileSettings.MaintenanceMessage = $("#txtMobMessage").val();
+        MobileSettings.LatestAppVersion = $("#txtMobVersion").val();
     }
 
     function EbProfileUserType(id,name,refid) {

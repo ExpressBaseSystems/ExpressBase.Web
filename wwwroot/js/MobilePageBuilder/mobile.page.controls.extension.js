@@ -144,19 +144,17 @@
             },
             fillControls: function (cells, root) {
                 for (let i = 0; i < cells.length; i++) {
+                    let $tr = $(`#${this.EbSid} tr:eq(${cells[i].RowIndex})`);
+                    if ($tr.is(":first-child"))
+                        $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).not(":last-child").css("width", `${cells[i].Width}%`);
+
                     let ctrls = cells[i].ControlCollection.$values;
 
                     for (let k = 0; k < ctrls.length; k++) {
                         let ebtype = root.getType(ctrls[k].$type);
                         let o = root.makeElement(ebtype, ebtype);
                         $.extend(o, ctrls[k]);
-
                         $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).append(o.$Control.outerHTML());
-                        let $tr = $(`#${this.EbSid} tr:eq(${cells[i].RowIndex})`);
-                        if ($tr.is(":first-child")) {
-                            $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).not(":last-child").css("width", `${cells[i].Width}%`);
-                        }
-
                         root.refreshControl(o);
                         o.trigger(root);
                     }

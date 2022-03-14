@@ -788,7 +788,7 @@ const EbPowerSelect = function (ctrl, options) {
 
                 try {
                     this.Vobj.valueMembers.push(...tempVMs);
-                    //if (this.ComboObj.__continue) this.ComboObj.__continue();
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                 }
                 catch (e) {
                     console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
@@ -1288,6 +1288,8 @@ const EbPowerSelect = function (ctrl, options) {
         else
             this.adjustDDposition();
 
+        this.hideOldDD();
+
         this.Vobj.DDstate = true;
 
         if (!this.IsDatatableInit)
@@ -1300,6 +1302,13 @@ const EbPowerSelect = function (ctrl, options) {
         this.V_updateCk();
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         this.colAdjust();
+    };
+
+    this.hideOldDD = function () {
+        $.each($('.DDdiv:visible'), function (i, obj) {
+            if (!this.$DDdiv.is(obj))
+                $(obj).hide();
+        }.bind(this));
     };
 
     this.focus1stRow = function () {

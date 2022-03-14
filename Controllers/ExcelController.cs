@@ -50,15 +50,15 @@ namespace ExpressBase.Web.Controllers
             using (SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false))
             {
                 WorkbookPart workbookPart = doc.WorkbookPart;
-                WorksheetPart worksheetPart =(WorksheetPart) workbookPart.GetPartById("rId1");
+                WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById("rId1");
                 Worksheet sheet = worksheetPart.Worksheet;
                 SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0 ?
                     workbookPart.GetPartsOfType<SharedStringTablePart>().First() : null;
-                SharedStringTable sst = sstpart != null ? sstpart.SharedStringTable : null;
-                var Cols = sheet.Descendants<Columns>().First();
-                var rows = sheet.Descendants<SheetData>().First().Elements<Row>();
-                var rowss = rows.Where(row => row.Elements<Cell>().Any(ce => ce.CellValue != null && (ce.CellValue.Text != "" || ce.CellValue.InnerText != "")));
-                if (rowss != null && rowss.Count() > 1)
+                SharedStringTable sst = sstpart?.SharedStringTable;
+                Columns Cols = sheet.Descendants<Columns>().First();
+                IEnumerable<Row> rows = sheet.Descendants<SheetData>().First().Elements<Row>();
+                IEnumerable<Row> rowss = rows.Where(row => row.Elements<Cell>().Any(ce => ce.CellValue != null && (ce.CellValue.Text != "" || ce.CellValue.InnerText != "")));
+                if (rowss?.Count() > 1)
                 {
                     EbDataTable tbl = new EbDataTable();
                     int colIndex = 0;
@@ -74,21 +74,24 @@ namespace ExpressBase.Web.Controllers
                         tbl.Columns.Add(dc);
                         colIndex++;
                     }
-                    var startRow = 0;
-                    var powerselectCols = _colInfo.FindAll(col => col.ControlType == "PowerSelect" || col.ControlType == "SimpleSelect");
+                    int startRow = 0;
+                    List<ColumnsInfo> powerselectCols = _colInfo.FindAll(col => col.ControlType == "PowerSelect" || col.ControlType == "SimpleSelect");
                     foreach (Row row in rowss)
                     {
                         if (startRow > 0)
                         {
                             EbDataRow rr = tbl.NewDataRow2();
                             int colIndex1 = 0;
-                            for (var i = 0; i < row.Elements<Cell>().Count(); i++ )
+                            bool isValidrow = false;
+                            for (int i = 0; i < row.Elements<Cell>().Count(); i++)
                             {
                                 Cell cell = row.Elements<Cell>().ToList()[i];
+
                                 string cellref = cell.CellReference.ToString();
                                 colIndex1 = GetColumnIndex(cellref);
                                 if (colIndex1 < tbl.Columns.Count)
                                 {
+                                    isValidrow = true;
                                     if (_colInfo[colIndex1].ControlType == "PowerSelect" || _colInfo[colIndex1].ControlType == "SimpleSelect")
                                     {
                                         int powerselectCount = powerselectCols.IndexOf(_colInfo[colIndex1]) + 1;
@@ -119,14 +122,14 @@ namespace ExpressBase.Web.Controllers
                                             string str = sst.ChildElements[ssid].InnerText;
                                             if (tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
                                             {
-                                                var val = "false";
+                                                bool val = false;
                                                 if (str == "Yes")
-                                                    val = "true";
+                                                    val = true;
                                                 rr[colIndex1] = val;
                                             }
                                             else if (tbl.Columns[colIndex1].Type == EbDbTypes.BooleanOriginal)
                                             {
-                                                var val = false;
+                                                bool val = false;
                                                 if (str == "Yes")
                                                     val = true;
                                                 rr[colIndex1] = val;
@@ -145,8 +148,8 @@ namespace ExpressBase.Web.Controllers
                                     }
                                 }
                             }
-
-                            tbl.Rows.Add(rr);
+                            if (isValidrow)
+                                tbl.Rows.Add(rr);
                         }
                         startRow++;
                     }

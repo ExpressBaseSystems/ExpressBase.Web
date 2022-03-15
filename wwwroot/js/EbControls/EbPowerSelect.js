@@ -340,7 +340,7 @@ const EbPowerSelect = function (ctrl, options) {
         if (mapedFieldType !== "string")
             searchByExp = " = ";
         if (!this.IsDatatableInit) {
-            if (this.ComboObj.MinSearchLength > searchVal.length)
+            if (this.ComboObj.MinSearchLength > searchVal.length || searchVal.length === 0)
                 return;
             let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
             let temp = this.filterArray.find(e => e.Column === filterObj.Column);

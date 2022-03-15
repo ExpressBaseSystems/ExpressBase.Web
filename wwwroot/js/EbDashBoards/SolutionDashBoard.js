@@ -86,7 +86,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/Integrate",
-            data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: false },
+            data: { _integration: JSON.stringify(postData), deploy: e, sid, drop: false },
             beforeSend: function () {
                 preventContextMenu = 1;
                 //$("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
@@ -116,7 +116,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                                 $.ajax({
                                     type: "POST",
                                     url: "../ConnectionManager/Integrate",
-                                    data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: true }
+                                    data: { _integration: JSON.stringify(postData), deploy: e, sid, drop: true }
                                 }).done(function (data) {
                                     preventContextMenu = 0;
                                     //$("#Integration_loder").EbLoader("hide");

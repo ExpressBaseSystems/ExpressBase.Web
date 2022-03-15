@@ -757,7 +757,7 @@ namespace ExpressBase.Web.Controllers
 
             Console.WriteLine("ENVIRONMENT-------->" + ViewBag.Env);
 
-            if (!data.Success && ViewBag.Env == "Production")//captcha error
+            if (data != null && !data.Success && ViewBag.Env == "Production")//captcha error
             {
                 Console.WriteLine("captcha error " + req["uname"]);
                 authresp.AuthStatus = false;

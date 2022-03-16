@@ -1255,6 +1255,12 @@
         if (__this === undefined)
             __this = this.FO.formObject.__getCtrlByPath(Obj.__path);
         let valChanged = false;
+
+        if (__this.ObjType === "PowerSelect" && !$("#" + __this.EbSid_CtxId).is($(event.target))) {
+            console.error('incorrect ctrl_ref');
+            return;
+        }
+
         if (__this.DataVals !== undefined) {
             let v = __this.getValueFromDOM();
             let d = __this.getDisplayMemberFromDOM();

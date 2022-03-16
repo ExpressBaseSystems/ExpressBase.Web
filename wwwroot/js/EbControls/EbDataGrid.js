@@ -16,6 +16,7 @@
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
     this.SlTableId = `#slno_${this.ctrl.EbSid}`;
     this.$DGbody = $(`#${this.ctrl.EbSid}Wraper .Dg_body`);
+    this.$ActiveTd = null;
 
     this.mode_s = "";
     if (this.Mode.isEdit)
@@ -148,9 +149,10 @@
         return TrsHTML.join();
     };
 
+    //full grid draw
     this.getTrHTML_ = function (rowCtrls, rowid, isAdded = true) {
         let isAnyColEditable = false;
-        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
+        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' rowid='${rowid}'>
                     <td class='row-no-td' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
 
         let visibleCtrlIdx = 0;
@@ -172,9 +174,10 @@
         return tr;
     };
 
+    //full grid draw
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@; display: inline-block;' form-link='@form-link@'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@; display: inline-block;' form-link='@form-link@'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
                       <span>${this.getDispMembr(inpCtrl)}</span>
@@ -187,8 +190,9 @@
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
+    //new row html
     this.getTdHtml = function (inpCtrl, col, i) {
-        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;' form-link='@form-link@'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;' form-link='@form-link@'>
                     <div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>
                 </td>`
@@ -198,37 +202,6 @@
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
-    this.editRow_click = function (e) {
-        let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
-        let td = $addRow.find(".ctrlstd")[0];
-        let isSameRow = $(event.target).closest("tr") === $addRow;
-        if ($addRow.length !== 0 && !this.confirmRow())
-            return;
-
-        let $td = $(e.target).closest("td");
-        let $tr = $td.closest("tr");
-        let rowId = $tr.attr("rowid");
-        this.setCurRow(rowId);
-        if ($tr.attr("is-initialised") === 'false')
-            this.rowInit_E($tr, rowId);
-        $td.find(".del-row").hide();
-        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(".edit-row").hide();
-        //$addRow.hide(300).attr("is-editing", "false");
-        $td.find(".check-row").show();
-        this.$addRowBtn.addClass("eb-disablebtn");
-        $tr.attr("is-editing", "true");
-        this.spanToCtrl_row($tr);
-        //$(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
-        //if (!this.curRowObjectMODEL[this.colNames[0]].__isEditing)
-        this.setcurRowDataMODELWithOldVals(rowId);
-        this.changeEditFlagInRowCtrls(true, rowId);
-
-        this.focusOnFirstInput($tr);
-        let enabledUiInps = $tr.find("td [ui-inp]:enabled");
-        if (enabledUiInps.length > 0)
-            $(enabledUiInps[0]).select();
-        this.execDisableExpr();
-    }.bind(this);
 
     this.changeEditFlagInRowCtrls = function (val, rowId) {
         let curRowCtrls = this.objectMODEL[rowId];
@@ -477,7 +450,7 @@
     this.tryAddRow = function () {
         if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable) {
             this.addRow();
-            this.focusOnFirstInput($(`#${this.TableId}>tbody tr[is-editing="true"]`));
+            //this.focusOnFirstInput($(`#${this.TableId}>tbody tr[is-editing="true"]`));
         }
         //if (this.Mode.isEdit)
         //    $(`.ctrlstd[mode] `).attr("mode", "edit");
@@ -603,7 +576,7 @@
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let isAnyColEditable = false;
-        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
+        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' rowid='${rowid}'>
                     <td class='row-no-td' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.objectMODEL[rowid] = [];
 
@@ -719,6 +692,11 @@
         this.bindReq_Vali_UniqRow($tr);
         this.updateAggCols();
         this.execDisableExpr();
+
+        let a = $tr.find('td[tdcoltype]');
+        if (a && a.length > 0)
+            $(a[0]).focus();
+
         return [$tr, rowCtrls];
 
     }.bind(this);
@@ -993,7 +971,40 @@
 
     }.bind(this);
 
-    this.row_dblclick = function (e) {
+
+    this.editRow_click = function (e) {
+        let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
+        let td = $addRow.find(".ctrlstd")[0];
+        let isSameRow = $(event.target).closest("tr") === $addRow;
+        if ($addRow.length !== 0 && !this.confirmRow())
+            return;
+
+        let $td = $(e.target).closest("td");
+        let $tr = $td.closest("tr");
+        let rowId = $tr.attr("rowid");
+        this.setCurRow(rowId);
+        if ($tr.attr("is-initialised") === 'false')
+            this.rowInit_E($tr, rowId);
+        $td.find(".del-row").hide();
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(".edit-row").hide();
+        //$addRow.hide(300).attr("is-editing", "false");
+        $td.find(".check-row").show();
+        this.$addRowBtn.addClass("eb-disablebtn");
+        $tr.attr("is-editing", "true");
+        this.spanToCtrl_row($tr);
+        //$(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
+        //if (!this.curRowObjectMODEL[this.colNames[0]].__isEditing)
+        this.setcurRowDataMODELWithOldVals(rowId);
+        this.changeEditFlagInRowCtrls(true, rowId);
+
+        //this.focusOnFirstInput($tr);
+        //let enabledUiInps = $tr.find("td [ui-inp]:enabled");
+        //if (enabledUiInps.length > 0)
+        //    $(enabledUiInps[0]).select();
+        this.execDisableExpr();
+    }.bind(this);
+
+    this.row_tdClicked = function (e) {
         if (!($(e.target).hasClass("tdtxt") || $(e.target).is($(`#${this.TableId}>tbody > tr >td`)) || $(e.target).is($(`#${this.TableId}>tbody > tr`)))) {
             return;
         }
@@ -1009,15 +1020,12 @@
         let $e = $(e.target);
         let $tr = $e.closest("tr");
         let new_rowId = $tr.attr("rowid");
+        let $td = $e.closest("td");
         if (rowId === new_rowId) {
-            let UiInps = $e.closest("td").find("[ui-inp]");
-            if (UiInps.length > 0) {
-                setTimeout(function ($e) {
-                    let $td = $e.closest("td");
-                    //if ($td.attr('tdcoltype') == "DGBooleanColumn")
-                    //$td.find("[ui-inp]").click();
-                    $td.find("[ui-inp]").focus();
-                }.bind(this, $e), 1);
+            let UiInps = $td.find("[ui-inp]:enabled");
+            if (UiInps.length > 0 && e.originalEvent) {
+                if ($td.attr('tdcoltype') == "DGBooleanColumn")
+                    $td.find("[ui-inp]").click();
             }
             return;
         }
@@ -1027,16 +1035,15 @@
                 return;
             this.confirmRow(rowId);
         }
-
-        if (this.isDGEditable()) {
-            $tr.find(".edit-row").trigger("click");
-            setTimeout(function () {
-                let UiInps = $e.closest("td").find("[ui-inp]");
-                if (UiInps.length > 0) {
-                    $e.closest("td").find("[ui-inp]").focus();
-                }
-            }, 310);
-        }
+        //if (this.isDGEditable()) {
+        //    $tr.find(".edit-row").trigger("click");
+        //    setTimeout(function () {
+        //        let UiInps = $e.closest("td").find("[ui-inp]");
+        //        if (UiInps.length > 0) {
+        //            $e.closest("td").find("[ui-inp]").focus();
+        //        }
+        //    }, 310);
+        //}
     }.bind(this);
 
     this.row_focusout = function (e) {
@@ -1046,6 +1053,7 @@
             return;
 
         this.checkActiveRecord();
+        //this.$ActiveTd = null;
         //setTimeout(this.row_focusout_inner.bind(this, e), 200);
     };
 
@@ -1055,6 +1063,7 @@
         if ($activeTr.length === 1 && $(document.activeElement).parents(`#${this.TableId}`).length === 0 &&
             $('.DDdiv:visible').length === 0 && $('.eb-ss-ddup:visible').length === 0 && $('.eb-ss-dd:visible').length === 0) {
             $activeTr.find('.check-row').trigger('click');
+            this.$ActiveTd = null;
         }
     };
 
@@ -1063,23 +1072,148 @@
             return;
         if ($(e.target).hasClass('rowc'))
             return;
+        let $curTarget = $(e.currentTarget);
+        if ($curTarget.is(this.$ActiveTd))
+            return;
         if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
             return;
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
-        let $tr = $(e.currentTarget);
+        let $tr = $curTarget.closest('tr');
         let new_rowId = $tr.attr("rowid");
         if (rowId != new_rowId && new_rowId) {
             if ($activeTr.length > 0) {
                 if (this.confirmRow(rowId)) {
-                    $tr.find('.edit-row').trigger('click');
+                    this.editRow_click({ target: $tr.find('.edit-row')[0] });
+                    //this.focusOnCtrlInTd($curTarget);
+                    //this.$ActiveTd = $curTarget;
+                    //$tr.find('.edit-row').trigger('click');
                 }
             }
             else {
-                $tr.find('.edit-row').trigger('click');
+                this.editRow_click({ target: $tr.find('.edit-row')[0] });
+                //this.focusOnCtrlInTd($curTarget);
+                //this.$ActiveTd = $curTarget;
+                //$tr.find('.edit-row').trigger('click');
             }
         }
+        else {
+            //this.focusOnCtrlInTd($curTarget);
+            //this.$ActiveTd = $curTarget;
+        }
     };
+
+    this.row_focus = function (e) {
+        let $curTarget = $(e.currentTarget);
+        if (this.$ActiveTd && $curTarget.is(this.$ActiveTd))
+            return;
+        this.focusOnCtrlInTd($curTarget);
+        this.$ActiveTd = $curTarget;
+    };
+
+    this.focusOnCtrlInTd = function ($td) {
+        let enabledUiInps = $td.find("input:enabled:visible");//[ui-inp]:enabled:visible
+        if (enabledUiInps.length > 0) {
+            setTimeout(function () {
+                $(enabledUiInps[0]).focus();
+            }, 10);
+            //$(enabledUiInps[0]).select();
+        }
+        //else
+        //    $td.focus();
+    };
+
+    //key event listener
+    this.dg_rowKeydown = function (e) {
+        let $e = $(e.target);
+        let $tr = $(e.currentTarget);
+
+        if (e.which === 40 || e.which === 38 || e.which === 37 || e.which === 39) {//37 left arrow | 38 up | 39 right | 40 down
+            //if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"], [tdcoltype="DGBooleanColumn"]').length === 0)
+            //    return;
+
+            let temp = performance.now();
+            if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 100)
+                return;
+            this.lastUpDownArrowTs = performance.now();
+
+            let $td = $(e.target).closest('td');
+
+            if ($e.closest('[tdcoltype="DGPowerSelectColumn"]').length === 1 && !$td.is(':focus'))
+                return;
+
+            if ((e.which === 37 || e.which === 39) && !(event.altKey || event.metaKey)) {
+                let $td = $(e.target).closest('td');
+                let uiInp = $td.find("input:enabled:visible");
+
+                if (uiInp.length && uiInp[0].type == 'text') {
+                    if (!(((e.which === 39 && uiInp[0].selectionEnd == uiInp[0].value.length) || (e.which === 37 && uiInp[0].selectionStart == 0)) &&
+                        uiInp[0].selectionStart == uiInp[0].selectionEnd))
+                        return;
+                }
+            }
+
+            e.preventDefault();
+
+            let indx = $(e.target).closest('td').index();
+            if (e.which === 40 || e.which === 38) {
+                let $nxtTr;
+                if (event.altKey || event.metaKey) {//alt
+                    let sel = e.which === 40 ? ':last' : ':first';
+                    $nxtTr = $(e.currentTarget).siblings(sel);
+                }
+                else {
+                    let func = e.which === 40 ? 'next' : 'prev';
+                    $nxtTr = $(e.currentTarget)[func]();
+                }
+
+                if ($nxtTr.length > 0) {
+                    let $nxtTd = $($nxtTr.find('td')[indx]);
+                    document.activeElement.blur();
+                    //$nxtTd.trigger('click');
+                    $nxtTd.trigger('focus');
+                }
+            }
+            else {
+                let $nxtTd;
+                if (event.altKey || event.metaKey) {
+                    let sel = e.which === 39 ? '[tdcoltype]:last' : '[tdcoltype]:first';
+                    $nxtTd = $td.siblings(sel);
+                }
+                else {
+                    let uiInp = $td.find("input:enabled:visible");
+                    let func = null;
+                    if (uiInp.length && uiInp[0].type == 'text') {
+                        if (((e.which === 39 && uiInp[0].selectionEnd == uiInp[0].value.length) ||
+                            (e.which === 37 && uiInp[0].selectionStart == 0)) &&
+                            uiInp[0].selectionStart == uiInp[0].selectionEnd)
+                            func = e.which === 39 ? 'next' : 'prev';
+                    }
+                    else
+                        func = e.which === 39 ? 'next' : 'prev';
+                    if (func)
+                        $nxtTd = $td[func]();
+
+                }
+                if ($nxtTd && $nxtTd.length > 0 && $nxtTd.attr('tdcoltype')) {
+                    document.activeElement.blur();
+                    $nxtTd.trigger('focus');
+                }
+            }
+        }
+        else if (e.which === 27) {//esc
+            if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")
+                $tr.find(".cancel-row").trigger("click");
+        }
+        //alt + enter
+        //else if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
+        //    if (this.$table.has(document.activeElement).length === 1) {
+        //        document.activeElement.blur();
+        //        this.addRowBtn_click();
+        //    }
+        //}
+
+    }.bind(this);
 
     this.confirmRow = function (rowId) {
         if (!rowId) {
@@ -1412,51 +1546,7 @@
         return (this.Mode.isEdit || this.Mode.isNew);
     };
 
-    //key event listener
-    this.dg_rowKeydown = function (e) {
-        let $e = $(e.target);
-        let $tr = $(e.currentTarget);
 
-        if (e.which === 40 || e.which === 38) {//down arrow //up arrow
-            if ($e.closest('[tdcoltype="DGNumericColumn"], [tdcoltype="DGStringColumn"], [tdcoltype="DGDateColumn"], [tdcoltype="DGBooleanColumn"]').length === 0)
-                return;
-            e.preventDefault();
-
-            let temp = performance.now();
-            if (this.lastUpDownArrowTs && temp - this.lastUpDownArrowTs < 100)
-                return;
-            this.lastUpDownArrowTs = performance.now();
-            let indx = $(e.target).closest('td').index();
-            let $nxtTr;
-            if (event.altKey || event.metaKey) {//alt
-                let sel = e.which === 40 ? ':last' : ':first';
-                $nxtTr = $(e.currentTarget).siblings(sel);
-            }
-            else {
-                let func = e.which === 40 ? 'next' : 'prev';
-                $nxtTr = $(e.currentTarget)[func]();
-            }
-
-            if ($nxtTr.length > 0) {
-                let $nxtTd = $($nxtTr.find('td')[indx]);
-                document.activeElement.blur();
-                $nxtTd.trigger('focusin');
-                $nxtTd.trigger('click');
-            }
-        }
-        else if (e.which === 27) {//esc
-            if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")
-                $tr.find(".cancel-row").trigger("click");
-        }
-        //alt + enter
-        //else if ((event.altKey || event.metaKey) && event.which === 82) { //alt+R
-        //    if (this.$table.has(document.activeElement).length === 1) {
-        //        document.activeElement.blur();
-        //        this.addRowBtn_click();
-        //    }
-        //}
-
-    }.bind(this);
 
     this.initAgg = function () {
         this.addAggragateRow();
@@ -2021,8 +2111,9 @@
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
         //this.$table.on("dblclick", ".dgtr > td", this.row_dblclick);
-        this.$table.on("click", ".dgtr > td", this.row_dblclick);
-        this.$table.on("focusin", ".dgtr", this.row_focusin.bind(this));
+        this.$table.on("click", ".dgtr > td", this.row_tdClicked);
+        this.$table.on("focusin", ".dgtr > td", this.row_focusin.bind(this));
+        this.$table.on("focus", ".dgtr > td", this.row_focus.bind(this));
         //this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
         $(document).on('mouseup', this.row_focusout.bind(this));
         this.$table.on("click", ".dgtr > td[tdcoltype='DGPowerSelectColumn'] > [coltype='DGPowerSelectColumn'] .selected-tag", this.clickedOnPsSeletedTag.bind(this));

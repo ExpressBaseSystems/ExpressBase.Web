@@ -95,6 +95,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.onDataLoadCallBackFns = [];
     this.getDataCounter = 0;
     this.initAt = performance.now();
+    this.SelectedUnformatedRow = null;//to manage duplicate value member in data
 
     this.scrollableContSelectors = options.scrollableContSelectors;
 
@@ -811,6 +812,12 @@ const EbPowerSelect = function (ctrl, options) {
             return;
         }
         let RowUnformattedData = RowUnformattedDataARR[0];
+
+        if (this.SelectedUnformatedRow && this.SelectedUnformatedRow.length > 0 &&
+            this.SelectedUnformatedRow[VMidx] === RowUnformattedDataARR[0][VMidx]) {
+            RowUnformattedData = this.SelectedUnformatedRow;
+        }
+
         let unFormattedRowIdx = this.unformattedData.indexOf(RowUnformattedData);
 
 
@@ -1447,6 +1454,8 @@ const EbPowerSelect = function (ctrl, options) {
     }.bind(this);
 
     this.getRowUnformattedData = function ($tr) {
+        let indx = this.datatable.Api.row($tr).index();
+        this.SelectedUnformatedRow = this.unformattedData[indx];
         let vmValue = this.datatable.Api.row($tr).data()[this.VMindex].replace(/[^\d.-]/g, '') * 1;
         return this.unformattedData.filter(obj => obj[this.VMindex] == vmValue)[0];
     };

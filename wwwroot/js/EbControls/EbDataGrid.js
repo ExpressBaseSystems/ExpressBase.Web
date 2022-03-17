@@ -1068,15 +1068,9 @@
     };
 
     this.row_focusin = function (e) {
-        if (this.Mode.isView)
-            return;
-        if ($(e.target).hasClass('rowc'))
+        if (!this.canContinueFocus(e))
             return;
         let $curTarget = $(e.currentTarget);
-        if ($curTarget.is(this.$ActiveTd))
-            return;
-        if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
-            return;
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
         let $tr = $curTarget.closest('tr');
@@ -1104,9 +1098,9 @@
     };
 
     this.row_focus = function (e) {
-        let $curTarget = $(e.currentTarget);
-        if (this.$ActiveTd && $curTarget.is(this.$ActiveTd))
+        if (!this.canContinueFocus(e))
             return;
+        let $curTarget = $(e.currentTarget);
         this.focusOnCtrlInTd($curTarget);
         this.$ActiveTd = $curTarget;
     };
@@ -1121,6 +1115,21 @@
         }
         //else
         //    $td.focus();
+    };
+
+    this.canContinueFocus = function (e) {
+        let v = true;
+        let $curTarget = $(e.currentTarget);
+        if (this.Mode.isView)
+            v = false;
+        else if ($(e.target).hasClass('rowc'))
+            v = false;
+        else if ($curTarget.is(this.$ActiveTd))
+            v = false;
+        else if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
+            v = false;
+
+        return v;
     };
 
     //key event listener

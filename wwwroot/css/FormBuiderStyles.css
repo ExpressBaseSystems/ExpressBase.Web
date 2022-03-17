@@ -351,7 +351,7 @@ body {
 .tdtxt {
     display: none;
     /*padding: 5px 6px;*/
-    padding: 8px 6px;
+    padding: 8px 5px;
     font-size: 13px;
     word-break: break-word;
 }
@@ -648,11 +648,13 @@ eb-disable {
 
     .dgtbl > tbody > tr > td {
         position: relative;
-        border: none !important;
         padding: 0 !important;
+        border-left: dotted 1px rgb(255, 255, 255) !important;
+        border-top: dotted 1px rgb(255, 255, 255) !important;
         border-right: dotted 1px rgb(200, 200, 220) !important;
+        border-bottom: dotted 1px rgb(255, 255, 255) !important;
         min-height: 34px;
-        margin: 1px 0;
+        /*margin: 1px 0;*/
         vertical-align: middle;
     }
 
@@ -1092,7 +1094,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
     /*padding: 3px;*/
-    padding: 7px 10px;
+    padding: 7px 5px;
     font-size: 13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
@@ -1178,10 +1180,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .dgtbl .ctrl-cover {
-    border-top: none;
+    border: none !important;
+    /*border-top: none;
     border-bottom: none;
     border-left: 1px solid var(--eb-bluishgray);
-    border-right: 1px solid var(--eb-bluishgray);
+    border-right: 1px solid var(--eb-bluishgray);*/
 }
 
 .Dg_body .slno-tbl {
@@ -2212,10 +2215,18 @@ input.locinp {
 }
 
 .Dg_head .dgtbl > thead > tr > th {
-    padding: 8px 10px;
+    padding: 8px 5px;
     vertical-align: middle;
     letter-spacing: 0.1px;
 }
+
+    .Dg_head .dgtbl > thead > tr > th[type="DGNumericColumn"] {
+        text-align: right;
+    }
+
+    .Dg_head .dgtbl > thead > tr > th[type="DGBooleanColumn"] {
+        text-align: center;
+    }
 
     .Dg_head .dgtbl > thead > tr > th:first-child {
         font-size: 11px;
@@ -2388,7 +2399,7 @@ input.locinp {
 
 .webform-cont .dgtr .radio-wrap,
 .sub-form-cont .dgtr .radio-wrap {
-    padding: 8px 6px;
+    padding: 8px 5px;
     justify-content: center;
 }
 

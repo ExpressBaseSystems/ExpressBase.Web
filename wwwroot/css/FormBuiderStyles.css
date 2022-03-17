@@ -456,7 +456,10 @@ body {
         border-right: dotted 1px transparent !important;
     }
 
-
+.dgtr > td:focus, .dgtr > td:focus-within {
+    border: 1px solid rgb(85, 94, 167) !important;
+    outline: 0 none;
+}
 
 .dgtbl .row-no-td {
     width: 30px;
@@ -1196,11 +1199,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*border: 1px solid #eea100;*/
     /*animation: dim_border 0.8s infinite;*/
     /*transition: all 0.8s ease-in-out;*/
-    box-shadow: 0 0 0px 1px rgb(0, 0, 0) inset;
+    /*box-shadow: 0 0 0px 1px rgb(0, 0, 0) inset;*/
 }
 
     .Dg_body > .dgtbl > tbody > tr[is-editing=true] > td {
-        border: none !important
+        /*border: none !important*/
     }
 
 .Dg_body {
@@ -2383,7 +2386,8 @@ input.locinp {
     align-items: center;
 }
 
-.webform-cont .dgtr .radio-wrap {
+.webform-cont .dgtr .radio-wrap,
+.sub-form-cont .dgtr .radio-wrap {
     padding: 8px 6px;
     justify-content: center;
 }
@@ -2407,14 +2411,16 @@ input.locinp {
         background-color: #bbb;
     }
 
-.webform-cont .Dg_body .eb-textarea {
+.webform-cont .Dg_body .eb-textarea,
+.sub-form-cont .Dg_body .eb-textarea {
     position: absolute;
     z-index: 1;
     top: 1px;
     height: 32px;
 }
 
-.webform-cont .eb-textarea, .webform-cont .fs-textarea {
+.webform-cont .eb-textarea, .webform-cont .fs-textarea,
+.sub-form-cont .eb-textarea, .sub-form-cont .fs-textarea {
     border: none;
     resize: none;
     background-attachment: local;
@@ -2423,14 +2429,16 @@ input.locinp {
     padding: 2px 11px;
 }
 
-.webform-cont .Dg_body .eb-textarea:focus {
+.webform-cont .Dg_body .eb-textarea:focus,
+.sub-form-cont .Dg_body .eb-textarea:focus {
     position: absolute;
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.31);
     padding: 2px 11px;
     height: auto;
 }
 
-.webform-cont sub, .webform-cont sup {
+.webform-cont sub, .webform-cont sup,
+.sub-form-cont sub, .sub-form-cont sup {
     font-size: 11px;
 }
 
@@ -4048,23 +4056,30 @@ input.locinp {
 }
 /*#sendregion EbAudioInput*/
 
-.webform-cont .ctrl-cover .input-group input, i, span {
+.webform-cont .ctrl-cover .input-group input,
+.webform-cont .ctrl-cover .input-group i,
+.webform-cont .ctrl-cover .input-group span,
+.sub-form-cont .ctrl-cover .input-group input,
+.sub-form-cont .ctrl-cover .input-group i,
+.sub-form-cont .ctrl-cover .input-group span {
     background-color: transparent;
 }
 
 .webform-cont .ctrl-cover input {
-    /*background-color: transparent !important;*/ /*Fix disable-enable fn of all ctrls [eg: numeric]*/
+    background-color: transparent !important; /*Fix disable-enable fn of all ctrls [eg: numeric]*/
 }
 
-.webform-cont .dg_body input {
+.webform-cont .dg_body input, .sub-form-cont .dg_body input {
     background-color: white !important;
 }
 
-.webform-cont .ctrl-cover[disabled="disabled"] {
+.webform-cont .ctrl-cover[disabled="disabled"],
+.sub-form-cont .ctrl-cover[disabled="disabled"] {
     background-color: var(--eb-disablegray) !important;
 }
 
-.webform-cont .ctrl-cover [disabled="disabled"] {
+.webform-cont .ctrl-cover [disabled="disabled"],
+.sub-form-cont .ctrl-cover [disabled="disabled"] {
     background-color: var(--eb-disablegray) !important;
 }
 

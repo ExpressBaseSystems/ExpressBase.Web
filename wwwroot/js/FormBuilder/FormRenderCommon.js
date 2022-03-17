@@ -1128,8 +1128,17 @@
     };
 
     this.DepHandleObj_create_inner_val = function (depCtrl, Prop, DepHandleObj, prop1, prop2, predCtrls) {
-        if (depCtrl === null)
+        if (depCtrl === null) {
             depCtrl = DepHandleObj.curCtrl;
+            if (depCtrl.SelfTrigger && prop1 === 'ValueP') {
+                if (depCtrl.ValueExpr && depCtrl.ValueExpr.Code && depCtrl.ValueExpr.Lang === 0) {
+                    DepHandleObj[prop1].push(depCtrl.__path);
+                    DepHandleObj[prop2].push(depCtrl);
+                    if (!depCtrl.___isNotUpdateValExpDepCtrls)
+                        depCtrl.__lockDependencyExec = true;
+                }
+            }
+        }
 
         predCtrls.push(depCtrl.__path);//predecessors
 
@@ -1246,6 +1255,12 @@
         if (__this === undefined)
             __this = this.FO.formObject.__getCtrlByPath(Obj.__path);
         let valChanged = false;
+
+        if (__this.ObjType === "PowerSelect" && !$("#" + __this.EbSid_CtxId).is($(event.target))) {
+            console.error('incorrect ctrl_ref');
+            return;
+        }
+
         if (__this.DataVals !== undefined) {
             let v = __this.getValueFromDOM();
             let d = __this.getDisplayMemberFromDOM();

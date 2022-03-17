@@ -426,7 +426,7 @@ function EbApiBuild(config) {
                         <td>${o.Name}</td>
                         <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o.Type)}</td>
                         <td><input type='text' style='width:100%;' Json-prop='${o.Name}' value='${formated_val || ""}'></input></td>
-                        <td><input type="checkbox" id="api-check-${o.Name}" Json-req="${o.Name}" p-name="${param.Name}" p-type="custom" checked/></td>
+                        <td><input type="checkbox" id="api-check-${o.Name}" Json-req="${o.Name}" p-name="${o.Name}" p-type="custom" checked/></td>
                         <td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>
                        </tr>`);
                 $('#tb' + this.TabNumber + '_api_scodeMd').modal('hide');

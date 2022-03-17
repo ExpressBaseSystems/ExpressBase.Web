@@ -456,8 +456,9 @@ body {
         border-right: dotted 1px transparent !important;
     }
 
-.dgtr > td:focus, .dgtr > td:focus-within {
-    border: 1px solid rgb(85, 94, 167) !important;
+.dgtr > td[tdcoltype]:focus,
+.dgtr > td[tdcoltype]:focus-within {
+    border: 1px solid #0075FF !important;
     outline: 0 none;
 }
 
@@ -1180,7 +1181,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .dgtbl .ctrl-cover {
-    border: none !important;
+    border: none;
     /*border-top: none;
     border-bottom: none;
     border-left: 1px solid var(--eb-bluishgray);

@@ -211,10 +211,10 @@ const WebFormCollectionRender = function (Option) {
             if ((this.RenderCollection.length === 1 && !this.IsMasterAvail) || (this.RenderCollection.length === 2 && this.IsMasterAvail))
                 $(`.sf-msk`).fadeOut();
             if (renObj) {
+                this.refreshRelatedForm(cxt);
                 renObj.DISPOSE();
                 $(`#subFormModal${cxt}`).remove();
                 this.RenderCollection.splice(renIdx, 1);
-                this.refreshRelatedForm(cxt);
             }
             if (this.RenderCollection.length === 0 || (renIdx === 1 && this.IsMasterAvail))
                 this.CurrentSubForm = null;
@@ -414,6 +414,12 @@ const WebFormCollectionRender = function (Option) {
         }
         else if (x.Initiator.ObjType === 'PowerSelect') {
             x.Initiator.DDrefresh();
+        }
+        else if (x.Initiator.ObjType === 'Label') {
+            let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
+            if (destRender) {
+                x.Initiator.reverseUpdateData(destRender);
+            }
         }
     };
 

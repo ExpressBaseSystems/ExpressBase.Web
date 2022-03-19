@@ -4114,3 +4114,25 @@ input.locinp {
         .Eb-Question-Ctrl .q-pane .a-sec {
             padding-left: 10px;
         }
+
+.dgtbl .ebdg-label-link, .dgtbl .tdtxt[coltype="DGLabelColumn"] {
+    padding: 8px 5px;
+    height: 32px;
+    font-size: 12px;
+}
+
+    .dgtbl .ebdg-label-link > span, .dgtbl .tdtxt[coltype="DGLabelColumn"] > span {
+        color: #337ab7;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        width: 100%;
+    }
+
+        .dgtbl .ebdg-label-link > span:hover, .dgtbl .tdtxt[coltype="DGLabelColumn"] > span:hover {
+            color: #23527c;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }

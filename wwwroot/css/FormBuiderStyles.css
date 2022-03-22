@@ -448,7 +448,7 @@ body {
 .dgtr:focus {
     /*border: solid 1px rgb(85, 94, 167) !important;*/
     /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
-    box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
+    /*box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;*/
     outline: 0 none;
 }
 

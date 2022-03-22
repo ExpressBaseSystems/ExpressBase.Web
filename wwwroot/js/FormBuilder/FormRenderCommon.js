@@ -523,7 +523,7 @@
         $.each(DependedDGs, function (i, depCtrl_s) {
             try {
                 let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView))))
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)) || depCtrl.IsLoadDataSourceAlways))
                     depCtrl.__setSuggestionVals();
             }
             catch (e) {
@@ -1051,7 +1051,7 @@
                         }
                         _ctrl.__filterControls.push(a[i]);
                     }
-                    else if (_ctrl.ObjType === "DataGrid" && (this.FO.Mode.isNew || _ctrl.DoNotPersist)) {
+                    else if (_ctrl.ObjType === "DataGrid" && (this.FO.Mode.isNew || _ctrl.DoNotPersist || _ctrl.IsLoadDataSourceAlways)) {
                         if (!DepHandleObj.DrPaths.includes(dd[j])) {
                             DepHandleObj.DrPaths.push(dd[j]);
                             DepHandleObj.DrCtrls.push(_ctrl);
@@ -1607,7 +1607,7 @@
         }
         else if (depCtrl.ObjType === "DataGrid") {
             try {
-                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)))) {
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)) || depCtrl.IsLoadDataSourceAlways)) {
                     depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
                     depCtrl.__setSuggestionVals();
                     wait = true;

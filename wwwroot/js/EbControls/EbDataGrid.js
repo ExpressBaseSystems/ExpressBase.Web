@@ -1923,7 +1923,7 @@
             let obj = { Name: ctrlName, Value: val };
             params.push(obj);
 
-            if (isFull && ctrl && !val)
+            if (!this.ctrl.IsLoadDataSourceAlways && isFull && ctrl && !val)
                 isFull = false;
         }.bind(this));
         return [params, lastCtrlName, isFull];

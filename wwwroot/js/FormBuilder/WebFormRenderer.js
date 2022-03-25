@@ -714,6 +714,7 @@ const WebFormRender = function (option) {
         }
         else if (mode_s === "Close Mode") {
             this.Mode.isEdit = false;
+            this.rowId = respObj.RowId;//label link reverse filling
             if (this.renderMode === 2) {
                 ebcontext.webform.hideSubForm(this.__MultiRenderCxt);
             }

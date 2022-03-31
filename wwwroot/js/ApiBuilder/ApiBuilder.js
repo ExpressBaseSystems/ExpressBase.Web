@@ -322,7 +322,17 @@ function EbApiBuild(config) {
         $("#obj_icons").empty().append(`<button class='btn run' id='tb${this.TabNumber}_api_run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
                                             <i class='fa fa-play' aria-hidden='true'></i>
                                         </button>`);
+
+        $("#obj_icons").append(`
+			<button class='btn run' id='scheduler_init' data-toggle='tooltip' data-placement='bottom' title= 'Schedule'> <i class='fa fa-clock-o' aria-hidden='true'></i></button >
+			`);
+        $("#scheduler_init").off("click").on("click", this.DrawScheduler.bind(this));
+
         $(`#tb${this.TabNumber}_api_run`).off("click").on("click", this.getApiResponse.bind(this));
+    };
+
+    this.DrawScheduler = function () {
+        $('#schedulerlistmodal').modal('show');
     };
 
     commonO.saveOrCommitSuccess = function (ref) {

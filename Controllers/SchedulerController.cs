@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Scheduler.Jobs;
 using ExpressBase.Web.BaseControllers;
@@ -29,29 +30,56 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void Schedule(string name, string expression, int objId, JobTypes type, string message, string users, string groups, string cronstring/*, int _delMechanism*/)
+        public void Schedule(string name, string expression, int objId, JobTypes type, string message, string users, string groups, string cronstring)
         {
-            List<Param> _param = new List<Param> { new Param { Name = "FromDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString("yyyy-MM-dd") },
-            new Param{ Name = "ToDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() } };           
-                EbTask task = new EbTask
+            string Refid = string.Empty;
+            List<Param> _param = new List<Param>
+            {
+                new Param
                 {
-                    Name = name,
-                    Expression = expression,
-                    JobType = type,
-                    CronString = cronstring,
-                    JobArgs = new EbJobArguments
-                    {
-                        Params = _param,
-                        ObjId = objId,
-                        SolnId = ViewBag.cid,
-                        UserId = ViewBag.UId,
-                        UserAuthId = ViewBag.UAuthId,
-                        ToUserIds = users,
-                        ToUserGroupIds = groups,
-                        Message = message
-                    }
-                };
-                this.ServiceClient.Post(new ScheduleMQRequest { Task = task });             
+                    Name = "FromDate",
+                    Type = ((int)EbDbTypes.DateTime).ToString(),
+                    Value = DateTime.Now.ToString("yyyy-MM-dd")
+                },
+                new Param
+                {
+                    Name = "ToDate",
+                    Type = ((int)EbDbTypes.DateTime).ToString(),
+                    Value = DateTime.Now.ToString()
+                },
+            };
+
+            if (objId > 0)
+            {
+                EbObjectFetchLiveVersionResponse res = this.ServiceClient.Get<EbObjectFetchLiveVersionResponse>(new EbObjectFetchLiveVersionRequest() { Id = objId });
+                if (res?.Data.Count > 0)
+                {
+                    EbApi api = EbSerializers.Json_Deserialize(res.Data[0].Json);
+                    Refid = api?.RefId;
+                }
+            }
+
+            EbTask task = new EbTask
+            {
+                Name = name,
+                Expression = expression,
+                JobType = type,
+                CronString = cronstring,
+                JobArgs = new EbJobArguments
+                {
+                    Params = _param,
+                    ObjId = objId,
+                    RefId = Refid,
+                    SolnId = ViewBag.cid,
+                    UserId = ViewBag.UId,
+                    UserAuthId = ViewBag.UAuthId,
+                    ToUserIds = users,
+                    ToUserGroupIds = groups,
+                    Message = message
+                }
+            };
+
+            this.ServiceClient.Post(new ScheduleMQRequest { Task = task });
         }
 
         [HttpGet]
@@ -63,26 +91,26 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public void UpdateSchedule(EbTask task, string triggerkey, string jobkey, int id)
         {
-            var ds = this.ServiceClient.Post(new RescheduleMQRequest { Task = task, TriggerKey = triggerkey, JobKey = jobkey, Id = id });
+            this.ServiceClient.Post(new RescheduleMQRequest { Task = task, TriggerKey = triggerkey, JobKey = jobkey, Id = id });
         }
 
         [HttpPost]
         public void Unschedule(string triggerkey)
         {
-            var ds = this.ServiceClient.Post(new UnscheduleMQRequest { TriggerKey = /*triggerkey*/"JobTrigger11/30/2018 12:04:14 PM" });
+            this.ServiceClient.Post(new UnscheduleMQRequest { TriggerKey = triggerkey });
         }
 
         [HttpPost]
         public void DeleteJob(string jobkey, int id)
         {
             DeleteJobMQResponse ds = this.ServiceClient.Post(new DeleteJobMQRequest { JobKey = jobkey, Id = id });
-
         }
 
         [HttpPost]
         public string GetUser_Group()
         {
             GetAllUsersResponse res = this.ServiceClient.Get<GetAllUsersResponse>(new GetAllSlackRequest());
+
             return JsonConvert.SerializeObject(res);
         }
     }

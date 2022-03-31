@@ -60,7 +60,6 @@ const EbPowerSelect = function (ctrl, options) {
     //parameters 
     this.getFilterValuesFn = options.getFilterValuesFn || function () { return []; };
     this.ComboObj = ctrl;
-    //this.ComboObj.__isDGv2Ctrl = true;// hardcoding
     this.renderer = options.renderer;
     this.ComboObj.initializer = this;
     this.name = ctrl.EbSid_CtxId;
@@ -556,14 +555,18 @@ const EbPowerSelect = function (ctrl, options) {
         //    return;
         //}
         this.showLoader();
-        if (this.ComboObj.__isDGv2Ctrl && this.ComboObj.__bkpData) {
-            this.getDataSuccess(this.ComboObj.__bkpData);
-        }
 
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         this.getDataCounter++;
         let params = this.ajaxData();
+
+        if (this.ComboObj.__Col && this.ComboObj.__Col.IsPreload && !this.ComboObj.__Col.StrictSelect && this.ComboObj.__Col.__bkpData) {
+            let cpyData = JSON.parse(JSON.stringify(this.ComboObj.__Col.__bkpData));
+            this.getDataSuccess(this.getDataCounter, cpyData);
+            return;
+        }
+
         let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect" : "../dv/getData4PowerSelect";
         $.ajax({
             url: url,
@@ -592,16 +595,16 @@ const EbPowerSelect = function (ctrl, options) {
             return;
             if (this.ComboObj.__continue) this.ComboObj.__continue();
         }
+
+        if (this.ComboObj.__Col && this.ComboObj.__Col.IsPreload && !this.ComboObj.__Col.StrictSelect && !this.ComboObj.__Col.__bkpData) {
+            this.ComboObj.__Col.__bkpData = JSON.parse(JSON.stringify(result));
+        }
+
         this.data = result;
         this.unformattedData = result.data;
         this.formattedData = result.formattedData;
         this.VMindex = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
-        if (this.ComboObj.__isDGv2Ctrl && !this.ComboObj.__bkpData) {
-            this.ComboObj.__bkpData = JSON.parse(JSON.stringify(this.data));
-            this.unformattedData = this.ComboObj.__bkpData.data;
-            this.formattedData = this.ComboObj.__bkpData.formattedData;
-        }
 
         if (this.IsFromSetValues) {// from set value
             let flag = false;

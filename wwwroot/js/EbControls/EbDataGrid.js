@@ -1026,6 +1026,8 @@
             if (UiInps.length > 0 && e.originalEvent) {
                 if ($td.attr('tdcoltype') == "DGBooleanColumn")
                     $td.find("[ui-inp]").click();
+                else if ($td.attr('tdcoltype') == "DGLabelColumn")
+                    $td.find(".tdtxt span").click();
             }
             return;
         }
@@ -1068,15 +1070,9 @@
     };
 
     this.row_focusin = function (e) {
-        if (this.Mode.isView)
-            return;
-        if ($(e.target).hasClass('rowc'))
+        if (!this.canContinueFocus(e))
             return;
         let $curTarget = $(e.currentTarget);
-        if ($curTarget.is(this.$ActiveTd))
-            return;
-        if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
-            return;
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
         let $tr = $curTarget.closest('tr');
@@ -1104,9 +1100,9 @@
     };
 
     this.row_focus = function (e) {
-        let $curTarget = $(e.currentTarget);
-        if (this.$ActiveTd && $curTarget.is(this.$ActiveTd))
+        if (!this.canContinueFocus(e))
             return;
+        let $curTarget = $(e.currentTarget);
         this.focusOnCtrlInTd($curTarget);
         this.$ActiveTd = $curTarget;
     };
@@ -1121,6 +1117,21 @@
         }
         //else
         //    $td.focus();
+    };
+
+    this.canContinueFocus = function (e) {
+        let v = true;
+        let $curTarget = $(e.currentTarget);
+        if (this.Mode.isView)
+            v = false;
+        else if ($(e.target).hasClass('rowc'))
+            v = false;
+        else if ($curTarget.is(this.$ActiveTd))
+            v = false;
+        else if (this.ctrl.DisableRowEdit && $(e.target).closest('tr[is-added="false"]').length > 0)
+            v = false;
+
+        return v;
     };
 
     //key event listener
@@ -1822,6 +1833,7 @@
         this.ctrl.sum = this.sumOfCol.bind(this, false);// returns sum of a numeric column
         this.ctrl.getRowByIndex = this.getRowByIndex;// get row by index (0,1...)
         this.ctrl.getValuesOfColumn = this.getValuesOfColumn;// returns value array of particular column
+        this.ctrl.getCurrentRowId = function () { return this.curRowId; }.bind(this);
 
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);
@@ -1911,7 +1923,7 @@
             let obj = { Name: ctrlName, Value: val };
             params.push(obj);
 
-            if (isFull && ctrl && ctrl.isEmpty())
+            if (!this.ctrl.IsLoadDataSourceAlways && isFull && ctrl && !val)
                 isFull = false;
         }.bind(this));
         return [params, lastCtrlName, isFull];
@@ -2046,6 +2058,147 @@
         }
     };
 
+    this.clickedOnLabelLink = function (e) {
+        let $td = $(e.currentTarget).closest("td");
+        let rowid = $td.closest("tr").attr("rowid");
+        let ctrlname = $td.attr('colname');
+        let ctrl = this.objectMODEL[rowid] ? this.objectMODEL[rowid].find(e => e.Name == ctrlname) : null;
+        if (!ctrl) {
+            console.error('clickedOnLabelLink - ctrl not found');
+            return;
+        }
+        if (!(ctrl.LinkedObjects && ctrl.LinkedObjects.$values.length > 0)) {
+            console.error('clickedOnLabelLink - no linked objects');
+            return;
+        }
+        let linkObj = ctrl.LinkedObjects.$values[0];
+
+        if (!linkObj.ObjRefId) {
+            console.error('clickedOnLabelLink - invalid obj refid');
+            return;
+        }
+        if (linkObj.LinkType !== 3) {
+            console.error('clickedOnLabelLink - only popup supported');
+            return;
+        }
+
+        let _params = this.getLabelLinkParameters(linkObj, rowid);
+        let _mode = 1;//view
+
+        if (_params.findIndex(e => e.Name === 'id') === -1) //prefill
+            _mode = 2;
+
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, linkObj, rowid);
+
+        ebcontext.webform.PopupForm(linkObj.ObjRefId, btoa(JSON.stringify(_params)), _mode,
+            {
+                srcCxt: this.formRenderer.__MultiRenderCxt,
+                initiator: ctrl,
+                locId: this.formRenderer.getLocId()
+            });
+    };
+
+    this.getLabelLinkParameters = function (linkObj, rowid) {
+        let destid = 0;
+        let params = [];
+        let pushMasterId = true;
+        let pushLinesId = true;
+
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowForwardMap'))
+                    continue;
+
+                if (pMap[i].SrcCtrlName === 'id') {//source table id
+                    params.push({ Name: pMap[i].DestCtrlName, Type: 7, Value: this.formRenderer.rowId });
+                    pushMasterId = false;
+                    continue;
+                }
+                else if (pMap[i].SrcCtrlName === this.ctrl.TableName + '_id') {//current row id
+                    params.push({
+                        Name: pMap[i].DestCtrlName,
+                        Type: 7,
+                        Value: rowid > 0 ? rowid : 0
+                    });
+                    pushLinesId = false;
+                    continue;
+                }
+
+                let dgCtrl = this.objectMODEL[rowid].find(e => e.__Col.Name === pMap[i].SrcCtrlName);
+                if (pMap[i].DestCtrlName === 'id') {
+                    if (dgCtrl) {
+                        if (dgCtrl.getValue() > 0) {
+                            destid = dgCtrl.getValue();
+                            params = [{ Name: 'id', Type: 7, Value: destid }];
+                            pushMasterId = false;
+                            break;
+                        }
+                        continue;
+                    }
+                    let outCtrl = this.ctrl.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        if (outCtrl.getValue() > 0) {
+                            destid = outCtrl.getValue();
+                            params = [{ Name: 'id', Type: 7, Value: destid }];
+                            pushMasterId = false;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    if (dgCtrl) {
+                        params.push({
+                            Name: pMap[i].DestCtrlName,
+                            Type: dgCtrl.EbDbType,
+                            Value: dgCtrl.getValue()
+                        });
+                    }
+                    else {
+                        let outCtrl = this.ctrl.formObject[pMap[i].SrcCtrlName];
+                        if (outCtrl) {
+                            params.push({
+                                Name: pMap[i].DestCtrlName,
+                                Type: outCtrl.EbDbType,
+                                Value: outCtrl.getValue()
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        if (pushMasterId) {
+            params.push({ Name: this.formRenderer.MasterTable, Type: 7, Value: this.formRenderer.rowId });
+            if (pushLinesId)
+                params.push({ Name: this.ctrl.TableName + '_id', Type: 7, Value: rowid > 0 ? rowid : 0 });
+        }
+
+        return params;
+    };
+
+    this.reverseUpdateData = function (linkObj, rowid, destRender) {
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            this.setCurRow(rowid);
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowReverseMap'))
+                    continue;
+                let dgCtrl = this.objectMODEL[rowid].find(e => e.__Col.Name === pMap[i].DestCtrlName);
+                if (!dgCtrl)
+                    continue;
+
+                if (pMap[i].SrcCtrlName === 'id') {
+                    dgCtrl.setValue(destRender.rowId);
+                }
+                else {
+                    let outCtrl = destRender.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl)
+                        dgCtrl.setValue(outCtrl.getValue());
+                }
+            }
+        }
+    };
+
     this.init = function () {
         this.curRowObjectMODEL = {};
         this.ctrl.currentRow = this.curRowObjectMODEL;
@@ -2117,6 +2270,8 @@
         //this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
         $(document).on('mouseup', this.row_focusout.bind(this));
         this.$table.on("click", ".dgtr > td[tdcoltype='DGPowerSelectColumn'] > [coltype='DGPowerSelectColumn'] .selected-tag", this.clickedOnPsSeletedTag.bind(this));
+        this.$table.on("click", ".dgtr > td[tdcoltype='DGLabelColumn'] > [coltype='DGLabelColumn'] span", this.clickedOnLabelLink.bind(this));
+        this.$table.on("click", ".dgtr > td[tdcoltype='DGLabelColumn'] .ebdg-label-link span", this.clickedOnLabelLink.bind(this));
 
         $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);

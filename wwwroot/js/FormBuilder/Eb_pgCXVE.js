@@ -262,7 +262,7 @@
     this.initStrE = function () {
         this.curEditorLabel = "String Editor";
         let PropsObj = this.getPropsObj();
-        let StrEbody = '<textarea id="StrE_txtEdtr' + this.PGobj.wraperId + '" class="strE-texarea" rows="15" cols="85">' + (PropsObj[this.PGobj.CurProp] || "") + '</textarea>';
+        let StrEbody = '<textarea id="StrE_txtEdtr' + this.PGobj.wraperId + '" class="strE-texarea" rows="15" cols="85" spellcheck="false">' + (PropsObj[this.PGobj.CurProp] || "") + '</textarea>';
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(StrEbody);
     };
 

@@ -6,7 +6,7 @@
 }
 
 <script>
-  
+
     window.Schedule= @Html.Raw(JsonConvert.SerializeObject(@ViewBag.schedules));
    // window.Schedule = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(ViewBag.schedules))');
 </script>
@@ -16,14 +16,16 @@
 
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+
+                <button class="ebbtn eb_btn_lg eb_btngreen pull-right" type="button" id="new_sch" style="border-radius: 20px;">
+                    <span class="fa fa-plus"> New Schedule</span>
+                </button>
+
                 <h4 class="modal-title">Schedules</h4>
             </div>
             <div class="modal-body">
-                <button class="ebbtn eb_btn_md eb_btngreen btn-default dropdown-toggle pull-right" type="button" id="new_sch" style="border-radius: 20px;">
-                    <span class="fa fa-plus"></span>
-                    New Schedule
-                </button>               
+
                 @{ List<EbSchedule> Schedules = ViewBag.schedules;
                     <div class="container-fluid">
                         <div class="schedules_list table-responsive table-light ">

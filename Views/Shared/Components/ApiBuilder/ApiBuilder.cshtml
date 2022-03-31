@@ -1,4 +1,6 @@
-﻿@{
+﻿@using ExpressBase.Common;
+
+@{
     var bApnd = true;
     if (ViewBag.Env == "Development")
     {
@@ -21,7 +23,7 @@
     <link rel="stylesheet" href="~/css/Bundles/eb-api.bundle.min.css" asp-append-version=@bApnd />
     <script src="~/js/Bundles/eb-api.bundle.js" type="text/javascript" asp-append-version=@bApnd></script>
 </environment>
- 
+
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -31,6 +33,7 @@
 </script>
 
 <div class="container-fluid api_body" id="@("apiversion-body"+ViewBag.tabnum)">
+    @await Component.InvokeAsync("SchedulerWindow", new { objid = Convert.ToInt32(ViewBag.Obj_id), tasktype = JobTypes.ApiTask })
     <div class="row">
         <div class="eb_apiWrper">
             <div class="eb_apiSideBar resource_wraper" id="@("tb"+ViewBag.tabnum+"_resource_wraper")">
@@ -52,7 +55,7 @@
                         </div>
                         <div eb-type="EmailNode" ctrname="Email" class="resource_items draggable">
                             <div class="resource_items-inner"><i class="fa fa-envelope-o"></i>Email</div>
-                        </div> 
+                        </div>
                         <div eb-type="SmsNode" ctrname="SmsNode" class="resource_items draggable">
                             <div class="resource_items-inner"><i class="fa fa-envelope-o"></i>Sms</div>
                         </div>

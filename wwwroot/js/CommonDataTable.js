@@ -3350,7 +3350,7 @@
                 ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
             }
             ebcontext.webform.showLoader();
-            $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowIds.join(','));
+            $("#iFramePdf").attr("src", "/WebForm/GetPdfReportMulti?refId=" + rptRefid + "&rowId=" + rowIds.join(','));
         }
         else {
             alert('Nothing selected');

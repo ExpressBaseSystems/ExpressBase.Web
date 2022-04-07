@@ -92,6 +92,7 @@ var DvContainerObj = function (settings) {
         this.PippedColl[focusedId] = this.RelatedDvlist;
         this.TaggedColl[focusedId] = this.TaggedDvlist;
         this.MainData = (this.currentObj.Pippedfrom !== null && this.currentObj.Pippedfrom !== "") ? this.previousObj.data : null;
+        let showCheckbox = this.currentObj.PrintDocs && this.currentObj.PrintDocs.$values.length > 0;
 
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             this.dvcol[focusedId] = new EbCommonDataTable({
@@ -113,7 +114,7 @@ var DvContainerObj = function (settings) {
                 datePattern: settings.datePattern,
                 TenantId: this.TenantId,
                 UserId: this.UserId,
-                showCheckboxColumn: false
+                showCheckboxColumn: showCheckbox
             }
             );
         }

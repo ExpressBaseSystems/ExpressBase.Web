@@ -2921,6 +2921,7 @@
                         ))
                     );
                     this.CreateNewFormLinks();
+                    this.CreatePrintDocsLinks();
                 }
                 $("#objname").text(this.EbObject.DisplayName);
                 if ($("#" + this.tableId).children().length > 0) {
@@ -3314,6 +3315,46 @@
             let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
+    };
+
+    this.CreatePrintDocsLinks = function () {
+        if (this.EbObject.PrintDocs && this.EbObject.PrintDocs.$values.length > 0) {
+            $("#obj_icons").append(`<div class="dropdown" style="display:inline-block;" id="PrintDocsdd${this.tableId}">
+                    <button class="btn" type="button" id="PrintDocsButton${this.tableId}" data-toggle="dropdown" title='Print'>
+                        <i class="fa fa-print" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu newform-menu">
+                        <ul class="drp_ul"></ul>
+                    </div>
+                    </div>`);
+
+            $.each(this.EbObject.PrintDocs.$values, function (i, obj) {
+                let tle = obj.Title || obj.ObjDisplayName;
+                $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
+            }.bind(this));
+
+            $(`#PrintDocsdd${this.tableId}`).off(".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
+        }
+    };
+
+    this.printDocument = function (e) {
+        debugger;
+        let rptRefid = $(e.currentTarget).attr('data-token');
+        let rowIds = [];
+        let chkdInps = $(`input[name=${this.tableId}_id]:checked`);
+        if (chkdInps && chkdInps.length > 0) {
+            for (let i = 0; i < chkdInps.length; i++) {
+                rowIds.push($(chkdInps[i]).val());
+            }
+            if (!ebcontext.webform) {
+                ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
+            }
+            ebcontext.webform.showLoader();
+            $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowIds.join(','));
+        }
+        else {
+            alert('Nothing selected');
+        }
     };
 
     this.FormNewGroup = function (key, opt, event) {

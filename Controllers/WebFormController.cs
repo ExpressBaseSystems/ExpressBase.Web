@@ -828,14 +828,23 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             if (!this.HasPermission(refId, OperationConstants.PRINT, 0, true))
                 return Redirect("/StatusCode/401");
 
-            List<Param> p = new List<Param>
+            try
+            {
+                List<Param> p = new List<Param>
             {
                 new Param { Name = "id", Value = rowId, Type = "16" }
             };
 
-            string s = JsonConvert.SerializeObject(p);
-            s = s.ToBase64();
-            return Redirect("/ReportRender/RenderlinkMulti?refid=" + refId + "&_params=" + s);
+                string s = JsonConvert.SerializeObject(p);
+                s = s.ToBase64();
+                return Redirect("/ReportRender/RenderlinkMulti?refid=" + refId + "&_params=" + s);
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error in GetPdfReportMulti" + e.Message+e.StackTrace);
+                return Redirect("/StatusCode/500");
+            }
         }
 
         public string SaveFormDraft(string RefId, int DraftId, string Json, int CurrentLoc, string Title)

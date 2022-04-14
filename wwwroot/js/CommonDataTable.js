@@ -3338,7 +3338,6 @@
     };
 
     this.printDocument = function (e) {
-        debugger;
         let rptRefid = $(e.currentTarget).attr('data-token');
         let rowIds = [];
         let chkdInps = $(`input[name=${this.tableId}_id]:checked`);

@@ -2138,6 +2138,8 @@ const WebFormRender = function (option) {
                 r.push(this.hBtns['Edit']);
         }
         else {
+            if (this.FormObj.IsLocIndependent)
+                loc = 0;
             if (!this.formPermissions[loc])
                 return r;
             let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11 };
@@ -2162,7 +2164,7 @@ const WebFormRender = function (option) {
     };
 
     this.checkPermission = function (opStr) {
-        let loc = this.getLocId();
+        let loc = this.FormObj.IsLocIndependent ? 0 : this.getLocId();
         if (!this.formPermissions[loc])
             return false;
         let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11 };
@@ -2234,7 +2236,7 @@ const WebFormRender = function (option) {
 
     this.initSaveMenu = function () {
         let $sel = $(`#${this.hBtns['SaveSel']} .selectpicker`);
-        let loc = this.getLocId();
+        let loc = this.FormObj.IsLocIndependent ? 0 : this.getLocId();
         if (this.formPermissions[loc] && this.formPermissions[loc].includes(0) && !this.FormObj.IsDisable)
             $sel.append(`<option data-token="new" data-title="Save and new">Save & New</option>`);
         if (this.formPermissions[loc] && (this.formPermissions[loc].includes(2) || (this.formPermissions[loc].includes(8)) && this.formData.CreatedBy === this.userObject.UserId))

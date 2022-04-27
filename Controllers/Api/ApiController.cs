@@ -27,6 +27,7 @@ using ExpressBase.Common.NotificationHubs;
 using ExpressBase.Security;
 using ExpressBase.Objects;
 using ExpressBase.Common.Security;
+using System.Security.Cryptography;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -1400,6 +1401,24 @@ namespace ExpressBase.Web.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpGet("api/generateRSAkeys")]
+        public string GenerateKeys()
+        {
+            string pr;
+            RSACryptoServiceProvider csp = new RSACryptoServiceProvider(2048);
+
+            var kp = Org.BouncyCastle.Security.DotNetUtilities.GetKeyPair(csp);
+            using (var sw = new System.IO.StringWriter())
+            {
+                Org.BouncyCastle.OpenSsl.PemWriter pw = new Org.BouncyCastle.OpenSsl.PemWriter(sw);
+                pw.WriteObject(kp.Public);
+
+                pw.WriteObject(kp.Private);
+                pr = sw.ToString();
+            }
+            return pr;
+        }
     }
-}
+    }
 

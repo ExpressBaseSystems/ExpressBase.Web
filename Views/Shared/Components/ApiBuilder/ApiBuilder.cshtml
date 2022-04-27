@@ -27,6 +27,7 @@
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
+
     @Html.Raw(ViewBag.EbObjectTypes);
     if (!ebcontext.EmailRetrieveConnections)
         ebcontext.EmailRetrieveConnections = @Html.Raw(ViewBag.EmailRetrieveConnections);
@@ -77,6 +78,12 @@
                         <div eb-type="EmailRetriever" ctrname="EmailRetriever" class="resource_items draggable">
                             <div class="resource_items-inner"><i class="fa fa-envelope-o "></i>EmailRetriever</div>
                         </div>
+                        @*<div eb-type="Encrypt" ctrname="Encrypt" class="resource_items draggable">
+                            <div class="resource_items-inner"><i class="fa fa-lock "></i>Encrypt</div>
+                        </div>
+                        <div eb-type="Decrypt" ctrname="Decrypt" class="resource_items draggable">
+                            <div class="resource_items-inner"><i class="fa fa-unlock "></i>Decrypt</div>
+                        </div>*@
                     </div>
                 </div>
             </div>

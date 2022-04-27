@@ -5,6 +5,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -21,7 +22,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost("submit")]
         [EbApiAuthGaurd]
-        public ActionResult<SubmitFormDataApiResponse> WebFormSubmitCommonApi([FromForm] Dictionary<string, string> form)
+        public IActionResult WebFormSubmitCommonApi([FromBody] JObject form)
         {
             if (!Authenticated) return Unauthorized();
 
@@ -29,12 +30,12 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 int VerId = form.ContainsKey("form_ver_id") ? Convert.ToInt32(form["form_ver_id"]) : 0;
-                string formData = form.ContainsKey("form_data") ? form["form_data"] : null;
+                string formData = form.ContainsKey("form_data") ? form["form_data"]?.ToString() : null;
 
                 if (VerId == 0)
-                    return new SubmitFormDataApiResponse() { Message = "Required parameter: form_ver_id", Status = (int)HttpStatusCode.BadRequest };
+                    return StatusCode((int)HttpStatusCode.BadRequest, new SubmitFormDataApiResponse() { Message = "Required parameter: form_ver_id", Status = (int)HttpStatusCode.BadRequest });
                 if (string.IsNullOrWhiteSpace(formData))
-                    return new SubmitFormDataApiResponse() { Message = "Required parameter: form_data", Status = (int)HttpStatusCode.BadRequest };
+                    return StatusCode((int)HttpStatusCode.BadRequest, new SubmitFormDataApiResponse() { Message = "Required parameter: form_data", Status = (int)HttpStatusCode.BadRequest });
 
                 SubmitFormDataApiRequest request = new SubmitFormDataApiRequest
                 {
@@ -51,39 +52,39 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
 
-                return new SubmitFormDataApiResponse()
+                return StatusCode((int)HttpStatusCode.InternalServerError, new SubmitFormDataApiResponse()
                 {
                     Message = ex.Message,
                     Status = (int)HttpStatusCode.InternalServerError
-                };
+                });
             }
-            return response;
+            return StatusCode(response.Status, response);
         }
 
         [HttpPost("send_otp")]
         [EbApiAuthGaurd]
-        public ActionResult<SendOtpApiResponse> SendVerificationOtp([FromForm] Dictionary<string, string> form)
+        public IActionResult SendVerificationOtp([FromBody] JObject form)
         {
             if (!Authenticated) return Unauthorized();
             try
             {
                 int VerId = form.ContainsKey("form_ver_id") ? Convert.ToInt32(form["form_ver_id"]) : 0;
-                string ctrlName = form.ContainsKey("control_name") ? form["control_name"] : null;
-                string mob = form.ContainsKey("mobile") ? form["mobile"] : null;
-                string ema = form.ContainsKey("email") ? form["email"] : null;
+                string ctrlName = form.ContainsKey("control_name") ? form["control_name"]?.ToString() : null;
+                string mob = form.ContainsKey("mobile") ? form["mobile"]?.ToString() : null;
+                string ema = form.ContainsKey("email") ? form["email"]?.ToString() : null;
 
                 if (VerId == 0)
-                    return new SendOtpApiResponse() { Message = "Required parameter: form_ver_id", Status = (int)HttpStatusCode.BadRequest };
+                    return GetSendOtpApiResponse((int)HttpStatusCode.BadRequest, "Required parameter: form_ver_id");
                 if (string.IsNullOrWhiteSpace(ctrlName))
-                    return new SendOtpApiResponse() { Message = "Required parameter: control_name", Status = (int)HttpStatusCode.BadRequest };
+                    return GetSendOtpApiResponse((int)HttpStatusCode.BadRequest, "Required parameter: control_name");
 
                 GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = VerId });
                 if (Resp.RefId == "__not__found__")
-                    return new SendOtpApiResponse() { Status = (int)HttpStatusCode.BadRequest, Message = "Invalid form_ver_id" };
+                    return GetSendOtpApiResponse((int)HttpStatusCode.BadRequest, "Invalid form_ver_id");
                 if (!EbFormHelper.HasPermission(this.LoggedInUser, Resp.RefId, OperationConstants.NEW, 0, true, RoutingConstants.UC))
-                    return new SendOtpApiResponse() { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied" };
+                    return GetSendOtpApiResponse((int)HttpStatusCode.Forbidden, "Access denied");
                 if (string.IsNullOrWhiteSpace(mob) && string.IsNullOrWhiteSpace(ema))
-                    return new SendOtpApiResponse() { Status = (int)HttpStatusCode.BadRequest, Message = "Invalid mobile/email" };
+                    return GetSendOtpApiResponse((int)HttpStatusCode.BadRequest, "Invalid mobile/email");
 
                 Authenticate2FAResponse r = ServiceClient.Post(new SendVerificationCodeRequest
                 {
@@ -104,41 +105,51 @@ namespace ExpressBase.Web.Controllers
                     resp.Status = (int)HttpStatusCode.InternalServerError;
                     resp.Message = r.Message;
                 }
-                return resp;
+                return StatusCode(resp.Status, resp);
             }
             catch (Exception ex)
             {
-                return new SendOtpApiResponse() { Status = (int)HttpStatusCode.InternalServerError, Message = ex.Message };
+                return GetSendOtpApiResponse((int)HttpStatusCode.InternalServerError, ex.Message);
             }
+        }
+
+        private IActionResult GetSendOtpApiResponse(int status, string msg)
+        {
+            return StatusCode(status, new SendOtpApiResponse() { Status = status, Message = msg });
+        }
+
+        private IActionResult GetVerifyOtpApiResponse(int status, string msg)
+        {
+            return StatusCode(status, new VerifyOtpApiResponse() { Status = status, Message = msg });
         }
 
         [HttpPost("verify_otp")]
         [EbApiAuthGaurd]
-        public ActionResult<VerifyOtpApiResponse> VerifyVerificationOtp([FromForm] Dictionary<string, string> form)
+        public IActionResult VerifyVerificationOtp([FromBody] JObject form)
         {
             if (!Authenticated) return Unauthorized();
             try
             {
                 int VerId = form.ContainsKey("form_ver_id") ? Convert.ToInt32(form["form_ver_id"]) : 0;
-                string ctrlName = form.ContainsKey("control_name") ? form["control_name"] : null;
-                string mob = form.ContainsKey("mobile") ? form["mobile"] : null;
-                string ema = form.ContainsKey("email") ? form["email"] : null;
-                string otp = form.ContainsKey("otp") ? form["otp"] : null;
+                string ctrlName = form.ContainsKey("control_name") ? form["control_name"]?.ToString() : null;
+                string mob = form.ContainsKey("mobile") ? form["mobile"]?.ToString() : null;
+                string ema = form.ContainsKey("email") ? form["email"]?.ToString() : null;
+                string otp = form.ContainsKey("otp") ? form["otp"]?.ToString() : null;
 
                 if (VerId == 0)
-                    return new VerifyOtpApiResponse() { Message = "Required parameter: form_ver_id", Status = (int)HttpStatusCode.BadRequest };
+                    return GetVerifyOtpApiResponse((int)HttpStatusCode.BadRequest, "Required parameter: form_ver_id");
                 if (string.IsNullOrWhiteSpace(ctrlName))
-                    return new VerifyOtpApiResponse() { Message = "Required parameter: control_name", Status = (int)HttpStatusCode.BadRequest };
+                    return GetVerifyOtpApiResponse((int)HttpStatusCode.BadRequest, "Required parameter: control_name");
                 if (string.IsNullOrWhiteSpace(mob) && string.IsNullOrWhiteSpace(ema))
-                    return new VerifyOtpApiResponse() { Message = "Required parameter: email or mobile", Status = (int)HttpStatusCode.BadRequest };
+                    return GetVerifyOtpApiResponse((int)HttpStatusCode.BadRequest, "Required parameter: email or mobile");
                 if (string.IsNullOrWhiteSpace(otp))
-                    return new VerifyOtpApiResponse() { Message = "Required parameter: otp", Status = (int)HttpStatusCode.BadRequest };
+                    return GetVerifyOtpApiResponse((int)HttpStatusCode.BadRequest, "Required parameter: otp");
 
                 GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = VerId });
                 if (Resp.RefId == "__not__found__")
-                    return new VerifyOtpApiResponse() { Status = (int)HttpStatusCode.BadRequest, Message = "Invalid form_ver_id" };
+                    return GetVerifyOtpApiResponse((int)HttpStatusCode.BadRequest, "Invalid form_ver_id");
                 if (!EbFormHelper.HasPermission(this.LoggedInUser, Resp.RefId, OperationConstants.NEW, 0, true, RoutingConstants.UC))
-                    return new VerifyOtpApiResponse() { Status = (int)HttpStatusCode.Forbidden, Message = "Access denied" };
+                    return GetVerifyOtpApiResponse((int)HttpStatusCode.Forbidden, "Access denied");
 
                 Authenticate2FAResponse r = ServiceClient.Post(new VerifyVerificationCodeRequest
                 {
@@ -156,11 +167,11 @@ namespace ExpressBase.Web.Controllers
                     Message = r.ErrorMessage ?? r.Message
                 };
 
-                return resp;
+                return StatusCode(resp.Status, resp);
             }
             catch (Exception ex)
             {
-                return new VerifyOtpApiResponse() { Status = (int)HttpStatusCode.InternalServerError, Message = ex.Message };
+                return GetVerifyOtpApiResponse((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }

@@ -3338,18 +3338,39 @@
     };
 
     this.printDocument = function (e) {
+        if (!ebcontext.webform) {
+            ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
+        }
+
+        $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
+        EbMessage("show", { Message: 'Generating PDF... Please wait', AutoHide: true, Background: '#00aa55', Delay: 15000});
+        ebcontext.webform.showLoader();
+
         let rptRefid = $(e.currentTarget).attr('data-token');
         let rowIds = [];
         let chkdInps = $(`input[name=${this.tableId}_id]:checked`);
+
         if (chkdInps && chkdInps.length > 0) {
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (!ebcontext.webform) {
-                ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
-            }
-            ebcontext.webform.showLoader();
-            $("#iFramePdf").attr("src", "/WebForm/GetPdfReportMulti?refId=" + rptRefid + "&rowId=" + rowIds.join(','));
+            let SubscriptionId = window.ebcontext.subscription_id;
+            this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
+            this.ss.onPdfDownloadSuccess = function (url) {
+                ebcontext.webform.showLoader();
+                $("#iFramePdf").attr("src", url);
+                $(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
+                event.stopPropagation();
+            }.bind(this);
+
+
+            $.ajax({
+                type: "GET",
+                url: "/WebForm/GetPdfReportMulti?refId=" + rptRefid + "&rowId=" + rowIds.join(',') + "&_sub=" + SubscriptionId,
+                success: function () {
+                    ebcontext.webform.hideLoader();}
+            });
+            
         }
         else {
             alert('Nothing selected');

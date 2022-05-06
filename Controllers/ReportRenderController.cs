@@ -73,27 +73,24 @@ namespace ExpressBase.Web.Controllers
                 return Redirect("/StatusCode/500");
         }
 
-        public IActionResult RenderlinkMulti(string refid, string _params)
+        public void RenderlinkMulti(string refid, string _params, string Sub)
         {
             try
             {
                 ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
-                ReportRenderResponse Res = pclient.Get<ReportRenderResponse>(new ReportRenderMultipleRequest {
+                ReportRenderResponse Res = pclient.Get<ReportRenderResponse>(new ReportRenderMultipleRequest
+                {
                     Refid = refid,
-                    RenderingUserAuthId = this.LoggedInUser.AuthId, 
+                    RenderingUserAuthId = this.LoggedInUser.AuthId,
                     ReadingUserAuthId = this.LoggedInUser.AuthId,
-                    Params = _params });
-                Res.StreamWrapper.Memorystream.Position = 0;
-                Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf");
-                if ((Pdf as FileStreamResult).FileStream.Length > 0)
-                    return Pdf;
+                    Params = _params,
+                    SubscriptionId = Sub
+                });
             }
             catch (Exception e)
             {
                 Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
             }
-
-            return Redirect("/StatusCode/500");
         }
 
         public IActionResult RenderforBot(string refid)

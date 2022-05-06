@@ -616,6 +616,17 @@ namespace ExpressBase.Web.Controllers
             byte[] decompressedData = Decompress(res);
             Redis.Delete("excel" + refid);
             return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+        } 
+        
+        public IActionResult GetPdf(string refid, string filename)
+        {
+            byte[] res = Redis.Get<byte[]>("PdfReport" + refid);
+
+            byte[] decompressedData = Decompress(res);
+
+            Redis.Delete("PdfReport" + refid);
+
+            return new FileStreamResult(new MemoryStream(decompressedData), "application/pdf") /*{ FileDownloadName = filename }*/;
         }
 
         public static byte[] Decompress(byte[] data)

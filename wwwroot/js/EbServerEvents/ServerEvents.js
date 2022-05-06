@@ -13,6 +13,7 @@
     this.onLogOut = function (m, e) { };
     this.onNotification = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
+    this.onPdfDownloadSuccess = function (m, e) { };
 
 
 
@@ -76,6 +77,10 @@
 
     this.onExportToExcel = function (m, e) {
         this.onExcelExportSuccess(m);
+    };
+
+    this.onPdfDownload = function (m, e) {
+        this.onPdfDownloadSuccess(m);
     };
 
     this.exportApplication = function (m, e) {
@@ -168,6 +173,7 @@
             onUploadSuccess: this.onUploaded.bind(this),
             stopListening: this.stopListening.bind(this),
             onExportToExcel: this.onExportToExcel.bind(this),
+            onPdfDownload: this.onPdfDownload.bind(this),
             onMsgSuccess: this.onMsgSuccess.bind(this),
             onLogOut: this.onLogOutMsg.bind(this),
             onNotification: this.onNotifyMsg.bind(this),

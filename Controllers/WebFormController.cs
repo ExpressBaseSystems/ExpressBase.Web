@@ -823,7 +823,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
         }
 
         //list view print
-        public IActionResult GetPdfReportMulti(string refId, string rowId)
+        public IActionResult GetPdfReportMulti(string refId, string rowId, string _sub)
         {
             if (!this.HasPermission(refId, OperationConstants.PRINT, 0, true))
                 return Redirect("/StatusCode/401");
@@ -837,12 +837,12 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
 
                 string s = JsonConvert.SerializeObject(p);
                 s = s.ToBase64();
-                return Redirect("/ReportRender/RenderlinkMulti?refid=" + refId + "&_params=" + s);
+                return Redirect("/ReportRender/RenderlinkMulti?refid=" + refId + "&_params=" + s + "&Sub=" + _sub);
             }
 
             catch (Exception e)
             {
-                Console.WriteLine("Error in GetPdfReportMulti" + e.Message+e.StackTrace);
+                Console.WriteLine("Error in GetPdfReportMulti" + e.Message + e.StackTrace);
                 return Redirect("/StatusCode/500");
             }
         }

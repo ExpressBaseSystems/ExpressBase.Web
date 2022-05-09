@@ -41,7 +41,6 @@ html {
 .Eb-ctrlContainer[ctype="Numeric"] .ctrl-cover:focus-within,
 .Eb-ctrlContainer[ctype="Date"] .ctrl-cover:focus-within,
 .Eb-ctrlContainer[ctype="EmailControl"] .ctrl-cover:focus-within,
-.Eb-ctrlContainer[ctype="RadioGroup"] .ctrl-cover:focus-within,
 .Eb-ctrlContainer[ctype="CheckBoxGroup"] .ctrl-cover:focus-within,
 .Eb-ctrlContainer[ctype="PowerSelect"] .ctrl-cover:focus-within,
 .Eb-ctrlContainer[ctype="BooleanSelect"] .ctrl-cover:focus-within,
@@ -277,6 +276,10 @@ body {
 
 .Eb-ctrlContainer [type="RadioGroup"] {
     /*padding: 5px;*/
+}
+
+.Eb-ctrlContainer[ctype="RadioGroup"] .ctrl-cover {
+    border: none;
 }
 
 .Eb-ctrlContainer .input-group-addon {

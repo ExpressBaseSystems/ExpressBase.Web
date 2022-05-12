@@ -875,14 +875,14 @@ namespace ExpressBase.Web.Controllers
                     {
                         if (resp.SolutionObj.GetMobileSettings(out var settings) && settings.IsSignupEnabled())
                         {
-                            EbMobilePage mobilePage = this.Redis.Get<EbMobilePage>(settings.SignUpPageRefId);
+                            EbMobilePage mobilePage = EbFormHelper.GetEbObject<EbMobilePage>(settings.SignUpPageRefId, this.ServiceClient, this.Redis, null);
                             resp.SignUpPage = EbSerializers.Json_Serialize(mobilePage);
                         }
                     }
                     catch (Exception ex)
                     {
-                        resp.Message += ", Redis exception while getting signup page";
-                        Console.WriteLine("Redis exception while getting mobile page");
+                        resp.Message += ", Exception while getting signup page";
+                        Console.WriteLine("Exception while getting mobile page");
                         Console.WriteLine(ex.Message);
                     }
                 }
@@ -1420,5 +1420,5 @@ namespace ExpressBase.Web.Controllers
             return pr;
         }
     }
-    }
+}
 

@@ -167,7 +167,8 @@ const EbPowerSelect = function (ctrl, options) {
                     FormRefId: this.ComboObj.FormRefId,
                     OpenInNewTab: this.ComboObj.OpenInNewTab,
                     ObjType: 'PowerSelect',
-                    DDrefresh: this.DDrefresh.bind(this)
+                    DDrefresh: this.DDrefresh.bind(this),
+                    IsDGCtrl: this.ComboObj.IsDGCtrl
                 });
             }
 

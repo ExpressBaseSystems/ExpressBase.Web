@@ -413,6 +413,12 @@ const WebFormCollectionRender = function (Option) {
             }
         }
         else if (x.Initiator.ObjType === 'PowerSelect') {
+            if (x.Initiator.IsDGCtrl) {
+                let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
+                if (destRender) {
+                    x.Initiator.reverseUpdateData(destRender);
+                }
+            }
             x.Initiator.DDrefresh();
         }
         else if (x.Initiator.ObjType === 'Label') {

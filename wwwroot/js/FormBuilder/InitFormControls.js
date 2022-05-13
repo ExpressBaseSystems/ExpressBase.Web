@@ -1152,7 +1152,10 @@
             return;
         }
         else if (ctrl.IsInsertable) {
-            ctrl.__AddButtonInit = this.Button;
+            if (this.Renderer.rendererName === "WebForm" && ctrl.IsDGCtrl)
+                ctrl.__AddButtonInit = this.Renderer.InitPsAddButton;
+            else
+                ctrl.__AddButtonInit = this.Button;
         }
 
         Vue.component('v-select', VueSelect.VueSelect);

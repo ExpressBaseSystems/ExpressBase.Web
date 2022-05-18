@@ -159,12 +159,18 @@
                 <a href="/SupportTicket/BugSupport" target="_blank" class="footer-btn" style="margin-right:5px">
                     <i class="fa fa-life-ring"></i> Support
                 </a>
-                @*@if (ViewBag.wc == "uc")
+                @if (ViewBag.wc == "uc")
                 {
+                    <a href="/Downloads" target="_blank" class="footer-btn" style="margin-right:5px">
+                        <i class="fa fa-download"></i> Downloads
+                    </a>
+                }
+                @*@if (ViewBag.wc == "uc")
+                    {
                     <a href="/SMSLog/SMSLogConsole" target="_blank" class="footer-btn">
                         <i class="fa fa-commenting-o"></i> Communication Console
                     </a>
-                }*@
+                    }*@
             </div>
             <small class="powered-by-exp">
                 <img height="30" src="@UrlHelper.GetLogoPath(ViewBag.BrowserURLContext)" />

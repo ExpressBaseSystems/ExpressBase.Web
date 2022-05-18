@@ -1,0 +1,59 @@
+﻿
+@{
+    @using ExpressBase.Common.ServiceStack.ReqNRes;
+    List<FileDownloadObject> FileObjects = ViewBag.FileObjects;
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+
+<script>
+    var cm = new EbHeader().setName("Downloads");
+</script>
+
+
+<div class="container-fluid" style="margin-top:50px; background-color:white; height:100%">
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">File name</th>
+                    <th scope="col">Created at</th>
+                    <th scope="col"> </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (FileObjects == null || FileObjects.Count == 0)
+                    {
+                        <tr>
+                            <th scope="row">No downloads available</th>
+                        </tr>
+                    }
+                    int i = 0;
+
+                    @foreach (FileDownloadObject obj in FileObjects)
+                    {
+                        <tr>
+                            <th scope="row">@(++i)</th>
+                            <td>@obj.Filename</td>
+                            <td>@obj.CreatedAt</td>
+                            @if (obj.IsDeleted)
+                            {
+                                <td>downloaded</td>
+                            }
+                            else if(obj.IsGenerating)
+                            {
+                                <td>Generating</td>
+                            }
+                            else
+                            {
+                                <td><a class="btn btn-sm btn-default download" href="/GetDownload?id=@(obj.Id)&op=d">Download</a></td>
+                                @*<td><a class="btn btn-sm btn-default download" href="/GetDownload?id=@(obj.Id)&op=o">Open</a></td>*@
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

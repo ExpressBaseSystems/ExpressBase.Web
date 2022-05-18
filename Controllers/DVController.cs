@@ -29,6 +29,8 @@ using System.Net;
 using System.Net.Mime;
 using ExpressBase.Objects.Objects.DVRelated;
 using System.IO.Compression;
+using ExpressBase.Objects.Helpers;
+using ExpressBase.Common.ServiceStack.ReqNRes;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -609,24 +611,30 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        public IActionResult GetExcel(string refid, string filename)
+        public IActionResult GetExcel(int id)
         {
+            GetDownloadFileResponse response = this.ServiceClient.Get<GetDownloadFileResponse>(new GetDownloadFileRequest { Id = id });
+            byte[] bytea = response.FileDownloadObject?.FileBytea;
+            if (bytea != null)
+            {
+                byte[] decompressedData = Decompress(bytea);
 
-            var res = Redis.Get<byte[]>("excel" + refid);
-            byte[] decompressedData = Decompress(res);
-            Redis.Delete("excel" + refid);
-            return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
-        } 
-        
-        public IActionResult GetPdf(string refid, string filename)
+                return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.FileDownloadObject?.Filename);
+            }
+            return Redirect("/StatusCode/404");
+        }
+
+        public IActionResult GetPdf(int id)
         {
-            byte[] res = Redis.Get<byte[]>("PdfReport" + refid);
+            GetDownloadFileResponse response = this.ServiceClient.Get<GetDownloadFileResponse>(new GetDownloadFileRequest { Id = id });
+            byte[] bytea = response.FileDownloadObject?.FileBytea;
+            if (bytea != null)
+            {
+                byte[] decompressedData = Decompress(bytea);
 
-            byte[] decompressedData = Decompress(res);
-
-            Redis.Delete("PdfReport" + refid);
-
-            return new FileStreamResult(new MemoryStream(decompressedData), "application/pdf") /*{ FileDownloadName = filename }*/;
+                return new FileStreamResult(new MemoryStream(decompressedData), "application/pdf");
+            }
+            return Redirect("/StatusCode/404");
         }
 
         public static byte[] Decompress(byte[] data)

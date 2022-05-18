@@ -2676,6 +2676,156 @@ const WebFormRender = function (option) {
             this.Mode.isEdit = true;
     };
 
+    this.InitPsAddButton = function (options) {
+        let $btn = $('#' + options.EbSid_CtxId);
+
+        if ($btn.length == 0)
+            return;
+        if (options.IsDGCtrl) {
+            $btn.removeAttr("disabled");
+            $btn.on('click', this.PsAddBtnClicked.bind(this, $btn, options));
+        }
+    }.bind(this);
+
+    this.PsAddBtnClicked = function ($btn, options) {
+        let dgEbsid = $btn.closest('[ctype=DataGrid]').attr('ebsid');
+        let DGB = this.DGBuilderObjs[dgEbsid];
+        let $td = $btn.closest("td");
+        let rowid = $td.closest("tr").attr("rowid");
+        let ctrlname = $td.attr('colname');
+        let ctrl = DGB.objectMODEL[rowid] ? DGB.objectMODEL[rowid].find(e => e.Name == ctrlname) : null;
+
+        if (!ctrl) {
+            console.error('PsAddBtnClicked - ctrl not found');
+            return;
+        }
+        if (!ctrl.FormRefId) {
+            console.error('PsAddBtnClicked - invalid form refid');
+            return;
+        }
+        let _params = this.getPsAddBtnParameters(ctrl.DataFlowMap, rowid, DGB);
+        let _mode = 1;//view
+
+        if (_params.findIndex(e => e.Name === 'id') === -1) //prefill
+            _mode = 2;
+
+        options['reverseUpdateData'] = this.reverseUpdateData.bind(this, ctrl.DataFlowMap, rowid, DGB);
+
+        if (ctrl.OpenInNewTab) {
+            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(JSON.stringify(_params))}&_m=${_mode}&_l=${this.getLocId()}`;
+            window.open(url, '_blank');
+        }
+        else {
+            ebcontext.webform.PopupForm(ctrl.FormRefId, btoa(JSON.stringify(_params)), _mode,
+                {
+                    srcCxt: this.__MultiRenderCxt,
+                    initiator: options,
+                    locId: this.getLocId()
+                });
+        }
+    };
+
+    this.getPsAddBtnParameters = function (DataFlowMap, rowid, DGB) {
+        let destid = 0;
+        let params = [];
+        let pushMasterId = true;
+        let pushLinesId = true;
+
+        if (DataFlowMap && DataFlowMap.$values.length > 0) {
+            let pMap = DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowForwardMap'))
+                    continue;
+
+                if (pMap[i].SrcCtrlName === 'id') {//source table id
+                    params.push({ Name: pMap[i].DestCtrlName, Type: 7, Value: this.rowId });
+                    pushMasterId = false;
+                    continue;
+                }
+                else if (pMap[i].SrcCtrlName === DGB.ctrl.TableName + '_id') {//current row id
+                    params.push({
+                        Name: pMap[i].DestCtrlName,
+                        Type: 7,
+                        Value: rowid > 0 ? rowid : 0
+                    });
+                    pushLinesId = false;
+                    continue;
+                }
+
+                let dgCtrl = DGB.objectMODEL[rowid].find(e => e.__Col.Name === pMap[i].SrcCtrlName);
+                if (pMap[i].DestCtrlName === 'id') {
+                    if (dgCtrl) {
+                        if (dgCtrl.getValue() > 0) {
+                            destid = dgCtrl.getValue();
+                            params = [{ Name: 'id', Type: 7, Value: destid }];
+                            pushMasterId = false;
+                            break;
+                        }
+                        continue;
+                    }
+                    let outCtrl = DGB.ctrl.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        if (outCtrl.getValue() > 0) {
+                            destid = outCtrl.getValue();
+                            params = [{ Name: 'id', Type: 7, Value: destid }];
+                            pushMasterId = false;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    if (dgCtrl) {
+                        params.push({
+                            Name: pMap[i].DestCtrlName,
+                            Type: dgCtrl.EbDbType,
+                            Value: dgCtrl.getValue()
+                        });
+                    }
+                    else {
+                        let outCtrl = DGB.ctrl.formObject[pMap[i].SrcCtrlName];
+                        if (outCtrl) {
+                            params.push({
+                                Name: pMap[i].DestCtrlName,
+                                Type: outCtrl.EbDbType,
+                                Value: outCtrl.getValue()
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        if (pushMasterId) {
+            params.push({ Name: this.MasterTable, Type: 7, Value: this.rowId });
+            if (pushLinesId)
+                params.push({ Name: DGB.ctrl.TableName + '_id', Type: 7, Value: rowid > 0 ? rowid : 0 });
+        }
+
+        return params;
+    };
+
+    this.reverseUpdateData = function (DataFlowMap, rowid, DGB, destRender) {
+        if (DataFlowMap && DataFlowMap.$values.length > 0) {
+            DGB.setCurRow(rowid);
+            let pMap = DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowReverseMap'))
+                    continue;
+                let dgCtrl = DGB.objectMODEL[rowid].find(e => e.__Col.Name === pMap[i].DestCtrlName);
+                if (!dgCtrl)
+                    continue;
+
+                if (pMap[i].SrcCtrlName === 'id') {
+                    dgCtrl.setValue(destRender.rowId);
+                }
+                else {
+                    let outCtrl = destRender.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl)
+                        dgCtrl.setValue(outCtrl.getValue());
+                }
+            }
+        }
+    };
+
     this.init = function (option) {
         //let t0 = performance.now();
 

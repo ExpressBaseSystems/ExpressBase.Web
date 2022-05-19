@@ -26,8 +26,8 @@ namespace ExpressBase.Web.Components
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;
             ViewBag.Refid = refid;
-            var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
-            ViewBag.LocConfig = JsonConvert.SerializeObject(resp.Config);
+            //var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
+            //ViewBag.LocConfig = JsonConvert.SerializeObject(resp.Config);
             return View();
         }       
     }

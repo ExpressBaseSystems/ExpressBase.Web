@@ -8,7 +8,7 @@
     var cur_status = option.Status || null;
     var tabNum = option.TabNum || null;
     var ssurl = option.ServiceUrl || null;
-    this.LocConfig = option.LocationConfig || {};
+    this.LocConfig = /*option.LocationConfig ||*/ {};
     this.wc = option.Wc;
     this.containment = ".page";
     this.Tenantid = option.Cid;

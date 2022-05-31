@@ -1883,10 +1883,14 @@
         let lastCtrlName = paramsColl__[1];
         let isFull = paramsColl__[2];
 
-        if (isFull)
+        if (isFull) {
             this.refreshDG(paramsColl, lastCtrlName);
-        //else
-        //    this.clearDG(false);
+        }
+        else {
+            //this.clearDG(false);//?
+            if (this.ctrl.__continue)
+                this.ctrl.__continue();
+        }
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;

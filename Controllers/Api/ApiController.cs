@@ -847,7 +847,7 @@ namespace ExpressBase.Web.Controllers
         public ActionResult<ValidateSidResponse> ValidateSolution()
         {
             if (!IsValidSolution)
-                return BadRequest($"invalid solution url '{ExtSolutionId}'");
+                return BadRequest($"Invalid solution url '{ExtSolutionId}'");
 
             ValidateSidResponse resp = new ValidateSidResponse { Message = "Success" };
             try
@@ -875,8 +875,9 @@ namespace ExpressBase.Web.Controllers
                     {
                         if (resp.SolutionObj.GetMobileSettings(out var settings) && settings.IsSignupEnabled())
                         {
-                            EbMobilePage mobilePage = EbFormHelper.GetEbObject<EbMobilePage>(settings.SignUpPageRefId, this.ServiceClient, this.Redis, null);
-                            resp.SignUpPage = EbSerializers.Json_Serialize(mobilePage);
+                            EbMobilePage mobilePage = this.Redis.Get<EbMobilePage>(settings.SignUpPageRefId);// auth required to get from db
+                            if (mobilePage != null)
+                                resp.SignUpPage = EbSerializers.Json_Serialize(mobilePage);
                         }
                     }
                     catch (Exception ex)

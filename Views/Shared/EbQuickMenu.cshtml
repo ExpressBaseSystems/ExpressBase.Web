@@ -1,5 +1,7 @@
 ﻿@using ExpressBase.Common.Structures;
 @using ExpressBase.Common.Helpers;
+@using ExpressBase.Common;
+@using ExpressBase.Security;
 @{
     string mrl = "0px";
 }
@@ -164,13 +166,15 @@
                     <a href="/Downloads" target="_blank" class="footer-btn" style="margin-right:5px">
                         <i class="fa fa-download"></i> Downloads
                     </a>
+
+                    User u = Newtonsoft.Json.JsonConvert.DeserializeObject<User>(ViewBag.UserObject);
+                    if (u.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || u.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                    {
+                        <a href="/CommunicationConsole" target="_blank" class="footer-btn">
+                            <i class="fa fa-commenting-o"></i> Communication Console
+                        </a>
+                    }
                 }
-                @*@if (ViewBag.wc == "uc")
-                {
-                    <a href="/CommunicationConsole" target="_blank" class="footer-btn">
-                        <i class="fa fa-commenting-o"></i> Communication Console
-                    </a>
-                }*@
             </div>
             <small class="powered-by-exp">
                 <img height="30" src="@UrlHelper.GetLogoPath(ViewBag.BrowserURLContext)" />

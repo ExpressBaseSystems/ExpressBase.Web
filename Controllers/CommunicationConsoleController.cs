@@ -82,8 +82,8 @@ namespace ExpressBase.Web.Controllers
 		                    l.id DESC, status ASC;";
             }
 
-            DateTime Fdate = DateTime.ParseExact(FromDate, "dd-MM-yyyy", null);
-            DateTime Tdate = DateTime.ParseExact(ToDate, "dd-MM-yyyy", null);
+            DateTime Fdate = DateTime.ParseExact(FromDate, "yyyy-MM-dd", null);
+            DateTime Tdate = DateTime.ParseExact(ToDate, "yyyy-MM-dd", null);
             _params.Add(new Param { Name = "from_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Fdate.ToString() });
             _params.Add(new Param { Name = "to_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Tdate.ToString() });
 

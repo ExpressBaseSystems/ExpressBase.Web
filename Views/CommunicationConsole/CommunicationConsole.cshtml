@@ -15,11 +15,14 @@
 
 <script src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
 <script src="~/js/EbControls/EbProgressBar.js" asp-append-version=@bApnd></script>
-<script src="~/js/SmsLogConsole.js" asp-append-version=@bApnd></script>
-<link rel="stylesheet" href="~/css/SmsLog/SMSLogConsole.css" asp-append-version=@bApnd />
+<script src="~/js/CommunicationConsole.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" href="~/css/CommunicationConsole/CommunicationConsole.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
 
 <script>
+
+    new EbHeader().setName("Communication Console");
+
     $(function () {
         $("#from-date").datepicker({
             dateFormat: "dd-mm-yy"
@@ -39,19 +42,21 @@
 <div id="show-scheduler"></div>
 <div class="container-fluid" style="margin-top:50px; background-color:white; height:100%">
     <div class="row">
-        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="border-bottom: 1px solid #ddd">
+        <ul class="nav nav-pills mb-3" role="tablist" style="border-bottom: 1px solid #ddd">
             <li class="nav-item">
-                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#smstab" role="tab" aria-controls="smstab" aria-selected="true">Sms Log</a>
+                <a class="nav-link active" id="pills-sms-tab" data-toggle="pill" href="#smstab" role="tab" aria-controls="smstab" aria-selected="true">Sms Log</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Email Log</a>
+                <a class="nav-link" id="pills-email-tab" data-toggle="pill" href="#emailtab" role="tab" aria-controls="emailtab" aria-selected="false">Email Log</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">System Notifications Log</a>
             </li>
         </ul>
-        <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane  show active" id="smstab" role="tabpanel" aria-labelledby="pills-home-tab" style="display:flex">
+
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="smstab" role="tabpanel" aria-labelledby="pills-sms-tab" ">
                 <div id="menu1" class=" row col-sm-12">
                     <div class="dropdown view-log-pane col-sm-3" id="sms-objs" style="width:20%"> <div>Template</div></div>
                     <div class="view-log-pane col-sm-3">
@@ -71,8 +76,9 @@
                     </div>
                 </div>
             </div>
-            @*<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                <div id="menu1" class=" row col-sm-12">
+
+            <div class="tab-pane fade" id="emailtab" role="tabpanel" aria-labelledby="pills-email-tab">
+                <div id="menu2" class=" row col-sm-12">
                     <div class="dropdown view-log-pane col-sm-3" id="email-objs" style="width:20%"> <div>Template</div></div>
                     <div class="view-log-pane col-sm-3">
                         <div> Date From </div>
@@ -83,7 +89,7 @@
                         <input type="text" class="form-control date-cntrl" id="email-to-date" placeholder="MM/DD/YY">
                     </div>
                     <div></div>
-                    <div class="view-log-pane col-sm-3"><button id="show-email-logs" class="btn btn-primary"> Show SMS</button></div>
+                    <div class="view-log-pane col-sm-3"><button id="show-email-logs" class="btn btn-primary"> Show Email</button></div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -91,9 +97,9 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>*@
-        </div>
 
+            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+        </div>
 
     </div>
 </div>
@@ -128,9 +134,9 @@
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
     @Html.Raw(ViewBag.ControlOperations);
-    if (@Html.Raw(ViewBag.SMSLogObject) != null) {
-        var obj = new smslogconsole({
-            AllObj: @Html.Raw(ViewBag.SMSLogObject),
+
+        var obj = new CommunicationConsoleObject({
+             SMSObj: @Html.Raw(ViewBag.SMSObjects),
+             EmailObj: @Html.Raw(ViewBag.EmailObjects)
         });
-    }
 </script>

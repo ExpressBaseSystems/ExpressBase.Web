@@ -22,11 +22,12 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class SMSLogController : EbBaseIntCommonController
+    public class CommunicationConsoleController : EbBaseIntCommonController
     {
-        public SMSLogController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
+        public CommunicationConsoleController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public IActionResult SMSLogConsole()
+        [Microsoft.AspNetCore.Mvc.Route("/CommunicationConsole")]
+        public IActionResult CommunicationConsole()
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbObject));
@@ -35,13 +36,16 @@ namespace ExpressBase.Web.Controllers
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
             ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.FilterDialog);
 
-            List<int> types = new List<int>() { 19 };
-            GetAllCommitedObjectsResp Result = this.ServiceClient.Get<GetAllCommitedObjectsResp>(new GetAllCommitedObjectsRqst { Typelist = types });
-            ViewBag.SMSLogObject = JsonConvert.SerializeObject(Result.Data);
-            return View("SmsLogConsole");
+
+            GetAllCommitedObjectsResp sms = this.ServiceClient.Get<GetAllCommitedObjectsResp>(new GetAllCommitedObjectsRqst { Typelist = new List<int>() { 19 } });
+            GetAllCommitedObjectsResp email = this.ServiceClient.Get<GetAllCommitedObjectsResp>(new GetAllCommitedObjectsRqst { Typelist = new List<int>() { 15 } });
+            ViewBag.SMSObjects = JsonConvert.SerializeObject(sms.Data);
+            ViewBag.EmailObjects = JsonConvert.SerializeObject(email.Data);
+
+            return View("CommunicationConsole");
         }
 
-        public ListSMSLogsResponse Get_SMS_List(string Refid, string FromDate, string ToDate)
+        public ListSMSLogsResponse GetCommunicationConsoleData(string Refid, string FromDate, string ToDate, string TableName)
         {
             ListSMSLogsResponse resp = new ListSMSLogsResponse();
             string query = string.Empty;
@@ -53,9 +57,9 @@ namespace ExpressBase.Web.Controllers
 		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, 
                             l.status, (CASE WHEN l.status='success' THEN '' ELSE l.result END) as result, l.id   
 	                    FROM
-		                    eb_sms_logs l, eb_users u 
+		                    " + TableName + @" l, eb_users u 
 	                    WHERE
-		                    l.id NOT IN (SELECT retryof FROM eb_sms_logs WHERE retryof IS NOT NULL) AND u.id =l.eb_created_by AND
+		                    l.id NOT IN (SELECT retryof FROM " + TableName + @" WHERE retryof IS NOT NULL) AND u.id =l.eb_created_by AND
 		                    (l.eb_created_at::date BETWEEN :from_date AND :to_date) AND 
 							l.refid = :refid AND COALESCE(l.eb_del,'F') = 'F'
 	                    ORDER BY 
@@ -69,9 +73,9 @@ namespace ExpressBase.Web.Controllers
 		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, 
                             l.status, (CASE WHEN l.status='success' THEN '' ELSE l.result END) as result, l.id   
 	                    FROM
-		                    eb_sms_logs l, eb_users u 
+		                    " + TableName + @" l, eb_users u 
 	                    WHERE
-		                    l.id NOT IN (SELECT retryof FROM eb_sms_logs WHERE retryof IS NOT NULL) AND u.id =l.eb_created_by AND
+		                    l.id NOT IN (SELECT retryof FROM " + TableName + @" WHERE retryof IS NOT NULL) AND u.id =l.eb_created_by AND
 		                    (l.eb_created_at::date between :from_date AND :to_date) AND 
 							COALESCE(l.eb_del,'F') = 'F'
 	                    ORDER BY 

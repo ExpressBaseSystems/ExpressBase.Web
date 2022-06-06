@@ -4,7 +4,7 @@
     padding: 10px 30px 10px 30px;
 }
 
-#show-sms-logs {
+#show-sms-logs, #show-email-logs{
     margin-top: 7%;
 }
 

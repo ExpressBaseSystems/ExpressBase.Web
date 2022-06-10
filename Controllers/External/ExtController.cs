@@ -1354,7 +1354,7 @@ namespace ExpressBase.Web.Controllers
                 if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
                 {
 
-                    return RedirectToAction("WebFormRender", "WebForm", new { refId = solutionObj.SolutionSettings.SignupFormRefid, _locId = authResponse.User.Preference.DefaultLocation, renderMode = 3 });
+                    return RedirectToAction("Index", "WebForm", new { _r = solutionObj.SolutionSettings.SignupFormRefid, _l = authResponse.User.Preference.DefaultLocation, _rm = 3 });
                 }
             }
             return Redirect("/StatusCode/404");

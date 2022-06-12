@@ -629,9 +629,18 @@ const WebFormRender = function (option) {
 
         if (respObj.Status === 200) {
             if (this.renderMode === 3) {
-                EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                EbMessage("show", { Message: "Sign up success.", AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                this.showLoader();
+                if (respObj.MetaData && respObj.MetaData.signup_user) {
+                    let signup_user = JSON.parse(respObj.MetaData.signup_user);
+                    if (signup_user.VerificationRequired) {
+                        EbMessage("show", { Message: "Sign up success. Please check email for verification code", AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                        signup_user.Exp = Date.now() + 300000;
+                        store.set('eb_signup_info', signup_user);
+                    }
+                }
                 setTimeout(function () {
-                    ebcontext.setup.ss.onLogOutMsg();
+                    ebcontext.setup.se.onLogOutMsg();
                 }, 3000);
                 return;
             }
@@ -1814,7 +1823,10 @@ const WebFormRender = function (option) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {// ctrl+S -> save
                 if ((this.Mode.isEdit || this.Mode.isNew) && this.preventCheck(event)) {
-                    this.saveForm();
+                    if (this.renderMode === 3 || this.renderMode === 5)//signup or public
+                        $('#webform_submit').click();
+                    else
+                        this.saveForm();
                 }
             }
             else if (event.which === 69) {// ctrl+E -> edit

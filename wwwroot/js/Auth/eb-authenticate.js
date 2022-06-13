@@ -184,7 +184,7 @@
     $("#otpvalidate").on("click", function () {
         if ($("#partitioned").val().length > 0) {
             $("#loader_profile").EbLoader("show");
-            if ($("#otptype").text() == "signinotp") {
+            if ($("#otptype").text() == "signinotp" || $("#otptype").text() == "signupverify") {
                 $(`[validator="submit"]`)[0].click();
             }
             else {
@@ -336,4 +336,30 @@
         forgotpassword = true;
     });
     var forgotpassword = false;
+
+    function setCookie(c_name, value) {
+        var exdate = moment().add(5, "minutes").toDate();
+        var c_value = escape(value) + ";expires = " + exdate.toUTCString();
+        document.cookie = c_name + "=" + c_value;
+    };
+
+    (function checkSignUpStatus() {
+        let user_info = store.get('eb_signup_info');
+        if (!user_info)
+            return;
+        store.remove('eb_signup_info');
+        if (user_info.Exp < Date.now())
+            return;
+
+        $("#log_form").hide();
+        $("#2fauth_form").show();
+        $("#lastDigit").text(user_info.VerifyEmail);
+        $("#otptype").text("signupverify");
+        $("#resend").hide();
+        $("#uname_otp").val(user_info.VerifyEmail);
+
+        setCookie("eb_signup_token", user_info.Token);
+        setCookie("eb_signup_authid", user_info.AuthId);
+    })();
+
 })(window);

@@ -802,6 +802,18 @@ namespace ExpressBase.Web.Controllers
                         return authresp;
                     }
                 }
+                else if (req["otptype"] == "signupverify")
+                {
+                    EbAuthResponse validateResp = ValidateSignUpVerify(req["otp"]);
+                    UserName = req["uname_otp"];
+                    Password = "NIL";
+                    if (!validateResp.AuthStatus)
+                    {
+                        authresp.AuthStatus = false;
+                        authresp.ErrorMessage = validateResp.ErrorMessage;
+                        return authresp;
+                    }
+                }
                 else
                 {
                     UserName = req["uname"];
@@ -828,7 +840,7 @@ namespace ExpressBase.Web.Controllers
 
                         //UseTokenCookie = true
                     };
-                    if (req["otptype"] == "signinotp")
+                    if (req["otptype"] == "signinotp" || req["otptype"] == "signupverify")
                         AuthenticateReq.Meta.Add("sso", "true");
                     myAuthResponse = this.AuthClient.Get<MyAuthenticateResponse>(AuthenticateReq);
 
@@ -983,6 +995,36 @@ namespace ExpressBase.Web.Controllers
                         authresp.ErrorMessage = "The OTP you've entered is incorrect. Please try again.";
                     }
                 }
+            }
+            return authresp;
+        }
+
+        private EbAuthResponse ValidateSignUpVerify(string otp)
+        {
+            EbAuthResponse authresp = new EbAuthResponse();
+            string token = Request.Cookies["eb_signup_token"];
+            string authid = Request.Cookies["eb_signup_authid"];
+            User _u = GetUserObject(authid);
+            if (_u != null)
+            {
+                Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateTokenRequest
+                {
+                    Token = token,
+                    UserAuthId = authid
+                });
+                authresp.AuthStatus = response.AuthStatus;
+                authresp.ErrorMessage = response.ErrorMessage;
+
+                if (authresp.AuthStatus)
+                {
+                    if (_u.EmailVerifCode != otp)
+                    {
+                        authresp.AuthStatus = false;
+                        authresp.ErrorMessage = "The OTP you've entered is incorrect. Please try again.";
+                    }
+                }
+                else
+                    authresp.ErrorMessage = "Session Expired";
             }
             return authresp;
         }
@@ -1354,7 +1396,7 @@ namespace ExpressBase.Web.Controllers
                 if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
                 {
 
-                    return RedirectToAction("WebFormRender", "WebForm", new { refId = solutionObj.SolutionSettings.SignupFormRefid, _locId = authResponse.User.Preference.DefaultLocation, renderMode = 3 });
+                    return RedirectToAction("Index", "WebForm", new { _r = solutionObj.SolutionSettings.SignupFormRefid, _l = authResponse.User.Preference.DefaultLocation, _rm = 3 });
                 }
             }
             return Redirect("/StatusCode/404");

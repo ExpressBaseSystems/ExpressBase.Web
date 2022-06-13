@@ -60,9 +60,10 @@
             }
             // plugin.settings.preloaded = prelod;
             let $filecont = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`);
-            $filecont.addClass('has-files');
             let $uploadedContainer = $filecont.find('.uploaded');
 
+            if (plugin.settings.preloaded.length > 0)
+                $filecont.addClass('has-files');
 
             for (let i = 0; i < plugin.settings.preloaded.length; i++) {
                 $uploadedContainer.append(createImg(plugin.settings.preloaded[i], plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].cntype, true, plugin.settings.preloaded[i].refid));
@@ -340,7 +341,7 @@
             $(files).each(function (i, file) {
                 let url = "";
                 let filetype = (t == 1) ? getFileType(files[i]) : 1;
-                if (filetype==1) {
+                if (filetype == 1) {
                     if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
                         //if (((preloadedfile - filedel.length) + newfilearray.length) < plugin.settings.maxFiles) {
                         if (((preloadedfile + newfilearray.length) - filedel.length) < plugin.settings.maxFiles) {

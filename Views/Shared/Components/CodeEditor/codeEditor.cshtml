@@ -274,10 +274,11 @@
                 CodeMirror.showHint(cm, CodeMirror.hint.sql);
             };
     }
-        if ("@readonlyval" === "w" ||'@ViewBag.IsNew'==="True"||'@ViewBag.versioning'==="False" ||'@ViewBag.versioning'==="false")
+    _readonly = false;
+        @*if ("@readonlyval" === "w" ||'@ViewBag.IsNew'==="True"||'@ViewBag.versioning'==="False" ||'@ViewBag.versioning'==="false")
             _readonly = false;
         else
-         _readonly = true;
+         _readonly = true;*@
         window["editor@(ViewBag.tabnum)"] = CodeMirror.fromTextArea(document.getElementById("code@(ViewBag.tabnum)"), {
             mode: "text/x-pgsql",
             lineNumbers: true,

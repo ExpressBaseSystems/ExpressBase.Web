@@ -687,7 +687,8 @@ eb-disable {
 
 .fs-tbl .dropdown-toggle[data-toggle="dropdown"] {
     height: 35px !important;
-    margin-top: 10px;
+    /*margin-top: 10px;*/
+    padding: 6px 0px;
     background-color: transparent !important;
     border: none;
 }
@@ -716,20 +717,24 @@ eb-disable {
     color: #6d6d6d;
 }
 
-.rc-slno {
-    width: 50px;
+.fs-grid-cont .rc-slno {
+    width: 5%;
 }
 
-.rc-stage {
-    width: 180px;
+.fs-grid-cont .rc-stage {
+    width: 25%;
 }
 
-.rc-status {
-    width: 250px;
+.fs-grid-cont .rc-status {
+    width: 22%;
 }
 
-.rc-by {
-    width: 270px;
+.fs-grid-cont .rc-by {
+    width: 25%;
+}
+
+.fs-grid-cont .rc-remarks {
+    width: 23%;
 }
 
 .review-reset-popover {
@@ -783,7 +788,7 @@ eb-disable {
     display: flex;
     justify-content: center;
     box-shadow: 0 -2px 6px -4px #b8b8b9;
-    padding: 10px 0 0px 0;
+    padding: 5px 0 0px 0;
     z-index: 1;
 }
 
@@ -793,21 +798,31 @@ eb-disable {
 
 .rc-tbl-thead-cont {
     /*height: 35px;*/
+    overflow-y: scroll;
+    background-color: #f3f3f5;
 }
+
+    .rc-tbl-thead-cont::-webkit-scrollbar {
+        background-color: #f3f3f5;
+    }
 
 .fs-tblhead {
     margin-bottom: 0;
 }
 
+    .fs-tblhead .grid-col-title {
+        font-weight: 500;
+    }
+
 .rc-tbl-tbody-cont {
-    height: 175px;
-    overflow-y: auto;
+    height: calc(100% - 78px);
+    overflow-y: scroll;
 }
 
 .fs-grid-cont {
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    /*padding: 10px;*/
 }
 
 .fs-user-cont {
@@ -822,10 +837,10 @@ eb-disable {
 }
 
 .fs-dp {
-    height: 47px;
+    height: 32px;
     background-size: cover;
-    width: 47px;
-    min-width: 47px;
+    width: 32px;
+    min-width: 32px;
     border: solid 1px #eee;
     border-radius: 50%;
     background-image: url(../images/nulldp.png);

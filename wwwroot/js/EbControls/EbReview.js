@@ -372,21 +372,32 @@
                         .replace("@uname@", userName);
                 }
                 if (column.Name === "action_unique_id") {
-                    this.afterRenderFuncs.push(function (val) {
+                    this.afterRenderFuncs.push(function (stage) {
                         let $sel = this.$tableBody.find(`tr[rowid='${row.RowId}'] [col='status'] .selectpicker`);
-                        if ($sel.length > 0)
-                            $sel.selectpicker('val', column.Value);
+                        if ($sel.length > 0) {
+                            if (row.RowId > 0) {
+                                let action = stage.StageActions.$values.find(function (action) { return action.EbSid == column.Value; });
+                                let actname = action ? action.Name : '';
+                                $sel.closest('.rc-status').html(`<span class='fstd-div'>${actname}</span>`);
+                            }
+                            else {
+                                $sel.selectpicker({
+                                    container: `#${this.formRenderer.FormObj.EbSid_CtxId}`
+                                });
+                                $sel.selectpicker('val', column.Value);
+                            }
+                        }
                     }.bind(this));
                 }
                 else if (column.Name === "eb_created_at") {
-                    html = html.replace("@time@", column.Value || "--/--/----");
+                    html = html.replace("@time@", column.F || column.Value || "--/--/----");
                 }
                 else if (column.Name === "comments") {
                     html = html.replace("@comment@", column.Value || '');
                 }
             }
             this.$tableBody.append(html);
-            this.runAfterRenderFuncs();
+            this.runAfterRenderFuncs(stage);
         }
 
         if (!this.hasPermission) {
@@ -404,14 +415,14 @@
         this.$container.on("click", ".fs-submit", this.submit);
     };
 
-    this.runAfterRenderFuncs = function () {
+    this.runAfterRenderFuncs = function (stage) {
         for (let i = 0; i < this.afterRenderFuncs.length; i++) {
-            this.afterRenderFuncs[i]();
+            this.afterRenderFuncs[i](stage);
         }
     };
 
     this.disableAllCtrls = function () {
-        this.$table.find('.selectpicker').selectpicker();
+        //this.$table.find('.selectpicker').selectpicker();
         this.$table.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
         this.$table.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
         this.$submit.hide();

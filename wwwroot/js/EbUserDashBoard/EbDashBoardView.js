@@ -21,7 +21,7 @@
     this.loader = $("#eb_common_loader");
     this.IsRendered = false;
     this.GridStackInit = function () {
-        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
+        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40, float: true });
         grid.on('gsresizestop', this.Redrawfn.bind(this));
         //grid.on('dragstart', this.DragStartFn.bind(this));
         //grid.on('dragstop', this.DragStopFn.bind(this));

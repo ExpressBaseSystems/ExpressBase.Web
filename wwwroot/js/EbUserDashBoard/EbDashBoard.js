@@ -57,7 +57,7 @@ var DashBoardWrapper = function (options) {
         //$('.grid-stack').on('dragstart', this.DragStartFn.bind(this));
         //$('.grid-stack').on('dragstop', this.DragStopFn.bind(this));
         //$('.grid-stack').gridstack();
-        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
+        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40, float: true });
         grid.on('gsresizestop', this.Redrawfn.bind(this));
         grid.on('dragstart', this.DragStartFn.bind(this));
         grid.on('dragstop', this.DragStopFn.bind(this));
@@ -1276,7 +1276,7 @@ var DashBoardWrapper = function (options) {
         var obj = {};
         this.EbObject.Tiles.$values = [];
         this.EbObject.TileCount = 0;
-        if (this.EbObject.EbSid === null || this.EbObject.EbSid ==="")
+        if (this.EbObject.EbSid === null || this.EbObject.EbSid === "")
             this.EbObject.EbSid = "ctrl_" + Date.now().toString(36);
         $(".grid-stack-item-content").each(function (j, val) {
             var id = $(val).parent().attr("id");
@@ -1552,7 +1552,7 @@ var DashBoardWrapper = function (options) {
         this.Current_DL.TextPosition = this.Copied_DL_Style.TextPosition;
         this.Current_DL.Top = this.Copied_DL_Style.Top;
         this.Current_DL.Left = this.Copied_DL_Style.Left;
-     
+
         for (i = 0; i < this.EbObject.Tiles.$values.length; i++) {
             let temp = this.EbObject.Tiles.$values[i];
             if (this.EbObject.Tiles.$values[i].LabelColl.$values.length == 1) {

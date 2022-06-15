@@ -217,7 +217,7 @@ function EbDataLabelFn(Label, tileId) {
         if (Label.Shadow) {
             $(`#${Label.EbSid}`).css("box-shadow", Label.Shadow);
         }
-        
+
         /*$(".icon-pane").off*/
         $(`#${Label.EbSid}`).css("border-radius", `${Label.LabelBorderRadius}px`);
         if (Label.LabelStyle == 3)
@@ -270,10 +270,18 @@ function Eb_Dashboard_Bg(EbObject) {
         $(".component_cont .nav").css("background-color", "").css("background-image", bg);
     }
     else {
-        $("#layout_div").css("background-image", "").css("background", EbObject.BackgroundColor);
+        $("#layout_div").css("background", EbObject.BackgroundColor);
         $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
+        if (EbObject.BackgroundImage) {
+            $("#layout_div")
+                .css("background-image", `url("/images/${EbObject.BackgroundImage}.jpg")`)
+                .css("background-size", "contain").css("background-repeat", "no-repeat")
+                .css("background-position-x", "center")
+                .css("background-position-y", "top");
+        }
+        else
+            $("#layout_div").css("background-image", "");
     }
-
 }
 
 function GradientDirection(val) {

@@ -847,6 +847,7 @@ eb-disable {
 }
 
 .fs-tbl .processing-td {
+    width: 70%;
     text-align: center;
     color: #3424b9;
     background: #adc1e678;

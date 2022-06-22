@@ -36,6 +36,8 @@ const WebFormRender = function (option) {
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+        if (this.ReviewCtrl && !this.formObject['review'])
+            this.formObject['review'] = this.ReviewCtrl;
         this.FRC.setFormObjHelperfns();// adds __getCtrlByPath() to formObject
         this.setFormObjectMode();
         this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 

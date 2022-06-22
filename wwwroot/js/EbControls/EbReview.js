@@ -322,17 +322,50 @@
 
     };
 
+    this.ctrl.setRowBackGroundColor = function (color) {
+        this.ctrl.__RowBackGroundColor = color;
+    }.bind(this);
+
     this.drawTable = function () {
         this.$tableBody.empty();
+
+        let execHideRowExpr = null;
+        let expr = this.ctrl.HideRowExpr;
+        if (expr && expr.Lang == 0 && expr.Code) {
+            try {
+                execHideRowExpr = atob(expr.Code);
+            }
+            catch (e) {
+                console.error(e);
+            }
+        }
 
         for (let i = 0; i < this.DataMODEL.length; i++) {
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
             let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", ebsid);
+
+            let hideRowExprRes = false;
+            this.ctrl.__RowBackGroundColor = null;
+            if (execHideRowExpr) {
+                this.ctrl.currentStage = ebsid;
+                this.ctrl.currentAction = actUniqueId;
+                this.ctrl.currentRowId = row.RowId;
+                try {
+                    hideRowExprRes = new Function("form", "user", execHideRowExpr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                }
+                catch (e) {
+                    console.error(e);
+                }
+
+            }
+            if (hideRowExprRes)
+                continue;
+
             let html;
             if (ebsid === '__system_stage' && actUniqueId === '__review_reset') {
-                html = `<tr name='Stage One' rowid='@rowid@'>
+                html = `<tr name='Stage One' rowid='@rowid@' style='@bg@'>
 	<td class='row-no-td rc-slno'>@slno@</td>
 	<td class='row-no-td rc-stage' col='stage'><span class='fstd-div'>System</span></td>
 	<td class='row-no-td rc-status' col='status' class='fs-ctrl-td'>
@@ -349,7 +382,7 @@
 			</div>
 		</div>
 	</td>
-	<td class='fs-ctrl-td rc-remarks' col='remarks'><div class='fstd-div'> <textarea class='fs-textarea'>@comment@</textarea> </div></td>
+	<td class='fs-ctrl-td rc-remarks' col='remarks'><div class='fstd-div'> <textarea class='fs-textarea' style ='@bg@ @bgimg@'>@comment@</textarea> </div></td>
 </tr>`;
             }
             else if (!stage)
@@ -359,6 +392,14 @@
 
             html = html.replace("@rowid@", row.RowId);
             html = html.replace("@slno@", i + 1);
+            if (this.ctrl.__RowBackGroundColor) {
+                html = html.replaceAll("@bg@", `background-color: ${this.ctrl.__RowBackGroundColor} !important;`);
+                html = html.replace("@bgimg@", 'background-image: none;');
+            }
+            else {
+                html = html.replaceAll("@bg@", '');
+                html = html.replace("@bgimg@", '');
+            }
 
             for (let j = 0; j < row.Columns.length; j++) {
                 let column = row.Columns[j];

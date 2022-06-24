@@ -1411,7 +1411,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .group-box {
-    min-height: 60px;
+    min-height: 30px;
 }
 
 .gridCont {

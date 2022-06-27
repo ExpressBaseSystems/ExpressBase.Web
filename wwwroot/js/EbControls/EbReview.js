@@ -204,7 +204,47 @@
         this.set();
     };
 
+    this.isValidationsOK = function () {
+        let validationOK = true;
+        if (this.CurStageDATA) {
+            let stageUqid = getObjByval(this.CurStageDATA.Columns, "Name", "stage_unique_id").Value;
+            let stage = getObjByval(this.stages, "EbSid", stageUqid);
+            //let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
+
+            if (stage && stage.Validators) {
+                stage.Validators.$values = sortByProp(stage.Validators.$values, "IsWarningOnly");
+                $.each(stage.Validators.$values, function (i, Validator) {
+                    if (Validator.IsDisabled || !Validator.Script.Code)// continue
+                        return true;
+                    try {
+                        let res = new Function("form", "user", atob(Validator.Script.Code)).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                        if (!res) {
+                            if (Validator.IsWarningOnly) {
+                                alert(`Validation warning while executing review in stage '${stage.Name}': ${Validator.FailureMSG}`);
+                            }
+                            else {
+                                EbMessage("show", { Message: `Validation error while executing review in stage '${stage.Name}': ${Validator.FailureMSG}`, AutoHide: true, Background: '#aa0000' });
+                                validationOK = false;
+                                return false;
+                            }
+                        }
+                    }
+                    catch (e) {
+                        console.error(e);
+                        EbMessage("show", { Message: e.Message, AutoHide: true, Background: '#aa0000' });
+                        validationOK = false;
+                        return false;
+                    }
+                }.bind(this));
+            }
+        }
+        return validationOK;
+    };
+
     this.submit = function () {
+        if (!this.isValidationsOK())
+            return;
+
         EbDialog("show", {
             Message: "Are you sure, you want to submit ?",
             Buttons: {
@@ -328,6 +368,7 @@
 
     this.drawTable = function () {
         this.$tableBody.empty();
+        let slnoCounter = 1;
 
         let execHideRowExpr = null;
         let expr = this.ctrl.HideRowExpr;
@@ -349,8 +390,16 @@
             let hideRowExprRes = false;
             this.ctrl.__RowBackGroundColor = null;
             if (execHideRowExpr) {
-                this.ctrl.currentStage = ebsid;
-                this.ctrl.currentAction = actUniqueId;
+                let stageName = null, actionName = null;
+                if (stage) {
+                    stageName = stage.Name;
+                    let action = stage.StageActions.$values.find(function (action) { return action.EbSid == actUniqueId; });
+                    if (action)
+                        actionName = action.Name;
+                }
+
+                this.ctrl.currentStage = stageName || ebsid;
+                this.ctrl.currentAction = actionName || actUniqueId;
                 this.ctrl.currentRowId = row.RowId;
                 try {
                     hideRowExprRes = new Function("form", "user", execHideRowExpr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
@@ -358,7 +407,6 @@
                 catch (e) {
                     console.error(e);
                 }
-
             }
             if (hideRowExprRes)
                 continue;
@@ -391,7 +439,7 @@
                 html = stage.Html;
 
             html = html.replace("@rowid@", row.RowId);
-            html = html.replace("@slno@", i + 1);
+            html = html.replace("@slno@", slnoCounter++);
             if (this.ctrl.__RowBackGroundColor) {
                 html = html.replaceAll("@bg@", `background-color: ${this.ctrl.__RowBackGroundColor} !important;`);
                 html = html.replace("@bgimg@", 'background-image: none;');
@@ -466,6 +514,7 @@
         //this.$table.find('.selectpicker').selectpicker();
         this.$table.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
         this.$table.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
+        this.$tableBody.find("tr[rowid='0']").hide();
         this.$submit.hide();
         this.$container.find("tr").attr("active", "false");
     };
@@ -479,6 +528,7 @@
         if (!this.CurStageDATA || !this.hasPermission)
             return;
 
+        $row.show();
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();
         $row.attr("active", "true");

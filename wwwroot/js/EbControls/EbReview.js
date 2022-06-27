@@ -231,7 +231,7 @@
                     }
                     catch (e) {
                         console.error(e);
-                        EbMessage("show", { Message: e.Message, AutoHide: true, Background: '#aa0000' });
+                        EbMessage("show", { Message: `Error while executing validation in stage '${stage.Name}': ${e.message}`, AutoHide: true, Background: '#aa0000' });
                         validationOK = false;
                         return false;
                     }

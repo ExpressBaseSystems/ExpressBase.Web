@@ -751,8 +751,16 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("RECAPTCHA EXCEPTION");
                 Console.WriteLine(e.Message);
-                authresp.AuthStatus = false;
-                authresp.ErrorMessage = "Recaptcha error, try again";
+                if (e.Message == "Resource temporarily unavailable Resource temporarily unavailable")
+                {
+                    data = new Recaptcha() { Success = true };
+                    Console.WriteLine("RECAPTCHA EXCEPTION - BYPASSED");
+                }
+                else
+                {
+                    authresp.AuthStatus = false;
+                    authresp.ErrorMessage = "Recaptcha error, try again";
+                }
             }
 
             Console.WriteLine("ENVIRONMENT-------->" + ViewBag.Env);

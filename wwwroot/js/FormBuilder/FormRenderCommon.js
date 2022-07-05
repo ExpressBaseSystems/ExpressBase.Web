@@ -1531,16 +1531,23 @@
         }
         else if (depCtrl[DepHandleObj.exprName] && depCtrl[DepHandleObj.exprName].Lang === 2) {
             let filterValues = [];
+            let paramsReady = true;
             $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {
                 let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                if (paramCtrl.Required && !paramCtrl.isRequiredOK()) {
+                    paramsReady = false;
+                    return false;
+                }
                 filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
             }.bind(this));
-            filterValues.push(new fltr_obj(11, "eb_loc_id", this.FO.getLocId()));
-            filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-            filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
-            depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
-            this.ExecuteSqlValueExpr(depCtrl, filterValues, DepHandleObj.exprName === 'ValueExpr' ? 0 : 1);
-            wait = true;
+            if (paramsReady) {
+                filterValues.push(new fltr_obj(11, "eb_loc_id", this.FO.getLocId()));
+                filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
+                depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
+                this.ExecuteSqlValueExpr(depCtrl, filterValues, DepHandleObj.exprName === 'ValueExpr' ? 0 : 1);
+                wait = true;
+            }
         }
         if (!wait) {
             depCtrl.__lockDependencyExec = false;

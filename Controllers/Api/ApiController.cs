@@ -1052,6 +1052,36 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
+        [HttpPost("api/get_sql_expr_result")]
+        public ActionResult<MobileDataResponse> GetSqlExprResult(string refid, string control, string param, int type)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            if (string.IsNullOrEmpty(refid)) return BadRequest();
+
+            MobileDataResponse response = null;
+            try
+            {
+                GetSqlExprRequest request = new GetSqlExprRequest()
+                {
+                    RefId = refid,
+                    Control = control,
+                    Params = param,
+                    ExprType = type
+                };
+                response = this.ServiceClient.Post(request);
+            }
+            catch (Exception ex)
+            {
+                response = response ?? new MobileDataResponse();
+                response.Message = ex.Message;
+
+                Console.WriteLine("EXCEPTION AT get_sql_expr_result API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return response;
+        }
+
         [HttpGet("api/get_data_flat")]
         public ActionResult<MobileDataResponse> GetDataFlat(string refid)
         {

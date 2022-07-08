@@ -20,6 +20,7 @@
     this.btnSaveAll = $("#btnSaveAll");
     this.loader = $("#loader1");
     this.chkboxAnonymous = $("#chkboxAnonymous");
+    this.chkboxPrimary = $("#chkboxPrimary");
     this.selectedLocations = ['-1'];//init as global loaction access
     this.chkboxLocations = $("#chkboxLocations");
     this.divLocationOverlay = $("#divLocationOverlay");
@@ -69,6 +70,10 @@
 
             this.chkboxAnonymous.bootstrapToggle('disable');
             this.findDominantRoles(this.roleId);
+
+            if (roleInfo["IsPrimary"] === "true") {
+                this.chkboxPrimary.bootstrapToggle('on');
+            }
 
             if (this.roleInfo["LocationIds"] !== "")
                 this.selectedLocations = this.roleInfo["LocationIds"].split(",");
@@ -564,6 +569,7 @@
         var rid = this.roleId;
         var permissionlist = "";
         var isAnonymous = this.chkboxAnonymous.prop("checked");
+        var isPrimary = this.chkboxPrimary.prop("checked");
         var role2rolelist = isAnonymous ? "" : this.subRolesTile.getItemIds();
         var userslist = isAnonymous ? "" : this.usersTile.getItemIds();
         var appId = $("#selectApp").find(":selected").attr("data-id");
@@ -606,7 +612,18 @@
         $.ajax({
             type: "POST",
             url: "../Security/SaveRole",
-            data: { _roleId: rid, _roleName: roleName, _roleDesc: roleDescription, _isAnonymous: isAnonymous, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist, _locations: strSelectedLocs },
+            data: {
+                _roleId: rid,
+                _roleName: roleName,
+                _roleDesc: roleDescription,
+                _isAnonymous: isAnonymous,
+                _isPrimary: isPrimary,
+                _appId: appId,
+                _permission: permissionlist,
+                _role2role: role2rolelist,
+                _users: userslist,
+                _locations: strSelectedLocs
+            },
             error: function () {
                 EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
                 $(this.btnSaveAll).removeAttr("disabled");

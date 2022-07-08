@@ -509,7 +509,7 @@ namespace ExpressBase.Web.Controllers
             return EbSerializers.Json_Serialize(_listObj);
         }
 
-        public string SaveRole(int _roleId, string _roleName, string _roleDesc, bool _isAnonymous, int _appId, string _permission, string _role2role, string _users, string _locations)
+        public string SaveRole(int _roleId, string _roleName, string _roleDesc, bool _isAnonymous, bool _isPrimary, int _appId, string _permission, string _role2role, string _users, string _locations)
         {
             if (!HasPemissionToSecurity())
                 return "Failed";
@@ -523,6 +523,7 @@ namespace ExpressBase.Web.Controllers
             Dict["role_name"] = _roleName;
             Dict["Description"] = _roleDesc;
             Dict["IsAnonymous"] = _isAnonymous ? "T" : "F";
+            Dict["IsPrimary"] = _isPrimary ? "T" : "F";
             Dict["users"] = string.IsNullOrEmpty(_users) ? string.Empty : _users;
             Dict["permission"] = string.IsNullOrEmpty(_permission) ? string.Empty : _permission;
             Dict["dependants"] = string.IsNullOrEmpty(_role2role) ? string.Empty : _role2role;

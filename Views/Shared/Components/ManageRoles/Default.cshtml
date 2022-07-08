@@ -18,9 +18,9 @@
 
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/TileSetup.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="~/css/DV/bootstrap-toggle.min.css" />
+@*<link rel="stylesheet" type="text/css" href="~/css/DV/bootstrap-toggle.min.css" />*@
 @*<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>*@
-<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-toggle.min.js"></script>
+@*<script type="text/javascript" src="~/js/LayoutCommon/bootstrap-toggle.min.js"></script>*@
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/ManageRoles.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
@@ -58,13 +58,19 @@
         </ul>
         <div class="tab-content" style="height: 100%;">
             <div id="settings" class="tab-pane fade in active">
-                <div class="form-group">
-                    <label class="label-custom-style" style="display:inline-block">Role Type</label>
-                    <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Anonymous" data-off="Normal">
-                </div>
-                <div class="form-group">
-                    <label class="label-custom-style" style="display:inline-block">Role Locations</label>
-                    <input id="chkboxLocations" type="checkbox" data-toggle="toggle" data-on="Limited Access" data-off="Global Access">
+                <div class="mr-parent-div w-100">
+                    <div class="form-group">
+                        <label class="label-custom-style" style="display:inline-block">Role Type</label>
+                        <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Anonymous" data-off="Normal">
+                    </div>
+                    <div class="form-group" style="margin-left: 20px">
+                        <label class="label-custom-style" style="display:inline-block">Primary Role?</label>
+                        <input id="chkboxPrimary" type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No">
+                    </div>
+                    <div class="form-group" style="margin-left: 20px">
+                        <label class="label-custom-style" style="display:inline-block">Role Locations</label>
+                        <input id="chkboxLocations" type="checkbox" data-toggle="toggle" data-on="Limited Access" data-off="Global Access">
+                    </div>
                 </div>
                 <div class="form-group" id="divLocation" style="position: relative;">
                     <div id="divLocationOverlay" style="position: absolute; z-index: 10; height:100%; width:100%; opacity: 0.6; background-color: #fff;"></div>

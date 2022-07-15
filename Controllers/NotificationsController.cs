@@ -25,7 +25,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public string GetNotifications()
         {
-			GetNotificationsResponse GetNf= this.ServiceClient.Post(new GetNotificationsRequest { user = this.LoggedInUser });
+            GetNotificationsResponse GetNf = this.ServiceClient.Post(new GetNotificationsRequest());
             return JsonConvert.SerializeObject(GetNf);
         }
 
@@ -66,16 +66,16 @@ namespace ExpressBase.Web.Controllers
             });
             return res;
         }
-		
+
         public int ClearAllNotifications(List<string> notificationLst)
         {
-			for(var i=0;i< notificationLst.Count; i++)
-			{
-				GetNotificationFromDB(notificationLst[i]);
-			}
-			return 1;
+            for (var i = 0; i < notificationLst.Count; i++)
+            {
+                GetNotificationFromDB(notificationLst[i]);
+            }
+            return 1;
         }
-		
+
         public IActionResult GetAllActions()
         {
             ListSqlJobsResponse resp = new ListSqlJobsResponse();
@@ -110,7 +110,7 @@ namespace ExpressBase.Web.Controllers
             List<Param> _params = new List<Param>();
             string[] arrayy = new string[] { "id", "form_ref_id", "form_data_id", "description", "from_datetime", "fullname", "roles_id", "role_name" };
             DVColumnCollection _DVColumnCollection = GetColumnsForActions(arrayy);
-            EbDataVisualization Visualization = new EbTableVisualization { Sql = query,Columns = _DVColumnCollection, AutoGen = false, IsPaging = true };
+            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = _DVColumnCollection, AutoGen = false, IsPaging = true };
             resp.Visualization = EbSerializers.Json_Serialize(Visualization);
             var x = EbSerializers.Json_Serialize(resp);
             ViewBag.data = resp;
@@ -133,19 +133,34 @@ namespace ExpressBase.Web.Controllers
                 foreach (string str in strArray)
                 {
                     DVBaseColumn _col = null;
-                     if (str == "id")
+                    if (str == "id")
                         _col = new DVNumericColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
                     else if (str == "form_ref_id")
                         _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = false };
                     else if (str == "form_data_id")
                         _col = new DVNumericColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
                     else if (str == "description")
-                        _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true,
-                            RenderAs = StringRenderType.LinkFromColumn,RefidColumn = Columns.Get("form_ref_id"),IdColumn = Columns.Get("form_data_id")
+                        _col = new DVStringColumn
+                        {
+                            Data = 3,
+                            Name = str,
+                            sTitle = str,
+                            Type = EbDbTypes.String,
+                            bVisible = true,
+                            RenderAs = StringRenderType.LinkFromColumn,
+                            RefidColumn = Columns.Get("form_ref_id"),
+                            IdColumn = Columns.Get("form_data_id")
                         };
-                    else if(str == "from_datetime")
-                        _col = new DVDateTimeColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.Date, bVisible = true,
-                            Format = DateFormat.DateTime,ConvretToUsersTimeZone = true
+                    else if (str == "from_datetime")
+                        _col = new DVDateTimeColumn
+                        {
+                            Data = 4,
+                            Name = str,
+                            sTitle = str,
+                            Type = EbDbTypes.Date,
+                            bVisible = true,
+                            Format = DateFormat.DateTime,
+                            ConvretToUsersTimeZone = true
                         };
                     else if (str == "fullname")
                         _col = new DVStringColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };

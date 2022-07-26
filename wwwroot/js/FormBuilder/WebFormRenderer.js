@@ -1824,7 +1824,7 @@ const WebFormRender = function (option) {
     this.windowKeyDown = function (event) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {// ctrl+S -> save
-                if ((this.Mode.isEdit || this.Mode.isNew) && this.preventCheck(event)) {
+                if ((this.Mode.isEdit || (this.Mode.isNew && !this.FormObj.IsDisable)) && this.preventCheck(event)) {
                     if (this.renderMode === 3 || this.renderMode === 5)//signup or public
                         $('#webform_submit').click();
                     else
@@ -2087,8 +2087,16 @@ const WebFormRender = function (option) {
         catch (e) { console.log("Error in title expression  " + e.message); }
 
         let modeText = this.mode;
-        if (reqstMode === "Preview Mode" || reqstMode === "Export Mode" || reqstMode === "Clone Mode" || reqstMode === "Prefill Mode")
-            modeText = "New Mode";
+
+        if (reqstMode === "New Mode" || reqstMode === "Preview Mode" || reqstMode === "Export Mode" || reqstMode === "Clone Mode" || reqstMode === "Prefill Mode") {
+            if (this.FormObj.IsDisable) {
+                modeText = "ReadOnly";
+                reqstMode = "ReadOnly";
+                console.warn("ReadOnly form!.............");
+            }
+            else
+                modeText = "New Mode";
+        }
         else if (reqstMode === "Draft Mode" && this.draftId > 0)
             modeText = "Draft";
 
@@ -2118,9 +2126,11 @@ const WebFormRender = function (option) {
             this.headerObj.showElement([this.hBtns['Discard'], this.hBtns['Details']]);
         }
         else if (this.Mode.isNew) {
-            this.headerObj.showElement(this.filterHeaderBtns([this.hBtns['SaveSel'], this.hBtns['ExcelSel']], currentLoc, "New Mode"));
-            if (this.draftId > 0)
-                this.headerObj.showElement([this.hBtns['Details']]);
+            if (!this.FormObj.IsDisable) {
+                this.headerObj.showElement(this.filterHeaderBtns([this.hBtns['SaveSel'], this.hBtns['ExcelSel']], currentLoc, "New Mode"));
+                if (this.draftId > 0)
+                    this.headerObj.showElement([this.hBtns['Details']]);
+            }
         }
         else if (this.Mode.isView) {
             let btnsArr = [this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['Clone']];

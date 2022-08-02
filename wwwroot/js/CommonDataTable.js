@@ -2419,7 +2419,7 @@
         }
         else {
             for (let j = 0; j < eb_footer_controls_scrollfoot.length; j++)
-                scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]);
+                scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]); //append or html[solves tv ctrl double footer] fn
         }
         if (lfoot.length !== 0 || rfoot.length !== 0) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);

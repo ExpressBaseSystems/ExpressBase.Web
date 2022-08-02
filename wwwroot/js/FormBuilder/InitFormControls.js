@@ -727,8 +727,8 @@
             }
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
-            //ctrl.initializer.Api.ajax.reload();
-            ctrl.initializer.getColumnsSuccess();
+            ctrl.initializer.Api.ajax.reload();
+            //ctrl.initializer.getColumnsSuccess();
         };
 
         ctrl.reloadWithParamAll = function () {
@@ -742,8 +742,8 @@
             }
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
-            //ctrl.initializer.Api.ajax.reload();
-            ctrl.initializer.getColumnsSuccess();
+            ctrl.initializer.Api.ajax.reload();
+            //ctrl.initializer.getColumnsSuccess();// this will produce double footer
         };
 
         $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {

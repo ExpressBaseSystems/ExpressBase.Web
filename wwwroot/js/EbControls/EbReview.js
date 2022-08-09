@@ -449,6 +449,50 @@
                 html = html.replace("@bgimg@", '');
             }
 
+            let stageText = stage.Name;
+            if (stage.StageTextExpr && stage.StageTextExpr.Code) {
+                try {
+                    let expr = atob(stage.StageTextExpr.Code);
+                    let stText = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                    if (stText)
+                        stageText = stText;
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            }
+            html = html.replace(`:${stage.Name}:`, stageText);
+
+            for (let j = 0; j < stage.StageActions.$values.length; j++) {
+                let actObj = stage.StageActions.$values[j];
+                let actText = actObj.Name;
+                if (actObj.ActionTextExpr && actObj.ActionTextExpr.Code) {
+                    try {
+                        let expr = atob(actObj.ActionTextExpr.Code);
+                        let atText = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                        if (atText)
+                            actText = atText;
+                    }
+                    catch (e) {
+                        console.error(e);
+                    }
+                }
+                html = html.replace(`:${actObj.Name}:`, actText);
+                actObj.ActionText = actText;
+
+                if (actObj.HiddenExpr && actObj.HiddenExpr.Code) {
+                    try {
+                        let expr = atob(actObj.HiddenExpr.Code);
+                        let stat = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                        if (stat)
+                            html = html.replace(`<option value='${actObj.EbSid}'>${actObj.ActionText}</option>`, '');
+                    }
+                    catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+
             for (let j = 0; j < row.Columns.length; j++) {
                 let column = row.Columns[j];
                 if (column.Name === "eb_created_by") {
@@ -466,7 +510,7 @@
                         if ($sel.length > 0) {
                             if (row.RowId > 0) {
                                 let action = stage.StageActions.$values.find(function (action) { return action.EbSid == column.Value; });
-                                let actname = action ? action.Name : '';
+                                let actname = action ? action.ActionText : '';
                                 $sel.closest('.rc-status').html(`<span class='fstd-div'>${actname}</span>`);
                             }
                             else {
@@ -494,6 +538,33 @@
             this.$tableBody.find("tr[rowid='0'] [col='remarks']").remove();
             this.$tableBody.find("tr[rowid='0'] [col='status']").attr("colspan", "3").addClass("processing-td").html("Stage in Processing");
             this.$submit.hide();
+        }
+
+        if (this.ctrl.HideColumnExpr && this.ctrl.HideColumnExpr) {
+            this.ctrl.hiddenColumns = [];
+            this.ctrl.hideColumn = function (e) {
+                this.ctrl.hiddenColumns.push(e);
+            }.bind(this);
+
+            let selectors = {
+                0: 'rc-stage', 1: 'rc-status', 2: 'rc-by', 3: 'rc-remarks',
+                stage: 'rc-stage', action: 'rc-status', reviewedby: 'rc-by', remarks: 'rc-remarks'
+            };
+
+            try {
+                let expr = atob(this.ctrl.HideColumnExpr.Code);
+                new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                for (let j = 0; j < this.ctrl.hiddenColumns.length; j++) {
+                    let s = selectors[this.ctrl.hiddenColumns[j]];
+                    if (s) {
+                        s = s.toString().toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
+                        this.$container.find(`tr td.${s}, tr th.${s}`).hide();
+                    }
+                }
+            }
+            catch (e) {
+                console.error(e);
+            }
         }
 
     };

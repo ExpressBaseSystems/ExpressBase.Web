@@ -449,46 +449,48 @@
                 html = html.replace("@bgimg@", '');
             }
 
-            let stageText = stage.Name;
-            if (stage.StageTextExpr && stage.StageTextExpr.Code) {
-                try {
-                    let expr = atob(stage.StageTextExpr.Code);
-                    let stText = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
-                    if (stText)
-                        stageText = stText;
-                }
-                catch (e) {
-                    console.error(e);
-                }
-            }
-            html = html.replace(`:${stage.Name}:`, stageText);
-
-            for (let j = 0; j < stage.StageActions.$values.length; j++) {
-                let actObj = stage.StageActions.$values[j];
-                let actText = actObj.Name;
-                if (actObj.ActionTextExpr && actObj.ActionTextExpr.Code) {
+            if (stage) {
+                let stageText = stage.Name;
+                if (stage.StageTextExpr && stage.StageTextExpr.Code) {
                     try {
-                        let expr = atob(actObj.ActionTextExpr.Code);
-                        let atText = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
-                        if (atText)
-                            actText = atText;
+                        let expr = atob(stage.StageTextExpr.Code);
+                        let stText = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                        if (stText)
+                            stageText = stText;
                     }
                     catch (e) {
                         console.error(e);
                     }
                 }
-                html = html.replace(`:${actObj.Name}:`, actText);
-                actObj.ActionText = actText;
+                html = html.replace(`:${stage.Name}:`, stageText);
 
-                if (actObj.HiddenExpr && actObj.HiddenExpr.Code) {
-                    try {
-                        let expr = atob(actObj.HiddenExpr.Code);
-                        let stat = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
-                        if (stat)
-                            html = html.replace(`<option value='${actObj.EbSid}'>${actObj.ActionText}</option>`, '');
+                for (let j = 0; j < stage.StageActions.$values.length; j++) {
+                    let actObj = stage.StageActions.$values[j];
+                    let actText = actObj.Name;
+                    if (actObj.ActionTextExpr && actObj.ActionTextExpr.Code) {
+                        try {
+                            let expr = atob(actObj.ActionTextExpr.Code);
+                            let atText = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                            if (atText)
+                                actText = atText;
+                        }
+                        catch (e) {
+                            console.error(e);
+                        }
                     }
-                    catch (e) {
-                        console.error(e);
+                    html = html.replace(`:${actObj.Name}:`, actText);
+                    actObj.ActionText = actText;
+
+                    if (actObj.HiddenExpr && actObj.HiddenExpr.Code) {
+                        try {
+                            let expr = atob(actObj.HiddenExpr.Code);
+                            let stat = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                            if (stat)
+                                html = html.replace(`<option value='${actObj.EbSid}'>${actObj.ActionText}</option>`, '');
+                        }
+                        catch (e) {
+                            console.error(e);
+                        }
                     }
                 }
             }

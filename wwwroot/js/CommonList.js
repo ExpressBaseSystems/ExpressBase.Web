@@ -44,7 +44,7 @@
         //metadata => refer CommonList.cshtml
         var tblcols = [];
         var tbldata = [];
-        tblcols.push({ data: null, title: "Serial No", className: "dataTableColumnStyle text-center", width: '30px', searchable: false, orderable: false });
+        tblcols.push({ data: null, title: "#", className: "dataTableColumnStyle text-center", width: '30px', searchable: false, orderable: false });
         if (this.metadata.indexOf("_profPic") !== -1)
             tblcols.push({ data: null, title: "", className: "dataTableColumnStyle text-center", width: '60px', render: this.tblProfPicRender, searchable: false, orderable: false });
         if (this.metadata.indexOf("_fbProfPic") !== -1) {
@@ -81,12 +81,13 @@
 
         var tbl = "#tblCommonList";
         this.table = $(tbl).DataTable({
-            scrollY: "96%",
+            scrollY: "calc(100vh - 270px)",
             scrollX: true,
-            paging: false,
+            paging: true,
+            pageLength: 25,
             autoWidth: false,
             //dom: 'frt',
-            dom: 't',
+            //dom: 't',
             ordering: false,
             columns: tblcols,
             data: tbldata,
@@ -148,13 +149,13 @@
             $("#btnNewCmnList").text("Create User Type");
             $("#btnNewCmnList").on("click", function () {
                 $("#ManageUserTypesModal").modal('show');
-                this.itemid = 0; 
+                this.itemid = 0;
             });
         }
 
-        $('#txtSrchCmnList').on('keyup', function (e) {
-            this.table.search($(e.target).val()).draw();
-        }.bind(this));
+        //$('#txtSrchCmnList').on('keyup', function (e) {
+        //    this.table.search($(e.target).val()).draw();
+        //}.bind(this));
     }.bind(this);
 
     this.onClickEdit = function (e) {
@@ -309,7 +310,7 @@
             success: this.updateAnonymousUserInfoSuccess.bind(this)
         });
     };
-       
+
     this.updateAnonymousUserInfoSuccess = function (r) {
         if (r > 0)
             alert("Updated Successfully");
@@ -357,8 +358,7 @@
                 name: $('#type-name').val()
             },
             success: function (data) {
-                if (data)
-                {
+                if (data) {
                     alert("Updated Successfully");
                     location.reload();
                 }

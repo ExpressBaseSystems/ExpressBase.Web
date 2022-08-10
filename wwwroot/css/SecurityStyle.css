@@ -234,9 +234,9 @@
 }
 
 .eb-user-listview {
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;
     border-radius: 4px;
-    padding-bottom: 25px;
+    padding-bottom: 25px;*/
 }
 
     .eb-user-listview .dataTables_scrollHead {
@@ -255,7 +255,7 @@
 }*/
 
 #divCommonList .dataTables_scroll {
-    height: calc(100vh - 160px);
+    /*height: calc(100vh - 160px);*/
 }
 
 /*.dataTableColumnStyle {
@@ -275,7 +275,7 @@
     }*/
 
 #divCommonList .dataTable tr {
-    height: 40px;
+    height: 30px;
 }
 
 .editviewclass {

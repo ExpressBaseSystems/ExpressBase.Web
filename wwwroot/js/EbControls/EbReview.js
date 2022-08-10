@@ -549,7 +549,7 @@
             }.bind(this);
 
             let selectors = {
-                0: 'rc-stage', 1: 'rc-status', 2: 'rc-by', 3: 'rc-remarks',
+                1: 'rc-stage', 2: 'rc-status', 3: 'rc-by', 4: 'rc-remarks',
                 stage: 'rc-stage', action: 'rc-status', reviewedby: 'rc-by', remarks: 'rc-remarks'
             };
 
@@ -557,10 +557,13 @@
                 let expr = atob(this.ctrl.HideColumnExpr.Code);
                 new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
                 for (let j = 0; j < this.ctrl.hiddenColumns.length; j++) {
-                    let s = selectors[this.ctrl.hiddenColumns[j]];
+                    let s = this.ctrl.hiddenColumns[j];
                     if (s) {
                         s = s.toString().toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
-                        this.$container.find(`tr td.${s}, tr th.${s}`).hide();
+                        s = selectors[s];
+                        if (s) {
+                            this.$container.find(`tr td.${s}, tr th.${s}`).hide();
+                        }
                     }
                 }
             }

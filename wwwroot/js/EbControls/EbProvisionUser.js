@@ -31,6 +31,7 @@
 
         //this.$refreshBtn.on('click', this.refreshBtnClicked.bind(this));
         this.$selectBtn.on('click', this.selectBtnClicked.bind(this));
+        this.$opnMgUserBtn.on('click', this.openMgUserBtnClicked.bind(this));
         this.$SelMdlSrch.on('keyup', this.SearchUser.bind(this));
         this.$SelMdlUlist.on('click', '.pu-selmdl-uli .col-md-12', this.ClickedOnUserItem.bind(this));
         this.$SelMdlBtn.on('click', this.SelMdlOkClicked.bind(this));
@@ -46,6 +47,7 @@
         this.$ctrl.html(`
             <div class='pu-btn-cont'>
                 <div class='pu-btn-select'><i class='fa fa-search'></i>&nbspSearch</div>
+                <div class='pu-open-mgusr'><i class='fa fa-external-link-square'></i>&nbspOpen</div>
                 <div class='pu-chkbox'><label><input type="checkbox"> Update existing user</label></div>
                 <div class='pu-btn-refresh'><i class='fa fa-refresh'></i></div>
             </div>
@@ -60,6 +62,7 @@
 
         this.$refreshBtn = this.$ctrl.find('.pu-btn-refresh');
         this.$selectBtn = this.$ctrl.find('.pu-btn-select');
+        this.$opnMgUserBtn = this.$ctrl.find('.pu-open-mgusr');
         this.$infoTxt = this.$ctrl.find('.pu-txt-info');
         this.$infoUsr1 = this.$ctrl.find('.pu-users-info .pu-user:eq(0)');
         this.$infoUsr2 = this.$ctrl.find('.pu-users-info .pu-user:eq(1)');
@@ -67,6 +70,8 @@
         this.$infoUsrNew2 = this.$ctrl.find('.pu-users-info .pu-user:eq(3)');
         this.$updateChkBx = this.$ctrl.find(".pu-chkbox [type='checkbox']");
         this.disableCheckBox();
+        if (this.ctrl.Height)
+            this.$ctrl.css('height', this.ctrl.Height + 'px');
 
         this.$selectUserModal = $(`#${this.ctrl.EbSid_CtxId}_selMdl`);
         if (this.$selectUserModal.length === 0) {
@@ -112,8 +117,11 @@
 
             let _d = JSON.parse(this.DataVals.F);
             let dataObj = { id: _d['map_id'], fullname: _d['map_fullname'], email: _d['map_email'], phprimary: _d['map_phprimary'] };
-            if (!_d['map_id'])
+            this._JsCtrlMng.enableOpenMgUserBtn();
+            if (!_d['map_id']) {
                 this._JsCtrlMng.appendPuInfo('- Not assigned yet -');
+                this._JsCtrlMng.disableOpenMgUserBtn();
+            }
             else if (_d['id'] === _d['map_id'])
                 this._JsCtrlMng.appendPuInfo('Created user details...', null, null, dataObj);
             else
@@ -177,6 +185,19 @@
             return;
         clearTimeout(this.timer1);
         this.timer1 = setTimeout(this.refreshBtnClicked.bind(this), 500);
+    };
+
+    this.enableOpenMgUserBtn = function () {
+        this.$opnMgUserBtn.css({ 'pointer-events': '', 'background': '' });
+    }.bind(this);
+
+    this.disableOpenMgUserBtn = function () {
+        this.$opnMgUserBtn.css({ 'pointer-events': 'none', 'background': '#555' });
+    }.bind(this);
+
+    this.openMgUserBtnClicked = function () {
+        if (this.ctrl.DataVals && this.ctrl.DataVals.Value)
+            window.open("/Security/ManageUser?itemid=" + this.ctrl.DataVals.Value, "_blank");
     };
 
     this.refreshBtnClicked = function (e) {
@@ -268,6 +289,7 @@
         this.hide_inp_loader('email');
         this.hide_inp_loader('phprimary');
         this.$updateChkBx.prop('checked', false);
+        this.disableOpenMgUserBtn();
 
         this.$refreshBtn.html(`<i class='fa fa-refresh'></i>`);
         let respObj = JSON.parse(res)[this.ctrl.Name];
@@ -351,8 +373,9 @@
                         this.addInvalidStyle('phprimary', this.POhtml.PhoneUpdate);
                     }
                 }
-                else
+                else {
                     this.appendPuInfo(this.Msg.New, null, null, reqObj);
+                }
             }
             else if (respObj.emailData !== null && respObj.phoneData !== null) {
                 if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['map_id']) {
@@ -612,6 +635,7 @@
         this.enableCheckBox();
         this.disableExtCtrls();
         this.ctrl.DataVals.Value = dataObj.id;
+        this.enableOpenMgUserBtn();
 
         this.updateExtCtrls('fullname', dataObj.fullname);
         this.updateExtCtrls('email', dataObj.email);

@@ -289,7 +289,6 @@
         this.hide_inp_loader('email');
         this.hide_inp_loader('phprimary');
         this.$updateChkBx.prop('checked', false);
-        this.disableOpenMgUserBtn();
 
         this.$refreshBtn.html(`<i class='fa fa-refresh'></i>`);
         let respObj = JSON.parse(res)[this.ctrl.Name];
@@ -507,6 +506,11 @@
                 }
             }
         }
+
+        if (this.ctrl.DataVals && this.ctrl.DataVals.Value)
+            this.enableOpenMgUserBtn();
+        else
+            this.disableOpenMgUserBtn();
     };
 
     this.appendPuInfo = function (msg, info1 = null, info2 = null, infoNew1 = null, infoNew2 = null) {
@@ -777,6 +781,7 @@ let EbProvUserUniqueChkJs = function (options) {
     this.$ModalBody;
     this.$OkBtn;
     this.abortSave = false;
+    this.okBtnClicked = false;
 
     this.init = function () {
         if (this.provUserAll.length === 0) {
@@ -786,6 +791,8 @@ let EbProvUserUniqueChkJs = function (options) {
         this.initiateAjaxCall();
         this.initModal();
         this.$OkBtn.off('click').on('click', this.modalOkClicked.bind(this));
+        this.$Modal.off('shown.bs.modal').on('shown.bs.modal', this.modalShown.bind(this));
+        this.$Modal.off('hidden.bs.modal').on('hidden.bs.modal', this.modalHidden.bind(this));
     };
 
     this.initModal = function () {
@@ -1075,8 +1082,16 @@ let EbProvUserUniqueChkJs = function (options) {
     };
 
     this.modalOkClicked = function () {
+        this.okBtnClicked = true;
         this.$Modal.modal('hide');
-        if (this.abortSave)
+    };
+
+    this.modalShown = function () {
+        this.okBtnClicked = false;
+    };
+
+    this.modalHidden = function () {
+        if (this.abortSave || !this.okBtnClicked)
             this.CallBackFn(false);
         else {
             this.CallBackFn(true);

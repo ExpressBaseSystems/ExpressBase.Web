@@ -2,7 +2,6 @@
 @{
     Layout = "~/Views/Shared/LayoutBuilders.cshtml";
 
-    var dvobj = ViewBag.data.Visualization;
 }
 @{
     var bApnd = true;
@@ -11,8 +10,8 @@
         bApnd = false;
     }
 }
-<script src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
-<link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+<script src="/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" href="/css/Eb_datatable.css" asp-append-version=@bApnd />
 @await Component.InvokeAsync("PageHeaderCommon")
 
 <div style="margin-top: 50px;">
@@ -20,17 +19,76 @@
         <table id="tbl" class="table display table-bordered compact"></table>
     </div>
 </div>
+<style>
+    .dataTableColumnStyle {
+        height: 25px;
+    }
+
+    .dataTableLinkStyle {
+        height: 25px;
+        color: darkblue;
+        cursor: pointer;
+    }
+
+        .dataTableLinkStyle:hover {
+            color: blue;
+        }
+</style>
 <script>
-    @Html.Raw(ViewBag.EbObjectType)
-        @Html.Raw(ViewBag.Meta)
-        @Html.Raw(ViewBag.JsObjects);
-        @Html.Raw(ViewBag.TypeRegister);
-    var o = new Object();
-    o.tableId = "tbl";
-    o.showCheckboxColumn = false;
-    o.showFilterRow = true;
-    o.IsPaging = true;
-    o.dvObject = @Html.Raw(dvobj);
-    o.Source = "myactions";
-    var data = new EbCommonDataTable(o);
+    document.title = "Action Required";
+    var menuBarObj = new EbHeader();
+    menuBarObj.setName("Action Required");
+
+    var MyActionsData = @Html.Raw(ViewBag.MyActionsData);
+
+    var tblcols = [];
+    var tbldata = [];
+
+    function tblDesColumnRender(data, type, row, meta)
+    {
+        return `<div class="editviewclass" style="" data-ref=${row[6]} data-id=${row[7]}>${data}</div>`;
+    }
+
+    $("#tbl").on('click', '.editviewclass', function (e)
+    {
+        var ref = $(e.target).attr("data-ref");
+        var id = $(e.target).attr("data-id");
+        let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", id)]))));
+
+        window.open(`/webform/index?_r=${ref}&_p=${params}&_m=1`, '_blank');
+    });
+
+    tblcols.push({ data: 1, title: "#", className: "dataTableColumnStyle text-center", searchable: false, orderable: false });
+    tblcols.push({ data: 2, title: "Description", className: "dataTableLinkStyle", render: tblDesColumnRender  });
+    tblcols.push({ data: 3, title: "Created By", className: "dataTableColumnStyle"});
+    tblcols.push({ data: 4, title: "Created Date", className: "dataTableColumnStyle"});
+    tblcols.push({ data: 5, title: "Time Ago", className: "dataTableColumnStyle"});
+    tblcols.push({ data: 6, title: "Link", visible: false });
+    tblcols.push({ data: 7, title: "DataId", visible: false });
+
+    for (var i = 0; i < MyActionsData.length; i++)
+    {
+        tbldata.push(
+            {
+                1: i + 1,
+                2: MyActionsData[i].Description,
+                3: MyActionsData[i].CreatedBy,
+                4: MyActionsData[i].CreatedDate,
+                5: MyActionsData[i].DateInString,
+                6: MyActionsData[i].Link,
+                7: MyActionsData[i].DataId
+            });
+    }
+
+    var _table = $("#tbl").DataTable({
+        scrollY: "calc(100vh - 170px)",
+        scrollX: true,
+        paging: true,
+        pageLength: 50,
+        autoWidth: false,
+        ordering: false,
+        columns: tblcols,
+        data: tbldata
+    });
+
 </script>

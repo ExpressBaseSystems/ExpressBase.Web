@@ -1,8 +1,6 @@
 ﻿@using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutBuilders.cshtml";
-
-    var dvobj = ViewBag.data.Visualization;
 }
 @{
     var bApnd = true;
@@ -20,17 +18,70 @@
         <table id="tbl" class="table display table-bordered compact"></table>
     </div>
 </div>
+<style>
+    .dataTableColumnStyle {
+        height: 25px;
+    }
+
+    .dataTableLinkStyle {
+        height: 25px;
+        color: darkblue;
+        cursor: pointer;
+    }
+
+        .dataTableLinkStyle:hover {
+            color: blue;
+        }
+</style>
 <script>
-    @Html.Raw(ViewBag.EbObjectType)
-        @Html.Raw(ViewBag.Meta)
-        @Html.Raw(ViewBag.JsObjects);
-        @Html.Raw(ViewBag.TypeRegister);
-    var o = new Object();
-    o.tableId = "tbl";
-    o.showCheckboxColumn = false;
-    o.showFilterRow = true;
-    o.IsPaging = true;
-    o.dvObject = @Html.Raw(dvobj);
-    o.Source = "myactions";
-    var data = new EbCommonDataTable(o);
+    document.title = "Notifications";
+    var menuBarObj = new EbHeader();
+    menuBarObj.setName("Notifications");
+
+    var Notifications = @Html.Raw(ViewBag.Notifications);
+
+    var tblcols = [];
+    var tbldata = [];
+
+    function tblDesColumnRender(data, type, row, meta)
+    {
+        return `<div class="editviewclass" style="" data-link=${row[5]}>${data}</div>`;
+    }
+
+    $("#tbl").on('click', '.editviewclass', function (e)
+    {
+        var link = $(e.target).attr("data-link");
+        if (link)
+            window.open(link, '_blank');
+    });
+
+    tblcols.push({ data: 1, title: "#", className: "dataTableColumnStyle text-center", searchable: false, orderable: false });
+    tblcols.push({ data: 2, title: "Title", className: "dataTableLinkStyle", render: tblDesColumnRender  });
+    tblcols.push({ data: 3, title: "Created Date", className: "dataTableColumnStyle"});
+    tblcols.push({ data: 4, title: "Time Ago", className: "dataTableColumnStyle"});
+    tblcols.push({ data: 5, title: "Link", visible: false });
+
+    for (var i = 0; i < Notifications.length; i++)
+    {
+        tbldata.push(
+            {
+                1: i + 1,
+                2: Notifications[i].Title,
+                3: Notifications[i].CreatedDate,
+                4: Notifications[i].Duration,
+                5: Notifications[i].Link
+            });
+    }
+
+    var _table = $("#tbl").DataTable({
+        scrollY: "calc(100vh - 170px)",
+        scrollX: true,
+        paging: true,
+        pageLength: 50,
+        autoWidth: false,
+        ordering: false,
+        columns: tblcols,
+        data: tbldata
+    });
+
 </script>

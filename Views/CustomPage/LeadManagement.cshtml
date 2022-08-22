@@ -1053,7 +1053,7 @@
     let uploadedFileRefList = {};
     let files1 = @Html.Raw(ViewBag.AttachImgInfo);
     let imgup1 = new FUPFormControl({
-        Type: 'image',
+        Type: 'files',
         ShowGallery: true,
         Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M18", "M24", "M30", "M36"],
         Files: files1,
@@ -1194,7 +1194,7 @@
 
     let files2 = @Html.Raw(ViewBag.PrpImgInfo);
     let imgup2 = new FUPFormControl({
-        Type: 'image',
+        Type: 'files',
         ShowGallery: true,
         Categories: ["Blood Tests", "Forms and Reports", "Pre consultation", "Consultation", "PRP1", "PRP2", "PRP3", "PRP4", "PRP5", "PRP6", "PRP7", "PRP8", "PRP9", "PRP10"],
         Files: files2,

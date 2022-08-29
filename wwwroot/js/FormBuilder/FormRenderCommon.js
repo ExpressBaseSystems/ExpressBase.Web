@@ -376,10 +376,23 @@
                 let ctrl = {};
                 let pathArr = path.split(".");
                 if (pathArr.length === 3) {
-                    path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
-                    ctrl = eval(path);
-                    ctrl.IsDGCtrl = true;
-                } else {
+                    if (this.FO.DGs.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+                        ctrl = eval(path);
+                        ctrl.IsDGCtrl = true;
+                    }
+                    else if (this.FO.TabControls.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        let TabCtrl = this.FO.TabControls.filter(function (obj) { return obj.Name == pathArr[1] })[0];
+                        let TabPane = TabCtrl.Controls.$values.filter(e => e.Name == pathArr[2]);
+                        if (TabPane.length > 0)
+                            ctrl = TabPane[0];
+                        else
+                            return "not found";
+                    }
+                    else
+                        return "not found";
+                }
+                else {
                     ctrl = eval(path);
                 }
                 return ctrl;
@@ -1035,6 +1048,8 @@
             this.GetDepHandleObj_ForDefValExpr_inner(a[i].HiddenExpDependants, DepHandleObj, 'HideP', 'HideC');
             this.GetDepHandleObj_ForDefValExpr_inner(a[i].DisableExpDependants, DepHandleObj, 'DisableP', 'DisableC');
         }
+        this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
+        this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
 
         if (!this.FO.__fromImport) {
             for (let i = 0; i < a.length; i++) {
@@ -1080,6 +1095,30 @@
                 if (ctrl != 'not found' && !DepHandleObj[prop1].includes(a[i])) {
                     DepHandleObj[prop1].push(a[i]);
                     DepHandleObj[prop2].push(ctrl);
+                }
+            }
+        }
+    };
+
+    this.FindCtrlsWithNoDependency = function (Ctrls, ExprName, DepHandleObj, prop1, prop2) {
+        for (let i = 0; i < Ctrls.length; i++) {
+            if (Ctrls[i][ExprName] && Ctrls[i][ExprName].Code && Ctrls[i][ExprName].Lang === 0) {
+                if (!DepHandleObj[prop1].includes(Ctrls[i].__path)) {
+                    DepHandleObj[prop1].push(Ctrls[i].__path);
+                    DepHandleObj[prop2].push(Ctrls[i]);
+                }
+            }
+        }
+
+        let tCtls = this.FO.TabControls;
+        for (let i = 0; i < tCtls.length; i++) {
+            for (let j = 0; j < tCtls[i].Controls.$values.length; j++) {
+                let tCtrlPane = tCtls[i].Controls.$values[j];
+                if (tCtrlPane[ExprName] && tCtrlPane[ExprName].Code && tCtrlPane[ExprName].Lang === 0) {
+                    if (!DepHandleObj[prop1].includes(tCtrlPane.__path)) {
+                        DepHandleObj[prop1].push(tCtrlPane.__path);
+                        DepHandleObj[prop2].push(tCtrlPane);
+                    }
                 }
             }
         }

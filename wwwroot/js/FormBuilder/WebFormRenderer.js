@@ -64,10 +64,10 @@ const WebFormRender = function (option) {
     };
 
     this.initWizards = function () {
-        this.TabControls = getFlatObjOfType(this.FormObj, "WizardControl");
+        this.WizardControls = getFlatObjOfType(this.FormObj, "WizardControl");
 
-        $.each(this.TabControls, function (i, tabControl) {//TabControl Init
-            let $Tab = $(`#cont_${tabControl.EbSid_CtxId}>.RenderAsWizard`);
+        $.each(this.WizardControls, function (i, wizControl) {//WizControl Init
+            let $Tab = $(`#cont_${wizControl.EbSid_CtxId}>.RenderAsWizard`);
             if ($Tab.length === 0)
                 return false;
             $Tab.smartWizard({
@@ -92,7 +92,7 @@ const WebFormRender = function (option) {
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 if (stepDirection === 'forward') {
                     e.stopPropagation();
-                    let pane = tabControl.Controls.$values[currentStepIndex];
+                    let pane = wizControl.Controls.$values[currentStepIndex];
                     let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
                     if (this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs)) {
                         if (this.FormObj.CanSaveAsDraft && this.Mode.isNew && !pane.savedAsDraft) {
@@ -287,20 +287,6 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
-        let opts = {
-            allTabCtrls: this.TabControls,
-            formModel: null, //_formDataWraper,//test
-            initControls: this.initControls,
-            mode: this.Mode,
-            formObjectGlobal: this.formObject,
-            userObject: this.userObject,
-            formDataExtdObj: this.FormDataExtdObj,
-            formObject_Full: this.FormObj,
-            formRefId: this.formRefId,
-            formRenderer: this
-        };
-        this.DynamicTabObject = new EbDynamicTab(opts);
-
         JsonToEbControls(this.FormObj, 'webform');// extend eb functions to control object (setValue(), disable()...)
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
@@ -336,29 +322,6 @@ const WebFormRender = function (option) {
             //this.FRC.bindValueUpdateFns_OnChange(_DG);
         }.bind(this));
     };
-
-    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};// multiple form related changes will come
-    DynamicTabPane = function (args) {
-        if (DynamicTabPaneGlobals === null) {
-            console.log('Dynamic tab not supported. Please initiate from a data grid.');
-            return;
-        }
-        let $initiatorDG = $("#cont_" + DynamicTabPaneGlobals.DG.EbSid);
-        if ($initiatorDG.length === 0) {
-            console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
-            return;
-        }
-        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");
-        if ($initiatorTab.length === 0) {
-            console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
-            return;
-        }
-
-        let DgCtrl = DynamicTabPaneGlobals.DG;
-        let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
-        this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
-        DynamicTabPaneGlobals = null;
-    }.bind(this); // multiple form related changes will come
 
     this.updateCtrlsUI = function () {
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
@@ -568,7 +531,6 @@ const WebFormRender = function (option) {
         let WebformData = {};
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
-        this.DynamicTabObject.updateDataModel();
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
 
         for (let EbSid_CtxId in this.DGBuilderObjs) {
@@ -606,7 +568,6 @@ const WebFormRender = function (option) {
             WebformData.MultipleTables[DGB.ctrl.TableName] = NwTable;
         }
 
-        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         WebformData.ModifiedAt = this.formData.ModifiedAt;
         console.log("form data --");
@@ -667,7 +628,6 @@ const WebFormRender = function (option) {
             }
 
             respObj.FormData = JSON.parse(respObj.FormData);//======
-            //this.DynamicTabObject.disposeDynamicTab();// febin
             this.relatedSubmissionsHtml = null;
 
             if (this.AfterSavePrintDoc) {
@@ -1102,7 +1062,6 @@ const WebFormRender = function (option) {
         //$.each(this.DGs, function (k, DG) {
         //    this.DGBuilderObjs[DG.EbSid_CtxId].SwitchToViewMode();
         //}.bind(this));
-        this.DynamicTabObject.switchToViewMode();// febin
     };
 
     this.S2EmodeReviewCtrl = function () {
@@ -1197,7 +1156,6 @@ const WebFormRender = function (option) {
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.enableControlsInEditMode();
         this.setUniqCtrlsInitialVals();
-        this.DynamicTabObject.switchToEditMode();// febin
     };
 
     this.isBtnDisableFor_eb_default = function () {
@@ -2904,7 +2862,6 @@ const WebFormRender = function (option) {
         this.RQCRenderer = {};
         this.DGNewBuilderObjs = {};
         this.uniqCtrlsInitialVals = {};
-        this.DynamicTabObject = null;
         this.FRC = new FormRenderCommon({ FO: this });
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject

@@ -1316,7 +1316,6 @@
         if ((this.ctrl.OnRowPaint && this.ctrl.OnRowPaint.Code && this.ctrl.OnRowPaint.Code.trim() !== '')) {
             try {
                 let FnString = atob(this.ctrl.OnRowPaint.Code);
-                DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event };
                 new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();
             }
             catch (e) {

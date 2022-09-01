@@ -45,7 +45,6 @@
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/fonts/icofont/icofont.min.css">
 @*<link rel="stylesheet" type="text/css" href="~/css/Common/offline-theme-dark.css" asp-append-version=@bApnd />*@
-<link href="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/css/smart_wizard_all.min.css" rel="stylesheet" type="text/css" />
 
 
 
@@ -131,7 +130,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <script src="~/js/DV/leaflet.js"></script>
-<script src="~/js/jquery.smartWizard.js" type="text/javascript" asp-append-version=@bApnd></script>
 
 <script>
     var t1 = performance.now();
@@ -370,71 +368,71 @@
 </style>
 
 <style>
-/*  
-    .webform-cont .form-buider-form {
-        background: white;
-    }
+        /*
+        .webform-cont .form-buider-form {
+            background: white;
+        }
 
-    .webform-cont .ctrl-cover {
-        border: 1px solid var(--eb-bluishgray);
-        display: flex;
-        flex-flow: column;
-        position: relative;
-    }
+        .webform-cont .ctrl-cover {
+            border: 1px solid var(--eb-bluishgray);
+            display: flex;
+            flex-flow: column;
+            position: relative;
+        }
 
-    .webform-cont .eb-label-editable {
-        background-color: transparent;
-    }
+        .webform-cont .eb-label-editable {
+            background-color: transparent;
+        }
 
-     .webform-cont [ctype='TextBox'] .eb-label-editable {
-        background-color: transparent !important;
-        color: brown;
-        font-family: cursive;
-        font-size: 14px;
-    }
+         .webform-cont [ctype='TextBox'] .eb-label-editable {
+            background-color: transparent !important;
+            color: brown;
+            font-family: cursive;
+            font-size: 14px;
+        }
 
-    .webform-cont [ctype='TextBox'] input {
-    }
+        .webform-cont [ctype='TextBox'] input {
+        }
 
-    .webform-cont [ctype='TextBox'] .input-group-addon {
-        background: transparent !important;
-        border-radius: 25px 0px 0px 20px;
-        color: brown;
-        font-size: 20px;
-        padding: 0px 10px !important;
-    }
+        .webform-cont [ctype='TextBox'] .input-group-addon {
+            background: transparent !important;
+            border-radius: 25px 0px 0px 20px;
+            color: brown;
+            font-size: 20px;
+            padding: 0px 10px !important;
+        }
 
-    .webform-cont [ctype='TextBox'] .ctrl-cover {
-        background-color: cornsilk;
-        border: solid 1px tan;
-        border-radius: 25px;
-        min-height: 30px;
-    }
+        .webform-cont [ctype='TextBox'] .ctrl-cover {
+            background-color: cornsilk;
+            border: solid 1px tan;
+            border-radius: 25px;
+            min-height: 30px;
+        }
 
-    .webform-cont .Eb-ctrlContainer[ctype="TextBox"] .ctrl-cover:focus-within {
-        outline: none !important;
-        border: solid 1px #429fff;
-    }
-*/
+        .webform-cont .Eb-ctrlContainer[ctype="TextBox"] .ctrl-cover:focus-within {
+            outline: none !important;
+            border: solid 1px #429fff;
+        }
+    */
 </style>
 
 @{
     @*string str = "<style>";
-    if (ViewBag.__Solution.SolutionSettings?.WebSettings != null) {
+        if (ViewBag.__Solution.SolutionSettings?.WebSettings != null) {
 
-        for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
-        {
-            for (int j = 0; j < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj.Count; j++)
+            for (int i = 0; i < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent.Count; i++)
             {
-                str += ".webform-cont " + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].Selector + " " + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Selector + "{" +
-                ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Css + "}";
+                for (int j = 0; j < ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj.Count; j++)
+                {
+                    str += ".webform-cont " + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].Selector + " " + ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Selector + "{" +
+                    ViewBag.__Solution.SolutionSettings.WebSettings.CssContent[i].CssObj[j].Css + "}";
+                }
             }
         }
-    }
-    str += "<style>";
-    <script>
-        $("head").append(`@Html.Raw(str)`);
-    </script>*@
+        str += "<style>";
+        <script>
+            $("head").append(`@Html.Raw(str)`);
+        </script>*@
 }
 <div id='WebForm-cont' class="webform-cont">
 

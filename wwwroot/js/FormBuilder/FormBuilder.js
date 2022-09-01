@@ -482,22 +482,23 @@
             return false;
         $Tab.smartWizard({
             theme: 'arrows',
-            enableURLhash: false, // Enable selection of the step based on url hash
+            enableUrlHash: false, // Enable selection of the step based on url hash
             transition: {
                 animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
                 speed: '400', // Transion animation speed
                 easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
             },
-            toolbarSettings: {
+            toolbar: {
                 showNextButton: false, // show/hide a Next button
                 showPreviousButton: false, // show/hide a Previous button
             },
-            anchorSettings: {
+            anchor: {
                 anchorClickable: true, // Enable/Disable anchor navigation
                 enableAllAnchors: true, // Activates all anchors clickable all times
                 markDoneStep: false, // Add done state on navigation
+                enableNavigationAlways: true
             },
-            keyboardSettings: {
+            keyboard: {
                 keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
             }
         });

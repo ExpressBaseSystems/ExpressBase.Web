@@ -70,41 +70,74 @@ const WebFormRender = function (option) {
             let $Tab = $(`#cont_${wizControl.EbSid_CtxId}>.RenderAsWizard`);
             if ($Tab.length === 0)
                 return false;
+
+            let extraHtml = '';
+            if (this.Mode.isNew) {
+                if (this.FormObj.CanSaveAsDraft)
+                    extraHtml += `<button class="btn sw-btn sw-btn-save-draft">Save as Draft</button>`;
+                extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">Submit</button>`;
+            }
+
             $Tab.smartWizard({
                 theme: 'arrows',
-                enableURLhash: false, // Enable selection of the step based on url hash
+                enableUrlHash: false, // Enable selection of the step based on url hash
                 transition: {
                     animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
                     speed: '400', // Transion animation speed
                     easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
                 },
-                toolbarSettings: {
-                    toolbarPosition: 'both', // none, top, bottom, both
-                    toolbarButtonPosition: 'center', // left, right, center
+                toolbar: {
+                    position: 'bottom', // none, top, bottom, both
+                    toolbarButtonPosition: 'right', // left, right, center
                     showNextButton: true, // show/hide a Next button
                     showPreviousButton: true, // show/hide a Previous button
+                    extraHtml: extraHtml
                 },
-                keyboardSettings: {
+                keyboard: {
                     keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+                },
+                lang: {
+                    next: 'Next >',
+                    previous: '< Previous'
                 }
             });
 
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
+                let leave = false;
                 if (stepDirection === 'forward') {
-                    e.stopPropagation();
+                    //e.stopPropagation();
                     let pane = wizControl.Controls.$values[currentStepIndex];
                     let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
                     if (this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs)) {
-                        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew && !pane.savedAsDraft) {
-                            pane.savedAsDraft = true;
-                            this.saveAsDraft();
-                        }
-                        return true;
+                        leave = true;
                     }
-                    else
-                        return false;
                 }
-                return true;
+                else
+                    leave = true;
+
+                if (leave) {
+                    if (wizControl.Controls.$values.length == nextStepIndex + 1) {
+                        $Tab.find('.sw-btn-save').removeClass('disabled');
+                    }
+                    else {
+                        $Tab.find('.sw-btn-save').addClass('disabled');
+                    }
+                }
+
+                return leave;
+            }.bind(this));
+
+            $Tab.off('click', '.sw-btn-save-draft').on('click', '.sw-btn-save-draft', function (e) {
+                if (this.FormObj.CanSaveAsDraft && this.Mode.isNew) {
+                    this.saveAsDraft();
+                }
+            }.bind(this));
+
+            $Tab.off('click', '.sw-btn-save').on('click', '.sw-btn-save', function (e) {
+                let stepInfo = $Tab.smartWizard("getStepInfo");
+                if (stepInfo.currentStep + 1 === stepInfo.totalSteps) {
+                    this.saveForm();
+                }
             }.bind(this));
 
         }.bind(this));

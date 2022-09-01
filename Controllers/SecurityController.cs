@@ -77,6 +77,8 @@ namespace ExpressBase.Web.Controllers
                     return true;
                 if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
                     return true;
+                if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionPM.ToString()))
+                    return true;
             }
             return false;
         }
@@ -95,7 +97,7 @@ namespace ExpressBase.Web.Controllers
             {
                 WC = ViewBag.wc,
                 DBIds = this.LoggedInUser.GetDashBoardIds(),
-                IsSolutionOwner = (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) ? true : false
+                IsSolutionOwner = HasPemissionToSecurity()
 
             });
 

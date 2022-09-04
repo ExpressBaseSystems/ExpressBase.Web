@@ -687,6 +687,14 @@ const WebFormRender = function (option) {
 
         if (respObj.Status === 200) {
             EbMessage("show", { Message: "Form saved as draft", AutoHide: true, Background: '#00aa00', Delay: 3000 });
+            if (respObj.DraftId > 0) {
+                this.draftId = respObj.DraftId;
+                option.draftId = this.draftId;
+                this.headerObj.setFormMode(`<span mode="Draft Mode" class="fmode">Draft</span>`);
+                let _url = `/WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: this.draftId }]))}&_m=8&_l=${this.getLocId()}`;
+                let stateObj = { draftId: this.draftId };
+                window.history.replaceState(stateObj, this.FormObj.DisplayName + '(Draft)', _url);
+            }
         }
         else if (respObj.Status === 403) {
             EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000', Delay: 4000 });
@@ -695,9 +703,7 @@ const WebFormRender = function (option) {
             EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });
             console.error(respObj.MessageInt);
         }
-        this.draftId = respObj.DraftId;
-        option.draftId = this.draftId;
-        this.headerObj.setFormMode(`<span mode="Draft Mode" class="fmode">Draft</span>`);
+
         //this.AdjustDraftBtnsVisibility();
     }.bind(this);
 

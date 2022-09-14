@@ -185,6 +185,7 @@ namespace ExpressBase.Web.BaseControllers
                 _json = JsonConvert.SerializeObject(list);
 
                 contrlr.ViewBag.FinYears = JsonConvert.SerializeObject(GetFinancialYearsObject(s_obj, this.LoggedInUser));
+                contrlr.ViewBag.Languages = JsonConvert.SerializeObject(new MultiLanguageController(this.ServiceClient, this.Redis).LoadLang());
             }
             catch (Exception e)
             {

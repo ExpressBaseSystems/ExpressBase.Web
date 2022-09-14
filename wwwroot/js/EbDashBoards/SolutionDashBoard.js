@@ -537,7 +537,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         postDataGoogleDrive = $(e.target).serializeArray();
         var uri = "";
         if (GoogleRedirecturi === "Staging")
-            uri = "https://myaccount.eb-test.xyz";
+            uri = "https://myaccount.eb-test.shop";
         else if (GoogleRedirecturi === "Production")
             uri = "https://myaccount.expressbase.com";
         auth2 = gapi.auth2.init({
@@ -739,7 +739,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             SolutionId: this.Sid,
             Container: "onboarding_logo",
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.xyz',
+            ServerEventUrl: 'https://se.eb-test.shop',
             EnableTag: false,
             EnableCrop: true,
             Context: "logo",//if single and crop

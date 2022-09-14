@@ -193,7 +193,7 @@ var order_obj = function (colu, dir) {
 };
 
 //to restrict access to internal pages by a logged out user
-var reload_if_session_expired = function () {    
+var reload_if_session_expired = function () {
     if (!getTok()) {
         alert("Session expired!");
         location.reload();
@@ -575,7 +575,8 @@ function JsonToEbControls(ctrlsContainer, type) {
         if (obj.IsContainer) {
             JsonToEbControls(obj, type);
         }
-        else if (type === 'webform')
+
+        if (type === 'webform')
             ctrlsContainer.Controls.$values[i] = new ControlOps_w[obj.ObjType](obj);
         else
             ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);

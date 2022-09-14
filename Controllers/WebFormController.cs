@@ -638,32 +638,32 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             return msg;
         }
 
-        public string GetDynamicGridData(string _refid, int _rowid, string _srcid, string[] _target)
-        {
-            try
-            {
-                if (_refid.IsNullOrEmpty())
-                    throw new FormException(FormErrors.E0124);
-                if (_srcid.IsNullOrEmpty())
-                    throw new FormException(FormErrors.E0125);
-                if (_target.Length == 0)
-                    throw new FormException(FormErrors.E0126);
+        //public string GetDynamicGridData(string _refid, int _rowid, string _srcid, string[] _target)
+        //{
+        //    try
+        //    {
+        //        if (_refid.IsNullOrEmpty())
+        //            throw new FormException(FormErrors.E0124);
+        //        if (_srcid.IsNullOrEmpty())
+        //            throw new FormException(FormErrors.E0125);
+        //        if (_target.Length == 0)
+        //            throw new FormException(FormErrors.E0126);
 
-                GetDynamicGridDataResponse Resp = ServiceClient.Post<GetDynamicGridDataResponse>(new GetDynamicGridDataRequest { RefId = _refid, RowId = _rowid, SourceId = _srcid, Target = _target });
-                return Resp.FormDataWrap;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception in GetDynamicGridData. Message: " + ex.Message);
-                return JsonConvert.SerializeObject(new WebformDataWrapper()
-                {
-                    Message = ex.Message,
-                    Status = (int)HttpStatusCode.InternalServerError,
-                    MessageInt = "Exception in GetDynamicGridData",
-                    StackTraceInt = ex.StackTrace
-                });
-            }
-        }
+        //        GetDynamicGridDataResponse Resp = ServiceClient.Post<GetDynamicGridDataResponse>(new GetDynamicGridDataRequest { RefId = _refid, RowId = _rowid, SourceId = _srcid, Target = _target });
+        //        return Resp.FormDataWrap;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Exception in GetDynamicGridData. Message: " + ex.Message);
+        //        return JsonConvert.SerializeObject(new WebformDataWrapper()
+        //        {
+        //            Message = ex.Message,
+        //            Status = (int)HttpStatusCode.InternalServerError,
+        //            MessageInt = "Exception in GetDynamicGridData",
+        //            StackTraceInt = ex.StackTrace
+        //        });
+        //    }
+        //}
 
         public string ExecuteSqlValueExpr(string _refid, string _triggerctrl, List<Param> _params, int _type)
         {

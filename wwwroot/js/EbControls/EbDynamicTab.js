@@ -29,8 +29,8 @@
         for (let i = 0; i < this.allTabCtrls.length; i++) {
             let tabCtrl = this.allTabCtrls[i];
             let dynPaneFound = false;
-            for (let j = 0; j < tabCtrl.Controls.$values.length; j++) {                
-                if (tabCtrl.Controls.$values[j].IsDynamic) {                    
+            for (let j = 0; j < tabCtrl.Controls.$values.length; j++) {
+                if (tabCtrl.Controls.$values[j].IsDynamic) {
                     let paneObj = tabCtrl.Controls.$values.splice(j--, 1)[0];
                     this.tabPaneArr.push({
                         name: tabCtrl.Name + '_' + paneObj.Name,
@@ -95,9 +95,9 @@
             title: 'Dynamic Tab 1',
             srcId: srcId,
             srcRowId: srcRowId,
-            params: { textbox1 : 'haha'}
+            params: { textbox1: 'haha' }
         }, args);
-        
+
         let targetPaneO = getObjByval(this.tabPaneArr, 'name', args.target);
         if (!targetPaneO) {
             console.log('dynamic tab pane not identified : ' + args.target);
@@ -124,7 +124,7 @@
                 console.log('dynamic tab pane not found to delete : ' + args.srcId);
         }
 
-        
+
     }.bind(this);
 
     this.AppendTabPaneHtml = function (temp, args) {
@@ -152,7 +152,7 @@
         $tab.find('.tab-content').append(bhtml);
 
         let dataModel = $.extend(true, {}, this.formRenderer.DataMODEL);
-        
+
         this.dynamicTabPanes[args.srcId] = {
             ctrlObj: paneCtrlNew,
             tabCtrl: temp.tab,
@@ -164,7 +164,7 @@
             FRC: new FormRenderCommon({ FO: paneCtrlNew }),
             dataModel: dataModel
         };
-        
+
         this.initializeControls(this.dynamicTabPanes[args.srcId]);
 
         //binding event + on edit data mngnt
@@ -235,7 +235,7 @@
     this.initializeControls = function (dObj) {
         this.setFormObject(dObj);
         this.updateCtrlsUI([dObj.ctrlObj, ...dObj.allFlatControls]);
-        
+
         attachModalCellRef_form(dObj.ctrlObj, dObj.dataModel);
 
         $.each(dObj.flatControls, function (k, Obj) {//initNCs  order 1
@@ -274,9 +274,9 @@
         if (this.mode.isNew) {
             dObj.FRC.setDefaultvalsNC(dObj.flatControls);// order 4
         }
-        
+
     };
-    
+
     this.updateCtrlsUI = function (allFlatControls) {
         $.each(allFlatControls, function (k, cObj) {
             $.each(cObj, function (prop, val) {
@@ -358,8 +358,8 @@
         let Model = this.formRenderer.DataMODEL;
 
         $.each(this.dynamicTabPanes, function (k, dObj) {
-            for (let i = 0; i < dObj.DGs.length; i++) {                
-                Model[dObj.DGs[i].TableName] = [];                
+            for (let i = 0; i < dObj.DGs.length; i++) {
+                Model[dObj.DGs[i].TableName] = [];
             }
         }.bind(this));
 
@@ -391,7 +391,7 @@
             setTimeout(function ($tab, id) {
                 $tab.find(`.tab-btn-cont ul li[ebsid="${id}"]`).remove();
                 $tab.find(`.tab-content #${id}`).remove();
-            }.bind(this, $tab, id), 1000);            
+            }.bind(this, $tab, id), 1000);
         }
         this.dynamicTabPanes = {};
 
@@ -399,3 +399,42 @@
 
     this.init();
 };
+
+
+//let opts = {
+//    allTabCtrls: this.TabControls,
+//    formModel: null, //_formDataWraper,//test
+//    initControls: this.initControls,
+//    mode: this.Mode,
+//    formObjectGlobal: this.formObject,
+//    userObject: this.userObject,
+//    formDataExtdObj: this.FormDataExtdObj,
+//    formObject_Full: this.FormObj,
+//    formRefId: this.formRefId,
+//    formRenderer: this
+//};
+//this.DynamicTabObject = new EbDynamicTab(opts);
+
+
+//DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};// multiple form related changes will come
+//DynamicTabPane = function (args) {
+//    if (DynamicTabPaneGlobals === null) {
+//        console.log('Dynamic tab not supported. Please initiate from a data grid.');
+//        return;
+//    }
+//    let $initiatorDG = $("#cont_" + DynamicTabPaneGlobals.DG.EbSid);
+//    if ($initiatorDG.length === 0) {
+//        console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
+//        return;
+//    }
+//    let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");
+//    if ($initiatorTab.length === 0) {
+//        console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
+//        return;
+//    }
+
+//    let DgCtrl = DynamicTabPaneGlobals.DG;
+//    let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
+//    this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
+//    DynamicTabPaneGlobals = null;
+//}.bind(this); // multiple form related changes will come

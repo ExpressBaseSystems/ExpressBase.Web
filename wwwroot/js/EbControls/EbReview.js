@@ -94,10 +94,10 @@
 
         let action_unique_id, comments;
 
-
         if (this.ctrl.RenderAsTable) {
             action_unique_id = this.$curActiveRow.find("[col='status'] .selectpicker").selectpicker('val');
-            comments = this.$curActiveRow.find("[col='remarks'] .fs-textarea").val();
+            comments = $(`#${this.ctrl.EbSid_CtxId}_remarks`).val();
+            //comments = this.$curActiveRow.find("[col='remarks'] .fs-textarea").val();
         }
         else {
             action_unique_id = this.$container.find(".rc-inp-cont .selectpicker").selectpicker('val');
@@ -114,7 +114,7 @@
             }
         }
         return this.CurStageDATA;
-    };
+    }.bind(this);
 
     this.submitReview = function () {
         this.saveForm_call();
@@ -161,7 +161,7 @@
             //}.bind(this),
             success: this.saveSuccess.bind(this)
         });
-    };
+    }.bind(this);
 
     this.saveSuccess = function (_respObj) {
         this.formRenderer.hideLoader();
@@ -171,8 +171,12 @@
         if (respObj.Status === 200) {
             EbMessage("show", { Message: "Review submited successfully", AutoHide: true, Background: '#00aa00', Delay: 5000 });
             respObj.FormData = JSON.parse(respObj.FormData);
-            this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName];
-            this.switch2viewMode(this.DataMODEL);
+            //this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName];
+            //this.switch2viewMode(this.DataMODEL);
+
+            this.formRenderer.relatedSubmissionsHtml = null;
+            ebcontext.webform.UpdateInterCxtObj(this.formRenderer.__MultiRenderCxt);
+            this.formRenderer.renderInAfterSaveMode(respObj);
         }
         //else if (respObj.Status === 403) {
         //    EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
@@ -209,9 +213,12 @@
         if (this.CurStageDATA) {
             let stageUqid = getObjByval(this.CurStageDATA.Columns, "Name", "stage_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", stageUqid);
-            //let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
-
-            if (stage && stage.Validators) {
+            let actUniqueId = getObjByval(this.CurStageDATA.Columns, "Name", "action_unique_id").Value;
+            if (!actUniqueId) {
+                EbMessage("show", { Message: `Please select ${this.ctrl.StatusTitle}`, AutoHide: true, Background: '#aa0000' });
+                validationOK = false;
+            }
+            else if (stage && stage.Validators) {
                 stage.Validators.$values = sortByProp(stage.Validators.$values, "IsWarningOnly");
                 $.each(stage.Validators.$values, function (i, Validator) {
                     if (Validator.IsDisabled || !Validator.Script.Code)// continue
@@ -239,7 +246,7 @@
             }
         }
         return validationOK;
-    };
+    }.bind(this);
 
     this.submit = function () {
         if (!this.isValidationsOK())
@@ -519,7 +526,8 @@
                                 $sel.selectpicker({
                                     container: `#${this.formRenderer.FormObj.EbSid_CtxId}`
                                 });
-                                $sel.selectpicker('val', column.Value);
+                                $sel.on('change', this.actionSelectChanged.bind(this));
+                                //$sel.selectpicker('val', column.Value);
                             }
                         }
                     }.bind(this));
@@ -571,7 +579,20 @@
                 console.error(e);
             }
         }
+    };
 
+    this.actionSelectChanged = function (e) {
+        if (!this.CurStageDATA || !this.hasPermission)
+            return;
+
+        let actionDataVals = getObjByval(this.CurStageDATA.Columns, "Name", "action_unique_id");
+        actionDataVals.Value = $(e.target).val();
+
+        this.ctrl.execReviewModal.modal('show');
+
+        //if (this.ctrl.CurStageAssocCtrls.length > 0) {
+
+        //}
     };
 
     this.init = function () {
@@ -605,7 +626,7 @@
             return;
 
         $row.show();
-        $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
+        //$row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();
         $row.attr("active", "true");
     };
@@ -647,6 +668,9 @@
         this.showResetBtn();
 
         if (!this.CurStageDATA || !this.hasPermission)
+            return;
+
+        if (this.ctrl.RenderAsTable)//show only if status changed
             return;
 
         this.$submit.show(300);

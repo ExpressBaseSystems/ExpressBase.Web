@@ -64,47 +64,80 @@ const WebFormRender = function (option) {
     };
 
     this.initWizards = function () {
-        this.TabControls = getFlatObjOfType(this.FormObj, "WizardControl");
+        this.WizardControls = getFlatObjOfType(this.FormObj, "WizardControl");
 
-        $.each(this.TabControls, function (i, tabControl) {//TabControl Init
-            let $Tab = $(`#cont_${tabControl.EbSid_CtxId}>.RenderAsWizard`);
+        $.each(this.WizardControls, function (i, wizControl) {//WizControl Init
+            let $Tab = $(`#cont_${wizControl.EbSid_CtxId}>.RenderAsWizard`);
             if ($Tab.length === 0)
                 return false;
+
+            let extraHtml = '';
+            if (this.Mode.isNew) {
+                if (this.FormObj.CanSaveAsDraft)
+                    extraHtml += `<button class="btn sw-btn sw-btn-save-draft">Save as Draft</button>`;
+                extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">Submit</button>`;
+            }
+
             $Tab.smartWizard({
                 theme: 'arrows',
-                enableURLhash: false, // Enable selection of the step based on url hash
+                enableUrlHash: false, // Enable selection of the step based on url hash
                 transition: {
                     animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
                     speed: '400', // Transion animation speed
                     easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
                 },
-                toolbarSettings: {
-                    toolbarPosition: 'both', // none, top, bottom, both
-                    toolbarButtonPosition: 'center', // left, right, center
+                toolbar: {
+                    position: 'bottom', // none, top, bottom, both
+                    toolbarButtonPosition: 'right', // left, right, center
                     showNextButton: true, // show/hide a Next button
                     showPreviousButton: true, // show/hide a Previous button
+                    extraHtml: extraHtml
                 },
-                keyboardSettings: {
+                keyboard: {
                     keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+                },
+                lang: {
+                    next: 'Next >',
+                    previous: '< Previous'
                 }
             });
 
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
+                let leave = false;
                 if (stepDirection === 'forward') {
-                    e.stopPropagation();
-                    let pane = tabControl.Controls.$values[currentStepIndex];
+                    //e.stopPropagation();
+                    let pane = wizControl.Controls.$values[currentStepIndex];
                     let innerCtrlsWithDGs = getFlatCtrlObjs(pane).concat(getFlatContObjsOfType(pane, "DataGrid"));
                     if (this.FRC.AllRequired_valid_Check(innerCtrlsWithDGs)) {
-                        if (this.FormObj.CanSaveAsDraft && this.Mode.isNew && !pane.savedAsDraft) {
-                            pane.savedAsDraft = true;
-                            this.saveAsDraft();
-                        }
-                        return true;
+                        leave = true;
                     }
-                    else
-                        return false;
                 }
-                return true;
+                else
+                    leave = true;
+
+                if (leave) {
+                    if (wizControl.Controls.$values.length == nextStepIndex + 1) {
+                        $Tab.find('.sw-btn-save').removeClass('disabled');
+                    }
+                    else {
+                        $Tab.find('.sw-btn-save').addClass('disabled');
+                    }
+                }
+
+                return leave;
+            }.bind(this));
+
+            $Tab.off('click', '.sw-btn-save-draft').on('click', '.sw-btn-save-draft', function (e) {
+                if (this.FormObj.CanSaveAsDraft && this.Mode.isNew) {
+                    this.saveAsDraft();
+                }
+            }.bind(this));
+
+            $Tab.off('click', '.sw-btn-save').on('click', '.sw-btn-save', function (e) {
+                let stepInfo = $Tab.smartWizard("getStepInfo");
+                if (stepInfo.currentStep + 1 === stepInfo.totalSteps) {
+                    this.saveForm();
+                }
             }.bind(this));
 
         }.bind(this));
@@ -287,20 +320,6 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
-        let opts = {
-            allTabCtrls: this.TabControls,
-            formModel: null, //_formDataWraper,//test
-            initControls: this.initControls,
-            mode: this.Mode,
-            formObjectGlobal: this.formObject,
-            userObject: this.userObject,
-            formDataExtdObj: this.FormDataExtdObj,
-            formObject_Full: this.FormObj,
-            formRefId: this.formRefId,
-            formRenderer: this
-        };
-        this.DynamicTabObject = new EbDynamicTab(opts);
-
         JsonToEbControls(this.FormObj, 'webform');// extend eb functions to control object (setValue(), disable()...)
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
@@ -315,6 +334,7 @@ const WebFormRender = function (option) {
         this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject
         this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
+        this.setExecReviewModal();
         this.initNCs();// order 1
         this.FRC.bindFunctionToCtrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
         //this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
@@ -337,34 +357,98 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};// multiple form related changes will come
-    DynamicTabPane = function (args) {
-        if (DynamicTabPaneGlobals === null) {
-            console.log('Dynamic tab not supported. Please initiate from a data grid.');
-            return;
-        }
-        let $initiatorDG = $("#cont_" + DynamicTabPaneGlobals.DG.EbSid);
-        if ($initiatorDG.length === 0) {
-            console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
-            return;
-        }
-        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");
-        if ($initiatorTab.length === 0) {
-            console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
-            return;
-        }
-
-        let DgCtrl = DynamicTabPaneGlobals.DG;
-        let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
-        this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
-        DynamicTabPaneGlobals = null;
-    }.bind(this); // multiple form related changes will come
-
     this.updateCtrlsUI = function () {
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);
         }.bind(this));
+    };
+
+    this.setExecReviewModal = function () {
+        if (this.ReviewCtrl && this.ReviewCtrl.RenderAsTable) {
+
+            if ($(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).length > 0)
+                $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).remove();
+
+            let revDataMdl = this.DataMODEL[this.ReviewCtrl.TableName];
+            let CurStageDATA = getObjByval(revDataMdl, "RowId", 0);
+            let hasPermission = false, isFormDataEditable = false;
+            if (CurStageDATA) {
+                hasPermission = getObjByval(CurStageDATA.Columns, "Name", "has_permission").Value === "T";//false;//
+                isFormDataEditable = getObjByval(CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
+                if (!hasPermission)
+                    return;
+            }
+            else
+                return;
+            let stageUqid = getObjByval(CurStageDATA.Columns, "Name", "stage_unique_id").Value;
+            let stage = getObjByval(this.ReviewCtrl.FormStages.$values, "EbSid", stageUqid);
+            if (!stage) return;
+
+            let _ctrlHtml = '';
+            let _ctrls = [];
+
+            if (isFormDataEditable && stage.AssocCtrls && stage.AssocCtrls.$values.length) {
+                for (let i = 0; i < stage.AssocCtrls.$values.length; i++) {
+                    let ctrlName = stage.AssocCtrls.$values[i].ControlName;
+                    if (ctrlName) {
+                        let c = this.formObject.__getCtrlByPath('form.' + ctrlName);
+                        if (c != "not found") {
+                            _ctrls.push(c);
+                            _ctrlHtml += $("<div />").append($('#cont_' + c.EbSid_CtxId).remove()).html();
+                        }
+                    }
+                }
+            }
+            $('body').append(
+                `<div class="modal fade rev-exec" id="${this.ReviewCtrl.EbSid_CtxId}_execRevMdl" role="dialog">
+                    <div class="modal-dialog" style="width: 440px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h5 class="modal-title">${this.ReviewCtrl.Label}</h5>
+                            </div>
+                            <div class="modal-body">
+                                ${_ctrlHtml}
+                                <div class="form-group" style='margin: 4px; padding-top: 5px;'>
+                                    <span class='eb-ctrl-label'>${this.ReviewCtrl.RemarksTitle || 'Remarks'}</span>
+                                    <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 80px !important; resize:none; border-radius: 0;"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="rev-submit ebbtn eb_btn-sm eb_btnblue">${this.ReviewCtrl.ExecuteBtnText || 'Execute Review'}</button>
+                                <button class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`);
+            this.ReviewCtrl.execReviewModal = $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`);
+            this.ReviewCtrl.CurStageAssocCtrls = _ctrls;
+            this.ReviewCtrl.execReviewModal.off('shown.bs.modal').on('shown.bs.modal', function () {
+                this.ReviewCtrl.includeReviewData = false;
+                $(`#${this.ReviewCtrl.EbSid_CtxId}_remarks`).val('');
+                if (this.ReviewCtrl.CurStageAssocCtrls.length > 0)
+                    this.SwitchToEditMode();
+            }.bind(this));
+
+            this.ReviewCtrl.execReviewModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                //this.ReviewCtrl.includeReviewData = false;
+            }.bind(this));
+
+            this.ReviewCtrl.execReviewModal.off('click', '.rev-submit').on('click', '.rev-submit', function (e) {
+                if (!this.ReviewCtrl._Builder.isValidationsOK())
+                    return;
+                if (this.ReviewCtrl.CurStageAssocCtrls.length > 0) {
+                    this.ReviewCtrl.includeReviewData = true;
+                    this.ReviewCtrl.execReviewModal.modal('hide');
+                    this.saveForm();
+                }
+                else {
+                    this.ReviewCtrl.execReviewModal.modal('hide');
+                    this.ReviewCtrl._Builder.saveForm_call();
+                }
+            }.bind(this));
+        }
     };
 
     //psDataImport
@@ -568,8 +652,10 @@ const WebFormRender = function (option) {
         let WebformData = {};
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
-        this.DynamicTabObject.updateDataModel();
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+        if (this.ReviewCtrl && this.ReviewCtrl.includeReviewData) {
+            WebformData.MultipleTables[this.ReviewCtrl.TableName].push(this.ReviewCtrl._Builder.getCurRowValues());
+        }
 
         for (let EbSid_CtxId in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[EbSid_CtxId];
@@ -606,7 +692,6 @@ const WebFormRender = function (option) {
             WebformData.MultipleTables[DGB.ctrl.TableName] = NwTable;
         }
 
-        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         WebformData.ModifiedAt = this.formData.ModifiedAt;
         console.log("form data --");
@@ -667,7 +752,6 @@ const WebFormRender = function (option) {
             }
 
             respObj.FormData = JSON.parse(respObj.FormData);//======
-            //this.DynamicTabObject.disposeDynamicTab();// febin
             this.relatedSubmissionsHtml = null;
 
             if (this.AfterSavePrintDoc) {
@@ -694,6 +778,14 @@ const WebFormRender = function (option) {
 
         if (respObj.Status === 200) {
             EbMessage("show", { Message: "Form saved as draft", AutoHide: true, Background: '#00aa00', Delay: 3000 });
+            if (respObj.DraftId > 0) {
+                this.draftId = respObj.DraftId;
+                option.draftId = this.draftId;
+                this.headerObj.setFormMode(`<span mode="Draft Mode" class="fmode">Draft</span>`);
+                let _url = `/WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: this.draftId }]))}&_m=8&_l=${this.getLocId()}`;
+                let stateObj = { draftId: this.draftId };
+                window.history.replaceState(stateObj, this.FormObj.DisplayName + '(Draft)', _url);
+            }
         }
         else if (respObj.Status === 403) {
             EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000', Delay: 4000 });
@@ -702,9 +794,7 @@ const WebFormRender = function (option) {
             EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });
             console.error(respObj.MessageInt);
         }
-        this.draftId = respObj.DraftId;
-        option.draftId = this.draftId;
-        this.headerObj.setFormMode(`<span mode="Draft Mode" class="fmode">Draft</span>`);
+
         //this.AdjustDraftBtnsVisibility();
     }.bind(this);
 
@@ -793,6 +883,8 @@ const WebFormRender = function (option) {
 
         let tvCtrls = getFlatObjOfType(this.FormObj, "TVcontrol");
         $.each(tvCtrls, function (a, b) { b.__filterValues = []; });
+        if (this.ReviewCtrl && $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).length > 0)
+            $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).remove();
 
         this.resetBuilderVariables(forceRelaodOptions);
         this.init(option);
@@ -1102,7 +1194,6 @@ const WebFormRender = function (option) {
         //$.each(this.DGs, function (k, DG) {
         //    this.DGBuilderObjs[DG.EbSid_CtxId].SwitchToViewMode();
         //}.bind(this));
-        this.DynamicTabObject.switchToViewMode();// febin
     };
 
     this.S2EmodeReviewCtrl = function () {
@@ -1197,7 +1288,6 @@ const WebFormRender = function (option) {
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.enableControlsInEditMode();
         this.setUniqCtrlsInitialVals();
-        this.DynamicTabObject.switchToEditMode();// febin
     };
 
     this.isBtnDisableFor_eb_default = function () {
@@ -2904,7 +2994,6 @@ const WebFormRender = function (option) {
         this.RQCRenderer = {};
         this.DGNewBuilderObjs = {};
         this.uniqCtrlsInitialVals = {};
-        this.DynamicTabObject = null;
         this.FRC = new FormRenderCommon({ FO: this });
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject

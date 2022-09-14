@@ -321,7 +321,7 @@
 
     @if (ViewBag.wc == "uc")
     {
-        <script>
+<script>
             let loc__ = new LocationPicker({
                 Location: '@Html.Raw(ViewBag.Locations)',
                 Tid: '@ViewBag.cid',
@@ -334,7 +334,12 @@
                 Tid: '@ViewBag.cid',
                 Uid:'@ViewBag.UId',
             });
-        </script>
+             window.ebcontext.languages = new LanguagePicker({
+                LanguagesList:@Html.Raw(ViewBag.Languages),
+                Tid: '@ViewBag.cid',
+                Uid:'@ViewBag.UId',
+            });
+</script>
     }
 
     @if (IsSectionDefined("JsCode"))

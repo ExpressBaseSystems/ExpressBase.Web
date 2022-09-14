@@ -334,6 +334,7 @@ const WebFormRender = function (option) {
         this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject
         this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
+        this.setExecReviewModal();
         this.initNCs();// order 1
         this.FRC.bindFunctionToCtrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
         //this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
@@ -361,6 +362,93 @@ const WebFormRender = function (option) {
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);
         }.bind(this));
+    };
+
+    this.setExecReviewModal = function () {
+        if (this.ReviewCtrl && this.ReviewCtrl.RenderAsTable) {
+
+            if ($(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).length > 0)
+                $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).remove();
+
+            let revDataMdl = this.DataMODEL[this.ReviewCtrl.TableName];
+            let CurStageDATA = getObjByval(revDataMdl, "RowId", 0);
+            let hasPermission = false, isFormDataEditable = false;
+            if (CurStageDATA) {
+                hasPermission = getObjByval(CurStageDATA.Columns, "Name", "has_permission").Value === "T";//false;//
+                isFormDataEditable = getObjByval(CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
+                if (!hasPermission)
+                    return;
+            }
+            else
+                return;
+            let stageUqid = getObjByval(CurStageDATA.Columns, "Name", "stage_unique_id").Value;
+            let stage = getObjByval(this.ReviewCtrl.FormStages.$values, "EbSid", stageUqid);
+            if (!stage) return;
+
+            let _ctrlHtml = '';
+            let _ctrls = [];
+
+            if (isFormDataEditable && stage.AssocCtrls && stage.AssocCtrls.$values.length) {
+                for (let i = 0; i < stage.AssocCtrls.$values.length; i++) {
+                    let ctrlName = stage.AssocCtrls.$values[i].ControlName;
+                    if (ctrlName) {
+                        let c = this.formObject.__getCtrlByPath('form.' + ctrlName);
+                        if (c != "not found") {
+                            _ctrls.push(c);
+                            _ctrlHtml += $("<div />").append($('#cont_' + c.EbSid_CtxId).remove()).html();
+                        }
+                    }
+                }
+            }
+            $('body').append(
+                `<div class="modal fade rev-exec" id="${this.ReviewCtrl.EbSid_CtxId}_execRevMdl" role="dialog">
+                    <div class="modal-dialog" style="width: 440px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h5 class="modal-title">${this.ReviewCtrl.Label}</h5>
+                            </div>
+                            <div class="modal-body">
+                                ${_ctrlHtml}
+                                <div class="form-group" style='margin: 4px; padding-top: 5px;'>
+                                    <span class='eb-ctrl-label'>${this.ReviewCtrl.RemarksTitle || 'Remarks'}</span>
+                                    <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 80px !important; resize:none; border-radius: 0;"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="rev-submit ebbtn eb_btn-sm eb_btnblue">${this.ReviewCtrl.ExecuteBtnText || 'Execute Review'}</button>
+                                <button class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`);
+            this.ReviewCtrl.execReviewModal = $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`);
+            this.ReviewCtrl.CurStageAssocCtrls = _ctrls;
+            this.ReviewCtrl.execReviewModal.off('shown.bs.modal').on('shown.bs.modal', function () {
+                this.ReviewCtrl.includeReviewData = false;
+                $(`#${this.ReviewCtrl.EbSid_CtxId}_remarks`).val('');
+                if (this.ReviewCtrl.CurStageAssocCtrls.length > 0)
+                    this.SwitchToEditMode();
+            }.bind(this));
+
+            this.ReviewCtrl.execReviewModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                //this.ReviewCtrl.includeReviewData = false;
+            }.bind(this));
+
+            this.ReviewCtrl.execReviewModal.off('click', '.rev-submit').on('click', '.rev-submit', function (e) {
+                if (!this.ReviewCtrl._Builder.isValidationsOK())
+                    return;
+                if (this.ReviewCtrl.CurStageAssocCtrls.length > 0) {
+                    this.ReviewCtrl.includeReviewData = true;
+                    this.ReviewCtrl.execReviewModal.modal('hide');
+                    this.saveForm();
+                }
+                else {
+                    this.ReviewCtrl.execReviewModal.modal('hide');
+                    this.ReviewCtrl._Builder.saveForm_call();
+                }
+            }.bind(this));
+        }
     };
 
     //psDataImport
@@ -565,6 +653,9 @@ const WebFormRender = function (option) {
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+        if (this.ReviewCtrl && this.ReviewCtrl.includeReviewData) {
+            WebformData.MultipleTables[this.ReviewCtrl.TableName].push(this.ReviewCtrl._Builder.getCurRowValues());
+        }
 
         for (let EbSid_CtxId in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[EbSid_CtxId];
@@ -792,6 +883,8 @@ const WebFormRender = function (option) {
 
         let tvCtrls = getFlatObjOfType(this.FormObj, "TVcontrol");
         $.each(tvCtrls, function (a, b) { b.__filterValues = []; });
+        if (this.ReviewCtrl && $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).length > 0)
+            $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).remove();
 
         this.resetBuilderVariables(forceRelaodOptions);
         this.init(option);

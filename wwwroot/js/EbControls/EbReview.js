@@ -213,10 +213,12 @@
         if (this.CurStageDATA) {
             let stageUqid = getObjByval(this.CurStageDATA.Columns, "Name", "stage_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", stageUqid);
-            let actUniqueId = getObjByval(this.CurStageDATA.Columns, "Name", "action_unique_id").Value;
-            if (!actUniqueId) {
-                EbMessage("show", { Message: `Please select ${this.ctrl.StatusTitle}`, AutoHide: true, Background: '#aa0000' });
-                validationOK = false;
+            if (this.ctrl.RenderAsTable) {
+                let actUniqueId = getObjByval(this.CurStageDATA.Columns, "Name", "action_unique_id").Value;
+                if (!actUniqueId) {
+                    EbMessage("show", { Message: `Please select ${this.ctrl.StatusTitle || 'Status'}`, AutoHide: true, Background: '#aa0000' });
+                    validationOK = false;
+                }
             }
             else if (stage && stage.Validators) {
                 stage.Validators.$values = sortByProp(stage.Validators.$values, "IsWarningOnly");

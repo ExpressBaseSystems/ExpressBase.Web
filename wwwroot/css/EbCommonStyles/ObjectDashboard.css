@@ -693,6 +693,15 @@ input:checked + .proslider:before {
         white-space: nowrap;
         font-size: 11px;
     }
+
+.language-switcher {
+    display: inline-flex;
+    margin: auto;
+    padding: 0px 0px 0px 10px;
+    position: relative;
+    height: 27.44px;
+}
+
 /*medial queries for mobile*/
 @media (min-width: 20px) and (max-width: 450px) {
 }

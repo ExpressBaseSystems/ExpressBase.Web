@@ -520,6 +520,44 @@
     }
 };
 
+let LanguagePicker = function (options) {
+    try {
+        this.languages = Object.entries(options.LanguagesList);
+        this.$switcherbtn = $("#language-switcher");
+        this.Tid = options.Tid || null;
+        this.Uid = options.Uid || null;
+        this.storeKey = "Eb_language-" + this.Tid + this.Uid;
+        this.init = function () {
+            if (this.languages == null)
+                return;
+
+            this.current_language = store.get(this.storeKey);
+            this.appendDD();
+
+            this.$switcherbtn.val(this.current_language);
+            this.$switcherbtn.show();
+        };
+
+        this.appendDD = function () {
+            for (let i = 0; i < this.languages.length; i++) {
+                this.$switcherbtn.append(`<option value = "${this.languages[i][1]}">${this.languages[i][0]}</option>`);
+            }
+
+            this.$switcherbtn.on("change", this.language_change.bind(this));
+        };
+
+        this.language_change = function (e) {
+            this.current_language = this.$switcherbtn.val();
+            store.set(this.storeKey, this.current_language);
+        };
+
+        this.init();
+    }
+    catch (e) {
+        console.error(e);
+    }
+};
+
 let FinYearPicker = function (options) {
     try {
         this.finyears = options.FinYears;

@@ -89,8 +89,11 @@ namespace ExpressBase.Web.Controllers
             WebForm.UserObj = this.LoggedInUser;
             WebForm.SolutionObj = GetSolutionObject(ViewBag.cid);
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
-            EbWebForm WebForm_L = WebForm;
 
+            //string[] Keys = EbControlContainer.GetKeys(WebForm);
+            //Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, /*Locale = Locale*/ }).Dict;
+            //EbWebForm WebForm_L = WebForm.Localize(KeyValue) as EbWebForm;
+            EbWebForm WebForm_L = WebForm;
             resp.RefId = _refId;
             resp.RenderMode = _renderMode > 0 ? _renderMode : 1;
             resp.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");

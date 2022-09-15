@@ -342,6 +342,11 @@
                 Tid: '@ViewBag.cid',
                 Uid:'@ViewBag.UId',
             });
+             window.ebcontext.languages = new LanguagePicker({
+                 LanguagesList:@Html.Raw(ViewBag.Languages),
+                 Tid: '@ViewBag.cid',
+                 Uid:'@ViewBag.UId',
+            });
         </script>
     }
 

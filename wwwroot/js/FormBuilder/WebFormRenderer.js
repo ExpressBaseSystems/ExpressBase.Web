@@ -403,7 +403,7 @@ const WebFormRender = function (option) {
             $('body').append(
                 `<div class="modal fade rev-exec" id="${this.ReviewCtrl.EbSid_CtxId}_execRevMdl" role="dialog">
                     <div class="modal-dialog" style="width: 440px;">
-                        <div class="modal-content">
+                        <div class="modal-content" eb-root-obj-container>
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h5 class="modal-title">${this.ReviewCtrl.Label}</h5>
@@ -412,7 +412,7 @@ const WebFormRender = function (option) {
                                 ${_ctrlHtml}
                                 <div class="form-group" style='margin: 4px; padding-top: 5px;'>
                                     <span class='eb-ctrl-label'>${this.ReviewCtrl.RemarksTitle || 'Remarks'}</span>
-                                    <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 80px !important; resize:none; border-radius: 0;"></textarea>
+                                    <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 100px !important; resize:none; border-radius: 0;"></textarea>
                                 </div>
                             </div>
                             <div class="modal-footer">

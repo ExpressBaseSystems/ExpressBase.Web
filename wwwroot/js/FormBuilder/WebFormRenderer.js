@@ -411,6 +411,10 @@ const WebFormRender = function (option) {
                             <div class="modal-body">
                                 ${_ctrlHtml}
                                 <div class="form-group" style='margin: 4px; padding-top: 5px;'>
+                                    <span class='eb-ctrl-label'>${this.ReviewCtrl.StatusTitle || 'Status'}</span>
+                                    <select id="${this.ReviewCtrl.EbSid_CtxId}_status" class="form-control"></select>
+                                </div>
+                                <div class="form-group" style='margin: 4px; padding-top: 5px;'>
                                     <span class='eb-ctrl-label'>${this.ReviewCtrl.RemarksTitle || 'Remarks'}</span>
                                     <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 100px !important; resize:none; border-radius: 0;"></textarea>
                                 </div>
@@ -432,7 +436,16 @@ const WebFormRender = function (option) {
             }.bind(this));
 
             this.ReviewCtrl.execReviewModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                //this.ReviewCtrl.includeReviewData = false;
+                if (!this.ReviewCtrl.includeReviewData && this.ReviewCtrl.CurStageAssocCtrls.length > 0) {
+                    this.DiscardChanges();
+                }
+            }.bind(this));
+
+            this.ReviewCtrl.execReviewModal.off('click', `#${this.ReviewCtrl.EbSid_CtxId}_status`).on('change', `#${this.ReviewCtrl.EbSid_CtxId}_status`, function (e) {
+                if (!this.ReviewCtrl._Builder.CurStageDATA)
+                    return;
+                let actionDataVals = getObjByval(this.ReviewCtrl._Builder.CurStageDATA.Columns, "Name", "action_unique_id");
+                actionDataVals.Value = $(e.target).val();
             }.bind(this));
 
             this.ReviewCtrl.execReviewModal.off('click', '.rev-submit').on('click', '.rev-submit', function (e) {

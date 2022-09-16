@@ -95,8 +95,9 @@
         let action_unique_id, comments;
 
         if (this.ctrl.RenderAsTable) {
-            action_unique_id = this.$curActiveRow.find("[col='status'] .selectpicker").selectpicker('val');
+            action_unique_id = $(`#${this.ctrl.EbSid_CtxId}_status`).val();
             comments = $(`#${this.ctrl.EbSid_CtxId}_remarks`).val();
+            //action_unique_id = this.$curActiveRow.find("[col='status'] .selectpicker").selectpicker('val');
             //comments = this.$curActiveRow.find("[col='remarks'] .fs-textarea").val();
         }
         else {
@@ -219,8 +220,16 @@
                     EbMessage("show", { Message: `Please select ${this.ctrl.StatusTitle || 'Status'}`, AutoHide: true, Background: '#aa0000' });
                     validationOK = false;
                 }
+                let act = getObjByval(stage.StageActions.$values, "EbSid", actUniqueId);
+                if (act.CommentsRequired) {
+                    let comments = $(`#${this.ctrl.EbSid_CtxId}_remarks`).val().trim();
+                    if (!comments) {
+                        EbMessage("show", { Message: `${this.ctrl.RemarksTitle || 'Remarks'} required`, AutoHide: true, Background: '#aa0000' });
+                        validationOK = false;
+                    }
+                }
             }
-            else if (stage && stage.Validators) {
+            if (validationOK && stage && stage.Validators) {
                 stage.Validators.$values = sortByProp(stage.Validators.$values, "IsWarningOnly");
                 $.each(stage.Validators.$values, function (i, Validator) {
                     if (Validator.IsDisabled || !Validator.Script.Code)// continue
@@ -472,6 +481,7 @@
                     }
                 }
                 html = html.replace(`:${stage.Name}:`, stageText);
+                stage.StageText = stageText;
 
                 for (let j = 0; j < stage.StageActions.$values.length; j++) {
                     let actObj = stage.StageActions.$values[j];
@@ -493,8 +503,8 @@
                     if (actObj.HiddenExpr && actObj.HiddenExpr.Code) {
                         try {
                             let expr = atob(actObj.HiddenExpr.Code);
-                            let stat = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
-                            if (stat)
+                            actObj.HiddenExprResult = new Function("form", "user", expr).bind(this.ctrl, this.formRenderer.formObject, this.formRenderer.userObject)();
+                            if (actObj.HiddenExprResult)
                                 html = html.replace(`<option value='${actObj.EbSid}'>${actObj.ActionText}</option>`, '');
                         }
                         catch (e) {
@@ -590,6 +600,19 @@
         let actionDataVals = getObjByval(this.CurStageDATA.Columns, "Name", "action_unique_id");
         actionDataVals.Value = $(e.target).val();
 
+        let stageUqid = getObjByval(this.CurStageDATA.Columns, "Name", "stage_unique_id").Value;
+        let stage = getObjByval(this.stages, "EbSid", stageUqid);
+
+        this.ctrl.execReviewModal.find('.modal-title').text(this.ctrl.Label + ' - ' + stage.StageText);
+        let statusSel = $(`#${this.ctrl.EbSid_CtxId}_status`);
+        statusSel.html('');
+        for (let i = 0; i < stage.StageActions.$values.length; i++) {
+            let actObj = stage.StageActions.$values[i];
+            if (!actObj.HiddenExprResult) {
+                statusSel.append(`<option value='${actObj.EbSid}'>${actObj.ActionText}</option>`);
+            }
+        }
+        statusSel.val($(e.target).val());
         this.ctrl.execReviewModal.modal('show');
 
         //if (this.ctrl.CurStageAssocCtrls.length > 0) {

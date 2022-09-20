@@ -389,6 +389,14 @@
                         else
                             return "not found";
                     }
+                    else if (this.FO.WizardControls.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        let WizCtrl = this.FO.WizardControls.filter(function (obj) { return obj.Name == pathArr[1] })[0];
+                        let WizStep = WizCtrl.Controls.$values.filter(e => e.Name == pathArr[2]);
+                        if (WizStep.length > 0)
+                            ctrl = WizStep[0];
+                        else
+                            return "not found";
+                    }
                     else
                         return "not found";
                 }
@@ -1109,11 +1117,14 @@
                 }
             }
         }
+        this.FindCtrlsWithNoDependency_inner(this.FO.TabControls, ExprName, DepHandleObj, prop1, prop2);
+        this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
+    };
 
-        let tCtls = this.FO.TabControls;
-        for (let i = 0; i < tCtls.length; i++) {
-            for (let j = 0; j < tCtls[i].Controls.$values.length; j++) {
-                let tCtrlPane = tCtls[i].Controls.$values[j];
+    this.FindCtrlsWithNoDependency_inner = function (ctrlConts, ExprName, DepHandleObj, prop1, prop2) {
+        for (let i = 0; i < ctrlConts.length; i++) {
+            for (let j = 0; j < ctrlConts[i].Controls.$values.length; j++) {
+                let tCtrlPane = ctrlConts[i].Controls.$values[j];
                 if (tCtrlPane[ExprName] && tCtrlPane[ExprName].Code && tCtrlPane[ExprName].Lang === 0) {
                     if (!DepHandleObj[prop1].includes(tCtrlPane.__path)) {
                         DepHandleObj[prop1].push(tCtrlPane.__path);
@@ -1122,7 +1133,7 @@
                 }
             }
         }
-    };
+    }
 
     this.execAllValExprForDoNotPersistCtrls = function () {
         if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms

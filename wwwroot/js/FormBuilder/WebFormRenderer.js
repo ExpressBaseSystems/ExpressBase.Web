@@ -78,6 +78,12 @@ const WebFormRender = function (option) {
                 extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">Submit</button>`;
             }
 
+            let hiddenSteps = [];
+            for (let i = 0; i < wizControl.Controls.$values.length; i++) {
+                if (wizControl.Controls.$values[i].Hidden)
+                    hiddenSteps.push(i);
+            }
+
             $Tab.smartWizard({
                 theme: 'arrows',
                 enableUrlHash: false, // Enable selection of the step based on url hash
@@ -101,6 +107,7 @@ const WebFormRender = function (option) {
                     previous: '< Previous'
                 }
             });
+            $Tab.smartWizard("setState", hiddenSteps, "disable");
 
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 let leave = false;
@@ -116,7 +123,7 @@ const WebFormRender = function (option) {
                     leave = true;
 
                 if (leave) {
-                    if (wizControl.Controls.$values.length == nextStepIndex + 1) {
+                    if ($Tab.find('li.nav-item:visible').last().index() == nextStepIndex) {
                         $Tab.find('.sw-btn-save').removeClass('disabled');
                     }
                     else {
@@ -135,7 +142,7 @@ const WebFormRender = function (option) {
 
             $Tab.off('click', '.sw-btn-save').on('click', '.sw-btn-save', function (e) {
                 let stepInfo = $Tab.smartWizard("getStepInfo");
-                if (stepInfo.currentStep + 1 === stepInfo.totalSteps) {
+                if (stepInfo.currentStep === $Tab.find('li.nav-item:visible').last().index()) {
                     this.saveForm();
                 }
             }.bind(this));

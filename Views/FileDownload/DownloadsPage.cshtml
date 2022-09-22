@@ -7,6 +7,7 @@
 
 <script>
     var cm = new EbHeader().setName("Downloads");
+    document.title = "Downloads";
 </script>
 
 
@@ -18,6 +19,7 @@
                     <th scope="col">#</th>
                     <th scope="col">File name</th>
                     <th scope="col">Created at</th>
+                    <th scope="col"> </th>
                     <th scope="col"> </th>
                 </tr>
             </thead>
@@ -39,16 +41,26 @@
                             <td>@obj.CreatedAt</td>
                             @if (obj.IsDeleted)
                             {
-                                <td>downloaded</td>
+                                <td>Downloaded</td>
+                                <td></td>
                             }
-                            else if(obj.IsGenerating)
+                            else if (obj.IsGenerating)
                             {
                                 <td>Generating</td>
+                                <td></td>
                             }
                             else
                             {
                                 <td><a class="btn btn-sm btn-default download" href="/GetDownload?id=@(obj.Id)&op=d">Download</a></td>
-                                @*<td><a class="btn btn-sm btn-default download" href="/GetDownload?id=@(obj.Id)&op=o">Open</a></td>*@
+                                string[] arr = (obj.Filename ?? "").Split('.');
+                                if (arr[arr.Length - 1].ToLower() == "pdf")
+                                {
+                                    <td><a class="btn btn-sm btn-info view" href="/GetDownload?id=@(obj.Id)&op=o">View</a></td>
+                                }
+                                else 
+                                { 
+                                    <td></td>
+                                }
                             }
                         </tr>
                     }
@@ -57,3 +69,18 @@
         </table>
     </div>
 </div>
+
+<script>
+    $('a.btn').on('click', function (e) {
+        var btn = $(e.target);
+        var td = btn.closest('td');
+        if (btn.hasClass('download')) {
+            td.html('Download will start shortly');
+            td.next().html('');
+        }
+        else if (btn.hasClass('view')) {
+            td.html('Processing...');
+            td.prev().html('');
+        }
+    });
+</script>

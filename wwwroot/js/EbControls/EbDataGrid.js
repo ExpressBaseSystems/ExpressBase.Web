@@ -246,7 +246,7 @@
                 opt.userObject = this.ctrl.__userObject;
             }
 
-            let t0 = performance.now();
+            //let t0 = performance.now();
             this.initControls.init(inpCtrl, opt);
             //console.dev_log("initControls : " + inpCtrl.ObjType + " took " + (performance.now() - t0) + " milliseconds.");
 
@@ -830,7 +830,7 @@
     }.bind(this);
 
     this.ctrlToSpan_row = function (rowid) {
-        let t0 = performance.now();
+        //let t0 = performance.now();
         let $tr = this.$table.find(`[rowid=${rowid}]`);
         let tds = $tr.find("td[ctrltdidx]");
         for (var i = 0; i < tds.length; i++) {
@@ -845,7 +845,7 @@
     };
 
     this.ctrlToSpan_td = function ($td, flag) {
-        let t0 = performance.now();
+        //let t0 = performance.now();
         let ctrl = this.getCtrlByTd($td);
         if (!flag)
             $td.find(".ctrl-cover").hide();
@@ -1451,9 +1451,9 @@
         setTimeout(function () {
             let trIdx = $tr.index();
             $tr.remove();
-            let t0 = performance.now();
+            //let t0 = performance.now();
             this.resetRowSlNo(trIdx);
-            console.dev_log("resetRowSlNoUnder :  took " + (performance.now() - t0) + " milliseconds.");
+            //console.dev_log("resetRowSlNoUnder :  took " + (performance.now() - t0) + " milliseconds.");
             this.updateAggCols();
         }.bind(this), 101);
     };
@@ -1546,10 +1546,10 @@
     }.bind(this);
 
     this.spanToCtrl_td = function ($td) {
-        let ctrl = this.getCtrlByTd($td);
+        //let ctrl = this.getCtrlByTd($td);
         $td.attr("edited", "true");
         $td.find(".tdtxt").hide();
-        $td.find(".ctrl-cover").show(300);
+        $td.find(".ctrl-cover").show(this.RowShowDelay);
     }.bind(this);
 
     this.isDGEditable = function () {
@@ -2226,6 +2226,7 @@
         this.S_cogsTdHtml = "";
         this.rowSLCounter = 0;
         this.$addRowBtn = $(`#${this.ctrl.EbSid}Wraper .addrow-btn`);
+        this.RowShowDelay = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             col.__DG.objectMODEL = this.objectMODEL;
@@ -2240,6 +2241,8 @@
                 this.isPSInDG = true;
             if (col.ObjType === "DGUserControlColumn")
                 col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
+            if (col.ObjType === "DGPowerSelectColumn" || col.ObjType === "DGDateColumn")
+                this.RowShowDelay = 300;
         }.bind(this));
 
         if (this.ctrl.IsColumnsResizable)

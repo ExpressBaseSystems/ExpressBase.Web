@@ -55,7 +55,7 @@
                                 string[] arr = (obj.Filename ?? "").Split('.');
                                 if (arr[arr.Length - 1].ToLower() == "pdf")
                                 {
-                                    <td><a class="btn btn-sm btn-info view" href="/GetDownload?id=@(obj.Id)&op=o">View</a></td>
+                                    <td><a class="btn btn-sm btn-info view" href="/GetDownload?id=@(obj.Id)&op=o" target="_blank">View</a></td>
                                 }
                                 else 
                                 { 

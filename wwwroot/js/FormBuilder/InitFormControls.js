@@ -1132,6 +1132,121 @@
         }.bind(this, $ctrl));
     };
 
+    this.Label = function (ctrl, ctrlOpts) {
+        if (ctrl.IsDGCtrl) {
+
+        }
+        else {
+            if (ctrl.RenderAs != 1)
+                return;
+
+            let $lbl = $("#" + ctrl.EbSid_CtxId + 'Lbl');
+
+            if (!(ctrl.LinkedObjects && ctrl.LinkedObjects.$values.length > 0)) {
+                return;
+            }
+            let linkObj = ctrl.LinkedObjects.$values[0];
+
+            if (!linkObj.ObjRefId) {
+                console.warn('LabelLink - invalid obj refid');
+                return;
+            }
+            if (linkObj.LinkType !== 3) {
+                console.warn('LabelLink - only popup supported');
+                return;
+            }
+
+            $lbl.css('pointer-events', 'all');
+            $lbl.addClass('eb-label-link');
+
+            $lbl.on('click', this.clickedOnLabelLink.bind(this, ctrl, linkObj));
+        }
+    };
+
+    this.clickedOnLabelLink = function (ctrl, linkObj) {
+        let _params = this.getLabelLinkParameters(linkObj);
+        let _mode = 1;//view
+
+        if (_params.findIndex(e => e.Name === 'id') === -1) //prefill
+            _mode = 2;
+
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, linkObj);
+
+        ebcontext.webform.PopupForm(linkObj.ObjRefId, btoa(JSON.stringify(_params)), _mode,
+            {
+                srcCxt: this.Renderer.__MultiRenderCxt,
+                initiator: ctrl,
+                locId: this.Renderer.getLocId()
+            });
+    };
+
+    this.getLabelLinkParameters = function (linkObj) {
+        let destid = 0;
+        let params = [];
+        let pushMasterId = true;
+
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowForwardMap'))
+                    continue;
+
+                if (pMap[i].SrcCtrlName === 'id') {//source table id
+                    params.push({ Name: pMap[i].DestCtrlName, Type: 7, Value: this.Renderer.rowId });
+                    pushMasterId = false;
+                    continue;
+                }
+                if (pMap[i].DestCtrlName === 'id') {
+                    let outCtrl = this.Renderer.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        if (outCtrl.getValue() > 0) {
+                            destid = outCtrl.getValue();
+                            params = [{ Name: 'id', Type: 7, Value: destid }];
+                            pushMasterId = false;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    let outCtrl = this.Renderer.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        params.push({
+                            Name: pMap[i].DestCtrlName,
+                            Type: outCtrl.EbDbType,
+                            Value: outCtrl.getValue()
+                        });
+                    }
+                }
+            }
+        }
+        if (pushMasterId) {
+            params.push({ Name: this.formRenderer.MasterTable + '_id', Type: 7, Value: this.Renderer.rowId });
+        }
+
+        return params;
+    };
+
+    this.reverseUpdateData = function (linkObj, destRender) {
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowReverseMap'))
+                    continue;
+                let destCtrl = this.Renderer.formObject[pMap[i].DestCtrlName];
+                if (!destCtrl)
+                    continue;
+                if (pMap[i].SrcCtrlName === 'id') {
+                    destCtrl.setValue(destRender.rowId);
+                }
+                else {
+                    let srcCtrl = destRender.formObject[pMap[i].SrcCtrlName];
+                    if (srcCtrl)
+                        destCtrl.setValue(srcCtrl.getValue());
+                }
+            }
+        }
+    };
+
     this.Review = function (ctrl, ctrlOpts) {
         return new EbReview(ctrl, ctrlOpts);
     };

@@ -2062,7 +2062,10 @@
     };
 
     this.clickedOnLabelLink = function (e) {
-        let $td = $(e.currentTarget).closest("td");
+        let $spn = $(e.currentTarget);
+        if (!$spn.text())
+            return;
+        let $td = $spn.closest("td");
         let rowid = $td.closest("tr").attr("rowid");
         let ctrlname = $td.attr('colname');
         let ctrl = this.objectMODEL[rowid] ? this.objectMODEL[rowid].find(e => e.Name == ctrlname) : null;
@@ -2070,6 +2073,23 @@
             console.error('clickedOnLabelLink - ctrl not found');
             return;
         }
+
+        if (ctrl.LinkVersionId && ctrl.LinkDataId) {
+            let verIdCtrl = this.objectMODEL[rowid].find(e => e.Name == ctrl.LinkVersionId);
+            let dataIdCtrl = this.objectMODEL[rowid].find(e => e.Name == ctrl.LinkDataId);
+            if (verIdCtrl && dataIdCtrl) {
+                let verId = verIdCtrl.getValue();
+                let dataId = dataIdCtrl.getValue();
+                if (verId && dataId) {
+                    let params = [];
+                    params.push(new fltr_obj(11, "id", dataId));
+                    let url = `/WebForm/Inde?_r=${verId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.formRenderer.getLocId()}`;
+                    window.open(url, '_blank');
+                    return;
+                }
+            }
+        }
+
         if (!(ctrl.LinkedObjects && ctrl.LinkedObjects.$values.length > 0)) {
             console.error('clickedOnLabelLink - no linked objects');
             return;
@@ -2171,7 +2191,7 @@
             }
         }
         if (pushMasterId) {
-            params.push({ Name: this.formRenderer.MasterTable, Type: 7, Value: this.formRenderer.rowId });
+            params.push({ Name: this.formRenderer.MasterTable + '_id', Type: 7, Value: this.formRenderer.rowId });
             if (pushLinesId)
                 params.push({ Name: this.ctrl.TableName + '_id', Type: 7, Value: rowid > 0 ? rowid : 0 });
         }

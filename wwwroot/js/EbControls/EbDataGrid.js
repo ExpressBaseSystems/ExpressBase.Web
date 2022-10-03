@@ -1929,6 +1929,8 @@
             if (!this.ctrl.IsLoadDataSourceAlways && isFull && ctrl && !val)
                 isFull = false;
         }.bind(this));
+        if (this.ctrl.CustomSelectDS && this.formRenderer.rowId <= 0)
+            isFull = false;
         return [params, lastCtrlName, isFull];
     };
 
@@ -2012,7 +2014,7 @@
 
         lastModel = lastModel.concat(delModel);
         for (let i = 0; i < lastModel.length; i++) {
-            if (lastModel[i].RowId > 0) {
+            if (lastModel[i].RowId > 0 && this.DataMODEL.findIndex(e => e.RowId == lastModel[i].RowId) == -1) {
                 lastModel[i].IsDelete = true;
                 this.DataMODEL.push(lastModel[i]);
             }

@@ -820,8 +820,8 @@ const WebFormRender = function (option) {
 
     this.renderInAfterSaveMode = function (respObj) {
         if (!this.afterSavemodeS) {
-            if (this.rowId > 0)
-                this.afterSavemodeS = 'view';
+            if (this.rowId > 0) //edit
+                this.afterSavemodeS = getKeyByVal(EbEnums_w.WebFormAfterSaveModes, this.FormObj.FormModeAfterEdit.toString()).split("_")[0].toLowerCase();
             else
                 this.afterSavemodeS = this.defaultAfterSavemodeS;
         }

@@ -891,7 +891,7 @@
         //console.dev_log("ctrlToSpan_td " + (performance.now() - t0) + " milliseconds.");
     }.bind(this);
 
-    ebUpdateDGTD = function ($td) {
+    this.ebUpdateDGTD = function ($td) {
         this.ctrlToSpan_td($td, true);
     }.bind(this);
 

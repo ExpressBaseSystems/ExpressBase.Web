@@ -1327,7 +1327,7 @@
                 __this.DataVals.D = d;
 
                 if ($(event.target).data('ctrl_ref'))// when trigger change from setValue(if the setValue called from inactive row control) update DG table td
-                    ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
+                    this.FO.DGBuilderObjs[__this.__DG.EbSid].ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
             }
         }
         if (__this.___isNotUpdateValExpDepCtrls) {

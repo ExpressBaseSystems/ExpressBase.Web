@@ -78,26 +78,26 @@ function EbRunValueExpr_n(ctrl, formObject, userObject, formObj) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
         return valueExpHelper_n(getValueExprValue(ctrl, formObject, userObject), ctrl);
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
-        let params = [];
+        //let params = [];
 
-        ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
+        //ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
 
-        $.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
-            try {
-                let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
-                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
-                let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
-                params.push(param);
-            }
-            catch (e) {
-                console.eb_log("eb error :");
-                console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-            }
-        }.bind(this));
+        //$.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
+        //    try {
+        //        let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
+        //        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+        //        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
+        //        let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
+        //        params.push(param);
+        //    }
+        //    catch (e) {
+        //        console.eb_log("eb error :");
+        //        console.eb_log(e);
+        //        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+        //    }
+        //}.bind(this));
 
-        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
+        //ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
     }
 }
 
@@ -117,26 +117,26 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
         return valueExpHelper(getValueExprValue(ctrl, formObject, userObject), ctrl);
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
-        let params = [];
+        //let params = [];
 
-        ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
+        //ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
 
-        $.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
-            try {
-                let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
-                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
-                let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
-                params.push(param);
-            }
-            catch (e) {
-                console.eb_log("eb error :");
-                console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-            }
-        }.bind(this));
+        //$.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
+        //    try {
+        //        let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
+        //        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+        //        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
+        //        let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
+        //        params.push(param);
+        //    }
+        //    catch (e) {
+        //        console.eb_log("eb error :");
+        //        console.eb_log(e);
+        //        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+        //    }
+        //}.bind(this));
 
-        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
+        //ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
     }
 }
 

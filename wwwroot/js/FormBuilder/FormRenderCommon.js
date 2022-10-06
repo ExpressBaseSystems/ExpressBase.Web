@@ -1318,11 +1318,13 @@
                 v = parseFloat(v);
             if (__this.__isEditing) {
                 valChanged = __this.curRowDataVals.Value != v;
+                __this.curRowDataVals.PrevValue = __this.curRowDataVals.Value;
                 __this.curRowDataVals.Value = v;
                 __this.curRowDataVals.D = d;
             }
             else {
                 valChanged = __this.DataVals.Value != v;
+                __this.DataVals.PrevValue = __this.DataVals.Value;
                 __this.DataVals.Value = v;
                 __this.DataVals.D = d;
 
@@ -1377,6 +1379,7 @@
 
         if (valChanged) {
             if (Obj.DataVals) {
+                Obj.DataVals.PrevValue = Obj.DataVals.Value;
                 Obj.DataVals.Value = Obj.getValueFromDOM();
                 Obj.DataVals.D = Obj.getDisplayMemberFromDOM();
 

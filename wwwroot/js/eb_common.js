@@ -1404,6 +1404,7 @@ const formatData4webform = function (_multipleTables) {
                 //delete singleColumn["R"];
                 delete singleColumn["ValueExpr_val"];
                 delete singleColumn["DisplayMember"];
+                delete singleColumn["PrevValue"];
             }
         }
     }

@@ -1475,7 +1475,7 @@
             let depCtrl_s = DepHandleObj.HideP[i];
             try {
                 let code = atob(depCtrl.HiddenExpr.Code);
-                let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                let hideExpVal = new Function("form", "user", "sourcectrl", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                 if (hideExpVal)
                     depCtrl.hide();
                 else
@@ -1492,7 +1492,7 @@
             try {
                 let code = atob(depCtrl.DisableExpr.Code);
                 if (!(!DepHandleObj.curCtrl.IsDGCtrl && depCtrl.IsDGCtrl)) {// not form to grid
-                    let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    let hideExpVal = new Function("form", "user", "sourcectrl", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                     if (hideExpVal) {
                         depCtrl.disable();
                         depCtrl.__IsDisableByExp = true;
@@ -1515,7 +1515,7 @@
         let chngFn = DepHandleObj.curCtrl.OnChangeFn;
         if (chngFn && chngFn.Code && chngFn.Code.trim() !== "") {
             try {
-                new Function("form", "user", `event`, atob(chngFn.Code)).bind(DepHandleObj.curCtrl, this.FO.formObject, this.FO.userObject)();
+                new Function("form", "user", "sourcectrl", `event`, atob(chngFn.Code)).bind(DepHandleObj.curCtrl, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
             }
             catch (e) {
                 console.error(e);
@@ -1552,7 +1552,7 @@
                 let ValueExpr_val = null;
                 try {
                     let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
-                    ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    ValueExpr_val = new Function("form", "user", "sourcectrl", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                     ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
                 }
                 catch (e) {

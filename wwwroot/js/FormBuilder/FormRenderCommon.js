@@ -1591,7 +1591,8 @@
                     paramsReady = false;
                     return false;
                 }
-                filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
+                let _type = paramCtrl.EbDbType > 0 && !paramCtrl.IsDGCtrl ? paramCtrl.EbDbType : 16;
+                filterValues.push(new fltr_obj(_type, paramCtrl.Name, paramCtrl.getValue()));
             }.bind(this));
             if (paramsReady) {
                 filterValues.push(new fltr_obj(11, "eb_loc_id", this.FO.getLocId()));

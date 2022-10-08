@@ -1905,7 +1905,7 @@
             if (ctrlName === "eb_currentuser_id")
                 val = ebcontext.user.UserId;
             else if (ctrlName === "eb_loc_id")
-                val = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+                val = this.formRenderer.getLocId();
             else if (ctrlName === "id")
                 val = this.formRenderer.rowId;
 

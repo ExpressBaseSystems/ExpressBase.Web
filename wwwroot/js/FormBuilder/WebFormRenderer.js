@@ -2618,14 +2618,16 @@ const WebFormRender = function (option) {
             $cont.append(`<div class='wfd-lock wfd-linkdiv'><span>Lock</span> this Form Submission</div>`);
         }
 
+        let hasSrcForm = this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0);
+
         if (this.formData.IsCancelled) {
             let $el = $(`<div class='wfd-cancel wfd-linkdiv'> This is a <b> Cancelled </b> Form Submission </div>`);
-            if (!this.formData.IsReadOnly && this.checkPermission('RevokeCancel')) {
+            if (!this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm && this.checkPermission('RevokeCancel')) {
                 $el.append(`<span> Undo </span>`);
             }
             $cont.append($el);
         }
-        else if (!this.formData.IsReadOnly && this.checkPermission('Cancel')) {
+        else if (!this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm && this.checkPermission('Cancel')) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableCancel()))
                 $cont.append(`<div class='wfd-cancel wfd-linkdiv'><span>Cancel</span> this Form Submission</div>`);
         }
@@ -2658,7 +2660,7 @@ const WebFormRender = function (option) {
             }
         }
 
-        if (this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0)) {
+        if (hasSrcForm) {
             $cont.append(`<div class='wfd-source wfd-depend wfd-linkdiv'><span>Open</span> Source Form Submission</div>`);
             $cont.find('.wfd-source span').off("click").on("click", this.openSourceForm.bind(this));
         }
@@ -2669,7 +2671,7 @@ const WebFormRender = function (option) {
             </div>`);
             $cont.find('.wfd-delete div').off("click").on("click", this.deleteDraft.bind(this));
         }
-        else if (this.checkPermission('Delete')) {
+        else if (this.checkPermission('Delete') && !this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableDelete())) {
                 $cont.append(`<div class='wfd-delete wfd-btndiv'>
                     <div><i class="fa fa-trash"></i> Delete the Submission</div>

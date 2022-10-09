@@ -4019,6 +4019,7 @@ input.locinp {
         bottom: 40px;
         position: absolute;
         width: calc(100% - 40px);
+        background-color: white;
     }
 
     .webformdetails .wfd-btndiv > div {
@@ -4048,8 +4049,7 @@ input.locinp {
     }
 
         .webformdetails .wfd-depend div:nth-child(2) {
-            text-align: center;
-            padding: 10px 0;
+            padding: 10px 0 10px 10px;
         }
 
 /*#endregion WebformDetails*/

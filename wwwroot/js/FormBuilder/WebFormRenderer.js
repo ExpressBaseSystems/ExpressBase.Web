@@ -68,6 +68,12 @@ const WebFormRender = function (option) {
 
         $.each(this.WizardControls, function (i, wizControl) {//WizControl Init
             let $Tab = $(`#cont_${wizControl.EbSid_CtxId}>.RenderAsWizard`);
+
+            wizControl.SwitchToEditMode = function () {
+                $Tab.find('.sw-btn-edit').addClass('disabled');
+                $Tab.find('.sw-btn-save').removeClass('disabled');
+            }.bind(this);
+
             if ($Tab.length === 0)
                 return false;
 
@@ -76,6 +82,11 @@ const WebFormRender = function (option) {
                 if (this.FormObj.CanSaveAsDraft)
                     extraHtml += `<button class="btn sw-btn sw-btn-save-draft">Save as Draft</button>`;
                 extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">Submit</button>`;
+            }
+            else if (this.Mode.isView) {
+                if ($('#' + this.hBtns.Edit).is(':visible:enabled'))
+                    extraHtml += `<button class="btn sw-btn sw-btn-edit">Edit</button>`;
+                extraHtml += `<button class="btn sw-btn sw-btn-save disabled">Submit</button>`;
             }
 
             let hiddenSteps = [];
@@ -122,7 +133,7 @@ const WebFormRender = function (option) {
                 else
                     leave = true;
 
-                if (leave) {
+                if (leave && (this.Mode.isNew)) {
                     if ($Tab.find('li.nav-item:visible').last().index() == nextStepIndex) {
                         $Tab.find('.sw-btn-save').removeClass('disabled');
                     }
@@ -142,8 +153,14 @@ const WebFormRender = function (option) {
 
             $Tab.off('click', '.sw-btn-save').on('click', '.sw-btn-save', function (e) {
                 let stepInfo = $Tab.smartWizard("getStepInfo");
-                if (stepInfo.currentStep === $Tab.find('li.nav-item:visible').last().index()) {
+                if ((stepInfo.currentStep === $Tab.find('li.nav-item:visible').last().index() && this.Mode.isNew) || this.Mode.isEdit) {
                     this.saveForm();
+                }
+            }.bind(this));
+
+            $Tab.off('click', '.sw-btn-edit').on('click', '.sw-btn-edit', function (e) {
+                if (this.Mode.isView && $('#' + this.hBtns.Edit).is(':visible:enabled')) {
+                    this.SwitchToEditMode();
                 }
             }.bind(this));
 
@@ -1232,6 +1249,9 @@ const WebFormRender = function (option) {
         }.bind(this));
         $.each(this.DGsNew, function (k, DG) {
             this.DGNewBuilderObjs[DG.EbSid_CtxId].SwitchToEditMode();
+        }.bind(this));
+        $.each(this.WizardControls, function (i, wizControl) {
+            wizControl.SwitchToEditMode();
         }.bind(this));
     }.bind(this);
 

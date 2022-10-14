@@ -1030,11 +1030,11 @@
     this.getFilterForLinkfromColumn = function () {
         this.linkfromcolumn = false;
         this.dvformMode = 1;
-        if (this.Source === "Draft")
-            this.dvformMode = 8;
         let filters = [];
         var temp = this.EbObject.Columns.$values.filter(obj => obj.name === this.linkDVColumn)[0];
         filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
+        if (this.Source === "Draft" || temp.IsFormDraftMode)
+            this.dvformMode = 8;
         return filters;
     };
 

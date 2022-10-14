@@ -1154,6 +1154,21 @@
             DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
             this.ctrlChangeListener_inner0(DepHandleObj);
         }
+        else {
+            DepHandleObj = {
+                curCtrl: {},
+                isInitSetup: true,
+                exprName: 'DefaultValueExpression',
+                ValueP: [], ValueC: [],
+                DrPaths: [], DrCtrls: [],
+                HideP: [], HideC: [],
+                DisableP: [], DisableC: []
+            };
+            let a = this.FO.flatControls;
+            this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
+            this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
+            this.ctrlChangeListener_inner2(DepHandleObj);
+        }
     };
 
     this.GetDepHandleObj = function (curCtrl) {

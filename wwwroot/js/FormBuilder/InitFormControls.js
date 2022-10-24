@@ -1137,6 +1137,12 @@
 
         }
         else {
+            ctrl.setValue = function (p1) {
+                let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
+                $lbl.text(p1 || '');
+            }.bind(ctrl);
+            ctrl.justSetValue = ctrl.setValue;
+
             if (ctrl.RenderAs != 1)
                 return;
 

@@ -548,10 +548,11 @@ namespace ExpressBase.Web.Controllers
             return null;
         }
 
-        public DataSourceDataResponse getData4PowerSelect(TableDataRequest request)
+        public DataSourceDataResponse getData4PowerSelect(string req)
         {
             try
             {
+	    	TableDataRequest request = JsonConvert.DeserializeObject<TableDataRequest>(req);
                 request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = false;
                 if (request.DataVizObjString != null)

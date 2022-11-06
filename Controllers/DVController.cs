@@ -506,10 +506,12 @@ namespace ExpressBase.Web.Controllers
             return resultlist1;
         }
 
-        public DataSourceDataResponse getData4PowerSelect(TableDataRequest request)
+          [HttpPost]
+        public DataSourceDataResponse getData4PowerSelect(string req)
         {
             try
             {
+                TableDataRequest request = JsonConvert.DeserializeObject<TableDataRequest>(req);                
                 request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = false;
                 //if (request.DataVizObjString != null)

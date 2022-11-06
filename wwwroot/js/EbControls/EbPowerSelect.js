@@ -572,7 +572,7 @@ const EbPowerSelect = function (ctrl, options) {
         $.ajax({
             url: url,
             type: 'POST',
-            data: params,
+            data: { req: JSON.stringify(params) },
             success: this.getDataSuccess.bind(this, this.getDataCounter),
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();

@@ -318,6 +318,8 @@ var EbBasicDataTable = function (Option) {
         dq.QueryIndex = this.QueryIndex;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.tableId;
+        if (this.source === "powerselect")
+            dq = { req: JSON.stringify(dq) };
         return dq;
     };
 

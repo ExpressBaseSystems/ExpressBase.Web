@@ -17,6 +17,11 @@
     this.SlTableId = `#slno_${this.ctrl.EbSid}`;
     this.$DGbody = $(`#${this.ctrl.EbSid}Wraper .Dg_body`);
     this.$ActiveTd = null;
+    this.trHeightInPx = 38;
+    this.visibleTrViewSize = 60;
+    this.visibleTrViewMargin = 70;//top and bottom margin
+    this.visibleTrWindowSize = this.visibleTrViewSize + this.visibleTrViewMargin * 2;
+    this.disableVScrollAdjust = false;
 
     this.mode_s = "";
     if (this.Mode.isEdit)
@@ -126,8 +131,8 @@
     this.drawHTMLView = function () {
         $(`#${this.TableId} tbody`).empty();
         this.resetBuffers();
-        let trsHTML = this.getTrsHTML_();
-
+        let trsHTML = this.getTrsHTML_(0);
+        this.adjustMargin(0);
         //if (!this.ctrl.AscendingOrder)
         //    this.UpdateSlNo();
         $(`#${this.TableId}>tbody`).append(trsHTML);
@@ -136,24 +141,24 @@
         $(`#${this.TableId}>tbody`).find(".ctrlstd .edit-row").show();
     };
 
-    this.getTrsHTML_ = function () {
+    this.getTrsHTML_ = function (startIdx) {
         let TrsHTML = [];
         //let rowIds = Object.keys(this.objectMODEL);
-        let rowIds = this.DataMODEL.map(a => a.RowId);
-        let i = 0;
-        for (i = 0; i < rowIds.length; i++) {
+        let rowIds = this.DataMODEL.filter(e => !e.IsDelete).map(a => a.RowId);
+        this.rowSLCounter = startIdx;
+        for (let i = startIdx, j = 0; i < rowIds.length && j < this.visibleTrWindowSize; i++, j++) {
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
-
+        this.rowSLCounter = rowIds.length;
         return TrsHTML.join();
     };
 
     //full grid draw
-    this.getTrHTML_ = function (rowCtrls, rowid, isAdded = true) {
+    this.getTrHTML_ = function (rowCtrls, rowid, isAdded) {
         let isAnyColEditable = false;
-        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' rowid='${rowid}'>
-                    <td class='row-no-td' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
+        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' rowid='${rowid}' rownum='${++this.rowSLCounter}'>
+                    <td class='row-no-td' id='${this.TableId + "_" + this.rowSLCounter}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
 
         let visibleCtrlIdx = 0;
 
@@ -177,31 +182,47 @@
     //full grid draw
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@; display: inline-block;' form-link='@form-link@'>
-                    <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
-                    <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
-                      <span>${this.getDispMembr(inpCtrl)}</span>
-                    </div >                                               
-                </td>`
-            .replace("@isReadonly@", col.IsDisable)
+        let html = `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@; display: inline-block;' form-link='@form-link@'>`;
+
+        if (this.canAddCtrlHtml(inpCtrl))
+            html += `<div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>`;
+
+        html += `<div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
+                   <span>${this.getDispMembr(inpCtrl)}</span>
+                 </div >
+               </td>`;
+
+        html = html.replace("@isReadonly@", col.IsDisable)
             .replace("@back-color@", col.IsDisable ? 'rgba(238,238,238,0.6)' : 'transparent')
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
             .replace("@form-link@", col.FormRefId ? 'true' : 'false')
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+
+        return html;
     };
 
     //new row html
     this.getTdHtml = function (inpCtrl, col, i) {
-        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;' form-link='@form-link@'>
-                    <div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
-                    <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>
-                </td>`
+        let html = `<td id ='td_@ebsid@' ctrltdidx='${i}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;' form-link='@form-link@'>`;
+
+        if (this.canAddCtrlHtml(inpCtrl))
+            html += `<div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>`;
+
+        html += `<div class='tdtxt' coltype='${col.ObjType}'><span></span></div>
+                </td>`;
+
+        html = html
             .replace("@isReadonly@", col.IsDisable)
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
             .replace("@form-link@", col.FormRefId ? 'true' : 'false')
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+
+        return html;
     };
 
+    this.canAddCtrlHtml = function (inpCtrl) {
+        return !(inpCtrl.IsDisable && inpCtrl.ObjType == 'TextBox' && inpCtrl.ValueExpr && !inpCtrl.ValueExpr.Code);
+    }.bind(this);
 
     this.changeEditFlagInRowCtrls = function (val, rowId) {
         let curRowCtrls = this.objectMODEL[rowId];
@@ -238,6 +259,8 @@
         //// initialise all controls in added row
         for (let i = 0; i < CurRowCtrls.length; i++) {
             let inpCtrl = CurRowCtrls[i];
+            if (!this.canAddCtrlHtml(inpCtrl))
+                continue;
             let opt = {};
             if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
                 opt.getAllCtrlValuesFn = this.getFormVals;
@@ -272,7 +295,7 @@
             }
 
             // disble 
-            if (inpCtrl.IsDisable && !inpCtrl.Hidden)
+            if (inpCtrl.IsDisable && !inpCtrl.Hidden && this.canAddCtrlHtml(inpCtrl))
                 inpCtrl.disable();
 
         }
@@ -295,7 +318,10 @@
 
                 ctrl.___DoNotUpdateDataVals = true;
 
-                if (ctrl.ObjType === "PowerSelect") {
+                if (!this.canAddCtrlHtml(ctrl)) {
+                    //ctrl.setDisplayMember(Value);
+                }
+                else if (ctrl.ObjType === "PowerSelect") {
                     ctrl.__isInitiallyPopulating = true;
                     ctrl.setDisplayMember(Value);
                 }
@@ -660,8 +686,8 @@
         rowId = rowId || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowId, isAdded);
         let $tr = $(tr).hide();
-        this.addRowDataModel(rowId, this.objectMODEL[rowId]);
         if (insertIdx !== undefined) {
+            this.addRowDataModel(rowId, this.objectMODEL[rowId]);
             this.insertRowAt(insertIdx, $tr);
             this.resetRowSlNo(insertIdx);
         }
@@ -671,6 +697,8 @@
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
                 //}
                 //else
+
+                this.scrollToTop();
                 $(`#${this.TableId}>tbody`).prepend($tr);
             }
             else {
@@ -678,8 +706,11 @@
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
                 //}
                 //else
+
+                this.scrollToBottom();
                 $(`#${this.TableId}>tbody`).append($tr);
             }
+            this.addRowDataModel(rowId, this.objectMODEL[rowId]);
             if (!this.ctrl.AscendingOrder)
                 this.resetRowSlNo();
         }
@@ -846,6 +877,8 @@
 
     this.ctrlToSpan_td = function ($td, flag) {
         //let t0 = performance.now();
+        if ($td.find(".ctrl-cover").length == 0)
+            return;
         let ctrl = this.getCtrlByTd($td);
         if (!flag)
             $td.find(".ctrl-cover").hide();
@@ -1022,6 +1055,7 @@
         let new_rowId = $tr.attr("rowid");
         let $td = $e.closest("td");
         if (rowId === new_rowId) {
+            //this.execDisableExpr();
             let UiInps = $td.find("[ui-inp]:enabled");
             if (UiInps.length > 0 && e.originalEvent) {
                 if ($td.attr('tdcoltype') == "DGBooleanColumn")
@@ -1395,22 +1429,22 @@
             let inpCtrl = colCtrls[i];
             if (inpCtrl.__isDeleted)
                 continue;
-            if (document.getElementById(inpCtrl.EbSid_CtxId) === document.activeElement)
-                val = document.activeElement.value.replace(/,/g, '');
-            else {
-                if (inpCtrl.__isEditing)
-                    val = inpCtrl.curRowDataVals.Value || 0;
-                else
-                    val = inpCtrl.DataVals.Value || 0;
-            }
+            //if (document.getElementById(inpCtrl.EbSid_CtxId) === document.activeElement)
+            //    val = document.activeElement.value.replace(/,/g, '');
+            //else {
+            if (inpCtrl.__isEditing)
+                val = inpCtrl.curRowDataVals.Value || 0;
+            else
+                val = inpCtrl.DataVals.Value || 0;
+            //}
             sum += parseFloat(val) || 0;
-            sum = parseFloat(sum.toFixed(getObjByval(colCtrls, "Name", colname).DecimalPlaces));
         }
+        sum = sum.toFixed(getObjByval(this.ctrl.Controls.$values, "Name", colname).DecimalPlaces);
 
-        this.ctrl[colname + "_sum"] = sum;
+        this.ctrl[colname + "_sum"] = parseFloat(sum);
         if (updateDpnt && !this.formRenderer.isInitiallyPopulating)
             this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
-        return sum.toFixed(getObjByval(this.ctrl.Controls.$values, "Name", colname).DecimalPlaces);
+        return sum;
     };
 
     this.sumOfCol = function (updateDpnt, colName) {
@@ -1548,6 +1582,8 @@
     this.spanToCtrl_td = function ($td) {
         //let ctrl = this.getCtrlByTd($td);
         $td.attr("edited", "true");
+        if ($td.find(".ctrl-cover").length == 0)
+            return;
         $td.find(".tdtxt").hide();
         $td.find(".ctrl-cover").show(this.RowShowDelay);
     }.bind(this);
@@ -1718,7 +1754,8 @@
         let $tr = this.get$RowByRowId(rowId);
         $tr.find(".ctrlstd").attr("mode", "view").attr("title", "Row Disabled");
         $.each(this.objectMODEL[rowId], function (i, inpCtrl) {
-            inpCtrl.disable();
+            if (this.canAddCtrlHtml(inpCtrl))
+                inpCtrl.disable();
         }.bind(this));
     };
 
@@ -1726,7 +1763,8 @@
         let $tr = this.get$RowByRowId(rowId);
         $tr.find(".ctrlstd").removeAttr('mode').removeAttr('title');
         $.each(this.objectMODEL[rowId], function (i, inpCtrl) {
-            inpCtrl.enable();
+            if (this.canAddCtrlHtml(inpCtrl))
+                inpCtrl.enable();
         }.bind(this));
     };
 
@@ -2265,6 +2303,9 @@
                 col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
             if (col.ObjType === "DGPowerSelectColumn" || col.ObjType === "DGDateColumn")
                 this.RowShowDelay = 300;
+
+            //create input ctrl here
+
         }.bind(this));
 
         if (this.ctrl.IsColumnsResizable)
@@ -2308,6 +2349,9 @@
         for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
             this.initControls.initInfo(this.ctrl.Controls.$values[i]);
         }
+
+        this.$TblBody = this.$table.children('tbody');///
+        this.$DGbody.on("scroll", this.dg_VScroll);
     };
 
     this.dg_HScroll = function (e) {
@@ -2324,6 +2368,87 @@
             $bodyHScroll.scrollLeft(scrollLeft);
         if ($e !== $footerHScroll && $footerHScroll.scrollLeft() !== scrollLeft)
             $footerHScroll.scrollLeft(scrollLeft);
+    }.bind(this);
+
+    this.timer = null;
+
+    this.dg_VScroll = function (e) {
+        if (this.visibleTrWindowSize >= this.DataMODEL.length)
+            return;
+        if (this.disableVScrollAdjust) {
+            this.disableVScrollAdjust = false;
+            return;
+        }
+        clearTimeout(this.timer);
+        this.timer = setTimeout(this.dg_VScroll_inner, 300);
+    }.bind(this);
+
+    this.dg_VScroll_inner = function (e) {
+        let scrollTop = this.$DGbody.scrollTop();
+        let topRowIndx = parseInt(scrollTop / this.trHeightInPx);
+        this.dg_VScroll_inner2(topRowIndx);
+    }.bind(this);
+
+    this.dg_VScroll_inner2 = function (topRowIndx) {
+        let visTrNum = parseInt(this.$TblBody.children('tr').first().attr('rownum'));
+
+        if (topRowIndx >= visTrNum && topRowIndx <= visTrNum + this.visibleTrViewMargin * 2)
+            return;
+
+        let topMarginRowIndx = topRowIndx - this.visibleTrViewMargin > 0 ? topRowIndx - this.visibleTrViewMargin : 0;
+
+        this.$TblBody.empty();
+        let trsHTML = this.getTrsHTML_(topMarginRowIndx);
+        this.$TblBody.append(trsHTML);
+        this.adjustMargin(topMarginRowIndx);
+
+        this.$TblBody.find(".ctrlstd .check-row").hide();
+        this.$TblBody.find(".ctrlstd .del-row").show();
+        this.$TblBody.find(".ctrlstd .edit-row").show();
+    }.bind(this);
+
+    this.scrollToTop = function () {
+        if (this.visibleTrWindowSize >= this.DataMODEL.length)
+            return;
+        this.disableVScrollAdjust = true;
+        this.dg_VScroll_inner2(0);
+        this.$DGbody.scrollTop(0);
+    }.bind(this);
+
+    this.scrollToBottom = function () {
+        if (this.visibleTrWindowSize >= this.DataMODEL.length)
+            return;
+        this.disableVScrollAdjust = true;
+        let topRowIndx = 0;
+        if (this.visibleTrWindowSize < this.DataMODEL.length)
+            topRowIndx = this.DataMODEL.length - this.visibleTrWindowSize + this.visibleTrViewMargin;
+        this.dg_VScroll_inner2(topRowIndx);
+        this.$DGbody.scrollTop(this.$DGbody[0].scrollHeight);
+    }.bind(this);
+
+    this.adjustMargin = function (topRowIndx) {
+        let trCount = this.DataMODEL.length;
+
+        if (topRowIndx > 0) {
+            this.$table.css('margin-top', parseInt(topRowIndx * this.trHeightInPx) + 'px');
+            if (topRowIndx + this.visibleTrWindowSize < trCount) {
+                let bPad = (trCount - topRowIndx - this.visibleTrWindowSize) * this.trHeightInPx;
+                this.$table.css('margin-bottom', parseInt(bPad) + 'px');
+            }
+            else {
+                this.$table.css('margin-bottom', '0px');
+            }
+        }
+        else {
+            this.$table.css('margin-top', '0px');
+            if (topRowIndx + this.visibleTrWindowSize < trCount) {
+                let bPad = (trCount - topRowIndx - this.visibleTrWindowSize) * this.trHeightInPx;
+                this.$table.css('margin-bottom', parseInt(bPad) + 'px');
+            }
+            else {
+                this.$table.css('margin-bottom', '0px');
+            }
+        }
     }.bind(this);
 
     this.preInit = function () {

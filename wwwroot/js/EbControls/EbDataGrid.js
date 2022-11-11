@@ -132,7 +132,8 @@
         $(`#${this.TableId} tbody`).empty();
         this.resetBuffers();
         let trsHTML = this.getTrsHTML_(0);
-        this.adjustMargin(0);
+        if (this.ctrl.DeferRender)
+            this.adjustMargin(0);
         //if (!this.ctrl.AscendingOrder)
         //    this.UpdateSlNo();
         $(`#${this.TableId}>tbody`).append(trsHTML);

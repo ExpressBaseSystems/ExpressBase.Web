@@ -146,7 +146,7 @@
         //let rowIds = Object.keys(this.objectMODEL);
         let rowIds = this.DataMODEL.filter(e => !e.IsDelete).map(a => a.RowId);
         this.rowSLCounter = startIdx;
-        for (let i = startIdx, j = 0; i < rowIds.length && j < this.visibleTrWindowSize; i++, j++) {
+        for (let i = startIdx, j = 0; i < rowIds.length && (!this.ctrl.DeferRender || j < this.visibleTrWindowSize); i++, j++) {
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
@@ -2351,7 +2351,8 @@
         }
 
         this.$TblBody = this.$table.children('tbody');///
-        this.$DGbody.on("scroll", this.dg_VScroll);
+        if (this.ctrl.DeferRender)
+            this.$DGbody.on("scroll", this.dg_VScroll);
     };
 
     this.dg_HScroll = function (e) {
@@ -2408,6 +2409,8 @@
     }.bind(this);
 
     this.scrollToTop = function () {
+        if (!this.ctrl.DeferRender)
+            return;
         if (this.visibleTrWindowSize >= this.DataMODEL.length)
             return;
         this.disableVScrollAdjust = true;
@@ -2416,6 +2419,8 @@
     }.bind(this);
 
     this.scrollToBottom = function () {
+        if (!this.ctrl.DeferRender)
+            return;
         if (this.visibleTrWindowSize >= this.DataMODEL.length)
             return;
         this.disableVScrollAdjust = true;

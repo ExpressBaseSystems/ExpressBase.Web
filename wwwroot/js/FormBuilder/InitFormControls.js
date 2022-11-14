@@ -1115,6 +1115,7 @@
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
+            params.push(new fltr_obj(16, "srcCtrl", ctrl.Name));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
             if (ctrl.OpenInNewTab) {
                 let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}`;
@@ -1130,6 +1131,12 @@
             else
                 ctrl.removeAttr('title');
         }.bind(this, $ctrl));
+        ctrl.setValue = function (p1) {
+            let $lbl = $("#" + this.EbSid_CtxId + ' span');
+            $lbl.text(p1 + ' ');
+        }.bind(ctrl);
+        ctrl.justSetValue = ctrl.setValue;
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, ctrl);
     };
 
     this.Label = function (ctrl, ctrlOpts) {

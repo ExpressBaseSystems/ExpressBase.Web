@@ -231,7 +231,16 @@ namespace ExpressBase.Web.Controllers
                     Console.WriteLine("GetFormForRendering - Export mode requested.");
                     string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? refId;
                     int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
-                    GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
+                    string sCtrl = ob.Find(e => e.Name == "srcCtrl")?.ValueTo ?? string.Empty;
+                    GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest
+                    {
+                        DestRefId = refId,
+                        SourceRefId = sRefId,
+                        SourceRowId = sRowId,
+                        SourceCtrl = sCtrl,
+                        CurrentLoc = _locId,
+                        RenderMode = WebFormRenderModes.Normal
+                    });
                     resp.FormDataWrap = Resp.FormDataWrap;
                     resp.Mode = ((WebFormModes)_mode).ToString().Replace("_", " ");
                 }

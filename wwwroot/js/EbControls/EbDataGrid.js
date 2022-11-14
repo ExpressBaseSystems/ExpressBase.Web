@@ -2397,6 +2397,14 @@
         if (topRowIndx >= visTrNum && topRowIndx <= visTrNum + this.visibleTrViewMargin * 2)
             return;
 
+        let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
+        if ($activeTr.length > 0) {
+            let rowId = $activeTr.attr("rowid");
+            if (!this.confirmRow(rowId)) {
+                this.cancelRow_click({ target: $activeTr.find('.cancel-row')[0] });
+            }
+        }
+
         let topMarginRowIndx = topRowIndx - this.visibleTrViewMargin > 0 ? topRowIndx - this.visibleTrViewMargin : 0;
 
         this.$TblBody.empty();

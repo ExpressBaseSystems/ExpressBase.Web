@@ -983,6 +983,15 @@
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (ebcontext.languages != undefined) {
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
         //if (this.isContextual && from !== "compare") {
         //    if (from === "filter" && prevfocusedId !== undefined) {
         //        $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
@@ -1630,7 +1639,8 @@
     };
 
     this.WebFormlink = function (_refid, _filter, _mode) {
-        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}`;
+        let _locale = ebcontext.languages.getCurrentLocale();
+        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
         window.open(url, '_blank');
 
         //var _form = document.createElement("form");
@@ -3311,8 +3321,9 @@
                         <ul class="drp_ul"></ul>
                     </div>
                     </div>`);
+        let _locale = ebcontext.languages.getCurrentLocale();
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}`;
+            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -3367,7 +3378,7 @@
                 type: "GET",
                 url: "/WebForm/GetPdfReportMulti?refId=" + rptRefid + "&rowId=" + rowIds.join(',') + "&_sub=" + SubscriptionId
             });
-            
+
         }
         else {
             alert('Nothing selected');
@@ -4693,7 +4704,7 @@
     this.ExportToExcel = function (e) {
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
         EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
-       this.excelbtn.prop("disabled", true);
+        this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
 
         var ob = new Object();

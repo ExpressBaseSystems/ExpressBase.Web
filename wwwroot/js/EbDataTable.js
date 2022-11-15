@@ -1319,7 +1319,8 @@ var EbDataTable = function (Option) {
         }
         else if (splitarray[2] === "0") {
             let _filter = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
-            let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
         else {
@@ -2476,7 +2477,8 @@ var EbDataTable = function (Option) {
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../webform/index?_r=${obj.Refid}&_p=""&_m=2&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../webform/index?_r=${obj.Refid}&_p=""&_m=2&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}&_lo=${_locale}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -2516,6 +2518,12 @@ var EbDataTable = function (Option) {
             input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
             _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_lo";
+            input.value = ebcontext.languages.getCurrentLocale();
+            _form.appendChild(input);
+
             document.body.appendChild(_form);
             _form.submit();
             document.body.removeChild(_form);
@@ -2532,7 +2540,8 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
     };
@@ -2547,7 +2556,8 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
     };
@@ -2562,7 +2572,7 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
     };

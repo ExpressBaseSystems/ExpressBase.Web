@@ -523,40 +523,68 @@
 let LanguagePicker = function (options) {
     try {
         this.languages = Object.entries(options.LanguagesList);
-        this.$switcherbtn = $("#language-switcher");
         this.Tid = options.Tid || null;
         this.Uid = options.Uid || null;
-        this.storeKey = "Eb_language-" + this.Tid + this.Uid;
-        this.init = function () {
-            if (this.languages == null)
-                return;
+        this.lang_storeKey = "Eb_language-" + this.Tid + this.Uid;
+        this.locale_storeKey = "Eb_locale-" + this.Tid + this.Uid;
 
-            this.current_language = store.get(this.storeKey);
-            this.appendDD();
+        if (this.languages.length > 0) {
+            this.$switcherbtn = $("#language-switcher");
+            this.init = function () {
+                if (this.languages == null)
+                    return;
 
-            this.$switcherbtn.val(this.current_language);
-            this.$switcherbtn.show();
+                this.current_language = store.get(this.lang_storeKey);
+                this.current_locale = store.get(this.locale_storeKey);
+                this.appendDD();
+
+                this.$switcherbtn.val(this.current_language);
+                this.$switcherbtn.show();
+            };
+
+            this.appendDD = function () {
+                for (let i = 0; i < this.languages.length; i++) {
+                    this.$switcherbtn.append(`<option value = "${this.languages[i][1]}" locale ="${this.languages[i][0].match(/\((.*)\)/)[1]}">${this.languages[i][0]}</option>`);
+                }
+
+                this.$switcherbtn.on("change", this.language_change.bind(this));
+            };
+
+            this.language_change = function (e) {
+                this.current_language = this.$switcherbtn.val();
+                this.current_locale = $("#language-switcher option:selected").attr("locale");
+                store.set(this.lang_storeKey, this.current_language);
+                store.set(this.locale_storeKey, this.current_locale);
+                let _href = window.location.href;
+                if (_href.includes("&_lo=")) {
+                    const myArray = _href.split("&_lo=");
+                    if (myArray.length > 1) {
+                        window.location.href = _href.replace(myArray[1], this.current_locale);
+                    }
+                }
+            };
+        }
+
+        this.getCurrentLocale = function () {
+            if (this.languages.length > 0)
+                return store.get(this.locale_storeKey);
+            else return 0;
         };
 
-        this.appendDD = function () {
-            for (let i = 0; i < this.languages.length; i++) {
-                this.$switcherbtn.append(`<option value = "${this.languages[i][1]}">${this.languages[i][0]}</option>`);
-            }
-
-            this.$switcherbtn.on("change", this.language_change.bind(this));
+        this.getCurrentLanguage = function () {
+            if (this.languages.length > 0)
+                return store.get(this.lang_storeKey);
+            else return 0;
         };
 
-        this.language_change = function (e) {
-            this.current_language = this.$switcherbtn.val();
-            store.set(this.storeKey, this.current_language);
-        };
-
-        this.init();
+        if (this.languages.length > 0) {
+            this.init();
+        }
     }
     catch (e) {
-        console.error(e);
-    }
-};
+    console.error(e);
+}
+    };
 
 let FinYearPicker = function (options) {
     try {

@@ -779,6 +779,15 @@
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (ebcontext.languages != undefined) {
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
         //if (this.stickBtn) { this.stickBtn.minimise(); }
         return this.filtervalues;
     };
@@ -797,9 +806,19 @@
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+
+        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+
         if (this.EbObject.Filter_Dialogue !== "") {
             this.Procs = {};
             CtrlCounters.DataLabelCounter = 0;
@@ -845,7 +864,8 @@
             //}
         }
         else if (splitarray[2] === "0") {
-            let url = "../webform/index?_r=" + this.linkDV;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = "../webform/index?_r=" + this.linkDV + "_lo=" + _locale;
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
             _form.setAttribute("action", url);

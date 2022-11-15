@@ -90,8 +90,12 @@
             $("#form_preview").tooltip().off("click").on("click", function () {
                 if (this.EbObject.RefId === null || this.EbObject.RefId === "")
                     EbMessage("show", { Message: 'Refresh page then Try again', AutoHide: true, Background: '#1e1ebf' });
-                else
-                    window.open(window.location.origin.replace('-dev', '') + "/WebForm/Index?_r=" + this.EbObject.RefId, '_blank');
+                else {
+                    let url = window.location.origin.replace('-dev', '') + "/WebForm/Index?_r=" + this.EbObject.RefId;
+                    if (ebcontext.languages != undefined)
+                        url += "&_lo=" + ebcontext.languages.getCurrentLocale();
+                    window.open(url, '_blank');
+                }
             }.bind(this));
             $("#form_update_index").tooltip().off("click").on("click", function () {
                 if (this.EbObject.RefId === null || this.EbObject.RefId === "")

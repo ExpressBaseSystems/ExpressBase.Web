@@ -128,7 +128,10 @@
                     }.bind(this));
                     filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
                     filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-                    filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
+                    filterValues.push(new fltr_obj(11, "id", this.FO.rowId));                  
+                    filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+                    filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+
                     ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
                     this.ExecuteSqlValueExpr(ctrl, filterValues, ExprName === 'ValueExpr' ? 0 : 1);
                     break;
@@ -485,6 +488,8 @@
                         }.bind(this));
                         filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
                         filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                        filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+                        filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
                         filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
                         depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
                         this.ExecuteSqlValueExpr(depCtrl, filterValues, 0);
@@ -1582,6 +1587,8 @@
             if (paramsReady) {
                 filterValues.push(new fltr_obj(11, "eb_loc_id", this.FO.getLocId()));
                 filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+                filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
                 filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
                 depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
                 this.ExecuteSqlValueExpr(depCtrl, filterValues, DepHandleObj.exprName === 'ValueExpr' ? 0 : 1);

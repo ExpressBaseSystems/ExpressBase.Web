@@ -1908,6 +1908,10 @@
                 val = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
             else if (ctrlName === "id")
                 val = this.formRenderer.rowId;
+            else if (ctrlName === "eb_current_language_id")
+                val = ebcontext.languages.getCurrentLanguage();
+            else if (ctrlName === "eb_current_locale")
+                val = ebcontext.languages.getCurrentLocale();
 
             if (val !== null) {
                 let obj = { Name: ctrlName, Value: val };
@@ -2052,7 +2056,8 @@
             if (vms.length > 0) {
                 let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
                 if (psctrl.OpenInNewTab) {
-                    let url = `../WebForm/Index?_r=${psctrl.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}`;
+                    let _locale = ebcontext.languages.getCurrentLocale();
+                    let url = `../WebForm/Index?_r=${psctrl.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
                     window.open(url, '_blank');
                 }
                 else

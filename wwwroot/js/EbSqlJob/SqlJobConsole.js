@@ -186,10 +186,15 @@
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
-        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
 
+        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
         if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+            this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+
         this.RunsqlJobFunction();
     };
 

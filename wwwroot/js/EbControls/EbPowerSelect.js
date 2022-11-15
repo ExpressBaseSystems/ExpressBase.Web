@@ -740,6 +740,8 @@ const EbPowerSelect = function (ctrl, options) {
 
         this.filterValues.push(new fltr_obj(11, "eb_loc_id", defaultLocId));
         this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        this.filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+        this.filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
     };
 
     this.getColumnIdx = function (arr, colName) {
@@ -1444,7 +1446,8 @@ const EbPowerSelect = function (ctrl, options) {
             if (vms.length > 0) {
                 let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
                 if (this.ComboObj.OpenInNewTab) {
-                    let url = `../WebForm/Index?_r=${this.ComboObj.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}`;
+                    let _locale = ebcontext.languages.getCurrentLocale();
+                    let url = `../WebForm/Index?_r=${this.ComboObj.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
                     window.open(url, '_blank');
                 }
                 else

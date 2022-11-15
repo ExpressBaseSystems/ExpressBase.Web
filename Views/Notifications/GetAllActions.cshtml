@@ -54,8 +54,8 @@
         var ref = $(e.target).attr("data-ref");
         var id = $(e.target).attr("data-id");
         let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", id)]))));
-
-        window.open(`/webform/index?_r=${ref}&_p=${params}&_m=1`, '_blank');
+        let _locale = ebcontext.languages.getCurrentLocale();
+        window.open(`/webform/index?_r=${ref}&_p=${params}&_m=1&_lo=${_locale}`, '_blank');
     });
 
     tblcols.push({ data: 1, title: "#", className: "dataTableColumnStyle text-center", searchable: false, orderable: false });

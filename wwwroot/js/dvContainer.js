@@ -339,6 +339,12 @@ var DvContainerObj = function (settings) {
                 input.value = ebcontext.locations.CurrentLoc;
                 _form.appendChild(input);
 
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "_lo";
+                input.value = ebcontext.languages.getCurrentLocale();
+                _form.appendChild(input);
+
                 document.body.appendChild(_form);
                 _form.submit();
                 document.body.removeChild(_form);

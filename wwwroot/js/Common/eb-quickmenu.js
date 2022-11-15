@@ -62,7 +62,7 @@
         let $overlay = $("#ebquickmsideoverlay");
 
         if (!$overlay.is(":visible")) {
-         
+
             if (ebcontext.locations && ebcontext.locations.hasOwnProperty('close')) {
                 ebcontext.locations.close();
             }
@@ -222,6 +222,12 @@
             else if (_obj.EbType === "CalendarView") {
                 _url = "../Calendar/CalendarView?refid=" + _obj.Refid;
             }
+        }
+
+        if (ebcontext.languages != undefined) {
+            let _locale = ebcontext.languages.getCurrentLocale();
+            if (_locale != 0 && _locale != undefined)
+                _url = _url + "&_lo=" + _locale
         }
         return _url;
     };

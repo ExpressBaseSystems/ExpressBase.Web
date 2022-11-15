@@ -642,6 +642,14 @@
                         val = ebcontext.user.UserId;
                         name = "eb_currentuser_id";
                     }
+                    else if (depCtrl_s === "form.eb_current_language_id") {
+                        val = ebcontext.languages.getCurrentLanguage();
+                        name = "eb_current_language_id";
+                    }
+                    else if (depCtrl_s === "form.eb_current_locale") {
+                        val = ebcontext.languages.getCurrentLocale();
+                        name = "eb_current_locale";
+                    }
                     else if (depCtrl_s === "form.id") {
                         val = this.Renderer.rowId;
                         name = "id";
@@ -698,6 +706,14 @@
                     else if (depCtrl_s === "form.eb_currentuser_id") {
                         val = ebcontext.user.UserId;
                         name = "eb_currentuser_id";
+                    }
+                    else if (depCtrl_s === "form.eb_current_language_id") {
+                        val = ebcontext.languages.getCurrentLanguage();
+                        name = "eb_current_language_id";
+                    }
+                    else if (depCtrl_s === "form.eb_current_locale") {
+                        val = ebcontext.languages.getCurrentLocale();
+                        name = "eb_current_locale";
                     }
                     else if (depCtrl_s === "form.id") {
                         val = this.Renderer.rowId;
@@ -1117,7 +1133,8 @@
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
             if (ctrl.OpenInNewTab) {
-                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}`;
+                let _locale = ebcontext.languages.getCurrentLocale();
+                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}&_lo=${_locale}`;
                 window.open(url, '_blank');
             }
             else {
@@ -1730,6 +1747,8 @@
         let Refid = ctrl.DataSourceId;
         this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1));
         this.filtervalues.push(new fltr_obj(ebDbType, "eb_currentuser_id", ebcontext.user.UserId));
+        this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+        this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
         this.filtervalues.push(new fltr_obj(ebDbType, "id", this.Renderer.rowId));
         this.filtervalues.push(new fltr_obj(ebDbType, this.Renderer.FormObj.TableName + "_id", this.Renderer.rowId));
 
@@ -2345,6 +2364,14 @@
                         else if (depCtrl_s === "form.eb_currentuser_id") {
                             val = ebcontext.user.UserId;
                             name = "eb_currentuser_id";
+                        }
+                        else if (depCtrl_s === "form.eb_current_language_id") {
+                            val = ebcontext.languages.getCurrentLanguage();
+                            name = "eb_current_language_id";
+                        }
+                        else if (depCtrl_s === "form.eb_current_locale") {
+                            val = ebcontext.languages.getCurrentLocale();
+                            name = "eb_current_locale";
                         }
                         else if (depCtrl_s === "form.id") {
                             val = this.Renderer.rowId;

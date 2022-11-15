@@ -68,6 +68,12 @@ const WebFormRender = function (option) {
 
         $.each(this.WizardControls, function (i, wizControl) {//WizControl Init
             let $Tab = $(`#cont_${wizControl.EbSid_CtxId}>.RenderAsWizard`);
+
+            wizControl.SwitchToEditMode = function () {
+                $Tab.find('.sw-btn-edit').addClass('disabled');
+                $Tab.find('.sw-btn-save').removeClass('disabled');
+            }.bind(this);
+
             if ($Tab.length === 0)
                 return false;
 
@@ -76,6 +82,17 @@ const WebFormRender = function (option) {
                 if (this.FormObj.CanSaveAsDraft)
                     extraHtml += `<button class="btn sw-btn sw-btn-save-draft">Save as Draft</button>`;
                 extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">Submit</button>`;
+            }
+            else if (this.Mode.isView) {
+                if ($('#' + this.hBtns.Edit).is(':visible:enabled'))
+                    extraHtml += `<button class="btn sw-btn sw-btn-edit">Edit</button>`;
+                extraHtml += `<button class="btn sw-btn sw-btn-save disabled">Submit</button>`;
+            }
+
+            let hiddenSteps = [];
+            for (let i = 0; i < wizControl.Controls.$values.length; i++) {
+                if (wizControl.Controls.$values[i].Hidden)
+                    hiddenSteps.push(i);
             }
 
             $Tab.smartWizard({
@@ -101,6 +118,7 @@ const WebFormRender = function (option) {
                     previous: '< Previous'
                 }
             });
+            $Tab.smartWizard("setState", hiddenSteps, "disable");
 
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 let leave = false;
@@ -115,8 +133,8 @@ const WebFormRender = function (option) {
                 else
                     leave = true;
 
-                if (leave) {
-                    if (wizControl.Controls.$values.length == nextStepIndex + 1) {
+                if (leave && (this.Mode.isNew)) {
+                    if ($Tab.find('li.nav-item:visible').last().index() == nextStepIndex) {
                         $Tab.find('.sw-btn-save').removeClass('disabled');
                     }
                     else {
@@ -135,8 +153,14 @@ const WebFormRender = function (option) {
 
             $Tab.off('click', '.sw-btn-save').on('click', '.sw-btn-save', function (e) {
                 let stepInfo = $Tab.smartWizard("getStepInfo");
-                if (stepInfo.currentStep + 1 === stepInfo.totalSteps) {
+                if ((stepInfo.currentStep === $Tab.find('li.nav-item:visible').last().index() && this.Mode.isNew) || this.Mode.isEdit) {
                     this.saveForm();
+                }
+            }.bind(this));
+
+            $Tab.off('click', '.sw-btn-edit').on('click', '.sw-btn-edit', function (e) {
+                if (this.Mode.isView && $('#' + this.hBtns.Edit).is(':visible:enabled')) {
+                    this.SwitchToEditMode();
                 }
             }.bind(this));
 
@@ -403,7 +427,7 @@ const WebFormRender = function (option) {
             $('body').append(
                 `<div class="modal fade rev-exec" id="${this.ReviewCtrl.EbSid_CtxId}_execRevMdl" role="dialog">
                     <div class="modal-dialog" style="width: 440px;">
-                        <div class="modal-content">
+                        <div class="modal-content" eb-root-obj-container>
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h5 class="modal-title">${this.ReviewCtrl.Label}</h5>
@@ -411,8 +435,12 @@ const WebFormRender = function (option) {
                             <div class="modal-body">
                                 ${_ctrlHtml}
                                 <div class="form-group" style='margin: 4px; padding-top: 5px;'>
+                                    <span class='eb-ctrl-label'>${this.ReviewCtrl.StatusTitle || 'Status'}</span>
+                                    <select id="${this.ReviewCtrl.EbSid_CtxId}_status" class="form-control"></select>
+                                </div>
+                                <div class="form-group" style='margin: 4px; padding-top: 5px;'>
                                     <span class='eb-ctrl-label'>${this.ReviewCtrl.RemarksTitle || 'Remarks'}</span>
-                                    <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 80px !important; resize:none; border-radius: 0;"></textarea>
+                                    <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 100px !important; resize:none; border-radius: 0;"></textarea>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -432,7 +460,16 @@ const WebFormRender = function (option) {
             }.bind(this));
 
             this.ReviewCtrl.execReviewModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                //this.ReviewCtrl.includeReviewData = false;
+                if (!this.ReviewCtrl.includeReviewData && this.ReviewCtrl.CurStageAssocCtrls.length > 0) {
+                    this.DiscardChanges();
+                }
+            }.bind(this));
+
+            this.ReviewCtrl.execReviewModal.off('click', `#${this.ReviewCtrl.EbSid_CtxId}_status`).on('change', `#${this.ReviewCtrl.EbSid_CtxId}_status`, function (e) {
+                if (!this.ReviewCtrl._Builder.CurStageDATA)
+                    return;
+                let actionDataVals = getObjByval(this.ReviewCtrl._Builder.CurStageDATA.Columns, "Name", "action_unique_id");
+                actionDataVals.Value = $(e.target).val();
             }.bind(this));
 
             this.ReviewCtrl.execReviewModal.off('click', '.rev-submit').on('click', '.rev-submit', function (e) {
@@ -801,8 +838,8 @@ const WebFormRender = function (option) {
 
     this.renderInAfterSaveMode = function (respObj) {
         if (!this.afterSavemodeS) {
-            if (this.rowId > 0)
-                this.afterSavemodeS = 'view';
+            if (this.rowId > 0) //edit
+                this.afterSavemodeS = getKeyByVal(EbEnums_w.WebFormAfterSaveModes, this.FormObj.FormModeAfterEdit.toString()).split("_")[0].toLowerCase();
             else
                 this.afterSavemodeS = this.defaultAfterSavemodeS;
         }
@@ -1218,6 +1255,9 @@ const WebFormRender = function (option) {
         }.bind(this));
         $.each(this.DGsNew, function (k, DG) {
             this.DGNewBuilderObjs[DG.EbSid_CtxId].SwitchToEditMode();
+        }.bind(this));
+        $.each(this.WizardControls, function (i, wizControl) {
+            wizControl.SwitchToEditMode();
         }.bind(this));
     }.bind(this);
 
@@ -2608,14 +2648,16 @@ const WebFormRender = function (option) {
             $cont.append(`<div class='wfd-lock wfd-linkdiv'><span>Lock</span> this Form Submission</div>`);
         }
 
+        let hasSrcForm = this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0);
+
         if (this.formData.IsCancelled) {
             let $el = $(`<div class='wfd-cancel wfd-linkdiv'> This is a <b> Cancelled </b> Form Submission </div>`);
-            if (!this.formData.IsReadOnly && this.checkPermission('RevokeCancel')) {
+            if (!this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm && this.checkPermission('RevokeCancel')) {
                 $el.append(`<span> Undo </span>`);
             }
             $cont.append($el);
         }
-        else if (!this.formData.IsReadOnly && this.checkPermission('Cancel')) {
+        else if (!this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm && this.checkPermission('Cancel')) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableCancel()))
                 $cont.append(`<div class='wfd-cancel wfd-linkdiv'><span>Cancel</span> this Form Submission</div>`);
         }
@@ -2648,7 +2690,7 @@ const WebFormRender = function (option) {
             }
         }
 
-        if (this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0)) {
+        if (hasSrcForm) {
             $cont.append(`<div class='wfd-source wfd-depend wfd-linkdiv'><span>Open</span> Source Form Submission</div>`);
             $cont.find('.wfd-source span').off("click").on("click", this.openSourceForm.bind(this));
         }
@@ -2659,7 +2701,7 @@ const WebFormRender = function (option) {
             </div>`);
             $cont.find('.wfd-delete div').off("click").on("click", this.deleteDraft.bind(this));
         }
-        else if (this.checkPermission('Delete')) {
+        else if (this.checkPermission('Delete') && !this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableDelete())) {
                 $cont.append(`<div class='wfd-delete wfd-btndiv'>
                     <div><i class="fa fa-trash"></i> Delete the Submission</div>

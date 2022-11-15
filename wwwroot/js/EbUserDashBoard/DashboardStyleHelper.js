@@ -275,7 +275,7 @@ function Eb_Dashboard_Bg(EbObject) {
         if (EbObject.BackgroundImage) {
             $("#layout_div")
                 .css("background-image", `url("/images/${EbObject.BackgroundImage}.jpg")`)
-                .css("background-size", "contain").css("background-repeat", "no-repeat")
+                .css("background-size", "100% 100%").css("background-repeat", "no-repeat")
                 .css("background-position-x", "center")
                 .css("background-position-y", "top");
         }

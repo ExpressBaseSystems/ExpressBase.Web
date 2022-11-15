@@ -677,6 +677,11 @@
         o.Source = this.Renderer.rendererName;
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+        o.drawCallBack = function (ctrl) {
+            ctrl.___isNotUpdateValExpDepCtrls = false;
+            let DepHandleObj = this.Renderer.FRC.GetDepHandleObj(ctrl);
+            this.Renderer.FRC.ctrlChangeListener_inner0(DepHandleObj);
+        }.bind(this, ctrl);
 
         let initFilterValues = function (ctrl) {
             if (!ctrl.__filterValues)
@@ -761,6 +766,18 @@
             ctrl.initializer.Api.ajax.reload();
             //ctrl.initializer.getColumnsSuccess();// this will produce double footer
         };
+
+        ctrl.sum = function (ctrl, colName) {
+            try {
+                let data = ctrl.initializer.Api.column(colName + ':name').data();
+                if (data)
+                    return data.sum();
+            }
+            catch (e) {
+                console.error(e);
+            }
+            return 0;
+        }.bind(this, ctrl);
 
         $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
             if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
@@ -1131,6 +1148,7 @@
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
+            params.push(new fltr_obj(16, "srcCtrl", ctrl.Name));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
             if (ctrl.OpenInNewTab) {
                 let _locale = ebcontext.languages.getCurrentLocale();
@@ -1147,6 +1165,133 @@
             else
                 ctrl.removeAttr('title');
         }.bind(this, $ctrl));
+        ctrl.setValue = function (p1) {
+            let $lbl = $("#" + this.EbSid_CtxId + ' span');
+            $lbl.text(p1 + ' ');
+        }.bind(ctrl);
+        ctrl.justSetValue = ctrl.setValue;
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, ctrl);
+    };
+
+    this.Label = function (ctrl, ctrlOpts) {
+        if (ctrl.IsDGCtrl) {
+
+        }
+        else {
+            ctrl.setValue = function (p1) {
+                let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
+                $lbl.text(p1 || '');
+            }.bind(ctrl);
+            ctrl.justSetValue = ctrl.setValue;
+
+            if (ctrl.RenderAs != 1)
+                return;
+
+            let $lbl = $("#" + ctrl.EbSid_CtxId + 'Lbl');
+
+            if (!(ctrl.LinkedObjects && ctrl.LinkedObjects.$values.length > 0)) {
+                return;
+            }
+            let linkObj = ctrl.LinkedObjects.$values[0];
+
+            if (!linkObj.ObjRefId) {
+                console.warn('LabelLink - invalid obj refid');
+                return;
+            }
+            if (linkObj.LinkType !== 3) {
+                console.warn('LabelLink - only popup supported');
+                return;
+            }
+
+            $lbl.css('pointer-events', 'all');
+            $lbl.addClass('eb-label-link');
+
+            $lbl.on('click', this.clickedOnLabelLink.bind(this, ctrl, linkObj));
+        }
+    };
+
+    this.clickedOnLabelLink = function (ctrl, linkObj) {
+        let _params = this.getLabelLinkParameters(linkObj);
+        let _mode = 1;//view
+
+        if (_params.findIndex(e => e.Name === 'id') === -1) //prefill
+            _mode = 2;
+
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, linkObj);
+
+        ebcontext.webform.PopupForm(linkObj.ObjRefId, btoa(JSON.stringify(_params)), _mode,
+            {
+                srcCxt: this.Renderer.__MultiRenderCxt,
+                initiator: ctrl,
+                locId: this.Renderer.getLocId()
+            });
+    };
+
+    this.getLabelLinkParameters = function (linkObj) {
+        let destid = 0;
+        let params = [];
+        let pushMasterId = true;
+
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowForwardMap'))
+                    continue;
+
+                if (pMap[i].SrcCtrlName === 'id') {//source table id
+                    params.push({ Name: pMap[i].DestCtrlName, Type: 7, Value: this.Renderer.rowId });
+                    pushMasterId = false;
+                    continue;
+                }
+                if (pMap[i].DestCtrlName === 'id') {
+                    let outCtrl = this.Renderer.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        if (outCtrl.getValue() > 0) {
+                            destid = outCtrl.getValue();
+                            params = [{ Name: 'id', Type: 7, Value: destid }];
+                            pushMasterId = false;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    let outCtrl = this.Renderer.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        params.push({
+                            Name: pMap[i].DestCtrlName,
+                            Type: outCtrl.EbDbType,
+                            Value: outCtrl.getValue()
+                        });
+                    }
+                }
+            }
+        }
+        if (pushMasterId) {
+            params.push({ Name: this.formRenderer.MasterTable + '_id', Type: 7, Value: this.Renderer.rowId });
+        }
+
+        return params;
+    };
+
+    this.reverseUpdateData = function (linkObj, destRender) {
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowReverseMap'))
+                    continue;
+                let destCtrl = this.Renderer.formObject[pMap[i].DestCtrlName];
+                if (!destCtrl)
+                    continue;
+                if (pMap[i].SrcCtrlName === 'id') {
+                    destCtrl.setValue(destRender.rowId);
+                }
+                else {
+                    let srcCtrl = destRender.formObject[pMap[i].SrcCtrlName];
+                    if (srcCtrl)
+                        destCtrl.setValue(srcCtrl.getValue());
+                }
+            }
+        }
     };
 
     this.Review = function (ctrl, ctrlOpts) {
@@ -1488,10 +1633,9 @@
 
     this.TextBox = function (ctrl, ctrlopts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        let $input = $("#" + ctrl.EbSid_CtxId);
         ctrl.__EbAlert = this.Renderer.EbAlert;
         if (ctrl.MaskPattern !== null && ctrl.MaskPattern !== "" && ctrl.TextMode == 0) {
-            $input.inputmask({ mask: ctrl.MaskPattern });
+            $ctrl.inputmask({ mask: ctrl.MaskPattern });
         }
         else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {

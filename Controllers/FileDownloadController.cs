@@ -46,17 +46,17 @@ namespace ExpressBase.Web.Controllers
 
                 if (extension == "pdf")
                 {
-                    //    if (op == 'o')
-                    //        return new FileStreamResult(new MemoryStream(decompressedData), "application/pdf");
-                    //    else if (op == 'd')
-                    return File(decompressedData, "application/pdf", response.FileDownloadObject?.Filename);
+                    if (op == 'o')
+                        return new FileStreamResult(new MemoryStream(decompressedData), "application/pdf");
+                    else if (op == 'd')
+                        return File(decompressedData, "application/pdf", response.FileDownloadObject?.Filename);
                 }
                 else if (extension == "xlsx")
                 {
                     //if (op == 'o')
                     //    return new FileStreamResult(new MemoryStream(decompressedData), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                     //else if (op == 'd')
-                    return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.FileDownloadObject?.Filename);
+                        return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.FileDownloadObject?.Filename);
                 }
             }
             return Redirect("/StatusCode/404");

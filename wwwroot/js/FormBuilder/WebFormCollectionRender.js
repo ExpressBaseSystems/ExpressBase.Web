@@ -411,6 +411,10 @@ const WebFormCollectionRender = function (Option) {
                         tvCtrls[i].reloadWithParamAll();
                 }
             }
+            let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
+            if (destRender) {
+                x.Initiator.reverseUpdateData(destRender);
+            }
         }
         else if (x.Initiator.ObjType === 'PowerSelect') {
             if (x.Initiator.IsDGCtrl) {

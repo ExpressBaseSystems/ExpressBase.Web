@@ -4019,6 +4019,7 @@ input.locinp {
         bottom: 40px;
         position: absolute;
         width: calc(100% - 40px);
+        background-color: white;
     }
 
     .webformdetails .wfd-btndiv > div {
@@ -4048,8 +4049,7 @@ input.locinp {
     }
 
         .webformdetails .wfd-depend div:nth-child(2) {
-            text-align: center;
-            padding: 10px 0;
+            padding: 10px 0 10px 10px;
         }
 
 /*#endregion WebformDetails*/
@@ -4147,7 +4147,7 @@ input.locinp {
     font-size: 12px;
 }
 
-    .dgtbl .ebdg-label-link > span, .dgtbl .tdtxt[coltype="DGLabelColumn"] > span {
+    .dgtbl .ebdg-label-link > span, .dgtbl .tdtxt[coltype="DGLabelColumn"] > span, [ctype="Label"] span.eb-label-link {
         color: #337ab7;
         cursor: pointer;
         white-space: nowrap;
@@ -4157,7 +4157,7 @@ input.locinp {
         width: 100%;
     }
 
-        .dgtbl .ebdg-label-link > span:hover, .dgtbl .tdtxt[coltype="DGLabelColumn"] > span:hover {
+        .dgtbl .ebdg-label-link > span:hover, .dgtbl .tdtxt[coltype="DGLabelColumn"] > span:hover, [ctype="Label"] span.eb-label-link:hover {
             color: #23527c;
             text-decoration: underline;
             text-underline-offset: 2px;

@@ -89,11 +89,13 @@ namespace ExpressBase.Web2
 
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
-                return new JsonServiceClient
+                JsonServiceClient client = new JsonServiceClient
                 {
                     BaseUri = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL),
                     RefreshTokenUri = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GET_ACCESS_TOKEN_URL)
                 };
+                client.Timeout = new TimeSpan(0, 3, 0);
+                return client;
             });
 
             services.AddScoped<IEbMqClient, EbMqClient>(serviceProvider =>

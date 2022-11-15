@@ -1458,7 +1458,11 @@ namespace ExpressBase.Web.Controllers
                     }
                     if (authResponse != null)
                     {
-                        CookieOptions options = new CookieOptions();
+                        CookieOptions options = new CookieOptions()
+                        {
+                            Secure = true,
+                            SameSite = SameSiteMode.None
+                        };
                         Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                         Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
                         Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);

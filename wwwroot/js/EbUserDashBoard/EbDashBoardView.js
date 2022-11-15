@@ -276,7 +276,7 @@
                 grid.addWidget(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content usr" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
-                    <div class="db-title" name-id="${t_id}" style="display:float"></div>
+                    <div class="db-title" name-id="${t_id}" style="display:flex"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
@@ -380,7 +380,8 @@
                             let designHtml = this.MakeLinks(object);
                             $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
                             $(`#${this.CurrentTile}`).addClass("eb-tile-link");
-                            $(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");
+                            //$(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");//
+                            $(`#${this.CurrentTile} .db-title-parent`).css("display", "none");
                             $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
                             $(`#${tile_id}`).removeClass('ext-linktoform').addClass('ext-linktoform');
                             this.labelstyleApply(this.CurrentTile);

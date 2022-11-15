@@ -392,6 +392,14 @@
                         else
                             return "not found";
                     }
+                    else if (this.FO.WizardControls.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        let WizCtrl = this.FO.WizardControls.filter(function (obj) { return obj.Name == pathArr[1] })[0];
+                        let WizStep = WizCtrl.Controls.$values.filter(e => e.Name == pathArr[2]);
+                        if (WizStep.length > 0)
+                            ctrl = WizStep[0];
+                        else
+                            return "not found";
+                    }
                     else
                         return "not found";
                 }
@@ -1114,11 +1122,14 @@
                 }
             }
         }
+        this.FindCtrlsWithNoDependency_inner(this.FO.TabControls, ExprName, DepHandleObj, prop1, prop2);
+        this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
+    };
 
-        let tCtls = this.FO.TabControls;
-        for (let i = 0; i < tCtls.length; i++) {
-            for (let j = 0; j < tCtls[i].Controls.$values.length; j++) {
-                let tCtrlPane = tCtls[i].Controls.$values[j];
+    this.FindCtrlsWithNoDependency_inner = function (ctrlConts, ExprName, DepHandleObj, prop1, prop2) {
+        for (let i = 0; i < ctrlConts.length; i++) {
+            for (let j = 0; j < ctrlConts[i].Controls.$values.length; j++) {
+                let tCtrlPane = ctrlConts[i].Controls.$values[j];
                 if (tCtrlPane[ExprName] && tCtrlPane[ExprName].Code && tCtrlPane[ExprName].Lang === 0) {
                     if (!DepHandleObj[prop1].includes(tCtrlPane.__path)) {
                         DepHandleObj[prop1].push(tCtrlPane.__path);
@@ -1127,7 +1138,7 @@
                 }
             }
         }
-    };
+    }
 
     this.execAllValExprForDoNotPersistCtrls = function () {
         if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
@@ -1147,6 +1158,21 @@
             }
             DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
             this.ctrlChangeListener_inner0(DepHandleObj);
+        }
+        else {
+            DepHandleObj = {
+                curCtrl: {},
+                isInitSetup: true,
+                exprName: 'DefaultValueExpression',
+                ValueP: [], ValueC: [],
+                DrPaths: [], DrCtrls: [],
+                HideP: [], HideC: [],
+                DisableP: [], DisableC: []
+            };
+            let a = this.FO.flatControls;
+            this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
+            this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
+            this.ctrlChangeListener_inner2(DepHandleObj);
         }
     };
 
@@ -1312,16 +1338,18 @@
                 v = parseFloat(v);
             if (__this.__isEditing) {
                 valChanged = __this.curRowDataVals.Value != v;
+                __this.curRowDataVals.PrevValue = __this.curRowDataVals.Value;
                 __this.curRowDataVals.Value = v;
                 __this.curRowDataVals.D = d;
             }
             else {
                 valChanged = __this.DataVals.Value != v;
+                __this.DataVals.PrevValue = __this.DataVals.Value;
                 __this.DataVals.Value = v;
                 __this.DataVals.D = d;
 
                 if ($(event.target).data('ctrl_ref'))// when trigger change from setValue(if the setValue called from inactive row control) update DG table td
-                    ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
+                    this.FO.DGBuilderObjs[__this.__DG.EbSid].ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
             }
         }
         if (__this.___isNotUpdateValExpDepCtrls) {
@@ -1371,6 +1399,7 @@
 
         if (valChanged) {
             if (Obj.DataVals) {
+                Obj.DataVals.PrevValue = Obj.DataVals.Value;
                 Obj.DataVals.Value = Obj.getValueFromDOM();
                 Obj.DataVals.D = Obj.getDisplayMemberFromDOM();
 
@@ -1466,7 +1495,7 @@
             let depCtrl_s = DepHandleObj.HideP[i];
             try {
                 let code = atob(depCtrl.HiddenExpr.Code);
-                let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                let hideExpVal = new Function("form", "user", "sourcectrl", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                 if (hideExpVal)
                     depCtrl.hide();
                 else
@@ -1483,7 +1512,7 @@
             try {
                 let code = atob(depCtrl.DisableExpr.Code);
                 if (!(!DepHandleObj.curCtrl.IsDGCtrl && depCtrl.IsDGCtrl)) {// not form to grid
-                    let hideExpVal = new Function("form", "user", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    let hideExpVal = new Function("form", "user", "sourcectrl", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                     if (hideExpVal) {
                         depCtrl.disable();
                         depCtrl.__IsDisableByExp = true;
@@ -1506,7 +1535,7 @@
         let chngFn = DepHandleObj.curCtrl.OnChangeFn;
         if (chngFn && chngFn.Code && chngFn.Code.trim() !== "") {
             try {
-                new Function("form", "user", `event`, atob(chngFn.Code)).bind(DepHandleObj.curCtrl, this.FO.formObject, this.FO.userObject)();
+                new Function("form", "user", "sourcectrl", `event`, atob(chngFn.Code)).bind(DepHandleObj.curCtrl, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
             }
             catch (e) {
                 console.error(e);
@@ -1543,7 +1572,7 @@
                 let ValueExpr_val = null;
                 try {
                     let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
-                    ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    ValueExpr_val = new Function("form", "user", "sourcectrl", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                     ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
                 }
                 catch (e) {
@@ -1582,7 +1611,8 @@
                     paramsReady = false;
                     return false;
                 }
-                filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
+                let _type = paramCtrl.EbDbType > 0 && !paramCtrl.IsDGCtrl ? paramCtrl.EbDbType : 16;
+                filterValues.push(new fltr_obj(_type, paramCtrl.Name, paramCtrl.getValue()));
             }.bind(this));
             if (paramsReady) {
                 filterValues.push(new fltr_obj(11, "eb_loc_id", this.FO.getLocId()));

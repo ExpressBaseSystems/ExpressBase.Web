@@ -1039,11 +1039,11 @@
     this.getFilterForLinkfromColumn = function () {
         this.linkfromcolumn = false;
         this.dvformMode = 1;
-        if (this.Source === "Draft")
-            this.dvformMode = 8;
         let filters = [];
         var temp = this.EbObject.Columns.$values.filter(obj => obj.name === this.linkDVColumn)[0];
         filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
+        if (this.Source === "Draft" || temp.IsFormDraftMode)
+            this.dvformMode = 8;
         return filters;
     };
 
@@ -3359,7 +3359,7 @@
 
         if (chkdInps && chkdInps.length > 0) {
             $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
-            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
+            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
             ebcontext.webform.showLoader();
 
             for (let i = 0; i < chkdInps.length; i++) {
@@ -4703,7 +4703,7 @@
 
     this.ExportToExcel = function (e) {
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
-        EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
+        EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
         this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
 

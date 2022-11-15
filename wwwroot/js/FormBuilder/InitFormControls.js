@@ -669,6 +669,11 @@
         o.Source = this.Renderer.rendererName;
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+        o.drawCallBack = function (ctrl) {
+            ctrl.___isNotUpdateValExpDepCtrls = false;
+            let DepHandleObj = this.Renderer.FRC.GetDepHandleObj(ctrl);
+            this.Renderer.FRC.ctrlChangeListener_inner0(DepHandleObj);
+        }.bind(this, ctrl);
 
         let initFilterValues = function (ctrl) {
             if (!ctrl.__filterValues)
@@ -745,6 +750,18 @@
             ctrl.initializer.Api.ajax.reload();
             //ctrl.initializer.getColumnsSuccess();// this will produce double footer
         };
+
+        ctrl.sum = function (ctrl, colName) {
+            try {
+                let data = ctrl.initializer.Api.column(colName + ':name').data();
+                if (data)
+                    return data.sum();
+            }
+            catch (e) {
+                console.error(e);
+            }
+            return 0;
+        }.bind(this, ctrl);
 
         $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
             if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {

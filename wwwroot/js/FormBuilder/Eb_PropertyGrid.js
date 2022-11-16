@@ -663,8 +663,8 @@
                 let opt = {
                     url: "../DS/GetColumnsFromApi",
                     apiUrl: this.PropsObj.Url,
-                    headers: this.PropsObj.Headers,
-                    //parameters: this.PropsObj.Parameters,
+                    headers: this.PropsObj.Headers.$values,
+                    parameters: this.PropsObj.DataApiParams.$values,
                     method: this.PropsObj.Method
                 }
                 this.PGHelper.UrlInit(opt);

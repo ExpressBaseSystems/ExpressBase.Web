@@ -356,8 +356,8 @@
             let opt = {
                 url: "../DS/GetColumnsFromApi",
                 apiUrl: this.PGobj.PropsObj.Url,
-                headers: this.PGobj.PropsObj.Headers,
-                //parameters: this.PGobj.PropsObj.Parameters,
+                headers: this.PGobj.PropsObj.Headers.$values,
+                parameters: this.PGobj.PropsObj.DataApiParams.$values,
                 method: this.PGobj.PropsObj.Method
             }
             this.PGobj.PGHelper.UrlReInit(opt, this.setOldSelectionByResettingProp);

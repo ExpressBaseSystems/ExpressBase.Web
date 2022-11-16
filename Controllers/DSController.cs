@@ -62,14 +62,14 @@ namespace ExpressBase.Web.Controllers
             return dvColumnCollection;
         }
 
-        public string GetColumnsFromApi(string url, List<ApiRequestHeader> headers, ApiMethods method)
+        public string GetColumnsFromApi(string url, List<ApiRequestHeader> headers, ApiMethods method, List<Param> parameters)
         {
             ReturnColumns returnobj = new ReturnColumns();
             ApiConversionResponse resultlist1 = null;
             ApiConversionRequest request = new ApiConversionRequest();
             request.Url = url;
             request.Headers = headers;
-            //request.Parameters = parameters;
+            request.Parameters = parameters;
             request.Method = method;
             try
             {

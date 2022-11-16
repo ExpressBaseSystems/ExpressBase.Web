@@ -537,8 +537,8 @@ let LanguagePicker = function (options) {
                 this.current_language = store.get(this.lang_storeKey);
                 this.current_locale = store.get(this.locale_storeKey);
                 this.appendDD();
-
-                this.$switcherbtn.val(this.current_language);
+                if (this.current_language > 0)
+                    this.$switcherbtn.val(this.current_language);
                 this.$switcherbtn.show();
             };
 
@@ -582,9 +582,9 @@ let LanguagePicker = function (options) {
         }
     }
     catch (e) {
-    console.error(e);
-}
-    };
+        console.error(e);
+    }
+};
 
 let FinYearPicker = function (options) {
     try {

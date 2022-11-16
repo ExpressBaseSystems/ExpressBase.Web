@@ -72,6 +72,8 @@ namespace ExpressBase.Web.BaseControllers
             }
             else if (!IsTokensValid(sRToken, sBToken, this.ExtSolutionId) && string.IsNullOrEmpty(sAPIKey))
             {
+                Console.WriteLine("B:  " + sBToken);
+                Console.WriteLine("R:  " + sRToken);
                 controller.ViewBag.IsValid = false;
                 Authenticated = false;
                 controller.ViewBag.Message = "Authentication failed";

@@ -205,7 +205,7 @@ namespace ExpressBase.Web.BaseControllers
                                     isvalid = true;
                                 else if (WhichConsole == RoutingConstants.DC)
                                 {
-                                    if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                                    if (subParts[0] == isid /*&& rSub.EndsWith(TokenConstants.DC)*/)
                                         isvalid = true;
                                 }
                                 else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC))

@@ -1411,7 +1411,15 @@ namespace ExpressBase.Web.Controllers
         }
 
         [Route("PublicForm")]
-        public IActionResult PublicForm(string id, string p, int m)
+        public IActionResult PublicFormSignIn(string id, string p, int m)
+        {
+            ViewBag.id = id;
+            ViewBag.p = p;
+            ViewBag.m = m;
+            return View();
+        }
+
+        public string PublicFormAuth(string id, string p, int m)
         {
             MyAuthenticateResponse authResponse = null;
             User usr = null;
@@ -1458,17 +1466,9 @@ namespace ExpressBase.Web.Controllers
                     }
                     if (authResponse != null)
                     {
-                        CookieOptions options = new CookieOptions()
-                        {
-                            Secure = true,
-                            SameSite = SameSiteMode.None
-                        };
-                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                        Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-                        Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
-
                         usr = authResponse.User;
+                        sBToken = authResponse.BearerToken;
+                        sRToken = authResponse.RefreshToken;
                     }
                 }
                 if (usr != null && usr.Permissions != null && usr.Permissions.Count > 0)
@@ -1477,12 +1477,25 @@ namespace ExpressBase.Web.Controllers
                     {
                         if (s.Contains("000-00-" + id.Split("-")[3].PadLeft(5, '0')))
                         {
-                            return RedirectToAction("Index", "WebForm", new { _r = id, _p = p, _m = m, _l = usr.Preference.DefaultLocation, _rm = 5 });
+                            object resp = new
+                            {
+                                _r = id,
+                                _p = p ?? string.Empty,
+                                _m = m,
+                                _l = usr.Preference.DefaultLocation,
+                                _rm = 5,
+                                web_btoken = sBToken,
+                                web_rtoken = sRToken,
+                                web_authid = usr.AuthId,
+                                web_user_disp_name = usr.FullName,
+                            };
+
+                            return JsonConvert.SerializeObject(resp);
                         }
                     }
                 }
             }
-            return Redirect("/StatusCode/401");
+            return string.Empty;
         }
 
         public IActionResult KSUMStartUpIndiaLogin()

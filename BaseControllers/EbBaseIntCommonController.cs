@@ -73,13 +73,14 @@ namespace ExpressBase.Web.BaseControllers
             string sRToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
             string SSE_Sub_Id = context.HttpContext.Request.Headers[RoutingConstants.SSE_SUB_ID];
             string userAuthId = context.HttpContext.Request.Cookies[TokenConstants.USERAUTHID];
+            string sWebBToken = context.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN];
 
-            bool IsPublicFormRqst = (context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") ||
-                context.HttpContext.Request.Headers["eb_form_type"] == "public_form";
+            bool IsPublicFormRqst = !string.IsNullOrWhiteSpace(sWebBToken) &&
+                ((context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") || context.HttpContext.Request.Headers["eb_form_type"] == "public_form");
 
             if (IsPublicFormRqst)
             {
-                sBToken = context.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN];
+                sBToken = sWebBToken;
                 sRToken = context.HttpContext.Request.Cookies[RoutingConstants.WEB_REFRESH_TOKEN];
                 userAuthId = context.HttpContext.Request.Cookies["web_authid"];
             }
@@ -166,8 +167,8 @@ namespace ExpressBase.Web.BaseControllers
         {
             if (ControllerContext.ActionDescriptor.ActionName != "Logout")
             {
-                bool IsPublicFormRqst = (context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") ||
-                    context.HttpContext.Request.Headers["eb_form_type"] == "public_form";
+                bool IsPublicFormRqst = !string.IsNullOrEmpty(context.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN]) &&
+                    ((context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") || context.HttpContext.Request.Headers["eb_form_type"] == "public_form");
 
                 if (this.ServiceClient != null)
                 {

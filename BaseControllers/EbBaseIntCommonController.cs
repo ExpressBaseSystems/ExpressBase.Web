@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Web;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -75,8 +76,7 @@ namespace ExpressBase.Web.BaseControllers
             string userAuthId = context.HttpContext.Request.Cookies[TokenConstants.USERAUTHID];
             string sWebBToken = context.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN];
 
-            bool IsPublicFormRqst = !string.IsNullOrWhiteSpace(sWebBToken) &&
-                ((context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") || context.HttpContext.Request.Headers["eb_form_type"] == "public_form");
+            bool IsPublicFormRqst = this.IsPublicFormRequest(context.HttpContext.Request);
 
             if (IsPublicFormRqst)
             {
@@ -167,8 +167,7 @@ namespace ExpressBase.Web.BaseControllers
         {
             if (ControllerContext.ActionDescriptor.ActionName != "Logout")
             {
-                bool IsPublicFormRqst = !string.IsNullOrEmpty(context.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN]) &&
-                    ((context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") || context.HttpContext.Request.Headers["eb_form_type"] == "public_form");
+                bool IsPublicFormRqst = this.IsPublicFormRequest(context.HttpContext.Request);
 
                 if (this.ServiceClient != null)
                 {
@@ -193,6 +192,20 @@ namespace ExpressBase.Web.BaseControllers
             }
 
             base.OnActionExecuted(context);
+        }
+
+        private bool IsPublicFormRequest(HttpRequest request)
+        {
+            if (!string.IsNullOrEmpty(request.Cookies[RoutingConstants.WEB_BEARER_TOKEN]))
+            {
+                if (request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5")
+                    return true;
+
+                Uri uri = new Uri(request.Headers["Referer"]);
+                if (HttpUtility.ParseQueryString(uri.Query).Get("_rm") == "5")
+                    return true;
+            }
+            return false;
         }
 
         public string GetAccessLoc(Controller contrlr)

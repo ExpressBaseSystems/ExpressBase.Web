@@ -1,0 +1,63 @@
+﻿
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading...</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css" asp-append-version=@bApnd>
+    <link rel="icon" href="~/images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.css" asp-append-version=@bApnd />
+
+    <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbControls/EbMsgBox.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbControls/EbProgressBar.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/LayoutCommon/loadingoverlay.min.js"></script>
+
+</head>
+<body>
+    <div class="html-root">
+
+    </div>
+</body>
+</html>
+<script>
+
+    function init() {
+        $.LoadingOverlay("show");
+        $.ajax({
+            type: "POST",
+            url: "/Ext/PublicFormAuth",
+            data: {
+                id: '@ViewBag.id',
+                p: '@ViewBag.p',
+                m: '@ViewBag.m'
+            },
+            error: function () {
+                console.error('Something went wrong');
+                $.LoadingOverlay("hide");
+            },
+            success: function (result) {
+                if (result) {
+                    let resp = JSON.parse(result);
+                    document.cookie = `web_btoken=${resp.web_btoken}; SameSite=None; Secure;path=/`;
+                    document.cookie = `web_rtoken=${resp.web_rtoken}; SameSite=None; Secure;path=/`;
+                    document.cookie = `web_authid=${resp.web_authid}; SameSite=None; Secure;path=/`;
+                    document.cookie = `web_user_disp_name=${resp.web_user_disp_name}; SameSite=None; Secure;path=/`;
+                    window.location.href = `/WebForm/Index?_r=${resp._r}&_p=${resp._p}&_m=${resp._m}&_l=${resp._l}&_rm=${resp._rm}`;
+                }
+            }.bind(this)
+        });
+    }
+    init();
+
+</script>

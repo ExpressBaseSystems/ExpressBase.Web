@@ -3020,6 +3020,11 @@ const WebFormRender = function (option) {
         this.draftInfo = option.draftInfo;
         this.mode = option.mode;
         this.renderMode = option.renderMode;
+        if (this.renderMode == 5) {
+            $.ajaxSetup({
+                headers: { 'eb_form_type': 'public_form' }
+            });
+        }
         this.userObject = option.userObject;
         this.isPartial = option.isPartial;//value is true if form is rendering in iframe
         this.headerObj = option.headerObj;//EbHeader

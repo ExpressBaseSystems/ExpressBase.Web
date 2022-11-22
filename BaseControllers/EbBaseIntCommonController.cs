@@ -10,6 +10,7 @@ using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Messaging;
@@ -18,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -72,6 +72,18 @@ namespace ExpressBase.Web.BaseControllers
             string sBToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
             string SSE_Sub_Id = context.HttpContext.Request.Headers[RoutingConstants.SSE_SUB_ID];
+            string userAuthId = context.HttpContext.Request.Cookies[TokenConstants.USERAUTHID];
+            string sWebBToken = context.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN];
+
+            bool IsPublicFormRqst = !string.IsNullOrWhiteSpace(sWebBToken) &&
+                ((context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") || context.HttpContext.Request.Headers["eb_form_type"] == "public_form");
+
+            if (IsPublicFormRqst)
+            {
+                sBToken = sWebBToken;
+                sRToken = context.HttpContext.Request.Cookies[RoutingConstants.WEB_REFRESH_TOKEN];
+                userAuthId = context.HttpContext.Request.Cookies["web_authid"];
+            }
 
             if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
             {
@@ -114,7 +126,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                     controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
                     controller.ViewBag.UId = Convert.ToInt32(bToken.Payload[TokenConstants.UID]);
-                    controller.ViewBag.UAuthId = context.HttpContext.Request.Cookies[TokenConstants.USERAUTHID];
+                    controller.ViewBag.UAuthId = userAuthId;
                     controller.ViewBag.cid = bToken.Payload[TokenConstants.CID];
                     controller.ViewBag.cide = ExtSolutionId.Replace(RoutingConstants.DASHDEV, string.Empty);
                     controller.ViewBag.wc = bToken.Payload[TokenConstants.WC];
@@ -155,12 +167,29 @@ namespace ExpressBase.Web.BaseControllers
         {
             if (ControllerContext.ActionDescriptor.ActionName != "Logout")
             {
+                bool IsPublicFormRqst = !string.IsNullOrEmpty(context.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN]) &&
+                    ((context.HttpContext.Request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5") || context.HttpContext.Request.Headers["eb_form_type"] == "public_form");
+
                 if (this.ServiceClient != null)
+                {
                     if (!string.IsNullOrEmpty(this.ServiceClient.BearerToken))
-                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                    {
+                        if (!IsPublicFormRqst)
+                            Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                        else
+                            Response.Cookies.Append(RoutingConstants.WEB_BEARER_TOKEN, this.ServiceClient.BearerToken, new CookieOptions());
+                    }
+                }
                 if (this.FileClient != null)
+                {
                     if (!string.IsNullOrEmpty(this.FileClient.BearerToken))
-                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.FileClient.BearerToken, new CookieOptions());
+                    {
+                        if (!IsPublicFormRqst)
+                            Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.FileClient.BearerToken, new CookieOptions());
+                        else
+                            Response.Cookies.Append(RoutingConstants.WEB_BEARER_TOKEN, this.FileClient.BearerToken, new CookieOptions());
+                    }
+                }
             }
 
             base.OnActionExecuted(context);

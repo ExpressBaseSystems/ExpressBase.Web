@@ -3306,6 +3306,7 @@ input.locinp {
     margin-left: 15%;
     background-color: aliceblue;
     padding: 7px;
+    border: 1px solid rgba(34,36,38,.15);
 }
 
 [ctype=SubmitButton] > .ctrl-cover {

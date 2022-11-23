@@ -1426,8 +1426,8 @@ namespace ExpressBase.Web.Controllers
             string[] hostParts = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Split(CharConstants.DOT);
             if (isAvailSolution())
             {
-                string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-                string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+                string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN];
+                string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.WEB_REFRESH_TOKEN];
                 bool Isloggedin = false;
                 if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
                 {

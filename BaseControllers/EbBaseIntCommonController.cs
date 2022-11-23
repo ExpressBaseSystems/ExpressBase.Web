@@ -198,12 +198,21 @@ namespace ExpressBase.Web.BaseControllers
         {
             if (!string.IsNullOrEmpty(request.Cookies[RoutingConstants.WEB_BEARER_TOKEN]))
             {
-                if (request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5")
-                    return true;
-
-                Uri uri = new Uri(request.Headers["Referer"]);
-                if (HttpUtility.ParseQueryString(uri.Query).Get("_rm") == "5")
-                    return true;
+                try
+                {
+                    if (request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5")
+                        return true;
+                    if (!string.IsNullOrWhiteSpace(request.Headers["Referer"]))
+                    {
+                        Uri uri = new Uri(request.Headers["Referer"]);
+                        if (HttpUtility.ParseQueryString(uri.Query).Get("_rm") == "5")
+                            return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception in IsPublicFormRequest: " + ex.Message);
+                }
             }
             return false;
         }

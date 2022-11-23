@@ -603,7 +603,7 @@
         let stageUqid = getObjByval(this.CurStageDATA.Columns, "Name", "stage_unique_id").Value;
         let stage = getObjByval(this.stages, "EbSid", stageUqid);
 
-        this.ctrl.execReviewModal.find('.modal-title').text(this.ctrl.Label + ' - ' + stage.StageText);
+        this.ctrl.execReviewCont.find('.exec-rev-title').text(this.ctrl.Label + ' - ' + stage.StageText);
         let statusSel = $(`#${this.ctrl.EbSid_CtxId}_status`);
         statusSel.html('');
         for (let i = 0; i < stage.StageActions.$values.length; i++) {
@@ -613,11 +613,7 @@
             }
         }
         statusSel.val($(e.target).val());
-        this.ctrl.execReviewModal.modal('show');
-
-        //if (this.ctrl.CurStageAssocCtrls.length > 0) {
-
-        //}
+        this.formRenderer.showExecReviewCont();
     };
 
     this.init = function () {
@@ -633,12 +629,18 @@
     };
 
     this.disableAllCtrls = function () {
-        //this.$table.find('.selectpicker').selectpicker();
-        this.$table.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
-        this.$table.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
-        this.$tableBody.find("tr[rowid='0']").hide();
-        this.$submit.hide();
-        this.$container.find("tr").attr("active", "false");
+        let $tr = this.$tableBody.find("tr[rowid='0']");
+        $tr.hide();
+        $tr.attr("active", "false");
+        $tr.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
+        $tr.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
+    };
+
+    this.enableAllCtrls = function () {
+        let $tr = this.$tableBody.find("tr[rowid='0']");
+        $tr.show();
+        $tr.attr("active", "true");
+        $tr.find("td[col='status'] .dropdown-toggle").removeAttr('disabled').css('pointer-events', 'inherit').find(".bs-caret").show();
     };
 
     this.enableRow = function () {

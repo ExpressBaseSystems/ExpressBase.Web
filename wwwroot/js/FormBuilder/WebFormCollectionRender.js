@@ -135,12 +135,13 @@ const WebFormCollectionRender = function (Option) {
         else
             _obj = this.ObjectCollection.find(e => e.formRefId === resp.RefId);
         let cxt = this.RenderCounter++;
-        this.SetSubFormModal(cxt);
+        let _formObj = JSON.parse(_obj.formObj);
+        this.SetSubFormModal(cxt, _formObj.DisableOpenInNewTab);
         this.showSubForm(cxt);
         this.CurrentSubForm = null;
         try {
             let WebForm = new WebFormRender({
-                formObj: JSON.parse(_obj.formObj),
+                formObj: _formObj,
                 $formCont: $(`#subForm-cont${cxt}`),
                 headerBtns: this.GetSlaveHeaderBtns(cxt),
                 formRefId: _obj.formRefId,
@@ -314,7 +315,7 @@ const WebFormCollectionRender = function (Option) {
         return headerBtns;
     };
 
-    this.SetSubFormModal = function (cxt) {
+    this.SetSubFormModal = function (cxt, DisableOpenInNewTab) {
         if ($(`#subFormModal${cxt}`).length === 0) {
             if ($('.sf-msk').length === 0)
                 $("body").append(`<div class="sf-msk" style='display: none;'></div>`);
@@ -345,7 +346,7 @@ const WebFormCollectionRender = function (Option) {
                     <button id="subformdiscardedit${cxt}" class='btn' title='Discard Changes (Ctrl+Q)' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
                     <button id="subformdetails${cxt}" class='btn' title='Details & More Options'><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>
 
-                    <button id="subformopen${cxt}" class='' title='Open in new tab'><i class="fa fa-external-link" aria-hidden="true"></i></button>
+                    <button id="subformopen${cxt}" class='' title='Open in new tab' ${(DisableOpenInNewTab ? "style='display: none;'" : "")}><i class="fa fa-external-link" aria-hidden="true"></i></button>
                     <button id="subformmaximize${cxt}" class='' title='Maximize'><i class="fa fa-window-maximize" aria-hidden="true"></i></button>
                     <button id="subformclose${cxt}" class='' title='Close' data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></button>
                 </div> 

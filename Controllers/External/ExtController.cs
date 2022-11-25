@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using ExpressBase.Security;
 using ExpressBase.Common.Security;
+using ExpressBase.Objects;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -326,8 +327,27 @@ namespace ExpressBase.Web.Controllers
             return IsAvail;
         }
 
-        public IActionResult UsrSignIn()
+        private string GetDefaultHtmlPageRefId()
         {
+            Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.SolutionId));
+            if (!string.IsNullOrWhiteSpace(s_obj?.SolutionSettings?.DefaultHtmlPageRefid))
+                return s_obj.SolutionSettings.DefaultHtmlPageRefid;
+            return string.Empty;
+        }
+
+        public IActionResult UsrSignIn(bool Page = true)
+        {
+            if (Page)
+            {
+                string refId = GetDefaultHtmlPageRefId();
+                if (!string.IsNullOrWhiteSpace(refId))
+                {
+                    EbHtmlPage view = this.Redis.Get<EbHtmlPage>(refId);
+                    if (view != null)
+                        return base.Content(view.Html, "text/html");
+                }
+            }
+
             if (isAvailSolution())
             {
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
@@ -1405,6 +1425,22 @@ namespace ExpressBase.Web.Controllers
                 {
 
                     return RedirectToAction("Index", "WebForm", new { _r = solutionObj.SolutionSettings.SignupFormRefid, _l = authResponse.User.Preference.DefaultLocation, _rm = 3 });
+                }
+            }
+            return Redirect("/StatusCode/404");
+        }
+
+        [HttpGet("/pages/{id}")]
+        public IActionResult HtmlPage(string id)
+        {
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                string[] parts = id.Split("-");
+                if (parts.Length == 7 && ViewBag.SolutionId == parts[1] && parts[2] == EbObjectTypes.HtmlPage.IntCode.ToString())
+                {
+                    EbHtmlPage view = this.Redis.Get<EbHtmlPage>(id);
+                    if (view != null)
+                        return base.Content(view.Html, "text/html");
                 }
             }
             return Redirect("/StatusCode/404");

@@ -1,0 +1,212 @@
+﻿@{
+    @using ExpressBase.Common;
+    var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
+    string readonlyval = (dsObj != null) ? dsObj.VersionNumber.Substring(dsObj.VersionNumber.Length - 1) : "w";
+}
+
+<style>
+    .CodeMirror {
+        z-index: 0;
+    }
+
+    .ds-cont {
+        position: relative;
+        margin: 0 auto;
+        height: calc( 100vh - 76.5px);
+        margin-top: 37px;
+        box-shadow: var(--eb-shadow);
+        border: solid rgba(54, 57, 88, 0.1);
+        border-width: 1px 1px 1px 0px;
+        border-radius: 2px 3px 3px 2px;
+        overflow: hidden;
+    }
+
+        .ds-cont .CodeMirror-gutters {
+            background-color: rgb(255, 255, 255);
+            border-right: solid 1px #f2f2f2;
+        }
+
+        .ds-cont .CodeMirror-gutter-elt {
+            color: white;
+        }
+
+        .ds-cont .ds-prop {
+            position: fixed;
+            right: 0px;
+            top: 37px;
+            width: 300px;
+            height: 100%;
+            background-color: white;
+            box-shadow: var(--eb-shadow);
+            border: 1px solid #ccc;
+            z-index: 7;
+        }
+
+        .ds-cont .CodeMirror pre {
+            z-index: 0 !important;
+        }
+
+        .ds-cont .code-window {
+            height: 100%;
+        }
+
+        .ds-cont .CodeMirror {
+            font-family: monospace;
+            height: 100%;
+            color: black;
+            z-index: 1;
+        }
+
+        .ds-cont .CodeMirror-selected {
+            background-color: #0083ff3b;
+        }
+
+        .ds-cont .param-div-cont {
+            position: absolute;
+            background-color: white;
+            height: calc( 100vh - 77px);
+        }
+
+        .ds-cont .param-div {
+            position: absolute;
+            left: 0px;
+            min-width: 300px;
+            height: 100%;
+            background-color: white;
+            box-shadow: var(--eb-shadow);
+            border: 1px solid #ccc;
+            z-index: 9;
+        }
+
+    .CodeMirror-linenumber {
+        color: #7b7b7b !important;
+        font-family: Arial;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+    .CodeMirror-gutters {
+        z-index: 0;
+    }
+
+    .CodeMirror-gutter-wrapper {
+        z-index: 2;
+    }
+
+    div.CodeMirror-cursors {
+        z-index: 2;
+    }
+
+    .CodeMirror-gutter-elt {
+        /*z-index: 3;*/
+    }
+
+    .CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+        z-index: 2;
+    }
+</style>
+
+<section class="ds-page ds-cont adv-dsb-cont" id="ds-page@(ViewBag.tabnum)">
+    <div class='code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
+        <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
+    </div>
+    <div class='ds-prop'>
+        <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
+    </div>
+</section>
+
+<script>
+    var HtmlPageBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
+        this.Code;
+        this.ObjectType = type;
+        this.Versions;
+        this.Refid = refid;
+        this.relatedObjects;
+        this.FilterDialogRefId;
+        this.rel_arr = [];
+        this.Filter_Params;
+        this.Parameter_Count;
+        this.Object_String_WithVal;
+        this.Ssurl = ssurl;
+        this.delay = 300;
+        this.isPw = false;
+        this.RedColor = "#aa0000";
+
+        this.EbObject = dsobj;
+        commonO.Current_obj = this.EbObject;
+        this.Sql = null;
+
+        this.propGrid = new Eb_PropertyGrid({
+            id: "dspropgrid" + tabNum,
+            wc: this.wc,
+            cid: this.cid,
+            $extCont: $(".ds-prop"),
+            $scope: $(".adv-dsb-cont")
+        });
+
+        this.Init = function () {
+            $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste', (this.SetCode.bind(this)));
+            $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
+            $(".selectpicker").selectpicker();
+
+            if (this.EbObject === null) {
+                this.EbObject = new EbObjects["EbHtmlPage"]("EbHtmlPage_" + Date.now().toString(36));
+                this.EbObject.DisplayName = this.EbObject.Name;
+                commonO.Current_obj = this.EbObject;
+            }
+
+            this.propGrid.setObject(this.EbObject, AllMetas["EbHtmlPage"]);
+            this.Name = this.EbObject.Name;
+            window["editor" + tabNum].setValue(atob(this.EbObject.Html));
+            this.GenerateButtons();
+        };
+
+        this.SetCode = function (e) {
+            try {
+                this.EbObject.Html = btoa(window["editor" + tabNum].getValue());
+                $('#save').removeClass('disabled');
+                $('#commit_outer').removeClass('disabled');
+            }
+            catch (err) {
+                alert(err.message);
+                $('#save').addClass('disabled');
+                $('#commit_outer').addClass('disabled');
+            }
+        };
+
+        this.GenerateButtons = function () {
+            $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
+                                            <i class='fa fa-eye' aria-hidden='true'></i>
+                                        </button>`);
+            $("#form_preview").tooltip().off("click").on("click", function () {
+                if (this.EbObject.RefId) {
+                    let url = window.location.origin.replace('-dev', '') + "/pages/" + this.EbObject.RefId;
+                    window.open(url, '_blank');
+                }
+                else {
+                    EbMessage("show", { Message: 'Refresh page then Try again', AutoHide: true, Background: '#1e1ebf' });
+                }
+            }.bind(this));
+        };
+
+        this.Init();
+    }
+
+    if (@ViewBag.tabnum === 0) {
+        var commonO = $("#layout_div").data("commonObj");
+    }
+
+    window["editor@(ViewBag.tabnum)"] = CodeMirror.fromTextArea(document.getElementById("code@(ViewBag.tabnum)"), {
+        mode: "text/html",
+        lineNumbers: true,
+        lineWrapping: false,
+        extraKeys: { "Ctrl-Space": "autocomplete" },
+        autoRefresh: true,
+        readOnly: false,
+        foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    });
+
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new HtmlPageBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ssurl');
+
+</script>

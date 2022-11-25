@@ -7,7 +7,9 @@
     Dictionary<string, List<EbObjectWrapper>> Public_ObjList = ViewBag.objlist;
     Dictionary<string, List<EbObjectWrapper>> All_ObjList = ViewBag.all_objlist;
     Dictionary<string, List<EbObjectWrapper>> mobile_allpages = ViewBag.MobilePages;
+    Dictionary<string, List<EbObjectWrapper>> All_HtmlPages = ViewBag.HtmlPages;
     string signupFormRefid = ViewBag.signupFormRefid;
+    string defaultHtmlPageRefid = ViewBag.defaultHtmlPageRefid;
     MobileAppSettings mobile_settings = ViewBag.MobileSettings;
     EbWebFormSettings Web_settings = ViewBag.WebFormSettings;
     string CleanupQueries = ViewBag.CleanupQueries;
@@ -196,20 +198,37 @@
             </div>
             <div class="solution_cons">
                 <div class="solution_cons_inner w-100" style="margin-left: 10px;">
-                    <label> Select External Forms </label>
+                    <label> Select External Forms/Pages </label>
                     <div>
-                        <label style="padding-top:10px;font-weight: 500;">1.  Signup Form</label>
-                    </div>
-                    <select class="form-control" id="signup_object">
-                        <option value="">  --- Choose signup form --- </option>
-                        @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in Public_ObjList)
-                        {
-                            @foreach (EbObjectWrapper ver in obj.Value)
+                        <div>
+                            <label style="padding-top:10px;font-weight: 500;">1.  Signup Form</label>
+                        </div>
+                        <select class="form-control" id="signup_object">
+                            <option value="">  --- Choose signup form --- </option>
+                            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in Public_ObjList)
                             {
-                                <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                @foreach (EbObjectWrapper ver in obj.Value)
+                                {
+                                    <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                }
                             }
-                        }
-                    </select>
+                        </select>
+                    </div>
+                    <div>
+                        <div>
+                            <label style="padding-top:10px;font-weight: 500;">2.  Default Html Page</label>
+                        </div>
+                        <select class="form-control" id="default_html_page">
+                            <option value="">  --- Choose default html page --- </option>
+                            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in All_HtmlPages)
+                            {
+                                @foreach (EbObjectWrapper ver in obj.Value)
+                                {
+                                    <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                }
+                            }
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -381,6 +400,9 @@
         if ("@signupFormRefid" != "") {
             $("#signup_object").val("@signupFormRefid");
         }
+        if ("@defaultHtmlPageRefid" != "") {
+            $("#default_html_page").val("@defaultHtmlPageRefid");
+        }
 
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
@@ -411,6 +433,7 @@
 
         let obj = {
             SignupFormRefid: $("#signup_object").val(),
+            DefaultHtmlPageRefid: $("#default_html_page").val(),
             UserTypeForms: arr,
             MobileAppSettings: MobileSettings,
             WebSettings: stylehelp.getStyleObj(),

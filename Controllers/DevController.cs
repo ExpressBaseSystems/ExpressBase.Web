@@ -793,12 +793,14 @@ namespace ExpressBase.Web.Controllers
             EbObjectObjListAllVerResponse public_res = this.ServiceClient.Get(new PublicObjListAllVerRequest { EbObjectType = 0 });
             EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
             EbObjectObjListAllVerResponse All_mobilePages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 13 });
+            EbObjectObjListAllVerResponse All_HtmlPages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.HtmlPage.IntCode });
             GetUserTypesResponse _userTypesResp = this.ServiceClient.Get(new GetUserTypesRequest());
 
             Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
             if (solutionObj != null && solutionObj.SolutionSettings != null)
             {
                 ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
+                ViewBag.defaultHtmlPageRefid = solutionObj.SolutionSettings.DefaultHtmlPageRefid;
                 if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
                 {
                     foreach (var item in _userTypesResp.UserTypes)
@@ -815,10 +817,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.objlist = public_res.Data;
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
+            ViewBag.HtmlPages = All_HtmlPages.Data;
             ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
             ViewBag.WebFormSettings = solutionObj.SolutionSettings?.WebSettings ?? new EbWebFormSettings(true);
             ViewBag.SystemColumns = solutionObj.SolutionSettings?.SystemColumns ?? new EbSystemColumns(EbSysCols.Values);
-           
+
             if (solutionObj.SolutionSettings?.MobileAppSettings == null)
             {
                 ViewBag.MobileSettings = new MobileAppSettings();
@@ -830,7 +833,7 @@ namespace ExpressBase.Web.Controllers
 
         public string ResetWebSettings()
         {
-            return JsonConvert.SerializeObject( new EbWebFormSettings(true));
+            return JsonConvert.SerializeObject(new EbWebFormSettings(true));
         }
         public string SaveSolutionSettings(string obj, string CleanupQueries)
         {

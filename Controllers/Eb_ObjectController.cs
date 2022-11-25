@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -13,11 +13,11 @@ using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
 using System.Text;
-using ExpressBase.Common.Structures; 
+using ExpressBase.Common.Structures;
 using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
 using ExpressBase.Web.Filters;
-using ExpressBase.Objects.Objects.SmsRelated; 
+using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
@@ -91,7 +91,7 @@ namespace ExpressBase.Web.Controllers
                             _object.VersionNumber = element.VersionNumber;
                             _object.DisplayName = element.DisplayName;
                             ViewBag.Workingcopy = element.Wc_All;
-                        }                        
+                        }
                     }
                 }
                 else
@@ -118,6 +118,16 @@ namespace ExpressBase.Web.Controllers
                     Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
                     _c2js = new Context2Js(typeArray, BuilderType.DataReader, typeof(EbDataSourceMain));
                     //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis, ServiceClient);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.HtmlPage))
+                {
+                    Type[] typeArray = typeof(EbHtmlPageBase).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.HtmlPage, typeof(EbHtmlPageBase));
                     if (_object != null)
                     {
                         _object.AfterRedisGet(Redis, ServiceClient);

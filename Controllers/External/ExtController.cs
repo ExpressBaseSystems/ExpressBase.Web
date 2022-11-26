@@ -337,17 +337,6 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn(bool Page = true)
         {
-            if (Page)
-            {
-                string refId = GetDefaultHtmlPageRefId();
-                if (!string.IsNullOrWhiteSpace(refId))
-                {
-                    EbHtmlPage view = this.Redis.Get<EbHtmlPage>(refId);
-                    if (view != null)
-                        return base.Content(view.Html, "text/html");
-                }
-            }
-
             if (isAvailSolution())
             {
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
@@ -366,6 +355,17 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (!IsInternal)
                 {
+                    if (Page && WhichConsole == RoutingConstants.UC)
+                    {
+                        string refId = GetDefaultHtmlPageRefId();
+                        if (!string.IsNullOrWhiteSpace(refId))
+                        {
+                            EbHtmlPage view = this.Redis.Get<EbHtmlPage>(refId);
+                            if (view != null)
+                                return base.Content(view.Html, "text/html");
+                        }
+                    }
+
                     ViewBag.HasSignupForm = false;
                     if (!(WhichConsole == RoutingConstants.DC))
                     {

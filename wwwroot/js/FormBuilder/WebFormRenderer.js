@@ -89,18 +89,21 @@ const WebFormRender = function (option) {
                 extraHtml += `<button class="btn sw-btn sw-btn-save disabled">Submit</button>`;
             }
 
-            let hiddenSteps = [];
+            let hiddenSteps = [], doneSteps = [];
             for (let i = 0; i < wizControl.Controls.$values.length; i++) {
                 if (wizControl.Controls.$values[i].Hidden)
                     hiddenSteps.push(i);
+                if (!this.Mode.isNew)
+                    doneSteps.push(i);
             }
 
             $Tab.smartWizard({
                 theme: 'arrows',
                 enableUrlHash: false, // Enable selection of the step based on url hash
+                autoAdjustHeight: false,
                 transition: {
-                    animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
-                    speed: '400', // Transion animation speed
+                    animation: 'none', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                    speed: '200', // Transion animation speed
                     easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
                 },
                 toolbar: {
@@ -110,6 +113,9 @@ const WebFormRender = function (option) {
                     showPreviousButton: true, // show/hide a Previous button
                     extraHtml: extraHtml
                 },
+                anchor: {
+                    enableNavigationAlways: !this.Mode.isNew
+                },
                 keyboard: {
                     keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
                 },
@@ -118,7 +124,9 @@ const WebFormRender = function (option) {
                     previous: '< Previous'
                 }
             });
+
             $Tab.smartWizard("setState", hiddenSteps, "disable");
+            $Tab.smartWizard("setState", doneSteps, "done");
 
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 let leave = false;

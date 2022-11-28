@@ -3581,7 +3581,9 @@ input.locinp {
     }
 
 .Eb-ctrlContainer .sw > .tab-content {
-    height: auto !important;
+    min-height: 100px;
+    height: calc(100vh - 150px);
+    overflow: auto;
 }
 
 

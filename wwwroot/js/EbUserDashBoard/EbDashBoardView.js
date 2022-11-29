@@ -812,13 +812,15 @@
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
 
-        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+        if (ebcontext.languages !== undefined) {
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
 
-        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
 
         if (this.EbObject.Filter_Dialogue !== "") {
             this.Procs = {};

@@ -187,14 +187,15 @@
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
 
-        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+        if (ebcontext.languages !== undefined) {
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
 
-        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
-
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
         this.RunsqlJobFunction();
     };
 
@@ -222,7 +223,7 @@
     this.init = function () {
         this.currentDate();
         this.DrawJobSelectBox();
-       // $("#list-of-jobs").on("click", ".retryBtn", this.SqljobRetry.bind(this));
+        // $("#list-of-jobs").on("click", ".retryBtn", this.SqljobRetry.bind(this));
         $("#show-sql-jobs").on("click", this.getJobsList.bind(this));
         $("#run-sql-job").on("click", this.RunsqlJobTrigger.bind(this));
         $("#schedule-sql-job").on("click", this.ScheduleSqlJobFunction.bind(this));

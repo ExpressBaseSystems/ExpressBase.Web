@@ -770,13 +770,15 @@ function getValsFromForm(formObj) {
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
 
-        temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_language_id"; });
-        if (temp.length === 0)
-            fltr_collection.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+        if (ebcontext.languages !== undefined) {
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
 
-        temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_locale"; });
-        if (temp.length === 0)
-            fltr_collection.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
     }
 
     return fltr_collection;

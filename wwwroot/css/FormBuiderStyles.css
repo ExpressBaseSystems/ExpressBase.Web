@@ -62,6 +62,11 @@ body {
     padding: 38px 0px 0px 0px;
 }
 
+    .webform-cont .form-buider-form {
+        height: calc(100vh - 38px);
+        border: none;
+    }
+
 .formB-box {
     display: inline-block;
     background-color: white;
@@ -2477,6 +2482,99 @@ input.locinp {
     font-size: 11px;
 }
 
+.webform-cont .form-cont-first,
+.sub-form-cont .form-cont-first {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    transition: width 0.5s;
+    display: inline-block;
+}
+
+    .webform-cont .form-cont-first.active,
+    .sub-form-cont .form-cont-first.active {
+        width: 70%;
+    }
+
+        .webform-cont .form-cont-first.active .form-buider-form,
+        .sub-form-cont .form-cont-first.active .form-buider-form {
+            width: 142%;
+            overflow-y: unset;
+        }
+
+        .webform-cont .form-cont-first.active .form-buider-form {
+            height: calc(100vh - 56px);
+        }
+
+.webform-cont .form-cont-second,
+.sub-form-cont .form-cont-second {
+    /*display: none;*/
+    width: 0;
+    background-color: #fefefe;
+    position: relative;
+    overflow: auto;
+    height: 100%;
+    transition: width 0.5s;
+    display: inline-block;
+}
+
+    .webform-cont .form-cont-second.active,
+    .sub-form-cont .form-cont-second.active {
+        width: 30%;
+        border-left: 1px solid rgb(200 200 220 / 100%);
+    }
+
+    .webform-cont .form-cont-second .exec-rev-cont,
+    .sub-form-cont .form-cont-second .exec-rev-cont {
+        height: 100%;
+    }
+
+    .webform-cont .form-cont-second .exec-rev-header,
+    .sub-form-cont .form-cont-second .exec-rev-header {
+        padding: 12px;
+        font-size: 14px;
+        height: 40px;
+        border-bottom: 1px solid #f0f0f0;
+        box-shadow: 0 0 5px 0 rgb(0 0 0 / 10%);
+    }
+
+    .webform-cont .form-cont-second .exec-rev-title,
+    .sub-form-cont .form-cont-second .exec-rev-title {
+        display: inline-block;
+        width: calc(100% - 30px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .webform-cont .form-cont-second .exec-rev-header button,
+    .sub-form-cont .form-cont-second .exec-rev-header button {
+        position: relative;
+        float: right;
+        top: -6px;
+        padding: 0px;
+        background-color: #fefefe;
+    }
+
+    .webform-cont .form-cont-second .exec-rev-body,
+    .sub-form-cont .form-cont-second .exec-rev-body {
+        padding: 12px;
+        overflow: auto;
+        height: calc(100% - 44px);
+        width: 100%;
+    }
+
+    .webform-cont .form-cont-second .exec-rev-footer,
+    .sub-form-cont .form-cont-second .exec-rev-footer {
+        font-size: 9px;
+        width: 100%;
+        text-align: right;
+        height: 40px;
+        padding: 20px 4px 0px 0px;
+        margin-bottom: 45px;
+    }
+
+
 .btn-select {
     position: relative;
     display: inline-block;
@@ -2756,6 +2854,8 @@ input.locinp {
     .sub-form-cont .form-buider-form {
         height: 100%;
         border-radius: 0px 0px 6px 6px;
+        border: none;
+        overflow: unset;
     }
 
 .sf-msk {
@@ -3481,7 +3581,9 @@ input.locinp {
     }
 
 .Eb-ctrlContainer .sw > .tab-content {
-    height: auto !important;
+    min-height: 100px;
+    height: calc(100vh - 150px);
+    overflow: auto;
 }
 
 

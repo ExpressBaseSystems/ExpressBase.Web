@@ -188,6 +188,10 @@
                         @await Component.InvokeAsync("SqlJob", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                     }
+                    else if (ViewBag.ObjType == (int)EbObjectTypes.HtmlPage)
+                    {
+                        @await Component.InvokeAsync("HtmlPageBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl });
+                    }
                 }
             </div>
         @if (ViewBag.ObjType == (int)EbObjectTypes.Report)

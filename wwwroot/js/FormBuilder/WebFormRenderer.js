@@ -89,18 +89,21 @@ const WebFormRender = function (option) {
                 extraHtml += `<button class="btn sw-btn sw-btn-save disabled">Submit</button>`;
             }
 
-            let hiddenSteps = [];
+            let hiddenSteps = [], doneSteps = [];
             for (let i = 0; i < wizControl.Controls.$values.length; i++) {
                 if (wizControl.Controls.$values[i].Hidden)
                     hiddenSteps.push(i);
+                if (!this.Mode.isNew)
+                    doneSteps.push(i);
             }
 
             $Tab.smartWizard({
                 theme: 'arrows',
                 enableUrlHash: false, // Enable selection of the step based on url hash
+                autoAdjustHeight: false,
                 transition: {
-                    animation: 'fade', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
-                    speed: '400', // Transion animation speed
+                    animation: 'none', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                    speed: '200', // Transion animation speed
                     easing: '' // Transition animation easing. Not supported without a jQuery easing plugin
                 },
                 toolbar: {
@@ -110,6 +113,9 @@ const WebFormRender = function (option) {
                     showPreviousButton: true, // show/hide a Previous button
                     extraHtml: extraHtml
                 },
+                anchor: {
+                    enableNavigationAlways: !this.Mode.isNew
+                },
                 keyboard: {
                     keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
                 },
@@ -118,7 +124,9 @@ const WebFormRender = function (option) {
                     previous: '< Previous'
                 }
             });
+
             $Tab.smartWizard("setState", hiddenSteps, "disable");
+            $Tab.smartWizard("setState", doneSteps, "done");
 
             $Tab.off("leaveStep").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
                 let leave = false;
@@ -358,7 +366,7 @@ const WebFormRender = function (option) {
         this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject
         this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
-        this.setExecReviewModal();
+        this.setExecReviewCont();
         this.initNCs();// order 1
         this.FRC.bindFunctionToCtrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
         //this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
@@ -388,11 +396,12 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.setExecReviewModal = function () {
+    this.setExecReviewCont = function () {
         if (this.ReviewCtrl && this.ReviewCtrl.RenderAsTable) {
 
-            if ($(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).length > 0)
-                $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`).remove();
+            this.ReviewCtrl.execReviewCont = this.$formCont.find('.form-cont-second');
+            this.ReviewCtrl.execReviewCont.empty();
+            this.ReviewCtrl.includeReviewData = false;
 
             let revDataMdl = this.DataMODEL[this.ReviewCtrl.TableName];
             let CurStageDATA = getObjByval(revDataMdl, "RowId", 0);
@@ -424,68 +433,78 @@ const WebFormRender = function (option) {
                     }
                 }
             }
-            $('body').append(
-                `<div class="modal fade rev-exec" id="${this.ReviewCtrl.EbSid_CtxId}_execRevMdl" role="dialog">
-                    <div class="modal-dialog" style="width: 440px;">
-                        <div class="modal-content" eb-root-obj-container>
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h5 class="modal-title">${this.ReviewCtrl.Label}</h5>
-                            </div>
-                            <div class="modal-body">
-                                ${_ctrlHtml}
-                                <div class="form-group" style='margin: 4px; padding-top: 5px;'>
-                                    <span class='eb-ctrl-label'>${this.ReviewCtrl.StatusTitle || 'Status'}</span>
-                                    <select id="${this.ReviewCtrl.EbSid_CtxId}_status" class="form-control"></select>
-                                </div>
-                                <div class="form-group" style='margin: 4px; padding-top: 5px;'>
-                                    <span class='eb-ctrl-label'>${this.ReviewCtrl.RemarksTitle || 'Remarks'}</span>
-                                    <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 100px !important; resize:none; border-radius: 0;"></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="rev-submit ebbtn eb_btn-sm eb_btnblue">${this.ReviewCtrl.ExecuteBtnText || 'Execute Review'}</button>
-                                <button class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
-                            </div>
+            this.ReviewCtrl.execReviewCont.append(
+                `<div class="exec-rev-cont" eb-root-obj-container>
+                    <div class="exec-rev-header">
+                        <div class="exec-rev-title">${this.ReviewCtrl.Label}</div>
+                        <button class="btn rev-cancel" title="Close"> <i class="material-icons">close</i> </button>
+                    </div>
+                    <div class="exec-rev-body">
+                        ${_ctrlHtml}
+                        <div class="form-group" style='margin: 4px; padding-top: 5px;'>
+                            <span class='eb-ctrl-label'>${this.ReviewCtrl.StatusTitle || 'Status'}</span>
+                            <select id="${this.ReviewCtrl.EbSid_CtxId}_status" class="form-control" style="border-radius: 0; padding: 7px 4px;"></select>
+                        </div>
+                        <div class="form-group" style='margin: 4px; padding-top: 5px;'>
+                            <span class='eb-ctrl-label'>${this.ReviewCtrl.RemarksTitle || 'Remarks'}</span>
+                            <textarea id="${this.ReviewCtrl.EbSid_CtxId}_remarks" class="form-control" style="height: 100px !important; resize:none; border-radius: 0;"></textarea>
+                        </div>
+                        <div class="exec-rev-footer">
+                            <button class="rev-submit ebbtn eb_btn-sm eb_btnblue">${this.ReviewCtrl.ExecuteBtnText || 'Execute Review'}</button>
+                            <button class="rev-cancel ebbtn eb_btn-sm eb_btnplain">Cancel</button>
                         </div>
                     </div>
+                    
                 </div>`);
-            this.ReviewCtrl.execReviewModal = $(`#${this.ReviewCtrl.EbSid_CtxId}_execRevMdl`);
             this.ReviewCtrl.CurStageAssocCtrls = _ctrls;
-            this.ReviewCtrl.execReviewModal.off('shown.bs.modal').on('shown.bs.modal', function () {
-                this.ReviewCtrl.includeReviewData = false;
-                $(`#${this.ReviewCtrl.EbSid_CtxId}_remarks`).val('');
-                if (this.ReviewCtrl.CurStageAssocCtrls.length > 0)
-                    this.SwitchToEditMode();
-            }.bind(this));
 
-            this.ReviewCtrl.execReviewModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                if (!this.ReviewCtrl.includeReviewData && this.ReviewCtrl.CurStageAssocCtrls.length > 0) {
-                    this.DiscardChanges();
-                }
-            }.bind(this));
-
-            this.ReviewCtrl.execReviewModal.off('click', `#${this.ReviewCtrl.EbSid_CtxId}_status`).on('change', `#${this.ReviewCtrl.EbSid_CtxId}_status`, function (e) {
+            this.ReviewCtrl.execReviewCont.off('click', `#${this.ReviewCtrl.EbSid_CtxId}_status`).on('change', `#${this.ReviewCtrl.EbSid_CtxId}_status`, function (e) {
                 if (!this.ReviewCtrl._Builder.CurStageDATA)
                     return;
                 let actionDataVals = getObjByval(this.ReviewCtrl._Builder.CurStageDATA.Columns, "Name", "action_unique_id");
                 actionDataVals.Value = $(e.target).val();
             }.bind(this));
 
-            this.ReviewCtrl.execReviewModal.off('click', '.rev-submit').on('click', '.rev-submit', function (e) {
+            this.ReviewCtrl.execReviewCont.off('click', '.rev-submit').on('click', '.rev-submit', function (e) {
                 if (!this.ReviewCtrl._Builder.isValidationsOK())
                     return;
                 if (this.ReviewCtrl.CurStageAssocCtrls.length > 0) {
-                    this.ReviewCtrl.includeReviewData = true;
-                    this.ReviewCtrl.execReviewModal.modal('hide');
                     this.saveForm();
                 }
                 else {
-                    this.ReviewCtrl.execReviewModal.modal('hide');
                     this.ReviewCtrl._Builder.saveForm_call();
                 }
             }.bind(this));
+
+            this.ReviewCtrl.execReviewCont.off('click', '.rev-cancel').on('click', '.rev-cancel', function (e) {
+                this.hideExecReviewCont();
+            }.bind(this));
         }
+    };
+
+    this.showExecReviewCont = function () {
+        this.$formCont.find('.form-cont-first').addClass('active');
+        this.ReviewCtrl.execReviewCont.addClass('active');
+
+        if (!this.S2EmodeReviewCtrl())
+            return;
+
+        if (this.ReviewCtrl.CurStageAssocCtrls.length > 0) {
+            this.ReviewCtrl.includeReviewData = true;
+
+            $.each(this.ReviewCtrl.CurStageAssocCtrls, function (i, ctrl) {
+                if ((ctrl.IsDisable && ctrl.__IsDisableByExp === undefined) || ctrl.__IsDisableByExp === true)
+                    return;
+                ctrl.enable();
+            }.bind(this));
+        }
+    };
+
+    this.hideExecReviewCont = function () {
+        this.ReviewCtrl.includeReviewData = false;
+        this.$formCont.find('.form-cont-first').removeClass('active');
+        this.ReviewCtrl.execReviewCont.removeClass('active');
+        this.ReviewCtrl._Builder.enableAllCtrls();
     };
 
     //psDataImport
@@ -3002,7 +3021,7 @@ const WebFormRender = function (option) {
         this.$formCont = option.$formCont;
         this.formHTML = option.formHTML;
         this.$formCont.empty();
-        this.$formCont.append(this.formHTML);
+        this.$formCont.append(`<div class="form-cont-first">${this.formHTML}</div><div class="form-cont-second"></div>`);
 
         this.sseChannel = option.formRefId + "_" + option.rowId;
         if (!ebcontext.sse_channels.includes(this.sseChannel))

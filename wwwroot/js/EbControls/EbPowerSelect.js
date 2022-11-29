@@ -740,8 +740,10 @@ const EbPowerSelect = function (ctrl, options) {
 
         this.filterValues.push(new fltr_obj(11, "eb_loc_id", defaultLocId));
         this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        this.filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
-        this.filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        if (ebcontext.languages != undefined) {
+            this.filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+            this.filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
     };
 
     this.getColumnIdx = function (arr, colName) {

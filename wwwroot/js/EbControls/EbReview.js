@@ -632,7 +632,7 @@
         let $tr = this.$tableBody.find("tr[rowid='0']");
         $tr.hide();
         $tr.attr("active", "false");
-        $tr.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
+        this.$table.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
         $tr.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
     };
 

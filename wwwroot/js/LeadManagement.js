@@ -51,6 +51,7 @@
     this.$LastModifiedBy = $("#txtLastModifiedBy");
     this.$GoogleReview = $("#selGoogleReview");
     this.$Stars = $("#selStars");
+    this.$CustomerLanguage = $("#selCustomerLanguage");
     this.$Comments = $("#txtComments");
 
     this.$ConsultedDate = $("#txtConsultedDate");
@@ -893,6 +894,7 @@
         this.$LastModifiedBy.val(this.CustomerInfo["eb_modifiedby"]);
         this.$GoogleReview.val(this.CustomerInfo["google_review"]);
         this.$Stars.val(this.CustomerInfo["stars"]);
+        this.$CustomerLanguage.val(this.CustomerInfo["cust_language"]);
         this.$Comments.val(this.CustomerInfo["comment"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
@@ -995,6 +997,7 @@
         this.pushToList("cust_category", this.$CustomerCategory.val());
         this.pushToList("google_review", this.$GoogleReview.val());
         this.pushToList("stars", this.$Stars.val());
+        this.pushToList("cust_language", this.$CustomerLanguage.val());
         this.pushToList("comment", this.$Comments.val());
 
         this.pushToList("consdate", this.$ConsultedDate.val());

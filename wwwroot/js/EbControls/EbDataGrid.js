@@ -2471,12 +2471,12 @@
     }.bind(this);
 
     this.preInit = function () {
-        if (this.ctrl.DataSourceId) {
-            if (!this.formRenderer.isInitiallyPopulating && (this.Mode.isNew || (this.ctrl.IsLoadDataSourceInEditMode && this.Mode.isEdit))) {
-                this.isDataImport = true;// is this using??
-                this.setSuggestionVals();
-            }
-        }
+        //if (this.ctrl.DataSourceId) {
+        //    if (!this.formRenderer.isInitiallyPopulating && (this.Mode.isNew || (this.ctrl.IsLoadDataSourceInEditMode && this.Mode.isEdit))) {
+        //        this.isDataImport = true;// is this using??
+        //        this.setSuggestionVals();
+        //    }
+        //}
         this.init();
     }.bind(this);
 

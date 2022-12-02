@@ -63,7 +63,7 @@
     };
 
     this.getCurRowValues = function () {
-        if (this.resetFlow) {
+        if (this.resetFlow || this.pullBackFlow) {
             let data = {
                 Columns: [
                     {
@@ -74,12 +74,12 @@
                     {
                         Name: 'action_unique_id',
                         Type: 16,
-                        Value: '__review_reset'
+                        Value: this.resetFlow ? '__review_reset' : '__stage_pullback'
                     },
                     {
                         Name: 'comments',
                         Type: 16,
-                        Value: $(`#${this.resetPopUpId} textarea`).val()
+                        Value: $(`#${(this.resetFlow ? this.resetPopUpId : this.pullBackPopUpId)} textarea`).val()
                     },
                     {
                         Name: 'eb_my_actions_id',
@@ -89,6 +89,7 @@
                 ]
             };
             this.resetFlow = false;
+            this.pullBackFlow = false;
             return data;
         }
 
@@ -296,17 +297,19 @@
             let actUniqueId = getObjByval(row.Columns, "Name", "action_unique_id").Value;
             let stage = getObjByval(this.stages, "EbSid", ebsid);
             let html;
-            if (ebsid === '__system_stage' && actUniqueId === '__review_reset')
+            if (ebsid === '__system_stage' && (actUniqueId === '__review_reset' || actUniqueId === '__stage_pullback')) {
+                let actSt = actUniqueId === '__review_reset' ? 'System (Reset)' : 'System (Pull Back)';
                 html = `<div class='message' rowid='@rowid@' rowid='@rowid@'>
    <div class='fs-dp' @dpstyle@></div>
    <div class='bubble'>
-	  <div class='msg-head'>System (Reset)</div>
+	  <div class='msg-head'>${actSt}</div>
 	  <div class='msg-comment'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@comment@</div>
 	  <span class='msg-uname'>@uname@</span>
 	  <div class='corner'></div>
 	  <span data-toggle='tooltip' title data-original-title='@timeTitle@'>@time@</span>
    </div>
 </div>`;
+            }
             else if (!stage)
                 continue;
             else
@@ -430,12 +433,13 @@
                 continue;
 
             let html;
-            if (ebsid === '__system_stage' && actUniqueId === '__review_reset') {
+            if (ebsid === '__system_stage' && (actUniqueId === '__review_reset' || actUniqueId === '__stage_pullback')) {
+                let actSt = actUniqueId === '__review_reset' ? 'Reset' : 'Pull Back';
                 html = `<tr name='Stage One' rowid='@rowid@' style='@bg@'>
 	<td class='row-no-td rc-slno'>@slno@</td>
 	<td class='row-no-td rc-stage' col='stage'><span class='fstd-div'>System</span></td>
 	<td class='row-no-td rc-status' col='status' class='fs-ctrl-td'>
-		<span class='fstd-div'>Reset</span>
+		<span class='fstd-div'>${actSt}</span>
 	</td>
 	<td class='fs-ctrl-td rc-by' col='review-dtls'>
 		<div class='fstd-div'>
@@ -693,6 +697,7 @@
         }
 
         this.showResetBtn();
+        this.showPullBackBtn();
 
         if (!this.CurStageDATA || !this.hasPermission)
             return;
@@ -776,6 +781,78 @@
         $poTrig.on('click', OnMouseEnter.bind($poTrig));
         $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
         $('body').off('click', `#${this.resetPopUpId} .review-reset-btn`).on('click', `#${this.resetPopUpId} .review-reset-btn`, initiateReset.bind(this));
+    };
+
+    this.showPullBackBtn = function () {
+        if (!this.CurStageDATA)
+            return;
+        let hasPullBackPerm = getObjByval(this.CurStageDATA.Columns, "Name", "has_pullback_permission").Value === "T";
+        if (!hasPullBackPerm)
+            return;
+
+        let $btnParent = this.$tableBody.find("tr[rowid='0']");
+        if ($btnParent.length > 0 && $btnParent.find('.pullback-btn').length === 0)
+            $btnParent.append(`<div class="pullback-btn"><i class="fa fa-step-backward" aria-hidden="true"></i> Pull Back</div>`);
+
+        this.pullBackPopUpId = `${this.ctrl.EbSid_CtxId}-pullback`;
+        let popUpContent = `
+            <div id='${this.pullBackPopUpId}' class='review-pullback-popover'>
+                <div>
+                    <div style='color: #555;'>Remarks</div>
+                    <textarea></textarea>
+                </div>
+                <div class='review-pullback-btn-cont'>
+                    <div class='review-pullback-btn'>Pull Back</div>
+                </div>
+            </div>`
+        let $pullbackBtn = this.$container.find('.fs-grid-cont .pullback-btn');
+
+        let $poTrig = $pullbackBtn.popover({
+            trigger: 'manual',
+            html: true,
+            container: "body",
+            placement: 'left',
+            content: popUpContent,
+            delay: { "hide": 100 }
+        });
+
+        let timer2;
+
+        let OnMouseEnter = function () {
+            clearTimeout(timer2);
+            let _this = this;
+            let $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            if (!$poDiv.length) {
+                $(_this).popover("show");
+                $poDiv = $('#' + $(_this).attr('aria-describedby'));
+            }
+            $poDiv.off("mouseleave").on("mouseleave", function () {
+                timer2 = setTimeout(function () { $(_this).popover('hide'); }, 500);
+            });
+
+            $poDiv.off("mouseenter").on("mouseenter", function () {
+                clearTimeout(timer2);
+            });
+        };
+
+        let OnMouseLeave = function () {
+            let _this = this;
+            timer2 = setTimeout(function () {
+                if (!$('#' + $(_this).attr('aria-describedby') + ':hover').length) {
+                    $(_this).popover("hide");
+                }
+            }, 500);
+        };
+
+        let initiatePullBack = function () {
+            this.pullBackFlow = true;
+            $poTrig.popover('hide');
+            this.saveForm_call();
+        };
+
+        $poTrig.on('click', OnMouseEnter.bind($poTrig));
+        $poTrig.on('mouseleave', OnMouseLeave.bind($poTrig));
+        $('body').off('click', `#${this.pullBackPopUpId} .review-pullback-btn`).on('click', `#${this.pullBackPopUpId} .review-pullback-btn`, initiatePullBack.bind(this));
     };
 
     this.init();

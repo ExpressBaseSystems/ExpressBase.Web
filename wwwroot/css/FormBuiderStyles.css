@@ -746,19 +746,19 @@ eb-disable {
     width: 23%;
 }
 
-.review-reset-popover {
+.review-reset-popover, .review-pullback-popover {
     min-height: 90px;
     min-width: 220px;
 }
 
-    .review-reset-popover textarea {
+    .review-reset-popover textarea, .review-pullback-popover textarea {
         width: 100%;
         height: 65px;
         border-color: #ccc;
         resize: none;
     }
 
-    .review-reset-popover .review-reset-btn-cont {
+    .review-reset-popover .review-reset-btn-cont, .review-pullback-popover .review-pullback-btn-cont {
         float: right;
     }
 
@@ -776,6 +776,19 @@ eb-disable {
             background-color: #ccc;
         }
 
+    .review-pullback-popover .review-pullback-btn {
+        text-align: center;
+        background-color: #5390f0;
+        cursor: pointer;
+        border-radius: 2px;
+        color: white;
+        opacity: 0.6;
+        padding: 3px 8px;
+    }
+
+        .review-pullback-popover .review-pullback-btn:hover {
+            opacity: 1;
+        }
 
 .fs-grid-cont .reset-btn {
     position: absolute;
@@ -789,7 +802,19 @@ eb-disable {
     cursor: pointer;
 }
 
-    .fs-grid-cont .reset-btn:hover {
+.fs-grid-cont .pullback-btn {
+    position: absolute;
+    right: 0px;
+    background-color: #5390f0;
+    padding: 5px 8px;
+    color: white;
+    border-radius: 2px;
+    opacity: 0.6;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+    .fs-grid-cont .reset-btn:hover, .fs-grid-cont .pullback-btn:hover {
         opacity: 1;
     }
 

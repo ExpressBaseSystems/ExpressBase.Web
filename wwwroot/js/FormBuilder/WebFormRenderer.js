@@ -2757,7 +2757,7 @@ const WebFormRender = function (option) {
             }
         }.bind(this));
         return changeDetected;
-    };
+    }.bind(this);
 
     this.excelUpload = function () {
         this.showLoader();

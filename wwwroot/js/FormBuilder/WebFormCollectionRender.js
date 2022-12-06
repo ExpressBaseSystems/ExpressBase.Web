@@ -66,10 +66,15 @@ const WebFormCollectionRender = function (Option) {
         }
 
         window.onbeforeunload = function (e) {
-            if (this.RenderCollection.find(e => e.Mode.isEdit)) {
-                var dialogText = 'Changes you made may not be saved.';
-                e.returnValue = dialogText;
-                return dialogText;
+            for (let i = 0; i < this.RenderCollection.length; i++) {
+                let renObj = this.RenderCollection[i];
+                if (renObj.Mode.isNew || renObj.Mode.isEdit) {
+                    if (renObj.IsAnyChangesInFormData()) {
+                        var dialogText = 'Changes you made may not be saved.';
+                        e.returnValue = dialogText;
+                        return dialogText;
+                    }
+                }
             }
         }.bind(this);
 
@@ -202,9 +207,11 @@ const WebFormCollectionRender = function (Option) {
         let proceed = true;
         let renIdx = this.RenderCollection.findIndex(e => e.__MultiRenderCxt === cxt);
         let renObj = this.RenderCollection[renIdx];
-        if (renObj && renObj.Mode.isEdit) {
-            if (!confirm('Changes you made may not be saved.'))
-                proceed = false;
+        if (renObj && (renObj.Mode.isNew || renObj.Mode.isEdit)) {
+            if (renObj.IsAnyChangesInFormData()) {
+                if (!confirm('Changes you made may not be saved.'))
+                    proceed = false;
+            }
         }
         if (proceed) {
             $(`#subFormModal${cxt}`).fadeOut();

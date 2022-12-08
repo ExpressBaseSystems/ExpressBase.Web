@@ -49,7 +49,10 @@
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                     </button>
                     <div class="dropdown obj_dash_proimage_drp">
-                        <img src="~/images/proimg.jpg" data-src=@DpUrl data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
+                        <div data-toggle="dropdown" class="dropdown-toggle">
+                            <img src="~/images/proimg.jpg" data-src=@DpUrl class="obj_dash_proimage Eb_Image" />
+                            <div class="obj_dash_proname">@ViewBag.UserDisplayName</div>
+                        </div>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
@@ -64,8 +67,8 @@
                             </ul>
                         </div>
                     </div>
-                    <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
-                </div>
+                        <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
+                    </div>
             </div>
         </div>
         <div class="eb_common_loader" id="eb_common_loader"></div>

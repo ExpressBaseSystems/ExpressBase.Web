@@ -559,7 +559,7 @@ let LanguagePicker = function (options) {
                 if (_href.includes("&_lo=")) {
                     const myArray = _href.split("&_lo=");
                     if (myArray.length > 1) {
-                        window.location.href = _href.replace(myArray[1], this.current_locale);
+                        window.location.href = _href.replace("&_lo=" + myArray[1], "&_lo=" + this.current_locale);
                     }
                 }
             };

@@ -93,7 +93,7 @@ namespace ExpressBase.Web.Controllers
             if (WebForm.IsLanguageEnabled && WebForm.SolutionObj.IsMultiLanguageEnabled) 
             {
                 string[] Keys = EbWebForm.GetKeys(WebForm);
-                Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = _locale }).Dict;
+                Dictionary<string, string> KeyValue = ServiceClient.Post<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = _locale }).Dict;
                 WebForm_L = WebForm.Localize(KeyValue) as EbWebForm;
             }
             else

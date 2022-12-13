@@ -1178,10 +1178,13 @@
 
         }
         else {
-            ctrl.setValue = function (p1) {
-                let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
-                $lbl.text(p1 || '');
-            }.bind(ctrl);
+            ctrl.setValue = function (renderer, p1) {
+                if (!renderer.isInitiallyPopulating) {
+                    let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
+                    $lbl.text(p1 || '');
+                }
+            }.bind(ctrl, this.Renderer);
+		
             ctrl.justSetValue = ctrl.setValue;
 
             if (ctrl.RenderAs != 1)

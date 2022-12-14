@@ -1143,7 +1143,7 @@
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
-            if (this.Renderer.Mode.isNew)
+            if (this.Renderer.Mode.isNew || (this.Renderer.Mode.isEdit && ctrl.DisableInEditMode))
                 return;
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
@@ -1162,6 +1162,8 @@
         $ctrl.on('mouseenter', function (ctrl, e) {
             if (this.Renderer.Mode.isNew)
                 ctrl.attr('title', 'Not available in New Mode');
+            else if (this.Renderer.Mode.isEdit && ctrl.DisableInEditMode)
+                ctrl.attr('title', 'Not available in Edit Mode');
             else
                 ctrl.removeAttr('title');
         }.bind(this, $ctrl));
@@ -1184,7 +1186,7 @@
                     $lbl.text(p1 || '');
                 }
             }.bind(ctrl, this.Renderer);
-		
+
             ctrl.justSetValue = ctrl.setValue;
 
             if (ctrl.RenderAs != 1)

@@ -1385,50 +1385,50 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult UsrSignUp()
-        {
-            MyAuthenticateResponse authResponse = null;
-            try
-            {
-                string tenantid = ViewBag.SolutionId;
-                authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
-                {
-                    provider = CredentialsAuthProvider.Name,
-                    UserName = "NIL",
-                    Password = "NIL",
-                    Meta = new Dictionary<string, string> {
-                        { RoutingConstants.WC, "uc" },
-                        { "anonymous", "true"},
-                        { "emailId", "user@signup.com" },
-                        { TokenConstants.CID, tenantid },
-                        { TokenConstants.IP, this.RequestSourceIp},
-                        { RoutingConstants.USER_AGENT, this.UserAgent}
-                    },
-                    RememberMe = true
-                });
+        //public IActionResult UsrSignUp()
+        //{
+        //    MyAuthenticateResponse authResponse = null;
+        //    try
+        //    {
+        //        string tenantid = ViewBag.SolutionId;
+        //        authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+        //        {
+        //            provider = CredentialsAuthProvider.Name,
+        //            UserName = "NIL",
+        //            Password = "NIL",
+        //            Meta = new Dictionary<string, string> {
+        //                { RoutingConstants.WC, "uc" },
+        //                { "anonymous", "true"},
+        //                { "emailId", "user@signup.com" },
+        //                { TokenConstants.CID, tenantid },
+        //                { TokenConstants.IP, this.RequestSourceIp},
+        //                { RoutingConstants.USER_AGENT, this.UserAgent}
+        //            },
+        //            RememberMe = true
+        //        });
 
-            }
-            catch (Exception wse)
-            {
-                Console.WriteLine("Exception:" + wse.ToString());
-            }
-            if (authResponse != null)
-            {
-                CookieOptions options = new CookieOptions();
-                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-                Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+        //    }
+        //    catch (Exception wse)
+        //    {
+        //        Console.WriteLine("Exception:" + wse.ToString());
+        //    }
+        //    if (authResponse != null)
+        //    {
+        //        CookieOptions options = new CookieOptions();
+        //        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+        //        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+        //        Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+        //        Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
 
-                Eb_Solution solutionObj = GetSolutionObject(ViewBag.SolutionId);
-                if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
-                {
+        //        Eb_Solution solutionObj = GetSolutionObject(ViewBag.SolutionId);
+        //        if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
+        //        {
 
-                    return RedirectToAction("Index", "WebForm", new { _r = solutionObj.SolutionSettings.SignupFormRefid, _l = authResponse.User.Preference.DefaultLocation, _rm = 3 });
-                }
-            }
-            return Redirect("/StatusCode/404");
-        }
+        //            return RedirectToAction("Index", "WebForm", new { _r = solutionObj.SolutionSettings.SignupFormRefid, _l = authResponse.User.Preference.DefaultLocation, _rm = 3 });
+        //        }
+        //    }
+        //    return Redirect("/StatusCode/404");
+        //}
 
         [HttpGet("/pages/{id}")]
         public IActionResult HtmlPage(string id)
@@ -1446,16 +1446,33 @@ namespace ExpressBase.Web.Controllers
             return Redirect("/StatusCode/404");
         }
 
+        public IActionResult UsrSignUp()
+        {
+            Eb_Solution solutionObj = GetSolutionObject(ViewBag.SolutionId);
+
+            if (string.IsNullOrWhiteSpace(solutionObj?.SolutionSettings?.SignupFormRefid))
+            {
+                return Redirect("/StatusCode/404");
+            }
+
+            ViewBag.id = solutionObj.SolutionSettings.SignupFormRefid;
+            ViewBag.p = string.Empty;
+            ViewBag.m = (int)WebFormDVModes.New_Mode;
+            ViewBag._rm = (int)WebFormRenderModes.Signup;
+            return View("PublicFormSignIn");
+        }
+
         [Route("PublicForm")]
         public IActionResult PublicFormSignIn(string id, string p, int m)
         {
             ViewBag.id = id;
             ViewBag.p = p;
             ViewBag.m = m;
+            ViewBag._rm = (int)WebFormRenderModes.PublicForm;
             return View();
         }
 
-        public string PublicFormAuth(string id, string p, int m)
+        public string PublicFormAuth(string id, string p, int m, int _rm)
         {
             MyAuthenticateResponse authResponse = null;
             User usr = null;
@@ -1486,13 +1503,13 @@ namespace ExpressBase.Web.Controllers
                             UserName = "NIL",
                             Password = "NIL",
                             Meta = new Dictionary<string, string> {
-                        { RoutingConstants.WC, "uc" },
-                        { "anonymous", "true"},
-                        { "emailId", "user@signup.com" },
-                        { TokenConstants.CID, tenantid },
-                        { TokenConstants.IP, this.RequestSourceIp},
-                        { RoutingConstants.USER_AGENT, this.UserAgent}
-                    },
+                                { RoutingConstants.WC, "uc" },
+                                { "anonymous", "true"},
+                                { "emailId", "user@signup.com" },
+                                { TokenConstants.CID, tenantid },
+                                { TokenConstants.IP, this.RequestSourceIp},
+                                { RoutingConstants.USER_AGENT, this.UserAgent}
+                            },
                             RememberMe = true
                         });
                     }
@@ -1507,28 +1524,41 @@ namespace ExpressBase.Web.Controllers
                         sRToken = authResponse.RefreshToken;
                     }
                 }
-                if (usr != null && usr.Permissions != null && usr.Permissions.Count > 0)
+
+                bool permissionOk = false;
+                if (_rm == (int)WebFormRenderModes.Signup)
+                {
+                    Eb_Solution solutionObj = GetSolutionObject(ViewBag.SolutionId);
+                    if (!string.IsNullOrWhiteSpace(solutionObj?.SolutionSettings?.SignupFormRefid) && solutionObj.SolutionSettings.SignupFormRefid == id)
+                        permissionOk = true;
+                }
+                else if (usr != null && usr.Permissions != null && usr.Permissions.Count > 0)
                 {
                     foreach (string s in usr.Permissions)
                     {
                         if (s.Contains("000-00-" + id.Split("-")[3].PadLeft(5, '0')))
                         {
-                            object resp = new
-                            {
-                                _r = id,
-                                _p = p ?? string.Empty,
-                                _m = m,
-                                _l = usr.Preference.DefaultLocation,
-                                _rm = 5,
-                                web_btoken = sBToken,
-                                web_rtoken = sRToken,
-                                web_authid = usr.AuthId,
-                                web_user_disp_name = usr.FullName,
-                            };
-
-                            return JsonConvert.SerializeObject(resp);
+                            permissionOk = true;
+                            break;
                         }
                     }
+                }
+                if (permissionOk)
+                {
+                    object resp = new
+                    {
+                        _r = id,
+                        _p = p ?? string.Empty,
+                        _m = m,
+                        _l = usr.Preference.DefaultLocation,
+                        _rm = _rm,
+                        web_btoken = sBToken,
+                        web_rtoken = sRToken,
+                        web_authid = usr.AuthId,
+                        web_user_disp_name = usr.FullName,
+                    };
+
+                    return JsonConvert.SerializeObject(resp);
                 }
             }
             return string.Empty;

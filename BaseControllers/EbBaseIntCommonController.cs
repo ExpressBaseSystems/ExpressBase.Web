@@ -17,6 +17,7 @@ using ServiceStack.Messaging;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Web;
@@ -200,12 +201,13 @@ namespace ExpressBase.Web.BaseControllers
             {
                 try
                 {
-                    if (request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && st[0] == "5")
+                    if (request.Query.TryGetValue("_rm", out StringValues st) && st.Count > 0 && (st[0] == "5" || st[0] == "3"))
                         return true;
                     if (!string.IsNullOrWhiteSpace(request.Headers["Referer"]))
                     {
                         Uri uri = new Uri(request.Headers["Referer"]);
-                        if (HttpUtility.ParseQueryString(uri.Query).Get("_rm") == "5")
+                        NameValueCollection pairs = HttpUtility.ParseQueryString(uri.Query);
+                        if (pairs.Get("_rm") == "5" || pairs.Get("_rm") == "3")
                             return true;
                     }
                 }

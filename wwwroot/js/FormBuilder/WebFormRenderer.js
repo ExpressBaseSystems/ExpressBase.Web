@@ -771,6 +771,7 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {
+            this.manualChangeInData = false;
             if (this.renderMode === 3) {
                 EbMessage("show", { Message: "Sign up success.", AutoHide: true, Background: '#00aa00', Delay: 4000 });
                 this.showLoader();
@@ -783,7 +784,8 @@ const WebFormRender = function (option) {
                     }
                 }
                 setTimeout(function () {
-                    ebcontext.setup.se.onLogOutMsg();
+                    //ebcontext.setup.se.onLogOutMsg();
+                    document.location.href = '/Ext/UsrSignIn?Page=False';
                 }, 3000);
                 return;
             }
@@ -1169,7 +1171,8 @@ const WebFormRender = function (option) {
                 FormObj: this.FormObj,
                 CallBackFn: this.userProvCallBack.bind(this),
                 showLoaderFn: this.showLoader,
-                hideLoaderFn: this.hideLoader
+                hideLoaderFn: this.hideLoader,
+                renderMode: this.renderMode
             });
         }.bind(this), 4);
     };
@@ -2591,7 +2594,7 @@ const WebFormRender = function (option) {
     };
 
     this.DiscardChanges = function () {
-        if (!this.IsAnyChangesInFormData()) {
+        if (!this.isCloseConfirmRequired()) {
             this.FORCE_RELOAD(this.rowId, this.formDataBackUp, "View Mode");
             return;
         }
@@ -2736,33 +2739,40 @@ const WebFormRender = function (option) {
         }
     };
 
-    this.IsAnyChangesInFormData = function () {
-        let changeDetected = false;
-        let modelBkUp = this.formDataBackUp.MultipleTables;
-        $.each(this.DataMODEL, function (k, Table) {
-            if (!modelBkUp[k] || (modelBkUp[k] && modelBkUp[k].length != Table.length)) {
-                changeDetected = true;
-                return false;
-            }
-            for (let i = 0; i < Table.length; i++) {
-                let RowBkUp = modelBkUp[k].find(e => e.RowId === Table[i].RowId);
-                if (!RowBkUp || (RowBkUp && RowBkUp.Columns.length != Table[i].Columns.length)) {
-                    changeDetected = true;
-                    return false;
-                }
-                for (let j = 0; j < Table[i].Columns.length; j++) {
-                    let ColumnBkUp = RowBkUp.Columns.find(e => e.Name === Table[i].Columns[j].Name);
-                    if (!ColumnBkUp || (ColumnBkUp && Table[i].Columns[j].Value !== ColumnBkUp.Value)) {
-                        let ctrl = this.flatControls.find(e => e.Name === ColumnBkUp.Name);
-                        if (!(ctrl && ctrl.DoNotPersist)) {
-                            changeDetected = true;
-                            return false;
-                        }
-                    }
-                }
-            }
-        }.bind(this));
-        return changeDetected;
+    //this.IsAnyChangesInFormData = function () {
+    //    let changeDetected = false;
+    //    let modelBkUp = this.formDataBackUp.MultipleTables;
+    //    $.each(this.DataMODEL, function (k, Table) {
+    //        if (!modelBkUp[k] || (modelBkUp[k] && modelBkUp[k].length != Table.length)) {
+    //            changeDetected = true;
+    //            return false;
+    //        }
+    //        for (let i = 0; i < Table.length; i++) {
+    //            let RowBkUp = modelBkUp[k].find(e => e.RowId === Table[i].RowId);
+    //            if (!RowBkUp || (RowBkUp && RowBkUp.Columns.length != Table[i].Columns.length)) {
+    //                changeDetected = true;
+    //                return false;
+    //            }
+    //            for (let j = 0; j < Table[i].Columns.length; j++) {
+    //                let ColumnBkUp = RowBkUp.Columns.find(e => e.Name === Table[i].Columns[j].Name);
+    //                if (!ColumnBkUp || (ColumnBkUp && Table[i].Columns[j].Value !== ColumnBkUp.Value)) {
+    //                    let ctrl = this.flatControls.find(e => e.Name === ColumnBkUp.Name);
+    //                    if (!(ctrl && ctrl.DoNotPersist)) {
+    //                        changeDetected = true;
+    //                        return false;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }.bind(this));
+    //    return changeDetected;
+    //}.bind(this);
+
+    this.isCloseConfirmRequired = function () {
+        if (this.Mode.isNew || this.Mode.isEdit) {
+            return this.manualChangeInData;
+        }
+        return false;
     }.bind(this);
 
     this.excelUpload = function () {
@@ -3092,6 +3102,7 @@ const WebFormRender = function (option) {
             right: 24,
             onClose: this.FRC.invalidBoxOnClose
         });
+        this.manualChangeInData = false;
         this.isInitiallyPopulating = true;
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums_w.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.afterSavemodeS = null;

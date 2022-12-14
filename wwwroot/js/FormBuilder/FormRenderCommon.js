@@ -128,7 +128,7 @@
                     }.bind(this));
                     filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
                     filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-                    filterValues.push(new fltr_obj(11, "id", this.FO.rowId));                  
+                    filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
                     filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
                     filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
 
@@ -1359,6 +1359,8 @@
         if (!valChanged)
             return;
 
+        this.FO.manualChangeInData = true;
+
         let DepHandleObj = this.GetDepHandleObj(__this);
 
         if (DepHandleObj.ValueP.length > 0) {
@@ -1443,6 +1445,8 @@
             //console.log('value not changed: ' + Obj.Name);
             return;
         }
+
+        this.FO.manualChangeInData = true;
 
         let DepHandleObj = this.GetDepHandleObj(Obj);
         this.ctrlChangeListener_inner0(DepHandleObj);

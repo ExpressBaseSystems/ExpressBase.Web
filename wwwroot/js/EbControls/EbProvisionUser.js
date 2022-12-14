@@ -775,6 +775,7 @@ let EbProvUserUniqueChkJs = function (options) {
     this.CallBackFn = options.CallBackFn;
     this.showLoaderFn = options.showLoaderFn;
     this.hideLoaderFn = options.hideLoaderFn;
+    this.renderMode = options.renderMode;
     this.provUserAll = getFlatObjOfType(this.FormObj, "ProvisionUser");
 
     this.$Modal;
@@ -1051,7 +1052,10 @@ let EbProvUserUniqueChkJs = function (options) {
             else
                 this.$OkBtn.show();
             this.$ModalBody.html(fullHtml);
-            this.$Modal.modal('show');
+            if (this.renderMode == 5 || this.renderMode == 3)
+                this.CallBackFn(true);
+            else
+                this.$Modal.modal('show');
         }
         else
             this.CallBackFn(true);

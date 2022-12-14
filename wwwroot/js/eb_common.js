@@ -195,7 +195,8 @@ var order_obj = function (colu, dir) {
 //to restrict access to internal pages by a logged out user
 var reload_if_session_expired = function () {
     if (!getTok()) {
-        if (new URL(location.href).searchParams.get('_rm') != '5') {
+        let _rm = new URL(location.href).searchParams.get('_rm');
+        if (_rm != '5' && _rm != '3') {
             alert("Session expired!");
             location.reload();
         }

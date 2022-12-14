@@ -1582,7 +1582,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
-[isrendermode=true][eb-form="true"][mode="new"] [ctype="ExportButton"] .ctrl-cover div {
+[isrendermode=true][eb-form="true"] [ctype="ExportButton"] .ctrl-cover div[disabled="disabled"] {
     background-color: #afafaf !important;
     cursor: not-allowed !important;
 }
@@ -2514,6 +2514,7 @@ input.locinp {
     overflow-y: auto;
     transition: width 0.5s;
     display: inline-block;
+    vertical-align: top;
 }
 
     .webform-cont .form-cont-first.active,
@@ -2533,7 +2534,6 @@ input.locinp {
 
 .webform-cont .form-cont-second,
 .sub-form-cont .form-cont-second {
-    /*display: none;*/
     width: 0;
     background-color: #fefefe;
     position: relative;
@@ -2541,6 +2541,7 @@ input.locinp {
     height: 100%;
     transition: width 0.5s;
     display: inline-block;
+    vertical-align: top;
 }
 
     .webform-cont .form-cont-second.active,

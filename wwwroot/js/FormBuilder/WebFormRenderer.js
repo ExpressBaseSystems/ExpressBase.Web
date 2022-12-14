@@ -1284,14 +1284,20 @@ const WebFormRender = function (option) {
         $.each(this.flatControls, function (i, ctrl) {
             if ((ctrl.IsDisable && ctrl.__IsDisableByExp === undefined) || ctrl.__IsDisableByExp === true)
                 return;
+            if (ctrl.ObjType === "ExportButton" && ctrl.DisableInEditMode) {
+                ctrl.disable();
+                return;
+            }
             ctrl.enable();
         }.bind(this));
     };
 
     this.disbleControlsInViewMode = function () {
         $.each(this.flatControls, function (k, ctrl) {
-            if (ctrl.ObjType === "ExportButton")
+            if (ctrl.ObjType === "ExportButton") {
+                ctrl.enable();
                 return true;
+            }
             if (!ctrl.__IsDisable) {
                 ctrl.disable();
             }

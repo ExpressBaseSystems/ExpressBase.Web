@@ -236,9 +236,12 @@ namespace ExpressBase.Web.BaseControllers
                 _json = JsonConvert.SerializeObject(list);
 
                 contrlr.ViewBag.FinYears = JsonConvert.SerializeObject(GetFinancialYearsObject(s_obj, this.LoggedInUser));
-                ViewBag.IsMultiLanguageEnabled = s_obj.IsMultiLanguageEnabled;
-                if (s_obj.IsMultiLanguageEnabled)
-                    contrlr.ViewBag.Languages = JsonConvert.SerializeObject(new MultiLanguageController(this.ServiceClient, this.Redis).LoadLang());
+                if (contrlr.ViewBag.wc != RoutingConstants.TC)
+                {
+                    ViewBag.IsMultiLanguageEnabled = s_obj.IsMultiLanguageEnabled;
+                    if (s_obj.IsMultiLanguageEnabled)
+                        contrlr.ViewBag.Languages = JsonConvert.SerializeObject(new MultiLanguageController(this.ServiceClient, this.Redis).LoadLang());
+                }
             }
             catch (Exception e)
             {

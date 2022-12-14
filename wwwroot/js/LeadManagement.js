@@ -52,6 +52,7 @@
     this.$GoogleReview = $("#selGoogleReview");
     this.$Stars = $("#selStars");
     this.$CustomerLanguage = $("#selCustomerLanguage");
+    this.$ProcedureDate = $("#txtProcedureDate");
     this.$Comments = $("#txtComments");
 
     this.$ConsultedDate = $("#txtConsultedDate");
@@ -100,7 +101,7 @@
     this.$SrgyConsentBy = $("#selSrgyConsentBy");
     this.$SrgyAnasthBy = $("#selSrgyAnasthBy");
     this.$SrgyPostBrfBy = $("#selSrgyPostBrfBy");
-    this.$SrgyNurse = $("#selSrgyNurse");   
+    this.$SrgyNurse = $("#selSrgyNurse");
     this.$SrgyCmpltry = $("#selSrgyCmpltry");
     this.$SrgyMethod = $("#selSrgyMethod");
     this.$SrgyComnt = $("#txaSrgyComnt");
@@ -182,7 +183,7 @@
                                 EbMessage("show", { Message: 'Failed', AutoHide: true, Background: '#aa0000' });
                         }.bind(this)
                     });
-            }            
+            }
         }.bind(this));
     };
 
@@ -204,6 +205,7 @@
 
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
+        this.$ProcedureDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
         //FEEDBACK  BILLING  SURGERY 
         this.initFeedBackModal();
@@ -250,8 +252,8 @@
             this.$LeadOwner.append(`<option value='${val}'>${key}</option>`);
             this.$Closing.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
-                
-        this.$SrgyNurse.children().remove();        
+
+        this.$SrgyNurse.children().remove();
         this.$SrgyNurse.append(`<option value='0'>- Select -</option>`);
         $.each(this.NurseInfo, function (key, val) {
             this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);
@@ -261,7 +263,7 @@
             this.$SrgyConsentBy.append(`<option value='${val}'>${key}</option>`);//
             this.$SrgyAnasthBy.append(`<option value='${val}'>${key}</option>`);//
         }.bind(this));
-                        
+
         this.$Mobile.on("change", function (e) {
             let newMob = $(e.target).val().trim();
             if (this.Mode === 1 && (this.CustomerInfo["genurl"] === newMob || this.CustomerInfo["watsapp_phno"] === newMob)) {
@@ -501,7 +503,7 @@
                 Fup_Date: this.$FlUpFolDate.val(),
                 Comments: this.$FlUpComnt.val(),
                 Account_Code: this.AccId,
-                Is_Picked_Up: this.$FlUpNotPicked.prop("checked")? "No": "Yes"
+                Is_Picked_Up: this.$FlUpNotPicked.prop("checked") ? "No" : "Yes"
             };
             $.ajax({
                 type: "POST",
@@ -536,7 +538,7 @@
             //this.$FlUpStatus.val(tempObj.Status);
             this.$FlUpFolDate.val(tempObj.Fup_Date);
             this.$FlUpComnt.val(tempObj.Comments);
-            this.$FlUpNotPicked.prop("checked", tempObj.Is_Picked_Up === "Yes" ? false: true);
+            this.$FlUpNotPicked.prop("checked", tempObj.Is_Picked_Up === "Yes" ? false : true);
             //this.$FlUpDate.prop("disabled", true);
 
             this.$MdlFeedBack.modal('show');
@@ -556,7 +558,7 @@
                     this.setFollowupStatus("To Consult");
                 else
                     this.setFollowupStatus(this.FeedbackList[0]["Status"]);
-            }            
+            }
 
         }.bind(this));
 
@@ -823,7 +825,7 @@
 
         new ListViewCustom(this.divSrgy, this.SurgeryList, function (id, tempObj) {
             this.$MdlSurgery.attr("data-id", id);
-            this.$SrgyDate.val(tempObj.Date);            
+            this.$SrgyDate.val(tempObj.Date);
             $('#selSrgyBranch option').filter(function () { return $(this).html() === tempObj.Branch; }).prop("selected", true);
             $('#selSrgyExtrDnBy option').filter(function () { return $(this).html() === tempObj.Extract_By; }).prop("selected", true);
             $('#selSrgyImplantBy option').filter(function () { return $(this).html() === tempObj.Implant_By; }).prop("selected", true);
@@ -834,13 +836,13 @@
             this.$SrgyCmpltry.val(tempObj.Complimentary);
             this.$SrgyMethod.val(tempObj.Method);
             this.$SrgyComnt.val(tempObj.Comment);
-            
+
             this.$MdlSurgery.modal('show');
         }.bind(this));
 
         this.$MdlSurgery.on('shown.bs.modal', function (e) {
             if (this.$MdlSurgery.attr("data-id") === "") {
-                this.$SrgyDate.val(moment(new Date()).format("DD-MM-YYYY"));                
+                this.$SrgyDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$SrgyBranch.val("1");
                 this.$SrgyExtrDnBy.val("0");
                 this.$SrgyImplantBy.val("0");
@@ -860,7 +862,7 @@
             this.$MdlSurgery.attr("data-id", "");
         }.bind(this));
     };
-    
+
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["eb_loc_id"]);
         this.$EnDate.val(this.CustomerInfo["trdate"]);
@@ -895,6 +897,7 @@
         this.$GoogleReview.val(this.CustomerInfo["google_review"]);
         this.$Stars.val(this.CustomerInfo["stars"]);
         this.$CustomerLanguage.val(this.CustomerInfo["cust_language"]);
+        this.$ProcedureDate.val(this.CustomerInfo["procedure_date"]);
         this.$Comments.val(this.CustomerInfo["comment"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
@@ -963,7 +966,7 @@
             EbMessage("show", { Message: 'Entered WhatsApp Number is Already Exists', AutoHide: true, Background: '#aa0000' });
             return false;
         }
-        
+
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });
         //Data to customer vendor
@@ -998,6 +1001,7 @@
         this.pushToList("google_review", this.$GoogleReview.val());
         this.pushToList("stars", this.$Stars.val());
         this.pushToList("cust_language", this.$CustomerLanguage.val());
+        this.pushToList("procedure_date", this.$ProcedureDate.val());
         this.pushToList("comment", this.$Comments.val());
 
         this.pushToList("consdate", this.$ConsultedDate.val());
@@ -1068,7 +1072,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
             tblcols.push({ data: i, title: this.metadata[i].replace("_", " ").replace("_", " "), orderable: true, className: "MyTempColStyle" });
         if (intSpecialPermission === "True" && (this.metadata.indexOf("_feedback") !== -1 || this.metadata.indexOf("_surgery") !== -1))
-            tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
+            tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center" });
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)

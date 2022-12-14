@@ -454,26 +454,26 @@
         $input.multiselect({
             includeSelectAllOption: true
         });
+        if (this.Renderer.rendererName != 'WebForm') {
+            if (ebcontext.user.wc === "uc") {
+                if (ctrl.TryToLoadGlobal && $input.attr('isglobal') === 'y')
+                    ctrl.setValue('-1');
+                else if (ctrl.LoadCurrentLocation) {
+                    let curLoc = false;
+                    if (ebcontext.locations.getCurrent)
+                        curLoc = ebcontext.locations.getCurrent();
+                    else if (ebcontext.sid && ebcontext.user.UserId)
+                        curLoc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
 
-        if (ebcontext.user.wc === "uc") {
-            if (ctrl.TryToLoadGlobal && $input.attr('isglobal') === 'y')
-                ctrl.setValue('-1');
-            else if (ctrl.LoadCurrentLocation) {
-                let curLoc = false;
-                if (ebcontext.locations.getCurrent)
-                    curLoc = ebcontext.locations.getCurrent();
-                else if (ebcontext.sid && ebcontext.user.UserId)
-                    curLoc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
-
-                if (curLoc)
-                    $('#' + ctrl.EbSid_CtxId).val([curLoc]).multiselect('refresh');
+                    if (curLoc)
+                        $('#' + ctrl.EbSid_CtxId).val([curLoc]).multiselect('refresh');
+                }
             }
+            else if (ebcontext.user.wc === "dc")
+                ctrl.setValue('-1');
+
+            ctrl.DataVals.Value = ctrl.getValueFromDOM();
         }
-        else if (ebcontext.user.wc === "dc")
-            ctrl.setValue('-1');
-
-        ctrl.DataVals.Value = ctrl.getValueFromDOM();
-
         //$("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
         //ebcontext.locations.getCurrent();
         //if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
@@ -1178,10 +1178,13 @@
 
         }
         else {
-            ctrl.setValue = function (p1) {
-                let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
-                $lbl.text(p1 || '');
-            }.bind(ctrl);
+            ctrl.setValue = function (renderer, p1) {
+                if (!renderer.isInitiallyPopulating) {
+                    let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
+                    $lbl.text(p1 || '');
+                }
+            }.bind(ctrl, this.Renderer);
+		
             ctrl.justSetValue = ctrl.setValue;
 
             if (ctrl.RenderAs != 1)

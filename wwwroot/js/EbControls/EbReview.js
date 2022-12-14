@@ -790,9 +790,12 @@
         if (!hasPullBackPerm)
             return;
 
-        let $btnParent = this.$tableBody.find("tr[rowid='0']");
+        let allTrs = this.$tableBody.find("tr:not([rowid='0'])");
+        if (allTrs.length == 0)
+            return;
+        let $btnParent = allTrs.last();
         if ($btnParent.length > 0 && $btnParent.find('.pullback-btn').length === 0)
-            $btnParent.append(`<div class="pullback-btn"><i class="fa fa-step-backward" aria-hidden="true"></i> Pull Back</div>`);
+            $btnParent.append(`<div class="pullback-btn"><i class="fa fa-undo" aria-hidden="true"></i> Pull Back</div>`);
 
         this.pullBackPopUpId = `${this.ctrl.EbSid_CtxId}-pullback`;
         let popUpContent = `

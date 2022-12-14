@@ -286,9 +286,27 @@
 }
 
 .obj_dash_proimage {
-    height: 28px;
-    margin-right: 5px;
+    height: 32px;
+    margin-right: -4px;
     cursor: pointer;
+    border: 1px solid #8080873b;
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+}
+
+.obj_dash_proname {
+    display: inline-block;
+    border-radius: 0 5px 5px 0;
+    border: 1px solid #8080873b;
+    padding: 7px 4px 6px 5px;
+    border-left: none;
+    font-size: 12px;
+    cursor: pointer;
+    max-width: 60px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: top;
 }
 /*profile image and dropdown style end.....................*/
 .notification_menu {

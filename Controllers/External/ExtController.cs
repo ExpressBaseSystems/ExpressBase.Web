@@ -102,7 +102,7 @@ namespace ExpressBase.Web.Controllers
             {
                 try
                 {
-                    UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+                    UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { Email = email });
                     if (result.Unique)
                     {
                         res.IsEmailUniq = true;
@@ -163,7 +163,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { Email = email });
                 if (result.Unique)
                 {
                     return 1;
@@ -195,6 +195,7 @@ namespace ExpressBase.Web.Controllers
 
             var grecap = false;
             Recaptcha cap = null;
+            bool is_user = !(ViewBag.SolutionId == CoreConstants.EXPRESSBASE);
             try
             {
                 cap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
@@ -210,7 +211,13 @@ namespace ExpressBase.Web.Controllers
             {
                 try
                 {
-                    UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+                    UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest
+                    {
+                        Email = email,
+                        IsUser = is_user,
+                        iSolutionId = ViewBag.SolutionId
+                    });
+
                     if (result.Unique || !result.HasPassword)
                     {
                         return 0;
@@ -220,12 +227,15 @@ namespace ExpressBase.Web.Controllers
                         string resetcode = Guid.NewGuid().ToString();
                         HostString pgurl = this.HttpContext.Request.Host;
                         PathString pgpath = this.HttpContext.Request.Path;
+
                         ForgotPasswordResponse res = this.ServiceClient.Post<ForgotPasswordResponse>(new ForgotPasswordRequest
                         {
                             Email = email,
                             Resetcode = resetcode,
                             PagePath = pgpath.ToString(),
-                            PageUrl = pgurl.ToString()
+                            PageUrl = pgurl.ToString(),
+                            IsUser = is_user,
+                            iSolutionId = ViewBag.SolutionId
                         });
                         if (res.VerifyStatus == true)
                         {
@@ -259,11 +269,10 @@ namespace ExpressBase.Web.Controllers
         {
             bool grecap = false;
             int stts = 0;
-
-            Recaptcha cap = null;
+            bool is_user = !(ViewBag.SolutionId == CoreConstants.EXPRESSBASE);
             try
             {
-                cap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+                Recaptcha cap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
                 grecap = cap.Success;
             }
             catch (Exception e)
@@ -280,14 +289,18 @@ namespace ExpressBase.Web.Controllers
                     string resetcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
                     string[] resetcode = resetcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    var sts = this.ServiceClient.Post<ResetPasswordResponse>(new ResetPasswordRequest
+                    ResetPasswordResponse sts = this.ServiceClient.Post<ResetPasswordResponse>(new ResetPasswordRequest
                     {
                         Resetcode = resetcode[1],
                         Email = resetcode[0],
-                        Password = psw
+                        Password = psw,
+                        IsUser = is_user,
+                        iSolutionId = ViewBag.SolutionId
                     });
                     if (sts.VerifyStatus == true)
-                    { stts = 1; }
+                    {
+                        stts = 1;
+                    }
                     else
                     {
                         stts = 0;
@@ -499,7 +512,7 @@ namespace ExpressBase.Web.Controllers
                     this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                 }
 
-                var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
+                CreateSolutionResponse tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
                 {
 
                     SolutionName = "My First solution",
@@ -520,7 +533,7 @@ namespace ExpressBase.Web.Controllers
                 else
                 {
                     Console.WriteLine("reached user autologin");
-                    var lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
+                    SocialAutoSignInResponse lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
                     {
                         Email = Social.Email,
                         Social_id = Social.Social_id
@@ -607,7 +620,7 @@ namespace ExpressBase.Web.Controllers
             {
                 string reqEmail = this.HttpContext.Request.Form[TokenConstants.EMAIL];
                 TempData[RequestEmail] = reqEmail;
-                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
+                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { Email = reqEmail });
                 if (result.Unique)
                 {
                     RegisterResponse res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
@@ -794,7 +807,7 @@ namespace ExpressBase.Web.Controllers
                     authresp.ErrorMessage = "The captcha input is invalid or malformed.";
                 }
 
-                var error = data.ErrorCodes[0].ToLower();
+                string error = data.ErrorCodes[0].ToLower();
                 switch (error)
                 {
                     case ("missing-input-secret"):

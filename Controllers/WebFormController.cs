@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Inde(int _r, string _p, int _m, int _l, int _rm, string _lo = "")
         {
             GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = _r });
-            return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm, _lo =_lo });
+            return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm, _lo = _lo });
         }
 
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
@@ -90,10 +90,14 @@ namespace ExpressBase.Web.Controllers
             WebForm.SolutionObj = GetSolutionObject(ViewBag.cid);
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             EbWebForm WebForm_L;
-            if (WebForm.IsLanguageEnabled && WebForm.SolutionObj.IsMultiLanguageEnabled) 
+            if (WebForm.IsLanguageEnabled && WebForm.SolutionObj.IsMultiLanguageEnabled)
             {
                 string[] Keys = EbWebForm.GetKeys(WebForm);
-                Dictionary<string, string> KeyValue = ServiceClient.Post<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = _locale }).Dict;
+                Dictionary<string, string> KeyValue = ServiceClient.Post<GetDictionaryValueResponse>(new GetDictionaryValueRequest
+                {
+                    Keys = Keys,
+                    Locale = _locale
+                }).Dict;
                 WebForm_L = WebForm.Localize(KeyValue) as EbWebForm;
             }
             else

@@ -105,10 +105,11 @@
             function (auth) {
                 $("#loader_profile").EbLoader("hide");
                 if (auth.authStatus) {
+                    EbMessage("show", { Background: "Green", Message: "Your password has been changed successfully" });
                     location.replace(auth.redirectUrl);
                 }
                 else {
-                    EbMessage("show", { Background: "red", Message: auth.errorMessage });
+                    EbMessage("show", { Background: "red", Message: auth.errorMessage});
                 }
             }
         );

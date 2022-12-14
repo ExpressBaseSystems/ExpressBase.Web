@@ -331,8 +331,8 @@
     });
 
     $("#forgotpw").on("click", function () {
-        $("#withpw_container").hide();
-        $("#withotp_container").removeClass("fade").addClass("active");
+        //$("#withpw_container").hide();
+        //$("#withotp_container").removeClass("fade").addClass("active");
         forgotpassword = true;
     });
     var forgotpassword = false;

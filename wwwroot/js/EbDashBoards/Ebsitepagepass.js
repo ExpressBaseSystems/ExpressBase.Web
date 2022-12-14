@@ -176,7 +176,7 @@ var PasswordValidation = function (RecaptchaCallbackreset) {
             {
                 grecaptcha.execute();
                 $.ajax({
-                    url: "../Ext/ResetPasswordAsync",
+                    url: "/Ext/ResetPasswordAsync",
                     beforeSend: function () {
                         $("#loaderdiv").EbLoader("show");
                         $("#btnpswreset").prop('disabled', true);
@@ -190,16 +190,19 @@ var PasswordValidation = function (RecaptchaCallbackreset) {
                     type: "POST",
                     success: function (status) {
                         $("#loaderdiv").EbLoader("hide");
-                        if (status == 1) {
+                        if (status === 1) {
                             EbMessage("show", { Message: "Please Login using New password" });
                             setTimeout(function () {
-                                location.href = "../Ext/TenantSignin";
+                                if (location.host.split('.')[0] ==="myaccount")
+                                    location.href = "/Ext/TenantSignin";
+                                else
+                                    location.href = "/Ext/UsrSignIn?Page=False";
                             }, 4000);
 
                         }
-                        if (status == 0) {
+                        if (status === 0) {
                             $('#btnpswreset').prop('disabled', false);
-                            location.href = "../StatusCode/401";
+                            location.href = "/StatusCode/401";
                         }
                     }
                 });

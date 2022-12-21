@@ -1183,7 +1183,10 @@
             ctrl.setValue = function (renderer, p1) {
                 if (!renderer.isInitiallyPopulating) {
                     let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
-                    $lbl.text(p1 || '');
+                    if (this.RenderAs == 2)//Html
+                        $lbl.html(p1 || '');
+                    else
+                        $lbl.text(p1 || '');
                 }
             }.bind(ctrl, this.Renderer);
 

@@ -81,11 +81,13 @@
                 });
             }
             this.Tempdata = JSON.parse(JSON.stringify(this.data));
-            this.Tempdata.sort(function (a, b) {
-                var textA = a.name.toUpperCase().trim();
-                var textB = b.name.toUpperCase().trim();
-                return textA.localeCompare(textB);
-            });
+            if (this.Tempdata.findIndex(e => e.pid < 0) == -1) {
+                this.Tempdata.sort(function (a, b) {
+                    var textA = a.name.toUpperCase().trim();
+                    var textB = b.name.toUpperCase().trim();
+                    return textA.localeCompare(textB);
+                });
+            }
             this.loc_data = this.Tempdata;
         };
 

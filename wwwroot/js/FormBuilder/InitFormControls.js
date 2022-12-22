@@ -1143,7 +1143,7 @@
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
-            if (this.Renderer.Mode.isNew || (this.Renderer.Mode.isEdit && ctrl.DisableInEditMode))
+            if ($('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled'))
                 return;
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
@@ -1167,12 +1167,28 @@
             else
                 ctrl.removeAttr('title');
         }.bind(this, $ctrl));
+
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, ctrl);
+
         ctrl.setValue = function (p1) {
             let $lbl = $("#" + this.EbSid_CtxId + ' span');
             $lbl.text(p1 + ' ');
         }.bind(ctrl);
         ctrl.justSetValue = ctrl.setValue;
-        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, ctrl);
+        ctrl.disable = function (ctrl) {
+            if (this.Renderer.Mode.isView || this.Renderer.Mode.isEdit) {
+                ctrl.__IsDisable = true;
+                $('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled', 'disabled');
+            }
+        }.bind(this, ctrl);
+        ctrl.enable = function (ctrl) {
+            if (this.Renderer.Mode.isView || (this.Renderer.Mode.isEdit && !ctrl.DisableInEditMode)) {
+                ctrl.__IsDisable = false;
+                $('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').removeAttr('disabled');
+            }
+        }.bind(this, ctrl);
+        if (this.Renderer.Mode.isView)
+            ctrl.enable();
     };
 
     this.Label = function (ctrl, ctrlOpts) {

@@ -1298,7 +1298,6 @@ const WebFormRender = function (option) {
     this.disbleControlsInViewMode = function () {
         $.each(this.flatControls, function (k, ctrl) {
             if (ctrl.ObjType === "ExportButton") {
-                ctrl.enable();
                 return true;
             }
             if (!ctrl.__IsDisable) {

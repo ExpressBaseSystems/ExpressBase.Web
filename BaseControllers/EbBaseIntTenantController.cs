@@ -176,14 +176,10 @@ namespace ExpressBase.Web.BaseControllers
                         list = s_obj?.Locations.Values.ToList();
                     else
                     {
-                        Console.WriteLine("==============Solution Obj Location Ids: ");
-                        foreach (int key in s_obj?.Locations.Keys)
-                            Console.WriteLine(key + "====");
-                        Console.WriteLine("================ User Object Location Ids: ");
-                        foreach (int id in this.LoggedInUser.LocationIds)
+                        foreach (KeyValuePair<int, EbLocation> loc in s_obj.Locations)
                         {
-                            Console.WriteLine(id + "====");
-                            list.Add(s_obj.Locations[id]);
+                            if (this.LoggedInUser.LocationIds.Contains(loc.Key))
+                                list.Add(loc.Value);
                         }
                     }
                 }

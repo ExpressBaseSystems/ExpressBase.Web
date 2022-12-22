@@ -188,6 +188,8 @@ const WebFormCollectionRender = function (Option) {
             Clone: "subformclone" + cxt,
             Print: "subformprint" + cxt,
             PrintSel: "subformprint-selbtn" + cxt,
+            PrintPrev: "subformprintprev" + cxt,
+            PrintPrevSel: "subformprintprev-selbtn" + cxt,
             Discard: "subformdiscardedit" + cxt,
             Details: "subformdetails" + cxt
         };
@@ -294,7 +296,11 @@ const WebFormCollectionRender = function (Option) {
                             </div>`);
         header.insertButton(`<div id="webformprint-selbtn" style='display: none;' class="btn-select btn">
                                 <button id="webformprint" class="savebtn" title="Print (Ctrl+P)"><i class="fa fa-print" aria-hidden="true"></i></button>
-                                <select class="selectpicker"></select>
+                                <select class="selectpicker" data-opr="print"></select>
+                            </div>`);
+        header.insertButton(`<div id="webformprintprev-selbtn" style='display: none;' class="btn-select btn">
+                                <button id="webformprintprev" class="savebtn" title="Print Preview"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+                                <select class="selectpicker" data-opr="preview"></select>
                             </div>`);
         header.insertButton(`<button id="webforminvalidmsgs" onclick='ebcontext.webform.RenderCollection[0].FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>`);
 
@@ -311,6 +317,8 @@ const WebFormCollectionRender = function (Option) {
             ExcelSel: "webformexcel-selbtn",
             Print: "webformprint",
             PrintSel: "webformprint-selbtn",
+            PrintPrev: "webformprintprev",
+            PrintPrevSel: "webformprintprev-selbtn",
             GotoInvalid: "webforminvalidmsgs",
             Discard: "webformdiscardedit",
             Details: "webformdetails"
@@ -335,9 +343,13 @@ const WebFormCollectionRender = function (Option) {
             <div class='sfh-toolbar'> 
                 <div class='sfh-tool-btns'>
                     <button id="subforminvalidmsgs${cxt}" style='display: none;' onclick='ebcontext.webform.RenderCollection[${this.RenderCollection.length}].FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>
+                    <div id="subformprintprev-selbtn${cxt}" style='display: none;' class="btn-select btn">
+                        <button id="subformprintprev${cxt}" class="savebtn" title="Print Preview"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+                        <select class="selectpicker" data-opr="preview"></select>
+                    </div>
                     <div id="subformprint-selbtn${cxt}" style='display: none;' class="btn-select btn">
                         <button id="subformprint${cxt}" class="savebtn" title="Print (Ctrl+P)"><i class="fa fa-print" aria-hidden="true"></i></button>
-                        <select class="selectpicker"></select>
+                        <select class="selectpicker" data-opr="print"></select>
                     </div>
                     <div id="subformsave-selbtn${cxt}"  style='display: none;' class="btn-select btn">
                         <button id="subformsave${cxt}" class="savebtn" title="Save form (Ctrl+S)"><i class="fa fa-save" aria-hidden="true"></i></button>

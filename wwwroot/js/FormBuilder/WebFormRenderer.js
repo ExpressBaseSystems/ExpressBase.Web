@@ -2282,7 +2282,7 @@ const WebFormRender = function (option) {
     this.AdjustBtnsVisibility = function (reqstMode) {
         let currentLoc = this.getLocId();
         let _html = '';
-        this.headerObj.hideElement([this.hBtns['SaveSel'], this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['Clone'], this.hBtns['ExcelSel'], this.hBtns['Discard'], this.hBtns['Details']]);
+        this.headerObj.hideElement([this.hBtns['SaveSel'], this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['PrintPrevSel'], this.hBtns['Clone'], this.hBtns['ExcelSel'], this.hBtns['Discard'], this.hBtns['Details']]);
 
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (this.Mode.isEdit) {
@@ -2297,7 +2297,7 @@ const WebFormRender = function (option) {
             }
         }
         else if (this.Mode.isView) {
-            let btnsArr = [this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['Clone']];
+            let btnsArr = [this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['PrintPrevSel'], this.hBtns['Clone']];
             if (this.formData.IsReadOnly || this.formData.IsLocked || this.formData.IsCancelled)
                 btnsArr.splice(1, 1);//
             if (this.formData.IsReadOnly) {
@@ -2340,7 +2340,7 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['New'] && this.formPermissions[loc].includes(op.New) && !this.FormObj.IsDisable)
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['PrintSel'] && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
+                else if ((btns[i] === this.hBtns['PrintSel'] || btns[i] === this.hBtns['PrintPrevSel']) && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['ExcelSel'] && this.formPermissions[loc].includes(op.ExcelImport) && mode === 'New Mode' && this.FormObj.EnableExcelImport)
                     r.push(btns[i]);
@@ -2394,32 +2394,102 @@ const WebFormRender = function (option) {
         }
     }.bind(this);
 
+    this.setupPrintiFrame = function () {
+        if ($("#iFramePdfModal").length != 0)
+            return;
+        $("body").append(`
+<div id='iFramePdfModal' style='display:none;'>
+    <button id='iFramePdfCloseBtn' class="btn" style=''><i class="fa fa-close"></i></button>
+    <button id='iFramePdfResizeBtn' class="btn" style=''><i class="fa fa-long-arrow-right"></i></button>
+    <div id='iFramePdfCont' class='eb_iframe-Cont' style=" ">
+        <iframe id='iFramePdf'></iframe>
+    </div>
+</div>`);
+        $("#iFramePdf").on('load', function (evt) {
+            try {
+                if ($(evt.target).attr("src") !== undefined) {
+                    if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
+                        if ($("#iFramePdf").data('data-opr') == 'preview') {
+                            $("#iFramePdfModal").show();
+                        }
+                        else {
+                            document.getElementById("iFramePdf").focus();
+                            document.getElementById("iFramePdf").contentWindow.print();
+                        }
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                    }
+                    ebcontext.webform.hideLoader();
+                }
+            }
+            catch (e) {
+                ebcontext.webform.hideLoader();
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+            }
+        });
+
+        $('#iFramePdfCloseBtn').on('click', function (e) {
+            let target = $(e.target).closest('button').parent();
+            if (target.attr("id") == "iFramePdfModal") {
+                target.hide();
+            }
+        });
+
+        $('#iFramePdfResizeBtn').on('click', function (e) {
+            let $c = $("#iFramePdfModal");
+            let $i = $(e.currentTarget).find('i');
+            $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
+            if ($c[0].style.width === '50%') {
+                if ($c[0].style.left === '50%') {
+                    $c.css('left', '0');
+                    $i.addClass('fa-arrows-h');
+                }
+                else {
+                    $c.css('width', '100%').css('left', '0');
+                    $i.addClass('fa-long-arrow-right');
+                }
+            }
+            else {
+                $c.css('width', '50%').css('left', '50%');
+                $i.addClass('fa-long-arrow-left');
+            }
+        });
+    }.bind(this);
+
     this.initPrintMenu = function () {
         if (this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0) {
+            this.setupPrintiFrame();
             let $sel = $(`#${this.hBtns['PrintSel']} .selectpicker`);
+            let $sel2 = $(`#${this.hBtns['PrintPrevSel']} .selectpicker`);
             for (let i = 0; i < this.FormObj.PrintDocs.$values.length; i++) {
                 let tle = this.FormObj.PrintDocs.$values[i].Title || this.FormObj.PrintDocs.$values[i].ObjDisplayName;
-                $sel.append(`<option data-token="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`);
+                let str = `<option data-token="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`;
+                $sel.append(str);
+                $sel2.append(str);
             }
 
             $sel.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
-            $(`#${this.hBtns['PrintSel']}`).off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.printDocument.bind(this));
-            $(`#${this.hBtns['Print']}`).off("click").on("click", function () { this.printDocument(); }.bind(this));
+            $sel2.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+            $(`#${this.hBtns['PrintSel']}, #${this.hBtns['PrintPrevSel']}`).off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.printDocument.bind(this));
+            $(`#${this.hBtns['Print']}, #${this.hBtns['PrintPrev']}`).off("click").on("click", this.printDocument.bind(this));
         }
     };
 
-    this.printDocument = function () {
-        let rptRefid = $(`#${this.hBtns['PrintSel']} .selectpicker`).find("option:selected").attr("data-token");
-        this.printDocument_inner(rptRefid, this.rowId);
+    this.printDocument = function (e) {
+        let sel = $(e.currentTarget).closest('.btn-select').find(`.selectpicker`);
+        let op = sel.attr('data-opr');
+        let rptRefid = sel.find("option:selected").attr("data-token");
+        this.printDocument_inner(rptRefid, this.rowId, op);
     };
 
-    this.printDocument_inner = function (rptRefid, rowId) {
+    this.printDocument_inner = function (rptRefid, rowId, op = 'print') {
+        $("#iFramePdf").data('data-opr', op);
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowId);
         if (this.defaultAfterSavemodeS === 'close')
             setTimeout(function () { ebcontext.webform.showLoader(); }, 100);
         else
             ebcontext.webform.showLoader();
-
     };
 
     this.initSaveMenu = function () {

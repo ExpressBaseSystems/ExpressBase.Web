@@ -106,9 +106,8 @@
                     if (exten == 'pdf') {
 
                         let html = $(`<div id='ebfileview_ContDiv' class='eb_fileview-Cont' style=''>
-                                    <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i>
-                                    <button id='' class="btn resize-ebfileview_Cont" style=''><i class="fa fa-long-arrow-right"></i>
-                                    </button>
+                                    <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i></button>
+                                    <button id='' class="btn resize-ebfileview_Cont" style=''><i class="fa fa-long-arrow-right"></i></button> 
                                     </div>`);
                         //$("body").append(` <iframe id="display_file" src="${src}.${exten}" frameborder="0" style=" bottom: 0;direction: ltr; font-size: 0; left: 0; line-height: 0;  overflow: hidden;position: absolute;right: 0;"></iframe>`);
                         html.append(`<div id='ebfileview_Iframe-Cont' class='eb_iframe-Cont' style=" ">

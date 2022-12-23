@@ -2185,6 +2185,11 @@
                     continue;
                 }
                 else if (pMap[i].SrcCtrlName === this.ctrl.TableName + '_id') {//current row id
+                    if (pMap[i].DestCtrlName === 'id') {
+                        params = [{ Name: 'id', Type: 7, Value: rowid > 0 ? rowid : 0 }];
+                        pushMasterId = false;
+                        break;
+                    }
                     params.push({
                         Name: pMap[i].DestCtrlName,
                         Type: 7,

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     var bApnd = true;
     if (ViewBag.Env == "Development")
     {
@@ -26,7 +25,6 @@
 </head>
 <body>
     <div class="html-root">
-
     </div>
 </body>
 </html>
@@ -59,7 +57,10 @@
                     document.cookie = `web_rtoken=${resp.web_rtoken}; SameSite=None; Secure; path=/; expires=${exp}`;
                     document.cookie = `web_authid=${resp.web_authid}; SameSite=None; Secure; path=/; expires=${exp}`;
                     document.cookie = `web_user_disp_name=${resp.web_user_disp_name}; SameSite=None; Secure; path=/; expires=${exp}`;
-                    window.location.href = `/WebForm/Index?_r=${resp._r}&_p=${resp._p}&_m=${resp._m}&_l=${resp._l}&_rm=${resp._rm}`;
+                    if (document.cookie.indexOf('web_btoken') > -1)
+                        window.location.href = `/WebForm/Index?_r=${resp._r}&_p=${resp._p}&_m=${resp._m}&_l=${resp._l}&_rm=${resp._rm}`;
+                    else
+                        window.location.href = `/StatusCode/701`;
                 }
             }.bind(this)
         });

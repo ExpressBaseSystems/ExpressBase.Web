@@ -1,16 +1,19 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-    if (ViewBag.SolutionId == "myaccount")
+    if (Model != 701)
     {
-        await Html.RenderPartialAsync("ExtPageHeader");
-    }
-    else if (ViewBag.WhichConsole == "dc" || ViewBag.WhichConsole == "uc")
-    {
-        await Html.RenderPartialAsync("ScontextHeader");
-    }
-    else
-    {
-        await Html.RenderPartialAsync("ExtPageHeader");
+        if (ViewBag.SolutionId == "myaccount")
+        {
+            await Html.RenderPartialAsync("ExtPageHeader");
+        }
+        else if (ViewBag.WhichConsole == "dc" || ViewBag.WhichConsole == "uc")
+        {
+            await Html.RenderPartialAsync("ScontextHeader");
+        }
+        else
+        {
+            await Html.RenderPartialAsync("ExtPageHeader");
+        }
     }
 }
 
@@ -41,6 +44,9 @@
         case 700:
             statusmessage = "Solution does not exist!";
             break;
+        case 701:
+            statusmessage = "Please enable third-party cookies in your browser settings for this page to work properly";
+            break;
         default:
             statusmessage = "That’s odd... Something we didn't expect happened";
             break;
@@ -52,22 +58,25 @@
             @{
                 if (Model == 401)
                 {
-                    <img src="~/images/eb_401.svg" class="w-100"/>
+                    <img src="~/images/eb_401.svg" class="w-100" />
 
                 }
                 else if (Model == 404)
                 {
-                    <img src="~/images/eb_404.jpg" class="w-100"/>
+                    <img src="~/images/eb_404.jpg" class="w-100" />
 
                 }
                 else if (Model == 700)
                 {
-                    <img src="~/images/eb_404.jpg" class="w-100"/>
+                    <img src="~/images/eb_404.jpg" class="w-100" />
                 }
             }
         </div>
         <h2 class="text-center">@statusmessage</h2>
-        <button class="ebbtn eb_btnblue backto_home" id="backto_home" onclick="javascript: history.go(-1)">Go Back</button>
+        @if (statusCode != 701)
+        {
+            <button class="ebbtn eb_btnblue backto_home" id="backto_home" onclick="javascript: history.go(-1)">Go Back</button>
+        }
     </div>
 </div>
 

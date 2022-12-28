@@ -211,14 +211,17 @@ namespace ExpressBase.Web.Controllers
             if (_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
-                if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
+                if (((int)WebFormModes.View_Mode == _mode || (int)WebFormModes.Edit_Mode == _mode) && ob.Count == 1)
                 {
                     Console.WriteLine("GetFormForRendering - View mode request identified.");
                     resp.RowId = Convert.ToInt32(ob[0].Value);
                     resp.FormDataWrap = getRowdata(refId, resp.RowId, _locId, resp.RenderMode);
                     if (resp.RowId > 0)
                     {
-                        resp.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+                        if ((int)WebFormModes.View_Mode == _mode)
+                            resp.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+                        else
+                            resp.Mode = WebFormModes.Edit_Mode.ToString().Replace("_", " ");
                         GetDisableEditBtnInfo(refId, resp.RowId, resp.DisableEditButton);
                     }
                     else

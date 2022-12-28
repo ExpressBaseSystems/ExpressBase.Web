@@ -3141,6 +3141,8 @@ const WebFormRender = function (option) {
         this.DisableDeleteData = this.formData.DisableDelete;
         this.DisableCancelData = this.formData.DisableCancel;
         this.Mode = {};
+        if (this.mode == "Edit Mode" && !this.checkPermission("Edit"))
+            this.mode == "View Mode";
         this.setMode();
         //this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
@@ -3194,7 +3196,8 @@ const WebFormRender = function (option) {
             this.locInit4viewMode();
         }
         else if (this.Mode.isEdit) {
-            this.SwitchToEditMode();
+            //this.SwitchToEditMode();
+            this.locInit4viewMode();
         }
 
         //this.LocationInit();

@@ -1072,6 +1072,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.DDrefresh = function (e) {
+        if (this.ComboObj.__Col)
+            this.ComboObj.__Col.__bkpData = null;
         this.reloadWithParams(false);
     };
 

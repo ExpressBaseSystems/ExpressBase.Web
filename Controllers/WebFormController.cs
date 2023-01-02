@@ -27,6 +27,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Security;
 using System.Collections;
 using ExpressBase.Objects.WebFormRelated;
+using Microsoft.AspNetCore.Http;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -633,6 +634,41 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                     Message = ex.Message,
                     Status = (int)HttpStatusCode.InternalServerError,
                     MessageInt = "Exception in ImportFormData",
+                    StackTraceInt = ex.StackTrace
+                });
+            }
+        }
+
+        public string GetDgDataFromExcel()
+        {
+            try
+            {
+                IFormFileCollection files = Request.Form.Files;
+                string _refid = Request.Form["RefId"];
+                string _dgname = Request.Form["DgName"];
+                if (string.IsNullOrWhiteSpace(_refid))
+                    throw new FormException(FormErrors.E0122);
+                if (string.IsNullOrWhiteSpace(_dgname))
+                    throw new FormException(FormErrors.E0123);
+
+                byte[] fileBytea = files[0].OpenReadStream().ToBytes();
+
+                GetDgDataFromExcelResponse Resp = ServiceClient.Post(new GetDgDataFromExcelRequest
+                {
+                    RefId = _refid,
+                    DgName = _dgname,
+                    FileBytea = fileBytea
+                });
+                return Resp.FormDataWrap;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GetDgDataFromExcel. Message: " + ex.Message);
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
+                {
+                    Message = ex.Message,
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    MessageInt = "Exception in GetDgDataFromExcel",
                     StackTraceInt = ex.StackTrace
                 });
             }

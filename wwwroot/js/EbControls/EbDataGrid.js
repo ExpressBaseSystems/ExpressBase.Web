@@ -1005,6 +1005,50 @@
 
     }.bind(this);
 
+    this.excelUploadBtn_click = function () {
+        let $fileInp = $("#dgexcelfileupload");
+        if ($fileInp.length == 0) {
+            $("body").prepend(`<input type="file" name="dgexcelfileupload" id="dgexcelfileupload" style="display: none;" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">`);
+            $fileInp = $("#dgexcelfileupload");
+        }
+        $fileInp.off('change');
+        $fileInp.val('');
+        $fileInp.trigger('click');
+        $fileInp.on('change', function (e) {
+            this.showLoader();
+            let fileUpload = $("#dgexcelfileupload").get(0);
+            let files = fileUpload.files;
+            if (files.length == 0) {
+                EbMessage("show", { Message: 'Please select a file to upload', AutoHide: true, Background: '#aa0000', Delay: 2000 });
+                return;
+            }
+            let fileName = files[0].name;
+            if (!fileName) {
+                EbMessage("show", { Message: 'Invalid file name', AutoHide: true, Background: '#aa0000', Delay: 2000 });
+                return;
+            }
+            let data1 = new FormData();
+            data1.append(fileName, files[0]);
+            data1.append("RefId", this.formRefId);
+            data1.append("DgName", this.ctrl.Name);
+
+            let ext = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            if (ext === "xls" || ext === "xlsx") {
+                $.ajax({
+                    type: "POST",
+                    url: "/WebForm/GetDgDataFromExcel",
+                    processData: false,
+                    contentType: false,
+                    data: data1,
+                    error: function () {
+                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                        this.hideLoader();
+                    }.bind(this),
+                    success: this.reloadDG.bind(this)
+                });
+            }
+        }.bind(this));
+    }.bind(this);
 
     this.editRow_click = function (e) {
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
@@ -2341,6 +2385,7 @@
                 this.addRowBtn_click();
             }
         }.bind(this));
+        $(`#${this.ctrl.EbSid}Wraper`).on("click", ".excelupload-btn", this.excelUploadBtn_click);
         this.$table.on("click", ".check-row", this.checkRow_click_New);
         this.$table.on("click", ".cancel-row", this.cancelRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

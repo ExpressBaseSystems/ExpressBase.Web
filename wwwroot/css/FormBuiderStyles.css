@@ -503,13 +503,12 @@ body {
     top: -24px;
     border-radius: 3px 5px 0 0;
     letter-spacing: 0.2px;
-    right: 102px;
+    right: 8px;
     background-color: #00bd31 !important;
 }
 
 .excelupload-btn {
     background-color: #0009bd !important;
-    right: 8px;
 }
 
 .addrow-btn:hover {

@@ -58,7 +58,7 @@
     var datePattern = (_user_culture as CultureInfo).DateTimeFormat.ShortDatePattern;
 }
 <script>
-     $('title').text('@ViewBag.DispName');
+    $('title').text('@ViewBag.DispName');
     $.fn.extend({
         treed: function (o) {
             var openedClass = 'fa-minus-square-o';
@@ -159,47 +159,47 @@
 <script>
 
     $("body").prepend(`
-<div class="modal fade" id="AuditHistoryModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
-                <h4 class="modal-title">Audit Trail</h4>
-            </div>
-            <div class="modal-body">
-                <div id="divAuditTrail"> </div>
+        <div class="modal fade" id="AuditHistoryModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
+                        <h4 class="modal-title">Audit Trail</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="divAuditTrail"> </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-`);
+        `);
 
     $("body").prepend(`
-<div class="modal fade" id="iFramePdfModal" role="dialog">
-    <div class="modal-dialog" style="width: 100%; margin: 38px 0 0 0;">
-        <div class="modal-content" style="border-radius: 0; border: none;">
-            <div class="modal-body" style="height: calc(100vh - 38px); padding: 0px;">
-                <div style="position: absolute; top: -33px; z-index: -1000; right: 11px; color: #fdd;">
-                    <i class="fa fa-times fa-2x" aria-hidden="true" data-dismiss="modal"></i>
+        <div class="modal fade" id="iFramePdfModal4dv" role="dialog">
+            <div class="modal-dialog" style="width: 100%; margin: 38px 0 0 0;">
+                <div class="modal-content" style="border-radius: 0; border: none;">
+                    <div class="modal-body" style="height: calc(100vh - 38px); padding: 0px;">
+                        <div style="position: absolute; top: -33px; z-index: -1000; right: 11px; color: #fdd;">
+                            <i class="fa fa-times fa-2x" aria-hidden="true" data-dismiss="modal"></i>
+                        </div>
+                        <iframe id="iFramePdf4dv" style="width: 100%; height: calc(100vh - 38px); border: none;" ></iframe>
+                    </div>
                 </div>
-                <iframe id="iFramePdf" style="width: 100%; height: calc(100vh - 38px); border: none;" ></iframe>
             </div>
-        </div>
-    </div>
-</div>`);
+        </div>`);
 
-    $("#iFramePdf").on('load', function (evt) {
+    $("#iFramePdf4dv").on('load', function (evt) {
         try {
             if ($(evt.target).attr("src") !== undefined) {
-                if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
-                    document.getElementById("iFramePdf").focus();
-                    document.getElementById("iFramePdf").contentWindow.print();
+                if (document.getElementById("iFramePdf4dv").contentWindow.document.embeds.length === 1) {
+                    document.getElementById("iFramePdf4dv").focus();
+                    document.getElementById("iFramePdf4dv").contentWindow.print();
                 }
                 else {
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                 }
                 ebcontext.webform.hideLoader();
-                //$("#iFramePdfModal").modal("show");
+                //$("#iFramePdfModal4dv").modal("show");
             }
         }
         catch (e) {
@@ -215,33 +215,33 @@
     let header = new EbHeader();
     header.addRootObjectHelp(_TableVisualization);
 
-        var counter = 0;
-        @Html.Raw(ViewBag.EbObjectType)
-        @Html.Raw(ViewBag.Meta)
-        @Html.Raw(ViewBag.JsObjects);
-        @Html.Raw(ViewBag.TypeRegister);
+    var counter = 0;
+    @Html.Raw(ViewBag.EbObjectType)
+    @Html.Raw(ViewBag.Meta)
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.TypeRegister);
 
-        var dvcontainerObj = new DvContainerObj({
-            refid: '@ViewBag.dvRefId',
-            ver_num: '@ViewBag.VersionNumber',
-            type: '@ViewBag.ObjType',
-            dsobj: _TableVisualization,
-            cur_status:'@ViewBag.Status',
-            ss_url: '@ViewBag.ServiceUrl',
-            wc: '@ViewBag.wc',
-            rowData:'@Html.Raw(ViewBag.rowData)',
-            filterValues:'@Html.Raw(ViewBag.filterValues)',
-            tabnum: @ViewBag.tabNum,
-            DvList:@Html.Raw(ViewBag.DvList),
-            DvTagList:@Html.Raw(ViewBag.DvTaggedList),
-            url: '@ViewBag.BrowserURLContext',
-            datePattern: '@datePattern',
-            TenantId: '@ViewBag.cid',
-            UserId: '@ViewBag.uid',
-            googlekey:'@ViewBag.al_arz_map_key'
-        });
+    var dvcontainerObj = new DvContainerObj({
+        refid: '@ViewBag.dvRefId',
+        ver_num: '@ViewBag.VersionNumber',
+        type: '@ViewBag.ObjType',
+        dsobj: _TableVisualization,
+        cur_status: '@ViewBag.Status',
+        ss_url: '@ViewBag.ServiceUrl',
+        wc: '@ViewBag.wc',
+        rowData: '@Html.Raw(ViewBag.rowData)',
+        filterValues: '@Html.Raw(ViewBag.filterValues)',
+        tabnum: @ViewBag.tabNum,
+        DvList: @Html.Raw(ViewBag.DvList),
+        DvTagList: @Html.Raw(ViewBag.DvTaggedList),
+        url: '@ViewBag.BrowserURLContext',
+        datePattern: '@datePattern',
+        TenantId: '@ViewBag.cid',
+        UserId: '@ViewBag.uid',
+        googlekey: '@ViewBag.al_arz_map_key'
+    });
 
-        $(document).ready(function () {
-            @Html.Raw(head)
-        });
+    $(document).ready(function () {
+    @Html.Raw(head)
+                });
 </script>

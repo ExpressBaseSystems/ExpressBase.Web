@@ -3368,7 +3368,7 @@
             let SubscriptionId = window.ebcontext.subscription_id;
             this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
             this.ss.onPdfDownloadSuccess = function (url) {
-                $("#iFramePdf").attr("src", url);
+                $("#iFramePdf4dv").attr("src", url);
                 $(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
                 event.stopPropagation();
             }.bind(this);

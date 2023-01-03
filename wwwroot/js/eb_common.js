@@ -1245,7 +1245,7 @@ function textTransform(element, transform_type, IsNoDelay) {
 }
 
 function textTransformHelper(element, transform_type) {
-    let value = $(element).val().trim();
+    let value = $(element).val();
     if (transform_type === 1)
         $(element).val(value.toLowerCase());
     else if (transform_type === 2)

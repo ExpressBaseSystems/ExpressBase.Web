@@ -130,7 +130,7 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
 
         this.initFilterDialogCtrls = function () {
             //$('.selectpicker').selectpicker();
-            JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
+            //JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
             $.each(this.FormObj.Controls.$values, function (k, Obj) {
                 let opt = {};
                 if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
@@ -158,8 +158,10 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
             $.each(this.FormObj.Controls.$values, function (k, cObj) {
                 this.formObject[cObj.Name] = cObj;
             }.bind(this));
-            //this.FRC.setUpdateDependentControlsFn();
-
+            this.FRC.setFormObjHelperfns();
+            this.FRC.setUpdateDependentControlsFn();
+            this.FRC.setUpdateDependentCtrlWithDrFn();
+            this.FRC.setUpdateDependentControlsBehaviorFns();
         };
 
         this.initFormObject = function () {

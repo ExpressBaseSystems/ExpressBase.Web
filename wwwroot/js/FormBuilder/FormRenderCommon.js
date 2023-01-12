@@ -1465,7 +1465,7 @@
 
     this.isPsImportFlow = function (ctrl) {
         let b = !1;
-        if (ctrl.ObjType === 'PowerSelect' && (ctrl.DataImportId || (ctrl.IsImportFromApi && ctrl.ImportApiUrl)) && this.FO.Mode.isNew) {
+        if (ctrl.ObjType === 'PowerSelect' && (ctrl.DataImportId || (ctrl.IsImportFromApi && ctrl.ImportApiUrl)) && (this.FO.Mode.isNew || ctrl.ImportInEditMode)) {
             if (!ctrl.___DoNotImport && !ctrl.isEmpty()) {
                 this.FO.psDataImport(ctrl);
                 b = !0;

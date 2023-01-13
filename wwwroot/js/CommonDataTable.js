@@ -3341,7 +3341,7 @@
 
             $.each(this.EbObject.PrintDocs.$values, function (i, obj) {
                 let tle = obj.Title || obj.ObjDisplayName;
-                $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
+                $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" data-params="${obj.UseParams}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
             }.bind(this));
 
             $(`#PrintDocsdd${this.tableId}`).off(".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
@@ -3354,12 +3354,22 @@
         }
 
         let rptRefid = $(e.currentTarget).attr('data-token');
+        let useParams = $(e.currentTarget).attr('data-params');
+
+        if (useParams == 'true') {
+            let params = btoa(JSON.stringify(this.filterValues));
+            let url = "/ReportRender/Renderlink?refid=" + rptRefid + "&_params=" + params;
+            ebcontext.webform.showLoader();
+            $("#iFramePdf4dv").attr("src", url);
+            return;
+        }
+
         let rowIds = [];
         let chkdInps = $(`input[name=${this.tableId}_id]:checked`);
 
         if (chkdInps && chkdInps.length > 0) {
             $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
-            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
+            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit Downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
             ebcontext.webform.showLoader();
 
             for (let i = 0; i < chkdInps.length; i++) {

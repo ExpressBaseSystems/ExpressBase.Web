@@ -2931,8 +2931,8 @@
                         ))
                     );
                     this.CreateNewFormLinks();
-                    this.CreatePrintDocsLinks();
                 }
+                this.CreatePrintDocsLinks();
                 $("#objname").text(this.EbObject.DisplayName);
                 if ($("#" + this.tableId).children().length > 0) {
                     if (this.FD) {

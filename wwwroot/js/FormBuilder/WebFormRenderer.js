@@ -559,14 +559,55 @@ const WebFormRender = function (option) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         if (_respObj.Status === 200) {
-            this.__fromImport = true;
-            let mode_s = "Export Mode";
-            if (this.draftId > 0)
-                mode_s = "Draft Mode"
-            this.FORCE_RELOAD(0, _respObj.FormData, mode_s);
+            //this.__fromImport = true;//this flag is not required!
+
+            this.softReloadForm(_respObj);
         }
-        else
+        else {
             console.error(_respObj.MessageInt);
+            EbMessage("show", { Message: `Failed to Import data`, AutoHide: true, Background: '#aa0000' });
+        }
+    }.bind(this);
+
+    this.softReloadForm = function (_respObj) {
+        try {
+            let OuterCtrlsTblNames = this.getNormalTblNames();
+            let newModel = _respObj.FormData.MultipleTables;
+            $.each(newModel, function (tblName, Table) {
+                if (this.DataMODEL[tblName]) {
+                    let TableBkup = this.DataMODEL[tblName];
+                    if (OuterCtrlsTblNames.includes(tblName)) {
+                        let bkupIdx = TableBkup[0].Columns[0].Name == 'id' ? 1 : 0;
+                        for (let i = 0; i < Table[0].Columns.length; i++) {
+                            let c1 = TableBkup[0].Columns[i + bkupIdx];
+                            let c2 = Table[0].Columns[i];
+                            c1.Value = c2.Value;
+                            c1.D = c2.D;
+                            c1.R = c2.R;
+                            c1.F = c2.F;
+                            c1.M = c2.M;
+                        }
+                    }
+                }
+                else {
+                    this.DataMODEL[tblName] = Table;
+                }
+            }.bind(this));
+
+            let outerCtrlsSingleColumns_flat = this.getOuterCtrlsSingleColumns_flat(this.DataMODEL, OuterCtrlsTblNames);
+            this.isInitiallyPopulating = true;
+            this.populateFormOuterCtrlsWithDataModel(outerCtrlsSingleColumns_flat);
+            this.isInitiallyPopulating = false;
+            for (let EbSid_CtxId in this.DGBuilderObjs) {
+                let DGB = this.DGBuilderObjs[EbSid_CtxId];
+                DGB.reloadDgUsingNewModel(newModel[DGB.ctrl.TableName]);
+            }
+            this.FRC.execAllDefaultValExpr();
+        }
+        catch (e) {
+            console.error(e);
+            EbMessage("show", { Message: `Reloading failed: ${e.message}`, AutoHide: false, Background: '#aa0000' });
+        }
     }.bind(this);
 
     //this.unbindUniqueCheck = function (control) {

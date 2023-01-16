@@ -2063,6 +2063,11 @@
             return;
         }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
+        this.reloadDgUsingNewModel(dataModel);
+        if (this.ctrl.__continue) this.ctrl.__continue();
+    };
+
+    this.reloadDgUsingNewModel = function (dataModel) {
         let lastModel = this.DataMODEL;
 
         let newModel = [], delModel = [], rowCntr = -501;
@@ -2106,9 +2111,7 @@
                 this.DataMODEL.push(lastModel[i]);
             }
         }
-
-        if (this.ctrl.__continue) this.ctrl.__continue();
-    };
+    }.bind(this);
 
     this.getDGIterable = function () {
         let DGrows = [];

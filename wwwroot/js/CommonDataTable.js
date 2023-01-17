@@ -3321,7 +3321,7 @@
                         <ul class="drp_ul"></ul>
                     </div>
                     </div>`);
-        let _locale = ebcontext.languages.getCurrentLocale();
+        let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale() : 0;
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
             let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);

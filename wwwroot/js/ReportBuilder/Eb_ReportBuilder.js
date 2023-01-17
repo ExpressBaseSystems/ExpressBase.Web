@@ -223,6 +223,7 @@
             let id = sections + this.idCounter[sections + "Counter"]++;
             let o = new EbObjects["Eb" + sections](id);
             o.DisplayName = id;
+            $.extend(o, subSecArray[k]);
             if (_new)
                 $(`.page [eb-type='${sections}']`).last().after(o.$Control.outerHTML());
             else

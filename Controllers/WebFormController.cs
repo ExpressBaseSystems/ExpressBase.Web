@@ -27,6 +27,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Security;
 using System.Collections;
 using ExpressBase.Objects.WebFormRelated;
+using Microsoft.AspNetCore.Http;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -211,14 +212,17 @@ namespace ExpressBase.Web.Controllers
             if (_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
-                if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
+                if (((int)WebFormModes.View_Mode == _mode || (int)WebFormModes.Edit_Mode == _mode) && ob.Count == 1)
                 {
                     Console.WriteLine("GetFormForRendering - View mode request identified.");
                     resp.RowId = Convert.ToInt32(ob[0].Value);
                     resp.FormDataWrap = getRowdata(refId, resp.RowId, _locId, resp.RenderMode);
                     if (resp.RowId > 0)
                     {
-                        resp.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+                        if ((int)WebFormModes.View_Mode == _mode)
+                            resp.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+                        else
+                            resp.Mode = WebFormModes.Edit_Mode.ToString().Replace("_", " ");
                         GetDisableEditBtnInfo(refId, resp.RowId, resp.DisableEditButton);
                     }
                     else
@@ -630,6 +634,41 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                     Message = ex.Message,
                     Status = (int)HttpStatusCode.InternalServerError,
                     MessageInt = "Exception in ImportFormData",
+                    StackTraceInt = ex.StackTrace
+                });
+            }
+        }
+
+        public string GetDgDataFromExcel()
+        {
+            try
+            {
+                IFormFileCollection files = Request.Form.Files;
+                string _refid = Request.Form["RefId"];
+                string _dgname = Request.Form["DgName"];
+                if (string.IsNullOrWhiteSpace(_refid))
+                    throw new FormException(FormErrors.E0122);
+                if (string.IsNullOrWhiteSpace(_dgname))
+                    throw new FormException(FormErrors.E0123);
+
+                byte[] fileBytea = files[0].OpenReadStream().ToBytes();
+
+                GetDgDataFromExcelResponse Resp = ServiceClient.Post(new GetDgDataFromExcelRequest
+                {
+                    RefId = _refid,
+                    DgName = _dgname,
+                    FileBytea = fileBytea
+                });
+                return Resp.FormDataWrap;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GetDgDataFromExcel. Message: " + ex.Message);
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
+                {
+                    Message = ex.Message,
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    MessageInt = "Exception in GetDgDataFromExcel",
                     StackTraceInt = ex.StackTrace
                 });
             }

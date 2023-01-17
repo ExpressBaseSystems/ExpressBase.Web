@@ -382,6 +382,8 @@
                     if (this.FO.DGs.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
                         path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
                         ctrl = eval(path);
+                        if (!ctrl)
+                            return "not found";
                         ctrl.IsDGCtrl = true;
                     }
                     else if (this.FO.TabControls.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
@@ -405,6 +407,8 @@
                 }
                 else {
                     ctrl = eval(path);
+                    if (!ctrl)
+                        return "not found";
                 }
                 return ctrl;
             }
@@ -1461,7 +1465,7 @@
 
     this.isPsImportFlow = function (ctrl) {
         let b = !1;
-        if (ctrl.ObjType === 'PowerSelect' && (ctrl.DataImportId || (ctrl.IsImportFromApi && ctrl.ImportApiUrl)) && this.FO.Mode.isNew) {
+        if (ctrl.ObjType === 'PowerSelect' && (ctrl.DataImportId || (ctrl.IsImportFromApi && ctrl.ImportApiUrl)) && (this.FO.Mode.isNew || ctrl.ImportInEditMode)) {
             if (!ctrl.___DoNotImport && !ctrl.isEmpty()) {
                 this.FO.psDataImport(ctrl);
                 b = !0;

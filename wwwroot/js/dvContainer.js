@@ -92,7 +92,17 @@ var DvContainerObj = function (settings) {
         this.PippedColl[focusedId] = this.RelatedDvlist;
         this.TaggedColl[focusedId] = this.TaggedDvlist;
         this.MainData = (this.currentObj.Pippedfrom !== null && this.currentObj.Pippedfrom !== "") ? this.previousObj.data : null;
-        let showCheckbox = this.currentObj.PrintDocs && this.currentObj.PrintDocs.$values.length > 0;
+
+        let showCheckbox = false;
+        let printDocs = this.currentObj.PrintDocs;
+        if (printDocs && printDocs.$values.length > 0) {
+            for (let i = 0; i < printDocs.$values.length; i++) {
+                if (!printDocs.$values[i].UseParams) {
+                    showCheckbox = true;
+                    break;
+                }
+            }
+        }
 
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             this.dvcol[focusedId] = new EbCommonDataTable({

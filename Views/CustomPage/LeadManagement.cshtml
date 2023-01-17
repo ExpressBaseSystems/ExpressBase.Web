@@ -1072,8 +1072,10 @@
 <script>
     var intSpecialPermission = '@ViewBag.Permission';
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
-
     let uploadedFileRefList = {};
+    let _fupCutstomMenu = [{ name: "Set as DP", icon: "fa-user" }];
+    if (ebcontext.user.Roles.includes("Custom Image Delete Role"))
+        _fupCutstomMenu.push({ name: "Delete", icon: "fa-trash" });
     let files1 = @Html.Raw(ViewBag.AttachImgInfo);
     let imgup1 = new FUPFormControl({
         Type: 'files',
@@ -1088,7 +1090,7 @@
         EnableTag: true,
         EnableCrop: true,
         MaxSize: '@ViewBag.Env' === 'Staging' ? 15: 2,
-        CustomMenu: [{ name: "Set as DP", icon: "fa-user" }/*, { name: "Delete", icon: "fa-trash" }*/],
+        CustomMenu: _fupCutstomMenu,
         DisableUpload: false,
         HideEmptyCategory: true,
         ShowUploadDate: true
@@ -1229,7 +1231,7 @@
         EnableTag: true,
         EnableCrop: true,
         MaxSize: '@ViewBag.Env' === 'Staging' ? 15: 2,
-        CustomMenu: [{ name: "Set as DP", icon: "fa-user" }/*, { name: "Delete", icon: "fa-trash" }*/],
+        CustomMenu: _fupCutstomMenu,
         DisableUpload: false,
         HideEmptyCategory: true,
         ShowUploadDate: true

@@ -1237,6 +1237,8 @@
     this.clickedOnLabelLink = function (ctrl, linkObj) {
         let _params = this.getLabelLinkParameters(linkObj);
         let _mode = 1;//view
+        if (linkObj.FormMode && linkObj.FormMode == 3)
+            _mode = 3;//edit
 
         if (_params.findIndex(e => e.Name === 'id') === -1) //prefill
             _mode = 2;

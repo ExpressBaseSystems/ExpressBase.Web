@@ -1041,7 +1041,7 @@
                     contentType: false,
                     data: data1,
                     error: function () {
-                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                        EbMessage("show", { Message: 'Something Unexpected Occurred and Data loading failed', AutoHide: true, Background: '#aa0000', Delay: 4000 });
                         this.hideLoader();
                     }.bind(this),
                     success: this.reloadDG.bind(this)
@@ -2059,6 +2059,7 @@
         console.log(_respObj);
         if (_respObj.Status !== 200) {
             console.error('Data not loaded : ' + _respObj.Message);
+            EbMessage("show", { Message: `Data loading in Datagrid (${this.ctrl.Label || this.ctrl.Name}) failed; ${_respObj.Message};`, AutoHide: true, Background: '#0000aa' });
             ebcontext._formLastResponse = _respObj;
             return;
         }

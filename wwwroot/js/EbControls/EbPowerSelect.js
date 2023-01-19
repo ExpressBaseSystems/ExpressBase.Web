@@ -370,7 +370,7 @@ const EbPowerSelect = function (ctrl, options) {
                 }
 
                 if (this.datatable) {
-                    this.datatable.Api.column(mapedField + ":name").search(this.getSearchTextRegex(searchVal), true).draw();
+                    this.datatable.Api.column(mapedField + ":name").search(this.getSearchTextRegex(searchVal), true, false, true).draw();
                 }
             }
             else {
@@ -902,7 +902,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
-            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.getSearchTextRegex(this.filterArray[0].Value), true).draw();
+            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.getSearchTextRegex(this.filterArray[0].Value), true, false, true).draw();
     };
 
     // init datatable

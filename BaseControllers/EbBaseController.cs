@@ -50,7 +50,7 @@ namespace ExpressBase.Web.BaseControllers
         {
             get
             {
-                return this.HttpContext.Request.Headers["X-Real-IP"].Count > 0 ? this.HttpContext.Request.Headers["X-Real-IP"][0] : string.Empty;
+                return this.HttpContext.Request.Headers["X-Forwarded-For"].Count > 0 ? this.HttpContext.Request.Headers["X-Forwarded-For"][0] : string.Empty;
             }
         }
 

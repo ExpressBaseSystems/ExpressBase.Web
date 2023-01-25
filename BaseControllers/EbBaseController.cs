@@ -50,7 +50,8 @@ namespace ExpressBase.Web.BaseControllers
         {
             get
             {
-                return this.HttpContext.Request.Headers["X-Forwarded-For"].Count > 0 ? this.HttpContext.Request.Headers["X-Forwarded-For"][0] : string.Empty;
+                string val = this.HttpContext.Request.Headers["X-Forwarded-For"];
+                return string.IsNullOrWhiteSpace(val) ? string.Empty : val.Split(",")[0];
             }
         }
 

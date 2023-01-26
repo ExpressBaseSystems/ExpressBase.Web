@@ -602,7 +602,17 @@ function EbApiBuild(config) {
         $("#obj_icons").empty().append(`<button class='btn run' id='tb${this.TabNumber}_api_run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
                                             <i class='fa fa-play' aria-hidden='true'></i>
                                         </button>`);
+
+        $("#obj_icons").append(`
+			<button class='btn run' id='scheduler_init' data-toggle='tooltip' data-placement='bottom' title= 'Schedule'> <i class='fa fa-clock-o' aria-hidden='true'></i></button >
+			`);
+        $("#scheduler_init").off("click").on("click", this.DrawScheduler.bind(this));
+
         $(`#tb${this.TabNumber}_api_run`).off("click").on("click", this.getApiResponse.bind(this));
+    };
+
+    this.DrawScheduler = function () {
+        $('#schedulerlistmodal').modal('show');
     };
 
     commonO.saveOrCommitSuccess = function (ref) {
@@ -706,7 +716,7 @@ function EbApiBuild(config) {
                         <td>${o.Name}</td>
                         <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o.Type)}</td>
                         <td><input type='text' style='width:100%;' Json-prop='${o.Name}' value='${formated_val || ""}'></input></td>
-                        <td><input type="checkbox" id="api-check-${o.Name}" Json-req="${o.Name}" p-name="${param.Name}" p-type="custom" checked/></td>
+                        <td><input type="checkbox" id="api-check-${o.Name}" Json-req="${o.Name}" p-name="${o.Name}" p-type="custom" checked/></td>
                         <td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>
                        </tr>`);
                 $('#tb' + this.TabNumber + '_api_scodeMd').modal('hide');

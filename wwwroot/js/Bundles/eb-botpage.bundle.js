@@ -90,7 +90,7 @@ var InitControls = function (option) {
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.site',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.shop',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -98,7 +98,8 @@ var InitControls = function (option) {
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,
             ShowUploadDate: ctrl.ShowUploadDate,
-            ViewByCategory: ctrl.ViewByCategory
+            ViewByCategory: ctrl.ViewByCategory,
+            Renderer: this.Renderer
         });
 
         //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -112,7 +113,7 @@ var InitControls = function (option) {
 
         imgup.windowClose = function () {
             if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
-                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                EbMessage("show", { Message: 'Changes affect only if form is saved', AutoHide: true, Background: '#0000aa', Delay: 3000 });
         }.bind(this);
 
         imgup.customTrigger = function (DpControlsList, name, refids) {
@@ -139,12 +140,12 @@ var InitControls = function (option) {
                                         }
                                     }
                                     if (initLen < this.Renderer.uploadedFileRefList[ctrl.Name + '_del'].length) {
-                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                        EbMessage("show", { Message: 'Changes affect only if form is saved', AutoHide: true, Background: '#0000aa', Delay: 3000 });
                                     }
                                     imgup.deleteFromGallery(refids);
                                     imgup.customMenuCompleted("Delete", refids);
                                 }
-                            }
+                            }.bind(this)
                         });
                 }
             }
@@ -254,6 +255,10 @@ var InitControls = function (option) {
                     mask: true
                 });
                 //$input.val(userObject.Preference.ShortDate);
+                if (ctrl.RestrictionRule == 1)
+                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId);
+                else if (ctrl.RestrictionRule == 2)
+                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId, true);
             }
             else if (ctrl.EbDateType === 17) { //Time
                 $input.datetimepicker({
@@ -346,7 +351,7 @@ var InitControls = function (option) {
             ctrl.setValue(val);
     };
 
-    this.SimpleSelect = function (ctrl) {
+    this.SimpleSelect = function (ctrl, ctrlOpts) {
         let $input = $("#" + ctrl.EbSid_CtxId);
 
         $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
@@ -360,7 +365,7 @@ var InitControls = function (option) {
         else {
             $input.selectpicker({
                 //dropupAuto: false,
-                container: "body [eb-root-obj-container]:first",
+                container: (ctrlOpts.parentCont ? `#${ctrlOpts.parentCont}` : `body [eb-root-obj-container]:first`),
                 virtualScroll: 500,
                 size: ctrl.DropdownHeight === 0 ? 'auto' : (ctrl.DropdownHeight / 23),
                 //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
@@ -374,14 +379,19 @@ var InitControls = function (option) {
             $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
                 let $el = $(e.target);
                 let $DDbScont = $DD.closest(".bs-container");
-                $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+                if ($DDbScont.length === 0)
+                    return;
+                //$DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
+                $DDbScont.offset({ left: $el.closest(".ctrl-cover").offset().left });
 
                 if ($DDbScont.hasClass("dropup")) {
-                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    //$DDbScont.css("top", parseFloat($DDbScont.css("top")) + 1);
+                    $DDbScont.offset({ top: $DDbScont.offset().top + 1 });
                     $DD.removeClass("eb-ss-dd").addClass("eb-ss-ddup");
                 }
                 else {
-                    $DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    //$DDbScont.css("top", parseFloat($DDbScont.css("top")) - 1);
+                    $DDbScont.offset({ top: $DDbScont.offset().top - 1 });
                     $DD.removeClass("eb-ss-ddup").addClass("eb-ss-dd");
                 }
 
@@ -434,8 +444,8 @@ var InitControls = function (option) {
         }
     };
 
-    this.BooleanSelect = function (ctrl) {
-        this.SimpleSelect(ctrl);
+    this.BooleanSelect = function (ctrl, ctrlOpts) {
+        this.SimpleSelect(ctrl, ctrlOpts);
     };
 
     // http://davidstutz.de/bootstrap-multiselect
@@ -444,39 +454,56 @@ var InitControls = function (option) {
         $input.multiselect({
             includeSelectAllOption: true
         });
+        if (this.Renderer.rendererName != 'WebForm') {
+            if (ebcontext.user.wc === "uc") {
+                if (ctrl.TryToLoadGlobal && $input.attr('isglobal') === 'y')
+                    ctrl.setValue('-1');
+                else if (ctrl.LoadCurrentLocation) {
+                    let curLoc = false;
+                    if (ebcontext.locations.getCurrent)
+                        curLoc = ebcontext.locations.getCurrent();
+                    else if (ebcontext.sid && ebcontext.user.UserId)
+                        curLoc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
 
-        $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
-
-        if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-            $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
-        }
-        else {
-            $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
-            if (ebcontext.user.wc === "dc")
-                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-            else if (ebcontext.user.wc === "uc") {
-                if (ctrl.LoadCurrentLocation)
-                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.CurrentLocObj.LocId + ']').trigger('click');
-                else
-                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+                    if (curLoc)
+                        $('#' + ctrl.EbSid_CtxId).val([curLoc]).multiselect('refresh');
+                }
             }
-        }
+            else if (ebcontext.user.wc === "dc")
+                ctrl.setValue('-1');
 
-        ctrl.DataVals.Value = ctrl.getValueFromDOM();
+            ctrl.DataVals.Value = ctrl.getValueFromDOM();
+        }
+        //$("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
+        //ebcontext.locations.getCurrent();
+        //if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+        //    $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        //}
+        //else {
+        //    $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
+        //    if (ebcontext.user.wc === "dc")
+        //        $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+        //    else if (ebcontext.user.wc === "uc") {
+        //        if (ctrl.LoadCurrentLocation)
+        //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.getCurrent() + ']').trigger('click');
+        //        else
+        //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+        //    }
+        //}
     };
 
-    this.UserLocationCheckboxChanged = function (ctrl) {
-        if ($(event.target).prop("checked")) {
-            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
-            $('#' + ctrl.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
-        }
-        else {
-            $('#' + ctrl.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
-            if ($('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
-                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //this.UserLocationCheckboxChanged = function (ctrl) {
+    //    if ($(event.target).prop("checked")) {
+    //        $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //        $('#' + ctrl.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
+    //    }
+    //    else {
+    //        $('#' + ctrl.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
+    //        if ($('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
+    //            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
 
-        }
-    };
+    //    }
+    //};
 
     this.LocationSelector = function (ctrl) {
         let $input = "#" + ctrl.EbSid_CtxId;
@@ -519,7 +546,7 @@ var InitControls = function (option) {
             $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
             if (ebcontext.user.wc === "uc") {
                 if (ctrl.LoadCurrentLocation)
-                    $('#' + ctrl.EbSid_CtxId).find('[data-id=' + ebcontext.locations.CurrentLocObj.LocId + '] .sim-tree-checkbox').eq(0).trigger('click');
+                    $('#' + ctrl.EbSid_CtxId).find('[data-id=' + ebcontext.locations.getCurrent() + '] .sim-tree-checkbox').eq(0).trigger('click');
             }
         }
         ctrl.DataVals.Value = ctrl.getValueFromDOM();
@@ -615,6 +642,14 @@ var InitControls = function (option) {
                         val = ebcontext.user.UserId;
                         name = "eb_currentuser_id";
                     }
+                    else if (depCtrl_s === "form.eb_current_language_id") {
+                        val = ebcontext.languages.getCurrentLanguage();
+                        name = "eb_current_language_id";
+                    }
+                    else if (depCtrl_s === "form.eb_current_locale") {
+                        val = ebcontext.languages.getCurrentLocale();
+                        name = "eb_current_locale";
+                    }
                     else if (depCtrl_s === "form.id") {
                         val = this.Renderer.rowId;
                         name = "id";
@@ -642,11 +677,18 @@ var InitControls = function (option) {
         o.Source = this.Renderer.rendererName;
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+        o.drawCallBack = function (ctrl) {
+            ctrl.___isNotUpdateValExpDepCtrls = false;
+            let DepHandleObj = this.Renderer.FRC.GetDepHandleObj(ctrl);
+            this.Renderer.FRC.ctrlChangeListener_inner0(DepHandleObj);
+        }.bind(this, ctrl);
 
-        if (!ctrl.__filterValues)
-            ctrl.__filterValues = [];
-        if (ctrl.ParamsList) {
-            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+        let initFilterValues = function (ctrl) {
+            if (!ctrl.__filterValues)
+                ctrl.__filterValues = [];
+            if (!ctrl.ParamsList)
+                return false;
+            let paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
             for (let i = 0; i < paramsList.length; i++) {
                 let depCtrl_s = paramsList[i];
                 let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
@@ -654,13 +696,29 @@ var InitControls = function (option) {
                     let val = '';
                     let ebDbType = 11;
                     let name = "";
-                    if (depCtrl_s === "form.eb_loc_id") {
-                        val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                    if (depCtrl && depCtrl != 'not found') {
+                        val = depCtrl.getValue();
+                        name = depCtrl.Name;
+                        ebDbType = depCtrl.EbDbType;
+                    }
+                    else if (depCtrl_s === "form.eb_loc_id") {
+                        if (this.Renderer.rendererName === 'WebForm')
+                            val = this.Renderer.getLocId(true);
+                        else
+                            val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 0;
                         name = "eb_loc_id";
                     }
                     else if (depCtrl_s === "form.eb_currentuser_id") {
                         val = ebcontext.user.UserId;
                         name = "eb_currentuser_id";
+                    }
+                    else if (depCtrl_s === "form.eb_current_language_id") {
+                        val = ebcontext.languages.getCurrentLanguage();
+                        name = "eb_current_language_id";
+                    }
+                    else if (depCtrl_s === "form.eb_current_locale") {
+                        val = ebcontext.languages.getCurrentLocale();
+                        name = "eb_current_locale";
                     }
                     else if (depCtrl_s === "form.id") {
                         val = this.Renderer.rowId;
@@ -670,17 +728,15 @@ var InitControls = function (option) {
                         val = this.Renderer.rowId;
                         name = this.Renderer.FormObj.TableName + "_id";
                     }
-                    else {
-                        val = depCtrl.getValue();
-                        name = depCtrl.Name;
-                        ebDbType = depCtrl.EbDbType;
-                    }
 
                     ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
                 }
             }
+            return true;
+        }.bind(this, ctrl);
+        if (initFilterValues())
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
-        }
+
         ctrl.initializer = new EbCommonDataTable(o);
         ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 
@@ -693,7 +749,35 @@ var InitControls = function (option) {
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
             ctrl.initializer.Api.ajax.reload();
+            //ctrl.initializer.getColumnsSuccess();
         };
+
+        ctrl.reloadWithParamAll = function () {
+            let a = ctrl.__filterControls;
+            if (a) {
+                for (let i = 0; i < a.length; i++) {
+                    let val = a[i].getValue();
+                    let filterObj = getObjByval(ctrl.__filterValues, "Name", a[i].Name);
+                    filterObj.Value = val;
+                }
+            }
+
+            ctrl.initializer.filterValues = ctrl.__filterValues;
+            ctrl.initializer.Api.ajax.reload();
+            //ctrl.initializer.getColumnsSuccess();// this will produce double footer
+        };
+
+        ctrl.sum = function (ctrl, colName) {
+            try {
+                let data = ctrl.initializer.Api.column(colName + ':name').data();
+                if (data)
+                    return data.sum();
+            }
+            catch (e) {
+                console.error(e);
+            }
+            return 0;
+        }.bind(this, ctrl);
 
         $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
             if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
@@ -726,9 +810,17 @@ var InitControls = function (option) {
         $input.find("#month").MonthPicker({
             OnAfterChooseMonth: this.SetDateFromDateTo.bind(this, $input)
         });
-        $input.find("#year").datetimepickers({
-            format: "YYYY",
+        $input.find("#fromyear").datepicker({
+            format: "yyyy",
             viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $input.find("#toyear").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
         });
 
         $input.find("#date").next(".input-group-addon").off('click').on('click', function () {
@@ -741,15 +833,18 @@ var InitControls = function (option) {
             if (this.value === "Hourly") {
                 $input.children("[name=date]").show();
                 $input.children("[name=month]").hide();
-                $input.children("[name=year]").hide();
+                $input.children("[name=fromyear]").hide();
+                $input.children("[name=toyear]").hide();
             }
             else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
                 $input.children("[name=month]").show();
                 $input.children("[name=date]").hide();
-                $input.children("[name=year]").hide();
+                $input.children("[name=fromyear]").hide();
+                $input.children("[name=toyear]").hide();
             }
-            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly") {
-                $input.children("[name=year]").show();
+            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly") {
+                $input.children("[name=fromyear]").show();
+                $input.children("[name=toyear]").show();
                 $input.children("[name=date]").hide();
                 $input.children("[name=month]").hide();
             }
@@ -757,7 +852,8 @@ var InitControls = function (option) {
 
         $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
 
-        $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#fromyear").on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#toyear").on('change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select").selectpicker({///////////////////////////////////////////////////////////
             dropupAuto: false,
@@ -783,11 +879,12 @@ var InitControls = function (option) {
             $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
             $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
         }
-        else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly") {
-            let year = $input.find("#year").val();
+        else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly" || $input.find("select").val() === "Yearly") {
+            let year = $input.find("#fromyear").val();
             startDate = moment([year]);
-            endDate = moment([year]).endOf('year');
             $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
+            year = $input.find("#toyear").val();
+            endDate = moment([year]).endOf('year');
             $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
         }
 
@@ -1031,6 +1128,10 @@ var InitControls = function (option) {
         });
     };
 
+    this.RenderQuestionsControl = function (ctrl, ctrlOpts) {
+        return new EbRenderQuestionsControl(ctrl, ctrlOpts);
+    };
+
     this.DataGrid = function (ctrl, ctrlOpts) {
         return new EbDataGrid(ctrl, ctrlOpts);
     };
@@ -1042,14 +1143,181 @@ var InitControls = function (option) {
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
-            //if (!this.Renderer.FRC.AllRequired_valid_Check())
-            //    return;
+            if ($('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled'))
+                return;
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
-            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_m=7&_l=${ebcontext.locations.CurrentLoc}`;
-            window.open(url, '_blank');
+            params.push(new fltr_obj(16, "srcCtrl", ctrl.Name));
+            let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+            if (ctrl.OpenInNewTab) {
+                let _locale = ebcontext.languages.getCurrentLocale();
+                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}&_lo=${_locale}`;
+                window.open(url, '_blank');
+            }
+            else {
+                ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
+            }
         }.bind(this);
+        $ctrl.on('mouseenter', function (ctrl, e) {
+            if (this.Renderer.Mode.isNew)
+                ctrl.attr('title', 'Not available in New Mode');
+            else if (this.Renderer.Mode.isEdit && ctrl.DisableInEditMode)
+                ctrl.attr('title', 'Not available in Edit Mode');
+            else
+                ctrl.removeAttr('title');
+        }.bind(this, $ctrl));
+
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, ctrl);
+
+        ctrl.setValue = function (p1) {
+            let $lbl = $("#" + this.EbSid_CtxId + ' span');
+            $lbl.text(p1 + ' ');
+        }.bind(ctrl);
+        ctrl.justSetValue = ctrl.setValue;
+        ctrl.disable = function (ctrl) {
+            if (this.Renderer.Mode.isView || this.Renderer.Mode.isEdit) {
+                ctrl.__IsDisable = true;
+                $('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled', 'disabled');
+            }
+        }.bind(this, ctrl);
+        ctrl.enable = function (ctrl) {
+            if (this.Renderer.Mode.isView || (this.Renderer.Mode.isEdit && !ctrl.DisableInEditMode)) {
+                ctrl.__IsDisable = false;
+                $('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').removeAttr('disabled');
+            }
+        }.bind(this, ctrl);
+        if (this.Renderer.Mode.isView)
+            ctrl.enable();
+    };
+
+    this.Label = function (ctrl, ctrlOpts) {
+        if (ctrl.IsDGCtrl) {
+
+        }
+        else {
+            ctrl.setValue = function (renderer, p1) {
+                if (!renderer.isInitiallyPopulating) {
+                    let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
+                    if (this.RenderAs == 2)//Html
+                        $lbl.html(p1 || '');
+                    else
+                        $lbl.text(p1 || '');
+                }
+            }.bind(ctrl, this.Renderer);
+
+            ctrl.justSetValue = ctrl.setValue;
+
+            if (ctrl.RenderAs != 1)
+                return;
+
+            let $lbl = $("#" + ctrl.EbSid_CtxId + 'Lbl');
+
+            if (!(ctrl.LinkedObjects && ctrl.LinkedObjects.$values.length > 0)) {
+                return;
+            }
+            let linkObj = ctrl.LinkedObjects.$values[0];
+
+            if (!linkObj.ObjRefId) {
+                console.warn('LabelLink - invalid obj refid');
+                return;
+            }
+            if (linkObj.LinkType !== 3) {
+                console.warn('LabelLink - only popup supported');
+                return;
+            }
+
+            $lbl.css('pointer-events', 'all');
+            $lbl.addClass('eb-label-link');
+
+            $lbl.on('click', this.clickedOnLabelLink.bind(this, ctrl, linkObj));
+        }
+    };
+
+    this.clickedOnLabelLink = function (ctrl, linkObj) {
+        let _params = this.getLabelLinkParameters(linkObj);
+        let _mode = 1;//view
+        if (linkObj.FormMode && linkObj.FormMode == 3)
+            _mode = 3;//edit
+
+        if (_params.findIndex(e => e.Name === 'id') === -1) //prefill
+            _mode = 2;
+
+        ctrl.reverseUpdateData = this.reverseUpdateData.bind(this, linkObj);
+
+        ebcontext.webform.PopupForm(linkObj.ObjRefId, btoa(JSON.stringify(_params)), _mode,
+            {
+                srcCxt: this.Renderer.__MultiRenderCxt,
+                initiator: ctrl,
+                locId: this.Renderer.getLocId()
+            });
+    };
+
+    this.getLabelLinkParameters = function (linkObj) {
+        let destid = 0;
+        let params = [];
+        let pushMasterId = true;
+
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowForwardMap'))
+                    continue;
+
+                if (pMap[i].SrcCtrlName === 'id') {//source table id
+                    params.push({ Name: pMap[i].DestCtrlName, Type: 7, Value: this.Renderer.rowId });
+                    pushMasterId = false;
+                    continue;
+                }
+                if (pMap[i].DestCtrlName === 'id') {
+                    let outCtrl = this.Renderer.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        if (outCtrl.getValue() > 0) {
+                            destid = outCtrl.getValue();
+                            params = [{ Name: 'id', Type: 7, Value: destid }];
+                            pushMasterId = false;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    let outCtrl = this.Renderer.formObject[pMap[i].SrcCtrlName];
+                    if (outCtrl) {
+                        params.push({
+                            Name: pMap[i].DestCtrlName,
+                            Type: outCtrl.EbDbType,
+                            Value: outCtrl.getValue()
+                        });
+                    }
+                }
+            }
+        }
+        if (pushMasterId) {
+            params.push({ Name: this.formRenderer.MasterTable + '_id', Type: 7, Value: this.Renderer.rowId });
+        }
+
+        return params;
+    };
+
+    this.reverseUpdateData = function (linkObj, destRender) {
+        if (linkObj.DataFlowMap && linkObj.DataFlowMap.$values.length > 0) {
+            let pMap = linkObj.DataFlowMap.$values;
+            for (let i = 0; i < pMap.length; i++) {
+                if (!pMap[i].$type.includes('DataFlowReverseMap'))
+                    continue;
+                let destCtrl = this.Renderer.formObject[pMap[i].DestCtrlName];
+                if (!destCtrl)
+                    continue;
+                if (pMap[i].SrcCtrlName === 'id') {
+                    destCtrl.setValue(destRender.rowId);
+                }
+                else {
+                    let srcCtrl = destRender.formObject[pMap[i].SrcCtrlName];
+                    if (srcCtrl)
+                        destCtrl.setValue(srcCtrl.getValue());
+                }
+            }
+        }
     };
 
     this.Review = function (ctrl, ctrlOpts) {
@@ -1068,11 +1336,14 @@ var InitControls = function (option) {
         let t0 = performance.now();
 
         if (ctrl.RenderAsSimpleSelect) {
-            this.SimpleSelect(ctrl);
+            this.SimpleSelect(ctrl, ctrlOpts);
             return;
         }
         else if (ctrl.IsInsertable) {
-            ctrl.__AddButtonInit = this.Button;
+            if (this.Renderer.rendererName === "WebForm" && ctrl.IsDGCtrl)
+                ctrl.__AddButtonInit = this.Renderer.InitPsAddButton;
+            else
+                ctrl.__AddButtonInit = this.Button;
         }
 
         Vue.component('v-select', VueSelect.VueSelect);
@@ -1216,34 +1487,46 @@ var InitControls = function (option) {
         //}
         //$("#iFrameForm").attr("src", url);
 
-        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0);
+        ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
     };
 
     this.SysLocation = function (ctrl) {
-        if (!ebcontext.locations.CurrentLocObj)
+        let locObj = this.Renderer.getLocObj();
+        if (!locObj)
             return;
+        //if (ctrl.DataVals && !ctrl.DataVals.Value && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
         if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
-            ctrl.DataVals.Value = ebcontext.locations.CurrentLocObj.LocId;
-            ctrl.DataVals.F = ebcontext.locations.CurrentLocObj.ShortName;
+            ctrl.DataVals.Value = locObj.LocId;
+            ctrl.DataVals.F = locObj.ShortName;
         }
         if (!(ctrl.IsDisable)) {
+            let temp = [];
             $.each(ebcontext.locations.Locations, function (intex, obj) {
-                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
+                temp.push({ k: obj.LocId, v: obj.ShortName || '' });
             });
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
-
-            $("#" + ctrl.EbSid_CtxId).on('change', function (e) {
-                let newLocId = ctrl.getValueFromDOM();
-                if (newLocId === 0)
-                    return;
-                let newLocObj = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
-                let oldLocObj = ebcontext.locations.CurrentLocObj;
-
-                if (newLocObj.LocId !== oldLocObj.LocId) {
-                    EbMessage("show", { Message: `Switching from ${oldLocObj.LongName} to ${newLocObj.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
-                    ebcontext.locations.SwitchLocation(newLocObj.LocId);
-                }
+            temp.sort(function (a, b) {
+                let v1 = a.v.toLowerCase();
+                let v2 = b.v.toLowerCase();
+                return ((v1 < v2) ? -1 : ((v1 > v2) ? 1 : 0));
             });
+            $.each(temp, function (i, obj) {
+                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.k}"> ${obj.v}</option>`);
+            });
+
+            $("#" + ctrl.EbSid_CtxId).val(locObj.LocId);
+
+            //$("#" + ctrl.EbSid_CtxId).on('change', function (e) {
+            //    let newLocId = ctrl.getValueFromDOM();
+            //    if (newLocId === 0)
+            //        return;
+            //    let nl = ebcontext.locations.Locations.find(e => e.LocId == newLocId);
+            //    let ol = this.Renderer.getLocObj();
+
+            //    if (nl.LocId !== ol.LocId) {
+            //        EbMessage("show", { Message: `Switching from ${ol.LongName} to ${nl.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+            //        ebcontext.locations.SwitchLocation(nl.LocId);
+            //    }
+            //}.bind(this));
         }
     };
 
@@ -1376,10 +1659,9 @@ var InitControls = function (option) {
 
     this.TextBox = function (ctrl, ctrlopts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        let $input = $("#" + ctrl.EbSid_CtxId);
         ctrl.__EbAlert = this.Renderer.EbAlert;
         if (ctrl.MaskPattern !== null && ctrl.MaskPattern !== "" && ctrl.TextMode == 0) {
-            $input.inputmask({ mask: ctrl.MaskPattern });
+            $ctrl.inputmask({ mask: ctrl.MaskPattern });
         }
         else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {
@@ -1445,7 +1727,7 @@ var InitControls = function (option) {
 
 
 
-        if (ctrl.InputMode == 1) {
+        if (ctrl.InputMode == 1) { //Currency
             $input.inputmask({
                 alias: "numeric",
                 _mask: function _mask(opts) {
@@ -1498,27 +1780,27 @@ var InitControls = function (option) {
         //    }
         //});
 
-        {// temp for hairo craft
-            $input.blur(function () {
-                var val = $input.val();
-                let decLen = 2;
+        //{// temp for hairo craft
+        //    $input.blur(function () {
+        //        var val = $input.val();
+        //        let decLen = 2;
 
-                if (val.trim() === "") {
-                    $input.val("0.00");
-                }
-                else if (!val.trim().includes(".")) {
-                    let newVal = val + ".00";
-                    $input.val(newVal);
-                }
-                else {
-                    let p1 = val.split(".")[0];
-                    let p2 = val.split(".")[1];
-                    zerolen = decLen - p2.length;
-                    let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
-                    $input.val(newVal);
-                }
-            });
-        }
+        //        if (val.trim() === "") {
+        //            $input.val("0.00");
+        //        }
+        //        else if (!val.trim().includes(".")) {
+        //            let newVal = val + ".00";
+        //            $input.val(newVal);
+        //        }
+        //        else {
+        //            let p1 = val.split(".")[0];
+        //            let p2 = val.split(".")[1];
+        //            zerolen = decLen - p2.length;
+        //            let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
+        //            $input.val(newVal);
+        //        }
+        //    });
+        //}
         //$input.keypress(function (e) {
 
         //    var val = $input.val();
@@ -1635,6 +1917,8 @@ var InitControls = function (option) {
         let Refid = ctrl.DataSourceId;
         this.filtervalues.push(new fltr_obj(ebDbType, "eb_loc_id", (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1));
         this.filtervalues.push(new fltr_obj(ebDbType, "eb_currentuser_id", ebcontext.user.UserId));
+        this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+        this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
         this.filtervalues.push(new fltr_obj(ebDbType, "id", this.Renderer.rowId));
         this.filtervalues.push(new fltr_obj(ebDbType, this.Renderer.FormObj.TableName + "_id", this.Renderer.rowId));
 
@@ -1851,7 +2135,9 @@ var InitControls = function (option) {
 
         var phninput = document.querySelector(`#${ctrl.EbSid}`);
 
-
+        let onlyCtrs = (ctrl.CountriesList && ctrl.CountriesList.length > 0) ? ctrl.CountriesList.split(",") : [];
+        let preferredCtrs = (ctrl.PreferredCountries && ctrl.PreferredCountries.length > 0) ? ctrl.PreferredCountries.split(",") : [];
+        let initCtry = preferredCtrs.length > 0 ? preferredCtrs[0] : (onlyCtrs.length > 0 ? onlyCtrs[0] : 'in');
 
         var iti = window.intlTelInput(phninput, {
             allowDropdown: true,
@@ -1860,22 +2146,22 @@ var InitControls = function (option) {
             // dropdownContainer: "body",
             //defaultCountry: "auto",
             formatOnDisplay: true,
-            geoIpLookup: function (callback) {
-                $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
-                    var countryCode = (resp && resp.country) ? resp.country : "";
-                    callback(countryCode);
-                });
-            },
-            initialCountry: "auto",
+            //geoIpLookup: function (callback) {
+            //    $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
+            //        var countryCode = (resp && resp.country) ? resp.country : "";
+            //        callback(countryCode);
+            //    });
+            //},
+            //initialCountry: "auto",
+            initialCountry: initCtry,
             // nationalMode: false,
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            // onlyCountries: (ctrl.CountryList?.$values?.length > 0) ? ctrl.CountryList.$values : [],
-            onlyCountries: (ctrl.CountriesList?.length > 0) ? ctrl.CountriesList.split(",") : [],
+            onlyCountries: onlyCtrs,
             //placeholderNumberType: "MOBILE",
-            preferredCountries: [],
+            preferredCountries: preferredCtrs,
             separateDialCode: true,
-            dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px",
-            utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
+            dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px"//,
+            //utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
         });
 
         if (ctrl.Sendotp) {
@@ -2249,6 +2535,14 @@ var InitControls = function (option) {
                             val = ebcontext.user.UserId;
                             name = "eb_currentuser_id";
                         }
+                        else if (depCtrl_s === "form.eb_current_language_id") {
+                            val = ebcontext.languages.getCurrentLanguage();
+                            name = "eb_current_language_id";
+                        }
+                        else if (depCtrl_s === "form.eb_current_locale") {
+                            val = ebcontext.languages.getCurrentLocale();
+                            name = "eb_current_locale";
+                        }
                         else if (depCtrl_s === "form.id") {
                             val = this.Renderer.rowId;
                             name = "id";
@@ -2299,13 +2593,13 @@ var InitControls = function (option) {
 
 
     this.QuestionnaireConfigurator = function (ctrl) {
-        debugger;
+        //debugger;
         let Ques_Confi = {};
         let que_SaveObj = [];
-       // let ext_props = { "required": false, "unique": false, "validator": [] };
+        // let ext_props = { "required": false, "unique": false, "validator": [] };
         let queSelCollection = {};
 
-        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0; position: fixed; width: 325px;'>
+        $(`#${this.Renderer.FormObj.EbSid_CtxId}`).append(`<div  class='queConf_PGrid ' style='right: 0;top: 50px; position: fixed; width: 325px;'>
 	                            <div  id='queConf_PGrid_wrp'>
 	
 	                            </div>
@@ -2321,9 +2615,9 @@ var InitControls = function (option) {
             isDraggable: true,
             root: 'webform'
         });
-      //  PGobj.css("visibility", "hidden");
+        //  PGobj.css("visibility", "hidden");
 
-       
+
 
 
         if (this.Renderer.rendererName == "Bot") {
@@ -2346,6 +2640,8 @@ var InitControls = function (option) {
             $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
                 let $el = $(e.target);
                 let $DDbScont = $DD.closest(".bs-container");
+                if ($DDbScont.length === 0)
+                    return;
                 $DDbScont.css("left", ($el.closest(".ctrl-cover").offset().left));
 
                 if ($DDbScont.hasClass("dropup")) {
@@ -2379,70 +2675,83 @@ var InitControls = function (option) {
             let QueIds = $('#' + ctrl.EbSid_CtxId).selectpicker('val');
             QueIds.forEach(function (item, index) {////to add new item to collection and save object
                 if (!(item in queSelCollection)) {
-                    let ext_props = new EbObjects_w["Ques_ext_props"]("extProp" + Date.now());
-                    Ques_Confi = {};
-                    Ques_Confi.id = 0;
-                    Ques_Confi.ques_id = item;
-                    Ques_Confi.ext_props = ext_props;
-                    queSelCollection[`${item}`] = ext_props;
-                    que_SaveObj.push(Ques_Confi);
-                    $(`#${ctrl.EbSid}_queRender`).append(`<div class="queOuterDiv" id="EbQuestionnaire${item}" qid="${item}" style="border-style: dashed;padding:10px;margin:10px;">${(ctrl.QuestionBankCtlHtmlList[item])}</div>`);
-                    var control = ctrl.QuestionBankList[item];
-                    $('.queOuterDiv').off("click").on("click", CreatePG.bind(this, control));
+                    setObjectValue_Html(item, false, {});
                 }
-               
-              //  CreatePG(control);
+
+                //  CreatePG(control);
             });
             arr2 = Object.keys(queSelCollection)
             let removedElem = arr2.filter(x => !QueIds.includes(x));
             if (removedElem.length > 0) {////to delete removed item from collection and save object
                 removedElem.forEach(function (item, index) {
                     $(`#EbQuestionnaire${item}`).remove();
-                    let indx = que_SaveObj.findIndex(x => x.ques_id === item);
-                    if (indx>=0)
-                        que_SaveObj.splice(indx,1);
+                    let indx = que_SaveObj.findIndex(x => x.ques_id == item);
+                    if (indx >= 0)
+                        que_SaveObj.splice(indx, 1);
                     delete queSelCollection[item];
                 });
             }
-           
+
 
         });
-       
-        var CreatePG = function (control,e) {
+
+        var setObjectValue_Html = function (item, setvalueTrue, _ext_prpty) {
+            let ext_props = new EbObjects_w["Ques_ext_props"]("Question_properties" + Date.now());
+            Ques_Confi = {};
+            Ques_Confi.id = 0;
+            Ques_Confi.ques_id = item;
+            if (setvalueTrue) {
+
+                $.extend(ext_props, _ext_prpty);
+                ext_props.EbSid_CtxId = ext_props.EbSid = _ext_prpty.Name;
+                Ques_Confi.ext_props = ext_props;
+                queSelCollection[`${item}`] = ext_props;
+            }
+            else {
+
+                Ques_Confi.ext_props = ext_props;
+                queSelCollection[`${item}`] = ext_props;
+            }
+            que_SaveObj.push(Ques_Confi);
+            $(`#${ctrl.EbSid}_queRender`).append(`<div class="queOuterDiv" id="EbQuestionnaire${item}" qid="${item}" style="border-style: ridge;padding:10px;margin:10px;">${(ctrl.QuestionBankCtlHtmlList[item])}</div>`);
+            var control = ctrl.QuestionBankList[item];
+            $(`.queOuterDiv`).find('*').attr('disabled', 'disabled').css('background-color', 'var(--eb-disablegray)');
+            $('.queOuterDiv').off("click").on("click", CreatePG.bind(this, control));
+        }
+
+        var CreatePG = function (control, e) {
             let qId = $(e.target).closest('.queOuterDiv').attr('qid');
             console.log("CreatePG called for:" + control.Name);
             let propObj = queSelCollection[`${qId}`];
-          //  this.$propGrid.css("visibility", "visible");
+            //  this.$propGrid.css("visibility", "visible");
             ////PGobj.setObject(control, AllMetas_w["EbQuestionnaireConfigurator"]);
             PGobj.setObject(propObj, AllMetas_w["Ques_ext_props"]);////
         };
 
         ctrl.bindOnChange = function (p1) {
 
-           // alert("bind change");
-            debugger;
+            // alert("bind change");
+            //debugger;
             $(`#${ctrl.EbSid}_queBtn`).on("click", p1);
+            $('#queConf_PGrid_wrp').on('input', p1);
         };
         ctrl.getValueFromDOM = function (p1) {
 
-           // alert("value from dom");
-            //let val = $('#' + this.EbSid_CtxId).selectpicker('val');
-            //debugger
-            //return val.toString();
             return JSON.stringify(que_SaveObj);
         };
 
         ctrl.setValue = function (p1) {
-            debugger;
+            //debugger;
             var qArray = [];
-           // alert("setvalue");
+            // alert("setvalue");
             if (p1 != null) {
                 qObj = JSON.parse(p1);
                 if (qObj.length > 0) {
                     qObj.forEach(function (item) {
                         item.id;
+                        setObjectValue_Html(item.ques_id, true, item.ext_props);
                         qArray.push(item.ques_id);
-                        $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlHtmlList[item.ques_id]);
+                        // $(`#${ctrl.EbSid}_queRender`).append(ctrl.QuestionBankCtlHtmlList[item.ques_id]);
                     });
                 }
             }
@@ -2450,7 +2759,7 @@ var InitControls = function (option) {
         };
         ctrl.clear = function () {
 
-           // alert("clear");
+            // alert("clear");
             if (ebcontext.renderContext === 'WebForm')
                 this.setValue(null);
             else
@@ -2481,6 +2790,7 @@ function createValidator(element) {
         $(element).trigger("change");
     }.bind(this);
 }
+
 //import { Array, Object } from "core-js/library/web/timers";
 
 var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, ebENV,_serverEventUrl) {
@@ -5729,6 +6039,7 @@ var EbServerEvents = function (options) {
     this.onLogOut = function (m, e) { };
     this.onNotification = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
+    this.onPdfDownloadSuccess = function (m, e) { };
 
 
 
@@ -5792,6 +6103,10 @@ var EbServerEvents = function (options) {
 
     this.onExportToExcel = function (m, e) {
         this.onExcelExportSuccess(m);
+    };
+
+    this.onPdfDownload = function (m, e) {
+        this.onPdfDownloadSuccess(m);
     };
 
     this.exportApplication = function (m, e) {
@@ -5884,6 +6199,7 @@ var EbServerEvents = function (options) {
             onUploadSuccess: this.onUploaded.bind(this),
             stopListening: this.stopListening.bind(this),
             onExportToExcel: this.onExportToExcel.bind(this),
+            onPdfDownload: this.onPdfDownload.bind(this),
             onMsgSuccess: this.onMsgSuccess.bind(this),
             onLogOut: this.onLogOutMsg.bind(this),
             onNotification: this.onNotifyMsg.bind(this),
@@ -6094,10 +6410,13 @@ var order_obj = function (colu, dir) {
 };
 
 //to restrict access to internal pages by a logged out user
-var reload_if_session_expired = function () {    
+var reload_if_session_expired = function () {
     if (!getTok()) {
-        alert("Session expired!");
-        location.reload();
+        let _rm = new URL(location.href).searchParams.get('_rm');
+        if (_rm != '5' && _rm != '3') {
+            alert("Session expired!");
+            location.reload();
+        }
     }
 };
 
@@ -6206,7 +6525,7 @@ function EbMakeInvalid(ctrl, contSel, _ctrlCont, msg = "This field is required",
 
 function EbMakeValid(contSel, _ctrlCont, ctrl) {
     //setTimeout(function () {
-    $(`${contSel}  ${_ctrlCont}:first`).css("border", "1px solid rgba(34,36,38,.15)").siblings("[name=ctrlsend]").css('disabled', false);
+    $(`${contSel}  ${_ctrlCont}:first`).css("border", "").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
     if (ctrl)
@@ -6476,7 +6795,8 @@ function JsonToEbControls(ctrlsContainer, type) {
         if (obj.IsContainer) {
             JsonToEbControls(obj, type);
         }
-        else if (type === 'webform')
+
+        if (type === 'webform')
             ctrlsContainer.Controls.$values[i] = new ControlOps_w[obj.ObjType](obj);
         else
             ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
@@ -6643,7 +6963,16 @@ function RecurFlatControls(src_obj, dest_coll) {
 function getValsFromForm(formObj) {
     let fltr_collection = [];
     let flag = 1;
-    $.each(getFlatCtrlObjs(formObj), function (i, obj) {
+    let ctrl_arr = getFlatCtrlObjs(formObj);
+    let DGs = getFlatContObjsOfType(formObj, "DataGrid");
+    for (let i = 0; i < DGs.length; i++) {
+        if (DGs[i].currentRow) {
+            let t = Object.values(DGs[i].currentRow).filter(e => typeof (e) === 'object' && e.getValue);
+            ctrl_arr = ctrl_arr.concat(t);
+        }
+    }
+
+    $.each(ctrl_arr, function (i, obj) {
         if (obj.ObjType === "FileUploader")
             return;
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
@@ -6654,9 +6983,20 @@ function getValsFromForm(formObj) {
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+
+        if (ebcontext.languages !== undefined) {
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
     }
 
     return fltr_collection;
@@ -6709,6 +7049,7 @@ function getValsForViz(formObj) {
         if (obj.ObjType === "CalendarControl") {
             fltr_collection.push(new fltr_obj(obj.EbDbType, "datefrom", value.split(",")[0]));
             fltr_collection.push(new fltr_obj(obj.EbDbType, "dateto", value.split(",")[1]));
+            fltr_collection.push(new fltr_obj(7, "id", value.split(",")[2]));
         }
         else
             fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
@@ -6926,6 +7267,17 @@ function dgOnChangeBind() {
 
             col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
         }
+
+        if (col.DrDependents && col.DrDependents.$values.length !== 0) {
+            let FnString = `let curCtrl = form.__getCtrlByPath(this.__path);
+                            form.updateDependentCtrlWithDr(curCtrl, form);`;
+
+            let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+            col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+
+        }
+
     }.bind(this));
 }
 
@@ -7110,7 +7462,7 @@ function textTransform(element, transform_type, IsNoDelay) {
 }
 
 function textTransformHelper(element, transform_type) {
-    let value = $(element).val().trim();
+    let value = $(element).val();
     if (transform_type === 1)
         $(element).val(value.toLowerCase());
     else if (transform_type === 2)
@@ -7280,9 +7632,10 @@ const formatData4webform = function (_multipleTables) {
                 let singleColumn = columns[k];
                 delete singleColumn["D"];
                 delete singleColumn["F"];//provUser test
-                delete singleColumn["R"];
+                //delete singleColumn["R"];
                 delete singleColumn["ValueExpr_val"];
                 delete singleColumn["DisplayMember"];
+                delete singleColumn["PrevValue"];
             }
         }
     }
@@ -7564,56 +7917,92 @@ $jscomp.polyfill("Array.prototype.find", function (a) { return a ? a : function 
     };
 }(jQuery));
 function EbMessage(action, options) {
-        var operation = action;
-        var settings = $.extend({
-            Background: "#31d031",
-            Message: "nothing to display",
-            FontColor: "#fff",
-            AutoHide: true,
-            Delay: 8000
-        }, options);       
+    var operation = action;
+    var settings = $.extend({
+        Background: "#31d031",
+        Message: "nothing to display",
+        FontColor: "#fff",
+        AutoHide: true,
+        Delay: 8000,
+        Details: null,
+        ShowCopyBtn: false
+    }, options);
 
-        function onHide() {
-            return options.onHide();
-        }
+    function onHide() {
+        return options.onHide();
+    }
 
-        function onShow() {
-            return options.onShow();
-        }
-    
-        function div() {
-            if ($('#eb_messageBox_container').length === 0)
-                $('body').append(`<div class="eb_messageBox_container" id="eb_messageBox_container" style="background-color:${settings.Background};color:${settings.FontColor}">
+    function onShow() {
+        return options.onShow();
+    }
+
+    function div() {
+        if ($('#eb_messageBox_container').length === 0)
+            $('body').append(`<div class="eb_messageBox_container" id="eb_messageBox_container" style="background-color:${settings.Background};color:${settings.FontColor}">
                                   <span class="msg">${settings.Message}</span>
-                                  <i class="fa fa-close pull-right" onclick="$(this).parent().hide();" id="close-msg"></i>
-                                </div>`);
-            else {
-                $(`#eb_messageBox_container .msg`).text(settings.Message);
-                $(`#eb_messageBox_container`).css({ "background-color": settings.Background, "color": settings.FontColor });
-            }
+                                  <i class="fa fa-close pull-right" onclick="$(this).parent().hide();" id="close-msg" style="margin-left: 20px;"></i>
+                                  <span class="more" title="See more"><i class="fa fa-chevron-down"></i> See more</span>
+                                  <span class="copy" title="Copy to clipboard"><i class="fa fa-files-o"></i> Copy</span>
+                                  </div>`);
+        else {
+            $(`#eb_messageBox_container .msg`).text(settings.Message);
+            $(`#eb_messageBox_container`).css({ "background-color": settings.Background, "color": settings.FontColor });
         }
+        if (settings.ShowCopyBtn)
+            $('#eb_messageBox_container .copy').show();
+        else
+            $('#eb_messageBox_container .copy').hide();
+        if (settings.Details)
+            $('#eb_messageBox_container .more').show();
+        else
+            $('#eb_messageBox_container .more').hide();
 
-        function showMsg() {
-            div();
-            $(`#eb_messageBox_container`).fadeIn();
-            settings.AutoHide ? setTimeout(function () { hideMsg(); }, settings.Delay) : null;
-            if (options.onShow)
-                onShow();
-        };
+        $(`#eb_messageBox_container .copy`).off('click').on('click', function (e) {
+            navigator.clipboard.writeText($(`#eb_messageBox_container .msg`).text());
+            $(this).html('<i class="fa fa-check"></i> Copied');
+            setTimeout(function () { $(this).html('<i class="fa fa-files-o"></i> Copy'); }.bind(this), 1500);
+        });
+        $(`#eb_messageBox_container .more`).off('click').on('click', function (e) {
+            if ($(this).attr('title') === 'See more' && settings.Details) {
+                $(`#eb_messageBox_container .msg`).text(settings.Message + ' ' + settings.Details);
+                $(this).attr('title', 'See less');
+                $(this).html('<i class="fa fa-chevron-up"></i> See less');
+            }
+            else if ($(this).attr('title') === 'See less') {
+                $(`#eb_messageBox_container .msg`).text(settings.Message);
+                $(this).attr('title', 'See more');
+                $(this).html('<i class="fa fa-chevron-down"></i> See more');
+            }
+        });
+    }
 
-        function hideMsg() {
-            $(`#eb_messageBox_container`).fadeOut();
-            if (options.onHide)
-                onHide();
-        };
-    
-        if (operation === "show")
-            showMsg();
-        else if (operation === "hide")
-            hideMsg();
-        else return null;
-        
+    function showMsg() {
+        div();
+        let $cont = $(`#eb_messageBox_container`);
+        $cont.fadeIn();
+        if (settings.AutoHide) {
+            let tmr = $cont.data('data-tmr');
+            if (tmr) clearTimeout(tmr);
+            tmr = setTimeout(hideMsg, settings.Delay);
+            $cont.data('data-tmr', tmr);
+        }
+        if (options.onShow)
+            onShow();
     };
+
+    function hideMsg() {
+        $(`#eb_messageBox_container`).fadeOut();
+        if (options.onHide)
+            onHide();
+    };
+
+    if (operation === "show")
+        showMsg();
+    else if (operation === "hide")
+        hideMsg();
+    else return null;
+
+};
 function EbPopBox(op,o) {
     var event = op;
     var settings = $.extend({
@@ -7926,7 +8315,7 @@ const FormRenderCommon = function (options) {
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'OnChange fn': ${inpCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
     };
@@ -7951,7 +8340,7 @@ const FormRenderCommon = function (options) {
             } catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'DefaultValueExpression' of : " + ctrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'DefaultValueExpression': ${ctrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
     };
@@ -7977,6 +8366,129 @@ const FormRenderCommon = function (options) {
         this.FO.__fromImport = false;
     };
 
+    this.DrCallBack = function (ctrl, CtrlPaths, Index, ExprName) {
+        ctrl.__continue = null;
+        this.execAllDefaultValExpr_Inner(CtrlPaths, Index, ExprName);
+    };
+
+    //this.execAllValExprForDoNotPersistCtrls = function () {
+    //    if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
+    //        console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+    //        return;
+    //    }
+    //    this.execAllDefaultValExpr_Inner(this.FO.FormObj.DoNotPersistExecOrder, 0, 'ValueExpr');
+    //};
+
+    //this.execAllDefaultValExpr = function () {
+    //    if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
+    //        console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
+    //        return;
+    //    }
+    //    this.execAllDefaultValExpr_Inner(this.FO.FormObj.DefaultValsExecOrder, 0, 'DefaultValueExpression');
+    //};
+
+    this.execAllDefaultValExpr_Inner = function (CtrlPaths, Index, ExprName) {
+
+        for (; Index < CtrlPaths.$values.length; Index++) {
+            let ctrl = this.FO.formObject.__getCtrlByPath(CtrlPaths.$values[Index]);
+            ctrl.___DoNotUpdateDrDepCtrls = this.FO.__fromImport;
+
+            if (ctrl === "not found")
+                continue;
+            try {
+                if (!ctrl[ExprName])
+                    continue;
+                if (ctrl[ExprName].Lang === 0) {
+                    let jsExpr = atob(ctrl[ExprName].Code);
+                    let result = new Function("form", "user", `event`, jsExpr).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+                    if (result) {
+                        if (!ctrl.IsDGCtrl) {
+                            ctrl.__defaultValExprExec = true;
+                            if (ctrl.ObjType === 'PowerSelect') {
+                                ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
+                                ctrl.justSetValue(result);
+                                EbBlink(ctrl);
+                                break;
+                            }
+                            else {
+                                ctrl.justSetValue(result);
+                                this.validateCtrl(ctrl);
+                                EbBlink(ctrl);
+                            }
+                        }
+                        else {
+                            $.each(ctrl.__DG.AllRowCtrls, function (rowid, row) {
+                                row[ctrl.Name].setValue(result);
+                            }.bind(this));
+                        }
+                        //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                        //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
+                    }
+                }
+                else if (ctrl[ExprName].Lang === 2) {
+                    let filterValues = [];
+                    $.each(ctrl.ValExpParams.$values, function (i, depCtrl) {
+                        let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl);
+                        filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
+                    }.bind(this));
+                    filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
+                    filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                    filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
+                    filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+                    filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+
+                    ctrl.__continue = this.DrCallBack.bind(this, ctrl, CtrlPaths, Index + 1, ExprName);
+                    this.ExecuteSqlValueExpr(ctrl, filterValues, ExprName === 'ValueExpr' ? 0 : 1);
+                    break;
+                }
+            }
+            catch (e) {
+                console.error('Error in default/value expression: ' + ctrl.Name);
+                console.log(e);
+            }
+        }
+        if (Index >= CtrlPaths.$values.length) {
+            if (!this.FO.__fromImport) {
+                let Dgs = [];
+                let TvCtrls = {};
+                for (let i = 0; i < CtrlPaths.$values.length; i++) {
+                    let ctrl = this.FO.formObject.__getCtrlByPath(CtrlPaths.$values[i]);
+                    if (ctrl != "not found" && ctrl.DrDependents && ctrl.DrDependents.$values) {
+                        let dd = ctrl.DrDependents.$values;
+                        for (let j = 0; j < dd.length; j++) {
+                            let _ctrl = this.FO.formObject.__getCtrlByPath(dd[j]);
+                            if (_ctrl.ObjType === "TVcontrol") {
+                                if (!TvCtrls.hasOwnProperty(dd[j]))
+                                    TvCtrls[dd[j]] = { ctrl: _ctrl, params: [] };
+                                TvCtrls[dd[j]].params.push(ctrl);
+                            }
+                            else if (_ctrl.ObjType === "DataGrid") {
+                                if (!Dgs.includes(dd[j]))
+                                    Dgs.push(dd[j]);
+                            }
+                        }
+                    }
+                }
+
+                if (ExprName === 'DefaultValueExpression') {
+                    for (let i = 0; i < this.FO.DGs.length; i++) {
+                        if (this.FO.DGs[i].Eb__paramControls && this.FO.DGs[i].Eb__paramControls.$values.length === 0) {
+                            Dgs.push('form.' + this.FO.DGs[i].Name);
+                        }
+                    }
+                }
+
+                if (Dgs.length > 0) {
+                    this.importDGRelatedUpdates(Dgs);
+                }
+                $.each(TvCtrls, function (k, obj) {
+                    obj.ctrl.reloadWithParamAll(obj.params);
+                }.bind(this));
+            }
+            this.FO.__fromImport = false;
+        }
+    };
+
     this.execValueExpNC = function (DoNotPersistExecOrder) {
         if (!DoNotPersistExecOrder) {//for old forms
             console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
@@ -7988,6 +8500,29 @@ const FormRenderCommon = function (options) {
             let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
             EbRunValueExpr_n(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
         }
+    };
+
+    //Duplicate for FD - first time execution only - correct object refrence issue or default on change triggering
+    //this will avoid multiple execution of onchange fn
+    this.bindFnsToCtrl_FD = function (Obj) {
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") ||
+            Obj.HiddenExpDependants && Obj.HiddenExpDependants.$values.length > 0 ||
+            Obj.DisableExpDependants && Obj.DisableExpDependants.$values.length > 0) {
+            try {
+                let control = Obj;
+                let FnString =
+                    this.wrapInFn(atob(control.OnChangeFn.Code)) +
+                    ((control.HiddenExpDependants && control.HiddenExpDependants.$values.length !== 0 || control.DisableExpDependants && control.DisableExpDependants.$values.length !== 0) ? ` ;
+                    form.updateDependentControlsBehavior(${control.__path}, form);` : "");
+                let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+                control.__onChangeFn = onChangeFn;// for FD only need clenup
+            } catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                EbMessage("show", { Message: `Error in 'OnChange fn or BehaviourExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+
     };
 
     this.bindFnsToCtrl = function (Obj) {
@@ -8058,7 +8593,7 @@ const FormRenderCommon = function (options) {
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'Value expression of' of : " + control.Name + " - " + e.message);
+            EbMessage("show", { Message: `Error in 'ValueExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
         }
     };
 
@@ -8082,7 +8617,7 @@ const FormRenderCommon = function (options) {
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'On Change function or Behaviour Expression' of : " + control.Name + " - " + e.message);
+            EbMessage("show", { Message: `Error in 'OnChange fn or BehaviourExpression': ${control.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
         }
     };
 
@@ -8123,6 +8658,10 @@ const FormRenderCommon = function (options) {
             if (this.DataVals) {
                 this.DataVals.Value = this.getValueFromDOM();
                 this.DataVals.D = this.getDisplayMemberFromDOM();
+
+                if (this.ObjType === 'PowerSelect' && this.__continue) {
+                    this.__continue();
+                }
             }
         }
     };
@@ -8145,11 +8684,36 @@ const FormRenderCommon = function (options) {
                 let ctrl = {};
                 let pathArr = path.split(".");
                 if (pathArr.length === 3) {
-                    path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+                    if (this.FO.DGs.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+                        ctrl = eval(path);
+                        if (!ctrl)
+                            return "not found";
+                        ctrl.IsDGCtrl = true;
+                    }
+                    else if (this.FO.TabControls.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        let TabCtrl = this.FO.TabControls.filter(function (obj) { return obj.Name == pathArr[1] })[0];
+                        let TabPane = TabCtrl.Controls.$values.filter(e => e.Name == pathArr[2]);
+                        if (TabPane.length > 0)
+                            ctrl = TabPane[0];
+                        else
+                            return "not found";
+                    }
+                    else if (this.FO.WizardControls.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        let WizCtrl = this.FO.WizardControls.filter(function (obj) { return obj.Name == pathArr[1] })[0];
+                        let WizStep = WizCtrl.Controls.$values.filter(e => e.Name == pathArr[2]);
+                        if (WizStep.length > 0)
+                            ctrl = WizStep[0];
+                        else
+                            return "not found";
+                    }
+                    else
+                        return "not found";
+                }
+                else {
                     ctrl = eval(path);
-                    ctrl.IsDGCtrl = true;
-                } else {
-                    ctrl = eval(path);
+                    if (!ctrl)
+                        return "not found";
                 }
                 return ctrl;
             }
@@ -8171,8 +8735,9 @@ const FormRenderCommon = function (options) {
             }
             else if (depCtrl.ObjType === "PowerSelect") {
                 if (!curCtrl.__isInitiallyPopulating && !curCtrl.___DoNotUpdateDrDepCtrls) {
-                    if (depCtrl.initializer)
+                    if (depCtrl.initializer && (!depCtrl.IsDGCtrl || (depCtrl.IsDGCtrl && depCtrl.__DG.RowCount > 0))) {
                         depCtrl.initializer.reloadWithParams(curCtrl);
+                    }
                 }
                 else {
                     curCtrl.__isInitiallyPopulating = false;
@@ -8188,11 +8753,18 @@ const FormRenderCommon = function (options) {
         this.sysValidationsOK(ctrl);
     };
 
-    this.UpdateValExpDepCtrls = function (curCtrl) {
-        $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+    this.waitLoop = function (depCtrl, curCtrl, index) {
+        depCtrl.__continue = null;
+        this.UpdateValExpDepCtrls(curCtrl, index);
+    };
+
+    this.UpdateValExpDepCtrls = function (curCtrl, index) {
+        let i = typeof (index) === 'number' ? (index + 1) : 0;
+        for (; i < curCtrl.DependedValExp.$values.length; i++) {
+            let depCtrl_s = curCtrl.DependedValExp.$values[i];
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
             if (depCtrl === "not found")
-                return;
+                continue;
             try {
                 if (depCtrl.ObjType === "TVcontrol") {
                     depCtrl.reloadWithParam(curCtrl);
@@ -8204,9 +8776,17 @@ const FormRenderCommon = function (options) {
                         if (valExpFnStr) {
                             if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
-                                depCtrl.justSetValue(ValueExpr_val);
-                                this.validateCtrl(depCtrl);
-                                EbBlink(depCtrl);
+                                if (depCtrl.ObjType === 'PowerSelect') {
+                                    depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
+                                    depCtrl.justSetValue(ValueExpr_val);
+                                    EbBlink(depCtrl);
+                                    break;
+                                }
+                                else {
+                                    depCtrl.justSetValue(ValueExpr_val);
+                                    this.validateCtrl(depCtrl);
+                                    EbBlink(depCtrl);
+                                }
                             }
                             else {
                                 $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
@@ -8218,45 +8798,73 @@ const FormRenderCommon = function (options) {
                         }
                     }
                     else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
-                        let params = [];
-
-                        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
-                            try {
-                                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                                let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
-                                let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
-                                params.push(param);
-                            }
-                            catch (e) {
-                                console.eb_log("eb error :");
-                                console.eb_log(e);
-                                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                            }
+                        let filterValues = [];
+                        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {
+                            let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                            filterValues.push(new fltr_obj(paramCtrl.EbDbType > 0 ? paramCtrl.EbDbType : 16, paramCtrl.Name, paramCtrl.getValue()));
                         }.bind(this));
-
-                        ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                        filterValues.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.getCurrent()));
+                        filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                        filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+                        filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+                        filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
+                        depCtrl.__continue = this.waitLoop.bind(this, depCtrl, curCtrl, i);
+                        this.ExecuteSqlValueExpr(depCtrl, filterValues, 0);
+                        break;
                     }
                 }
             }
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'ValueExpression': ${curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
-        }.bind(this));
+        }
+
+        if (i === curCtrl.DependedValExp.$values.length && curCtrl.__continue2) {
+            curCtrl.__continue2();
+            curCtrl.__continue2 = null;
+        }
     }.bind(this);
 
-    this.importDGRelatedUpdates = function (curCtrl) {
-        $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
+    this.ExecuteSqlValueExpr = function (depCtrl, filterValues, type) {
+        this.FO.showLoader();
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/ExecuteSqlValueExpr",
+            data: { _refid: this.FO.FormObj.RefId, _triggerctrl: depCtrl.Name, _params: filterValues, _type: type },
+            error: function (xhr, ajaxOptions, thrownError) {
+                EbMessage("show", { Message: `Couldn't Update ${depCtrl.Label || depCtrl.Name}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+                this.FO.hideLoader();
+                if (depCtrl.__continue) depCtrl.__continue();
+            }.bind(this),
+            success: function (ctrl, val) {
+                this.FO.hideLoader();
+                val = JSON.parse(val);
+                if (val) {
+                    val.Value = this.getProcessedValue(ctrl, val.Value);
+                    depCtrl.justSetValue(val.Value);
+                }
+                else
+                    console.error('ExecuteSqlValueExpr did not respond properly: ' + ctrl.Name);
+                if (depCtrl.ObjType !== 'PowerSelect' && depCtrl.__continue) {
+                    depCtrl.__continue();
+                }
+            }.bind(this, depCtrl)
+        });
+    };
+
+    this.importDGRelatedUpdates = function (DependedDGs) {
+        $.each(DependedDGs, function (i, depCtrl_s) {
             try {
-                let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
-                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView))))
+                let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)) || depCtrl.IsLoadDataSourceAlways))
                     depCtrl.__setSuggestionVals();
             }
             catch (e) {
                 console.eb_log("eb error :");
                 console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                EbMessage("show", { Message: `Error in 'ValueExpression': ${curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }.bind(this));
     }.bind(this);
@@ -8307,24 +8915,33 @@ const FormRenderCommon = function (options) {
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) { //calls in onchange
-            if (event && event.type === "blur" && curCtrl.ObjType === "Date") { // to manage unnecessorily change triggering while blur from date pluggin
+            if (event && curCtrl.ObjType === "Date") { // to manage unnecessorily change triggering while blur from date pluggin
+                if (!curCtrl.__lastval) {
+                    curCtrl.__lastval = this.getOldDataVal(this.FO.formDataBackUp, curCtrl);
+                }
                 if (curCtrl.getValue() !== curCtrl.__lastval)
                     curCtrl.__lastval = curCtrl.getValue();
                 else
                     return;
             }
             if (curCtrl.DependedValExp && curCtrl.DependedValExp.$values.length !== 0) {
+                curCtrl.__continue2 = this.updateDependentControls_inner.bind(this, curCtrl);
                 this.UpdateValExpDepCtrls(curCtrl);
             }
-            if (curCtrl.DependedDG) {
-                this.importDGRelatedUpdates(curCtrl);
-            }
-            if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
-                if (!curCtrl.___DoNotImport)
-                    this.PSImportRelatedUpdates(curCtrl);
-                curCtrl.___DoNotImport = false;
-            }
+            else
+                this.updateDependentControls_inner(curCtrl);
         }.bind(this);
+    };
+
+    this.updateDependentControls_inner = function (curCtrl) {
+        if (curCtrl.DependedDG && curCtrl.DependedDG.$values) {
+            this.importDGRelatedUpdates(curCtrl.DependedDG.$values);
+        }
+        if ((curCtrl.DataImportId || (curCtrl.IsImportFromApi && curCtrl.ImportApiUrl)) && this.FO.Mode.isNew) {
+            if (!curCtrl.___DoNotImport)
+                this.PSImportRelatedUpdates(curCtrl);
+            curCtrl.___DoNotImport = false;
+        }
     };
 
     this.setUpdateDependentCtrlWithDrFn = function () {
@@ -8350,6 +8967,20 @@ const FormRenderCommon = function (options) {
         }.bind(this);
     };
 
+    this.getOldDataVal = function (formDataBackUp, ctrlObj) {
+        let val = null;
+        $.each(formDataBackUp.MultipleTables, function (i, Table) {
+            for (let x = 0; x < Table.length; x++) {
+                let Column = Table[x].Columns.find(e => e.Name === ctrlObj.Name);
+                if (Column) {
+                    val = Column.Value;
+                    return false;
+                }
+            }
+        }.bind(this));
+        return val;
+    };
+
     this.bindRequired = function (control) {
         if (control.ObjType === "SimpleSelect" || control.RenderAsSimpleSelect)
             $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
@@ -8368,7 +8999,7 @@ const FormRenderCommon = function (options) {
             val = val.trim().toLowerCase();
         let initVal = this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
         if (typeof initVal === 'string')
-            initVal = initVal.trim().toLowerCase(); 
+            initVal = initVal.trim().toLowerCase();
         return val === initVal;
     };
 
@@ -8382,6 +9013,12 @@ const FormRenderCommon = function (options) {
             }
             else {
                 ctrl.addInvalidStyle("Invalid email");
+                return false;
+            }
+        }
+        else if (ctrl.ObjType === "Date" && ctrl.RestrictionRule > 0) {
+            if (!ebcontext.finyears.checkDate(ctrl.getValue(), ctrl.RestrictionRule === 2)) {
+                ctrl.addInvalidStyle("Must be between " + ebcontext.finyears.getDateRangeToDisplay(ctrl.RestrictionRule === 2), 'warning');
                 return false;
             }
         }
@@ -8404,7 +9041,7 @@ const FormRenderCommon = function (options) {
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
                         head: "Required",
-                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.FormCollection[0].FRC.goToCtrlwithEbSid()'>"
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.RenderCollection[" + this.FO.__MultiRenderCxt + "].FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
@@ -8423,9 +9060,9 @@ const FormRenderCommon = function (options) {
         required_valid_flag = required_valid_flag && this.runFormValidations();
         if (this.FO.headerObj && this.FO.EbAlert) {
             if (!required_valid_flag)
-                this.FO.headerObj.showElement(["webforminvalidmsgs"]);
+                this.FO.headerObj.showElement([this.FO.hBtns['GotoInvalid']]);
             else
-                this.FO.headerObj.hideElement(["webforminvalidmsgs"]);
+                this.FO.headerObj.hideElement([this.FO.hBtns['GotoInvalid']]);
         }
 
         return required_valid_flag;
@@ -8492,11 +9129,12 @@ const FormRenderCommon = function (options) {
             }.bind(this))
 
             $el.attr("data-content", content.replace(/, \s*$/, ""));
+            let root_cont_id = $el.closest('[eb-root-obj-container]').attr('id');
             if ($el.attr('set-hover') !== 'true') {
                 $el.popover({
                     trigger: 'hover',
                     html: true,
-                    container: "body [eb-root-obj-container]:first"
+                    container: '#' + root_cont_id
                 });
                 $el.attr('set-hover', 'true');
             }
@@ -8532,8 +9170,10 @@ const FormRenderCommon = function (options) {
             }
         }.bind(this));
 
-        if (UniqObjs.length === 0 && !isSaveAfter)
+        if (UniqObjs.length === 0 && !isSaveAfter) {
+            this.FO.LockSave = false;
             return true;
+        }
 
         if (UniqObjs.length === 0 && isSaveAfter) {
             this.FO.saveForm_call();
@@ -8585,6 +9225,8 @@ const FormRenderCommon = function (options) {
                     //this.FO.DGsB4SaveActions();
                     this.FO.saveForm_call();
                 }
+                else
+                    this.FO.LockSave = false;
             }.bind(this),
             error: function (error) {
                 if (isFromCtrl) {
@@ -8595,6 +9237,7 @@ const FormRenderCommon = function (options) {
                     this.FO.hideLoader();
                     EbMessage("show", { Message: `Unique check failed`, AutoHide: true, Background: '#aa0000' });
                 }
+                this.FO.LockSave = false;
             }.bind(this)
         });
     };
@@ -8613,18 +9256,25 @@ const FormRenderCommon = function (options) {
             EbMessage("hide", "");// reset EbMakeValid
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
-            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            let valRes = func();
-            if (valRes === false) {
-                if (!Validator.IsWarningOnly) {
-                    EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
-                    formValidationflag = false;
-                    return false;// break; from loop if one validation failed
+            try {
+                let valRes = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+                if (valRes !== true) {
+                    if (!Validator.IsWarningOnly) {
+                        EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
+                        formValidationflag = false;
+                        return false;// break; from loop if one validation failed
+                    }
+                    //this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
+                    EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: 'rgb(245, 144, 58)' });
                 }
-                //this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
-                EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: 'rgb(245, 144, 58)' });
-            } else if (valRes !== true && valRes !== undefined) {
-                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                else if (valRes !== false) {
+                    console.warn(`Validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                }
+            }
+            catch (e) {
+                formValidationflag = false;
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'FormValidator': ${Validator.Name}. `, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: e.message });
             }
         }.bind(this));
         return formValidationflag;
@@ -8639,17 +9289,24 @@ const FormRenderCommon = function (options) {
             this.removeInvalidStyle(ctrl);// reset EbMakeValid
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
-            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            let valRes = func();
-            if (valRes === false) {
-                //EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
-                this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
-                if (!Validator.IsWarningOnly) {
-                    formValidationflag = false;
-                    return false;// break; from loop if one validation failed
+            try {
+                let valRes = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject)();
+                if (valRes !== true) {
+                    //EbMakeInvalid(ctrl, `#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
+                    this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
+                    if (!Validator.IsWarningOnly) {
+                        formValidationflag = false;
+                        return false;// break; from loop if one validation failed
+                    }
                 }
-            } else if (valRes !== true && valRes !== undefined) {
-                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                else if (valRes !== false) {
+                    console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+                }
+            }
+            catch (e) {
+                formValidationflag = false;
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'Validator': ${Validator.Name}('${ctrl.Name}'). `, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: e.message });
             }
         }.bind(this));
         return formValidationflag;
@@ -8688,4 +9345,712 @@ const FormRenderCommon = function (options) {
             contSel = '#td_' + ctrl.EbSid_CtxId;
         EbMakeInvalid(ctrl, contSel, `.ctrl-cover`, msg, type);
     };
+
+    //#region SingleBinding - New ---------------------------------------------------
+
+    this.GetDepHandleObj_ForDefValExpr = function (CtrlPaths, ExprName) {
+        let DepHandleObj = {
+            curCtrl: {},
+            isInitSetup: true,
+            exprName: ExprName,
+            ValueP: [], ValueC: [],
+            DrPaths: [], DrCtrls: [],
+            HideP: [], HideC: [],
+            DisableP: [], DisableC: []
+        };
+
+        this.GetDepHandleObj_ForDefValExpr_inner(CtrlPaths, DepHandleObj, 'ValueP', 'ValueC');
+        let a = DepHandleObj.ValueC;
+        for (let i = 0; i < a.length; i++) {
+            a[i].__lockDependencyExec = true;
+        }
+
+        a = this.FO.flatControls;
+        for (let i = 0; i < a.length; i++) {
+            this.GetDepHandleObj_ForDefValExpr_inner(a[i].HiddenExpDependants, DepHandleObj, 'HideP', 'HideC');
+            this.GetDepHandleObj_ForDefValExpr_inner(a[i].DisableExpDependants, DepHandleObj, 'DisableP', 'DisableC');
+        }
+        this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
+        this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
+
+        if (!this.FO.__fromImport) {
+            for (let i = 0; i < a.length; i++) {
+                let dd = a[i].DrDependents.$values;
+                for (let j = 0; j < dd.length; j++) {
+                    let _ctrl = this.FO.formObject.__getCtrlByPath(dd[j]);
+                    if (_ctrl === 'not found')
+                        continue;
+                    if (_ctrl.ObjType === "TVcontrol") {
+                        if (!DepHandleObj.DrPaths.includes(dd[j])) {
+                            DepHandleObj.DrPaths.push(dd[j]);
+                            DepHandleObj.DrCtrls.push(_ctrl);
+                            _ctrl.__filterControls = [];
+                        }
+                        _ctrl.__filterControls.push(a[i]);
+                    }
+                    else if (_ctrl.ObjType === "DataGrid" && (this.FO.Mode.isNew || _ctrl.DoNotPersist || _ctrl.IsLoadDataSourceAlways)) {
+                        if (!DepHandleObj.DrPaths.includes(dd[j])) {
+                            DepHandleObj.DrPaths.push(dd[j]);
+                            DepHandleObj.DrCtrls.push(_ctrl);
+                        }
+                    }
+                }
+            }
+            if (ExprName === 'DefaultValueExpression') {
+                for (let i = 0; i < this.FO.DGs.length; i++) {
+                    if (this.FO.DGs[i].Eb__paramControls && this.FO.DGs[i].Eb__paramControls.$values.length === 0) {
+                        DepHandleObj.DrPaths.push('form.' + this.FO.DGs[i].Name);
+                        DepHandleObj.DrCtrls.push(this.FO.DGs[i]);
+                    }
+                }
+            }
+        }
+        this.FO.__fromImport = false;
+        return DepHandleObj;
+    };
+
+    this.GetDepHandleObj_ForDefValExpr_inner = function (ctrlPaths, DepHandleObj, prop1, prop2) {
+        if (ctrlPaths && ctrlPaths.$values) {
+            let a = ctrlPaths.$values;
+            for (let i = 0; i < a.length; i++) {
+                let ctrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (ctrl != 'not found' && !DepHandleObj[prop1].includes(a[i])) {
+                    DepHandleObj[prop1].push(a[i]);
+                    DepHandleObj[prop2].push(ctrl);
+                }
+            }
+        }
+    };
+
+    this.FindCtrlsWithNoDependency = function (Ctrls, ExprName, DepHandleObj, prop1, prop2) {
+        for (let i = 0; i < Ctrls.length; i++) {
+            if (Ctrls[i][ExprName] && Ctrls[i][ExprName].Code && Ctrls[i][ExprName].Lang === 0) {
+                if (!DepHandleObj[prop1].includes(Ctrls[i].__path)) {
+                    DepHandleObj[prop1].push(Ctrls[i].__path);
+                    DepHandleObj[prop2].push(Ctrls[i]);
+                }
+            }
+        }
+        this.FindCtrlsWithNoDependency_inner(this.FO.TabControls, ExprName, DepHandleObj, prop1, prop2);
+        this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
+    };
+
+    this.FindCtrlsWithNoDependency_inner = function (ctrlConts, ExprName, DepHandleObj, prop1, prop2) {
+        for (let i = 0; i < ctrlConts.length; i++) {
+            for (let j = 0; j < ctrlConts[i].Controls.$values.length; j++) {
+                let tCtrlPane = ctrlConts[i].Controls.$values[j];
+                if (tCtrlPane[ExprName] && tCtrlPane[ExprName].Code && tCtrlPane[ExprName].Lang === 0) {
+                    if (!DepHandleObj[prop1].includes(tCtrlPane.__path)) {
+                        DepHandleObj[prop1].push(tCtrlPane.__path);
+                        DepHandleObj[prop2].push(tCtrlPane);
+                    }
+                }
+            }
+        }
+    }
+
+    this.execAllValExprForDoNotPersistCtrls = function () {
+        if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
+            console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        let DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DoNotPersistExecOrder, 'ValueExpr');
+        this.ctrlChangeListener_inner0(DepHandleObj);
+    };
+
+    this.execAllDefaultValExpr = function () {
+        let DepHandleObj;
+        if (this.FO.mode != "Clone Mode" && this.FO.mode != "Draft Mode") { // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
+            if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
+                console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
+                return;
+            }
+            DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
+            this.ctrlChangeListener_inner0(DepHandleObj);
+        }
+        else {
+            DepHandleObj = {
+                curCtrl: {},
+                isInitSetup: true,
+                exprName: 'DefaultValueExpression',
+                ValueP: [], ValueC: [],
+                DrPaths: [], DrCtrls: [],
+                HideP: [], HideC: [],
+                DisableP: [], DisableC: []
+            };
+            let a = this.FO.flatControls;
+            this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
+            this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
+            this.ctrlChangeListener_inner2(DepHandleObj);
+        }
+    };
+
+    this.GetDepHandleObj = function (curCtrl) {
+        let DepHandleObj = {
+            curCtrl: curCtrl,
+            isInitSetup: false,
+            exprName: 'ValueExpr',
+            ValueP: [], ValueC: [],
+            DrPaths: [], DrCtrls: [],
+            HideP: [], HideC: [],
+            DisableP: [], DisableC: []
+        };
+        this.DepHandleObj_create_rec(null, DepHandleObj, []);
+        return DepHandleObj;
+    };
+
+    this.DepHandleObj_create_rec = function (depCtrl, DepHandleObj, predCtrls) {
+        this.DepHandleObj_create_inner_val(depCtrl, 'DependedValExp', DepHandleObj, 'ValueP', 'ValueC', predCtrls);
+        this.DepHandleObj_create_rec_inner(depCtrl, 'DrDependents', DepHandleObj, 'DrPaths', 'DrCtrls', false);
+        this.DepHandleObj_create_inner_HD(depCtrl, 'HiddenExpDependants', DepHandleObj, 'HideP', 'HideC');
+        this.DepHandleObj_create_inner_HD(depCtrl, 'DisableExpDependants', DepHandleObj, 'DisableP', 'DisableC');
+    };
+
+    this.DepHandleObj_create_inner_val = function (depCtrl, Prop, DepHandleObj, prop1, prop2, predCtrls) {
+        if (depCtrl === null) {
+            depCtrl = DepHandleObj.curCtrl;
+            if (depCtrl.SelfTrigger && prop1 === 'ValueP') {
+                if (depCtrl.ValueExpr && depCtrl.ValueExpr.Code && depCtrl.ValueExpr.Lang === 0) {
+                    DepHandleObj[prop1].push(depCtrl.__path);
+                    DepHandleObj[prop2].push(depCtrl);
+                    if (!depCtrl.___isNotUpdateValExpDepCtrls)
+                        depCtrl.__lockDependencyExec = true;
+                }
+            }
+        }
+
+        predCtrls.push(depCtrl.__path);//predecessors
+
+        if (depCtrl[Prop] && depCtrl[Prop].$values.length > 0) {
+            let a = depCtrl[Prop].$values;
+            for (let i = 0; i < a.length; i++) {
+                let nxtCtrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (nxtCtrl == 'not found')
+                    continue;
+                if (predCtrls.includes(a[i]))
+                    continue;
+                if (depCtrl.__path === a[i])
+                    continue;
+                nxtCtrl.__lockDependencyExec = false;
+                let indx = DepHandleObj[prop1].indexOf(a[i]);
+                if (indx >= 0) {
+                    let commindx = -1;
+                    for (let j = indx; j <= DepHandleObj[prop1].length; j++) {
+                        if (predCtrls.includes(DepHandleObj[prop1][j])) {
+                            commindx = j;
+                            break;
+                        }
+                    }
+                    if (commindx >= 0) {
+                        let arr1 = DepHandleObj[prop1].splice(indx, commindx - indx);
+                        let arr2 = DepHandleObj[prop2].splice(indx, commindx - indx);
+                        DepHandleObj[prop1] = DepHandleObj[prop1].concat(arr1);
+                        DepHandleObj[prop2] = DepHandleObj[prop2].concat(arr2);
+                    }
+                }
+                else {
+                    DepHandleObj[prop1].push(a[i]);
+                    DepHandleObj[prop2].push(nxtCtrl);
+                    if (!nxtCtrl.___isNotUpdateValExpDepCtrls)
+                        nxtCtrl.__lockDependencyExec = true;
+                    this.DepHandleObj_create_rec(nxtCtrl, DepHandleObj, predCtrls.slice(0));
+                }
+            }
+        }
+    };
+
+    this.DepHandleObj_create_inner_HD = function (depCtrl, Prop, DepHandleObj, prop1, prop2) {
+        if (depCtrl === null)
+            depCtrl = DepHandleObj.curCtrl;
+        if (depCtrl[Prop] && depCtrl[Prop].$values.length > 0) {
+            let a = depCtrl[Prop].$values;
+            for (let i = 0; i < a.length; i++) {
+                let nxtCtrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (nxtCtrl != 'not found' && !DepHandleObj[prop1].includes(a[i])) {
+                    DepHandleObj[prop1].push(a[i]);
+                    DepHandleObj[prop2].push(nxtCtrl);
+                }
+            }
+        }
+    };
+
+    this.DepHandleObj_create_rec_inner = function (depCtrl, Prop, DepHandleObj, prop1, prop2, rec) {
+        if (DepHandleObj.curCtrl === depCtrl)
+            return;
+        if (depCtrl === null)
+            depCtrl = DepHandleObj.curCtrl;
+        if (depCtrl[Prop] && depCtrl[Prop].$values.length > 0) {
+            let a = depCtrl[Prop].$values;
+            for (let i = 0; i < a.length; i++) {
+                let nxtCtrl = this.FO.formObject.__getCtrlByPath(a[i]);
+                if (nxtCtrl != 'not found') {
+                    nxtCtrl.__lockDependencyExec = false;
+                    let indx = DepHandleObj[prop1].indexOf(a[i]);
+                    if (indx >= 0) {
+                        DepHandleObj[prop1].splice(indx, 1);
+                        DepHandleObj[prop2].splice(indx, 1);
+                    }
+                    let ph = true;
+                    if (Prop === 'DrDependents') {
+                        if (nxtCtrl.ObjType === 'DataGrid') {
+                            let x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                            while (x >= 0) {
+                                DepHandleObj[prop1].splice(x, 1);
+                                DepHandleObj[prop2].splice(x, 1);
+                                x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                            }
+                        }
+                        else if (nxtCtrl.ObjType === 'PowerSelect' && nxtCtrl.IsDGCtrl) {
+                            let dgpath = a[i].substring(0, a[i].lastIndexOf('.'));
+                            let x = DepHandleObj[prop1].findIndex(e => e === dgpath);
+                            if (x >= 0)
+                                ph = false;
+                        }
+                    }
+                    if (ph) {
+                        DepHandleObj[prop1].push(a[i]);
+                        DepHandleObj[prop2].push(nxtCtrl);
+
+                        if (rec) {
+                            if (!nxtCtrl.___isNotUpdateValExpDepCtrls && Prop === 'DependedValExp')
+                                nxtCtrl.__lockDependencyExec = true;
+                            this.DepHandleObj_create_rec(nxtCtrl, DepHandleObj);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    this.bindFunctionToDG = function (DG) {
+        $.each(DG.Controls.$values, function (i, col) {// need change
+            col.bindOnChange({ form: this.FO.formObject, col: col, DG: DG, user: this.FO.userObject }, this.DgchangeListener.bind(this, col));
+        }.bind(this));
+    };
+
+    this.DgchangeListener = function (Obj, event) {
+        //let __this = form.__getCtrlByPath(this.__path);
+        let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)
+        if (__this === undefined)
+            __this = this.FO.formObject.__getCtrlByPath(Obj.__path);
+        let valChanged = false;
+
+        if (__this.ObjType === "PowerSelect" && !$("#" + __this.EbSid_CtxId).is($(event.target))) {
+            console.error('incorrect ctrl_ref');
+            return;
+        }
+
+        if (__this.DataVals !== undefined) {
+            let v = __this.getValueFromDOM();
+            let d = __this.getDisplayMemberFromDOM();
+            if (__this.ObjType === 'Numeric')
+                v = parseFloat(v);
+            if (__this.__isEditing) {
+                valChanged = __this.curRowDataVals.Value != v;
+                __this.curRowDataVals.PrevValue = __this.curRowDataVals.Value;
+                __this.curRowDataVals.Value = v;
+                __this.curRowDataVals.D = d;
+            }
+            else {
+                valChanged = __this.DataVals.Value != v;
+                __this.DataVals.PrevValue = __this.DataVals.Value;
+                __this.DataVals.Value = v;
+                __this.DataVals.D = d;
+
+                if ($(event.target).data('ctrl_ref'))// when trigger change from setValue(if the setValue called from inactive row control) update DG table td
+                    this.FO.DGBuilderObjs[__this.__DG.EbSid].ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
+            }
+        }
+        if (__this.___isNotUpdateValExpDepCtrls) {
+            __this.___isNotUpdateValExpDepCtrls = false;
+            return;
+        }
+        if (!valChanged)
+            return;
+
+        this.FO.manualChangeInData = true;
+
+        let DepHandleObj = this.GetDepHandleObj(__this);
+
+        if (DepHandleObj.ValueP.length > 0) {
+            __this.__continue2 = this.ctrlChangeListener_inner1.bind(this, DepHandleObj);
+            this.UpdateDependency1(DepHandleObj);
+        }
+        else {
+            this.ctrlChangeListener_inner1(DepHandleObj);
+        }
+
+
+    }.bind(this);
+
+    this.bindFunctionToCtrls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            Obj.bindOnChange(this.ctrlChangeListener.bind(this, Obj));
+
+            if (Obj.Required) {
+                if (Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)
+                    $("#cont_" + Obj.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+                else
+                    $("#" + Obj.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+            }
+
+            if (Obj.Unique)
+                $("#" + Obj.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, Obj), 1000));
+
+            if (Obj.Validators && Obj.Validators.$values.length > 0) {
+                $("#" + Obj.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, Obj));
+            }
+        }.bind(this));
+    };
+
+    //listener entry point
+    this.ctrlChangeListener = function (Obj, event) {
+
+        let valChanged = Obj.getValue() != Obj.getValueFromDOM();
+
+        if (valChanged) {
+            if (Obj.DataVals) {
+                Obj.DataVals.PrevValue = Obj.DataVals.Value;
+                Obj.DataVals.Value = Obj.getValueFromDOM();
+                Obj.DataVals.D = Obj.getDisplayMemberFromDOM();
+
+                if (Obj.ObjType === 'PowerSelect' && Obj.__continue) {
+                    Obj.__continue();
+                }
+            }
+        }
+
+        if (valChanged && !this.FO.__fromImport && this.isPsImportFlow(Obj)) {
+            //console.log('Ps import flow: ' + Obj.Name);
+            this.FO.__fromImport = false;
+            return;
+        }
+
+        if (Obj.__defaultValExprExec) {
+            //console.log('default val expr: ' + Obj.Name);
+            Obj.__defaultValExprExec = false;
+            Obj.___isNotUpdateValExpDepCtrls = false;
+            return;
+        }
+
+        if (this.FO.isInitiallyPopulating) {
+            //console.log('initial loading: ' + Obj.Name);
+            Obj.___isNotUpdateValExpDepCtrls = false;
+            return;
+        }
+
+        if (Obj.___isNotUpdateValExpDepCtrls) {
+            //console.log('should be from justsetvalue: ' + Obj.Name);
+            Obj.___isNotUpdateValExpDepCtrls = false;
+            return;
+        }
+
+        if (Obj.__lockDependencyExec) {
+            //console.log('dependency execution blocked: ' + Obj.Name);
+            return;
+        }
+
+        if (!valChanged) {
+            //console.log('value not changed: ' + Obj.Name);
+            return;
+        }
+
+        this.FO.manualChangeInData = true;
+
+        let DepHandleObj = this.GetDepHandleObj(Obj);
+        this.ctrlChangeListener_inner0(DepHandleObj);
+    };
+
+    this.ctrlChangeListener_in = function (Obj) {
+        if (Obj.ObjType === 'PowerSelect' && Obj.RefreshDpndcy && (this.FO.Mode.isNew || this.FO.Mode.isEdit)) {
+            if (!this.isPsImportFlow(Obj)) {
+                let DepHandleObj = this.GetDepHandleObj(Obj);
+                this.ctrlChangeListener_inner0(DepHandleObj);
+            }
+        }
+    };
+
+    this.isPsImportFlow = function (ctrl) {
+        let b = !1;
+        if (ctrl.ObjType === 'PowerSelect' && (ctrl.DataImportId || (ctrl.IsImportFromApi && ctrl.ImportApiUrl)) && (this.FO.Mode.isNew || ctrl.ImportInEditMode)) {
+            if (!ctrl.___DoNotImport && !ctrl.isEmpty()) {
+                this.FO.psDataImport(ctrl);
+                b = !0;
+            }
+            ctrl.___DoNotImport = false;
+        }
+        return b;
+    };
+
+    this.ctrlChangeListener_inner0 = function (DepHandleObj) {
+        if (DepHandleObj.ValueP.length > 0 && !DepHandleObj.curCtrl.___isNotUpdateValExpDepCtrls) {
+            DepHandleObj.curCtrl.__continue2 = this.ctrlChangeListener_inner1.bind(this, DepHandleObj);
+            this.UpdateDependency1(DepHandleObj);
+        }
+        else {
+            DepHandleObj.curCtrl.___isNotUpdateValExpDepCtrls = false;
+            this.ctrlChangeListener_inner1(DepHandleObj);
+        }
+    };
+
+    //val expr completed
+    this.ctrlChangeListener_inner1 = function (DepHandleObj) {
+        if (DepHandleObj.DrPaths.length > 0) {
+            DepHandleObj.curCtrl.__continue3 = this.ctrlChangeListener_inner2.bind(this, DepHandleObj);
+            this.UpdateDependency2(DepHandleObj);
+        }
+        else
+            this.ctrlChangeListener_inner2(DepHandleObj);
+    };
+
+    //hidden disable onchange
+    this.ctrlChangeListener_inner2 = function (DepHandleObj) {
+        for (let i = 0; i < DepHandleObj.HideC.length; i++) {
+            let depCtrl = DepHandleObj.HideC[i];
+            let depCtrl_s = DepHandleObj.HideP[i];
+            try {
+                let code = atob(depCtrl.HiddenExpr.Code);
+                let hideExpVal = new Function("form", "user", "sourcectrl", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
+                if (hideExpVal)
+                    depCtrl.hide();
+                else
+                    depCtrl.show();
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'HideExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+        for (let i = 0; i < DepHandleObj.DisableC.length; i++) {
+            let depCtrl = DepHandleObj.DisableC[i];
+            let depCtrl_s = DepHandleObj.DisableP[i];
+            try {
+                let code = atob(depCtrl.DisableExpr.Code);
+                if (!(!DepHandleObj.curCtrl.IsDGCtrl && depCtrl.IsDGCtrl)) {// not form to grid
+                    let hideExpVal = new Function("form", "user", "sourcectrl", `event`, code).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
+                    if (hideExpVal) {
+                        depCtrl.disable();
+                        depCtrl.__IsDisableByExp = true;
+                    }
+                    else {
+                        if (!this.FO.Mode.isView) {
+                            depCtrl.enable();
+                            depCtrl.__IsDisableByExp = false;
+                        }
+                    }
+                }
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'ReadOnlyExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+        if (DepHandleObj.isInitSetup)
+            return;
+        let chngFn = DepHandleObj.curCtrl.OnChangeFn;
+        if (chngFn && chngFn.Code && chngFn.Code.trim() !== "") {
+            try {
+                new Function("form", "user", "sourcectrl", `event`, atob(chngFn.Code)).bind(DepHandleObj.curCtrl, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to execute 'OnChange Function': ${DepHandleObj.curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+
+    };
+
+    //resume val expr
+    this.resumeExec1 = function (depCtrl, DepHandleObj) {
+        depCtrl.__continue = null;
+        depCtrl.__lockDependencyExec = false;
+        this.UpdateDependency1(DepHandleObj);
+    };
+
+    //ValueExpression
+    this.UpdateDependency1 = function (DepHandleObj) {
+        let curCtrl = DepHandleObj.curCtrl;
+        if (DepHandleObj.ValueP.length === 0) {
+            if (curCtrl.__continue2) {
+                curCtrl.__continue2();
+                curCtrl.__continue2 = null;
+            }
+            return;
+        }
+        let depCtrl_s = DepHandleObj.ValueP.splice(0, 1)[0]
+        let depCtrl = DepHandleObj.ValueC.splice(0, 1)[0];
+        let wait = false;
+        depCtrl.__continue = null;
+
+        if (depCtrl[DepHandleObj.exprName] && depCtrl[DepHandleObj.exprName].Code && depCtrl[DepHandleObj.exprName].Lang === 0) {
+            if (!(!curCtrl.IsDGCtrl && depCtrl.IsDGCtrl)) {// not form to grid
+                let ValueExpr_val = null;
+                try {
+                    let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
+                    ValueExpr_val = new Function("form", "user", "sourcectrl", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
+                    ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
+                }
+                catch (e) {
+                    console.error(e);
+                    EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+                }
+                if (DepHandleObj.isInitSetup || this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                    // if persist - manual onchange only setValue. DoNotPersist always setValue
+                    if (depCtrl.ObjType === 'PowerSelect') {
+                        depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
+                        depCtrl.justSetValue(ValueExpr_val);
+                        EbBlink(depCtrl);
+                        wait = true;
+                    }
+                    else {
+                        depCtrl.justSetValue(ValueExpr_val);
+                        this.validateCtrl(depCtrl);
+                        EbBlink(depCtrl);
+                    }
+                }
+                else {
+                    $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                        row[depCtrl.Name].setValue(ValueExpr_val);
+                    }.bind(this));
+                }
+                //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
+            }
+        }
+        else if (depCtrl[DepHandleObj.exprName] && depCtrl[DepHandleObj.exprName].Lang === 2) {
+            let filterValues = [];
+            let paramsReady = true;
+            $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {
+                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                if (paramCtrl.Required && !paramCtrl.isRequiredOK()) {
+                    paramsReady = false;
+                    return false;
+                }
+                let _type = paramCtrl.EbDbType > 0 && !paramCtrl.IsDGCtrl ? paramCtrl.EbDbType : 16;
+                filterValues.push(new fltr_obj(_type, paramCtrl.Name, paramCtrl.getValue()));
+            }.bind(this));
+            if (paramsReady) {
+                filterValues.push(new fltr_obj(11, "eb_loc_id", this.FO.getLocId()));
+                filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+                filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+                filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+                filterValues.push(new fltr_obj(11, "id", this.FO.rowId));
+                depCtrl.__continue = this.resumeExec1.bind(this, depCtrl, DepHandleObj);
+                this.ExecuteSqlValueExpr(depCtrl, filterValues, DepHandleObj.exprName === 'ValueExpr' ? 0 : 1);
+                wait = true;
+            }
+        }
+        if (!wait) {
+            depCtrl.__lockDependencyExec = false;
+            this.UpdateDependency1(DepHandleObj);
+        }
+
+    };
+
+    //this.execDgValueExpr = function (DepHandleObj, depCtrl) {
+    //    try {
+    //        $.each(depCtrl.__DG.Rows, function (rowId, inpCtrls) {
+    //            depCtrl.__DG.currentRow = inpCtrls;
+    //            let inpCtrl = inpCtrls[depCtrl.Name];
+    //            if (inpCtrl && inpCtrl[DepHandleObj.exprName] && inpCtrl[DepHandleObj.exprName].Lang === 0 && inpCtrl[DepHandleObj.exprName].Code) {
+    //                let ValueExpr_val = new Function("form", "user", `event`, atob(inpCtrl[DepHandleObj.exprName].Code)).bind(inpCtrl, this.FO.formObject, this.FO.userObject)();
+    //                ValueExpr_val = this.getProcessedValue(inpCtrl, ValueExpr_val);
+    //                inpCtrl.___isNotUpdateValExpDepCtrls = true;
+    //                inpCtrl.justSetValue(ValueExpr_val);
+    //            }
+    //        }.bind(this));
+    //    }
+    //    catch (e) {
+    //        console.error(e);
+    //        EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+    //    }
+    //};
+
+    //resume dr dependency
+    this.resumeExec2 = function (depCtrl, DepHandleObj) {
+        depCtrl.__continue = null;
+        depCtrl.__lockDependencyExec = false;
+        this.UpdateDependency2(DepHandleObj);
+    };
+
+    //Dr dependency
+    this.UpdateDependency2 = function (DepHandleObj) {
+        let curCtrl = DepHandleObj.curCtrl;
+        if (DepHandleObj.DrPaths.length === 0) {
+            if (curCtrl.__continue3) {
+                curCtrl.__continue3();
+                curCtrl.__continue3 = null;
+            }
+            return;
+        }
+        let depCtrl_s = DepHandleObj.DrPaths.splice(0, 1)[0];
+        let depCtrl = DepHandleObj.DrCtrls.splice(0, 1)[0];
+        let wait = false;
+        depCtrl.__continue = null;
+
+        if (depCtrl.ObjType === "TVcontrol") {
+            if (DepHandleObj.isInitSetup) {
+                depCtrl.reloadWithParamAll();
+            }
+            else {
+                depCtrl.reloadWithParam(curCtrl);
+            }
+        }
+        else if (depCtrl.ObjType === "PowerSelect") {
+            if (depCtrl.initializer && (!depCtrl.IsDGCtrl || (depCtrl.IsDGCtrl && depCtrl.__DG.RowCount > 0))) {
+                depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
+                depCtrl.initializer.reloadWithParams(true);
+                wait = true;
+            }
+        }
+        else if (depCtrl.ObjType === "DataGrid") {
+            try {
+                if (depCtrl.DataSourceId && (this.FO.Mode.isNew || (depCtrl.IsLoadDataSourceInEditMode && (this.FO.Mode.isEdit || this.FO.Mode.isView)) || depCtrl.IsLoadDataSourceAlways)) {
+                    depCtrl.__continue = this.resumeExec2.bind(this, depCtrl, DepHandleObj);
+                    depCtrl.__setSuggestionVals();
+                    wait = true;
+                }
+            }
+            catch (e) {
+                console.error(e);
+                EbMessage("show", { Message: `Failed to load 'DataGrid': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
+            }
+        }
+        if (!wait) {
+            depCtrl.__lockDependencyExec = false;
+            this.UpdateDependency2(DepHandleObj);
+        }
+    }.bind(this);
+
+    this.getProcessedValue = function (ctrl, value) {
+        let _t = ctrl.EbDbType;
+        if (value) {
+            if (ctrl.ObjType == 'Numeric') {
+                value = parseFloat(value).toFixed(ctrl.DecimalPlaces);
+                value = parseFloat(value);
+            }
+            return value;
+        }
+        if (_t === 16 || _t === 0)
+            return '';
+        if (_t === 7 || _t === 8 || _t === 10 || _t === 11 || _t === 12)
+            return 0;
+        if (_t === 3 || _t === 30)
+            return false;
+        if (_t === 5 || _t === 6 || _t === 17) {
+            if (ctrl.IsNullable)
+                return null;
+            if (_t === 5)
+                return moment('0001-01-01').format('YYYY-MM-DD');
+            if (_t === 6)
+                return moment('0001-01-01 00:00:00').format('YYYY-MM-DD HH:mm:ss');
+            if (_t === 17)
+                return moment('00:00:00').format('HH:mm:ss');
+        }
+        if (value === undefined)
+            return null;
+        return value;
+    };
+
+    //#endregion SingleBinding
 };

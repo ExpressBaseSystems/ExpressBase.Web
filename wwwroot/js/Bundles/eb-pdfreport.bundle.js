@@ -8,7 +8,7 @@ var RptBuilder = function (option) {
     var cur_status = option.Status || null;
     var tabNum = option.TabNum || null;
     var ssurl = option.ServiceUrl || null;
-    this.LocConfig = option.LocationConfig || {};
+    this.LocConfig = /*option.LocationConfig ||*/ {};
     this.wc = option.Wc;
     this.containment = ".page";
     this.Tenantid = option.Cid;
@@ -58,19 +58,25 @@ var RptBuilder = function (option) {
         $('#schedulerlistmodal').modal('show');
     };
 
-    this.RefreshControl = function (obj) {
+    this.RefreshControl = function (obj, pname) {
+
         var NewHtml = obj.$Control.outerHTML();
+
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
+        
+        if (pname && metas && !metas.find(m => m.name === pname)?.IsUIproperty) { return; }
+
         $.each(metas, function (i, meta) {
             var name = meta.name;
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
             }
         });
+
         $("#" + obj.EbSid).replaceWith(NewHtml);
 
-        if ('Font' in obj)
-            this.repExtern.setFontProp(obj);
+        if ('Font' in obj) { this.repExtern.setFontProp(obj); }
+            
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
                 cursor: "crosshair", containment: this.containment, appendTo: "body", zIndex: 100,
@@ -78,6 +84,7 @@ var RptBuilder = function (option) {
             });
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
         }
+
         if ('SectionHeight' in obj) {
             $("#" + obj.EbSid).droppable({
                 accept: ".draggable,.dropped,.coloums",
@@ -86,9 +93,14 @@ var RptBuilder = function (option) {
                 drop: this.onDropFn.bind(this)
             });
         }
+
         $("#" + obj.EbSid).attr("tabindex", "1");
         $("#" + obj.EbSid).not(".locked").off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
+
+    this.getSectionDroppableItems = function () {
+
+    }
 
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
@@ -119,7 +131,7 @@ var RptBuilder = function (option) {
         var pxlabel = this.rulertype === "px" ? 5 : 1;
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
-        for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
+        for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++, step++) {
             var $tick = $('<div>');
             if (step === 0) {
                 if (this.rulertype === "px")
@@ -139,7 +151,7 @@ var RptBuilder = function (option) {
         }
 
         var $rulerleft = $('.rulerleft').css({ "height": "calc(100% - 20px)" });
-        for (i = 0, step = 0; i < 300; i++ , step++) {
+        for (i = 0, step = 0; i < 300; i++, step++) {
             $tick = $('<div>');
             if (step === 0) {
                 if (this.rulertype === "px")
@@ -215,6 +227,7 @@ var RptBuilder = function (option) {
             let id = sections + this.idCounter[sections + "Counter"]++;
             let o = new EbObjects["Eb" + sections](id);
             o.DisplayName = id;
+            $.extend(o, subSecArray[k]);
             if (_new)
                 $(`.page [eb-type='${sections}']`).last().after(o.$Control.outerHTML());
             else
@@ -274,7 +287,7 @@ var RptBuilder = function (option) {
         this.makeSecResizable(`#${fid}`);
         this.makeSecResizable(`#${hid}`);
 
-        this.appendMSplitGroup(h, f,c);
+        this.appendMSplitGroup(h, f, c);
 
         return { header: h, footer: f };
     };
@@ -287,7 +300,7 @@ var RptBuilder = function (option) {
         this.syncHeight();
     };
 
-    this.appendMSplitSec = function (sections, obj,_new) {
+    this.appendMSplitSec = function (sections, obj, _new) {
         let h = $(`.page .${sections}`).height();
         if (_new) {
             $(`.multiSplit .${sections}_sub`).last().after(`<div class='multiSplitHboxSub ${sections}_sub' eb-type='MultiSplitBox' style='height:${obj.SectionHeight}'>
@@ -771,7 +784,7 @@ var RptBuilder = function (option) {
         else if (obj.constructor.name === "EbReport" && pname === "BackColor")
             $(".page-reportLayer").css("background-color", obj.BackColor);
         else {
-            this.RefreshControl(obj);
+            this.RefreshControl(obj, pname);
         }
     }.bind(this);
 
@@ -813,10 +826,10 @@ var RptBuilder = function (option) {
 
     this.init = function () {
         this.GenerateButtons();
-        if (this.EbObject === null || this.EbObject === "undefined")
-            this.newReport();
-        else
+        if (this.EbObject)
             this.editReport();
+        else
+            this.newReport();
         this.RbCommon.drawLocConfig();
         this.RM = new ReportMenu(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
@@ -932,12 +945,21 @@ var ReportExtended = function (Rpt_obj) {
     };
 
     this.replaceProp = function (source, destination) {
+        let ar1 = ['Width', 'Height', 'Left', 'Top'];
+        let ar2 = ['Detail', 'PageFooters', 'PageHeaders', 'ReportFooters', 'ReportGroups', 'ReportHeaders', 'ReportObjects', 'CellCollection', '$Control'];
         for (var objPropIndex in source) {
-            if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
-                if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1)
-                    source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
-                else
-                    source[objPropIndex] = destination[objPropIndex];
+            //if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
+            //    if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1)
+            //        source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
+            //    else
+            //        source[objPropIndex] = destination[objPropIndex];
+            //}
+
+            if (typeof source[objPropIndex] !== "object" && ar1.indexOf(objPropIndex) > -1) {
+                source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
+            }
+            else if (ar2.indexOf(objPropIndex) === -1) {
+                source[objPropIndex] = destination[objPropIndex];
             }
         }
     };
@@ -1326,21 +1348,35 @@ var RbCommon = function (RbMainObj) {
     };
 
     this.getTdCtrls = function ($td, eb_obj) {
+
         $td.find(".dropped").each(function (k, ebctrl) {
+
             if ($(ebctrl).length >= 1) {
-                var eb_type = this.RbObj.objCollection[$(ebctrl).attr("id")].$type.split(",")[0].split(".").pop().substring(2);
+
+                var id = $(ebctrl).attr("id");
+
+                var control = this.RbObj.objCollection[id];
+
+                var eb_type = control.$type.split(",")[0].split(".").pop().substring(2);    
+                
                 if (eb_type === "Table_Layout")
-                    this.innerTableOnEdit(this.RbObj.objCollection[$(ebctrl).attr("id")]);
+                    this.innerTableOnEdit(control);
                 else {
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Width = $(ebctrl).innerWidth();
-                    this.RbObj.objCollection[$(ebctrl).attr("id")].Height = $(ebctrl).innerHeight();
-                    eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
-                    this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+                    control.Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
+                    control.Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
+                    control.LeftPt = this.RbObj.repExtern.convertTopoints(control.Left);
+                    control.TopPt = this.RbObj.repExtern.convertTopoints(control.Top);
+
+                    control.Width = $(ebctrl).innerWidth();
+                    control.Height = $(ebctrl).innerHeight();
+                    control.WidthPt = this.RbObj.repExtern.convertTopoints(control.Width);
+                    control.HeightPt = this.RbObj.repExtern.convertTopoints(control.Height);         
+
+                    eb_obj.ControlCollection.$values.push(control);
                 }
             }
         }.bind(this));
+
         this._table.CellCollection.$values.push(eb_obj);
     };
 
@@ -1878,7 +1914,6 @@ let EbTableLayout = function (report, EbControl) {
         this.makeResizable(id);
         this.makeTLayoutDroppable(id);
         this.InitColResize(id);
-        //this.InitColResizable();
     };
 
     this.createTableOnEdit = function () {
@@ -1905,17 +1940,6 @@ let EbTableLayout = function (report, EbControl) {
         this.setCells();
         this.isNew = true;
     };
-
-    //this.InitColResizable = function () {
-    //    this.Table.find("tr").eq(0).find("td").each(function (i, o) {
-    //        if (!$(o).is(':last-child'))
-    //            $(o).resizable({ handles: "e", resize: this.onResizeTd.bind(this) });
-    //    }.bind(this));
-    //};
-
-    //this.onResizeTd = function (event, ui) {
-
-    //};
 
     this.setCells = function () {
         let coll = this.EditCtrl.CellCollection.$values;
@@ -1967,7 +1991,9 @@ let EbTableLayout = function (report, EbControl) {
     this.draggableT = function (id) {
         $(`#${id}`).draggable({
             cursor: "crosshair", containment: ".page", appendTo: "body", zIndex: 100,
-            start: this.Report.onDrag_Start.bind(this.Report), stop: this.Report.onDrag_stop.bind(this.Report), drag: this.Report.ondragControl.bind(this.Report)
+            start: this.Report.onDrag_Start.bind(this.Report),
+            stop: this.Report.onDrag_stop.bind(this.Report),
+            drag: this.Report.ondragControl.bind(this.Report)
         });
     };
 
@@ -2023,12 +2049,12 @@ let EbTableLayout = function (report, EbControl) {
         let trlen = $(`#${id} table tr`).length;
         $(`#${id} table tr`).eq(0).find("td").each(function (i, o) {
             if (!$(o).is(":last-child"))
-                $(o).css({ width: this.calcPercent($(o).outerWidth()) + "%" });
+                $(o).css({ width: this.calcPercent($(o).innerWidth()) + "%" });
         }.bind(this));
 
         $(`#${id} table tr`).each(function (i, ob) {
             if (!$(ob).is(":last-child"))
-                $(ob).css({ height: this.calcPercentTop($(ob).outerHeight()) + "%" });
+                $(ob).css({ height: this.calcPercentTop($(ob).innerHeight()) + "%" });
         }.bind(this));
 
         for (let i = 0; i < tdlen - 1; i++) {
@@ -2047,7 +2073,7 @@ let EbTableLayout = function (report, EbControl) {
 
     this.getPos = function (i) {
         let it = this.Table.find("tr").eq(0).find("td").eq(i);
-        let tdleft = it.position().left + it.outerWidth();
+        let tdleft = it.position().left + it.innerWidth();
         return this.calcPercent(tdleft);
     };
 
@@ -2058,7 +2084,7 @@ let EbTableLayout = function (report, EbControl) {
     };
 
     this.calcPercent = function (val) {
-        let per = val / this.Table.outerWidth() * 100;
+        let per = val / this.Table.innerWidth() * 100;
         return per;
     };
 
@@ -2079,13 +2105,13 @@ let EbTableLayout = function (report, EbControl) {
 
     this.setTrPixelH = function () {
         this.Table.find("tr").each(function (k, o) {
-            $(o).css({ height: $(o).height() });
+            $(o).css({ height: $(o).innerHeight() });
         }.bind(this));
     };
 
     this.setTdPixelW = function () {
         this.Table.find("tr").eq(0).find("td").each(function (k, o) {
-            $(o).css({ width: $(o).width() });
+            $(o).css({ width: $(o).innerWidth() });
         }.bind(this));
     };
 
@@ -2131,7 +2157,7 @@ let EbTableLayout = function (report, EbControl) {
                 this.Table.find("tr").each(function (i, o) {
                     lastnode = $(o).find("td:last-child");
                     if (lastnode.closest("tr").index() === 0)
-                        this.Table.width($(`#${obj.EbSid}`).width() - lastnode.width());
+                        this.Table.width($(`#${obj.EbSid}`).innerWidth() - lastnode.innerWidth());
                     lastnode.remove();
                 }.bind(this));
             }
@@ -2142,7 +2168,7 @@ let EbTableLayout = function (report, EbControl) {
             this.setTrPixelH();
             for (let y = 0; y < this.RowCount - obj.RowCount; y++) {
                 lastnode = this.Table.find("tr:last-child");
-                this.Table.height(this.Table.height() - lastnode.height() - 2);
+                this.Table.height(this.Table.innerHeight() - lastnode.innerHeight() - 2);
                 lastnode.remove();
             }
             this.RowCount = obj.RowCount;
@@ -2156,7 +2182,7 @@ let EbTableLayout = function (report, EbControl) {
         let index = $td.index();
         if (type === "row") {
             this.setTrPixelH();
-            this.Table.height(this.Table.height() - $td.height() - 2);
+            this.Table.height(this.Table.innerHeight() - $td.innerHeight() - 2);
             $td.closest("tr").remove();
             this.RowCount = this.RowCount - 1;
             this.EbCtrl.RowCount = this.EbCtrl.RowCount - 1;
@@ -2166,7 +2192,7 @@ let EbTableLayout = function (report, EbControl) {
             this.setTdPixelW();
             this.Table.find("tr").each(function (i, o) {
                 let node = $(o).find("td").eq(index);
-                this.Table.width(this.Table.width() - node.width());
+                this.Table.width(this.Table.innerWidth() - node.innerWidth());
                 node.remove();
             }.bind(this));
             this.ColCount = this.ColCount - 1; this.EbCtrl.ColoumCount = this.EbCtrl.ColoumCount - 1;

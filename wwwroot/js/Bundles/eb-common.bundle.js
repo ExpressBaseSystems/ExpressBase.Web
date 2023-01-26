@@ -49,13 +49,10 @@ try {
 <div class='toolb-srchbx-wrpr'>
     <input type='text' class='toolb-srchbx'/>
     <button id="platformsearch" class="btn" data-toggle="modal" data-target="#exampleModalCenter__" title="search"><i class="fa fa-search" aria-hidden="true"></i></button>
-    <div class="search-dd">
-
-<div class="srch-body-cont"></div>
-
-
-    </div>
-<div class="eb_common_loader" id="srch_loader"></div>
+        <div class="search-dd">
+            <div class="srch-body-cont"></div>
+        </div>
+        <div class="eb_common_loader" id="srch_loader"></div>
 </div>`);
 
             this.$toolbSrchBx = $('.toolb-srchbx');
@@ -68,14 +65,18 @@ try {
             //$('#exampleModalCenter .srch-btn').on('click', this.platformSearch);
             $('#platformsearch').on('click', this.platformSearch);
 
-            this.$toolbSrchBx.on('focus', function () {
-                $('.search-dd').slideDown(100);
-            }.bind(this));
+            //this.$toolbSrchBx.on('focus', function () {
+            //    if (this.isSearchedOnce)
+            //        $('.search-dd').slideDown(100);
+            //}.bind(this));
 
             this.$toolbSrchBx.on('keyup', function () {
                 this.isSimpleSearch = true;
-                if (event.keyCode === 13)
+                if (event.keyCode === 13) {
                     this.platformSearch();
+                    if (this.isSearchedOnce)
+                        $('.search-dd').slideDown(100);
+                }
                 else if (event.keyCode === 27)
                     $('.search-dd').slideUp(50);
             }.bind(this));
@@ -90,6 +91,27 @@ try {
             //    if (event.keyCode === 13)
             //        this.platformSearch();
             //}.bind(this));
+            this.searchDivs = $('.search-dd').add('.srch_loader');
+            this.searchDivs = this.searchDivs.detach();
+            $('.html-root').prepend(this.searchDivs);
+            $('.search-dd > .srch-body-cont').append(`<div class="srch-header">
+                            <div class='srch-header-title'><h5>Global Search</h5></div>
+                            <div class='srch-grpby-wraper'>
+                                <div class='srch-header-grpby'><span class="align-middle" style="margin: auto;">Group by</span></div>
+                                <input id='srch_chkToggle' type="checkbox" data-toggle="toggle" data-size="sm">
+                                <div class="srch-close" data-toggle='tooltip' title="close" id="g_srch_close"><i style="margin:auto; font-size: 20px;" onclick="$('.search-dd').slideUp(100);" class="material-icons">close</i></div>
+                            </div>
+                        </div>`);
+            $('#srch_chkToggle').bootstrapToggle({
+                on: 'Date',
+                off: 'Doc Type'
+            });
+
+            $('#srch_chkToggle').change(function () {
+                this.isGroupByDate = $('#srch_chkToggle').prop('checked');
+                this.drawResultList(this.g_srcg_data);
+            }.bind(this));
+
         }.bind(this);
 
         this.scrollList = function () {
@@ -127,7 +149,8 @@ try {
 
         this.platformSearch = function () {
             let $srch = this.isSimpleSearch ? this.$toolbSrchBx : $('#exampleModalCenter .srch-bx');
-            let searchkey = $srch.val();
+            let searchkey = $srch.val().replace('\\n', '');
+            this.g_search_key = searchkey;
             if (searchkey.trim() !== '' && $srch.data('lastKey') !== searchkey) {
                 //do ajax call
                 $('.search-dd').slideUp(100);
@@ -149,22 +172,27 @@ try {
                     $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
                     EbMessage("show", { Message: `Something Unexpected Occurred while searching`, AutoHide: true, Background: '#aa0000' });
                 }.bind(this),
-                success: this.drawResultList.bind(this, searchkey)
+                success: this.drawResultList.bind(this)
             });
         }.bind(this);
 
-        this.drawResultList = function (searchkey, data = `{ "RowCount": 12, "Data": [{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27 d","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"Common test 2020-10-27","Data":{"textbox1":"hass ","textbox2":"gggffded"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1914-2119-1914-2119&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjkiLCJWYWx1ZVRvIjo5LjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"Febin","CreatedAt":"23-11-2020 11:31 PM","ModifiedBy":"Febin","ModifiedAt":"23-11-2020 11:31 PM"},{"DisplayName":"karikku m","Data":{"numeric2":"0","textbox1":"","textbox3":"hair"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1114-1265-1114-1265&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjI3MSIsIlZhbHVlVG8iOjI3MS4wLCJSZXF1aXJlZCI6dHJ1ZX1d&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:13 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:13 PM"},{"DisplayName":"wiz test","Data":{"numeric1":"555","textbox1":"hair creame"},"Link":"../WebForm/Index?refid=hairocraft_stagging-hairocraft_stagging-0-1928-2133-1928-2133&_params=W3siTmFtZSI6ImlkIiwiVHlwZSI6IjciLCJWYWx1ZSI6IjEiLCJWYWx1ZVRvIjoxLjAsIlJlcXVpcmVkIjp0cnVlfV0=&_mode=1","CreatedBy":"jith","CreatedAt":"24-11-2020 12:18 PM","ModifiedBy":"jith","ModifiedAt":"24-11-2020 12:18 PM"}]}`) {
+        this.drawResultList = function (data) {
+            this.g_srcg_data = data;
+            this.isSearchedOnce = true;
             data = JSON.parse(data);
-            let dataItems = data.Data;
-            let DataItemsG = groupBy(data.Data.sort((a, b) => (a.DisplayName > b.DisplayName) ? 1 : ((b.DisplayName > a.DisplayName) ? -1 : 0)), 'DisplayName');
+            let dataItems = data.Data.map((a) => a.modifiedDateOnly = a.ModifiedAt.split(' ')[0]);
+            let DataItemsG = [];
+            if (this.isGroupByDate)
+                DataItemsG = groupBy(data.Data.sort((a, b) => (moment(a.modifiedDateOnly, 'DD-MM-YYYY') < moment(b.modifiedDateOnly, 'DD-MM-YYYY')) ? 1 : ((b.modifiedDateOnly > a.modifiedDateOnly) ? -1 : 0)), 'modifiedDateOnly');
+            else
+                DataItemsG = groupBy(data.Data.sort((a, b) => (a.DisplayName > b.DisplayName) ? 1 : ((b.DisplayName > a.DisplayName) ? -1 : 0)), 'DisplayName');
             let $cont = this.isSimpleSearch ? $('.search-dd > .srch-body-cont') : $('.srch-body-cont > .srch-body-cont');
-            $('.srch-body-cont').empty();
+            $('.srch-ul-outer').remove();
+            $('.srch-footer').remove();
 
 
-            let html = `<ul class="srch-ul-outer">
-                        <li class="li-summary">
-                            <div class='srch-summary-text'><b>${dataItems.length}</b> / <b>${data.RowCount}</b> matches</div>
-                        </li>`;
+            let html = `<ul class="srch-ul-outer">`;
+
             if (dataItems.length > 0) {
                 $.each(DataItemsG, function (formName, items) {
                     html += this.getUlHtml(items, true);
@@ -172,30 +200,34 @@ try {
             }
             else {
 
-                html += `<li class="srch-li">
-                        <div class='srch-li-block'>
-                            <h4><a class='srch-res-a' tabindex="1"> No match found :(</a></h4>
-                            <div class="ctrldtlsWrap">Try some other keyword</div>
-                        </div>
-                    </li>`;
+                html += `<li class="srch-li" style="height:100%">
+                            <div class="nores-cont">
+                                <div class="gs-noresult-img"></div>
+                            <div><h3 style="color: #6c63ff;"><center> No match found :(</center></h3></div>
+                            </div>
+                        </li>`;
             }
 
-            html += `</ul>`;
+            html += `   </ul>
+                        <div class="srch-footer">
+                            <div class='srch-footer-summary'>${dataItems.length} / ${data.RowCount} matches</div>
+                        </div>`;
 
             //$('.srch-body-cont').append(html);
-            $cont.append(html);
+            $(html).insertAfter($('.search-dd > .srch-body-cont .srch-header'));
             $('.search-dd').slideDown(100);
-            modifyTextStyle('.srch-body-cont .value', RegExp(searchkey, 'gi'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
+            modifyTextStyle('.srch-body-cont .value', RegExp(this.g_search_key, 'gi'), 'background-color:yellow;border-radius: 4px;padding: 0 1px;');
             $("#srch_loader").EbLoader("hide", { maskItem: { Id: ".search-dd" } });
             this.scrollList();
             $('.srch-li').on('click', function () { event.target.closest('.srch-li').querySelector('.ctrldtlsWrap').focus() });
+            $('.search-dd [data-toggle="tooltip"]').tooltip();
         };
 
         this.getUlHtml = function (dataItems, hideHead) {
             let idfromDN = dataItems[0].DisplayName.replace(/ /g, '_') + '_li';
             let html =
                 `<li data-toggle="collapse" href="#${idfromDN}" role="button" aria-expanded="true" aria-controls="${idfromDN}">
-                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> ${dataItems[0].DisplayName} (${dataItems.length})</h5>
+                <h5 class='srch-res-a'  tabindex="1"><i class="fa fa-caret-right" aria-hidden="true"></i> &nbsp; ${this.isGroupByDate ? dataItems[0].modifiedDateOnly : dataItems[0].DisplayName} (${dataItems.length})</h5>
             </li>
             <li id='${idfromDN}' class='collapse in'>
                 <ul class="srch-ul">`;
@@ -203,47 +235,35 @@ try {
                 let j = 0;
                 let modifiedAtarr = obj.ModifiedAt.split(' ');
                 let createdAtArr = obj.CreatedAt.split(' ');
+                let lstupdtd = obj.ModifiedAt === obj.CreatedAt ? "" : `<div><span class='metaval'>Last updated by ${obj.ModifiedBy} on ${obj.ModifiedAt}</span></div>`
                 html += `
                     <li class="srch-li"  ondblclick="window.open('${obj.Link}', '_blank')">
                         <div class='srch-li-block'>
-                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">`;
+                            <div class="ctrldtlsWrap" tabindex='0' onkeyup='if(event.keyCode === 13) event.target.click();' onclick="window.open('${obj.Link}', '_blank')">
+                                <div class='row'>`;
                 $.each(obj.Data, function (name, val) {
-                    if (j++ % 3 === 0) {
-                        html += `
-                                <table class='ctrldtls'>
-                                    <tbody>`;
-                    }
-                    html += `<tr><td class='key'>${name}</td> <td class='value'>${val}</td></tr>`
-                    if (j % 3 === 0) {
-                        html += `
-                                    </tbody>
-                                </table>`;
-                    }
-                    if (j === 6)
+                    html += `
+                                    <div class='keyval-cont col-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2'>
+                                        <div class='keyval-wrap' data-toggle='tooltip' title='${val}'>
+                                            <div class='key'>${name}</div>
+                                            <div class='value'>${(val === "" ? "&nbsp;" : val)}</div>
+                                        </div>
+                                    </div>`;
+                    if (j === 12)
                         return false;
                 });
                 html += `
-                                    </tbody>
-                                </table>
+                                </div>
                             </div>
 
                             <div class="metadtlsWrap">
-                                <table class='metadtls'>
-                                    <tbody>
-                                        <tr>
-                                            <td class='metalbl'>Created</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i>   ${createdAtArr[0]} ${createdAtArr[1]} <span class='am_pm'>${createdAtArr[2]}</span>, </td>
-                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.CreatedBy} </td>
-                                        <tr>    
-                                    </tbody>
-                                </table>
-                                <table class='metadtls'>
-                                    <tbody>
-                                        <tr>
-                                            <td class='metalbl'>Modified</td><td class='metaval'> : <i class="fa fa-clock-o" aria-hidden="true"></i> ${modifiedAtarr[0]} ${modifiedAtarr[1]} <span class='am_pm'>${modifiedAtarr[2]}</span>, </td>
-                                            <td class='metalbl'> &nbsp;&nbsp;<i class="fa fa-user" aria-hidden="true"></i></td><td class='metaval metauname'> ${obj.ModifiedBy}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class='metadtls lft'>
+                                    <div> <span class='metaval'>${obj.DisplayName.toUpperCase()}</span></div>
+                                </div>
+                                <div class='metadtls'>
+                                    <div> <span class='metaval'>Created by ${obj.CreatedBy} on ${obj.CreatedAt}</span></div>
+                                    ${lstupdtd}
+                                </div>
                             </div>
                         </div>`;
                 html += '   </li>'
@@ -254,7 +274,12 @@ try {
         };
 
         this.hideDDclickOutside = function (e) {
-            if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
+            let $srchDD = $('.search-dd');
+           /* if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
+                $('.search-dd').slideUp(100);
+            }*/
+
+            if (this.$srchWrap.has(e.target).length === 0 && !$srchDD.is(e.target) && $srchDD.has(e.target).length === 0) {
                 $('.search-dd').slideUp(100);
             }
         };
@@ -552,9 +577,11 @@ var EbMenu = function (option) {
     this.start = function () {
 
         $(document).bind('keypress', function (event) {
-            if (event.which === 10 && event.ctrlKey)
+            if (event.which === 10 && event.ctrlKey) {
                 this.showMenuOverlay();
+            }
         }.bind(this));
+
         $('#quik_menu').off("click").on("click", this.showMenuOverlay.bind(this));
         $("#ebm-close").off("click").on("click", this.closeMenuOverlay.bind(this));
 
@@ -565,7 +592,6 @@ var EbMenu = function (option) {
         if (this.login !== "tc") {
             $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
             $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
-            $("body").on("click", ".EbQuickMoverlaySideWRpr .backbtn", this.closeSingle.bind(this));
 
             if (this.login === "uc") {
                 $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
@@ -599,9 +625,18 @@ var EbMenu = function (option) {
     };
 
     this.showMenuOverlay = function (e) {
-        if (!$("#ebquickmsideoverlay").is(":visible")) {
+
+        let $overlay = $("#ebquickmsideoverlay");
+
+        if (!$overlay.is(":visible")) {
+
+            if (ebcontext.locations && ebcontext.locations.hasOwnProperty('close')) {
+                ebcontext.locations.close();
+            }
+
             $("#ebm-overlayfade").show();
-            $("#ebquickmsideoverlay").show('slide', { direction: 'left' }, function () {
+
+            $overlay.show('slide', { direction: 'left' }, function () {
                 if (this.attempt <= 0 && this.login === "dc") {
                     this.LoadApps();
                     this.attempt = 1;
@@ -614,7 +649,7 @@ var EbMenu = function (option) {
         }
         else {
             $("#ebm-overlayfade").hide();
-            $("#ebquickmsideoverlay").hide();
+            $overlay.hide();
         }
     };
 
@@ -628,7 +663,9 @@ var EbMenu = function (option) {
     };
 
     this.LoadApps = function () {
+
         let o = store.get("EbMenuObjects_" + this.Tid + this.Uid + this.login) || {};
+
         let locId = store.get("Eb_Loc-" + this.Tid + this.Uid) || null;
 
         if ($.isEmptyObject(o)) {
@@ -643,6 +680,7 @@ var EbMenu = function (option) {
                 store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", result);
                 $("#quick_menu_load").EbLoader("hide");
                 $("#ebquickmsideoverlay #appList").html(result);
+                $("#ebquickmsideoverlay #menu-app-count").text()
                 $(`li[trigger='menu']`).off("click").on("click", this.appendObType.bind(this));
                 if (this.login === "uc") {
                     $('li[trigger="security"]').off("click").on("click", this.showSecurity.bind(this));
@@ -727,9 +765,6 @@ var EbMenu = function (option) {
         }
         $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item" klink="true">
                                                         <a href='${this.decideUrl(_obj)}' objid='${_obj.Id}'>
-                                                            <span class="obj-icon">
-                                                                <i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i>
-                                                            </span>
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}
@@ -739,7 +774,7 @@ var EbMenu = function (option) {
     this.decideUrl = function (_obj) {
         var _url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
         if (this.login === "uc") {
-            if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "MapView" || _obj.EbType ==="OpenStreetMap") {
+            if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "MapView" || _obj.EbType === "OpenStreetMap") {
                 _url = "../DV/dv?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "Report") {
@@ -754,6 +789,12 @@ var EbMenu = function (option) {
             else if (_obj.EbType === "CalendarView") {
                 _url = "../Calendar/CalendarView?refid=" + _obj.Refid;
             }
+        }
+
+        if (ebcontext.languages != undefined) {
+            let _locale = ebcontext.languages.getCurrentLocale();
+            if (_locale != 0 && _locale != undefined)
+                _url = _url + "&_lo=" + _locale
         }
         return _url;
     };
@@ -821,11 +862,6 @@ var EbMenu = function (option) {
         else {
             $("#ebm-objectcontainer").show();
         }
-    };
-
-    this.closeSingle = function (e) {
-        $(e.target).closest("[slider='true']").next().hide();
-        $(e.target).closest("[slider='true']").hide();
     };
 
     this.active = function ($el) {
@@ -992,6 +1028,12 @@ var EbMenu = function (option) {
             }
         }
     };
+
+    this.close = function () {
+        if ($("#ebquickmsideoverlay").is(':visible')) {
+            this.closeMenuOverlay();
+        }
+    }
 
     this.refresh = function () {
         store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
@@ -2262,6 +2304,7 @@ var EbServerEvents = function (options) {
     this.onLogOut = function (m, e) { };
     this.onNotification = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
+    this.onPdfDownloadSuccess = function (m, e) { };
 
 
 
@@ -2325,6 +2368,10 @@ var EbServerEvents = function (options) {
 
     this.onExportToExcel = function (m, e) {
         this.onExcelExportSuccess(m);
+    };
+
+    this.onPdfDownload = function (m, e) {
+        this.onPdfDownloadSuccess(m);
     };
 
     this.exportApplication = function (m, e) {
@@ -2417,6 +2464,7 @@ var EbServerEvents = function (options) {
             onUploadSuccess: this.onUploaded.bind(this),
             stopListening: this.stopListening.bind(this),
             onExportToExcel: this.onExportToExcel.bind(this),
+            onPdfDownload: this.onPdfDownload.bind(this),
             onMsgSuccess: this.onMsgSuccess.bind(this),
             onLogOut: this.onLogOutMsg.bind(this),
             onNotification: this.onNotifyMsg.bind(this),

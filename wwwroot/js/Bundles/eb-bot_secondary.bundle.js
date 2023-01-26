@@ -8959,7 +8959,7 @@ var EbDataTable = function (Option) {
             this.filterValues = this.getFilterValues("filter");
         }
         this.isSecondTime = false;
-        if(this.login === "uc")
+        if (this.login === "uc")
             $(".dv-body1").show();
         $("#eb_common_loader").EbLoader("show");
         this.extraCol = [];
@@ -8980,7 +8980,7 @@ var EbDataTable = function (Option) {
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
         let CurR_RowG = this.CurrentRowGroup;
-        if (rowG_coll.length>0 &&  !this.EbObject.DisableRowGrouping) {
+        if (rowG_coll.length > 0 && !this.EbObject.DisableRowGrouping) {
             if (CurR_RowG === null) {
                 CurR_RowG = rowG_coll.find(obj => obj.RowGrouping.$values.length > 0);
                 this.CurrentRowGroup = CurR_RowG;
@@ -9499,10 +9499,14 @@ var EbDataTable = function (Option) {
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation") {
-                    if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
+                    let $sel = $(ctrl).find('select');
+                    let allsld = $sel.next('div').find('[value=multiselect-all').prop('checked');
+                    if (allsld && $sel.attr('isglobal') === 'y')
                         o.value = "Global";
+                    else if (allsld)
+                        o.value = "Selected all";
                     else
-                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join(",");
+                        o.value = $(ctrl).find('ul').find(".active:not(.multiselect-all)").text().trim().split(" ").join(",");
                 }
                 else
                     o.value = $($(ctrl).children()[1]).val();
@@ -9599,7 +9603,7 @@ var EbDataTable = function (Option) {
 
     this.receiveAjaxData = function (dd) {
         if (dd.responseStatus.message !== null) {
-            EbPopBox("show", { Message: dd.responseStatus.message, Title:"Error" });
+            EbPopBox("show", { Message: dd.responseStatus.message, Title: "Error" });
         }
         this.isRun = true;
         if (this.login === "uc") {
@@ -9884,7 +9888,8 @@ var EbDataTable = function (Option) {
         }
         else if (splitarray[2] === "0") {
             let _filter = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
-            let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
         else {
@@ -10790,7 +10795,7 @@ var EbDataTable = function (Option) {
 
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
-        if (e.keyCode === 13 && text.length >3) {
+        if (e.keyCode === 13 && text.length > 3) {
             //window.find(text, false, false, true);
             if (window.find && window.getSelection) {
                 document.designMode = "on";
@@ -10847,9 +10852,9 @@ var EbDataTable = function (Option) {
             container: 'body',
             trigger: 'hover',
             placement: this.PopoverPlacement,
-            html:true,
-            content: function (e,i) {
-                return atob($(this).attr("data-contents"));                
+            html: true,
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
             },
         });
         //$('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
@@ -11041,7 +11046,8 @@ var EbDataTable = function (Option) {
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../webform/index?_r=${obj.Refid}&_p=""&_m=2&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../webform/index?_r=${obj.Refid}&_p=""&_m=2&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}&_lo=${_locale}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -11081,6 +11087,12 @@ var EbDataTable = function (Option) {
             input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
             _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_lo";
+            input.value = ebcontext.languages.getCurrentLocale();
+            _form.appendChild(input);
+
             document.body.appendChild(_form);
             _form.submit();
             document.body.removeChild(_form);
@@ -11097,7 +11109,8 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
     };
@@ -11112,7 +11125,8 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
     };
@@ -11127,7 +11141,7 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}`;
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
             window.open(url, '_blank');
         }
     };
@@ -12073,7 +12087,7 @@ var EbDataTable = function (Option) {
         //ob.DataVizObjString = JSON.stringify(this.EbObject);
         //ob.Params = this.filterValues;
         //ob.TFilters = this.columnSearch;
-        //this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.site', Channels: ["ExportToExcel"] });
+        //this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.shop', Channels: ["ExportToExcel"] });
         //this.ss.onExcelExportSuccess = function (url) {
         //    window.location.href = url;
         //};
@@ -12232,7 +12246,7 @@ var EbDataTable = function (Option) {
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === "T" ) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {
@@ -12355,7 +12369,7 @@ var EbDataTable = function (Option) {
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         //else
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
-        
+
         return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg'/>`;
     };
 
@@ -12837,6 +12851,8 @@ var EbBasicDataTable = function (Option) {
         dq.QueryIndex = this.QueryIndex;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.tableId;
+        if (this.source === "powerselect")
+            dq = { req: JSON.stringify(dq) };
         return dq;
     };
 
@@ -12844,9 +12860,19 @@ var EbBasicDataTable = function (Option) {
         let temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             this.filterValues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+
         temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (ebcontext.languages != undefined) {
+            temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
     };
 
     this.filterDisplay = function () {
@@ -14193,6 +14219,10 @@ var EbCommonDataTable = function (Option) {
 
     //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
+    //if (typeof (AllMetas) === 'undefined') var AllMetas = AllMetas_w;
+    //if (typeof (EbEnums) === 'undefined') var EbEnums = EbEnums_w;
+    //if (typeof (EbObjects) === 'undefined') var EbObjects = EbObjects_w;
+
     this.propGrid = Option.PGobj;
     this.Api = null;
     this.order_info = new Object();
@@ -14229,6 +14259,7 @@ var EbCommonDataTable = function (Option) {
     this.settingsbtn = null;
     this.OuterModalDiv = null;
     this.settings_tbl = null;
+    this.ajaxCallCounter = 0;
 
     this.eb_filter_controls_4fc = [];
     this.eb_filter_controls_4sb = [];
@@ -14387,7 +14418,7 @@ var EbCommonDataTable = function (Option) {
             }
             //this.InitializeColumns();
             this.SetColumnRef();
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.PcFlag === true)
                 this.compareAndModifyRowGroup();
 
@@ -14419,8 +14450,8 @@ var EbCommonDataTable = function (Option) {
             this.PcFlag = false;
 
             if (this.propGrid !== null) {
-                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-                this.CreatePgButton();
+                //this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+                //this.CreatePgButton();
             }
         }
         else {
@@ -14520,7 +14551,7 @@ var EbCommonDataTable = function (Option) {
         }
 
         $("#objname").text(this.EbObject.DisplayName);
-        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
         $("title").text(this.EbObject.DisplayName);
         if (this.EbObject.DataSourceRefId) {
@@ -14553,7 +14584,7 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.getColumnsSuccess = function (e) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         if (this.Source === "EbDataTable") {
             this.Do4EbdataTable();
             this.Done4All();
@@ -14706,8 +14737,8 @@ var EbCommonDataTable = function (Option) {
         }
         this.isSecondTime = false;
         this.totalcount = 0;
-        if (this.login === "uc")
-            $(".dv-body1").show();
+        //if (this.login === "uc")
+        //    $(".dv-body1").show();
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
@@ -14797,12 +14828,16 @@ var EbCommonDataTable = function (Option) {
 
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
-                $("#obj_icons .btn").prop("disabled", true);
-                $("#eb_common_loader").EbLoader("show");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", true);
+                    $("#eb_common_loader").EbLoader("show");
+                }
             }
             else {
-                $("#obj_icons .btn").prop("disabled", false);
-                $("#eb_common_loader").EbLoader("hide");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
+                }
                 $("[data-coltyp=date]").datepicker("hide");
             }
         }.bind(this));
@@ -14819,7 +14854,7 @@ var EbCommonDataTable = function (Option) {
                 $("#" + settings.sTableId + "_processing").text("Something went wrong..");
             else
                 EbPopBox("show", { Message: "Table View Error Occured....", Title: "Error" });
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
         }.bind(this);
 
         if (this.Source === "datagrid")
@@ -14931,7 +14966,7 @@ var EbCommonDataTable = function (Option) {
         o.scrollX = true;
         //o.scrollXInner = "110%";
         o.scrollCollapse = true;
-        if (this.Source === "EbDataTable") {
+        if (this.Source === "EbDataTable" || this.Source === "Draft") {
             if (this.EbObject.PageLength !== 0) {
                 o.lengthMenu = this.generateLengthMenu();
             }
@@ -15044,7 +15079,7 @@ var EbCommonDataTable = function (Option) {
                             $("#" + this.tableId + "_processing").text("Timeout Expired..");
                         else
                             EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
-                        $("#eb_common_loader").EbLoader("hide");
+                        this.hideEbLoader();
                     }.bind(this)
                 };
             }
@@ -15093,12 +15128,14 @@ var EbCommonDataTable = function (Option) {
         if (dq.length === -1)
             dq.length = this.totalcount;
         this.RemoveColumnRef();
-        dq.DataVizObjString = JSON.stringify(this.EbObject);
+        if (!this.Refid)
+            dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;
         dq.TableId = this.tableId;
         dq.showCheckboxColumn = this.showCheckboxColumn;
+        dq.counter = ++this.ajaxCallCounter;
         return dq;
     };
 
@@ -15151,7 +15188,8 @@ var EbCommonDataTable = function (Option) {
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.FormObj);
-
+        if (this.Source === "Calendar")
+            fltr_collection = getValsForViz(FilterDialog.FormObj);
         let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0) {
             if (this.Source === "Bot")
@@ -15162,6 +15200,15 @@ var EbCommonDataTable = function (Option) {
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (ebcontext.languages != undefined) {
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
         //if (this.isContextual && from !== "compare") {
         //    if (from === "filter" && prevfocusedId !== undefined) {
         //        $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
@@ -15209,11 +15256,11 @@ var EbCommonDataTable = function (Option) {
     this.getFilterForLinkfromColumn = function () {
         this.linkfromcolumn = false;
         this.dvformMode = 1;
-        if (this.Source === "Draft")
-            this.dvformMode = 8;
         let filters = [];
         var temp = this.EbObject.Columns.$values.filter(obj => obj.name === this.linkDVColumn)[0];
         filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
+        if (this.Source === "Draft" || temp.IsFormDraftMode)
+            this.dvformMode = 8;
         return filters;
     };
 
@@ -15286,10 +15333,14 @@ var EbCommonDataTable = function (Option) {
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation") {
-                    if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
+                    let $sel = $(ctrl).find('select');
+                    let allsld = $sel.next('div').find('[value=multiselect-all').prop('checked');
+                    if (allsld && $sel.attr('isglobal') === 'y')
                         o.value = "Global";
+                    else if (allsld)
+                        o.value = "Selected all";
                     else
-                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join(",");
+                        o.value = $(ctrl).find('ul').find(".active:not(.multiselect-all)").text().trim().split(" ").join(",");
                 }
                 else
                     o.value = $($(ctrl).children()[1]).val();
@@ -15398,6 +15449,10 @@ var EbCommonDataTable = function (Option) {
                     EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
             }
         }
+        if (dd.counter && this.ajaxCallCounter != dd.counter && this.MainData) {
+            console.warn(`Mismatch in counter value: ${this.ajaxCallCounter}, ${dd.counter}`);
+            dd = this.MainData;
+        }
         if (!this.isSecondTime)
             this.totalcount = dd.recordsFiltered;
         this.isRun = true;
@@ -15475,7 +15530,7 @@ var EbCommonDataTable = function (Option) {
         });
         $.each(this.EbObject.Columns.$values, function (i, col) {
             if (col.bVisible)
-                ftr_part += "<th></th>";
+                ftr_part += "<th data-col='" + col.name + "'></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
         });
@@ -15510,9 +15565,17 @@ var EbCommonDataTable = function (Option) {
                         oper = $('#' + table + '_' + colobj.name + '_hdr_sel').text().trim();
                         if (api.columns(i).visible()[0]) {
                             if (oper !== '' && $(textid).val() !== '') {
-                                if (oper === 'B') {
-                                    val1 = $(textid).val();
+                                val1 = $(textid).val();
+                                if (oper === 'B')
                                     val2 = $(textid).siblings('input').val();
+                                if (Rtype === 5 || Rtype === 6) {
+                                    if (!val1 || !moment(val1, 'DD-MM-YYYY', true).isValid())
+                                        return;
+                                    if (oper === 'B' && (!val2 || !moment(val2, 'DD-MM-YYYY', true).isValid()))
+                                        return;
+                                }
+
+                                if (oper === 'B') {
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
                                         if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(paracolum, ">=", Math.min(val1, val2)));
@@ -15546,7 +15609,7 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.rowCallBackFunc = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-        //this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
+        this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
         if (this.treeColumn) {
             let elem = aData[this.treeColumn.data].split("&nbsp;").join("").split("&emsp;").join("");
             let treeElem = $(elem);
@@ -15564,7 +15627,7 @@ var EbCommonDataTable = function (Option) {
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm")
+        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm" || this.Source === "popup" || this.Source === "PivotTable")
             this.GenerateButtons();
 
         else if (this.Source === "Calendar") {
@@ -15600,7 +15663,7 @@ var EbCommonDataTable = function (Option) {
             if (this.Source !== "Calendar" || this.EbObject.IsDataFromApi)
                 this.placeFilterInText();
 
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
             if (this.login === "uc") {
                 if (!this.EbObject.DisableCopy)
                     $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
@@ -15629,7 +15692,6 @@ var EbCommonDataTable = function (Option) {
             }
             if (Option.initCompleteCallback)
                 Option.initCompleteCallback();
-
             this.Api.columns.adjust();
         }.bind(this), 0);
     };
@@ -15794,7 +15856,8 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.WebFormlink = function (_refid, _filter, _mode) {
-        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}`;
+        let _locale = ebcontext.languages.getCurrentLocale();
+        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
         window.open(url, '_blank');
 
         //var _form = document.createElement("form");
@@ -15966,28 +16029,28 @@ var EbCommonDataTable = function (Option) {
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 52px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader)
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 62px)", "important");
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 25px)", "important");
             else {
                 if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//multilineonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 59px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//pagingonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 88px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 68px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filteronly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 86px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 66px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//paging & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 104px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 84px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//filter & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filetr & paging
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 112px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 92px)", "important");
                 }
                 else {
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 107px)", "important");//filter && paging & multiline
                 }
             }
             //this.stickBtn.$stickBtn.css("top", "46px");
@@ -16051,7 +16114,7 @@ var EbCommonDataTable = function (Option) {
 
     this.drawCallBackFunc = function (settings) {
         if (this.Source === "EbDataTable") {
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.ImageArray.length > 0) {
                 $("#test12").remove();
                 $("body").append("<div id='test12'></div>");
@@ -16583,10 +16646,8 @@ var EbCommonDataTable = function (Option) {
         }
         else {
             for (let j = 0; j < eb_footer_controls_scrollfoot.length; j++)
-                scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]);
+                scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]); //append or html[solves tv ctrl double footer] fn
         }
-
-
         if (lfoot.length !== 0 || rfoot.length !== 0) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
             if (lfoot.length !== 0) {
@@ -16611,6 +16672,17 @@ var EbCommonDataTable = function (Option) {
             $(lfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
             $(rfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
         }
+        if (this.eb_agginfo.length > 0) {
+            var footer_select_id = this.tableId + "_ftr_sel" + ps;
+            let _ls = "<div class='input-group-btn dropup'>" +
+                "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
+                " <ul class='dropdown-menu'>" +
+                "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
+                "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
+                " </ul>" +
+                " </div>";
+            scrollfoot.find(".addedbyeb th").eq(0).html(_ls);
+        }
         this.summarize2();
     };
 
@@ -16629,12 +16701,7 @@ var EbCommonDataTable = function (Option) {
             var temp = $.grep(this.eb_agginfo, function (agg) { return agg.colname === col.name });
             //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
             if (col.Aggregate || col.AggregateFun === 0 || col.AggregateFun === 1) {
-                var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
-                var fselect_class = this.tableId + "_fselect";
-                var data_colum = "data-column=" + col.name;
-                var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                var data_decip = "data-decip=" + this.Api.settings().init().aoColumns[i].DecimalPlaces;
                 var style = "";
                 if (col.Align.toString() === EbEnums.Align.Left)
                     style = "text-align: left;";
@@ -16643,16 +16710,8 @@ var EbCommonDataTable = function (Option) {
                 else
                     style = "text-align: center;";
 
-                _ls = "<div class='input-group input-group-sm'>" +
-                    "<div class='input-group-btn dropup'>" +
-                    "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
-                    " <ul class='dropdown-menu'>" +
-                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + "> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
-                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
-                    " </ul>" +
-                    " </div>" +
-                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='z-index:" + zidx.toString() + ";" + style + "'>" +
-                    " </div>";
+                //_ls = `<input type='text' class='' id='${footer_txt}' disabled style='z-index:${zidx.toString()};${style}'/>`;
+                _ls = `<div style='z-index:${zidx.toString()};text-align: center;'><p id='${footer_txt}' disabled style='${style} margin: 10px 0;'></p><div>`;
             }
             else
                 _ls = "&nbsp;";
@@ -16668,19 +16727,14 @@ var EbCommonDataTable = function (Option) {
         if (isUpdatable) {
             var api = this.Api;
             var tableId = this.tableId;
-            var scrollY = this.EbObject.scrollY;
-            var opScroll;
-            var ftrtxtScroll;
+            let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_ftr_sel0').text().trim();
+            let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_ftr_sel0').text().trim();
+            let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_ftr_sel0').text().trim();
             $.each(this.eb_agginfo, function (index, agginfo) {
                 if (agginfo.colname) {
-                    opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                    opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                    opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
                     var col = api.column(agginfo.colname + ':name');
                     var summary_val = 0;
@@ -16697,11 +16751,11 @@ var EbCommonDataTable = function (Option) {
                             summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
                     }
                     if (opScroll !== "")
-                        $(ftrtxtScroll).val(summary_val);
+                        $(ftrtxtScroll).text(summary_val);
                     if (opLF !== "")
-                        $(ftrtxtLF).val(summary_val);
+                        $(ftrtxtLF).text(summary_val);
                     if (opRF !== "")
-                        $(ftrtxtRF).val(summary_val);
+                        $(ftrtxtRF).text(summary_val);
                 }
             }.bind(this));
         }
@@ -16923,7 +16977,7 @@ var EbCommonDataTable = function (Option) {
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-        $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
+        $("#" + this.tableId).off("click", ".tablelink4calendar").on("click", ".tablelink4calendar", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
@@ -16957,7 +17011,7 @@ var EbCommonDataTable = function (Option) {
             placement: 'bottom'
         });
         $('.status-time').tooltip({
-            placement: 'top'
+            placement: 'left'
         });
 
         $('.columntooltip').popover({
@@ -16977,7 +17031,7 @@ var EbCommonDataTable = function (Option) {
         $('.btn-approval_popover').popover({
             container: 'body',
             trigger: 'click',
-            placement: this.PopoverPlacement,
+            placement: this.ApprovalPopoverPlacement,
             html: true,
             template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
             content: function (e, i) {
@@ -16992,7 +17046,8 @@ var EbCommonDataTable = function (Option) {
         $('.btn-approval_popover').off('shown.bs.popover').on('shown.bs.popover', function (e) {
             $(".stage_actions").selectpicker();
             let $td = $(e.target).closest("td.tdheight");
-            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
+            $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
         }.bind(this));
 
         $('.btn-approval_popover').on('hidden.bs.popover', function (e) {
@@ -17019,7 +17074,11 @@ var EbCommonDataTable = function (Option) {
             dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
             beforeShow: function (elem, obj) {
                 $(".ui-datepicker").addClass("datecolumn-picker");
-            }
+            },
+            onSelect: function (d, i) {
+                if (d !== i.lastVal)
+                    this.call_filter({ keyCode: 10 });
+            }.bind(this)
         });
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
@@ -17047,66 +17106,83 @@ var EbCommonDataTable = function (Option) {
         }
     };
 
+    this.ApprovalPopoverPlacement = function (context, source) {
+        var position = $(source).offset();
+        let w = $(window).width();
+        if (position.left + 600 > w)
+            return "left";
+        else
+            return "right";
+    };
+
     this.GenerateButtons = function () {
-        this.submitId = "btnGo" + this.tableId;
-        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        if (this.Source === "WebForm") {
-            $("#buttondiv_" + this.tableId).empty();
-            this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
-            $("#buttondiv_" + this.tableId).append(this.$submit);
+        if (this.Source === "PivotTable") {
+            let $print = $("<button id='print" + this.tableId + "' class='btn commonControl print' onclick='window.print();'><i class='fa fa-print' aria-hidden='true'></i></button>");
+            $('print' + this.tableId).remove();
+            $("#obj_icons").append($print);
         }
         else {
-            $(".toolicons").show();
-            let search = $('#obj_icons .toolb-srchbx-wrpr').detach();
-            $('#obj_icons').empty().append(search);
-            $("#obj_icons").append(this.$submit);
-        }
-        this.$submit.click(this.getColumnsSuccess.bind(this));
-
-        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
-            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
-
-        if (this.Source === "EbDataTable") {
-            if (this.EbObject.FormLinks.$values.length > 0) {
-                this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
-                    index === self.findIndex((t) => (
-                        t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
-                    ))
-                );
-                this.CreateNewFormLinks();
+            this.submitId = "btnGo" + this.tableId;
+            this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+            if (this.Source === "WebForm") {
+                $("#buttondiv_" + this.tableId).empty();
+                this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
+                $("#buttondiv_" + this.tableId).append(this.$submit);
             }
-            $("#objname").text(this.EbObject.DisplayName);
-            if ($("#" + this.tableId).children().length > 0) {
-                if (this.FD) {
-                    this.filterid = "filter" + this.tableId;
-                    this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
-                    $("#obj_icons").append(this.$filter);
-                    this.$filter.click(this.CloseParamDiv.bind(this));
-                }
-                if (this.login === "uc") {
-                    $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
-                    $.each(this.permission, function (i, obj) {
-                        if (obj === "Excel")
-                            $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
-                    }.bind(this));
-                    dvcontainerObj.modifyNavigation();
-                }
+            else {
+                $(".toolicons").show();
+                let search = $('#obj_icons .toolb-srchbx-wrpr').detach();
+                $('#obj_icons').empty().append(search);
+                $("#obj_icons").append(this.$submit);
             }
-            this.CreatePgButton();
-            this.excelbtn = $("#btnExcel" + this.tableId);
-        }
-        else {
-            $(".display-none").remove();
-        }
+            this.$submit.click(this.getColumnsSuccess.bind(this));
 
-        if (this.IsTree) {
-            this.CreateContexmenu4Tree();
+            if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
+                $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+
+            if (this.Source === "EbDataTable") {
+                if (this.EbObject.FormLinks.$values.length > 0) {
+                    this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                        index === self.findIndex((t) => (
+                            t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                        ))
+                    );
+                    this.CreateNewFormLinks();
+                }
+                this.CreatePrintDocsLinks();
+                $("#objname").text(this.EbObject.DisplayName);
+                if ($("#" + this.tableId).children().length > 0) {
+                    if (this.FD) {
+                        this.filterid = "filter" + this.tableId;
+                        this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+                        $("#obj_icons").append(this.$filter);
+                        this.$filter.click(this.CloseParamDiv.bind(this));
+                    }
+                    if (this.login === "uc") {
+                        $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
+                        $.each(this.permission, function (i, obj) {
+                            if (obj === "Excel")
+                                $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
+                        }.bind(this));
+                        dvcontainerObj.modifyNavigation();
+                    }
+                }
+                //this.CreatePgButton();
+                this.excelbtn = $("#btnExcel" + this.tableId);
+            }
+            else {
+                $(".display-none").remove();
+            }
+
+            if (this.IsTree) {
+                this.CreateContexmenu4Tree();
+            }
+            if (this.isSecondTime) {
+                this.addFilterEventListeners();
+            }
+            $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
+            this.Contexmenu4SmsColumn();
         }
-        if (this.isSecondTime) {
-            this.addFilterEventListeners();
-        }
-        $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
-        this.Contexmenu4SmsColumn();
     };
 
     this.CreatePgButton = function () {
@@ -17399,18 +17475,24 @@ var EbCommonDataTable = function (Option) {
         }
     };
 
-    this.CalendarLinkClick = function (key, opt, event) {
+    this.CalendarLinkClick = function (key, idx, event) {
         let MapObj = this.ObjectLinks.filter(obj => obj.ObjName === key)[0];
-        var idx = this.Api.row(opt.$trigger.parent().parent()).index();
-        let rowdata = window.atob(opt.$trigger.children("span").attr("hidden-row")).split(",");
-        var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
-        if (MapObj.FormMode === 1) {
-            if (filter[0].Value === "") {
-                MapObj.FormMode = 2;
-                filter = [];
-            }
+        let rowdata;
+        if (event !== undefined) {
+            // var idx = this.Api.row(opt.$trigger.parent().parent()).index();
+            rowdata = window.atob(idx.$trigger.children("span").attr("hidden-row")).split(",");
+        }
+        else {
+            rowdata = this.unformatedData[idx];
         }
         if (MapObj.ObjRefId.split("-")[2] === "0") {
+            var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
+            if (MapObj.FormMode === 1) {
+                if (filter[0].Value === "") {
+                    MapObj.FormMode = 2;
+                    filter = [];
+                }
+            }
             if (parseInt(EbEnums.LinkTypeEnum.Popout) === MapObj.LinkType) {
                 this.WebFormlink(MapObj.ObjRefId, btoa(unescape(encodeURIComponent(JSON.stringify(filter)))), MapObj.FormMode);
             }
@@ -17456,10 +17538,78 @@ var EbCommonDataTable = function (Option) {
                         <ul class="drp_ul"></ul>
                     </div>
                     </div>`);
+        let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale() : 0;
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}`;
+            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
+    };
+
+    this.CreatePrintDocsLinks = function () {
+        if (this.EbObject.PrintDocs && this.EbObject.PrintDocs.$values.length > 0) {
+            $("#obj_icons").append(`<div class="dropdown" style="display:inline-block;" id="PrintDocsdd${this.tableId}">
+                    <button class="btn" type="button" id="PrintDocsButton${this.tableId}" data-toggle="dropdown" title='Print'>
+                        <i class="fa fa-print" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu newform-menu">
+                        <ul class="drp_ul"></ul>
+                    </div>
+                    </div>`);
+
+            $.each(this.EbObject.PrintDocs.$values, function (i, obj) {
+                let tle = obj.Title || obj.ObjDisplayName;
+                $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" data-params="${obj.UseParams}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
+            }.bind(this));
+
+            $(`#PrintDocsdd${this.tableId}`).off(".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
+        }
+    };
+
+    this.printDocument = function (e) {
+        if (!ebcontext.webform) {
+            ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
+        }
+
+        let rptRefid = $(e.currentTarget).attr('data-token');
+        let useParams = $(e.currentTarget).attr('data-params');
+
+        if (useParams == 'true') {
+            let params = btoa(JSON.stringify(this.filterValues));
+            let url = "/ReportRender/Renderlink?refid=" + rptRefid + "&_params=" + params;
+            ebcontext.webform.showLoader();
+            $("#iFramePdf4dv").attr("src", url);
+            return;
+        }
+
+        let rowIds = [];
+        let chkdInps = $(`input[name=${this.tableId}_id]:checked`);
+
+        if (chkdInps && chkdInps.length > 0) {
+            $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
+            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit Downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
+            ebcontext.webform.showLoader();
+
+            for (let i = 0; i < chkdInps.length; i++) {
+                rowIds.push($(chkdInps[i]).val());
+            }
+            let SubscriptionId = window.ebcontext.subscription_id;
+            this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
+            this.ss.onPdfDownloadSuccess = function (url) {
+                $("#iFramePdf4dv").attr("src", url);
+                $(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
+                event.stopPropagation();
+            }.bind(this);
+
+
+            $.ajax({
+                type: "GET",
+                url: "/WebForm/GetPdfReportMulti?refId=" + rptRefid + "&rowId=" + rowIds.join(',') + "&_sub=" + SubscriptionId
+            });
+
+        }
+        else {
+            alert('Nothing selected');
+        }
     };
 
     this.FormNewGroup = function (key, opt, event) {
@@ -17765,13 +17915,18 @@ var EbCommonDataTable = function (Option) {
                 return false;
             },
             select: function (event, ui) {
-                var terms = splitval(this.value);
+                let inp = event.target;
+                var terms = splitval($(inp).val());
                 terms.pop();
                 terms.push(ui.item.value);
                 terms.push("");
-                this.value = terms.join(" | ");
+                $(inp).val(terms.join(" | "));
+                if (!this.EbObject.DisableAutoSearch) {
+                    var e = $.Event("keyup", { which: 13, keyCode: 13, target: inp });
+                    $(inp).trigger(e);
+                }
                 return false;
-            },
+            }.bind(this),
             search: function (event, ui) {
             }
         });
@@ -17954,7 +18109,7 @@ var EbCommonDataTable = function (Option) {
             " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> B </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Between</span></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' placeholder='" + this.datePattern + "' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' placeholder='&#xf073;' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -18038,12 +18193,16 @@ var EbCommonDataTable = function (Option) {
         if (selText.trim() === 'B') {
             if ($(elemnt).parents('.input-group').find("input").length == 1) {
                 if (ctype === "date") {
-                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='" + this.datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='&#xf073;' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
                         dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {
                             $(".ui-datepicker").addClass("datecolumn-picker");
-                        }
+                        },
+                        onSelect: function (d, i) {
+                            if (d !== i.lastVal)
+                                this.call_filter({ keyCode: 10 });
+                        }.bind(this)
                     });
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("click", function () {
                         $(this).datepicker("show");
@@ -18063,6 +18222,7 @@ var EbCommonDataTable = function (Option) {
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
             }
         }
+
         this.Api.columns.adjust();
         e.preventDefault();
     };
@@ -18092,25 +18252,44 @@ var EbCommonDataTable = function (Option) {
                 else
                     $(e.target).css("border-color", "#ccc");
             }
+            if ($(e.target).data('ui-autocomplete') != undefined)
+                $(e.target).autocomplete('close');
 
             if (flag) {
-                this.columnSearch = this.repopulate_filter_arr();
-                $('#' + this.tableId).DataTable().ajax.reload();
-                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+                this.reloadDataTable();
             }
         }
-        else {
+        else if (!this.EbObject.DisableAutoSearch) {
             $("[data-coltyp=date]").datepicker("hide");
-            this.columnSearch = this.repopulate_filter_arr();
             if (typeof (e.key) === "undefined") {
-                $('#' + this.tableId).DataTable().ajax.reload();
-                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+                this.reloadDataTable();
+            }
+            else {
+                let nam = $(e.target).attr('data-colum');
+                let obj = this.columnSearch.find(e => e.Column === nam);
+                if ((obj && obj.Value != $(e.target).val().trim()) || !obj) {
+                    clearTimeout(this.realoadDtTimer);
+                    this.realoadDtTimer = setTimeout(function (e) {
+                        let ac = $(e.target).data('ui-autocomplete');
+                        if ((ac && $(ac.menu.activeMenu[0]).is(':visible')) || !ac)
+                            return;
+                        this.reloadDataTable(e);
+                    }.bind(this, e), 1500);
+                }
             }
         }
 
     }.bind(this);
+
+    this.reloadDataTable = function (e) {
+        let filter = this.repopulate_filter_arr();
+        if (JSON.stringify(filter) != JSON.stringify(this.columnSearch)) {
+            this.columnSearch = filter;
+            $('#' + this.tableId).DataTable().ajax.reload();
+            if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+                $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+        }
+    };
 
     this.dblclickDateColumn = function () {
         this.type = "text";
@@ -18173,36 +18352,33 @@ var EbCommonDataTable = function (Option) {
 
     this.fselect_func = function (e) {
         let element = ($(e.target).is("a")) ? $(e.target) : $(e.target).siblings("a");
-        var selValue = $(element).text().trim();
-        $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
-        var table = $(element).attr('data-table');
-        var colum = $(element).attr('data-column');
-        var decip = parseInt($(element).attr('data-decip'));
-        var col = this.Api.column(colum + ':name');
-        var ftrtxt;
-        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; })[0];
-        ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
-        if ($(ftrtxt).length === 0)
-            ftrtxt = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
-        if ($(ftrtxt).length === 0)
-            ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
+        var opScroll = $(element).text().trim();
+        $(element).parents('.input-group-btn').find('.dropdown-toggle').html(opScroll);
+        $.each(this.eb_agginfo, function (index, agginfo) {
+            if (agginfo.colname) {
+                ftrtxtScroll = '.dataTables_scrollFootInner #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
+                ftrtxtLF = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
+                ftrtxtRF = '.DTFC_RightFootWrapper #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-        if (selValue === '∑') {
-            if (this.Source === "datagrid")
-                pageTotal = col.data().sum().toFixed(agginfo.deci_val);
-            else
-                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
-        }
-        else if (selValue === 'x̄') {
-            if (this.Source === "datagrid")
-                pageTotal = col.data().average().toFixed(agginfo.deci_val);
-            else
-                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
-        }
-
-        $(ftrtxt).val(pageTotal);
+                var col = this.Api.column(agginfo.colname + ':name');
+                var summary_val = 0;
+                if (opScroll === '∑') {
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().sum().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+                }
+                if (opScroll === 'x̄') {
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().average().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                }
+                if (opScroll !== "")
+                    $(ftrtxtScroll).text(summary_val);
+            }
+        }.bind(this));
         e.preventDefault();
-        //e.stopPropagation();
     };
 
     this.clickAlSlct = function (e) {
@@ -18282,8 +18458,58 @@ var EbCommonDataTable = function (Option) {
         this.Api.columns.adjust();
     };
 
-    this.linkFromCalendar = function () {
+    this.linkFromCalendar = function (e) {
+        this.popup = true;
+        var rows = this.Api.rows(idx).nodes();
+        this.linkDV = this.ObjectLinks[0].ObjRefId; //$(e.target).closest("a").attr("data-link");
+        colindex = parseInt($(e.target).closest("a").attr("idx"));
+        var idx = this.Api.row($(e.target).parents().closest("td")).index();
+        let col = this.columns[colindex];
 
+        if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm) {
+            $(".tableviewpopupmodal").remove();
+            $("body").append(`
+            <div class="modal fade tableviewpopupmodal" id="popupmodalContainer${this.tableId}" role="dialog" >
+                <div class="modal-dialog" style="width: 95%; height: 95%;">
+                    <div class="modal-content" style="height: 100%; overflow-y: auto;">
+                        <div class="modal-header">
+                                <div id ="popupheader${this.tableId}">
+                                     <button type="button" class="close" data-dismiss="modal">&times;</button> 
+                                </div>                           
+                        </div>
+                            <div id="tblpopup"></div>
+                        <div class="modal-body"> <div id='content_popupmodal${this.tableId}'><table class='table display table-bordered compact' id="popupmodal${this.tableId}"></table></div></div>
+                    </div>
+                </div>
+            </div>
+            `);
+
+            $(`#popupmodalContainer${this.tableId}`).modal('show');
+            $(`#tblpopup`).EbLoader("show", { maskItem: { Id: "body" } });
+            if (typeof (idx) !== "undefined")
+                this.rowData = this.unformatedData[idx];
+            else {//incomplete...
+                this.rowData = [];
+            }
+            this.filterValues = this.getFilterValues();
+            let rowfilter = this.getfilterFromRowdata().find(ele => ele.Name === "id");
+            this.filterValues[this.filterValues.findIndex(ele => ele.Name === "id")].Value = rowfilter.Value;
+            this.filterValues[0].Value = col.StartDT;
+            this.filterValues[1].Value = col.EndDT;
+            let source = "Calendar";
+
+            this.call2newDv(rows, idx, colindex, source);
+        }
+        else {
+            this.filterValuesforForm = this.getfilterFromRowdata();
+            CallWebFormCollectionRender({
+                _source: 'tv',
+                _refId: this.linkDV,
+                _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
+                _mode: 1,
+                _locId: ebcontext.locations.CurrentLoc
+            });
+        }
     };
 
     this.link2NewTable = function (e) {
@@ -18315,7 +18541,7 @@ var EbCommonDataTable = function (Option) {
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
         this.linkDVColumn = $(e.target).closest("a").attr("data-column");
-        var idx = this.Api.row($(e.target).parents().closest("td")).index();
+        var idx = this.Api.row($(e.target).closest("tr")).index();
         if (typeof (idx) !== "undefined")
             this.rowData = this.unformatedData[idx];
         else {//incomplete...
@@ -18365,7 +18591,7 @@ var EbCommonDataTable = function (Option) {
                 _source: 'tv',
                 _refId: this.linkDV,
                 _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
-                _mode: 1,
+                _mode: this.dvformMode,
                 _locId: ebcontext.locations.CurrentLoc
             });
             //$("#iFrameFormPopupModal").modal("show");
@@ -18394,7 +18620,7 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.drawInlinedv = function (rows, e, idx, colindex) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-caret-up").addClass("fa-caret-down");
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
@@ -18412,12 +18638,41 @@ var EbCommonDataTable = function (Option) {
         this.Api.columns.adjust();
     };
 
-    this.ExecuteApproval = function ($td, e) {
-        $("#eb_common_loader").EbLoader("show");
-        $('.btn-approval_popover').popover('hide');
-        let val = $(e.target).closest("#action").find(".selectpicker").val();
-        val = JSON.parse(atob(val));
-        let comments = $(e.target).closest("#action").find(".comment-text").val();
+    this.ExecuteApproval = function ($td, action, e) {
+        //$("#eb_common_loader").EbLoader("show");
+        if ($(e.target).attr('action-clicked') == 'true') {// to avoid multi click
+            console.warn('multi click blocked');
+            return;
+        }
+        $(e.target).attr('action-clicked', 'true');
+        let val, comments;
+        if (action === 'reset') {
+            comments = $(e.target).closest("#resetstage").find(".comment-text").val();
+            if (!comments.trim()) {
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
+                return;
+            }
+            val = $(e.target).attr("data-json");
+            val = JSON.parse(atob(val));
+        }
+        else {
+            comments = $(e.target).closest("#action").find(".comment-text").val();
+            let req = $(e.target).closest("#action").find(".selectpicker :selected").attr('req');
+            if (!comments.trim() && req === 'y') {
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
+                return;
+            }
+            val = $(e.target).closest("#action").find(".selectpicker").val();
+            val = JSON.parse(atob(val));
+        }
+        if ($td.find('.btn-approval_popover:visible').length === 0)
+            return;
+        $td.find('.btn-approval_popover').popover('hide');
+        $td.find('.btn-approval_popover').popover('destroy');
+        $td.find('.btn-approval_popover i').removeClass('fa-history').removeClass('fa-pencil').addClass('fa-spinner fa-pulse');
+
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
@@ -18428,21 +18683,55 @@ var EbCommonDataTable = function (Option) {
             url: "../dv/PostWebformData",
             data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: ebcontext.locations.CurrentLoc },
             success: this.cccccc.bind(this, $td),
-            error: function (xhr, error) {
+            error: function ($td, xhr, error) {
                 console.log(xhr); console.log(error);
                 console.debug(xhr); console.debug(error);
-
-            },
+                this.cccccc.bind(this, $td, { messaage: 'Something went wrong ### error' })();
+            }.bind(this, $td),
         });
     };
 
     this.cccccc = function ($td, resp) {
-        $td.html(resp._data);
-        if ($td.find(".status-label").text() === "Review Completed")
-            EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
-        var cell = this.Api.cell($td);
-        cell.data($td.html()).draw();
-        $("#eb_common_loader").EbLoader("hide");
+        if (!(resp._data)) {
+            let msg = resp.messaage;
+            console.error(msg);
+            $td.find('.btn-approval_popover').attr('title', msg.includes(' ### ') ? msg.split(' ### ')[0] : msg);
+            $td.find('.btn-approval_popover i').removeClass('fa-spinner fa-pulse').addClass('fa-exclamation-circle').attr('style', 'color: red !important;');
+            //return;
+        }
+        else {
+            $td.html(resp._data);
+            //if ($td.find(".status-label").text() === "Review Completed")
+            //    EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
+            var cell = this.Api.cell($td);
+            cell.data($td.html());
+        }
+
+        let $popoverBtn = $td.find('.btn-approval_popover');
+
+        $popoverBtn.popover({
+            container: 'body',
+            trigger: 'click',
+            placement: this.ApprovalPopoverPlacement,
+            html: true,
+            template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
+            },
+        });
+
+        $popoverBtn.off('shown.bs.popover').on('shown.bs.popover', function (e) {
+            $(".stage_actions").selectpicker();
+            let $td = $(e.target).closest("td.tdheight");
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
+            $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
+        }.bind(this));
+
+        $popoverBtn.off('hidden.bs.popover').on('hidden.bs.popover', function (e) {
+            $(e.target).data("bs.popover").inState.click = false;
+        }.bind(this));
+
+        //$("#eb_common_loader").EbLoader("hide");
     };
 
     this.getRowGroupFilter = function ($elem) {
@@ -18454,86 +18743,121 @@ var EbCommonDataTable = function (Option) {
         this.rowgroupFilter.push(new fltr_obj(type, name, val));
     };
 
-    this.call2newDv = function (rows, idx, colindex) {
+    this.call2newDv = function (rows, idx, colindex, source) {
         $.ajax({
             type: "POST",
             url: "../DV/getdv",
             data: { refid: this.linkDV },
-            success: this.GetData4InlineDv.bind(this, rows, idx, colindex),
+            success: this.GetData4InlineDv.bind(this, rows, idx, colindex, source),
             error: function (req, status, xhr) {
             }
         });
     };
 
-    this.GetData4InlineDv = function (rows, idx, colindex, result) {
+    this.GetData4InlineDv = function (rows, idx, colindex, source, result) {
         var Dvobj = JSON.parse(result).DsObj;
-        var param = this.Params4InlineTable(Dvobj, idx);
+        var param = this.Params4InlineTable(Dvobj, idx, source);
         $.ajax({
             type: "POST",
             url: "../DV/getData",
             data: param,
-            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex),
+            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex, source),
             error: function (req, status, xhr) {
             }
         });
     };
 
-    this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
-        let colspan = Dvobj.Columns.$values.length;
-        let str = "";
-        $.each(this.rowgroupCols, function (k, obj) {
-            str += "<td>&nbsp;</td>";
-        });
-        $.each(this.extraCol, function (k, obj) {
-            if (obj.bVisible)
-                str += "<td>&nbsp;</td>";
-        });
+    this.LoadInlineDv = function (rows, idx, Dvobj, colindex, source, result) {
+        if (this.popup) {
+            $("#popupheader" + this.tableId).append(`
+               <div class="popup-header-name">
+                    ${Dvobj.DisplayName}
+               </div>
+               <div>
+                   Range :  ${moment(new Date(this.filterValues[0].Value)).format('DD-MMM-YYYY') + " - " + moment(new Date(this.filterValues[1].Value)).format('DD-MMM-YYYY')}
+               </div>
+            `);
 
-        $(rows).eq(idx).next(".containerrow").remove();
-        if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
-
-            var o = new Object();
-            o.tableId = "tbl" + idx;
-            o.showFilterRow = false;
-            o.showSerialColumn = true;
-            o.showCheckboxColumn = false;
-            o.Source = "inline";
-            o.scrollHeight = "200px";
-            o.dvObject = Dvobj;
-            o.data = result;
-            o.keys = false;
-            o.IsPaging = false;
-            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
-            this.datatable = new EbCommonDataTable(o);
-            if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
-                $(".inlinetable").css("width", $(window).width() - 115);
-            else
-                $(".inlinetable").css("width", $(window).width() - 175);
-            this.datatable.Api.columns.adjust();
+            this.RenderTableviewAsPopup(Dvobj, result);
         }
         else {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
-            o = new Object();
-            o.tableId = "chart" + idx;
-            o.dvObject = Dvobj;
-            o.data = result.data;
-            this.chartApi = new EbBasicChart(o);
-            $(".inlinetable").css("height", "380px");
-            $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
-            $("#canvasDivchart" + idx).css("height", "inherit");
-        }
-        $(".containerrow .close").off("click").on("click", function (e) {
-            $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
-            $(e.target).parents().closest(".containerrow").remove();
-            this.Api.columns.adjust();
-        }.bind(this));
+            let colspan = Dvobj.Columns.$values.length;
+            let str = "";
+            $.each(this.rowgroupCols, function (k, obj) {
+                str += "<td>&nbsp;</td>";
+            });
+            $.each(this.extraCol, function (k, obj) {
+                if (obj.bVisible)
+                    str += "<td>&nbsp;</td>";
+            });
 
-        $("#eb_common_loader").EbLoader("hide");
+            $(rows).eq(idx).next(".containerrow").remove();
+            if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+                $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
+
+                var o = new Object();
+                o.tableId = "tbl" + idx;
+                o.showFilterRow = false;
+                o.showSerialColumn = true;
+                o.showCheckboxColumn = false;
+                o.Source = "inline";
+                o.scrollHeight = "200px";
+                o.dvObject = Dvobj;
+                o.data = result;
+                o.keys = false;
+                o.IsPaging = false;
+                o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+                this.datatable = new EbCommonDataTable(o);
+                if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
+                    $(".inlinetable").css("width", $(window).width() - 115);
+                else
+                    $(".inlinetable").css("width", $(window).width() - 175);
+                this.datatable.Api.columns.adjust();
+            }
+            else {
+                $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
+                o = new Object();
+                o.tableId = "chart" + idx;
+                o.dvObject = Dvobj;
+                o.data = result.data;
+                this.chartApi = new EbBasicChart(o);
+                $(".inlinetable").css("height", "380px");
+                $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
+                $("#canvasDivchart" + idx).css("height", "inherit");
+            }
+            $(".containerrow .close").off("click").on("click", function (e) {
+                $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+                $(e.target).parents().closest(".containerrow").remove();
+                this.Api.columns.adjust();
+            }.bind(this));
+        }
+        if (source === "Calendar")
+            $("#tblpopup").EbLoader("hide");
+        else
+            this.hideEbLoader();
+
         this.Api.columns.adjust();
     };
 
-    this.Params4InlineTable = function (Dvobj, idx) {
+    this.RenderTableviewAsPopup = function (Dvobj, result) {
+        var o = new Object();
+        o.tableId = `popupmodal${this.tableId}`;
+        o.showFilterRow = false;
+        o.showSerialColumn = true;
+        o.showCheckboxColumn = false;
+        o.Source = "popup";
+        //o.scrollHeight = "200px";
+        o.dvObject = Dvobj;
+        o.data = result;
+        o.keys = false;
+        o.IsPaging = false;
+        o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+        this.datatable = new EbCommonDataTable(o);
+        this.popup = false;
+        this.datatable.Api.columns.adjust();
+    };
+
+    this.Params4InlineTable = function (Dvobj, idx, source) {
         var dq = new Object();
         dq.RefId = Dvobj.DataSourceRefId;
         dq.TFilters = [];
@@ -18541,10 +18865,14 @@ var EbCommonDataTable = function (Option) {
         dq.Start = 0;
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
-        dq.TableId = "tbl" + idx;
+        if (source === "Calendar")
+            dq.TableId = `popupmodal${this.tableId}`;
+        else
+            dq.TableId = "tbl" + idx;
         if (Dvobj.RowGroupCollection.$values.length > 0)
             dq.CurrentRowGroup = JSON.stringify(Dvobj.RowGroupCollection.$values[0]);
         dq.OrderBy = this.getOrderByInfoforInline(Dvobj);
+        dq.Source = source;
         return dq;
     };
 
@@ -18602,6 +18930,7 @@ var EbCommonDataTable = function (Option) {
 
     this.ExportToExcel = function (e) {
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
         this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
 
@@ -18678,9 +19007,9 @@ var EbCommonDataTable = function (Option) {
                     this.EbObject.Columns.$values[i].className += " tdheight dt-right";
             }
             else if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
-                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "sys_cancelled") {
-                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
-                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "eb_lock") {
+                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "eb_lock") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "eb_lock") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 }
                 else {
                     if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
@@ -18768,11 +19097,11 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === 'true' || data === true || data === 'T') ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {
-        return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
+        return (data === 'true' || data === true || data === 'T') ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
     };
 
     this.renderlink4NewTable = function (data, type, row, meta) {
@@ -18796,10 +19125,12 @@ var EbCommonDataTable = function (Option) {
                 $(nRow).css('background-color', '#' + t);
             }
 
-            if (value.name === 'sys_cancelled') {
+            if (value.name === 'eb_void') {
                 var tr = aData[value.data];
-                if (tr === true)
-                    $(nRow).css('color', '#f00');
+                if (tr === 'true' || tr === true || tr === 'T') {
+                    $(nRow).css('color', '#ab0000');
+                    $(nRow).attr('eb-void', 'T');
+                }
             }
         });
     };
@@ -18972,6 +19303,17 @@ var EbCommonDataTable = function (Option) {
 
         return gradient[val];
     };
+
+    this.showEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("show");
+    };
+
+    this.hideEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("hide");
+    };
+
     if (this.Source === "EbDataTable" || this.Source === "PivotTable")
         this.start4EbDataTable();
     else
@@ -29701,8 +30043,8 @@ var EbBasicChart = function (Option) {
                             filesrc = obj.FileB64;
                         }
                         else {
-                             filethumbnail = `/images/small/${obj.FileRefId}.jpg`;
-                             filesrc = `/images/${obj.FileRefId}.jpg`;
+                            filethumbnail = `/images/small/${obj.FileRefId}.jpg`;
+                            filesrc = `/images/${obj.FileRefId}.jpg`;
                         }
 
 
@@ -29725,7 +30067,7 @@ var EbBasicChart = function (Option) {
             }
             else {
                 ////commented because in fup control incase of single image after delete it shows this dailoguebox
-               // EbMessage("show", { Message: "No image found", Background: 'red' });
+                // EbMessage("show", { Message: "No image found", Background: 'red' });
             }
         }
 
@@ -29755,15 +30097,16 @@ var EbBasicChart = function (Option) {
                     if (exten == 'pdf') {
 
                         let html = $(`<div id='ebfileview_ContDiv' class='eb_fileview-Cont' style=''>
-                                    <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i>
-                                    </button>
+                                    <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i></button>
+                                    <button id='' class="btn resize-ebfileview_Cont" style=''><i class="fa fa-long-arrow-right"></i></button> 
                                     </div>`);
                         //$("body").append(` <iframe id="display_file" src="${src}.${exten}" frameborder="0" style=" bottom: 0;direction: ltr; font-size: 0; left: 0; line-height: 0;  overflow: hidden;position: absolute;right: 0;"></iframe>`);
                         html.append(`<div id='ebfileview_Iframe-Cont' class='eb_iframe-Cont' style=" ">
                                     <iframe id='ebfileview_Iframe' class='ebfileview_Iframe' src="${url}" class='' style=''></iframe>
                                     </div>`);
                         $("body").append(html[0]);
-                        $('.close-ebfileview_Cont').on('click', this.CloseFileviewFn.bind(this));
+                        $('.close-ebfileview_Cont').off('click').on('click', this.CloseFileviewFn.bind(this));
+                        $('.resize-ebfileview_Cont').off('click').on('click', this.ResizeFileviewFn.bind(this));
                         console.log("need pdf viewer");
                     }
                     else {
@@ -29803,6 +30146,28 @@ var EbBasicChart = function (Option) {
                 target.remove();
             }
         }
+
+        this.ResizeFileviewFn = function (e) {
+            let $c = $("#ebfileview_ContDiv");
+            let $i = $(e.currentTarget).find('i');
+            $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
+            if ($c[0].style.width === '50%') {
+                if ($c[0].style.left === '50%') {
+                    $c.css('left', '0');
+                    $i.addClass('fa-arrows-h');
+                }
+                else {
+                    $c.css('width', '100%').css('left', '0');
+                    $i.addClass('fa-long-arrow-right');
+                }
+            }
+            else {
+                $c.css('width', '50%').css('left', '50%');
+                $i.addClass('fa-long-arrow-left');
+            }
+
+        }
+
         this.addToImagelist = function (file) {
             if (file.hasOwnProperty('Recent')) {
                 if (file.FileCategory == 1) {
@@ -30158,7 +30523,7 @@ var EbBasicChart = function (Option) {
         zoomed: null
     };
 
-    var TEMPLATE = '<div class="viewer-container" touch-action="none">' + '<div class="viewer-canvas"></div>' + '<div class="viewer-footer">' + '<div class="viewer-title"></div>' + '<div class="viewer-toolbar"></div>' + '<div class="viewer-navbar">' + '<ul class="viewer-list"></ul>' + '</div>' + '</div>' + '<div class="viewer-tooltip"></div>' + '<div role="button" class="viewer-button" data-viewer-action="mix"></div>' + '<div class="viewer-player"></div>' + '</div>';
+    var TEMPLATE = '<div class="viewer-container" touch-action="none">' + '<div class="viewer-canvas"></div>' + '<div class="viewer-footer">' + '<div class="viewer-title"></div>' + '<div class="viewer-toolbar"></div>' + '<div class="viewer-navbar">' + '<ul class="viewer-list"></ul>' + '</div>' + '</div>' + '<div class="viewer-tooltip"></div>' + '<div role="button" class="viewer-button" data-viewer-action="mix"></div>' + '<div class="viewer-eb-button"><i class="fa fa-long-arrow-right"></i></div>' + '<div class="viewer-player"></div>' + '</div>';
 
     var IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
     var WINDOW = IS_BROWSER ? window : {};
@@ -30844,7 +31209,7 @@ var EbBasicChart = function (Option) {
         },
         initContainer: function initContainer() {
             this.containerData = {
-                width: window.innerWidth,
+                width: this.eb_half_width ? (window.innerWidth / 2) : window.innerWidth,
                 height: window.innerHeight
             };
         },
@@ -30928,16 +31293,16 @@ var EbBasicChart = function (Option) {
 
                     _this.loadImage(event);
                 }, {
-                        once: true
-                    });
+                    once: true
+                });
             });
 
             if (options.transition) {
                 addListener(element, EVENT_VIEWED, function () {
                     addClass(list, CLASS_TRANSITION);
                 }, {
-                        once: true
-                    });
+                    once: true
+                });
             }
         },
         renderList: function renderList(index) {
@@ -31094,6 +31459,31 @@ var EbBasicChart = function (Option) {
             if (options.toggleOnDblclick) {
                 addListener(canvas, EVENT_DBLCLICK, this.onDblclick = this.dblclick.bind(this));
             }
+
+            //eb_edited
+            $(viewer).off('click', '.viewer-eb-button').on('click', '.viewer-eb-button', function (e) {
+                let $v = $(this.viewer);
+                let $i = $(e.currentTarget).find('i');
+                $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
+                if (this.viewer.style.width === '50%') {
+                    if (this.viewer.style.left === '50%') {
+                        $v.css('left', '0');
+                        $i.addClass('fa-arrows-h');
+                    }
+                    else {
+                        $v.css('width', '100%').css('left', '0');
+                        $i.addClass('fa-long-arrow-right');
+                        this.eb_half_width = false;
+                        this.resize();
+                    }
+                }
+                else {
+                    $v.css('width', '50%').css('left', '50%');
+                    $i.addClass('fa-long-arrow-left');
+                    this.eb_half_width = true;
+                    this.resize();
+                }
+            }.bind(this));
         },
         unbind: function unbind() {
             var options = this.options,
@@ -31146,7 +31536,7 @@ var EbBasicChart = function (Option) {
                         this.hide();
                         imgdivremove();
                         this.infono = 1;
-                       // $(".viewer-container").remove();
+                        // $(".viewer-container").remove();
                     }
 
                     break;
@@ -31155,7 +31545,7 @@ var EbBasicChart = function (Option) {
                     this.hide();
                     imgdivremove();
                     this.infono = 1;
-                   // $(".viewer-container").remove();
+                    // $(".viewer-container").remove();
                     break;
 
                 case 'view':
@@ -31335,7 +31725,7 @@ var EbBasicChart = function (Option) {
                     } else {
                         this.hide();
                         imgdivremove();
-                       // $(".viewer-container").remove();
+                        // $(".viewer-container").remove();
                     }
 
                     break;
@@ -32169,7 +32559,7 @@ var EbBasicChart = function (Option) {
                 var image = document.createElement('img');
                 image.src = getData(img, 'originalUrl');
                 image.alt = img.getAttribute('alt');
-             //   image.dtls = img.getAttribute('dtls');
+                //   image.dtls = img.getAttribute('dtls');
                 total += 1;
                 addClass(image, CLASS_FADE);
                 toggleClass(image, CLASS_TRANSITION, options.transition);
@@ -32361,8 +32751,8 @@ var EbBasicChart = function (Option) {
                         removeClass(tooltipBox, CLASS_TRANSITION);
                         _this7.fading = false;
                     }, {
-                            once: true
-                        });
+                        once: true
+                    });
                     removeClass(tooltipBox, CLASS_IN);
                     _this7.fading = true;
                 } else {
@@ -32402,7 +32792,7 @@ var EbBasicChart = function (Option) {
                 let indx = this.index;
                 var obj = this.$images[indx];
                 if (!(Object.keys(obj).length == 0)) {
-                    
+
                     var ky = "";
                     $(".viewer-footer").prepend(`<div class='imgDetail'></div>`);
                     Object.entries(obj).forEach(([key, value]) => {
@@ -32784,8 +33174,8 @@ var EbBasicChart = function (Option) {
                     this.isImg = isImg;
                     this.length = images.length;
                     this.images = images;
-// this.$images - to store .data(), ie meta from ebfileviewerplugin to use in info click
-                    this.$images=$imgarr;
+                    // this.$images - to store .data(), ie meta from ebfileviewerplugin to use in info click
+                    this.$images = $imgarr;
                     var ownerDocument = element.ownerDocument;
                     var body = ownerDocument.body || ownerDocument.documentElement;
                     this.body = body;

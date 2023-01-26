@@ -927,4 +927,14 @@
 .GroupHeader_sub {
     background: #eaf8fd;
 }
+.eb_report_datatable_container {
+    width: 300px;
+    position: absolute;
+    height: 25px;
+    background-color: #eee;
+}
+.eb_report_datatable_container .name{
+    margin-left:5px;
+}
+
 /*report style 2 end******************/

@@ -98,6 +98,10 @@
         $("#" + obj.EbSid).not(".locked").off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
 
+    this.getType = function (assembly) {
+        return assembly.split(",")[0].split(".")[2];
+    };
+
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
             $("#get-col-loader").show();
@@ -822,10 +826,10 @@
 
     this.init = function () {
         this.GenerateButtons();
-        if (this.EbObject === null || this.EbObject === "undefined")
-            this.newReport();
-        else
+        if (this.EbObject)
             this.editReport();
+        else
+            this.newReport();
         this.RbCommon.drawLocConfig();
         this.RM = new ReportMenu(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));

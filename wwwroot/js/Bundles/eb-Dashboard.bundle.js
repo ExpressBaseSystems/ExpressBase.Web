@@ -83,7 +83,7 @@ var DashBoardWrapper = function (options) {
     this.Version = options.Version;
     this.ObjType = options.ObjType;
     this.EbObject = options.dvObj;
-    this.Statu = options.Statu
+    this.Statu = options.Statu;
     this.TabNum = options.TabNum;
     this.ServiceUrl = options.ServiceUrl;
     this.Wc = options.Wc;
@@ -132,7 +132,7 @@ var DashBoardWrapper = function (options) {
         //$('.grid-stack').on('dragstart', this.DragStartFn.bind(this));
         //$('.grid-stack').on('dragstop', this.DragStopFn.bind(this));
         //$('.grid-stack').gridstack();
-        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
+        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40, float: true });
         grid.on('gsresizestop', this.Redrawfn.bind(this));
         grid.on('dragstart', this.DragStartFn.bind(this));
         grid.on('dragstop', this.DragStopFn.bind(this));
@@ -633,14 +633,48 @@ var DashBoardWrapper = function (options) {
         </div></div>`;
         }
         else if (obj.LabelStyle == 3) {
-            a = `<div class="display-block label4-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
-        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
-        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div><div class='lb4-data'>
-        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
-        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
-        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
-        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
-        </div></div></div>`;
+            a = `<div class="row display-block datalabel4 eb-full-width" id="${obj.EbSid}" eb-type="DataLabel">
+            <div class="col-lg-4 col-sm-4 col-md-4 eb-full-height eb-nopadding icon-pane">
+            <div class="icon4 eb-full-height" id="${obj.EbSid}_icon"><i></i></div></div>
+            <div class="col-lg-8 col-sm-8 col-md-8 eb-full-height body-pane">
+                <div class="card" id="${obj.EbSid}_Data_pane" style="width: 100%;">
+                    <h5 class="card-header lbl" id="${obj.EbSid}_static"> ${obj.StaticLabel} </h5>
+                    <div class="card-body">
+<p class="card-text" id="${obj.EbSid}_description lbl"></p>
+<p class="card-text" id="${obj.EbSid}_dynamic lbl">${obj.DynamicLabel}</p>
+                    </div>
+                <div class="card-footer text-muted" id="${obj.EbSid}_footer">
+                <div class="row">
+<div class="col-sm-3"><i class="fa fa-address-book" aria-hidden="true"></i></div>
+<div class="col-sm-9 eb-nopadding"> <label></label></div>
+                </div>
+             </div>
+            </div>
+            </div> `;
+        }
+        else if (obj.LabelStyle == 4) {
+            a = `<div class="row display-block datalabel5 eb-full-width" id="${obj.EbSid}" eb-type="DataLabel">
+    <div class="col-lg-8 col-sm-8 col-md-8 eb-full-height body-pane">
+        <div class="card eb-full-width" id="${obj.EbSid}_Data_pane" style="width: 100%;">
+            <h5 class="card-header lbl" id="${obj.EbSid}_static"> ${obj.StaticLabel} </h5>
+            <div class="card-body">
+                <p class="card-text lbl" id="${obj.EbSid}_description">  </p>
+                <p class="card-text" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</p>
+            </div>
+            <div class="card-footer text-muted" id="${obj.EbSid}_footer">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <i class="fa fa-address-book" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-9 eb-nopadding"> <label></label></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-4 col-md-4 eb-full-height eb-nopadding icon-pane">
+        <div class="icon4 eb-full-height" id="${obj.EbSid}_icon"><i></i></div>
+    </div>
+</div>`;
         }
         return a;
     };
@@ -993,7 +1027,7 @@ var DashBoardWrapper = function (options) {
                             let designHtml = this.MakeLinks(object);
                             $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
                             this.labelstyleApply(this.CurrentTile);
-                            LinkStyle(obj, this.CurrentTile, this.TabNum);
+                            LinkStyle(obj, this.CurrentTile, this.TabNum, this.GetFilterValuesForDataSource());
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
                         }.bind(this));
                     }
@@ -1317,7 +1351,7 @@ var DashBoardWrapper = function (options) {
         var obj = {};
         this.EbObject.Tiles.$values = [];
         this.EbObject.TileCount = 0;
-        if (this.EbObject.EbSid === null || this.EbObject.EbSid ==="")
+        if (this.EbObject.EbSid === null || this.EbObject.EbSid === "")
             this.EbObject.EbSid = "ctrl_" + Date.now().toString(36);
         $(".grid-stack-item-content").each(function (j, val) {
             var id = $(val).parent().attr("id");
@@ -1425,6 +1459,17 @@ var DashBoardWrapper = function (options) {
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+
+        if (ebcontext.languages !== undefined) {
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
+
         if (this.FilterDiv) { this.FilterDiv.hide(); }
     };
 
@@ -1440,9 +1485,21 @@ var DashBoardWrapper = function (options) {
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+
+        if (ebcontext.languages !== undefined) {
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
+
         if (this.EbObject.Filter_Dialogue !== "") {
             this.Procs = {};
             CtrlCounters.DataLabelCounter = 0;
@@ -1593,7 +1650,7 @@ var DashBoardWrapper = function (options) {
         this.Current_DL.TextPosition = this.Copied_DL_Style.TextPosition;
         this.Current_DL.Top = this.Copied_DL_Style.Top;
         this.Current_DL.Left = this.Copied_DL_Style.Left;
-     
+
         for (i = 0; i < this.EbObject.Tiles.$values.length; i++) {
             let temp = this.EbObject.Tiles.$values[i];
             if (this.EbObject.Tiles.$values[i].LabelColl.$values.length == 1) {
@@ -1648,6 +1705,10 @@ var EbCommonDataTable = function (Option) {
 
     //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
+    //if (typeof (AllMetas) === 'undefined') var AllMetas = AllMetas_w;
+    //if (typeof (EbEnums) === 'undefined') var EbEnums = EbEnums_w;
+    //if (typeof (EbObjects) === 'undefined') var EbObjects = EbObjects_w;
+
     this.propGrid = Option.PGobj;
     this.Api = null;
     this.order_info = new Object();
@@ -1684,6 +1745,7 @@ var EbCommonDataTable = function (Option) {
     this.settingsbtn = null;
     this.OuterModalDiv = null;
     this.settings_tbl = null;
+    this.ajaxCallCounter = 0;
 
     this.eb_filter_controls_4fc = [];
     this.eb_filter_controls_4sb = [];
@@ -1842,7 +1904,7 @@ var EbCommonDataTable = function (Option) {
             }
             //this.InitializeColumns();
             this.SetColumnRef();
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.PcFlag === true)
                 this.compareAndModifyRowGroup();
 
@@ -1874,8 +1936,8 @@ var EbCommonDataTable = function (Option) {
             this.PcFlag = false;
 
             if (this.propGrid !== null) {
-                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-                this.CreatePgButton();
+                //this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+                //this.CreatePgButton();
             }
         }
         else {
@@ -1975,7 +2037,7 @@ var EbCommonDataTable = function (Option) {
         }
 
         $("#objname").text(this.EbObject.DisplayName);
-        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
         $("title").text(this.EbObject.DisplayName);
         if (this.EbObject.DataSourceRefId) {
@@ -2008,7 +2070,7 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.getColumnsSuccess = function (e) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         if (this.Source === "EbDataTable") {
             this.Do4EbdataTable();
             this.Done4All();
@@ -2161,8 +2223,8 @@ var EbCommonDataTable = function (Option) {
         }
         this.isSecondTime = false;
         this.totalcount = 0;
-        if (this.login === "uc")
-            $(".dv-body1").show();
+        //if (this.login === "uc")
+        //    $(".dv-body1").show();
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
@@ -2252,12 +2314,16 @@ var EbCommonDataTable = function (Option) {
 
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
-                $("#obj_icons .btn").prop("disabled", true);
-                $("#eb_common_loader").EbLoader("show");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", true);
+                    $("#eb_common_loader").EbLoader("show");
+                }
             }
             else {
-                $("#obj_icons .btn").prop("disabled", false);
-                $("#eb_common_loader").EbLoader("hide");
+                if (this.Source != 'WebForm') {
+                    $("#obj_icons .btn").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
+                }
                 $("[data-coltyp=date]").datepicker("hide");
             }
         }.bind(this));
@@ -2274,7 +2340,7 @@ var EbCommonDataTable = function (Option) {
                 $("#" + settings.sTableId + "_processing").text("Something went wrong..");
             else
                 EbPopBox("show", { Message: "Table View Error Occured....", Title: "Error" });
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
         }.bind(this);
 
         if (this.Source === "datagrid")
@@ -2386,7 +2452,7 @@ var EbCommonDataTable = function (Option) {
         o.scrollX = true;
         //o.scrollXInner = "110%";
         o.scrollCollapse = true;
-        if (this.Source === "EbDataTable") {
+        if (this.Source === "EbDataTable" || this.Source === "Draft") {
             if (this.EbObject.PageLength !== 0) {
                 o.lengthMenu = this.generateLengthMenu();
             }
@@ -2499,7 +2565,7 @@ var EbCommonDataTable = function (Option) {
                             $("#" + this.tableId + "_processing").text("Timeout Expired..");
                         else
                             EbPopBox("show", { Message: "Timeout Expired..", Title: "Error" });
-                        $("#eb_common_loader").EbLoader("hide");
+                        this.hideEbLoader();
                     }.bind(this)
                 };
             }
@@ -2548,12 +2614,14 @@ var EbCommonDataTable = function (Option) {
         if (dq.length === -1)
             dq.length = this.totalcount;
         this.RemoveColumnRef();
-        dq.DataVizObjString = JSON.stringify(this.EbObject);
+        if (!this.Refid)
+            dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;
         dq.TableId = this.tableId;
         dq.showCheckboxColumn = this.showCheckboxColumn;
+        dq.counter = ++this.ajaxCallCounter;
         return dq;
     };
 
@@ -2606,7 +2674,8 @@ var EbCommonDataTable = function (Option) {
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.FormObj);
-
+        if (this.Source === "Calendar")
+            fltr_collection = getValsForViz(FilterDialog.FormObj);
         let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0) {
             if (this.Source === "Bot")
@@ -2617,6 +2686,15 @@ var EbCommonDataTable = function (Option) {
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (ebcontext.languages != undefined) {
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                fltr_collection.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
         //if (this.isContextual && from !== "compare") {
         //    if (from === "filter" && prevfocusedId !== undefined) {
         //        $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
@@ -2664,11 +2742,11 @@ var EbCommonDataTable = function (Option) {
     this.getFilterForLinkfromColumn = function () {
         this.linkfromcolumn = false;
         this.dvformMode = 1;
-        if (this.Source === "Draft")
-            this.dvformMode = 8;
         let filters = [];
         var temp = this.EbObject.Columns.$values.filter(obj => obj.name === this.linkDVColumn)[0];
         filters.push(new fltr_obj(temp.IdColumn.Type, temp.IdColumn.name, this.rowData[temp.IdColumn.data]));
+        if (this.Source === "Draft" || temp.IsFormDraftMode)
+            this.dvformMode = 8;
         return filters;
     };
 
@@ -2741,10 +2819,14 @@ var EbCommonDataTable = function (Option) {
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation") {
-                    if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
+                    let $sel = $(ctrl).find('select');
+                    let allsld = $sel.next('div').find('[value=multiselect-all').prop('checked');
+                    if (allsld && $sel.attr('isglobal') === 'y')
                         o.value = "Global";
+                    else if (allsld)
+                        o.value = "Selected all";
                     else
-                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join(",");
+                        o.value = $(ctrl).find('ul').find(".active:not(.multiselect-all)").text().trim().split(" ").join(",");
                 }
                 else
                     o.value = $($(ctrl).children()[1]).val();
@@ -2853,6 +2935,10 @@ var EbCommonDataTable = function (Option) {
                     EbPopBox("show", { Message: "Table View PreProcessing Error Occured...", Title: "Error" });
             }
         }
+        if (dd.counter && this.ajaxCallCounter != dd.counter && this.MainData) {
+            console.warn(`Mismatch in counter value: ${this.ajaxCallCounter}, ${dd.counter}`);
+            dd = this.MainData;
+        }
         if (!this.isSecondTime)
             this.totalcount = dd.recordsFiltered;
         this.isRun = true;
@@ -2930,7 +3016,7 @@ var EbCommonDataTable = function (Option) {
         });
         $.each(this.EbObject.Columns.$values, function (i, col) {
             if (col.bVisible)
-                ftr_part += "<th></th>";
+                ftr_part += "<th data-col='" + col.name + "'></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
         });
@@ -2965,9 +3051,17 @@ var EbCommonDataTable = function (Option) {
                         oper = $('#' + table + '_' + colobj.name + '_hdr_sel').text().trim();
                         if (api.columns(i).visible()[0]) {
                             if (oper !== '' && $(textid).val() !== '') {
-                                if (oper === 'B') {
-                                    val1 = $(textid).val();
+                                val1 = $(textid).val();
+                                if (oper === 'B')
                                     val2 = $(textid).siblings('input').val();
+                                if (Rtype === 5 || Rtype === 6) {
+                                    if (!val1 || !moment(val1, 'DD-MM-YYYY', true).isValid())
+                                        return;
+                                    if (oper === 'B' && (!val2 || !moment(val2, 'DD-MM-YYYY', true).isValid()))
+                                        return;
+                                }
+
+                                if (oper === 'B') {
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
                                         if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(paracolum, ">=", Math.min(val1, val2)));
@@ -3001,7 +3095,7 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.rowCallBackFunc = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-        //this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
+        this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
         if (this.treeColumn) {
             let elem = aData[this.treeColumn.data].split("&nbsp;").join("").split("&emsp;").join("");
             let treeElem = $(elem);
@@ -3019,7 +3113,7 @@ var EbCommonDataTable = function (Option) {
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm")
+        if (this.Source === "EbDataTable" || this.Source === "locationTree" || this.Source === "WebForm" || this.Source === "popup" || this.Source === "PivotTable")
             this.GenerateButtons();
 
         else if (this.Source === "Calendar") {
@@ -3055,7 +3149,7 @@ var EbCommonDataTable = function (Option) {
             if (this.Source !== "Calendar" || this.EbObject.IsDataFromApi)
                 this.placeFilterInText();
 
-            $("#eb_common_loader").EbLoader("hide");
+            this.hideEbLoader();
             if (this.login === "uc") {
                 if (!this.EbObject.DisableCopy)
                     $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
@@ -3084,7 +3178,6 @@ var EbCommonDataTable = function (Option) {
             }
             if (Option.initCompleteCallback)
                 Option.initCompleteCallback();
-
             this.Api.columns.adjust();
         }.bind(this), 0);
     };
@@ -3249,7 +3342,8 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.WebFormlink = function (_refid, _filter, _mode) {
-        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}`;
+        let _locale = ebcontext.languages.getCurrentLocale();
+        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
         window.open(url, '_blank');
 
         //var _form = document.createElement("form");
@@ -3421,28 +3515,28 @@ var EbCommonDataTable = function (Option) {
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 52px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader)
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 62px)", "important");
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 25px)", "important");
             else {
                 if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//multilineonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 59px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//pagingonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 88px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 68px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filteronly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 86px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 66px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//paging & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 104px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 84px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.EbObject.IsPaging && this.EbObject.AllowMultilineHeader) {//filter & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader) {//filetr & paging
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 112px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 92px)", "important");
                 }
                 else {
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 107px)", "important");//filter && paging & multiline
                 }
             }
             //this.stickBtn.$stickBtn.css("top", "46px");
@@ -3506,7 +3600,7 @@ var EbCommonDataTable = function (Option) {
 
     this.drawCallBackFunc = function (settings) {
         if (this.Source === "EbDataTable") {
-            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             if (this.ImageArray.length > 0) {
                 $("#test12").remove();
                 $("body").append("<div id='test12'></div>");
@@ -4038,10 +4132,8 @@ var EbCommonDataTable = function (Option) {
         }
         else {
             for (let j = 0; j < eb_footer_controls_scrollfoot.length; j++)
-                scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]);
+                scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]); //append or html[solves tv ctrl double footer] fn
         }
-
-
         if (lfoot.length !== 0 || rfoot.length !== 0) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
             if (lfoot.length !== 0) {
@@ -4066,6 +4158,17 @@ var EbCommonDataTable = function (Option) {
             $(lfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
             $(rfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
         }
+        if (this.eb_agginfo.length > 0) {
+            var footer_select_id = this.tableId + "_ftr_sel" + ps;
+            let _ls = "<div class='input-group-btn dropup'>" +
+                "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
+                " <ul class='dropdown-menu'>" +
+                "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
+                "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "'> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
+                " </ul>" +
+                " </div>";
+            scrollfoot.find(".addedbyeb th").eq(0).html(_ls);
+        }
         this.summarize2();
     };
 
@@ -4084,12 +4187,7 @@ var EbCommonDataTable = function (Option) {
             var temp = $.grep(this.eb_agginfo, function (agg) { return agg.colname === col.name });
             //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
             if (col.Aggregate || col.AggregateFun === 0 || col.AggregateFun === 1) {
-                var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
-                var fselect_class = this.tableId + "_fselect";
-                var data_colum = "data-column=" + col.name;
-                var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                var data_decip = "data-decip=" + this.Api.settings().init().aoColumns[i].DecimalPlaces;
                 var style = "";
                 if (col.Align.toString() === EbEnums.Align.Left)
                     style = "text-align: left;";
@@ -4098,16 +4196,8 @@ var EbCommonDataTable = function (Option) {
                 else
                     style = "text-align: center;";
 
-                _ls = "<div class='input-group input-group-sm'>" +
-                    "<div class='input-group-btn dropup'>" +
-                    "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
-                    " <ul class='dropdown-menu'>" +
-                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + "> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
-                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
-                    " </ul>" +
-                    " </div>" +
-                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='z-index:" + zidx.toString() + ";" + style + "'>" +
-                    " </div>";
+                //_ls = `<input type='text' class='' id='${footer_txt}' disabled style='z-index:${zidx.toString()};${style}'/>`;
+                _ls = `<div style='z-index:${zidx.toString()};text-align: center;'><p id='${footer_txt}' disabled style='${style} margin: 10px 0;'></p><div>`;
             }
             else
                 _ls = "&nbsp;";
@@ -4123,19 +4213,14 @@ var EbCommonDataTable = function (Option) {
         if (isUpdatable) {
             var api = this.Api;
             var tableId = this.tableId;
-            var scrollY = this.EbObject.scrollY;
-            var opScroll;
-            var ftrtxtScroll;
+            let opScroll = $('.dataTables_scrollFootInner #' + tableId + '_ftr_sel0').text().trim();
+            let opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_ftr_sel0').text().trim();
+            let opRF = $('.DTFC_RightFootWrapper #' + tableId + '_ftr_sel0').text().trim();
             $.each(this.eb_agginfo, function (index, agginfo) {
                 if (agginfo.colname) {
-                    opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                    opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
-
-                    opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                    ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    let ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
                     var col = api.column(agginfo.colname + ':name');
                     var summary_val = 0;
@@ -4152,11 +4237,11 @@ var EbCommonDataTable = function (Option) {
                             summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
                     }
                     if (opScroll !== "")
-                        $(ftrtxtScroll).val(summary_val);
+                        $(ftrtxtScroll).text(summary_val);
                     if (opLF !== "")
-                        $(ftrtxtLF).val(summary_val);
+                        $(ftrtxtLF).text(summary_val);
                     if (opRF !== "")
-                        $(ftrtxtRF).val(summary_val);
+                        $(ftrtxtRF).text(summary_val);
                 }
             }.bind(this));
         }
@@ -4378,7 +4463,7 @@ var EbCommonDataTable = function (Option) {
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-        $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
+        $("#" + this.tableId).off("click", ".tablelink4calendar").on("click", ".tablelink4calendar", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
@@ -4412,7 +4497,7 @@ var EbCommonDataTable = function (Option) {
             placement: 'bottom'
         });
         $('.status-time').tooltip({
-            placement: 'top'
+            placement: 'left'
         });
 
         $('.columntooltip').popover({
@@ -4432,7 +4517,7 @@ var EbCommonDataTable = function (Option) {
         $('.btn-approval_popover').popover({
             container: 'body',
             trigger: 'click',
-            placement: this.PopoverPlacement,
+            placement: this.ApprovalPopoverPlacement,
             html: true,
             template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
             content: function (e, i) {
@@ -4447,7 +4532,8 @@ var EbCommonDataTable = function (Option) {
         $('.btn-approval_popover').off('shown.bs.popover').on('shown.bs.popover', function (e) {
             $(".stage_actions").selectpicker();
             let $td = $(e.target).closest("td.tdheight");
-            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
+            $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
         }.bind(this));
 
         $('.btn-approval_popover').on('hidden.bs.popover', function (e) {
@@ -4474,7 +4560,11 @@ var EbCommonDataTable = function (Option) {
             dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
             beforeShow: function (elem, obj) {
                 $(".ui-datepicker").addClass("datecolumn-picker");
-            }
+            },
+            onSelect: function (d, i) {
+                if (d !== i.lastVal)
+                    this.call_filter({ keyCode: 10 });
+            }.bind(this)
         });
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
@@ -4502,66 +4592,83 @@ var EbCommonDataTable = function (Option) {
         }
     };
 
+    this.ApprovalPopoverPlacement = function (context, source) {
+        var position = $(source).offset();
+        let w = $(window).width();
+        if (position.left + 600 > w)
+            return "left";
+        else
+            return "right";
+    };
+
     this.GenerateButtons = function () {
-        this.submitId = "btnGo" + this.tableId;
-        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        if (this.Source === "WebForm") {
-            $("#buttondiv_" + this.tableId).empty();
-            this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
-            $("#buttondiv_" + this.tableId).append(this.$submit);
+        if (this.Source === "PivotTable") {
+            let $print = $("<button id='print" + this.tableId + "' class='btn commonControl print' onclick='window.print();'><i class='fa fa-print' aria-hidden='true'></i></button>");
+            $('print' + this.tableId).remove();
+            $("#obj_icons").append($print);
         }
         else {
-            $(".toolicons").show();
-            let search = $('#obj_icons .toolb-srchbx-wrpr').detach();
-            $('#obj_icons').empty().append(search);
-            $("#obj_icons").append(this.$submit);
-        }
-        this.$submit.click(this.getColumnsSuccess.bind(this));
-
-        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
-            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
-
-        if (this.Source === "EbDataTable") {
-            if (this.EbObject.FormLinks.$values.length > 0) {
-                this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
-                    index === self.findIndex((t) => (
-                        t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
-                    ))
-                );
-                this.CreateNewFormLinks();
+            this.submitId = "btnGo" + this.tableId;
+            this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+            if (this.Source === "WebForm") {
+                $("#buttondiv_" + this.tableId).empty();
+                this.$submit = $("<div id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-refresh' aria-hidden='true'></i></div>");
+                $("#buttondiv_" + this.tableId).append(this.$submit);
             }
-            $("#objname").text(this.EbObject.DisplayName);
-            if ($("#" + this.tableId).children().length > 0) {
-                if (this.FD) {
-                    this.filterid = "filter" + this.tableId;
-                    this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
-                    $("#obj_icons").append(this.$filter);
-                    this.$filter.click(this.CloseParamDiv.bind(this));
-                }
-                if (this.login === "uc") {
-                    $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
-                    $.each(this.permission, function (i, obj) {
-                        if (obj === "Excel")
-                            $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
-                    }.bind(this));
-                    dvcontainerObj.modifyNavigation();
-                }
+            else {
+                $(".toolicons").show();
+                let search = $('#obj_icons .toolb-srchbx-wrpr').detach();
+                $('#obj_icons').empty().append(search);
+                $("#obj_icons").append(this.$submit);
             }
-            this.CreatePgButton();
-            this.excelbtn = $("#btnExcel" + this.tableId);
-        }
-        else {
-            $(".display-none").remove();
-        }
+            this.$submit.click(this.getColumnsSuccess.bind(this));
 
-        if (this.IsTree) {
-            this.CreateContexmenu4Tree();
+            if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
+                $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='NewCustomer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+
+            if (this.Source === "EbDataTable") {
+                if (this.EbObject.FormLinks.$values.length > 0) {
+                    this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                        index === self.findIndex((t) => (
+                            t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                        ))
+                    );
+                    this.CreateNewFormLinks();
+                }
+                this.CreatePrintDocsLinks();
+                $("#objname").text(this.EbObject.DisplayName);
+                if ($("#" + this.tableId).children().length > 0) {
+                    if (this.FD) {
+                        this.filterid = "filter" + this.tableId;
+                        this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
+                        $("#obj_icons").append(this.$filter);
+                        this.$filter.click(this.CloseParamDiv.bind(this));
+                    }
+                    if (this.login === "uc") {
+                        $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
+                        $.each(this.permission, function (i, obj) {
+                            if (obj === "Excel")
+                                $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
+                        }.bind(this));
+                        dvcontainerObj.modifyNavigation();
+                    }
+                }
+                //this.CreatePgButton();
+                this.excelbtn = $("#btnExcel" + this.tableId);
+            }
+            else {
+                $(".display-none").remove();
+            }
+
+            if (this.IsTree) {
+                this.CreateContexmenu4Tree();
+            }
+            if (this.isSecondTime) {
+                this.addFilterEventListeners();
+            }
+            $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
+            this.Contexmenu4SmsColumn();
         }
-        if (this.isSecondTime) {
-            this.addFilterEventListeners();
-        }
-        $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
-        this.Contexmenu4SmsColumn();
     };
 
     this.CreatePgButton = function () {
@@ -4854,18 +4961,24 @@ var EbCommonDataTable = function (Option) {
         }
     };
 
-    this.CalendarLinkClick = function (key, opt, event) {
+    this.CalendarLinkClick = function (key, idx, event) {
         let MapObj = this.ObjectLinks.filter(obj => obj.ObjName === key)[0];
-        var idx = this.Api.row(opt.$trigger.parent().parent()).index();
-        let rowdata = window.atob(opt.$trigger.children("span").attr("hidden-row")).split(",");
-        var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
-        if (MapObj.FormMode === 1) {
-            if (filter[0].Value === "") {
-                MapObj.FormMode = 2;
-                filter = [];
-            }
+        let rowdata;
+        if (event !== undefined) {
+            // var idx = this.Api.row(opt.$trigger.parent().parent()).index();
+            rowdata = window.atob(idx.$trigger.children("span").attr("hidden-row")).split(",");
+        }
+        else {
+            rowdata = this.unformatedData[idx];
         }
         if (MapObj.ObjRefId.split("-")[2] === "0") {
+            var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
+            if (MapObj.FormMode === 1) {
+                if (filter[0].Value === "") {
+                    MapObj.FormMode = 2;
+                    filter = [];
+                }
+            }
             if (parseInt(EbEnums.LinkTypeEnum.Popout) === MapObj.LinkType) {
                 this.WebFormlink(MapObj.ObjRefId, btoa(unescape(encodeURIComponent(JSON.stringify(filter)))), MapObj.FormMode);
             }
@@ -4911,10 +5024,78 @@ var EbCommonDataTable = function (Option) {
                         <ul class="drp_ul"></ul>
                     </div>
                     </div>`);
+        let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale() : 0;
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}`;
+            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
+    };
+
+    this.CreatePrintDocsLinks = function () {
+        if (this.EbObject.PrintDocs && this.EbObject.PrintDocs.$values.length > 0) {
+            $("#obj_icons").append(`<div class="dropdown" style="display:inline-block;" id="PrintDocsdd${this.tableId}">
+                    <button class="btn" type="button" id="PrintDocsButton${this.tableId}" data-toggle="dropdown" title='Print'>
+                        <i class="fa fa-print" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu newform-menu">
+                        <ul class="drp_ul"></ul>
+                    </div>
+                    </div>`);
+
+            $.each(this.EbObject.PrintDocs.$values, function (i, obj) {
+                let tle = obj.Title || obj.ObjDisplayName;
+                $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" data-params="${obj.UseParams}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
+            }.bind(this));
+
+            $(`#PrintDocsdd${this.tableId}`).off(".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
+        }
+    };
+
+    this.printDocument = function (e) {
+        if (!ebcontext.webform) {
+            ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
+        }
+
+        let rptRefid = $(e.currentTarget).attr('data-token');
+        let useParams = $(e.currentTarget).attr('data-params');
+
+        if (useParams == 'true') {
+            let params = btoa(JSON.stringify(this.filterValues));
+            let url = "/ReportRender/Renderlink?refid=" + rptRefid + "&_params=" + params;
+            ebcontext.webform.showLoader();
+            $("#iFramePdf4dv").attr("src", url);
+            return;
+        }
+
+        let rowIds = [];
+        let chkdInps = $(`input[name=${this.tableId}_id]:checked`);
+
+        if (chkdInps && chkdInps.length > 0) {
+            $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
+            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit Downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
+            ebcontext.webform.showLoader();
+
+            for (let i = 0; i < chkdInps.length; i++) {
+                rowIds.push($(chkdInps[i]).val());
+            }
+            let SubscriptionId = window.ebcontext.subscription_id;
+            this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
+            this.ss.onPdfDownloadSuccess = function (url) {
+                $("#iFramePdf4dv").attr("src", url);
+                $(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
+                event.stopPropagation();
+            }.bind(this);
+
+
+            $.ajax({
+                type: "GET",
+                url: "/WebForm/GetPdfReportMulti?refId=" + rptRefid + "&rowId=" + rowIds.join(',') + "&_sub=" + SubscriptionId
+            });
+
+        }
+        else {
+            alert('Nothing selected');
+        }
     };
 
     this.FormNewGroup = function (key, opt, event) {
@@ -5220,13 +5401,18 @@ var EbCommonDataTable = function (Option) {
                 return false;
             },
             select: function (event, ui) {
-                var terms = splitval(this.value);
+                let inp = event.target;
+                var terms = splitval($(inp).val());
                 terms.pop();
                 terms.push(ui.item.value);
                 terms.push("");
-                this.value = terms.join(" | ");
+                $(inp).val(terms.join(" | "));
+                if (!this.EbObject.DisableAutoSearch) {
+                    var e = $.Event("keyup", { which: 13, keyCode: 13, target: inp });
+                    $(inp).trigger(e);
+                }
                 return false;
-            },
+            }.bind(this),
             search: function (event, ui) {
             }
         });
@@ -5409,7 +5595,7 @@ var EbCommonDataTable = function (Option) {
             " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> B </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Between</span></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' placeholder='" + this.datePattern + "' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' placeholder='&#xf073;' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -5493,12 +5679,16 @@ var EbCommonDataTable = function (Option) {
         if (selText.trim() === 'B') {
             if ($(elemnt).parents('.input-group').find("input").length == 1) {
                 if (ctype === "date") {
-                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='" + this.datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='&#xf073;' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
                         dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {
                             $(".ui-datepicker").addClass("datecolumn-picker");
-                        }
+                        },
+                        onSelect: function (d, i) {
+                            if (d !== i.lastVal)
+                                this.call_filter({ keyCode: 10 });
+                        }.bind(this)
                     });
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("click", function () {
                         $(this).datepicker("show");
@@ -5518,6 +5708,7 @@ var EbCommonDataTable = function (Option) {
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
             }
         }
+
         this.Api.columns.adjust();
         e.preventDefault();
     };
@@ -5547,25 +5738,44 @@ var EbCommonDataTable = function (Option) {
                 else
                     $(e.target).css("border-color", "#ccc");
             }
+            if ($(e.target).data('ui-autocomplete') != undefined)
+                $(e.target).autocomplete('close');
 
             if (flag) {
-                this.columnSearch = this.repopulate_filter_arr();
-                $('#' + this.tableId).DataTable().ajax.reload();
-                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+                this.reloadDataTable();
             }
         }
-        else {
+        else if (!this.EbObject.DisableAutoSearch) {
             $("[data-coltyp=date]").datepicker("hide");
-            this.columnSearch = this.repopulate_filter_arr();
             if (typeof (e.key) === "undefined") {
-                $('#' + this.tableId).DataTable().ajax.reload();
-                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+                this.reloadDataTable();
+            }
+            else {
+                let nam = $(e.target).attr('data-colum');
+                let obj = this.columnSearch.find(e => e.Column === nam);
+                if ((obj && obj.Value != $(e.target).val().trim()) || !obj) {
+                    clearTimeout(this.realoadDtTimer);
+                    this.realoadDtTimer = setTimeout(function (e) {
+                        let ac = $(e.target).data('ui-autocomplete');
+                        if ((ac && $(ac.menu.activeMenu[0]).is(':visible')) || !ac)
+                            return;
+                        this.reloadDataTable(e);
+                    }.bind(this, e), 1500);
+                }
             }
         }
 
     }.bind(this);
+
+    this.reloadDataTable = function (e) {
+        let filter = this.repopulate_filter_arr();
+        if (JSON.stringify(filter) != JSON.stringify(this.columnSearch)) {
+            this.columnSearch = filter;
+            $('#' + this.tableId).DataTable().ajax.reload();
+            if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+                $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+        }
+    };
 
     this.dblclickDateColumn = function () {
         this.type = "text";
@@ -5628,36 +5838,33 @@ var EbCommonDataTable = function (Option) {
 
     this.fselect_func = function (e) {
         let element = ($(e.target).is("a")) ? $(e.target) : $(e.target).siblings("a");
-        var selValue = $(element).text().trim();
-        $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
-        var table = $(element).attr('data-table');
-        var colum = $(element).attr('data-column');
-        var decip = parseInt($(element).attr('data-decip'));
-        var col = this.Api.column(colum + ':name');
-        var ftrtxt;
-        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; })[0];
-        ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
-        if ($(ftrtxt).length === 0)
-            ftrtxt = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
-        if ($(ftrtxt).length === 0)
-            ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
+        var opScroll = $(element).text().trim();
+        $(element).parents('.input-group-btn').find('.dropdown-toggle').html(opScroll);
+        $.each(this.eb_agginfo, function (index, agginfo) {
+            if (agginfo.colname) {
+                ftrtxtScroll = '.dataTables_scrollFootInner #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
+                ftrtxtLF = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
+                ftrtxtRF = '.DTFC_RightFootWrapper #' + this.tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-        if (selValue === '∑') {
-            if (this.Source === "datagrid")
-                pageTotal = col.data().sum().toFixed(agginfo.deci_val);
-            else
-                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
-        }
-        else if (selValue === 'x̄') {
-            if (this.Source === "datagrid")
-                pageTotal = col.data().average().toFixed(agginfo.deci_val);
-            else
-                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
-        }
-
-        $(ftrtxt).val(pageTotal);
+                var col = this.Api.column(agginfo.colname + ':name');
+                var summary_val = 0;
+                if (opScroll === '∑') {
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().sum().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+                }
+                if (opScroll === 'x̄') {
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().average().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                }
+                if (opScroll !== "")
+                    $(ftrtxtScroll).text(summary_val);
+            }
+        }.bind(this));
         e.preventDefault();
-        //e.stopPropagation();
     };
 
     this.clickAlSlct = function (e) {
@@ -5737,8 +5944,58 @@ var EbCommonDataTable = function (Option) {
         this.Api.columns.adjust();
     };
 
-    this.linkFromCalendar = function () {
+    this.linkFromCalendar = function (e) {
+        this.popup = true;
+        var rows = this.Api.rows(idx).nodes();
+        this.linkDV = this.ObjectLinks[0].ObjRefId; //$(e.target).closest("a").attr("data-link");
+        colindex = parseInt($(e.target).closest("a").attr("idx"));
+        var idx = this.Api.row($(e.target).parents().closest("td")).index();
+        let col = this.columns[colindex];
 
+        if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm) {
+            $(".tableviewpopupmodal").remove();
+            $("body").append(`
+            <div class="modal fade tableviewpopupmodal" id="popupmodalContainer${this.tableId}" role="dialog" >
+                <div class="modal-dialog" style="width: 95%; height: 95%;">
+                    <div class="modal-content" style="height: 100%; overflow-y: auto;">
+                        <div class="modal-header">
+                                <div id ="popupheader${this.tableId}">
+                                     <button type="button" class="close" data-dismiss="modal">&times;</button> 
+                                </div>                           
+                        </div>
+                            <div id="tblpopup"></div>
+                        <div class="modal-body"> <div id='content_popupmodal${this.tableId}'><table class='table display table-bordered compact' id="popupmodal${this.tableId}"></table></div></div>
+                    </div>
+                </div>
+            </div>
+            `);
+
+            $(`#popupmodalContainer${this.tableId}`).modal('show');
+            $(`#tblpopup`).EbLoader("show", { maskItem: { Id: "body" } });
+            if (typeof (idx) !== "undefined")
+                this.rowData = this.unformatedData[idx];
+            else {//incomplete...
+                this.rowData = [];
+            }
+            this.filterValues = this.getFilterValues();
+            let rowfilter = this.getfilterFromRowdata().find(ele => ele.Name === "id");
+            this.filterValues[this.filterValues.findIndex(ele => ele.Name === "id")].Value = rowfilter.Value;
+            this.filterValues[0].Value = col.StartDT;
+            this.filterValues[1].Value = col.EndDT;
+            let source = "Calendar";
+
+            this.call2newDv(rows, idx, colindex, source);
+        }
+        else {
+            this.filterValuesforForm = this.getfilterFromRowdata();
+            CallWebFormCollectionRender({
+                _source: 'tv',
+                _refId: this.linkDV,
+                _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
+                _mode: 1,
+                _locId: ebcontext.locations.CurrentLoc
+            });
+        }
     };
 
     this.link2NewTable = function (e) {
@@ -5770,7 +6027,7 @@ var EbCommonDataTable = function (Option) {
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
         this.linkDVColumn = $(e.target).closest("a").attr("data-column");
-        var idx = this.Api.row($(e.target).parents().closest("td")).index();
+        var idx = this.Api.row($(e.target).closest("tr")).index();
         if (typeof (idx) !== "undefined")
             this.rowData = this.unformatedData[idx];
         else {//incomplete...
@@ -5820,7 +6077,7 @@ var EbCommonDataTable = function (Option) {
                 _source: 'tv',
                 _refId: this.linkDV,
                 _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
-                _mode: 1,
+                _mode: this.dvformMode,
                 _locId: ebcontext.locations.CurrentLoc
             });
             //$("#iFrameFormPopupModal").modal("show");
@@ -5849,7 +6106,7 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.drawInlinedv = function (rows, e, idx, colindex) {
-        $("#eb_common_loader").EbLoader("show");
+        this.showEbLoader();
         $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-caret-up").addClass("fa-caret-down");
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
@@ -5867,12 +6124,41 @@ var EbCommonDataTable = function (Option) {
         this.Api.columns.adjust();
     };
 
-    this.ExecuteApproval = function ($td, e) {
-        $("#eb_common_loader").EbLoader("show");
-        $('.btn-approval_popover').popover('hide');
-        let val = $(e.target).closest("#action").find(".selectpicker").val();
-        val = JSON.parse(atob(val));
-        let comments = $(e.target).closest("#action").find(".comment-text").val();
+    this.ExecuteApproval = function ($td, action, e) {
+        //$("#eb_common_loader").EbLoader("show");
+        if ($(e.target).attr('action-clicked') == 'true') {// to avoid multi click
+            console.warn('multi click blocked');
+            return;
+        }
+        $(e.target).attr('action-clicked', 'true');
+        let val, comments;
+        if (action === 'reset') {
+            comments = $(e.target).closest("#resetstage").find(".comment-text").val();
+            if (!comments.trim()) {
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
+                return;
+            }
+            val = $(e.target).attr("data-json");
+            val = JSON.parse(atob(val));
+        }
+        else {
+            comments = $(e.target).closest("#action").find(".comment-text").val();
+            let req = $(e.target).closest("#action").find(".selectpicker :selected").attr('req');
+            if (!comments.trim() && req === 'y') {
+                EbMessage("show", { Message: "Comments required to complete the review", Background: "#e40707", AutoHide: true, Delay: 3000 });
+                $(e.target).attr('action-clicked', 'false');
+                return;
+            }
+            val = $(e.target).closest("#action").find(".selectpicker").val();
+            val = JSON.parse(atob(val));
+        }
+        if ($td.find('.btn-approval_popover:visible').length === 0)
+            return;
+        $td.find('.btn-approval_popover').popover('hide');
+        $td.find('.btn-approval_popover').popover('destroy');
+        $td.find('.btn-approval_popover i').removeClass('fa-history').removeClass('fa-pencil').addClass('fa-spinner fa-pulse');
+
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
@@ -5883,21 +6169,55 @@ var EbCommonDataTable = function (Option) {
             url: "../dv/PostWebformData",
             data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: ebcontext.locations.CurrentLoc },
             success: this.cccccc.bind(this, $td),
-            error: function (xhr, error) {
+            error: function ($td, xhr, error) {
                 console.log(xhr); console.log(error);
                 console.debug(xhr); console.debug(error);
-
-            },
+                this.cccccc.bind(this, $td, { messaage: 'Something went wrong ### error' })();
+            }.bind(this, $td),
         });
     };
 
     this.cccccc = function ($td, resp) {
-        $td.html(resp._data);
-        if ($td.find(".status-label").text() === "Review Completed")
-            EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
-        var cell = this.Api.cell($td);
-        cell.data($td.html()).draw();
-        $("#eb_common_loader").EbLoader("hide");
+        if (!(resp._data)) {
+            let msg = resp.messaage;
+            console.error(msg);
+            $td.find('.btn-approval_popover').attr('title', msg.includes(' ### ') ? msg.split(' ### ')[0] : msg);
+            $td.find('.btn-approval_popover i').removeClass('fa-spinner fa-pulse').addClass('fa-exclamation-circle').attr('style', 'color: red !important;');
+            //return;
+        }
+        else {
+            $td.html(resp._data);
+            //if ($td.find(".status-label").text() === "Review Completed")
+            //    EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
+            var cell = this.Api.cell($td);
+            cell.data($td.html());
+        }
+
+        let $popoverBtn = $td.find('.btn-approval_popover');
+
+        $popoverBtn.popover({
+            container: 'body',
+            trigger: 'click',
+            placement: this.ApprovalPopoverPlacement,
+            html: true,
+            template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
+            },
+        });
+
+        $popoverBtn.off('shown.bs.popover').on('shown.bs.popover', function (e) {
+            $(".stage_actions").selectpicker();
+            let $td = $(e.target).closest("td.tdheight");
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
+            $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
+        }.bind(this));
+
+        $popoverBtn.off('hidden.bs.popover').on('hidden.bs.popover', function (e) {
+            $(e.target).data("bs.popover").inState.click = false;
+        }.bind(this));
+
+        //$("#eb_common_loader").EbLoader("hide");
     };
 
     this.getRowGroupFilter = function ($elem) {
@@ -5909,86 +6229,121 @@ var EbCommonDataTable = function (Option) {
         this.rowgroupFilter.push(new fltr_obj(type, name, val));
     };
 
-    this.call2newDv = function (rows, idx, colindex) {
+    this.call2newDv = function (rows, idx, colindex, source) {
         $.ajax({
             type: "POST",
             url: "../DV/getdv",
             data: { refid: this.linkDV },
-            success: this.GetData4InlineDv.bind(this, rows, idx, colindex),
+            success: this.GetData4InlineDv.bind(this, rows, idx, colindex, source),
             error: function (req, status, xhr) {
             }
         });
     };
 
-    this.GetData4InlineDv = function (rows, idx, colindex, result) {
+    this.GetData4InlineDv = function (rows, idx, colindex, source, result) {
         var Dvobj = JSON.parse(result).DsObj;
-        var param = this.Params4InlineTable(Dvobj, idx);
+        var param = this.Params4InlineTable(Dvobj, idx, source);
         $.ajax({
             type: "POST",
             url: "../DV/getData",
             data: param,
-            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex),
+            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex, source),
             error: function (req, status, xhr) {
             }
         });
     };
 
-    this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
-        let colspan = Dvobj.Columns.$values.length;
-        let str = "";
-        $.each(this.rowgroupCols, function (k, obj) {
-            str += "<td>&nbsp;</td>";
-        });
-        $.each(this.extraCol, function (k, obj) {
-            if (obj.bVisible)
-                str += "<td>&nbsp;</td>";
-        });
+    this.LoadInlineDv = function (rows, idx, Dvobj, colindex, source, result) {
+        if (this.popup) {
+            $("#popupheader" + this.tableId).append(`
+               <div class="popup-header-name">
+                    ${Dvobj.DisplayName}
+               </div>
+               <div>
+                   Range :  ${moment(new Date(this.filterValues[0].Value)).format('DD-MMM-YYYY') + " - " + moment(new Date(this.filterValues[1].Value)).format('DD-MMM-YYYY')}
+               </div>
+            `);
 
-        $(rows).eq(idx).next(".containerrow").remove();
-        if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
-
-            var o = new Object();
-            o.tableId = "tbl" + idx;
-            o.showFilterRow = false;
-            o.showSerialColumn = true;
-            o.showCheckboxColumn = false;
-            o.Source = "inline";
-            o.scrollHeight = "200px";
-            o.dvObject = Dvobj;
-            o.data = result;
-            o.keys = false;
-            o.IsPaging = false;
-            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
-            this.datatable = new EbCommonDataTable(o);
-            if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
-                $(".inlinetable").css("width", $(window).width() - 115);
-            else
-                $(".inlinetable").css("width", $(window).width() - 175);
-            this.datatable.Api.columns.adjust();
+            this.RenderTableviewAsPopup(Dvobj, result);
         }
         else {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
-            o = new Object();
-            o.tableId = "chart" + idx;
-            o.dvObject = Dvobj;
-            o.data = result.data;
-            this.chartApi = new EbBasicChart(o);
-            $(".inlinetable").css("height", "380px");
-            $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
-            $("#canvasDivchart" + idx).css("height", "inherit");
-        }
-        $(".containerrow .close").off("click").on("click", function (e) {
-            $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
-            $(e.target).parents().closest(".containerrow").remove();
-            this.Api.columns.adjust();
-        }.bind(this));
+            let colspan = Dvobj.Columns.$values.length;
+            let str = "";
+            $.each(this.rowgroupCols, function (k, obj) {
+                str += "<td>&nbsp;</td>";
+            });
+            $.each(this.extraCol, function (k, obj) {
+                if (obj.bVisible)
+                    str += "<td>&nbsp;</td>";
+            });
 
-        $("#eb_common_loader").EbLoader("hide");
+            $(rows).eq(idx).next(".containerrow").remove();
+            if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+                $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
+
+                var o = new Object();
+                o.tableId = "tbl" + idx;
+                o.showFilterRow = false;
+                o.showSerialColumn = true;
+                o.showCheckboxColumn = false;
+                o.Source = "inline";
+                o.scrollHeight = "200px";
+                o.dvObject = Dvobj;
+                o.data = result;
+                o.keys = false;
+                o.IsPaging = false;
+                o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+                this.datatable = new EbCommonDataTable(o);
+                if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
+                    $(".inlinetable").css("width", $(window).width() - 115);
+                else
+                    $(".inlinetable").css("width", $(window).width() - 175);
+                this.datatable.Api.columns.adjust();
+            }
+            else {
+                $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
+                o = new Object();
+                o.tableId = "chart" + idx;
+                o.dvObject = Dvobj;
+                o.data = result.data;
+                this.chartApi = new EbBasicChart(o);
+                $(".inlinetable").css("height", "380px");
+                $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
+                $("#canvasDivchart" + idx).css("height", "inherit");
+            }
+            $(".containerrow .close").off("click").on("click", function (e) {
+                $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+                $(e.target).parents().closest(".containerrow").remove();
+                this.Api.columns.adjust();
+            }.bind(this));
+        }
+        if (source === "Calendar")
+            $("#tblpopup").EbLoader("hide");
+        else
+            this.hideEbLoader();
+
         this.Api.columns.adjust();
     };
 
-    this.Params4InlineTable = function (Dvobj, idx) {
+    this.RenderTableviewAsPopup = function (Dvobj, result) {
+        var o = new Object();
+        o.tableId = `popupmodal${this.tableId}`;
+        o.showFilterRow = false;
+        o.showSerialColumn = true;
+        o.showCheckboxColumn = false;
+        o.Source = "popup";
+        //o.scrollHeight = "200px";
+        o.dvObject = Dvobj;
+        o.data = result;
+        o.keys = false;
+        o.IsPaging = false;
+        o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+        this.datatable = new EbCommonDataTable(o);
+        this.popup = false;
+        this.datatable.Api.columns.adjust();
+    };
+
+    this.Params4InlineTable = function (Dvobj, idx, source) {
         var dq = new Object();
         dq.RefId = Dvobj.DataSourceRefId;
         dq.TFilters = [];
@@ -5996,10 +6351,14 @@ var EbCommonDataTable = function (Option) {
         dq.Start = 0;
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
-        dq.TableId = "tbl" + idx;
+        if (source === "Calendar")
+            dq.TableId = `popupmodal${this.tableId}`;
+        else
+            dq.TableId = "tbl" + idx;
         if (Dvobj.RowGroupCollection.$values.length > 0)
             dq.CurrentRowGroup = JSON.stringify(Dvobj.RowGroupCollection.$values[0]);
         dq.OrderBy = this.getOrderByInfoforInline(Dvobj);
+        dq.Source = source;
         return dq;
     };
 
@@ -6057,6 +6416,7 @@ var EbCommonDataTable = function (Option) {
 
     this.ExportToExcel = function (e) {
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
         this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
 
@@ -6133,9 +6493,9 @@ var EbCommonDataTable = function (Option) {
                     this.EbObject.Columns.$values[i].className += " tdheight dt-right";
             }
             else if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
-                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "sys_cancelled") {
-                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
-                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "eb_lock") {
+                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "eb_lock") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "eb_lock") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 }
                 else {
                     if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
@@ -6223,11 +6583,11 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === 'true' || data === true || data === 'T') ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {
-        return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
+        return (data === 'true' || data === true || data === 'T') ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
     };
 
     this.renderlink4NewTable = function (data, type, row, meta) {
@@ -6251,10 +6611,12 @@ var EbCommonDataTable = function (Option) {
                 $(nRow).css('background-color', '#' + t);
             }
 
-            if (value.name === 'sys_cancelled') {
+            if (value.name === 'eb_void') {
                 var tr = aData[value.data];
-                if (tr === true)
-                    $(nRow).css('color', '#f00');
+                if (tr === 'true' || tr === true || tr === 'T') {
+                    $(nRow).css('color', '#ab0000');
+                    $(nRow).attr('eb-void', 'T');
+                }
             }
         });
     };
@@ -6427,6 +6789,17 @@ var EbCommonDataTable = function (Option) {
 
         return gradient[val];
     };
+
+    this.showEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("show");
+    };
+
+    this.hideEbLoader = function () {
+        if (this.Source != "WebForm")
+            $("#eb_common_loader").EbLoader("hide");
+    };
+
     if (this.Source === "EbDataTable" || this.Source === "PivotTable")
         this.start4EbDataTable();
     else
@@ -7138,7 +7511,8 @@ var EbGoogleMap = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    url = `../webform/index?_r=${MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                    let _locale = ebcontext.languages.getCurrentLocale();
+                    url = `../webform/index?_r=${MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lo=${_locale}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")
@@ -7291,7 +7665,7 @@ let DashBoardViewWrapper = function (options) {
     this.loader = $("#eb_common_loader");
     this.IsRendered = false;
     this.GridStackInit = function () {
-        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
+        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40, float: true });
         grid.on('gsresizestop', this.Redrawfn.bind(this));
         //grid.on('dragstart', this.DragStartFn.bind(this));
         //grid.on('dragstop', this.DragStopFn.bind(this));
@@ -7364,6 +7738,17 @@ let DashBoardViewWrapper = function (options) {
                 `);
         $('#paramdiv' + this.TabNum).append(result);
         this.FilterObj = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
+        if (this.FilterVal.length > 0) {
+            //this.filterValues = this.FilterVal;
+            //this.placefiltervalues();
+            $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+                var mapobj = getObjByval(this.FilterVal, "Name", obj.Name);
+                if (typeof mapobj !== "undefined") {
+                    let val = mapobj.Value;
+                    obj.setValue(val);
+                }
+            }.bind(this));
+        }
         $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
         $("#btnGo").empty().append("Apply");
@@ -7401,8 +7786,8 @@ let DashBoardViewWrapper = function (options) {
     };
 
     this.placefiltervalues = function () {
-        $.each(getFlatControls(this.filterDialog.FormObj), function (i, obj) {
-            var mapobj = getObjByval(this.filtervalues, "Name", obj.Name);
+        $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+            var mapobj = getObjByval(this.FilterVal, "Name", obj.Name);
             if (typeof mapobj !== "undefined") {
                 let val = mapobj.Value;
                 obj.setValue(val);
@@ -7535,7 +7920,7 @@ let DashBoardViewWrapper = function (options) {
                 grid.addWidget(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content usr" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
-                    <div class="db-title" name-id="${t_id}" style="display:float"></div>
+                    <div class="db-title" name-id="${t_id}" style="display:flex"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
@@ -7639,11 +8024,12 @@ let DashBoardViewWrapper = function (options) {
                             let designHtml = this.MakeLinks(object);
                             $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
                             $(`#${this.CurrentTile}`).addClass("eb-tile-link");
-                            $(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");
+                            //$(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");//
+                            $(`#${this.CurrentTile} .db-title-parent`).css("display", "none");
                             $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
                             $(`#${tile_id}`).removeClass('ext-linktoform').addClass('ext-linktoform');
                             this.labelstyleApply(this.CurrentTile);
-                            LinkStyle(obj, this.CurrentTile, this.TabNum);
+                            LinkStyle(obj, this.CurrentTile, this.TabNum, this.GetFilterValuesForDataSource());
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
                             this.loader.EbLoader("hide");
                             $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
@@ -7766,14 +8152,48 @@ let DashBoardViewWrapper = function (options) {
         </div></div>`;
         }
         else if (obj.LabelStyle == 3) {
-            a = `<div class="display-block label4-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
-        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
-        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div><div class='lb4-data'>
-        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
-        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
-        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
-        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
-        </div></div></div>`;
+            a = `<div class="row display-block datalabel4 eb-full-width" id="${obj.EbSid}" eb-type="DataLabel">
+            <div class="col-lg-4 col-sm-4 col-md-4 eb-full-height eb-nopadding icon-pane">
+            <div class="icon4 eb-full-height" id="${obj.EbSid}_icon"><i></i></div></div>
+            <div class="col-lg-8 col-sm-8 col-md-8 eb-full-height body-pane">
+                <div class="card" id="${obj.EbSid}_Data_pane" style="width: 100%;">
+                    <h5 class="card-header lbl" id="${obj.EbSid}_static"> ${obj.StaticLabel} </h5>
+                    <div class="card-body">
+<p class="card-text" id="${obj.EbSid}_description lbl"></p>
+<p class="card-text" id="${obj.EbSid}_dynamic lbl">${obj.DynamicLabel}</p>
+                    </div>
+                <div class="card-footer text-muted" id="${obj.EbSid}_footer">
+                <div class="row">
+<div class="col-sm-3"><i class="fa fa-address-book" aria-hidden="true"></i></div>
+<div class="col-sm-9 eb-nopadding"> <label></label></div>
+                </div>
+             </div>
+            </div>
+            </div> `;
+        }
+        else if (obj.LabelStyle == 4) {
+            a = `<div class="row display-block datalabel5 eb-full-width" id="${obj.EbSid}" eb-type="DataLabel">
+    <div class="col-lg-8 col-sm-8 col-md-8 eb-full-height body-pane">
+        <div class="card eb-full-width" id="${obj.EbSid}_Data_pane" style="width: 100%;">
+            <h5 class="card-header lbl" id="${obj.EbSid}_static"> ${obj.StaticLabel} </h5>
+            <div class="card-body">
+                <p class="card-text lbl" id="${obj.EbSid}_description">  </p>
+                <p class="card-text" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</p>
+            </div>
+            <div class="card-footer text-muted" id="${obj.EbSid}_footer">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <i class="fa fa-address-book" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-9 eb-nopadding"> <label></label></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-4 col-md-4 eb-full-height eb-nopadding icon-pane">
+        <div class="icon4 eb-full-height" id="${obj.EbSid}_icon"><i></i></div>
+    </div>
+</div>`;
         }
         return a;
     };
@@ -7918,7 +8338,7 @@ let DashBoardViewWrapper = function (options) {
     this.TileRefidChangesuccess = function (id, data) {
         if (this.FilterVal.length > 0) {
             this.filterValues = this.FilterVal;
-            this.placefiltervalues();
+            //this.placefiltervalues();
         }
         else if (this.filtervalues.length === 0 || this.filtervalues === undefined) {
             this.GetFilterValuesForDataSource();
@@ -8004,6 +8424,15 @@ let DashBoardViewWrapper = function (options) {
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (ebcontext.languages != undefined) {
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
         //if (this.stickBtn) { this.stickBtn.minimise(); }
         return this.filtervalues;
     };
@@ -8022,9 +8451,21 @@ let DashBoardViewWrapper = function (options) {
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+
+        if (ebcontext.languages !== undefined) {
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_language_id"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+
+            temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_current_locale"; });
+            if (temp.length === 0)
+                this.filtervalues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
+
         if (this.EbObject.Filter_Dialogue !== "") {
             this.Procs = {};
             CtrlCounters.DataLabelCounter = 0;
@@ -8070,7 +8511,8 @@ let DashBoardViewWrapper = function (options) {
             //}
         }
         else if (splitarray[2] === "0") {
-            let url = "../webform/index?_r=" + this.linkDV;
+            let _locale = ebcontext.languages.getCurrentLocale();
+            let url = "../webform/index?_r=" + this.linkDV + "_lo=" + _locale;
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
             _form.setAttribute("action", url);
@@ -9724,120 +10166,230 @@ var EbBasicChart = function (Option) {
 
 //DataLabel Style Function
 
+//const { functions } = require("stylus");
+
 function EbDataLabelFn(Label, tileId) {
-    if (Label.Object_Selector != "" && tileId != null)
-        $(`[data-id="${tileId}"] .label-cont`).attr("ref-id", Label.Object_Selector);
-    if (Label.ChangeTextPositon) {
-        if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
-            $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
+    if (Label.LabelStyle < 3) {
+        if (Label.Object_Selector != "" && tileId != null)
+            $(`[data-id="${tileId}"] .label-cont`).attr("ref-id", Label.Object_Selector);
+        if (Label.ChangeTextPositon) {
+            if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
+                $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
+            }
+
+            if (Label.DescriptionPosition.Left !== 0 && Label.DescriptionPosition.Top !== 0) {
+                $(`#${Label.EbSid}_description`).css({ "left": `${Label.DescriptionPosition.Left}%`, "top": `${Label.DescriptionPosition.Top}%`, "position": "absolute" });
+            }
+
+            if (Label.DynamicLabelPositon.Left !== 0 && Label.DynamicLabelPositon.Top !== 0) {
+                $(`#${Label.EbSid}_dynamic`).css({ "left": `${Label.DynamicLabelPositon.Left}%`, "top": `${Label.DynamicLabelPositon.Top}%`, "position": "absolute" });
+            }
+        }
+        else {
+            $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
+            $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
+            $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
+        }
+        if (Label.TextPosition == 0) { this.TextPosition = "left" }
+        if (Label.TextPosition == 1) { this.TextPosition = "center" }
+        if (Label.TextPosition == 2) { this.TextPosition = "right" }
+        $(`#${Label.EbSid}_Data_pane .lbl`).css("text-align", this.TextPosition);
+        //Static label style
+        $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
+        if (Label.StaticLabelFont !== null) {
+            GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
         }
 
-        if (Label.DescriptionPosition.Left !== 0 && Label.DescriptionPosition.Top !== 0) {
-            $(`#${Label.EbSid}_description`).css({ "left": `${Label.DescriptionPosition.Left}%`, "top": `${Label.DescriptionPosition.Top}%`, "position": "absolute" });
+        //description style
+        $(`#${Label.EbSid}_description`).empty().append(Label.Description);
+        if (Label.DescriptionFont !== null) {
+            GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
         }
 
-        if (Label.DynamicLabelPositon.Left !== 0 && Label.DynamicLabelPositon.Top !== 0) {
-            $(`#${Label.EbSid}_dynamic`).css({ "left": `${Label.DynamicLabelPositon.Left}%`, "top": `${Label.DynamicLabelPositon.Top}%`, "position": "absolute" });
+        //Dynamic label style
+        if (Label.DynamicLabelFont !== null) {
+            GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
         }
-    }
-    else {
-        $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
-        $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
-        $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
-    }
-    if (Label.TextPosition == 0) { this.TextPosition = "left" }
-    if (Label.TextPosition == 1) { this.TextPosition = "center" }
-    if (Label.TextPosition == 2) { this.TextPosition = "right" }
-    $(`#${Label.EbSid}_Data_pane .lbl`).css("text-align", this.TextPosition);
-    //Static label style
-    $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
-    if (Label.StaticLabelFont !== null) {
-        GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
-    }
-
-    //description style
-    $(`#${Label.EbSid}_description`).empty().append(Label.Description);
-    if (Label.DescriptionFont !== null) {
-        GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
-    }
-
-    //Dynamic label style
-    if (Label.DynamicLabelFont !== null) {
-        GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
-    }
-    if (Label.LabelStyle == 0) {
-        $(`#${Label.EbSid}_Data_pane`).css("border-radius", Label.LabelBorderRadius);
-        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
-        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
-    }
-    else if (Label.LabelStyle == 1) {
-        $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
-        $(`#${Label.EbSid}_icon`).css("border-radius", `${Label.LabelBorderRadius}px 0px 0px ${Label.LabelBorderRadius}px`);
-        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
-        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
-    }
-    else if (Label.LabelStyle == 2) {
-        $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
-        $(`#${Label.EbSid}_icon`).css("border-radius", `0px ${Label.LabelBorderRadius}px  ${Label.LabelBorderRadius}px  0px`);
-        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
-        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
-    }
-    else if (Label.LabelStyle == 3) {
-        $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
-        //$(`#${Label.EbSid}_icon`).css("border-radius", `0px ${Label.LabelBorderRadius}px  ${Label.LabelBorderRadius}px  0px`);
-        $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
-        $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
-    }
-    if (!Label.IsGradient) {
-        $(`#${Label.EbSid}_Data_pane`).css("background", Label.LabelBackColor);
-    }
-    if (Label.IsGradient) {
-        $(`#${Label.EbSid}_Data_pane`).css("background", "");
-        let direction = GradientDirection(Label.Direction);
-        let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
-        $(`#${Label.EbSid}_Data_pane`).css('background-image', bg);
-    }
-    $(`#${Label.EbSid}_Data_pane`).css("border", `solid 1px ${Label.LabelBorderColor}`);
-
-    //Label Icon
-    if (Label.RenderIcon) {
         if (Label.LabelStyle == 0) {
-            $(`#${Label.EbSid}_Data_pane`).css("padding-left", "14vh");
-            $(`#${Label.EbSid}`).css("padding-top", "2vh");
+            $(`#${Label.EbSid}_Data_pane`).css("border-radius", Label.LabelBorderRadius);
+            $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+            $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
         }
-        $(`#${Label.EbSid}_icon`).css('display', 'block');
+        else if (Label.LabelStyle == 1) {
+            $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
+            $(`#${Label.EbSid}_icon`).css("border-radius", `${Label.LabelBorderRadius}px 0px 0px ${Label.LabelBorderRadius}px`);
+            $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+            $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+        }
+        else if (Label.LabelStyle == 2) {
+            $(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
+            $(`#${Label.EbSid}_icon`).css("border-radius", `0px ${Label.LabelBorderRadius}px  ${Label.LabelBorderRadius}px  0px`);
+            $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+            $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+        }
+        else if (Label.LabelStyle == 3) {
+            //$(`#${Label.EbSid}_Data_pane`).css("border-radius", `${Label.LabelBorderRadius}px`);
+            //$(`#${Label.EbSid}_icon`).css("border-radius", `0px ${Label.LabelBorderRadius}px  ${Label.LabelBorderRadius}px  0px`);
+            $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+            $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+        }
+        if (!Label.IsGradient) {
+            $(`#${Label.EbSid}_Data_pane`).css("background", Label.LabelBackColor);
+        }
+        if (Label.IsGradient) {
+            $(`#${Label.EbSid}_Data_pane`).css("background", "");
+            let direction = GradientDirection(Label.Direction);
+            let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
+            $(`#${Label.EbSid}_Data_pane`).css('background-image', bg);
+        }
+        $(`#${Label.EbSid}_Data_pane`).css("border", `solid 1px ${Label.LabelBorderColor}`);
+
+        //Label Icon
+        if (Label.RenderIcon) {
+            if (Label.LabelStyle == 0) {
+                $(`#${Label.EbSid}_Data_pane`).css("padding-left", "14vh");
+                $(`#${Label.EbSid}`).css("padding-top", "2vh");
+            }
+            $(`#${Label.EbSid}_icon`).css('display', 'block');
+        }
+        else {
+            $(`#${Label.EbSid}_Data_pane`).css("padding-left", "2vh")
+            $(`#${Label.EbSid}`).css("padding-top", "0vh");
+            $(`#${Label.EbSid}_icon`).css('display', 'none');
+        }
+
+        if (Label.HideFooter) { $(`#${Label.EbSid}_footer`).css("display", "none"); }
+        else { $(`#${Label.EbSid}_footer`).css("display", "block"); }
+
+        let Icondirection = GradientDirection(Label.IconDirection);
+        let bg = "linear-gradient(" + Icondirection + "," + Label.IconGradientColor1 + "," + Label.IconGradientColor2 + ")";
+        if (Label.LabelStyle != 4)
+            $(`#${Label.EbSid}_icon`).css('background-image', bg);
+        $(`#${Label.EbSid}_icon i`).css("color", Label.IconColor);
+        if (Label.IconText == "" || Label.IconText == null || Label.IconText == undefined) {
+            $(`#${Label.EbSid}_icon i`).empty().removeAttr("class").addClass(`fa ${Label.Icon}`);
+            $(`#${Label.EbSid}_icon`).css({ "display": "flex", "align-items": "center", "justify-content": "center" });
+        }
+        else {
+            $(`#${Label.EbSid}_icon i`).empty().append(Label.IconText).removeAttr("class").addClass(`lbl-icon-text`);
+            $(`#${Label.EbSid}_icon`).css({ "display": "flex", "align-items": "center", "justify-content": "center" });
+        }
+
+        $(`#${Label.EbSid}_footer label`).css("color", Label.FooterTextColor);
+        $(`#${Label.EbSid}_footer i`).removeAttr("class").addClass(`fa ${Label.FooterIcon}`);
+        $(`#${Label.EbSid}_footer i`).css("color", Label.FooterIconColor);
+        $(`#${Label.EbSid}_footer label`).text(Label.FooterText);
+
+        //shadow Editor 
+        if (Label.Shadow) {
+            $(`#${Label.EbSid}_Data_pane`).css("box-shadow", Label.Shadow);
+        }
     }
     else {
-        $(`#${Label.EbSid}_Data_pane`).css("padding-left", "2vh")
-        $(`#${Label.EbSid}`).css("padding-top", "0vh");
-        $(`#${Label.EbSid}_icon`).css('display', 'none');
-    }
 
-    if (Label.HideFooter) { $(`#${Label.EbSid}_footer`).css("display", "none"); }
-    else { $(`#${Label.EbSid}_footer`).css("display", "block"); }
+        if (Label.Object_Selector != "" && tileId != null)
+            $(`[data-id="${tileId}"] .label-cont`).attr("ref-id", Label.Object_Selector);
+        if (Label.ChangeTextPositon) {
+            if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
+                $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
+            }
 
-    let Icondirection = GradientDirection(Label.IconDirection);
-    let bg = "linear-gradient(" + Icondirection + "," + Label.IconGradientColor1 + "," + Label.IconGradientColor2 + ")";
-    if (Label.LabelStyle != 3)
+            if (Label.DescriptionPosition.Left !== 0 && Label.DescriptionPosition.Top !== 0) {
+                $(`#${Label.EbSid}_description`).css({ "left": `${Label.DescriptionPosition.Left}%`, "top": `${Label.DescriptionPosition.Top}%`, "position": "absolute" });
+            }
+
+            if (Label.DynamicLabelPositon.Left !== 0 && Label.DynamicLabelPositon.Top !== 0) {
+                $(`#${Label.EbSid}_dynamic`).css({ "left": `${Label.DynamicLabelPositon.Left}%`, "top": `${Label.DynamicLabelPositon.Top}%`, "position": "absolute" });
+            }
+        }
+        else {
+            $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
+            $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
+            $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
+        }
+        if (Label.TextPosition == 0) { this.TextPosition = "left" }
+        if (Label.TextPosition == 1) { this.TextPosition = "center" }
+        if (Label.TextPosition == 2) { this.TextPosition = "right" }
+        $(`#${Label.EbSid}_Data_pane .lbl`).css("text-align", this.TextPosition);
+        //Static label style
+        $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
+        if (Label.StaticLabelFont !== null) {
+            GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
+        }
+
+        //description style
+        $(`#${Label.EbSid}_description`).empty().append(Label.Description);
+        if (Label.DescriptionFont !== null) {
+            GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
+        }
+
+        //Dynamic label style
+        if (Label.DynamicLabelFont !== null) {
+            GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
+        }
+
+        if (Label.LabelStyle == 3) {
+            $(`#${Label.EbSid}`).css("border", `solid 1px ${Label.LabelBorderColor}`);
+            $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
+        }
+        if (!Label.IsGradient) {
+            $(`#${Label.EbSid}_Data_pane`).css("background", Label.LabelBackColor);
+        }
+        if (Label.IsGradient) {
+            $(`#${Label.EbSid}_Data_pane`).css("background", "");
+            let direction = GradientDirection(Label.Direction);
+            let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
+            $(`#${Label.EbSid}_Data_pane`).css('background-image', bg);
+        }
+        //$(`#${Label.EbSid}_Data_pane`).css("border", `solid 1px ${Label.LabelBorderColor}`);
+
+        //render icon  or icon text
+        if (Label.IconText == "") {
+            $(`#${Label.EbSid}_icon i`).removeClass().addClass(`fa ${Label.Icon}`);
+            let _fontsize = $(`#${Label.EbSid}_icon`).height() < $(`#${Label.EbSid}_icon`).width() ? $(`#${Label.EbSid}_icon`).height() : $(`#${Label.EbSid}_icon`).width();
+            $(`#${Label.EbSid}_icon`).css("font-size", _fontsize - 40 + "px");
+        }
+        else {
+            $(`#${Label.EbSid}_icon i`).removeClass().text(Label.IconText);
+        }
+        //Label Icon
+        if (Label.RenderIcon) {
+            $(`#${Label.EbSid} .body-pane`).removeClass("col-lg-12 col-sm-12 col-md-12").addClass("col-lg-8 col-sm-8 col-md-8");
+            $(`#${Label.EbSid} .icon-pane`).show();
+        }
+        else {
+            $(`#${Label.EbSid} .body-pane`).removeClass("col-lg-8 col-sm-8 col-md-8").addClass("col-lg-12 col-sm-12 col-md-12");
+            //$(`#${Label.EbSid}_Data_pane`).css("padding-left", "2vh")
+            //$(`#${Label.EbSid}`).css("padding-top", "0vh");
+            //$(`#${Label.EbSid}_icon`).css('display', 'none');
+            $(`#${Label.EbSid} .icon-pane`).hide();
+        }
+
+        if (Label.HideFooter) { $(`#${Label.EbSid}_footer`).css("display", "none"); }
+        else { $(`#${Label.EbSid}_footer`).css("display", "block"); }
+
+        let Icondirection = GradientDirection(Label.IconDirection);
+        let bg = "linear-gradient(" + Icondirection + "," + Label.IconGradientColor1 + "," + Label.IconGradientColor2 + ")";
         $(`#${Label.EbSid}_icon`).css('background-image', bg);
-    $(`#${Label.EbSid}_icon i`).css("color", Label.IconColor);
-    if (Label.IconText == "" || Label.IconText == null || Label.IconText == undefined) {
-        $(`#${Label.EbSid}_icon i`).empty().removeAttr("class").addClass(`fa ${Label.Icon}`);
-        $(`#${Label.EbSid}_icon`).css("padding", "1.5rem 2rem");
-    }
-    else {
-        $(`#${Label.EbSid}_icon i`).empty().append(Label.IconText).removeAttr("class").addClass(`lbl-icon-text`);
-        $(`#${Label.EbSid}_icon`).css("padding", "1.5rem 2rem");
-    }
+        $(`#${Label.EbSid}_icon i`).css("color", Label.IconColor);
 
-    $(`#${Label.EbSid}_footer label`).css("color", Label.FooterTextColor);
-    $(`#${Label.EbSid}_footer i`).removeAttr("class").addClass(`fa ${Label.FooterIcon}`);
-    $(`#${Label.EbSid}_footer i`).css("color", Label.FooterIconColor);
-    $(`#${Label.EbSid}_footer label`).text(Label.FooterText);
+        $(`#${Label.EbSid}_footer label`).css("color", Label.FooterTextColor);
+        $(`#${Label.EbSid}_footer i`).removeAttr("class").addClass(`fa ${Label.FooterIcon}`);
+        $(`#${Label.EbSid}_footer i`).css("color", Label.FooterIconColor);
+        $(`#${Label.EbSid}_footer label`).text(Label.FooterText);
 
-    //shadow Editor 
-    if (Label.Shadow) {
-        $(`#${Label.EbSid}_Data_pane`).css("box-shadow", Label.Shadow);
+        //shadow Editor 
+        if (Label.Shadow) {
+            $(`#${Label.EbSid}`).css("box-shadow", Label.Shadow);
+        }
+
+        /*$(".icon-pane").off*/
+        $(`#${Label.EbSid}`).css("border-radius", `${Label.LabelBorderRadius}px`);
+        if (Label.LabelStyle == 3)
+            $(`#${Label.EbSid}_icon`).css("border-radius", `${Label.LabelBorderRadius}px 0px 0px ${Label.LabelBorderRadius}px`);
+        else if (Label.LabelStyle == 4)
+            $(`#${Label.EbSid}_icon`).css("border-radius", `0px ${Label.LabelBorderRadius}px ${Label.LabelBorderRadius}px 0px`);
+
     }
 }
 
@@ -9883,10 +10435,18 @@ function Eb_Dashboard_Bg(EbObject) {
         $(".component_cont .nav").css("background-color", "").css("background-image", bg);
     }
     else {
-        $("#layout_div").css("background-image", "").css("background", EbObject.BackgroundColor);
+        $("#layout_div").css("background", EbObject.BackgroundColor);
         $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
+        if (EbObject.BackgroundImage) {
+            $("#layout_div")
+                .css("background-image", `url("/images/${EbObject.BackgroundImage}.jpg")`)
+                .css("background-size", "100% 100%").css("background-repeat", "no-repeat")
+                .css("background-position-x", "center")
+                .css("background-position-y", "top");
+        }
+        else
+            $("#layout_div").css("background-image", "");
     }
-
 }
 
 function GradientDirection(val) {
@@ -9907,9 +10467,9 @@ $(document).ready(function () {
 });
 
 
-function LinkStyle(Obj, tile, TabNum) {
+function LinkStyle(Obj, tile, TabNum, filtervalues) {
     $(`[eb-id=${tile}]`).addClass("eb-links")
-    this.link = Obj.Object_Selector ? GetUrl4Link(Obj.Object_Selector) : "#";
+    this.link = Obj.Object_Selector ? GetUrl4Link(Obj.Object_Selector, filtervalues) : "#";
     $(`#${Obj.EbSid}_link`).text(Obj.LinkName);
     if (Obj.Object_Selector) {
         $(`#${Obj.EbSid}_link`).attr("href", this.link);
@@ -9918,6 +10478,7 @@ function LinkStyle(Obj, tile, TabNum) {
     if (Obj.HoverText) {
         $(`#${Obj.EbSid}_link`).attr("data-toggle", `Link-hover_${Obj.EbSid}`);
         $(`#${Obj.EbSid}_link`).attr("title", Obj.HoverText);
+        $(`#${Obj.EbSid}_link`).attr("data-placement", "bottom");
         $(`[data-toggle="Link-hover_${Obj.EbSid}"]`).tooltip();
     }
     if (Obj.BackgroundColor) {
@@ -9933,48 +10494,54 @@ function LinkStyle(Obj, tile, TabNum) {
 }
 
 
-function GetUrl4Link(refid) {
+function GetUrl4Link(refid, filtervalues) {
+    this.filterValues = filtervalues;
     var objtype = parseInt(refid.split("-")[2]);
-    let objTypeName = enumFn(objtype);
+    let objTypeName = GetEnumType(objtype);
     let objid = parseInt(refid.split("-")[3]);
     this.login = ebcontext.user.wc;
     var _url = `../Eb_Object/Index?objid=${objid}&objtype=${objtype}`;
     if (this.login === "uc") {
         if (objTypeName === "TableVisualization" || objTypeName === "ChartVisualization" || objTypeName === "GoogleMap") {
-            _url = "../DV/dv?refid=" + refid;
+            _url = "../DV/dv?refid=" + refid + "&filterValues=" + btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
         }
         else if (objTypeName === "Report") {
             _url = "../ReportRender/Index?refid=" + refid;
         }
         else if (objTypeName === "WebForm") {
-            _url = "../WebForm/Index?_r=" + refid;
+            let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale(): 0;
+            _url = "../WebForm/Index?_r=" + refid + "&_p" + btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))+"&_lo=" + _locale;
         }
         else if (objTypeName === "DashBoard") {
-            _url = "../DashBoard/DashBoardView?refid=" + refid;
+            _url = "../DashBoard/DashBoardView?refid=" + refid + "&filterValues=" + btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
         }
         else if (objTypeName === "CalendarView") {
             _url = "../Calendar/CalendarView?refid=" + refid;
         }
     }
+
     return _url;
 };
 
-function enumFn(id) {
+function GetEnumType(id) {
     this.obj = {};
+    this.obj[0] = "WebForm";
     this.obj[1] = "DisplayBlock";
     this.obj[2] = "DataReader";
+    this.obj[3] = "Report";
     this.obj[4] = "DataWriter";
     this.obj[5] = "SqlFunctions";
+    this.obj[11] = "DVBuilder";
     this.obj[12] = "FilterDialog";
-    this.obj[0] = "WebForm";
     this.obj[13] = "MobilePage";
     this.obj[14] = "UserControl";
-    this.obj[3] = "Report";
-    this.obj[11] = "DVBuilder";
     this.obj[15] = "EmailBuilder";
+    this.obj[16] = "TableVisualization";
+    this.obj[17] = "ChartVisualization";
     this.obj[18] = "BotForm";
     this.obj[19] = "SmsBuilder";
     this.obj[20] = "ApiBuilder"
+    this.obj[1] = "MapView";
     this.obj[22] = "DashBoard"
     this.obj[24] = "Calendar";
     this.obj[26] = "SqlJob";
@@ -11611,21 +12178,23 @@ var mapView = function (option) {
                 split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap", prevfocusedId);
             else
                 split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap");
-            if (this.propGrid === null) {
-                this.CreatePg();
-            }
-            else {
-                $(".form-group #ppt-grid").remove();
-                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+            if (this.login === "dc") {
+                if (this.propGrid === null) {
+                    this.CreatePg();
+                }
+                else {
+                    $(".form-group #ppt-grid").remove();
+                    $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
                                     <i class="fa fa-cog" aria-expanded="false"></i>
                                 </button>`);
-                $(".stickBtn").hide();
-                this.PropertyDiv = $("#pp_inner");
-                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
-                $("#pp_inner .pull-right.pgpin").remove();
-                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                    $(".stickBtn").hide();
+                    this.PropertyDiv = $("#pp_inner");
+                    $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+                    $("#pp_inner .pull-right.pgpin").remove();
+                    $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
                 <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
-                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+                    $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+                }
             }
             this.InitParamWindow();
             if (this.Mode === BuilderMode.EDIT)
@@ -11859,8 +12428,9 @@ var mapView = function (option) {
         if (this.login === "uc") {
             this.collapseGraph();
         }
+        else
+            this.PropertyDiv.hide();
         //this.propGrid.ClosePG();
-        this.PropertyDiv.hide();
         if (this.FD) {
             this.FilterToggle();
             //this.stickBtn.minimise();
@@ -12028,7 +12598,8 @@ var mapView = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                    let _locale = ebcontext.languages.getCurrentLocale();
+                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lo=${_locale}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")
@@ -12129,7 +12700,8 @@ var mapView = function (option) {
             accepts: this.acceptDrop1.bind(this)
         });
         this.drake.off("drop").on("drop", this.colDrop.bind(this));
-        this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+        if (this.login === "dc")
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
     };
 
     this.acceptDrop1 = function (el, target, source, sibling) {
@@ -12317,7 +12889,8 @@ var mapView = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                    let _locale = ebcontext.languages.getCurrentLocale();
+                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lo=${_locale}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")

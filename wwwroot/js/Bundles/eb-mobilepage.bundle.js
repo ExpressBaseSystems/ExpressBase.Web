@@ -162,10 +162,13 @@ function EbMobStudio(config) {
             $.extend(o, edit_obj);
             $container.append(o.$Control.outerHTML());
             this.refreshControl(o);
-            let tobj = o.trigger(this);
+            let tobj = o.trigger(this, null, this.ContainerType);
             if (ebtype === "EbMobileDataGrid") {
                 tobj.fillControls(tobj.CellCollection.$values, this);
                 this.setCtrls($(`#${o.EbSid} .ctrl_as_container .control_container`), o.ChildControls.$values);
+            }
+            else if (ebtype === "EbMobileTableLayout") {
+                o.fillControls(o.CellCollection.$values, this);
             }
         }
     };
@@ -226,7 +229,7 @@ function EbMobStudio(config) {
         let o = this.makeElement(ebtype, ctrlname);
         $(event.target).append(o.$Control.outerHTML());
         this.refreshControl(o);
-        o.trigger(this, 'drop');
+        o.trigger(this, 'drop', this.ContainerType);
         if (this.ContainerType === "EbMobileForm") {
             this.Controls.refreshColumnTree();
         }
@@ -327,7 +330,7 @@ function EbMobStudio(config) {
     this.findFormContainerItems = function (i, o, ebContainer) {
         let jsobj = this.Procs[o.id];
         let ebtype = this.getType(jsobj.$type);
-        if (ebtype === "EbMobileDataGrid")
+        if (ebtype === "EbMobileDataGrid" || ebtype === "EbMobileTableLayout")
             jsobj.setObject(this);
         ebContainer.$values.push(jsobj);
     };
@@ -1002,7 +1005,7 @@ function MobileMenu(option) {
         let constructor = o.constructor.name;
         let common = {
             tab: "",
-            trigger: function (root) {
+            trigger: function (root, event, containerType) {
                 this.tab = root.Conf.TabNum || "";
             },
             setObject: function () { return null; },
@@ -1071,10 +1074,10 @@ function MobileMenu(option) {
             }
         },
         EbMobileTableLayout: {
-            trigger: function (root) {
+            trigger: function (root, event, containerType) {
                 this.tab = "Tab" + root.Conf.TabNum;
                 $(`#${this.EbSid} .eb_mob_tablelayout_inner`).append(this.getHtml());
-                this.droppable();
+                this.droppable(containerType);
                 this.resizable();
             },
             getHtml: function () {
@@ -1090,11 +1093,17 @@ function MobileMenu(option) {
                 html.push(`</table>`);
                 return html.join("");
             },
-            droppable: function () {
+            droppable: function (containerType) {
+                if (containerType === 'EbMobileForm')
+                    accept = [Constants.FORM_CONTROL];
+                else
+                    accept = [Constants.DS_COLUMN, Constants.LIST_CONTROL];
+
                 $(`#${this.EbSid} .eb_tablelayout_td`).droppable({
-                    accept: [Constants.DS_COLUMN, Constants.LIST_CONTROL].join(","),
+                    accept: accept.join(","),
                     hoverClass: "drop-hover-td",
-                    drop: this.onDrop.bind(this)
+                    drop: this.onDrop.bind(this),
+                    greedy: true
                 });
             },
             onDrop: function (event, ui) {
@@ -1108,7 +1117,7 @@ function MobileMenu(option) {
 
                 if (ebtype === "EbMobileDataColumn") {
                     o.Type = $dragged.attr("DbType");
-                    o.ColumnName = $dragged.attr("ColName");
+                    o.ColumnName = $dragged.attr("ColName") || 'column' + CtrlCounters['MobileDataColumnCounter'];
                     o.ColumnIndex = $dragged.attr("index");
                 }
                 root.refreshControl(o);
@@ -1121,19 +1130,17 @@ function MobileMenu(option) {
             },
             fillControls: function (cells, root) {
                 for (let i = 0; i < cells.length; i++) {
+                    let $tr = $(`#${this.EbSid} tr:eq(${cells[i].RowIndex})`);
+                    if ($tr.is(":first-child"))
+                        $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).not(":last-child").css("width", `${cells[i].Width}%`);
+
                     let ctrls = cells[i].ControlCollection.$values;
 
                     for (let k = 0; k < ctrls.length; k++) {
                         let ebtype = root.getType(ctrls[k].$type);
                         let o = root.makeElement(ebtype, ebtype);
                         $.extend(o, ctrls[k]);
-
                         $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).append(o.$Control.outerHTML());
-                        let $tr = $(`#${this.EbSid} tr:eq(${cells[i].RowIndex})`);
-                        if ($tr.is(":first-child")) {
-                            $(`#${this.EbSid} tr:eq(${cells[i].RowIndex}) td:eq(${cells[i].ColIndex})`).not(":last-child").css("width", `${cells[i].Width}%`);
-                        }
-
                         root.refreshControl(o);
                         o.trigger(root);
                     }
@@ -1143,7 +1150,13 @@ function MobileMenu(option) {
                 this.CellCollection.$values.length = 0;
                 this.RowCount = $(`#${this.EbSid} .eb_tablelayout_tr`).length;
                 this.ColumCount = $(`#${this.EbSid} .eb_tablelayout_tr:first-child .eb_tablelayout_td`).length;
-
+                let widthAdjustement = 0.0;
+                let totalwidth = 0;
+                $(`#${this.EbSid} .eb_tablelayout_td`).each(function (i, td) {
+                    totalwidth += $(td).width();
+                }.bind(this));
+                if (this.RowCount > 1)
+                    totalwidth /= this.RowCount;
                 $(`#${this.EbSid} .eb_tablelayout_td`).each(function (i, td) {
                     let rowindex = $(td).closest(".eb_tablelayout_tr").index();
                     let colindex = $(td).index();
@@ -1151,7 +1164,13 @@ function MobileMenu(option) {
                     let cell = new EbObjects.EbMobileTableCell(`TableCell_${rowindex}_${colindex}`);
                     cell.RowIndex = rowindex;
                     cell.ColIndex = colindex;
-                    cell.Width = parseFloat($(td).width() / $(`#${this.EbSid}`).width() * 100);
+                    let floatwidth = ($(td).width() * 100.0) / totalwidth;
+                    widthAdjustement += floatwidth % 1;
+                    cell.Width = parseInt(floatwidth);
+                    if (widthAdjustement >= 1) {
+                        cell.Width += 1;
+                        widthAdjustement--;
+                    }
 
                     $(td).find(".mob_control").each(function (i, ctrl) {
                         let ebo = window.MobilePage[this.tab].Creator.Procs[ctrl.id];
@@ -1175,7 +1194,7 @@ function MobileMenu(option) {
                     if (tobj.ColumCount <= 0) tobj.ColumCount = 2;
                     tobj.CellCollection = this.DataLayout.CellCollection;
                 }
-                tobj.trigger(root);
+                tobj.trigger(root, null, 'EbMobileDataGrid');
                 return tobj;
             },
             setObject: function (root) {
@@ -1231,7 +1250,7 @@ function MobileMenu(option) {
             }
         },
         EbMobileVisualization: {
-            LinkSettingsProps: ["FormMode", "RenderAsPopup", "FormId", "LinkFormParameters", "ContextToControlMap"],
+            LinkSettingsProps: ["FormMode", "RenderAsPopup", "FormId", "LinkFormParameters"],//"ContextToControlMap"
             propertyChanged: function (propname, root) {
                 if (propname == "DataSourceRefId") {
                     if (!this.DataSourceRefId) {
@@ -1323,9 +1342,12 @@ function MobileMenu(option) {
             trigger: function (root) {
                 this.propertyChanged("HorrizontalAlign");
             },
-            propertyChanged: function (propname) {
+            propertyChanged: function (propname, root) {
                 if (propname === "HorrizontalAlign") {
                     window.alignHorrizontally($(`#${this.EbSid}`), this.HorrizontalAlign);
+                }
+                else if (propname === "ColumnName") {
+                    root.refreshControl(this);
                 }
             }
         },

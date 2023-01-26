@@ -768,7 +768,7 @@ function delid() {
                 multiple: { type: Boolean, default: !1 },
                 placeholder: { type: String, default: "" },
                 transition: { type: String, default: "expand" },
-                clearSearchOnSelect: { type: Boolean, default: !0 },
+                clearSearchOnSelect: { type: Boolean, default: !1 },//eb_edited
                 label: { type: String, default: "label" },
                 getOptionLabel: {
                     type: Function, default: function (t) {
@@ -1069,37 +1069,44 @@ function isAllValuesTrue(Obj) {
 
 function getValueExprValue(ctrl, formObject, userObject) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code) {
-        let fun = new Function("form", "user", `event`, atob(ctrl.ValueExpr.Code)).bind(ctrl, formObject, userObject);
-        let val = fun();
-        val = EbConvertValue(val, ctrl.ObjType);
-        return val;
+        try {
+            let fun = new Function("form", "user", `event`, atob(ctrl.ValueExpr.Code)).bind(ctrl, formObject, userObject);
+            let val = fun();
+            val = EbConvertValue(val, ctrl.ObjType);
+            return val;
+        }
+        catch (e) {
+            console.error('Error in grid value expression: ' + ctrl.Name);
+            console.warn(e);
+        }
     }
+    return null;
 }
 
 function EbRunValueExpr_n(ctrl, formObject, userObject, formObj) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
         return valueExpHelper_n(getValueExprValue(ctrl, formObject, userObject), ctrl);
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
-        let params = [];
+        //let params = [];
 
-        ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
+        //ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
 
-        $.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
-            try {
-                let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
-                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
-                let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
-                params.push(param);
-            }
-            catch (e) {
-                console.eb_log("eb error :");
-                console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-            }
-        }.bind(this));
+        //$.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
+        //    try {
+        //        let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
+        //        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+        //        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
+        //        let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
+        //        params.push(param);
+        //    }
+        //    catch (e) {
+        //        console.eb_log("eb error :");
+        //        console.eb_log(e);
+        //        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+        //    }
+        //}.bind(this));
 
-        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
+        //ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
     }
 }
 
@@ -1119,26 +1126,26 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
         return valueExpHelper(getValueExprValue(ctrl, formObject, userObject), ctrl);
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
-        let params = [];
+        //let params = [];
 
-        ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
+        //ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
 
-        $.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
-            try {
-                let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
-                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
-                let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
-                params.push(param);
-            }
-            catch (e) {
-                console.eb_log("eb error :");
-                console.eb_log(e);
-                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-            }
-        }.bind(this));
+        //$.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
+        //    try {
+        //        let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
+        //        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+        //        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
+        //        let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
+        //        params.push(param);
+        //    }
+        //    catch (e) {
+        //        console.eb_log("eb error :");
+        //        console.eb_log(e);
+        //        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+        //    }
+        //}.bind(this));
 
-        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
+        //ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
     }
 }
 
@@ -1521,7 +1528,6 @@ const EbPowerSelect = function (ctrl, options) {
     //parameters 
     this.getFilterValuesFn = options.getFilterValuesFn || function () { return []; };
     this.ComboObj = ctrl;
-    //this.ComboObj.__isDGv2Ctrl = true;// hardcoding
     this.renderer = options.renderer;
     this.ComboObj.initializer = this;
     this.name = ctrl.EbSid_CtxId;
@@ -1554,6 +1560,9 @@ const EbPowerSelect = function (ctrl, options) {
     this.datatable = null;
     this.clmAdjst = 0;
     this.onDataLoadCallBackFns = [];
+    this.getDataCounter = 0;
+    this.initAt = performance.now();
+    this.SelectedUnformatedRow = null;//to manage duplicate value member in data
 
     this.scrollableContSelectors = options.scrollableContSelectors;
 
@@ -1596,6 +1605,7 @@ const EbPowerSelect = function (ctrl, options) {
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit)
             $('#' + this.name + 'Container .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
             $('#' + this.name + 'Container .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
+            $('#' + this.name + 'Container .DDrefresh').off("click").on("click", this.DDrefresh.bind(this)); // dd refresh button
             $('#' + this.name + 'tbl').keydown(function (e) {
                 if (e.which === 27) {
                     this.lastFocusedDMsearchBox.focus();
@@ -1603,9 +1613,10 @@ const EbPowerSelect = function (ctrl, options) {
                 }
             }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Container').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+            $('#' + this.name + 'Container').on('click', "[class= selected-tag]", this.clickedOnTag.bind(this));
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
             $('#' + this.name + 'Container' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
-            this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 600)); //delayed search on combo searchbox
+            this.$searchBoxes.keyup(this.searchFN.bind(this));
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
             this.Values = [];
@@ -1622,8 +1633,17 @@ const EbPowerSelect = function (ctrl, options) {
                 this.ComboObj.__AddButtonInit({
                     EbSid_CtxId: this.ComboObj.EbSid_CtxId + "_addbtn",
                     FormRefId: this.ComboObj.FormRefId,
-                    OpenInNewTab: this.ComboObj.OpenInNewTab
+                    OpenInNewTab: this.ComboObj.OpenInNewTab,
+                    ObjType: 'PowerSelect',
+                    DDrefresh: this.DDrefresh.bind(this),
+                    IsDGCtrl: this.ComboObj.IsDGCtrl
                 });
+            }
+
+            if (this.ComboObj.RefreshDpndcy && this.renderer.rendererName === 'WebForm') {
+                $(`#${this.ComboObj.EbSid_CtxId}_rfshbtn`).off('click').on('click', function () {
+                    this.renderer.FRC.ctrlChangeListener_in(this.ComboObj);
+                }.bind(this));
             }
 
             //set id for searchBox
@@ -1655,7 +1675,13 @@ const EbPowerSelect = function (ctrl, options) {
         }
     }.bind(this);
 
-    this.getColumn = function (colName) { return this.ComboObj.MultiSelect ? this.columnVals[colName] : this.columnVals[colName][0]; }.bind(this);
+    this.getColumn = function (colName) {
+        if (this.ComboObj.MultiSelect)
+            return this.columnVals ? this.columnVals[colName] : null;
+        if (this.columnVals && this.columnVals[colName])
+            return this.columnVals[colName][0];
+        return null;
+    }.bind(this);
 
     //this.getColumn = function (colName) {
     //    let columnVals = getEbFormatedPSRows(this.ComboObj);
@@ -1677,16 +1703,29 @@ const EbPowerSelect = function (ctrl, options) {
     this.getSearchByExp = function (DefOp, mapedFieldType) {
         let op = String.empty;
         if (mapedFieldType === "string") {
-            if (DefOp === 0)// Equals
-                op = " = ";
-            else if (DefOp === 1)// Startwith
-                op = "x*";
-            else if (DefOp === 2)//EndsWith
-                op = "*x";
-            else if (DefOp === 3)// Between
-                op = "*x*";
-            else if (DefOp === 3)// Contains
-                op = "*x*";
+            if (typeof (this.ComboObj.SearchOperator) === 'number') {//temp solution
+                let inop = this.ComboObj.SearchOperator.toString();
+                if (inop === EbEnums_w.PsSearchOperators.StartsWith)
+                    op = 'x*';
+                else if (inop === EbEnums_w.PsSearchOperators.EndsWith)
+                    op = '*x';
+                else if (inop === EbEnums_w.PsSearchOperators.Equals)
+                    op = ' = ';
+                else
+                    op = '*x*';
+            }
+            else {
+                if (DefOp === 0)// Equals
+                    op = " = ";
+                else if (DefOp === 1)// Startwith
+                    op = "x*";
+                else if (DefOp === 2)//EndsWith
+                    op = "*x";
+                else if (DefOp === 3)// Between
+                    op = "*x*";
+                else if (DefOp === 3)// Contains
+                    op = "*x*";
+            }
         }
         else if (mapedField === "numeric") {
             switch (DefOp.toString()) {
@@ -1711,7 +1750,20 @@ const EbPowerSelect = function (ctrl, options) {
             }
         }
         return op;
-    }
+    };
+
+    this.getSearchTextRegex = function (text) {
+        if (typeof (this.ComboObj.SearchOperator) === 'number') {
+            let op = this.ComboObj.SearchOperator.toString();
+            if (op === EbEnums_w.PsSearchOperators.StartsWith)
+                text = '^' + text;
+            else if (op === EbEnums_w.PsSearchOperators.EndsWith)
+                text = text + '$';
+            else if (op === EbEnums_w.PsSearchOperators.Equals)
+                text = '^' + text + '$';
+        }
+        return text;
+    };
 
     this.showCtrlMsg = function () {
         EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSearchLength} characters to search`, "info");
@@ -1721,14 +1773,24 @@ const EbPowerSelect = function (ctrl, options) {
         EbHideCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
     }.bind(this);
 
+    this.searchFN = function (e) {
+        if (this.ComboObj.IsPreload) {
+            this.delayedSearchFN(e);
+        }
+        else {
+            clearTimeout(this.timer1);
+            this.timer1 = setTimeout(this.delayedSearchFN.bind(this, e), 600);
+        }
+    };
+
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
         let $e = $(e.target);
         let searchVal = $e.val().trim();
         let MaxSearchVal = this.getMaxLenVal();
 
-        if (!isPrintable(e) && e.which !== 8)
-            return;
+        //if (!isPrintable(e) && e.which !== 8)
+        //    return;
 
         if (this.ComboObj.MinSearchLength > MaxSearchVal.length) {
             this.showCtrlMsg();
@@ -1743,14 +1805,18 @@ const EbPowerSelect = function (ctrl, options) {
         let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         let $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         let colObj = getObjByval(this.ComboObj.DisplayMembers.$values, "name", mapedField);
-        let searchByExp = "*x*";//this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
+        let searchByExp = this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
         if (mapedFieldType !== "string")
             searchByExp = " = ";
         if (!this.IsDatatableInit) {
-            if (this.ComboObj.MinSearchLength > searchVal.length)
+            if (this.ComboObj.MinSearchLength > searchVal.length || searchVal.length === 0)
                 return;
             let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
-            this.filterArray.push(filterObj);
+            let temp = this.filterArray.find(e => e.Column === filterObj.Column);
+            if (temp)
+                temp.Value = filterObj.Value;
+            else
+                this.filterArray.push(filterObj);
             this.V_showDD();
             if (!this.ComboObj.IsPreload)
                 this.DMlastSearchVal[mapedField] = searchVal;
@@ -1772,7 +1838,7 @@ const EbPowerSelect = function (ctrl, options) {
                 }
 
                 if (this.datatable) {
-                    this.datatable.Api.column(mapedField + ":name").search(searchVal).draw();
+                    this.datatable.Api.column(mapedField + ":name").search(this.getSearchTextRegex(searchVal), true, false, true).draw();
                 }
             }
             else {
@@ -1806,10 +1872,15 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
         //this.clearValues();
-        let triggerChange = (StrValues === "" || StrValues === undefined);// trigger if set with nothing
+        let triggerChange = (StrValues === "" || StrValues === undefined || StrValues === 0);// trigger if set with nothing
         this.clearValues(triggerChange);
-        if (StrValues === "" || StrValues === null)
+        if (StrValues === "" || StrValues === null || StrValues === 0) {
+            if (this.ComboObj.__continue) {
+                this.ComboObj.___isNotUpdateValExpDepCtrls = false;
+                this.ComboObj.__continue();
+            }
             return;
+        }
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.ComboObj.IsPreload) { // if preLoad
@@ -1902,22 +1973,22 @@ const EbPowerSelect = function (ctrl, options) {
         let search = $e.val().toString();
         //if (mobileAndTabletCheck())
         //    alert(e.which);
-        if (e.which === 13)
+        if (e.which === 13 && search)
             this.Vobj.showDD();
-        if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
+        if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {//backspace || delete
             this.Vobj.valueMembers.pop();
             $.each(this.dmNames, this.popDmValues.bind(this));
         }
-        if (e.which === 40) {
+        if (e.which === 40) {//down arrow
             this.Vobj.showDD();
             this.focus1stRow();
         }
-        if (e.which === 32) {
+        if (e.which === 32) {//space
             if (this.Vobj.DDstate)
                 return;
             this.Vobj.showDD();
         }
-        if (e.which === 27)
+        if (e.which === 27)//escape
             this.Vobj.hideDD();
     };
 
@@ -1936,47 +2007,54 @@ const EbPowerSelect = function (ctrl, options) {
     //    this.URLwithParams = url.toString();
     //};
 
-    this.reloadWithParams = function () {
+    this.reloadWithParams = function (setOldValue = true) {
         this.oldValsFromReloadWithParams = [... this.Vobj.valueMembers];
         this.clearValues(true);
         this.fromReloadWithParams = true;
         //if (this.ComboObj.IsDataFromApi)
         //    this.attachParams2Url();
 
-        this.IsFromReloadWithParams2setOldval = true;
+        this.IsFromReloadWithParams2setOldval = setOldValue;
         this.getData();
     };
 
     this.getData = function () {
-        if (Offline.state !== 'up') {
-            this.V_hideDD();
-            return;
-        }
+        //if (Offline.state !== 'up') {
+        //    this.V_hideDD();
+        //    return;
+        //}
         this.showLoader();
-        if (this.ComboObj.__isDGv2Ctrl && this.ComboObj.__bkpData) {
-            this.getDataSuccess(this.ComboObj.__bkpData);
-        }
 
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
+        this.getDataCounter++;
         let params = this.ajaxData();
+
+        if (this.ComboObj.__Col && this.ComboObj.__Col.IsPreload && !this.ComboObj.__Col.StrictSelect && this.ComboObj.__Col.__bkpData) {
+            let cpyData = JSON.parse(JSON.stringify(this.ComboObj.__Col.__bkpData));
+            this.getDataSuccess(this.getDataCounter, cpyData);
+            return;
+        }
+
         let url = this.renderer.rendererName === 'Bot' ? "../boti/getData4PowerSelect" : "../dv/getData4PowerSelect";
         $.ajax({
             url: url,
             type: 'POST',
-            data: params,
-            success: this.getDataSuccess.bind(this),
+            data: { req: JSON.stringify(params) },
+            success: this.getDataSuccess.bind(this, this.getDataCounter),
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
                 this.V_hideDD();
                 console.warn("PS: getData4PowerSelect ajax call failed");
+                if (this.ComboObj.__continue) this.ComboObj.__continue();
             }.bind(this)
         });
     };
 
-    this.getDataSuccess = function (result) {
+    this.getDataSuccess = function (getDataCntr, result) {
         if (result === undefined || result.data === null) {
-            this.hideLoader();
+            if (this.getDataCounter === getDataCntr)
+                this.hideLoader();
             this.V_hideDD();
             if (result === undefined)
                 console.warn("PS: getData4PowerSelect ajax call returned undefined");
@@ -1984,24 +2062,29 @@ const EbPowerSelect = function (ctrl, options) {
                 console.warn("PS: " + result.error);
             }
             return;
+            if (this.ComboObj.__continue) this.ComboObj.__continue();
         }
+
+        if (this.ComboObj.__Col && this.ComboObj.__Col.IsPreload && !this.ComboObj.__Col.StrictSelect && !this.ComboObj.__Col.__bkpData) {
+            this.ComboObj.__Col.__bkpData = JSON.parse(JSON.stringify(result));
+        }
+
         this.data = result;
         this.unformattedData = result.data;
         this.formattedData = result.formattedData;
         this.VMindex = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
 
-        if (this.ComboObj.__isDGv2Ctrl && !this.ComboObj.__bkpData) {
-            this.ComboObj.__bkpData = JSON.parse(JSON.stringify(this.data));
-            this.unformattedData = this.ComboObj.__bkpData.data;
-            this.formattedData = this.ComboObj.__bkpData.formattedData;
-        }
 
         if (this.IsFromSetValues) {// from set value
+            let flag = false;
             if (this.setvaluesColl && this.setvaluesColl.length > 0) {
-                this.setValues2PSFromData(this.setvaluesColl);
+                flag = this.setValues2PSFromData(this.setvaluesColl);
                 this.filterArray.clear();
             }
+
             this.IsFromSetValues = false;
+
+            if (!flag && this.ComboObj.__continue) this.ComboObj.__continue();
         }
         else {// not from setValue (search,...)
             if (!this.isDMSearchEmpty() && this.ComboObj.IsPreload === false && this.unformattedData.length === 1) {
@@ -2009,7 +2092,8 @@ const EbPowerSelect = function (ctrl, options) {
                 let value = this.unformattedData[0][VMidx];
                 this.setValues2PSFromData([value]);
                 this.filterArray.clear();
-                this.hideLoader();
+                if (this.getDataCounter === getDataCntr)
+                    this.hideLoader();
                 this.V_hideDD();
                 return;
             }
@@ -2028,9 +2112,10 @@ const EbPowerSelect = function (ctrl, options) {
             }
             this.IsFromReloadWithParams2setOldval = false;
 
-            this.focus1stRow();
+            //this.focus1stRow();
         }
-        this.hideLoader();
+        if (this.getDataCounter === getDataCntr)
+            this.hideLoader();
     };
 
     this.isDMSearchEmpty = function () {
@@ -2080,6 +2165,11 @@ const EbPowerSelect = function (ctrl, options) {
     this.ajaxData = function () {
         this.EbObject = new EbTableVisualization("Container");// used by all ebobejcts
         this.filterValues = this.getFilterValuesFn();
+
+        if (!getObjByval(this.filterValues, 'Name', this.ComboObj.Name)) {
+            this.filterValues.push(new fltr_obj(this.ComboObj.EbDbType, this.ComboObj.Name, 0));
+        }
+
         this.AddUserAndLcation();
 
         if (this.ComboObj.IsDataFromApi) {
@@ -2118,6 +2208,10 @@ const EbPowerSelect = function (ctrl, options) {
 
         this.filterValues.push(new fltr_obj(11, "eb_loc_id", defaultLocId));
         this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (ebcontext.languages != undefined) {
+            this.filterValues.push(new fltr_obj(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage()));
+            this.filterValues.push(new fltr_obj(16, "eb_current_locale", ebcontext.languages.getCurrentLocale()));
+        }
     };
 
     this.getColumnIdx = function (arr, colName) {
@@ -2125,8 +2219,10 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setValues2PSFromData = function (setvaluesColl) {
-        if (!setvaluesColl || setvaluesColl.length === 0)
+        if (!setvaluesColl || setvaluesColl.length === 0) {
+            if (this.ComboObj.__continue) this.ComboObj.__continue();
             return;
+        }
 
         if (this.IsFromReloadWithParams2setOldval)
             this.ComboObj.___DoNotImport = true;
@@ -2148,6 +2244,8 @@ const EbPowerSelect = function (ctrl, options) {
                     console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
                     if (this.IsFromReloadWithParams2setOldval)
                         this.ComboObj.___DoNotImport = false;
+                    this.ComboObj.___isNotUpdateValExpDepCtrls = false;
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                     return;
                 }
 
@@ -2167,12 +2265,13 @@ const EbPowerSelect = function (ctrl, options) {
 
                 try {
                     this.Vobj.valueMembers.push(...tempVMs);
+                    if (this.ComboObj.__continue) this.ComboObj.__continue();
                 }
                 catch (e) {
                     console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
                 }
             }.bind(this));
-
+            return true;
         }
         catch (e) {
             console.warn("error in 'setValues2PSFromData' of : " + this.ComboObj.Name + " - " + e.message);
@@ -2189,6 +2288,12 @@ const EbPowerSelect = function (ctrl, options) {
             return;
         }
         let RowUnformattedData = RowUnformattedDataARR[0];
+
+        if (this.SelectedUnformatedRow && this.SelectedUnformatedRow.length > 0 &&
+            this.SelectedUnformatedRow[VMidx] === RowUnformattedDataARR[0][VMidx]) {
+            RowUnformattedData = this.SelectedUnformatedRow;
+        }
+
         let unFormattedRowIdx = this.unformattedData.indexOf(RowUnformattedData);
 
 
@@ -2255,7 +2360,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.IsDatatableInit = true;
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
-        this.focus1stRow();
+        //this.focus1stRow();
     };
 
     //this.preInit = function (e, settings) {
@@ -2265,7 +2370,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
-            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.filterArray[0].Value).draw();
+            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.getSearchTextRegex(this.filterArray[0].Value), true, false, true).draw();
     };
 
     // init datatable
@@ -2432,6 +2537,12 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.DDclose = function (e) {
         this.Vobj.hideDD();
+    };
+
+    this.DDrefresh = function (e) {
+        if (this.ComboObj.__Col)
+            this.ComboObj.__Col.__bkpData = null;
+        this.reloadWithParams(false);
     };
 
     //this.getSelectedRow = function () {
@@ -2614,7 +2725,7 @@ const EbPowerSelect = function (ctrl, options) {
             //    return;
             //else
             this.V_showDD();
-            this.focus1stRow();
+            //this.focus1stRow();
         }
 
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);
@@ -2646,6 +2757,9 @@ const EbPowerSelect = function (ctrl, options) {
     this.V_showDD = function (e) {
         if (this.Vobj.DDstate)
             return;
+        let ts = performance.now();
+        if (ts - this.initAt < 600)
+            return;
         let searchVal = this.getMaxLenVal();
         if (this.ComboObj.MinSearchLength > searchVal.length) {
             this.showCtrlMsg();
@@ -2659,6 +2773,8 @@ const EbPowerSelect = function (ctrl, options) {
         else
             this.adjustDDposition();
 
+        this.hideOldDD();
+
         this.Vobj.DDstate = true;
 
         if (!this.IsDatatableInit)
@@ -2671,6 +2787,13 @@ const EbPowerSelect = function (ctrl, options) {
         this.V_updateCk();
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         this.colAdjust();
+    };
+
+    this.hideOldDD = function () {
+        $.each($('.DDdiv:visible'), function (i, obj) {
+            if (!this.$DDdiv.is(obj))
+                $(obj).hide();
+        }.bind(this));
     };
 
     this.focus1stRow = function () {
@@ -2786,12 +2909,34 @@ const EbPowerSelect = function (ctrl, options) {
         }
     };
 
+    this.clickedOnTag = function (e) {
+        if (!($(e.target).hasClass('selected-tag')))
+            return;
+
+        if (this.ComboObj.FormRefId && this.Vobj.valueMembers && this.Vobj.valueMembers.length > 0) {
+            let vms = this.Vobj.valueMembers.toString().split(",");
+            if (vms.length > 0) {
+                let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
+                if (this.ComboObj.OpenInNewTab) {
+                    let _locale = ebcontext.languages.getCurrentLocale();
+                    let url = `../WebForm/Index?_r=${this.ComboObj.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
+                    window.open(url, '_blank');
+                }
+                else
+                    CallWebFormCollectionRender({ _source: 'ps', _refId: this.ComboObj.FormRefId, _params: _params, _mode: 1, _locId: this.renderer.getLocId() });
+            }
+        }
+    };
+
     this.reloadDT = function () {
         this.datatable.Api.draw(false);
     }.bind(this);
 
     this.getRowUnformattedData = function ($tr) {
-        return this.unformattedData.filter(obj => obj[this.VMindex] == this.datatable.Api.row($tr).data()[this.VMindex].replace(/[^\d.-]/g, '') * 1)[0];
+        let indx = this.datatable.Api.row($tr).index();
+        this.SelectedUnformatedRow = this.unformattedData[indx];
+        let vmValue = this.datatable.Api.row($tr).data()[this.VMindex].replace(/[^\d.-]/g, '') * 1;
+        return this.unformattedData.filter(obj => obj[this.VMindex] == vmValue)[0];
     };
 
     this.checkBxClickEventHand = function (e) {
@@ -2929,74 +3074,155 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');
-        //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
-        let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
-        let $form_div = $(document).find("[eb-root-obj-container]:first");
-        let $scrollBody = this.$DDdiv.find('.dataTables_scrollBody');
-        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
+        if ($ctrl.length === 0)
+            return;
+        let $FORMdiv = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
 
-        let ctrlContOffset = $ctrlCont.offset();
-        let ctrlHeight = $ctrlCont.outerHeight();
-        let ctrlWidth = $ctrl.width();
-        let ctrlBottom = ctrlHeight + ctrlContOffset.top;
-        let formScrollTop = $form_div.scrollTop();
-        let formTopOffset = $form_div.offset().top;
-        let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
+        let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $(`#${this.ComboObj.EbSid_CtxId}Wraper`);
+        let showHeader = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;
+        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 300 : this.ComboObj.DropdownHeight) + (showHeader ? 100 : 32);
 
-        let LEFT = $ctrl.offset().left - $form_div.offset().left;
-        let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
-        let windowWidth = $(window).width();
-        let windowHeight = $(window).height();
+        //Control related
+        let curLeftw = $ctrlCont.offset().left;
+        let curTopw = $ctrlCont.offset().top;
+        let cWidth = $ctrlCont.width();
+        let cHeight = $ctrlCont.outerHeight();
 
-        let topDist = ctrlContOffset.top - formTopOffset;
-        let bottomDist = windowHeight - ctrlBottom;
+        //Form container related
+        let formLeftw = $FORMdiv.offset().left;
+        let formTopw = $FORMdiv.offset().top;
+        let fWidth = $FORMdiv[0].scrollWidth;
+        let fHeight = $FORMdiv[0].scrollHeight;
+        let scrollLeft = $FORMdiv[0].scrollLeft;
+        let scrollTop = $FORMdiv[0].scrollTop;
 
-        if (WIDTH > windowWidth) {
-            WIDTH = windowWidth - 20;
-            LEFT = 10;
+        //window related
+        let winWidth = $(window).width();
+        let winHeight = $(window).height();
+
+        //Estimated
+        let _TOP = 0, _LEFT = 0;
+        let HEIGHT = DD_height;
+        let WIDTH = this.ComboObj.DropdownWidth === 0 ? cWidth : (this.ComboObj.DropdownWidth / 100) * cWidth;
+
+        let DOWNflow = true;
+
+        //check where is more space (up or down)
+        let topSpace = curTopw - formTopw + scrollTop;
+        //let bottomSpace =  formTopw + fHeight - curTopw + scrollTop - cHeight;
+        let bottomSpace = fHeight - topSpace - cHeight;
+        if (DD_height < bottomSpace) {
+            DOWNflow = true;
+            _TOP = curTopw + cHeight + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = DD_height;
         }
-        else if ((WIDTH + LEFT) > windowWidth)
-            LEFT = ($ctrl.offset().left + ctrlWidth) - WIDTH;
-        else if (LEFT < 10)
-            LEFT = 10;
-
-
-        if (ctrlBottom + DD_height > windowHeight && topDist < DD_height && topDist > bottomDist) {
-            this.$DDdiv.addClass("dd-ctrl-top");
-            let pageHeight = $form_div.outerHeight() + formTopOffset,
-                cotrolTop = $ctrl.offset().top + formScrollTop,
-                BOTTOM = (pageHeight - cotrolTop) + 1;
-            this.$DDdiv.css("top", "unset").css("bottom", BOTTOM);
-            if (topDist < DD_height) {
-                this.$DDdiv.css("height", topDist + 'px').css("top", formScrollTop + 'px').css("bottom", "unset");
-                if ($scrollBody.length === 0)
-                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(topDist - 32); }.bind(this);
-                else
-                    $scrollBody.height(topDist - 32);
-            }
-
+        else if (DD_height > bottomSpace && DD_height < topSpace) {
+            DOWNflow = false;
+            _TOP = curTopw - DD_height + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = DD_height;
+        }
+        else if (bottomSpace > topSpace) {
+            DOWNflow = true;
+            _TOP = curTopw + cHeight + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = bottomSpace;
         }
         else {
-            this.$DDdiv.css("bottom", "unset").css("top", TOP).removeClass("dd-ctrl-top");
-
-            if (bottomDist < DD_height) {
-                this.$DDdiv.css("height", bottomDist + 'px');
-                if ($scrollBody.length === 0)
-                    this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(bottomDist - 32); }.bind(this);
-                else
-                    $scrollBody.height(bottomDist - 32);
-            }
+            DOWNflow = false;
+            _TOP = curTopw - topSpace + scrollTop - formTopw;
+            _LEFT = curLeftw - formLeftw;
+            HEIGHT = topSpace;
         }
 
-        this.$DDdiv.css("left", LEFT).width(WIDTH);
+        if (DOWNflow)
+            this.$DDdiv.css("box-shadow", "3px 8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222)");
+        else
+            this.$DDdiv.css("box-shadow", "3px -8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222)");
+        this.$DDdiv.css('height', HEIGHT + 'px').width(WIDTH);
+
+        this.$DDdiv.css('top', _TOP + 'px').css('left', _LEFT + 'px');
+
+        //let curoffset = this.$DDdiv.offset();
+        //if ((curoffset.top != _TOP || _TOP === 0) && (curoffset.left != _LEFT || _LEFT === 0)) {
+        //this.$DDdiv.css('top', 'unset').css('left', 'unset');
+        //this.$DDdiv.offset({ top: _TOP, left: _LEFT });
+        //}
     };
+
+    //this.adjustDDposition_OLD = function () {
+    //    let $ctrl = $('#' + this.name + 'Container');
+    //    if ($ctrl.length === 0)
+    //        return;
+    //    //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+    //    let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
+    //    let $form_div = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
+    //    let $scrollBody = this.$DDdiv.find('.dataTables_scrollBody');
+    //    let DD_height = (this.ComboObj.DropdownHeight === 0 ? 300 : this.ComboObj.DropdownHeight) + 100;
+
+    //    let ctrlContOffset = $ctrlCont.offset();
+    //    let ctrlHeight = $ctrlCont.outerHeight();
+    //    let ctrlWidth = $ctrl.width();
+    //    let ctrlBottom = ctrlHeight + ctrlContOffset.top;
+    //    let formScrollTop = $form_div.scrollTop();
+    //    let formTopOffset = $form_div.offset().top;
+    //    let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
+
+    //    let LEFT = $ctrl.offset().left - $form_div.offset().left;
+    //    let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
+    //    let windowWidth = $(window).width();
+    //    let windowHeight = $(window).height();
+
+    //    let topDist = ctrlContOffset.top - formTopOffset;
+    //    let bottomDist = windowHeight - ctrlBottom;
+
+    //    if (WIDTH > windowWidth) {
+    //        WIDTH = windowWidth - 20;
+    //        LEFT = 10;
+    //    }
+    //    else if ((WIDTH + LEFT) > windowWidth)
+    //        LEFT = ($ctrl.offset().left + ctrlWidth) - WIDTH;
+    //    else if (LEFT < 10)
+    //        LEFT = 10;
+
+
+    //    if (ctrlBottom + DD_height > windowHeight && topDist < DD_height && topDist > bottomDist) {
+    //        this.$DDdiv.addClass("dd-ctrl-top");
+    //        let pageHeight = $form_div.outerHeight() + formTopOffset,
+    //            cotrolTop = $ctrl.offset().top + formScrollTop,
+    //            BOTTOM = (pageHeight - cotrolTop) + 1;
+    //        this.$DDdiv.css("top", "unset").css("bottom", BOTTOM);
+    //        if (topDist < DD_height) {
+    //            this.$DDdiv.css("height", topDist + 'px').css("top", formScrollTop + 'px').css("bottom", "unset");
+    //            if ($scrollBody.length === 0)
+    //                this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(topDist - 32); }.bind(this);
+    //            else
+    //                $scrollBody.height(topDist - 32);
+    //        }
+
+    //    }
+    //    else {
+    //        this.$DDdiv.css("bottom", "unset").css("top", TOP).removeClass("dd-ctrl-top");
+
+    //        if (bottomDist < DD_height) {
+    //            this.$DDdiv.css("height", bottomDist + 'px');
+    //            if ($scrollBody.length === 0)
+    //                this.OnInitialDraw = function () { this.$DDdiv.find('.dataTables_scrollBody').height(bottomDist - 32); }.bind(this);
+    //            else
+    //                $scrollBody.height(bottomDist - 32);
+    //        }
+    //    }
+
+    //    this.$DDdiv.css("left", LEFT).width(WIDTH);
+    //};
 
     this.appendDD2Body = function () {
         if (this.fromReloadWithParams)
             this.$DDdiv.hide();
         let $div_detach = this.$DDdiv.detach();
         $div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
-        let $form_div = $(document).find("[eb-root-obj-container]:first");
+        let $form_div = this.renderer.rendererName === 'WebForm' ? $(`#${this.ComboObj.EbSid_CtxId}Container`).closest('[eb-root-obj-container]') : $(document).find("[eb-root-obj-container]:first");
         $div_detach.appendTo($form_div);
         this.adjustDDposition();
         this.bindHideDDonScroll();
@@ -3028,6 +3254,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.Renderselect();
 };
+
 var EbSurveyRender = function ($ctrl, bot) {
     this.$curCtrl = $ctrl;
     this.Bot = bot;
@@ -3571,9 +3798,10 @@ prashanth pamidi (https://github.com/prrashi)*/
             }
             // plugin.settings.preloaded = prelod;
             let $filecont = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`);
-            $filecont.addClass('has-files');
             let $uploadedContainer = $filecont.find('.uploaded');
 
+            if (plugin.settings.preloaded.length > 0)
+                $filecont.addClass('has-files');
 
             for (let i = 0; i < plugin.settings.preloaded.length; i++) {
                 $uploadedContainer.append(createImg(plugin.settings.preloaded[i], plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].cntype, true, plugin.settings.preloaded[i].refid));
@@ -3851,7 +4079,7 @@ prashanth pamidi (https://github.com/prrashi)*/
             $(files).each(function (i, file) {
                 let url = "";
                 let filetype = (t == 1) ? getFileType(files[i]) : 1;
-                if (filetype==1) {
+                if (filetype == 1) {
                     if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
                         //if (((preloadedfile - filedel.length) + newfilearray.length) < plugin.settings.maxFiles) {
                         if (((preloadedfile + newfilearray.length) - filedel.length) < plugin.settings.maxFiles) {

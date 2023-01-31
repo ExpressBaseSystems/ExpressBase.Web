@@ -3368,13 +3368,20 @@
         let chkdInps = $(`input[name=${this.tableId}_id]:checked`);
 
         if (chkdInps && chkdInps.length > 0) {
+            for (let i = 0; i < chkdInps.length; i++) {
+                rowIds.push($(chkdInps[i]).val());
+            }
+            if (rowIds.length == 1) {
+                let url = "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowIds[0];
+                ebcontext.webform.showLoader();
+                $("#iFramePdf4dv").attr("src", url);
+                return;
+            }
+
             $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
             EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit Downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
             ebcontext.webform.showLoader();
 
-            for (let i = 0; i < chkdInps.length; i++) {
-                rowIds.push($(chkdInps[i]).val());
-            }
             let SubscriptionId = window.ebcontext.subscription_id;
             this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
             this.ss.onPdfDownloadSuccess = function (url) {

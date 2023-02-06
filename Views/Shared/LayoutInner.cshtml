@@ -265,26 +265,27 @@
     <script>
         $(document).ready(function () {
             window.ebcontext.setup = new Setup({ se_url: '@ViewBag.ServerEventUrl' });
+            $('.Eb_Image').Lazy();
             //debugger;
             //let 
-            if (ebcontext && ebcontext.locations && ebcontext.locations.CurrentLocObj){
-                let logo=parseInt(ebcontext.locations.CurrentLocObj.Logo);
-                if (!isNaN(logo)){
-                    $(".solution_logo.Eb_Image").attr("data-src", `/images/${ebcontext.sid}.png`);
-                    $(".solution_logo.Eb_Image").Lazy({
-                        onError: function (element) {
-                            //$(element).attr("data-src", `/images/logo/${ebcontext.sid}.png`);
-                            ///images/logo / hairocraft_stagging.png
-                        }
-                    });
-                }
-            }
-            $('.Eb_Image:not(.solution_logo)');
-            $('.Eb_Image').Lazy({
-                onError: function (element) {
-                    //element.data('src');
-                }
-            });
+            //if (ebcontext && ebcontext.locations && ebcontext.locations.CurrentLocObj){
+            //    let logo=parseInt(ebcontext.locations.CurrentLocObj.Logo);
+            //    if (!isNaN(logo)){
+            //        $(".solution_logo.Eb_Image").attr("data-src", `/images/${ebcontext.sid}.png`);
+            //        $(".solution_logo.Eb_Image").Lazy({
+            //            onError: function (element) {
+            //                //$(element).attr("data-src", `/images/logo/${ebcontext.sid}.png`);
+            //                ///images/logo / hairocraft_stagging.png
+            //            }
+            //        });
+            //    }
+            //}
+            //$('.Eb_Image:not(.solution_logo)');
+            //$('.Eb_Image').Lazy({
+            //    onError: function (element) {
+            //        //element.data('src');
+            //    }
+            //});
         });
     </script>
 </body>

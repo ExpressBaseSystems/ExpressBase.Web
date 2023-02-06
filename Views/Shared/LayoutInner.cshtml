@@ -215,7 +215,8 @@
                 </div>
             </div>
         </div>
-        @{
+        @if (ViewBag.wc == "uc")
+        {
             await Html.RenderPartialAsync("NotificationWindow");
         }
     </div>

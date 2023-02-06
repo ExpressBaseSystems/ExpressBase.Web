@@ -10,7 +10,7 @@
         $.extend(this.option, option);
         this.initContainers_DomEvents();
         this.initServerEvents();
-        this.getNotifications();
+        //this.getNotifications();
         //this.userNotification();aler
         this.modal = new EbCommonModal();
     }
@@ -39,6 +39,7 @@
 
     toggleNFWindow() {
         if (!this.nf_window.is(":visible")) {
+            this.getNotifications();
             this.nf_fade.show();
             this.nf_window.show("slide", { direction: 'right' });
         }
@@ -68,6 +69,7 @@
     }
 
     getNotifications() {
+        this.nf_container.html(`<p class="nf-window-eptylbl" style="margin:auto;"><i class="fa fa-spinner fa-pulse"></i> Loading...</p>`);
         $.ajax({
             type: "GET",
             url: "../Notifications/GetNotifications",

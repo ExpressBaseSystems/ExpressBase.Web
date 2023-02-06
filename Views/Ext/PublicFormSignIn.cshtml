@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ExpressBase.Common.Helpers;
+@{
     var bApnd = true;
     if (ViewBag.Env == "Development")
     {
@@ -14,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css" asp-append-version=@bApnd>
-    <link rel="icon" href="~/images/favicon.ico">
+    <link rel="icon" href="@UrlHelper.GetIconUrl(ViewBag.HostValue)">
     <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.css" asp-append-version=@bApnd />
 
     <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>

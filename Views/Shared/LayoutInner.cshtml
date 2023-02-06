@@ -1,4 +1,4 @@
-﻿
+﻿@using ExpressBase.Common.Helpers;
 @using ExpressBase.Web.Filters;
 @{var bApnd = true;
     if (ViewBag.Env == "Development")
@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
-    <link rel="icon" href="~/images/favicon.ico">
+    <link rel="icon" href="@UrlHelper.GetIconUrl(ViewBag.BrowserURLContext)">
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -265,7 +265,26 @@
     <script>
         $(document).ready(function () {
             window.ebcontext.setup = new Setup({ se_url: '@ViewBag.ServerEventUrl' });
-            $('.Eb_Image').Lazy();
+            //debugger;
+            //let 
+            if (ebcontext && ebcontext.locations && ebcontext.locations.CurrentLocObj){
+                let logo=parseInt(ebcontext.locations.CurrentLocObj.Logo);
+                if (!isNaN(logo)){
+                    $(".solution_logo.Eb_Image").attr("data-src", `/images/${ebcontext.sid}.png`);
+                    $(".solution_logo.Eb_Image").Lazy({
+                        onError: function (element) {
+                            //$(element).attr("data-src", `/images/logo/${ebcontext.sid}.png`);
+                            ///images/logo / hairocraft_stagging.png
+                        }
+                    });
+                }
+            }
+            $('.Eb_Image:not(.solution_logo)');
+            $('.Eb_Image').Lazy({
+                onError: function (element) {
+                    //element.data('src');
+                }
+            });
         });
     </script>
 </body>

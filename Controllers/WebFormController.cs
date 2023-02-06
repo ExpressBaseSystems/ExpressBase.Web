@@ -58,7 +58,7 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm, _lo = _lo });
         }
 
-        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 604800, Location = ResponseCacheLocation.Any, NoStore = false)]
         public FileContentResult cxt2js()
         {
             EbToolbox _toolBox = new EbToolbox(BuilderType.WebForm);
@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 
-        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 604800, Location = ResponseCacheLocation.Any, NoStore = false)]
         public FileContentResult cxt2js_vis()
         {
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();

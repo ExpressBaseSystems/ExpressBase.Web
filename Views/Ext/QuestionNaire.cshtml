@@ -63,14 +63,14 @@
             cookie: true,
             xfbml: true,
         });
-            FB.getLoginStatus(updateStatusCallback);
+        FB.getLoginStatus(updateStatusCallback);
     });
 
-    function authFbId(id,name,email) {
+    function authFbId(id, name, email) {
         $.ajax({
             url: "../Bote/SurveyAuth",
             data: {
-                SurveyId:'@ViewBag.Sid',
+                SurveyId: '@ViewBag.Sid',
                 FbId: id,
                 Name: name,
                 Email: email,
@@ -97,9 +97,9 @@
         $(".eb_loader").EbLoader("show");
     }
 
-    function getUserInfo(){
+    function getUserInfo() {
         FB.api('/me?fields=id,name,picture,email', function (r) {
-            authFbId(r.id,r.name,r.email);
+            authFbId(r.id, r.name, r.email);
         });
     }
 
@@ -112,13 +112,15 @@
     <div class="fb_auth_wrapper">
         <div class="fb_auth">
             <div class="eb_loader" style="top:0;"></div>
-            <img src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" class="eb_logo" />
+            @if (UrlHelper.IsLogoVisible(ViewBag.HostValue))
+            {
+                <img src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" class="eb_logo" />
+            }
             <button class="ebbtn eb_btnblue w-100" id="loginbutton"><i class="fa fa-facebook"></i> Login With Facebook</button>
         </div>
     </div>
 </div>
 <div jstag="wrapper_viewc">
-
 </div>
 <script>
     $('#loginbutton').click(FBlogin);

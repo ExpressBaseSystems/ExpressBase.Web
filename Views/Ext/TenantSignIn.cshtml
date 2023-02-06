@@ -69,50 +69,50 @@
 
 <script>
     //load the JavaScript SDK
-    (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "https://connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
 
-    window.fbAsyncInit = function() {
+    window.fbAsyncInit = function () {
         FB.init({
-        appId      :  '@ViewBag.FacebookSigninAppid',
-        status: true,
-        cookie     : true,
-        xfbml      : true,
-        version    : 'v4.0'
+            appId: '@ViewBag.FacebookSigninAppid',
+            status: true,
+            cookie: true,
+            xfbml: true,
+            version: 'v4.0'
         });
 
-	    //check user session and refresh it
-	    FB.getLoginStatus((response) => {
-		    if (response.status === 'connected') {
-			    //user is authorized
-			    // getUserData();
-		    } else {
-			    //user is not authorized
-		    }
-	    });
+        //check user session and refresh it
+        FB.getLoginStatus((response) => {
+            if (response.status === 'connected') {
+                //user is authorized
+                // getUserData();
+            } else {
+                //user is not authorized
+            }
+        });
     };
     //add event listener to login button
     function FBLogin() {
         console.log("fb");
         $("#loaderdiv").EbLoader("show");
-    FB.login(function (response) {
-        if (response.authResponse) {
-            getUserData();
-        } else {
-        //alert('User cancelled login or did not fully authorize.');
-        }
-    }, {scope: 'email,public_profile'});
+        FB.login(function (response) {
+            if (response.authResponse) {
+                getUserData();
+            } else {
+                //alert('User cancelled login or did not fully authorize.');
+            }
+        }, { scope: 'email,public_profile' });
     }
 
     function getUserData() {
-	    FB.api('/me', {fields: 'id, name, first_name, last_name,email, gender,hometown'}, (response) => {
+        FB.api('/me', { fields: 'id, name, first_name, last_name,email, gender,hometown' }, (response) => {
             fbuserdetails(response);
-	    });
+        });
 
     }
     function fbuserdetails(response) {
@@ -152,8 +152,8 @@
             document.body.removeChild(_form);
         }
         else {
-              EbMessage("show", { Message: 'Error while getting permission from facebook', Background: "#d83535" });
-             $("#loaderdiv").EbLoader("hide");
+            EbMessage("show", { Message: 'Error while getting permission from facebook', Background: "#d83535" });
+            $("#loaderdiv").EbLoader("hide");
         }
     }
 </script>
@@ -163,7 +163,10 @@
     <div class="header hidden-xs">
         <div class="container-fluid">
             <div class="callFrAction" style="display: flex;align-items: center;">
-                <a href="@home"><img src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" class="log-eblogo" /></a>
+                @if (UrlHelper.IsLogoVisible(ViewBag.HostValue))
+                {
+                    <a href="@home"><img src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" class="log-eblogo" /></a>
+                }
                 <spn style="margin-left: auto;font-size: 13px;">
                     New to EXPRESSbase?
                 </spn>
@@ -215,9 +218,9 @@
                         @if ((ViewBag.Env == "Production") || (ViewBag.Env == "Development"))
                         {
                             <div class="g-recaptcha"
-                                 data-sitekey="@ViewBag.ReCaptchaKey"
-                                 data-callback="validator_recaptcha"
-                                 data-size="invisible">
+                             data-sitekey="@ViewBag.ReCaptchaKey"
+                             data-callback="validator_recaptcha"
+                             data-size="invisible">
                             </div>
                         }
 
@@ -228,7 +231,8 @@
                             </button>
                         </div>
                     </div>
-                    @{ if (ViewBag.Env != "Production")
+                    @{
+                        if (ViewBag.Env != "Production")
                         {
                             <div class="eb_socilaWrpr text-center">
                                 <div class="eb_socilaWrpr_inner">
@@ -242,14 +246,14 @@
                                         <i class="fa fa-google text-muted"></i>
                                     </a>
                                     @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
-                                              <i class="fa fa-twitter text-muted"></i>
-                                          </a>
-                                          <a href=" @sociallink/auth/google" class="btn btn-lg">
-                                               <i class="fa fa-google-plus text-muted"></i>
-                                          </a>
-                                          <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
-                                          <i class="fa fa-linkedin text-muted"></i>
-                                        </a>*@
+                            <i class="fa fa-twitter text-muted"></i>
+                            </a>
+                            <a href=" @sociallink/auth/google" class="btn btn-lg">
+                            <i class="fa fa-google-plus text-muted"></i>
+                            </a>
+                            <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
+                            <i class="fa fa-linkedin text-muted"></i>
+                            </a>*@
                                 </div>
                             </div>
                         }
@@ -268,14 +272,14 @@
 </div>
 <script>
     if ('@(TempData["scl_signin_msg"])') {
-          EbMessage("show", { Message: '@(TempData["scl_signin_msg"])', Background: "#d83535" });
+        EbMessage("show", { Message: '@(TempData["scl_signin_msg"])', Background: "#d83535" });
     }
 
     function GoogleLogin() {
-        gapi.load('auth2', function() {
-          auth2 = gapi.auth2.init({
-            client_id: '@ViewBag.GoogleSigninAppid',
-          });
+        gapi.load('auth2', function () {
+            auth2 = gapi.auth2.init({
+                client_id: '@ViewBag.GoogleSigninAppid',
+            });
 
             if (auth2.isSignedIn.get()) {
                 var profile = auth2.currentUser.get().getBasicProfile();
@@ -285,7 +289,7 @@
                 // Sign the user in, and then retrieve their ID.
                 auth2.signIn().then(function () {
                     var profile = auth2.currentUser.get().getBasicProfile();
-                     googlesigninfn(profile);
+                    googlesigninfn(profile);
                     //var id_token = googleUser.getAuthResponse().id_token;
                     //  console.log("ID Token: " + id_token);
 

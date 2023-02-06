@@ -76,17 +76,14 @@
                 {
                     <div class="AppContainer" slider='true'>
                         <div class="body" id="appList">
-
                         </div>
                     </div>
                     <div class="ObjectTypeContainer" id="ebm-objtcontainer" slider='true'>
                         <div class="ObjectTypeContainer-inner objtypes">
-
                         </div>
                     </div>
                     <div class="objListContainer" id="ebm-objectcontainer" slider='true'>
                         <div class="objListContainer-inner ebm-objlist">
-
                         </div>
                     </div>
 
@@ -177,7 +174,10 @@
                 }
             </div>
             <small class="powered-by-exp">
-                <img height="30" src="@UrlHelper.GetLogoPath(ViewBag.BrowserURLContext)" />
+                @if (UrlHelper.IsLogoVisible(ViewBag.BrowserURLContext))
+                {
+                    <img height="30" src="@UrlHelper.GetLogoPath(ViewBag.BrowserURLContext)" />
+                }
             </small>
         </div>
     </div>

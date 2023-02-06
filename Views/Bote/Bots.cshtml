@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using ExpressBase.Common.Helpers;
+<!DOCTYPE html>
 <html>
 @{
     var BotDtls = Html.Raw(ViewBag.BotDetails);
@@ -10,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link async rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
-    <link rel="icon" href="~/images/favicon.ico">
+    <link rel="icon" href="@UrlHelper.GetIconUrl(ViewBag.BrowserURLContext)">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">
     <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version="true"></script>
 

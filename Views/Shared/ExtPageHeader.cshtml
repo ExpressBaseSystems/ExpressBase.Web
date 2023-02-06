@@ -29,7 +29,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="@home"><img class="img-responsive" src="@UrlHelper.GetSmallLogoPath(ViewBag.BrowserURLContext)"></a>
+                @if (UrlHelper.IsLogoVisible(ViewBag.BrowserURLContext))
+                {
+                    <a class="navbar-brand" href="@home"><img class="img-responsive" src="@UrlHelper.GetSmallLogoPath(ViewBag.BrowserURLContext)"></a>
+                }
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->

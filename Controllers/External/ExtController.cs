@@ -27,6 +27,7 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using ExpressBase.Security;
 using ExpressBase.Common.Security;
 using ExpressBase.Objects;
+using ExpressBase.Common.Helpers;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -396,6 +397,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
                 ViewBag.ErrorMsg = TempData["ErrorMessage"];
                 ViewBag.Email = TempData["Email"];
+                ViewBag.Title = UrlHelper.GetLoginPageDescription(ViewBag.HostValue);
                 return View();
             }
             else

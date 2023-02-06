@@ -4,7 +4,10 @@
         <div class="row">
             <div class="col-md-5 pd-0">
                 <a class="solution_logo_cont pull-left" href="/">
-                    <img src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" class="solution_logo" style="height: 50px;"/>
+                    @if (UrlHelper.IsLogoVisible(ViewBag.HostValue))
+                    {
+                        <img src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" class="solution_logo" style="height: 50px;"/>
+                    }
                 </a>
                 <div class="brd_cr_t EbHeadTitle">
                 </div>

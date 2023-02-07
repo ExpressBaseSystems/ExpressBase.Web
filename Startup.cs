@@ -176,7 +176,18 @@ namespace ExpressBase.Web2
 
             app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    var headers = context.Context.Response.GetTypedHeaders();
+                    headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
+                    {
+                        Public = true,
+                        MaxAge = TimeSpan.FromDays(15)
+                    };
+                }
+            });
 
             app.UseMvc(routes =>
             {

@@ -372,7 +372,7 @@
             }
         }
         else {
-            return `<img src="${src}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
+            return `<img data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
         }
     }
 

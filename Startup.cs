@@ -183,7 +183,7 @@ namespace ExpressBase.Web2
                     var headers = context.Context.Response.GetTypedHeaders();
                     headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
                     {
-                        Public = false,
+                        Private = true,
                         MaxAge = TimeSpan.FromDays(15)
                     };
                 }

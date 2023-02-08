@@ -123,21 +123,21 @@ namespace ExpressBase.Web2
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
-            //if (env == "Staging")
+            //if (env == "Development")
             //{
             //    services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
             //    {
-            //        return new RedisClient(redisServer, Convert.ToInt32(redisPort));
+            //        return new RedisClient(redisServer, Convert.ToInt32(redisPort), redisPassword);
             //    });
             //}
             //else
             //{
-            var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
-            var redisManager = new RedisManagerPool(redisConnectionString);
-            services.AddScoped<IRedisClient, IRedisClient>(serviceProvider =>
-            {
-                return redisManager.GetClient();
-            });
+                var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
+                var redisManager = new RedisManagerPool(redisConnectionString);
+                services.AddScoped<IRedisClient, IRedisClient>(serviceProvider =>
+                {
+                    return redisManager.GetClient();
+                });
             //}
 
             ////Setting Assembly version in Redis
@@ -183,7 +183,7 @@ namespace ExpressBase.Web2
                     var headers = context.Context.Response.GetTypedHeaders();
                     headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
                     {
-                        Public = true,
+                        Public = false,
                         MaxAge = TimeSpan.FromDays(15)
                     };
                 }

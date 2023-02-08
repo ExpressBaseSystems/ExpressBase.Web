@@ -58,7 +58,7 @@
 
 
                         let filename = obj.FileName || "image";
-                        let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${obj.FileName}' alt='${filename}'></li>`);
+                        let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filethumbnail}' dtls='${obj.FileName}' alt='${filename}'></li>`);
                         var l = lk.find("img").data("details", obj.Meta);
                         $('#imageContainer').append(lk);
                     }

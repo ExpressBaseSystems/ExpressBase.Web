@@ -240,7 +240,7 @@
         $(`.${this.Options.Container}_preview`).off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
         this.hideEmptyCategoryFn();
         $('.Col_apndBody').on('show.bs.collapse', function (event) {
-            $(event.target).find('.EbFupThumbLzy').Lazy();
+            $(event.target).find('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         });
     }
 

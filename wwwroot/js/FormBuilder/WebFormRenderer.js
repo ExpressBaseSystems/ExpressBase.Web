@@ -86,7 +86,7 @@ const WebFormRender = function (option) {
             else if (this.Mode.isView) {
                 if ($('#' + this.hBtns.Edit).is(':visible:enabled'))
                     extraHtml += `<button class="btn sw-btn sw-btn-edit">Edit</button>`;
-                extraHtml += `<button class="btn sw-btn sw-btn-save disabled">Submit</button>`;
+                extraHtml += `<button class="btn sw-btn sw-btn-save disabled">${(wizControl.SubmitButtonText || 'Submit')}</button>`;
             }
 
             let hiddenSteps = [], doneSteps = [];

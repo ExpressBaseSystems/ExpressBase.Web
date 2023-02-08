@@ -81,7 +81,7 @@ const WebFormRender = function (option) {
             if (this.Mode.isNew) {
                 if (this.FormObj.CanSaveAsDraft)
                     extraHtml += `<button class="btn sw-btn sw-btn-save-draft">Save as Draft</button>`;
-                extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">Submit</button>`;
+                extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">${(wizControl.SubmitButtonText || 'Submit')}</button>`;
             }
             else if (this.Mode.isView) {
                 if ($('#' + this.hBtns.Edit).is(':visible:enabled'))

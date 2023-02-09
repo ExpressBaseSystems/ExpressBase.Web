@@ -1050,7 +1050,7 @@
                     var item = document.createElement('li');
                     var img = document.createElement('img');
                     // commented bcoz lazy load issue
-                    img.src = src || url;
+                    //img.src = src || url;
                     img.alt = alt;
                     img.setAttribute('class', 'viewerLzyImg');
                     img.setAttribute('data-index', index);
@@ -1774,7 +1774,7 @@
                     this.show(immediate);
                 }
                 //lazy load function
-                // $('.viewerLzyImg').Lazy();
+                $('.viewerLzyImg').Lazy();
                 return this;
             }
 

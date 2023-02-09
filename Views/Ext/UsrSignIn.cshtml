@@ -40,12 +40,12 @@
                     @if (ViewBag.WhichConsole == "uc" && (ViewBag.Is2fA != null && !ViewBag.Is2fA) && ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled)
                     {
                         <ul class="nav nav-tabs eb-styledTab" role="tablist">
-                            <li class="active">
+                            <li class="@UrlHelper.GetLiActiveClass(ViewBag.HostValue, true)">
                                 <a href="#withpw_container" role="tab" data-toggle="tab">
                                     With Password
                                 </a>
                             </li>
-                            <li>
+                            <li class="@UrlHelper.GetLiActiveClass(ViewBag.HostValue, false)">
                                 <a href="#withotp_container" role="tab" data-toggle="tab">
                                     With OTP
                                 </a>
@@ -54,9 +54,9 @@
                     }
 
                     <div class="tab-content @styleClass">
-                        <div class="tab-pane fade active in" id="withpw_container">
+                        <div class="tab-pane fade @UrlHelper.GetTabPaneActiveClass(ViewBag.HostValue, true)" id="withpw_container">
                             <div class="form-group mb-25" validator="email">
-                                <label>Email or Mobile</label>
+                                <label>@UrlHelper.GetUserNameLabel(ViewBag.HostValue)</label>
                                 <div class="log-username">
                                     <input type="email" id="uname" name="uname" class="form-control ebtext-lg" placeholder="Email" value="@ViewBag.Email" />
                                 </div>
@@ -101,10 +101,10 @@
                         </div>
                         @*@if (ViewBag.WhichConsole == "uc" && ((ViewBag.Is2fA != null && ViewBag.Is2fA) || (ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled)))
                         {*@
-                        <div class="tab-pane fade" id="withotp_container">
+                        <div class="tab-pane fade @UrlHelper.GetTabPaneActiveClass(ViewBag.HostValue, false)" id="withotp_container">
 
                             <div class="form-group mb-25">
-                                <label> Email or Mobile</label>
+                                <label>@UrlHelper.GetUserNameLabel(ViewBag.HostValue)</label>
                                 <div class="log-username">
                                     <input type="text" id="uname_otp" name="uname_otp" class="form-control ebtext-lg" value="@ViewBag.Email" />
                                 </div>

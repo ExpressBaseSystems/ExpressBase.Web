@@ -493,7 +493,7 @@ body {
         box-shadow: 0px 1px 2px 0 #000082;
     }
 
-.addrow-btn, .excelupload-btn {
+.addrow-btn, .excelupload-btn, .refreshdgdr-btn {
     display: inline-block;
     cursor: pointer;
     color: white;
@@ -511,6 +511,10 @@ body {
     background-color: #0009bd !important;
 }
 
+.refreshdgdr-btn {
+    background-color: #a70e0e !important;
+}
+
 .addrow-btn:hover {
     background: linear-gradient(to bottom, #3ebf09 5%, #00D036 100%);
     background-color: #00D036;
@@ -520,7 +524,11 @@ body {
     background: linear-gradient(to bottom, #0a0f6e 5%, #0009bd 100%);
 }
 
-[eb-form="true"][mode="view"] .addrow-btn, [eb-form="true"][mode="view"] .excelupload-btn {
+.refreshdgdr-btn:hover {
+    background: linear-gradient(to bottom, #500909 5%, #8f1515 100%);
+}
+
+[eb-form="true"][mode="view"] .addrow-btn, [eb-form="true"][mode="view"] .excelupload-btn, [eb-form="true"][mode="view"] .refreshdgdr-btn {
     display: none;
 }
 
@@ -636,7 +644,7 @@ eb-disable {
     display: block;
 }*/
 
-.grid-cont[is-disabled='true'] .addrow-btn, .grid-cont[is-disabled='true'] .excelupload-btn {
+.grid-cont[is-disabled='true'] .addrow-btn, .grid-cont[is-disabled='true'] .excelupload-btn, .grid-cont[is-disabled='true'] .refreshdgdr-btn {
     color: #333;
     pointer-events: none;
     background: #dddddd;
@@ -1175,7 +1183,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     color: #555;
 }
 
-.Eb-ctrlContainer[eb-readonly="true"] .addrow-btn, .Eb-ctrlContainer[eb-readonly="true"] .excelupload-btn, .eb-disablebtn {
+.Eb-ctrlContainer[eb-readonly="true"] .addrow-btn, .Eb-ctrlContainer[eb-readonly="true"] .excelupload-btn, .Eb-ctrlContainer[eb-readonly="true"] .refreshdgdr-btn, .eb-disablebtn {
     filter: grayscale(90%);
     pointer-events: none;
 }

@@ -1288,11 +1288,16 @@
                     let ph = true;
                     if (Prop === 'DrDependents') {
                         if (nxtCtrl.ObjType === 'DataGrid') {
-                            let x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
-                            while (x >= 0) {
-                                DepHandleObj[prop1].splice(x, 1);
-                                DepHandleObj[prop2].splice(x, 1);
-                                x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                            if (nxtCtrl.ShowRefreshBtn) {
+                                ph = false;
+                            }
+                            else {
+                                let x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                                while (x >= 0) {
+                                    DepHandleObj[prop1].splice(x, 1);
+                                    DepHandleObj[prop2].splice(x, 1);
+                                    x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                                }
                             }
                         }
                         else if (nxtCtrl.ObjType === 'PowerSelect' && nxtCtrl.IsDGCtrl) {
@@ -1584,9 +1589,11 @@
                     let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
                     ValueExpr_val = new Function("form", "user", "sourcectrl", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                     ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
+                    //depCtrl.__invalidValueValExpr = false;
                 }
                 catch (e) {
                     console.error(e);
+                    //depCtrl.__invalidValueValExpr = true;
                     EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
                 }
                 if (DepHandleObj.isInitSetup || this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {

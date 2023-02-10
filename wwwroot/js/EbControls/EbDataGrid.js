@@ -1050,6 +1050,12 @@
         }.bind(this));
     }.bind(this);
 
+    this.refreshDgDrBtn_clicked = function () {
+        let paramsColl__ = this.getParamsColl();
+        let paramsColl = paramsColl__[0];
+        this.refreshDG(paramsColl);
+    }.bind(this);
+
     this.editRow_click = function (e) {
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
@@ -2390,6 +2396,7 @@
             }
         }.bind(this));
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".excelupload-btn", this.excelUploadBtn_click);
+        $(`#${this.ctrl.EbSid}Wraper`).on("click", ".refreshdgdr-btn", this.refreshDgDrBtn_clicked);
         this.$table.on("click", ".check-row", this.checkRow_click_New);
         this.$table.on("click", ".cancel-row", this.cancelRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

@@ -1293,7 +1293,7 @@
             }
         }
         if (pushMasterId) {
-            params.push({ Name: this.formRenderer.MasterTable + '_id', Type: 7, Value: this.Renderer.rowId });
+            params.push({ Name: this.Renderer.MasterTable + '_id', Type: 7, Value: this.Renderer.rowId });
         }
 
         return params;

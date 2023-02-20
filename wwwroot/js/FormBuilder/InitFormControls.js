@@ -1405,16 +1405,17 @@
     };
 
     this.CheckBoxGroup = function (ctrl) {
-        $('#' + ctrl.Name).find("input").on("change", function (e) {
-            var $ctrlDiv = $('#' + ctrl.Name); var values = "";
-            $ctrlDiv.find("input").each(function (i, el) {
-                if (el.checked) {
-                    val = $('#' + el.id + 'Lbl').text().trim();
-                    values += "," + val;
-                }
-            });
-            $ctrlDiv.val(values.substring(1));
-        });
+        //commented on 2023-02-20// due to undetected code flow
+        //$('#' + ctrl.Name).find("input").on("change", function (e) {
+        //    var $ctrlDiv = $('#' + ctrl.Name); var values = "";
+        //    $ctrlDiv.find("input").each(function (i, el) {
+        //        if (el.checked) {
+        //            val = $('#' + el.id + 'Lbl').text().trim();
+        //            values += "," + val;
+        //        }
+        //    });
+        //    $ctrlDiv.val(values.substring(1));
+        //});
     };
 
     this.Button = function (ctrl) {//////////////////////////////////////

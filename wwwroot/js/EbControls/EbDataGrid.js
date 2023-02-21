@@ -159,7 +159,7 @@
     this.getTrHTML_ = function (rowCtrls, rowid, isAdded) {
         let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' rowid='${rowid}' rownum='${++this.rowSLCounter}'>
-                    <td class='row-no-td' id='${this.TableId + "_" + this.rowSLCounter}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
+                    <td class='row-no-td ${(rowid <= 0 ? "new-dgtr' title='Newly added row" : '')}' id='${this.TableId + "_" + this.rowSLCounter}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
 
         let visibleCtrlIdx = 0;
 
@@ -601,10 +601,11 @@
         col = this.attachFns(col, col.ObjType);
     };
 
+    //manuel row add
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' rowid='${rowid}'>
-                    <td class='row-no-td' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
+                    <td class='row-no-td new-dgtr' title='Newly added row' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.objectMODEL[rowid] = [];
 
         let visibleCtrlIdx = 0;
@@ -2080,13 +2081,14 @@
         let newModel = [], delModel = [], rowCntr = -501;
         if (this.ctrl.MergeData && lastModel.length > 0 && dataModel.length > 0) {
             let keyIdx1 = 0;
-            let keyIdx2 = lastModel[0].Columns.findIndex(e => e.Name === dataModel[0].Columns[keyIdx1].Name);
+            let keyColumnName = dataModel[0].Columns[keyIdx1].Name;
 
             while (lastModel.length > 0) {
                 let oldRow = lastModel.splice(0, 1)[0];
-                oldRow.IsDelete = false;
+                //oldRow.IsDelete = false;
+                let keyIdx2 = oldRow.Columns.findIndex(e => e.Name === keyColumnName);
                 let newIdx = dataModel.findIndex(e => e.Columns[keyIdx1].Value === oldRow.Columns[keyIdx2].Value);
-                if (newIdx >= 0) {
+                if (newIdx >= 0 && !oldRow.IsDelete) {
                     dataModel.splice(newIdx, 1);
                     if (oldRow.RowId <= 0)
                         oldRow.RowId = rowCntr--;

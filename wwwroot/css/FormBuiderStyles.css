@@ -476,6 +476,10 @@ body {
     padding: 0px !important;
 }
 
+    .dgtbl .row-no-td.new-dgtr {
+        background-color: #c8ff74;
+    }
+
 .ctrl-edit {
     position: absolute;
     right: 0;

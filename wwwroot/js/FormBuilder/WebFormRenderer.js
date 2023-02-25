@@ -628,7 +628,7 @@ const WebFormRender = function (option) {
 
             if (SingleColumn.Name === "id")
                 continue;
-            if (val === null)
+            if (val === null)////SoftReloadForm issue
                 continue;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
@@ -647,7 +647,7 @@ const WebFormRender = function (option) {
                 if (val)
                     val = val.replace(/\r/g, '');
                 ctrl.justSetValue(val);
-                if (ctrl.getValueFromDOM() !== val) {
+                if (val && ctrl.getValueFromDOM() !== val) {
                     ctrl.__EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
                         head: "Value Trimmed by mistake(Old Value : " + val + ", New Value:" + ctrl.getValueFromDOM() + " ) - contact Support",
@@ -828,6 +828,10 @@ const WebFormRender = function (option) {
                     //ebcontext.setup.se.onLogOutMsg();
                     document.location.href = '/Ext/UsrSignIn?Page=False';
                 }, 3000);
+                return;
+            }
+            if (this.AfterSavePage) {
+                document.location.href = `/pages/${this.AfterSavePage}`;
                 return;
             }
             if (this.renderMode === 5) {

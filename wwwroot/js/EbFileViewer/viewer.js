@@ -311,7 +311,28 @@
         zoomed: null
     };
 
-    var TEMPLATE = '<div class="viewer-container" touch-action="none">' + '<div class="viewer-canvas"></div>' + '<div class="viewer-footer">' + '<div class="viewer-title"></div>' + '<div class="viewer-toolbar"></div>' + '<div class="viewer-navbar">' + '<ul class="viewer-list"></ul>' + '</div>' + '</div>' + '<div class="viewer-tooltip"></div>' + '<div role="button" class="viewer-button" data-viewer-action="mix"></div>' + '<div class="viewer-eb-button"><i class="fa fa-long-arrow-right"></i></div>' + '<div class="viewer-player"></div>' + '</div>';
+    var TEMPLATE = `
+<div class="viewer-container" touch-action="none">
+  <div class="viewer-canvas"></div>
+  <div class="viewer-footer">
+    <div class="viewer-title"></div>
+    <div class="viewer-toolbar"></div>
+    <div class="viewer-navbar">
+      <ul class="viewer-list"></ul>
+    </div>
+  </div>
+  <div class="viewer-tooltip"></div>
+  <div role="button" class="viewer-button" data-viewer-action="mix"></div>
+  <div class="viewer-eb-more dropdown">
+    <button class="viewer-eb-button btn" data-toggle="dropdown" style=''><i class="fa fa-caret-square-o-down"></i></button> 
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item"><i class="fa fa-arrow-left"></i> Move Left</a></li>
+      <li><a class="dropdown-item"><i class="fa fa-arrow-right"></i> Move Right</a></li>
+      <li style='display:none;'><a class="dropdown-item"><i class="fa fa-window-maximize"></i> Full Screen</a></li>
+    </ul>
+  </div>
+  <div class="viewer-player"></div>
+</div>`;
 
     var IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
     var WINDOW = IS_BROWSER ? window : {};
@@ -1249,29 +1270,45 @@
             }
 
             //eb_edited
-            $(viewer).off('click', '.viewer-eb-button').on('click', '.viewer-eb-button', function (e) {
-                let $v = $(this.viewer);
-                let $i = $(e.currentTarget).find('i');
-                $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
-                if (this.viewer.style.width === '50%') {
-                    if (this.viewer.style.left === '50%') {
-                        $v.css('left', '0');
-                        $i.addClass('fa-arrows-h');
+            let adjustViewerPosition = function (e) {
+                let $c = $(this.viewer);
+                let $li = $(e.currentTarget);
+                let $i = $li.find('i');
+
+                if ($i.hasClass('fa-arrow-left')) {
+                    $c.css('left', '0%');
+                    this.eb_half_width = true;
+                    if (this.viewer.style.width != '50%') {
+                        $c.css('width', '50%');
+                        this.resize();
                     }
-                    else {
-                        $v.css('width', '100%').css('left', '0');
-                        $i.addClass('fa-long-arrow-right');
-                        this.eb_half_width = false;
+                }
+                else if ($i.hasClass('fa-arrow-right')) {
+                    $c.css('left', '50%');
+                    this.eb_half_width = true;
+                    if (this.viewer.style.width != '50%') {
+                        $c.css('width', '50%');
                         this.resize();
                     }
                 }
                 else {
-                    $v.css('width', '50%').css('left', '50%');
-                    $i.addClass('fa-long-arrow-left');
-                    this.eb_half_width = true;
-                    this.resize();
+                    $c.css('left', '0%');
+                    this.eb_half_width = false;
+                    if (this.viewer.style.width != '100%') {
+                        $c.css('width', '100%');
+                        this.resize();
+                    }
                 }
-            }.bind(this));
+                $li.siblings('li').show();
+                $li.hide();
+            }.bind(this);
+
+            $(viewer).off('click', '.viewer-eb-more li').on('click', '.viewer-eb-more li', adjustViewerPosition);
+
+            if (this.eb_adjust_postion == 1)
+                adjustViewerPosition({ currentTarget: $(viewer).find('.viewer-eb-more i.fa-arrow-left').closest('li') });
+            else if (this.eb_adjust_postion == 2)
+                adjustViewerPosition({ currentTarget: $(viewer).find('.viewer-eb-more i.fa-arrow-right').closest('li') });
         },
         unbind: function unbind() {
             var options = this.options,

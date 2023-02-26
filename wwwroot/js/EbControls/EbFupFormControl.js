@@ -403,7 +403,7 @@
             let fileref = $(ev.target).closest(`.${this.Options.Container}_preview`).attr("filref");
 
             //ebfileviewer 
-            this[`${this.Options.Container}_cont`].showimage(fileref);
+            this[`${this.Options.Container}_cont`].showimage(fileref, this.Options.ViewerPosition);
         }
 
 

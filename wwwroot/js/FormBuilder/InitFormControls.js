@@ -99,7 +99,8 @@
             HideEmptyCategory: ctrl.HideEmptyCategory,
             ShowUploadDate: ctrl.ShowUploadDate,
             ViewByCategory: ctrl.ViewByCategory,
-            Renderer: this.Renderer
+            Renderer: this.Renderer,
+            ViewerPosition: ctrl.ViewerPosition
         });
 
         //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);

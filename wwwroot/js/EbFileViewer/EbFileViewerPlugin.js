@@ -82,7 +82,7 @@
 
 
 
-        this.showimage = function (rfid) {
+        this.showimage = function (rfid, ViewerPosition) {
             if (!(!rfid || rfid.length === 0)) {
                 let indx = this.pgSettings.findIndex(item => item.FileRefId == rfid);
                 if (this.pgSettings[indx].FileCategory == 1) {
@@ -93,6 +93,7 @@
                         }
                     }
                     let j = temparr.findIndex(x => x.FileRefId == rfid);
+                    this.viewer.eb_adjust_postion = this.viewer.ready ? 0 : ViewerPosition;
                     this.viewer.view(j);
                 }
                 else if (this.pgSettings[indx].FileCategory == 0) {
@@ -105,17 +106,37 @@
                     let url = (this.pgSettings[indx].hasOwnProperty('Recent')) ? this.pgSettings[indx].FileB64 : `${src}.${exten}`;
                     if (exten == 'pdf') {
 
-                        let html = $(`<div id='ebfileview_ContDiv' class='eb_fileview-Cont' style=''>
-                                    <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i></button>
-                                    <button id='' class="btn resize-ebfileview_Cont" style=''><i class="fa fa-long-arrow-right"></i></button> 
-                                    </div>`);
+                        let $html = $(`
+<div class='eb_fileview-Cont' style=''>
+  <button class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i></button>
+  <div class="dropdown more-ebfileview_Cont">
+    <button class="btn resize-ebfileview_Cont" data-toggle="dropdown" style=''><i class="fa fa-caret-square-o-down"></i></button> 
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item"><i class="fa fa-arrow-left"></i> Move Left</a></li>
+      <li><a class="dropdown-item"><i class="fa fa-arrow-right"></i> Move Right</a></li>
+      <li><a class="dropdown-item"><i class="fa fa-window-maximize"></i> Full Screen</a></li>
+    </ul>
+  </div>
+</div>`);
                         //$("body").append(` <iframe id="display_file" src="${src}.${exten}" frameborder="0" style=" bottom: 0;direction: ltr; font-size: 0; left: 0; line-height: 0;  overflow: hidden;position: absolute;right: 0;"></iframe>`);
-                        html.append(`<div id='ebfileview_Iframe-Cont' class='eb_iframe-Cont' style=" ">
-                                    <iframe id='ebfileview_Iframe' class='ebfileview_Iframe' src="${url}" class='' style=''></iframe>
+                        $html.append(`<div class='eb_iframe-Cont' style=" ">
+                                    <iframe class='ebfileview_Iframe' src="${url}" class='' style=''></iframe>
                                     </div>`);
-                        $("body").append(html[0]);
-                        $('.close-ebfileview_Cont').off('click').on('click', this.CloseFileviewFn.bind(this));
-                        $('.resize-ebfileview_Cont').off('click').on('click', this.ResizeFileviewFn.bind(this));
+                        if (ViewerPosition == 1) {//left
+                            $html.css('width', '50%').css('left', '0%');
+                            $($html.find('li')[0]).hide();
+                        }
+                        else if (ViewerPosition == 2) {//right
+                            $html.css('width', '50%').css('left', '50%');
+                            $($html.find('li')[1]).hide();
+                        }
+                        else {
+                            $($html.find('li')[2]).hide();
+                        }
+
+                        $("body").append($html[0]);
+                        $html.on('click', '.close-ebfileview_Cont', this.CloseFileviewFn.bind(this, $html));
+                        $html.on('click', '.more-ebfileview_Cont li', this.ResizeFileviewFn.bind(this, $html));
                         console.log("need pdf viewer");
                     }
                     else {
@@ -149,32 +170,28 @@
             }
         }
 
-        this.CloseFileviewFn = function (e) {
+        this.CloseFileviewFn = function ($ele, e) {
             let target = $(e.target).closest('button').parent();
-            if (target.attr("id") == "ebfileview_ContDiv") {
+            if (target.hasClass("eb_fileview-Cont")) {
                 target.remove();
             }
         }
 
-        this.ResizeFileviewFn = function (e) {
-            let $c = $("#ebfileview_ContDiv");
-            let $i = $(e.currentTarget).find('i');
-            $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
-            if ($c[0].style.width === '50%') {
-                if ($c[0].style.left === '50%') {
-                    $c.css('left', '0');
-                    $i.addClass('fa-arrows-h');
-                }
-                else {
-                    $c.css('width', '100%').css('left', '0');
-                    $i.addClass('fa-long-arrow-right');
-                }
+        this.ResizeFileviewFn = function ($ele, e) {
+            let $c = $ele;
+            let $li = $(e.currentTarget);
+            let $i = $li.find('i');
+            if ($i.hasClass('fa-arrow-left')) {
+                $c.css('width', '50%').css('left', '0%');
+            }
+            else if ($i.hasClass('fa-arrow-right')) {
+                $c.css('width', '50%').css('left', '50%');
             }
             else {
-                $c.css('width', '50%').css('left', '50%');
-                $i.addClass('fa-long-arrow-left');
+                $c.css('width', '100%').css('left', '0%');
             }
-
+            $li.siblings('li').show();
+            $li.hide();
         }
 
         this.addToImagelist = function (file) {

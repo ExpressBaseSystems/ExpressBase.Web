@@ -668,6 +668,11 @@ button.btn.close-ebfileview_Cont.ebclx_fileview-Cont:hover {
     transition: background-color 0.15s;
     width: 80px;
     color: white;
-    padding: 50px 0 0 50px;
+    padding: 36px 0 0 36px;
     font-size: 12px;
 }
+
+    .viewer-eb-button:hover {
+        color: white;
+        background-color: #333;
+    }

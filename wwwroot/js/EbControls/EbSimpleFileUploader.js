@@ -484,7 +484,7 @@
             let fileref = $(e.target).closest(".uploaded-file").attr("filref");
 
             //ebfileviewer 
-            plugin.ebFilesview.showimage(fileref);
+            plugin.ebFilesview.showimage(fileref, plugin.settings.fileCtrl.ViewerPosition);
         }
 
 

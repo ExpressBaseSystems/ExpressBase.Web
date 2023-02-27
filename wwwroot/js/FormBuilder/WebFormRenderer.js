@@ -830,8 +830,8 @@ const WebFormRender = function (option) {
                 }, 3000);
                 return;
             }
-            if (this.AfterSavePage) {
-                document.location.href = `/pages/${this.AfterSavePage}`;
+            if (this.FormObj.AfterSavePage) {
+                document.location.href = `/pages/${this.FormObj.AfterSavePage}`;
                 return;
             }
             if (this.renderMode === 5) {

@@ -28,6 +28,7 @@
     this.login = Option.login;
     this.counter = Option.counter;
     this.datePattern = Option.datePattern || "dd-MM-yyyy";
+    this.mmtDateFormat = ebcontext.user.Preference.ShortDatePattern || 'DD-MM-YYYY';//
     this.TenantId = Option.TenantId;
     this.UserId = Option.UserId;
     this.relatedObjects = null;
@@ -1155,7 +1156,10 @@
                                 o.title = colObj.sTitle;
                                 o.name = colObj.name;
                                 o.operator = search.Operator;
-                                o.value = val;
+                                if (search.Type == 5 || search.Type == 6)
+                                    o.value = moment(val, 'YYYY-MM-DD').format(this.mmtDateFormat);
+                                else
+                                    o.value = val;
                                 if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")
                                     o.logicOp = "OR";
                                 else if (typeof this.columnSearch[i + 1] !== "undefined")
@@ -1167,7 +1171,11 @@
                         }.bind(this));
                     }
                     else {
-                        o.value = search.Value;
+                        if (search.Type == 5 || search.Type == 6)
+                            o.value = moment(search.Value, 'YYYY-MM-DD').format(this.mmtDateFormat);
+                        else
+                            o.value = search.Value;
+
                         if (typeof this.columnSearch[i + 1] !== "undefined")
                             o.logicOp = "AND";
                         else
@@ -1177,7 +1185,14 @@
                 }
                 else {
                     i++;
-                    o.value = searchobj[0].Value + " AND " + searchobj[1].Value;
+                    let val1 = searchobj[0].Value;
+                    let val2 = searchobj[1].Value;
+                    if (searchobj[0].Type == 5 || searchobj[0].Type == 6)
+                        val1 = moment(val1, 'YYYY-MM-DD').format(this.mmtDateFormat);
+                    if (searchobj[1].Type == 5 || searchobj[1].Type == 6)
+                        val2 = moment(val2, 'YYYY-MM-DD').format(this.mmtDateFormat);
+
+                    o.value = val1 + " AND " + val2;
                     o.operator = "BETWEEN";
                     if (typeof this.columnSearch[i + 1] !== "undefined")
                         o.logicOp = "AND";
@@ -1352,10 +1367,17 @@
                                 if (oper === 'B')
                                     val2 = $(textid).siblings('input').val();
                                 if (Rtype === 5 || Rtype === 6) {
-                                    if (!val1 || !moment(val1, 'DD-MM-YYYY', true).isValid())
+                                    if (val1 && moment(val1, this.mmtDateFormat, true).isValid())
+                                        val1 = moment(val1, this.mmtDateFormat).format('YYYY-MM-DD');
+                                    else
                                         return;
-                                    if (oper === 'B' && (!val2 || !moment(val2, 'DD-MM-YYYY', true).isValid()))
-                                        return;
+
+                                    if (oper === 'B') {
+                                        if (val2 && moment(val2, this.mmtDateFormat, true).isValid())
+                                            val2 = moment(val2, this.mmtDateFormat).format('YYYY-MM-DD');
+                                        else
+                                            return;
+                                    }
                                 }
 
                                 if (oper === 'B') {
@@ -1365,8 +1387,8 @@
                                             filter_obj_arr.push(new filter_obj(paracolum, "<=", Math.max(val1, val2), type));
                                         }
                                         else if (Rtype === 5 || Rtype === 6) {
-                                            let d1 = Date.parse(moment(val1, 'DD-MM-YYYY').format('YYYY-MM-DD'));
-                                            let d2 = Date.parse(moment(val2, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+                                            let d1 = Date.parse(val1);
+                                            let d2 = Date.parse(val2);
                                             if (d2 > d1) {
                                                 filter_obj_arr.push(new filter_obj(paracolum, ">=", val1, type));
                                                 filter_obj_arr.push(new filter_obj(paracolum, "<=", val2, type));
@@ -1379,8 +1401,7 @@
                                     }
                                 }
                                 else {
-                                    var data = $(textid).val();
-                                    filter_obj_arr.push(new filter_obj(paracolum, oper, data, type));
+                                    filter_obj_arr.push(new filter_obj(paracolum, oper, val1, type));
                                 }
                             }
                         }
@@ -1758,13 +1779,16 @@
             else {
                 if (param1.Operator !== '' && param1.Value !== '') {
                     if (param2 && param2.Column === param1.Column) {
-                        $(textid).val(param1.Value);
-                        $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
-                        $(textid).siblings('input').val(param2.Value);
+                        let val1 = type == 'date' ? moment(param1.Value, 'YYYY-MM-DD').format(this.mmtDateFormat) : param1.Value;
+                        let val2 = type == 'date' ? moment(param2.Value, 'YYYY-MM-DD').format(this.mmtDateFormat) : param2.Value;
+                        $(textid).val(val1);
+                        //$(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");//doubtful code commented 2023-02-28
+                        $(textid).siblings('input').val(val2);
                         i++;
                     }
                     else {
-                        $(textid).val(param1.Value);
+                        let val1 = type == 'date' ? moment(param1.Value, 'YYYY-MM-DD').format(this.mmtDateFormat) : param1.Value;
+                        $(textid).val(val1);
                         $('#' + this.tableId + '_' + colum + '_hdr_sel').text(param1.Operator);
                     }
                 }

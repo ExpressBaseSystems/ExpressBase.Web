@@ -155,9 +155,12 @@
         </div>
         <div id="ebm-wrprfooter" class="FooterBlock">
             <div class="footer-buttons">
-                <a href="/SupportTicket/BugSupport" target="_blank" class="footer-btn" style="margin-right:5px">
-                    <i class="fa fa-life-ring"></i> Support
-                </a>
+                @if (UrlHelper.IsSupportButtonVisible(ViewBag.BrowserURLContext))
+                {
+                    <a href="/SupportTicket/BugSupport" target="_blank" class="footer-btn" style="margin-right:5px">
+                        <i class="fa fa-life-ring"></i> Support
+                    </a>
+                }
                 @if (ViewBag.wc == "uc")
                 {
                     <a href="/Downloads" target="_blank" class="footer-btn" style="margin-right:5px">

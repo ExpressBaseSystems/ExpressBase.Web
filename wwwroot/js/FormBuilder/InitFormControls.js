@@ -94,6 +94,7 @@
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
+            MaxSizeInKB: ctrl.MaxSizeInKB,
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,

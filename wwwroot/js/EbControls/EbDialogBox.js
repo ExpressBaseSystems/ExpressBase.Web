@@ -2,6 +2,7 @@
     var operation = action;
     var settings = $.extend({
         Message: "Nothing specified",
+        DefaultText: '',
         Buttons: {
             "Ok": {
                 ClassName: "eb_dlogBox_defaultbutton",
@@ -57,7 +58,7 @@
         if (settings.IsPrompt) {
             return `<div class="eb_dlogBox_prompt_inputContainer">
                         <label class="eb_dlogBox_prompt_label">${settings.Message}</label>
-                        <input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input"/>
+                        <input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" value='${settings.DefaultText}'/>
                     </div>`;
         }
         else

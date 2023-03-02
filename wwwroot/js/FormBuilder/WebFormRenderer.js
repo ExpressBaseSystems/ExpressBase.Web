@@ -1231,7 +1231,7 @@ const WebFormRender = function (option) {
             this.LockSave = false;
     };
 
-    this.saveAsDraft = function () {
+    this.saveAsDraft_Call = function (title) {
         this.showLoader();
         $.ajax({
             type: "POST",
@@ -1240,7 +1240,8 @@ const WebFormRender = function (option) {
                 RefId: this.formRefId,
                 DraftId: this.draftId,
                 Json: JSON.stringify(this.formData),
-                CurrentLoc: this.getLocId()
+                CurrentLoc: this.getLocId(),
+                Title: title
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
@@ -1248,6 +1249,39 @@ const WebFormRender = function (option) {
             }.bind(this),
             success: this.saveDraftSuccess.bind(this)
         });
+    }.bind(this);
+
+    this.saveAsDraft = function () {
+        let title = '';
+
+        try {
+            if (this.FormObj.DraftTitleExpression && this.FormObj.DraftTitleExpression.Code && this.FormObj.DraftTitleExpression.Code !== '') {
+                if (this.formObject)
+                    title = new Function("form", "user", atob(this.FormObj.DraftTitleExpression.Code)).bind('', this.formObject, ebcontext.user)();
+            }
+        }
+        catch (e) { console.log("Error in draft title expression  " + e.message); }
+
+        if (!title)
+            title = this.FormObj.DisplayName;
+
+        this.saveAsDraft_Call(title);
+
+        //EbDialog("show",
+        //    {
+        //        Message: "Draft Title",
+        //        IsPrompt: true,
+        //        DefaultText: title,
+        //        Buttons: {
+        //            "Continue": { Background: "green", Align: "left", FontColor: "white;" },
+        //            "Cancel": { Background: "violet", Align: "right", FontColor: "white;" }
+        //        },
+        //        CallBack: function (name, inputText) {
+        //            if (name === "Continue") {
+        //                this.saveAsDraft_Call(inputText);
+        //            }
+        //        }.bind(this)
+        //    });
     }.bind(this);
 
     this.saveForm_call = function () {

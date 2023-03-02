@@ -6,7 +6,8 @@
             HideEmptyCategory: false
         }, options);
 
-        this.MaxSize = this.Options.MaxSize || 5;
+        this.MaxSize = (this.Options.MaxSize || this.Options.MaxSizeInKB) ? (this.Options.MaxSize || 0) : 5;
+        this.MaxSizeInKB = (this.MaxSize) * 1024 + (this.Options.MaxSizeInKB || 0)
         this.Files = [];
         this.RefIds = [];
         this.SingleRefid = null;
@@ -554,7 +555,7 @@
     }
 
     drawThumbNail(e, file) {
-        if ((file.size / (1024)) < (this.MaxSize * 1024)) {
+        if ((file.size / (1024)) < (this.MaxSizeInKB)) {
             let b64 = e.target.result;
             $(`#${this.Options.Container}-eb-upl-bdy`).append(`
                                                         <div class="file-thumb-wraper">
@@ -594,7 +595,7 @@
             this.isDropZoneEmpty();
         }
         else {
-            EbMessage("show", { Background: "red", Message: "Image size should not exceed " + this.MaxSize + " Mb" });
+            EbMessage("show", { Background: "red", Message: "Image size should not exceed " + this.MaxSizeInKB + " KB" });
         }
     }
 

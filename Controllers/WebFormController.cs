@@ -401,7 +401,7 @@ namespace ExpressBase.Web.Controllers
             DVColumnCollection DVColumnCollection = new DVColumnCollection()
             {
                 new DVNumericColumn { Data = 0, Name = "id", sTitle = "Id", Type = EbDbTypes.Int32, bVisible = false },
-                new DVStringColumn { Data = 1, Name = "title", sTitle = "Subject", Type = EbDbTypes.String, bVisible = false},
+                new DVStringColumn { Data = 1, Name = "title", sTitle = "Title", Type = EbDbTypes.String, bVisible = true},
                 new DVStringColumn { Data = 2, Name = "form_ref_id", sTitle = "Ref id", Type = EbDbTypes.String, bVisible = false },
                 new DVStringColumn { Data = 3, Name = "display_name", sTitle = "Form name", Type = EbDbTypes.String, bVisible = true, RenderAs = StringRenderType.LinkFromColumn, RefidColumn = new DVBaseColumn(), IdColumn = new DVBaseColumn()  },
                 new DVDateTimeColumn { Data = 4, Name = "eb_created_at", sTitle = "Created at", Type = EbDbTypes.Date, bVisible = true,Format = DateFormat.DateTime, ConvretToUsersTimeZone = true },

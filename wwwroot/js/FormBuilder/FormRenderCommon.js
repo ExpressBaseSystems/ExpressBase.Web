@@ -41,9 +41,11 @@
     };
 
     this.setDefaultvalsNC = function (flatControls) {
-        $.each(flatControls, function (k, Obj) {
-            this.setDefaultValue(Obj);
-        }.bind(this));
+        if (!this.FO.FormObj.DefaultValsExecOrder) {
+            $.each(flatControls, function (k, Obj) {
+                this.setDefaultValue(Obj);
+            }.bind(this));
+        }
     };
 
     this.execDefaultvalsNC = function (defaultValsExecOrder) {
@@ -747,6 +749,10 @@
                     notOk1stCtrl = ctrl;
                 }
             }
+            //if (ctrl.__invalidValueValExpr) {
+            //    required_valid_flag = false;
+            //    EbMessage("show", { Message: `Unable to save. Invalid data in ${ctrl.Lable || ctrl.Name}`, AutoHide: false, Background: '#aa0000' });
+            //}
         }.bind(this));
 
         if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
@@ -1091,7 +1097,7 @@
                     }
                 }
             }
-            if (ExprName === 'DefaultValueExpression') {
+            if (ExprName === 'DefaultValueExpression' && this.FO.DGs) {
                 for (let i = 0; i < this.FO.DGs.length; i++) {
                     if (this.FO.DGs[i].Eb__paramControls && this.FO.DGs[i].Eb__paramControls.$values.length === 0) {
                         DepHandleObj.DrPaths.push('form.' + this.FO.DGs[i].Name);
@@ -1126,8 +1132,11 @@
                 }
             }
         }
-        this.FindCtrlsWithNoDependency_inner(this.FO.TabControls, ExprName, DepHandleObj, prop1, prop2);
-        this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
+        if (this.FO.TabControls)
+            this.FindCtrlsWithNoDependency_inner(this.FO.TabControls, ExprName, DepHandleObj, prop1, prop2);
+
+        if (this.FO.WizardControls)
+            this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
     };
 
     this.FindCtrlsWithNoDependency_inner = function (ctrlConts, ExprName, DepHandleObj, prop1, prop2) {

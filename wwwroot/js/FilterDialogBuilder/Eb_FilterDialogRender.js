@@ -90,8 +90,8 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
                 IsUpdate: false,
                 Columns: []
             }];
-            for (let i = 0; i < this.FormObj.Controls.$values.length; i++) {
-                let ctrl = this.FormObj.Controls.$values[i];
+            for (let i = 0; i < this.flatControls.length; i++) {
+                let ctrl = this.flatControls[i];
                 ctrl.__isFDcontrol = true;
                 this.DataMODEL[this.FormObj.TableName][0].Columns.push(getSingleColumn(ctrl));
             }
@@ -102,22 +102,30 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
             this._allPSsInit = false;
             this.initFormObject2();
             this.initDataModel();
+            attachModalCellRef_form(this.FormObj, this.DataMODEL);
+            this.isInitiallyPopulating = true;
             this.initFilterDialogCtrls();// order 1
-            this.FRC.bindEbOnChange2Ctrls(this.FormObj.Controls.$values);// order 2
-            this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2 // replace with 'execDefaultvalsNC'
-            this.setValueExpValsNC(this.FormObj.Controls.$values);//
-            this.FRC.bindFnsToCtrls(this.flatControls);// order 4
-            this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
+            this.FRC.bindFunctionToCtrls(this.flatControls);
+            this.FRC.setDisabledControls(this.flatControls);
+            //this.FRC.bindEbOnChange2Ctrls(this.FormObj.Controls.$values);// order 2
+            this.FRC.setDefaultvalsNC(this.flatControls);// order 2 // replace with 'execDefaultvalsNC'
+            //this.setValueExpValsNC(this.FormObj.Controls.$values);//
+            //this.FRC.bindFnsToCtrls(this.flatControls);// order 4
+            //this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
             this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
             this.SetWatchers();
             $.each(this.PSs, function (i, ps) { this.IsPSsInitComplete[ps.EbSid_CtxId] = false; }.bind(this));
 
-            this.FRC.fireInitOnchangeNC(this.flatControls);
+            //this.FRC.fireInitOnchangeNC(this.flatControls);
             this._all_OctrlsInit = true;
             //this.bindFuncsToDom();
+
             this.FRC.populateDateCtrlsWithInitialVal(this.FormObj); // ?
             this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);// ?
             this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);// ?
+            this.isInitiallyPopulating = false;
+            this.FRC.fireInitOnchangeNC(this.flatControls);
+            this.FRC.execAllDefaultValExpr();
         };
 
         this.setValueExpValsNC = function (flatControls) {
@@ -131,7 +139,7 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
         this.initFilterDialogCtrls = function () {
             //$('.selectpicker').selectpicker();
             //JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
-            $.each(this.FormObj.Controls.$values, function (k, Obj) {
+            $.each(this.flatControls, function (k, Obj) {
                 let opt = {};
                 if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                     opt.getAllCtrlValuesFn = this.getFormVals;
@@ -145,9 +153,9 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
                 this.FRC.bindFnsToCtrl_FD(Obj);
             }.bind(this));
 
-            $.each(this.FormObj.Controls.$values, function (k, Obj) {
-                this.FRC.fireInitOnchange(Obj);
-            }.bind(this));
+            //$.each(this.flatControls, function (k, Obj) {
+            //    this.FRC.fireInitOnchange(Obj);
+            //}.bind(this));
         };
 
         this.getFormVals = function () {
@@ -155,7 +163,7 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
         }.bind(this);
 
         this.initFormObject2 = function () {
-            $.each(this.FormObj.Controls.$values, function (k, cObj) {
+            $.each(this.flatControls, function (k, cObj) {
                 this.formObject[cObj.Name] = cObj;
             }.bind(this));
             this.FRC.setFormObjHelperfns();
@@ -164,28 +172,28 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
             this.FRC.setUpdateDependentControlsBehaviorFns();
         };
 
-        this.initFormObject = function () {
-            $.each(this.FormObj.Controls.$values, function (k, cObj) {
-                this.formObject[cObj.Name] = cObj;
+        //this.initFormObject = function () {
+        //    $.each(this.FormObj.Controls.$values, function (k, cObj) {
+        //        this.formObject[cObj.Name] = cObj;
 
-                Object.defineProperty(this.formObject, cObj.Name, {
-                    get: function () {
-                        return this.getValue(this.FormObj.Controls.$values[k]);
-                    }.bind(this),
-                    set: function (val) {
-                        this.setValue(this.FormObj.Controls.$values[k], val);
-                    }.bind(this)
-                });
-            }.bind(this));
-        };
+        //        Object.defineProperty(this.formObject, cObj.Name, {
+        //            get: function () {
+        //                return this.getValue(this.FormObj.Controls.$values[k]);
+        //            }.bind(this),
+        //            set: function (val) {
+        //                this.setValue(this.FormObj.Controls.$values[k], val);
+        //            }.bind(this)
+        //        });
+        //    }.bind(this));
+        //};
 
-        this.getValue = function (ctrlObj) {
-            return ctrlObj.getValue();
-        };
+        //this.getValue = function (ctrlObj) {
+        //    return ctrlObj.getValue();
+        //};
 
-        this.setValue = function (ctrlObj, val) {
-            ctrlObj.setValue(val);
-        };
+        //this.setValue = function (ctrlObj, val) {
+        //    ctrlObj.setValue(val);
+        //};
 
         this.init();
         a___MT = this.DataMODEL;

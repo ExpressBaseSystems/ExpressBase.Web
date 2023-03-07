@@ -824,7 +824,7 @@ function getValsForViz(formObj) {
     $.each(getFlatControls(formObj), function (i, obj) {
         var value = obj.getValue();
         if (value == "" || value == null) {
-            if (obj.EbDbType === 7 || obj.EbDbType === 8)
+            if (obj.EbDbType === 7 || obj.EbDbType === 8 || obj.EbDbType === 11)
                 value = 0;
             else if (obj.EbDbType === 16)
                 value = "0";
@@ -846,6 +846,8 @@ function getSingleColumn(obj) {
     SingleColumn.Name = obj.Name;
     SingleColumn.Type = obj.EbDbType;
     SingleColumn.Value = (obj.ObjType === "PowerSelect" && obj.__isFDcontrol) ? -1 : "";
+    if (!SingleColumn.Value && (obj.EbDbType == 7 || obj.EbDbType == 11))
+        SingleColumn.Value = 0;
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;

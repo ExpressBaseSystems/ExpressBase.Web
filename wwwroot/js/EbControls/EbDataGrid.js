@@ -852,8 +852,9 @@
             $.each(ctrls, function (i, obj) {
                 let colObj = {};
                 colObj.Name = obj.Name;
-                _type = obj.EbDbType;
-                colObj.Value = (_type === 7) ? parseFloat(obj.getValue()) : obj.getValue();
+                let _type = obj.EbDbType;
+                let _val = obj.getValue();
+                colObj.Value = (_type === 7) ? parseFloat(_val) : (_type === 11 ? parseInt(_val) : _val);
                 colObj.Type = _type;
                 //colObj.AutoIncrement = obj.AutoIncrement || false;
                 rowObjs[0].push(colObj);

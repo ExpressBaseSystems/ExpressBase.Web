@@ -4413,10 +4413,10 @@
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            if (this.login === "uc")
-                dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
-            else
-                this.OpeninNewTab(idx, cData);
+            //if (this.login === "uc")
+            //  dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+            //else
+            this.OpeninNewTab(idx, cData);
         }
         //this.filterValues = [];
     };

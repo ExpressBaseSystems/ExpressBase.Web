@@ -41,7 +41,7 @@
     };
 
     this.setDefaultvalsNC = function (flatControls) {
-        if (!this.FO.FormObj.DefaultValsExecOrder) {
+        if (!(this.FO.FormObj.DefaultValsExecOrder && this.FO.FormObj.DefaultValsExecOrder.$values.length)) {
             $.each(flatControls, function (k, Obj) {
                 this.setDefaultValue(Obj);
             }.bind(this));

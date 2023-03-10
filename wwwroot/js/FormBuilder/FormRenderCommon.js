@@ -1169,6 +1169,8 @@
                 console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
                 return;
             }
+            if (this.FO.rendererName == 'FilterDialog')
+                this.FO.FdInitInProgress = true;
             DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
             this.ctrlChangeListener_inner0(DepHandleObj);
         }
@@ -1554,8 +1556,14 @@
                 EbMessage("show", { Message: `Failed to execute 'ReadOnlyExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
-        if (DepHandleObj.isInitSetup)
+        if (DepHandleObj.isInitSetup) {
+            if (this.FO.FdInitInProgress) {
+                this.FO.FdInitInProgress = false;
+                this.FO._allPSsInit = true;
+            }
+            //End
             return;
+        }
         let chngFn = DepHandleObj.curCtrl.OnChangeFn;
         if (chngFn && chngFn.Code && chngFn.Code.trim() !== "") {
             try {
@@ -1566,7 +1574,11 @@
                 EbMessage("show", { Message: `Failed to execute 'OnChange Function': ${DepHandleObj.curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
-
+        if (this.FO.FdInitInProgress) {
+            this.FO.FdInitInProgress = false;
+            this.FO._allPSsInit = true;
+        }
+        //End
     };
 
     //resume val expr

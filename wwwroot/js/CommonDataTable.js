@@ -4364,7 +4364,7 @@
         var x = this.getStaticParameter(colindex);
         this.filterValuesforForm = [];
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
-            this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
+            this.filterValues = this.getfilterFromRowdata().concat(this.getFilterValues()).concat(x);
         else if (this.linkfromcolumn)
             this.filterValuesforForm = this.getFilterForLinkfromColumn();
         else

@@ -404,6 +404,15 @@
     cursor: default;
 }
 
+.EbQuickMoverlaySideWRpr .btn-new-tab {
+    margin-left: auto;
+    color: #508bf9;
+    margin-right: 5px;
+    border-radius: 3px;
+    background: white;
+    border-style: none;
+}
+
 .EbQuickMoverlaySideWRpr .ebmSearchBox:before {
     content: "\f002";
     font-family: FontAwesome;

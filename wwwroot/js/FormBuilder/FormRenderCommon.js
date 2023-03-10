@@ -1169,7 +1169,7 @@
                 console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
                 return;
             }
-            if (this.FO.rendererName == 'FilterDialog')
+            if (this.FO.rendererName == 'FilterDialog' && this.FO.PSs.length > 0)
                 this.FO.FdInitInProgress = true;
             DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
             this.ctrlChangeListener_inner0(DepHandleObj);

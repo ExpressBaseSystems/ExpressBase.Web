@@ -29,6 +29,7 @@
             if (this.login === "uc") {
                 $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
                 $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+                $("#ebm-objectcontainer").on("click", ".btn-new-tab", this.openInNewTab.bind(this));
             }
         }
         //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
@@ -201,26 +202,29 @@
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}
+                                                        <button class="btn-new-tab" title="Open in new tab">
+                                                            <i class="fa fa-external-link"></i>
+                                                        </button>
                                                   </div>`);
     };
 
     this.decideUrl = function (_obj) {
-        var _url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
+        var _url = `/Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
         if (this.login === "uc") {
             if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "MapView" || _obj.EbType === "OpenStreetMap") {
-                _url = "../DV/dv?refid=" + _obj.Refid;
+                _url = "/DV/dv?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "Report") {
-                _url = "../ReportRender/Index?refid=" + _obj.Refid;
+                _url = "/ReportRender/Index?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "WebForm") {
-                _url = "../WebForm/Index?_r=" + _obj.Refid;
+                _url = "/WebForm/Index?_r=" + _obj.Refid;
             }
             else if (_obj.EbType === "DashBoard") {
-                _url = "../DashBoard/DashBoardView?refid=" + _obj.Refid;
+                _url = "/DashBoard/DashBoardView?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "CalendarView") {
-                _url = "../Calendar/CalendarView?refid=" + _obj.Refid;
+                _url = "/Calendar/CalendarView?refid=" + _obj.Refid;
             }
         }
 
@@ -351,6 +355,12 @@
         }.bind(this));
     };
 
+    this.openInNewTab = function (e) {
+        let url = $(e.target).closest('.obj-item').find('a').attr('href');
+        if (url)
+            window.open(url, '_blank');
+    };
+
     this.showfavourites = function (e) {
         this.active($(e.target));
         {
@@ -408,6 +418,9 @@
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}
+                                                        <button class="btn-new-tab" title="Open in new tab">
+                                                            <i class="fa fa-external-link"></i>
+                                                        </button>
                                                   </div>`);
 
         let len = $(`#ebm-objectcontainer #ctypeContaner${_obj.EbObjectType}`).find(".obj-item").length;

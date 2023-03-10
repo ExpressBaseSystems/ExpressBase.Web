@@ -117,7 +117,6 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
             $.each(this.PSs, function (i, ps) { this.IsPSsInitComplete[ps.EbSid_CtxId] = false; }.bind(this));
 
             //this.FRC.fireInitOnchangeNC(this.flatControls);
-            this._all_OctrlsInit = true;
             //this.bindFuncsToDom();
 
             this.FRC.populateDateCtrlsWithInitialVal(this.FormObj); // ?
@@ -126,6 +125,7 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
             this.isInitiallyPopulating = false;
             this.FRC.fireInitOnchangeNC(this.flatControls);
             this.FRC.execAllDefaultValExpr();
+            this._all_OctrlsInit = true;
         };
 
         this.setValueExpValsNC = function (flatControls) {

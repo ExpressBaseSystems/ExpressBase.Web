@@ -66,7 +66,7 @@
     (function() {
         let initCompleteCallback = function () { };
         let _this = { $submit: $("#btnGo") }
-        if (fobj.AutoRun)
+        if (fobj.AutoRun && '@ViewBag.wc' == 'uc')
             initCompleteCallback = function () { this.$submit.trigger("click"); }.bind(_this);
         self.FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc', '@ViewBag.curloc', @Html.Raw(ViewBag.userObj), '@ViewBag.submitId', null, initCompleteCallback);
         console.log("Eb_FilterDialogRender");

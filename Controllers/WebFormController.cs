@@ -767,7 +767,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             }
         }
 
-        public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId)
+        public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId, string fsCxtId)
         {
             try
             {
@@ -778,6 +778,9 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                 bool neglectLocId = WebForm.IsLocIndependent;
                 if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = FormErrors.E0127, MessageInt = $"Access denied. Info: [{RefId}, {Operation}, {CurrentLoc}, {neglectLocId}]" });
+
+                EbFormHelper.SetFsWebReceivedCxtId(this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+
                 DateTime dt = DateTime.Now;
                 Console.WriteLine("InsertWebformData request received : " + dt);
                 InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
@@ -787,13 +790,23 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                         FormData = ValObj,
                         RowId = RowId,
                         CurrentLoc = CurrentLoc,
-                        DraftId = DraftId
+                        DraftId = DraftId,
+                        FsCxtId = fsCxtId
                     });
                 Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
                 //////using server events enable other opened form edit buttons
                 //FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
 
+                EbFormHelper.SetFsWebProcessedCxtId(this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+
                 return JsonConvert.SerializeObject(Resp);
+            }
+            catch (FormException ex)
+            {
+                Console.WriteLine("FormException : " + ex.Message + "\n" + ex.StackTrace);
+                if (ex.ExceptionCode != (int)HttpStatusCode.MethodNotAllowed)
+                    EbFormHelper.ReSetFormSubmissionCxtId(this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = ex.ExceptionCode, Message = ex.Message, MessageInt = ex.MessageInternal, StackTraceInt = ex.StackTraceInternal });
             }
             catch (Exception ex)
             {

@@ -1296,7 +1296,8 @@ const WebFormRender = function (option) {
                 DraftId: this.draftId,
                 CurrentLoc: this.getLocId(),
                 sseChannel: this.sseChannel,
-                sse_subscrId: ebcontext.subscription_id
+                sse_subscrId: ebcontext.subscription_id,
+                fsCxtId: this.fsCxtId
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
@@ -3181,6 +3182,7 @@ const WebFormRender = function (option) {
 
         this.rendererName = 'WebForm';
         this.__MultiRenderCxt = option.__MultiRenderCxt;
+        this.fsCxtId = Date.now().toString(36);
 
         this.$formCont = option.$formCont;
         this.formHTML = option.formHTML;

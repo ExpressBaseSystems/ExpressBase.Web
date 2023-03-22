@@ -632,7 +632,7 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (!ctrl) {
                 EbMessage("show", { Message: `Form rendering failed. Contact admin. [${SingleColumn.Name} not found]`, AutoHide: false, Background: '#aa0000' });
-                return;
+                continue;
             }
             if (val === null && ctrl.ObjType != "TextBox")////SoftReloadForm issue
                 continue;

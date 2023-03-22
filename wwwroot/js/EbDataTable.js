@@ -902,7 +902,7 @@ var EbDataTable = function (Option) {
         //        $("#" + this.ContextId + ' #' + param.Name).val(param.Value);
         //    });
         //}
-        $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
+        $.each(getFlatCtrlObjs(this.FilterDialog.FormObj), function (i, obj) {
             var mapobj = getObjByval(this.filterValues, "Name", obj.Name);
             if (typeof mapobj !== "undefined") {
                 let val = mapobj.Value;

@@ -361,7 +361,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
     this.placefiltervalues = function () {
 
-        $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
+        $.each(getFlatCtrlObjs(this.FilterDialog.FormObj), function (i, obj) {
             let getobjval = getObjByval(this.filterValues, "Name", obj.Name)
             if (getobjval !== undefined) {
                 let val = getobjval.Value;

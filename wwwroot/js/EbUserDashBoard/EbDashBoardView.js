@@ -97,7 +97,7 @@
         if (this.FilterVal.length > 0) {
             //this.filterValues = this.FilterVal;
             //this.placefiltervalues();
-            $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+            $.each(getFlatCtrlObjs(this.FilterObj.FormObj), function (i, obj) {
                 var mapobj = getObjByval(this.FilterVal, "Name", obj.Name);
                 if (typeof mapobj !== "undefined") {
                     let val = mapobj.Value;
@@ -142,7 +142,7 @@
     };
 
     this.placefiltervalues = function () {
-        $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+        $.each(getFlatCtrlObjs(this.FilterObj.FormObj), function (i, obj) {
             var mapobj = getObjByval(this.FilterVal, "Name", obj.Name);
             if (typeof mapobj !== "undefined") {
                 let val = mapobj.Value;
@@ -932,7 +932,7 @@
     }
 
     this.placefiltervalues = function () {
-        $.each(getFlatControls(this.FilterObj.FormObj), function (i, obj) {
+        $.each(getFlatCtrlObjs(this.FilterObj.FormObj), function (i, obj) {
             let getobjval = getObjByval(this.filtervalues, "Name", obj.Name)
             if (getobjval !== undefined) {
                 let val = getobjval.Value;

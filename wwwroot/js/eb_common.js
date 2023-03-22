@@ -821,7 +821,7 @@ function getFlatObjOfType(ContObj, type) {
 
 function getValsForViz(formObj) {
     let fltr_collection = [];
-    $.each(getFlatControls(formObj), function (i, obj) {
+    $.each(getFlatCtrlObjs(formObj), function (i, obj) {
         var value = obj.getValue();
         if (value == "" || value == null) {
             if (obj.EbDbType === 7 || obj.EbDbType === 8 || obj.EbDbType === 11)

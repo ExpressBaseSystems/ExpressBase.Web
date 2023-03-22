@@ -29,8 +29,8 @@
             if (this.login === "uc") {
                 $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
                 $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
-                $("#ebm-objectcontainer").on("click", ".btn-new-tab", this.openInNewTab.bind(this));
             }
+            $("#ebm-objectcontainer").on("click", ".btn-new-tab", this.openInNewTab.bind(this));
         }
         //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
         $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));

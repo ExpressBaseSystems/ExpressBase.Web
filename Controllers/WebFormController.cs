@@ -769,6 +769,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
 
         public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId, string fsCxtId)
         {
+            InsertDataFromWebformResponse Resp;
             try
             {
                 string Operation = OperationConstants.NEW;
@@ -779,40 +780,65 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                 if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = FormErrors.E0127, MessageInt = $"Access denied. Info: [{RefId}, {Operation}, {CurrentLoc}, {neglectLocId}]" });
 
-                EbFormHelper.SetFsWebReceivedCxtId(this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+                int DataIdInRedis = EbFormHelper.SetFsWebReceivedCxtId(ServiceClient, this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+                if (DataIdInRedis > 0)
+                {
+                    GetRowDataResponse __Resp = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = RefId, RowId = DataIdInRedis, CurrentLoc = CurrentLoc, RenderMode = WebFormRenderModes.Normal });
 
-                DateTime dt = DateTime.Now;
-                Console.WriteLine("InsertWebformData request received : " + dt);
-                InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
-                    new InsertDataFromWebformRequest
+                    WebformDataWrapper __wrap = JsonConvert.DeserializeObject<WebformDataWrapper>(__Resp.FormDataWrap);
+
+                    if (__wrap.Status == (int)HttpStatusCode.OK)
                     {
-                        RefId = RefId,
-                        FormData = ValObj,
-                        RowId = RowId,
-                        CurrentLoc = CurrentLoc,
-                        DraftId = DraftId,
-                        FsCxtId = fsCxtId
-                    });
-                Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
-                //////using server events enable other opened form edit buttons
-                //FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
+                        Resp = new InsertDataFromWebformResponse()
+                        {
+                            Message = "Success",
+                            RowId = DataIdInRedis,
+                            FormData = JsonConvert.SerializeObject(__wrap.FormData),
+                            RowAffected = 1,
+                            AffectedEntries = "Routed to GetRowData",
+                            Status = (int)HttpStatusCode.OK,
+                            MetaData = new Dictionary<string, string>()
+                        };
+                    }
+                    else
+                    {
+                        throw new FormException(__wrap.Message, __wrap.Status, __wrap.MessageInt, __wrap.StackTraceInt);
+                    }
+                }
+                else
+                {
+                    DateTime dt = DateTime.Now;
+                    Console.WriteLine("InsertWebformData request received : " + dt);
+                    Resp = ServiceClient.Post(
+                        new InsertDataFromWebformRequest
+                        {
+                            RefId = RefId,
+                            FormData = ValObj,
+                            RowId = RowId,
+                            CurrentLoc = CurrentLoc,
+                            DraftId = DraftId,
+                            FsCxtId = fsCxtId
+                        });
+                    Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
+                    //////using server events enable other opened form edit buttons
+                    //FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
 
-                EbFormHelper.SetFsWebProcessedCxtId(this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
-
-                return JsonConvert.SerializeObject(Resp);
+                    EbFormHelper.SetFsWebProcessedCxtId(ServiceClient, this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+                }
             }
             catch (FormException ex)
             {
                 Console.WriteLine("FormException : " + ex.Message + "\n" + ex.StackTrace);
                 if (ex.ExceptionCode != (int)HttpStatusCode.MethodNotAllowed)
                     EbFormHelper.ReSetFormSubmissionCxtId(this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
-                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = ex.ExceptionCode, Message = ex.Message, MessageInt = ex.MessageInternal, StackTraceInt = ex.StackTraceInternal });
+                Resp = new InsertDataFromWebformResponse { Status = ex.ExceptionCode, Message = ex.Message, MessageInt = ex.MessageInternal, StackTraceInt = ex.StackTraceInternal };
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
-                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.InternalServerError, Message = FormErrors.E0128 + ex.Message, MessageInt = "Exception in InsertWebformData[web]", StackTraceInt = ex.StackTrace });
+                Resp = new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.InternalServerError, Message = FormErrors.E0128 + ex.Message, MessageInt = "Exception in InsertWebformData[web]", StackTraceInt = ex.StackTrace };
             }
+            return JsonConvert.SerializeObject(Resp);
         }
 
         public int DeleteWebformData(string RefId, int RowId, int CurrentLoc)

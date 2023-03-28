@@ -129,7 +129,7 @@ namespace ExpressBase.Web.Controllers
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
 
-            Eb_Solution s_obj = GetSolutionObject(ViewBag.cid); 
+            Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
             if (dsObject.FilterDialog != null)
                 EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
             return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = s_obj, wc = "dc" });
@@ -143,8 +143,8 @@ namespace ExpressBase.Web.Controllers
         }
         [HttpPost]
         public string GetColumns4Trial(string ds_refid, List<Param> parameter)
-        { 
-            JsonServiceClient sscli = ServiceClient; 
+        {
+            JsonServiceClient sscli = ServiceClient;
             DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
             if (columnresp.Columns == null || columnresp.Columns.Count == 0)
             {
@@ -169,9 +169,9 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public EbQueryResponse GetColumnsCollection(string ds_refid, List<Param> parameter)
         {
-            EbQueryResponse res = new EbQueryResponse(); 
-            JsonServiceClient sscli = ServiceClient; 
-            DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
+            EbQueryResponse res = new EbQueryResponse();
+            JsonServiceClient sscli = ServiceClient;
+            DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = ds_refid.ToString(), Params = parameter, UpdateSqlFn = true });
             if ((columnresp.Columns == null || columnresp.Columns.Count == 0) && columnresp.ResponseStatus != null)
             {
                 res.Message = columnresp.ResponseStatus.Message;

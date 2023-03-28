@@ -823,7 +823,10 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                     //////using server events enable other opened form edit buttons
                     //FormEdit_TabClosed(RefId, RowId.ToString(), sseChannel, sse_subscrId);
 
-                    EbFormHelper.SetFsWebProcessedCxtId(ServiceClient, this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+                    if (Resp.Status == (int)HttpStatusCode.OK)
+                        EbFormHelper.SetFsWebProcessedCxtId(ServiceClient, this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
+                    else
+                        EbFormHelper.ReSetFormSubmissionCxtId(this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
                 }
             }
             catch (FormException ex)

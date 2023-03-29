@@ -739,8 +739,8 @@
         if (initFilterValues())
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
 
-        ctrl.initializer = new EbCommonDataTable(o);
-        ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
+        //ctrl.initializer = new EbCommonDataTable(o);
+        ////ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 
         ctrl.reloadWithParam = function (depCtrl) {
             if (depCtrl) {
@@ -749,9 +749,15 @@
                 filterObj.Value = val;
             }
 
-            ctrl.initializer.filterValues = ctrl.__filterValues;
-            ctrl.initializer.Api.ajax.reload();
-            //ctrl.initializer.getColumnsSuccess();
+            if (ctrl.initializer) {
+                ctrl.initializer.filterValues = ctrl.__filterValues;
+                ctrl.initializer.Api.ajax.reload();
+                //ctrl.initializer.getColumnsSuccess();                
+            }
+            else {
+                o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+                ctrl.initializer = new EbCommonDataTable(o);
+            }
         };
 
         ctrl.reloadWithParamAll = function () {
@@ -764,9 +770,15 @@
                 }
             }
 
-            ctrl.initializer.filterValues = ctrl.__filterValues;
-            ctrl.initializer.Api.ajax.reload();
-            //ctrl.initializer.getColumnsSuccess();// this will produce double footer
+            if (ctrl.initializer) {
+                ctrl.initializer.filterValues = ctrl.__filterValues;
+                ctrl.initializer.Api.ajax.reload();
+                //ctrl.initializer.getColumnsSuccess();// this will produce double footer
+            }
+            else {
+                o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+                ctrl.initializer = new EbCommonDataTable(o);
+            }
         };
 
         ctrl.sum = function (ctrl, colName) {

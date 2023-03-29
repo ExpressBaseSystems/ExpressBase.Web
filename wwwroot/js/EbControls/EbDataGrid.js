@@ -1058,6 +1058,38 @@
         this.refreshDG(paramsColl);
     }.bind(this);
 
+    this.copyDgBtn_clicked = function () {
+        let cpStr1 = [];
+        for (let rowId in this.objectMODEL) {
+            let cpStr2 = [];
+            for (let a = 0; a < this.objectMODEL[rowId].length; a++) {
+                let _ctrl = this.objectMODEL[rowId][a];
+                if (!_ctrl.Hidden) {
+                    if (_ctrl.ObjType == 'PowerSelect') {
+                        let _dm = _ctrl.DisplayMembers.$values;
+                        for (let b = 0; b < _dm.length; b++) {
+                            let str = '';
+                            for (let k1 in _ctrl.DataVals.D) {
+                                str += _ctrl.DataVals.D[k1][_dm[b].name] + ' ';
+                            }
+                            cpStr2.push(str);
+                        }
+                    }
+                    else {
+                        cpStr2.push(_ctrl.DataVals.Value);
+                    }
+                }
+            }
+            cpStr1.push(cpStr2.join('\t'));
+        }
+
+        let temp = $("<textarea>");
+        $("body").append(temp);
+        temp.val(cpStr1.join('\n')).select();
+        document.execCommand("copy");
+        temp.remove();
+    }.bind(this);
+
     this.editRow_click = function (e) {
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
@@ -2400,6 +2432,7 @@
         }.bind(this));
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".excelupload-btn", this.excelUploadBtn_click);
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".refreshdgdr-btn", this.refreshDgDrBtn_clicked);
+        $(`#${this.ctrl.EbSid}Wraper`).on("click", ".copydg-btn", this.copyDgBtn_clicked);
         this.$table.on("click", ".check-row", this.checkRow_click_New);
         this.$table.on("click", ".cancel-row", this.cancelRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

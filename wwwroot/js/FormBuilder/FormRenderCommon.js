@@ -1071,6 +1071,7 @@
             this.GetDepHandleObj_ForDefValExpr_inner(a[i].HiddenExpDependants, DepHandleObj, 'HideP', 'HideC');
             this.GetDepHandleObj_ForDefValExpr_inner(a[i].DisableExpDependants, DepHandleObj, 'DisableP', 'DisableC');
         }
+        this.FindTvCtrlsWithoutDepdcyCheck(a, DepHandleObj);
         this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
         this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
 
@@ -1082,11 +1083,6 @@
                     if (_ctrl === 'not found')
                         continue;
                     if (_ctrl.ObjType === "TVcontrol") {
-                        if (!DepHandleObj.DrPaths.includes(dd[j])) {
-                            DepHandleObj.DrPaths.push(dd[j]);
-                            DepHandleObj.DrCtrls.push(_ctrl);
-                            _ctrl.__filterControls = [];
-                        }
                         _ctrl.__filterControls.push(a[i]);
                     }
                     else if (_ctrl.ObjType === "DataGrid" && (this.FO.Mode.isNew || _ctrl.DoNotPersist || _ctrl.IsLoadDataSourceAlways)) {
@@ -1151,7 +1147,19 @@
                 }
             }
         }
-    }
+    };
+
+    this.FindTvCtrlsWithoutDepdcyCheck = function (Ctrls, DepHandleObj) {
+        for (let i = 0; i < Ctrls.length; i++) {
+            if (Ctrls[i].ObjType === "TVcontrol") {
+                if (!DepHandleObj.DrPaths.includes(Ctrls[i].__path)) {
+                    DepHandleObj.DrPaths.push(Ctrls[i].__path);
+                    DepHandleObj.DrCtrls.push(Ctrls[i]);
+                    Ctrls[i].__filterControls = [];
+                }
+            }
+        }
+    };
 
     this.execAllValExprForDoNotPersistCtrls = function () {
         if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
@@ -1185,6 +1193,7 @@
                 DisableP: [], DisableC: []
             };
             let a = this.FO.flatControls;
+            this.FindTvCtrlsWithoutDepdcyCheck(a, DepHandleObj);
             this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
             this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
             this.ctrlChangeListener_inner2(DepHandleObj);

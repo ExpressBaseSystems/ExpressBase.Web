@@ -751,8 +751,8 @@
 
             if (ctrl.initializer) {
                 ctrl.initializer.filterValues = ctrl.__filterValues;
-                ctrl.initializer.Api.ajax.reload();
-                //ctrl.initializer.getColumnsSuccess();                
+                //ctrl.initializer.Api.ajax.reload();
+                ctrl.initializer.getColumnsSuccess();
             }
             else {
                 o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
@@ -772,8 +772,8 @@
 
             if (ctrl.initializer) {
                 ctrl.initializer.filterValues = ctrl.__filterValues;
-                ctrl.initializer.Api.ajax.reload();
-                //ctrl.initializer.getColumnsSuccess();// this will produce double footer
+                //ctrl.initializer.Api.ajax.reload();
+                ctrl.initializer.getColumnsSuccess();// this will produce double footer: experiment
             }
             else {
                 o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));

@@ -18,8 +18,9 @@
             }
         },
         IsPrompt: false,
+        PromptLines: 1,
         hideClose: false,
-        CallBack: function (name, prompt) { console.log(name + ":" +prompt); }
+        CallBack: function (name, prompt) { console.log(name + ":" + prompt); }
     }, options);
 
     function div() {
@@ -44,8 +45,8 @@
             let n = $(ev.target).attr("name");
             let prompt = settings.IsPrompt ? $("#eb_dlogBox_prompt_input").val() : undefined;
 
-            settings.CallBack(n, prompt);
-            hideMsg();
+            if (!settings.CallBack(n, prompt))
+                hideMsg();
         });
 
         $("#eb_dlogBox_container ._cls").on("click", function () {
@@ -56,10 +57,13 @@
 
     function setMessage() {
         if (settings.IsPrompt) {
-            return `<div class="eb_dlogBox_prompt_inputContainer">
-                        <label class="eb_dlogBox_prompt_label">${settings.Message}</label>
-                        <input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" value='${settings.DefaultText}'/>
-                    </div>`;
+            let _htm = `<div class="eb_dlogBox_prompt_inputContainer"> <label class="eb_dlogBox_prompt_label">${settings.Message}<sup style="color: red">*</sup></label>`;
+            if (settings.PromptLines && settings.PromptLines > 1)
+                _htm += `<textarea type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" rows="${settings.PromptLines}">${settings.DefaultText}</textarea>`;
+            else
+                _htm += `<input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" value='${settings.DefaultText}'/>`;
+            _htm += `</div>`;
+            return _htm;
         }
         else
             return settings.Message;
@@ -70,7 +74,9 @@
         $(`#eb_dlogBox_container,.eb_dlgMsk`).fadeIn();
         if (settings.$for)
             settings.$for.css('filter', 'blur(3px)');
-        if ($('.dlgBoxBtn-cust').length > 0) {
+        if (settings.IsPrompt)
+            $("#eb_dlogBox_prompt_input").focus();
+        else if ($('.dlgBoxBtn-cust').length > 0) {
             $($('.dlgBoxBtn-cust')[0]).focus();
         }
     };

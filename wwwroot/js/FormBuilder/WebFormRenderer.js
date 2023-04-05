@@ -1212,17 +1212,56 @@ const WebFormRender = function (option) {
                 return;
             }
 
-            //this.FRC.checkUnique4All_save(this.flatControls, true);
+            this.GetEditReason();
 
-            EbProvUserUniqueChkJs({
-                FormObj: this.FormObj,
-                CallBackFn: this.userProvCallBack.bind(this),
-                showLoaderFn: this.showLoader,
-                hideLoaderFn: this.hideLoader,
-                renderMode: this.renderMode
-            });
         }.bind(this), 4);
     };
+
+    this.GetEditReason = function () {
+        let clearLockFlag = true;
+        if (this.FormObj.EditReasonCtrl) {
+            let ctrl = getObjByval(this.flatControls, "Name", this.FormObj.EditReasonCtrl);
+            if (ctrl && ctrl.ObjType == "TextBox") {
+                clearLockFlag = false;
+                EbDialog("show",
+                    {
+                        Message: "Enter Edit Reason",
+                        Buttons: {
+                            "Confirm": { Background: "green", Align: "left", FontColor: "white;" },
+                            "Back": { Background: "violet", Align: "right", FontColor: "white;" }
+                        },
+                        IsPrompt: true,
+                        PromptLines: ctrl.TextMode == 4 ? (ctrl.RowsVisible ? ctrl.RowsVisible : 3) : 1,
+                        CallBack: function (ctrl, name, prompt) {
+                            if (name === "Confirm") {
+                                if (prompt && prompt.trim() != '') {
+                                    let reasonTxt = prompt.trim();
+                                    ctrl.justSetValue(reasonTxt);
+
+                                    //this.FRC.checkUnique4All_save(this.flatControls, true);
+
+                                    EbProvUserUniqueChkJs({
+                                        FormObj: this.FormObj,
+                                        CallBackFn: this.userProvCallBack.bind(this),
+                                        showLoaderFn: this.showLoader,
+                                        hideLoaderFn: this.hideLoader,
+                                        renderMode: this.renderMode
+                                    });
+                                }
+                                else {
+                                    EbMessage("show", { Message: 'Please Enter Reason', AutoHide: true, Background: '#aa0000', Delay: 2000 });
+                                    return true;
+                                }
+                            }
+                            else
+                                this.LockSave = false;
+                        }.bind(this, ctrl)
+                    });
+            }
+        }
+        if (clearLockFlag)
+            this.LockSave = false;
+    }.bind(this);
 
     //Provision user related unique check callback function
     this.userProvCallBack = function (ok) {
@@ -1604,15 +1643,35 @@ const WebFormRender = function (option) {
 
     this.cancelForm = function () {
         this.hideInfoWindow();
+        let msg = `Are you sure to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel'} this data entry?`;
+        let yesBtnTxt = 'Yes';
+        let noBtnTxt = 'No';
+        if (this.FormObj.CancelReason) {
+            msg = `Enter Reason for Cancellation ${this.formData.IsCancelled ? 'Revoke' : ''}`;
+            yesBtnTxt = 'Confirm';
+            noBtnTxt = 'Back';
+        }
         EbDialog("show",
             {
-                Message: `Are you sure to ${this.formData.IsCancelled ? 'Revoke Cancellation of' : 'Cancel'} this data entry?`,
+                Message: msg,
                 Buttons: {
-                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
-                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                    [yesBtnTxt]: { Background: "green", Align: "left", FontColor: "white;" },
+                    [noBtnTxt]: { Background: "violet", Align: "right", FontColor: "white;" }
                 },
-                CallBack: function (name) {
-                    if (name === "Yes") {
+                IsPrompt: this.FormObj.CancelReason,
+                PromptLines: 3,
+                CallBack: function (name, prompt) {
+                    let reasonTxt = '';
+                    if (name === "Confirm") {
+                        if (prompt && prompt.trim() != '') {
+                            reasonTxt = prompt.trim();
+                        }
+                        else {
+                            EbMessage("show", { Message: 'Please Enter Reason', AutoHide: true, Background: '#aa0000', Delay: 2000 });
+                            return true;
+                        }
+                    }
+                    if (name === "Yes" || name === "Confirm") {
                         this.showLoader();
                         $.ajax({
                             type: "POST",
@@ -1621,7 +1680,8 @@ const WebFormRender = function (option) {
                                 RefId: this.formRefId,
                                 RowId: this.rowId,
                                 CurrentLoc: this.getLocId(),
-                                Cancel: !this.formData.IsCancelled
+                                Cancel: !this.formData.IsCancelled,
+                                Reason: reasonTxt
                             },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
@@ -2830,11 +2890,19 @@ const WebFormRender = function (option) {
         let hasSrcForm = this.formData.SrcDataId > 0 && (this.formData.SrcRefId?.length > 0 || this.formData.SrcVerId > 0);
 
         if (this.formData.IsCancelled) {
-            let $el = $(`<div class='wfd-cancel wfd-linkdiv'> This is a <b> Cancelled </b> Form Submission </div>`);
+            let infoIcon = '';
+            if (this.formData.CancelReason) {
+                infoIcon = `<i class="fa fa-info-circle" style='color: blue;font-size: 14px;' title='Reason' data-content="${this.formData.CancelReason}"></i>`;
+            }
+            let $el = $(`<div class='wfd-cancel wfd-linkdiv'>${infoIcon} This is a <b> Cancelled </b> Form Submission </div>`);
             if (!this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm && this.checkPermission('RevokeCancel')) {
                 $el.append(`<span> Undo </span>`);
             }
             $cont.append($el);
+
+            if (this.formData.CancelReason) {
+                $($el.find('.fa-info-circle')).popover();
+            }
         }
         else if (!this.formData.IsReadOnly && !this.formData.IsLocked && !hasSrcForm && this.checkPermission('Cancel')) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableCancel()))

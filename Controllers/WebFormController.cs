@@ -852,11 +852,11 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             return Resp.RowAffected;
         }
 
-        public (int, string) CancelWebformData(string RefId, int RowId, int CurrentLoc, bool Cancel)
+        public (int, string) CancelWebformData(string RefId, int RowId, int CurrentLoc, bool Cancel, string Reason)
         {
             if (!this.HasPermission(RefId, OperationConstants.CANCEL, CurrentLoc))
                 return (-2, null); //Access Denied
-            CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, Cancel = Cancel });
+            CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, Cancel = Cancel, Reason = Reason });
             return (Resp.RowAffected, Resp.ModifiedAt);
         }
 

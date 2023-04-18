@@ -935,9 +935,16 @@
                 success: function (result) {
                     if (result) {
                         //uploadedImgRefList = [];//cleared Image ref id list
-                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
-                        if (this.Mode === 0)
-                            window.location = window.origin + "/leadmanagement/" + result;
+                        if (result.includes('This')) {
+                            EbMessage("show", { Message: result, AutoHide: false, Background: '#aa0000' });
+                        }
+                        else {
+                            EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
+                            if (this.Mode === 0)
+                                window.location = window.origin + "/leadmanagement/" + result;
+                            else
+                                location.reload();
+                        }
                     }
                     else {
                         EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
@@ -1003,6 +1010,7 @@
         this.pushToList("cust_language", this.$CustomerLanguage.val());
         this.pushToList("procedure_date", this.$ProcedureDate.val());
         this.pushToList("comment", this.$Comments.val());
+        this.pushToList("eb_modifiedat", this.CustomerInfo["eb_modifiedat"]);
 
         this.pushToList("consdate", this.$ConsultedDate.val());
         this.pushToList("consultingdoctor", this.$Doctor.val());

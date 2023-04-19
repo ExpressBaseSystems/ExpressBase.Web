@@ -54,6 +54,7 @@
     this.$CustomerLanguage = $("#selCustomerLanguage");
     this.$ProcedureDate = $("#txtProcedureDate");
     this.$Comments = $("#txtComments");
+    this.$btnNewPatient = $("#btnNewPatient");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -201,6 +202,24 @@
             let age = parseInt(this.$Age.val());
             if (!isNaN(age) && (parseInt(moment.duration(moment().diff(moment(this.$Dob.val(), "DD-MM-YYYY"))).asYears()) !== age))
                 this.$Dob.val("01-01-" + (moment().year() - age));
+        }.bind(this));
+
+        this.$btnNewPatient.on("click", function () {
+            let pid = this.$btnNewPatient.data('patient_master_id');
+            if (pid) {
+                let params = [];
+                params.push(new fltr_obj(11, "id", pid));
+                let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+                let url = `../WebForm/Index?_r=hairocraft-hairocraft-0-855-1537-855-1537&_p=${_p}&_m=1&_l=${this.CustomerInfo["eb_loc_id"]}`;
+                window.open(url, '_blank');
+            }
+            else {
+                let params = [];
+                params.push(new fltr_obj(11, "patient_name_id", this.AccId));
+                let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+                let url = `../WebForm/Index?_r=hairocraft-hairocraft-0-855-1537-855-1537&_p=${_p}&_m=2&_l=${this.CustomerInfo["eb_loc_id"]}`;
+                window.open(url, '_blank');
+            }
         }.bind(this));
 
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
@@ -907,6 +926,12 @@
                         <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
                     </div>`);
         }
+
+        if (this.CustomerInfo["patient_master_id"] != "0") {
+            this.$btnNewPatient.data('patient_master_id', this.CustomerInfo["patient_master_id"]);
+            this.$btnNewPatient.html(this.$btnNewPatient.html().replace('New', 'Open'));
+        }
+        this.$btnNewPatient.closest('.col-md-1').show();
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);

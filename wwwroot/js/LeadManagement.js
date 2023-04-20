@@ -929,7 +929,6 @@
 
         if (this.CustomerInfo["patient_master_id"] != "0") {
             this.$btnNewPatient.data('patient_master_id', this.CustomerInfo["patient_master_id"]);
-            this.$btnNewPatient.html(this.$btnNewPatient.html().replace('New', 'Open'));
         }
         this.$btnNewPatient.closest('.col-md-1').show();
 

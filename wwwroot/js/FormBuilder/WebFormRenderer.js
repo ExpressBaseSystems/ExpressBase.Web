@@ -1259,8 +1259,15 @@ const WebFormRender = function (option) {
                     });
             }
         }
-        if (clearLockFlag)
-            this.LockSave = false;
+        if (clearLockFlag) {
+            EbProvUserUniqueChkJs({
+                FormObj: this.FormObj,
+                CallBackFn: this.userProvCallBack.bind(this),
+                showLoaderFn: this.showLoader,
+                hideLoaderFn: this.hideLoader,
+                renderMode: this.renderMode
+            });
+        }
     }.bind(this);
 
     //Provision user related unique check callback function

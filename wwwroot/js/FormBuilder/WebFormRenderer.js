@@ -1219,7 +1219,7 @@ const WebFormRender = function (option) {
 
     this.GetEditReason = function () {
         let clearLockFlag = true;
-        if (this.FormObj.EditReasonCtrl) {
+        if (this.FormObj.EditReasonCtrl && this.Mode.isEdit) {
             let ctrl = getObjByval(this.flatControls, "Name", this.FormObj.EditReasonCtrl);
             if (ctrl && ctrl.ObjType == "TextBox") {
                 clearLockFlag = false;

@@ -1102,9 +1102,9 @@ function dgEBOnChangeBind() {
 }
 
 function SetDisplayMemberDate_EB(p1, p2) {
-    if (this.IsNullable && p1 !== null)
+    if (this.IsNullable && p1)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
-    if (p1 !== null && p1 !== undefined) {
+    if (p1) {
         if (this.ShowDateAs_ === 1 || this.ShowDateAs_ === 2) //month picker or year picker
             $('#' + this.EbSid_CtxId).val(p1);
         else if (this.EbDateType === 5) //Date

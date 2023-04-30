@@ -263,6 +263,10 @@
                     ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId, true);
             }
             else if (ctrl.EbDateType === 17) { //Time
+
+                if (ctrl.ShowTimeAs === 4)
+                    stp = "HH:mm";
+
                 $input.datetimepicker({
                     format: stp,
                     formatTime: stp,

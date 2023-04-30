@@ -1111,8 +1111,10 @@ function SetDisplayMemberDate_EB(p1, p2) {
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD').format(ebcontext.user.Preference.ShortDatePattern));
         else if (this.EbDateType === 6) //DateTime
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
-        else if (this.EbDateType === 17) //Time
-            $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
+        else if (this.EbDateType === 17) { //Time
+            let ptn = this.ShowTimeAs === 4 ? 'HH:mm' : ebcontext.user.Preference.ShortTimePattern;
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ptn));
+        }
     }
     else
         $('#' + this.EbSid_CtxId).val('');

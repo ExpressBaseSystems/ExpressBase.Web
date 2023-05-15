@@ -394,6 +394,18 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.IsSmsIntegrated = solutionObj.IsSmsIntegrated;
                     }
                 }
+
+                string SsoUrl = Environment.GetEnvironmentVariable("SULEKHA-SSO-URL") ?? string.Empty;
+                if (!string.IsNullOrEmpty(SsoUrl))
+                {
+                    string[] parts = SsoUrl.Split("$$");
+                    string cuid = Math.Round(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds).ToString();
+                    string hash = cuid + parts[1] + DateTime.UtcNow.ToString("dd-MM-yyyy") + parts[2];
+                    hash = hash.ToSha256Hash();
+                    SsoUrl = string.Format(parts[0], cuid, hash);
+                }
+                ViewBag.SsoUrl = SsoUrl;
+
                 ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
                 ViewBag.ErrorMsg = TempData["ErrorMessage"];
                 ViewBag.Email = TempData["Email"];
@@ -1589,5 +1601,10 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public void lsglogin(string userdet)
+        {
+            Console.WriteLine("======================================");
+            Console.WriteLine(JsonConvert.SerializeObject(userdet));
+        }
     }
 }

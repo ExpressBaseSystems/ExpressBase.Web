@@ -1635,11 +1635,11 @@ namespace ExpressBase.Web.Controllers
 
             JObject jObj = new JObject();
             jObj["id"] = "0";
-            jObj["uqIdIkm"] = uqIdIkm;
-            jObj["localBodyId"] = localBodyId;
-            jObj["userName"] = userName;
-            jObj["custUqId"] = custUqId;
-            jObj["fullName"] = fullName;
+            jObj["ikm_uqid"] = uqIdIkm;
+            jObj["localbody_id"] = localBodyId;
+            jObj["username"] = userName;
+            jObj["cust_uqid"] = custUqId;
+            jObj["fullname"] = fullName;
             jObj["unknown1"] = unknown1;
             jObj["designation"] = designation;
             jObj["mobile"] = mobile;

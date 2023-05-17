@@ -28,6 +28,7 @@ using ExpressBase.Security;
 using ExpressBase.Common.Security;
 using ExpressBase.Objects;
 using ExpressBase.Common.Helpers;
+using Newtonsoft.Json.Linq;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -398,7 +399,7 @@ namespace ExpressBase.Web.Controllers
                 string SsoUrl = Environment.GetEnvironmentVariable("SULEKHA-SSO-URL") ?? string.Empty;
                 if (!string.IsNullOrEmpty(SsoUrl))
                 {
-                    string[] parts = SsoUrl.Split("$$");
+                    string[] parts = SsoUrl.Split("~~");
                     string cuid = Math.Round(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds).ToString();
                     string hash = cuid + parts[1] + DateTime.UtcNow.ToString("dd-MM-yyyy") + parts[2];
                     hash = hash.ToSha256Hash();
@@ -1601,10 +1602,158 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public void lsglogin(string userdet)
+        public IActionResult lsglogin(string userdet)
         {
-            Console.WriteLine("======================================");
-            Console.WriteLine(JsonConvert.SerializeObject(userdet));
+            if (string.IsNullOrEmpty(userdet))
+                return Redirect("/StatusCode/404?m=invalid_userdet");
+            string[] p = userdet.Split("~");
+            if (p.Length < 11)
+                return Redirect("/StatusCode/404?m=param_length_" + p.Length);
+            string SsoUrl = Environment.GetEnvironmentVariable("SULEKHA-SSO-URL") ?? string.Empty;
+
+            if (string.IsNullOrEmpty(SsoUrl))
+                return Redirect("/StatusCode/404?m=invalid_ssourl");
+
+            string[] parts = SsoUrl.Split("~~");
+
+            string uqIdIkm = p[0],
+                localBodyId = p[1],
+                userName = p[2],
+                custUqId = p[3],
+                fullName = p[4],
+                unknown1 = p[5],
+                designation = p[6],
+                mobile = p[7],
+                email = p[8],
+                district = p[9],
+                hash = p[10];
+
+            string hashLocal = (uqIdIkm + localBodyId + userName + custUqId + parts[2]).ToSha256Hash();
+
+            if (hash != hashLocal)
+                return Redirect("/StatusCode/404?m=hash_mismatch");
+
+            JObject jObj = new JObject();
+            jObj["id"] = "0";
+            jObj["uqIdIkm"] = uqIdIkm;
+            jObj["localBodyId"] = localBodyId;
+            jObj["userName"] = userName;
+            jObj["custUqId"] = custUqId;
+            jObj["fullName"] = fullName;
+            jObj["unknown1"] = unknown1;
+            jObj["designation"] = designation;
+            jObj["mobile"] = mobile;
+            jObj["email"] = email;
+            jObj["district"] = district;
+
+            if (IslsgSsoSuccess(email, jObj.ToString(), true, parts[3]))
+                return RedirectToAction("UserDashboard", "TenantUser");
+
+            return Redirect("/StatusCode/404?m=last_return");
+        }
+
+        private bool IslsgSsoSuccess(string email, string formData, bool first, string verId)
+        {
+            MyAuthenticateResponse authResponse = null;
+            try
+            {
+                authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = email,
+                    Password = "NIL",
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, RoutingConstants.UC },
+                        { TokenConstants.CID, ViewBag.SolutionId },
+                        { "sso", "true" },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception lsgsso1: " + ex.ToString());
+                if (ex.Message != "Invalid Username or Password")
+                    return false;
+                else
+                    authResponse = new MyAuthenticateResponse() { ResponseStatus = new ResponseStatus() { ErrorCode = "EbUnauthorized" } };
+            }
+
+            if (authResponse != null)
+            {
+                if (authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+                {
+                    if (!first)
+                        return false;
+                    try
+                    {
+                        authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+                        {
+                            provider = CredentialsAuthProvider.Name,
+                            UserName = "NIL",
+                            Password = "NIL",
+                            Meta = new Dictionary<string, string> {
+                                { RoutingConstants.WC, RoutingConstants.UC },
+                                { "anonymous", "true"},
+                                { "emailId", email },
+                                { TokenConstants.CID, ViewBag.SolutionId },
+                                { TokenConstants.IP, this.RequestSourceIp},
+                                { RoutingConstants.USER_AGENT, this.UserAgent}
+                            },
+                            RememberMe = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception lsgsso2: " + ex.ToString());
+                        return false;
+                    }
+                    if (authResponse != null)
+                    {
+                        this.ServiceClient.BearerToken = authResponse.BearerToken;
+                        this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+
+                        try
+                        {
+                            SubmitFormDataApiRequest request = new SubmitFormDataApiRequest
+                            {
+                                VerId = Int32.Parse(verId),
+                                FormData = formData,
+                                DataId = 0,
+                                CurrentLoc = 0
+                            };
+
+                            var saveResp = ServiceClient.Post(request);
+
+                            if (saveResp.Status == (int)HttpStatusCode.OK)
+                            {
+                                return IslsgSsoSuccess(email, formData, false, verId);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Exception lsgsso4: " + saveResp.Message);
+                                return false;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Exception lsgsso3: " + ex.ToString());
+                            return false;
+                        }
+                    }
+                }
+                else //AUTH SUCCESS
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

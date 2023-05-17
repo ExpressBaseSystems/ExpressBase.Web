@@ -1606,6 +1606,8 @@ namespace ExpressBase.Web.Controllers
         {
             if (string.IsNullOrEmpty(userdet))
                 return Redirect("/StatusCode/404?m=invalid_userdet");
+            Console.WriteLine("======================================");
+            Console.WriteLine(JsonConvert.SerializeObject(userdet));
             string[] p = userdet.Split("~");
             if (p.Length < 11)
                 return Redirect("/StatusCode/404?m=param_length_" + p.Length);

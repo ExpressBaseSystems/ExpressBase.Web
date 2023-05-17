@@ -1647,8 +1647,11 @@ namespace ExpressBase.Web.Controllers
             jObj["mobile"] = mobile;
             jObj["email"] = email;
             jObj["district"] = district;
+            JArray array = new JArray { jObj };
+            JObject jObjOut = new JObject();
+            jObjOut[parts[4]] = array;
 
-            if (IslsgSsoSuccess(email, jObj.ToString(), true, parts[3]))
+            if (IslsgSsoSuccess(email, jObjOut.ToString(), true, parts[3]))
                 return RedirectToAction("UserDashboard", "TenantUser");
 
             return Redirect("/StatusCode/404?m=last_return");

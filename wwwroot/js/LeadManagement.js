@@ -55,6 +55,7 @@
     this.$ProcedureDate = $("#txtProcedureDate");
     this.$Comments = $("#txtComments");
     this.$btnNewPatient = $("#btnNewPatient");
+    this.$btnNewHtEvaluation = $("#btnNewHtEvaluation");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -218,6 +219,24 @@
                 params.push(new fltr_obj(11, "patient_name_id", this.AccId));
                 let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
                 let url = `../WebForm/Index?_r=hairocraft-hairocraft-0-855-1537-855-1537&_p=${_p}&_m=2&_l=${this.CustomerInfo["eb_loc_id"]}`;
+                window.open(url, '_blank');
+            }
+        }.bind(this));
+
+        this.$btnNewHtEvaluation.on("click", function () {
+            let pid = this.$btnNewHtEvaluation.data('ht_evaluation_id');
+            if (pid) {
+                let params = [];
+                params.push(new fltr_obj(11, "id", pid));
+                let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+                let url = `../WebForm/Index?_r=hairocraft-hairocraft-0-945-1627-945-1627&_p=${_p}&_m=1&_l=${this.CustomerInfo["eb_loc_id"]}`;
+                window.open(url, '_blank');
+            }
+            else {
+                let params = [];
+                params.push(new fltr_obj(11, "patient_name_id", this.AccId));
+                let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+                let url = `../WebForm/Index?_r=hairocraft-hairocraft-0-945-1627-945-1627&_p=${_p}&_m=2&_l=${this.CustomerInfo["eb_loc_id"]}`;
                 window.open(url, '_blank');
             }
         }.bind(this));
@@ -932,6 +951,12 @@
             this.$btnNewPatient.html(this.$btnNewPatient.html().replace('New Patient Record', 'View Patient Record'));
         }
         this.$btnNewPatient.closest('.col-md-1').show();
+
+        if (this.CustomerInfo["ht_evaluation_id"] != "0") {
+            this.$btnNewHtEvaluation.data('ht_evaluation_id', this.CustomerInfo["ht_evaluation_id"]);
+            this.$btnNewHtEvaluation.html(this.$btnNewHtEvaluation.html().replace('New HT Evaluation Record', 'View HT Evaluation Record'));
+        }
+        this.$btnNewHtEvaluation.closest('.col-md-1').show();
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);

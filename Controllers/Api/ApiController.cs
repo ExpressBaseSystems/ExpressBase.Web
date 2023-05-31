@@ -1450,6 +1450,35 @@ namespace ExpressBase.Web.Controllers
             }
             return pr;
         }
+
+        [HttpGet("api/get_zkteco_attendance_device_list")]
+        public ActionResult<GetAttendanceDeviceListResponse> GetZKTecoAttendanceDeviceList()
+        {
+            if (!Authenticated)
+            {
+                return Unauthorized();
+            }
+
+            GetAttendanceDeviceListResponse resp = null;
+            try
+            {
+                if (Authenticated)
+                {
+                    resp = this.ServiceClient.Get(new GetAttendanceDeviceListRequest
+                    {
+                        Device = 1
+                    });
+                }
+                else
+                    resp = new GetAttendanceDeviceListResponse { Message = "Unauthenticated" };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT GetZKTecoAttendanceDeviceList API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return resp;
+        }
     }
 }
 

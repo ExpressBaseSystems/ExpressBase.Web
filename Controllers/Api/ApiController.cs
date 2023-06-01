@@ -1479,6 +1479,33 @@ namespace ExpressBase.Web.Controllers
             }
             return resp;
         }
+
+        [HttpGet("api/get_employees_list")]
+        public ActionResult<GetEmployeesListResponse> GetEmployeesList(int eb_loc_id)
+        {
+            if (!Authenticated)
+            {
+                return Unauthorized();
+            }
+
+            GetEmployeesListResponse resp;
+            try
+            {
+                if (Authenticated)
+                {
+                    resp = this.ServiceClient.Get(new GetEmployeesListRequest() { LocationId = eb_loc_id });
+                }
+                else
+                    resp = new GetEmployeesListResponse { ErrorMessage = "Unauthenticated" };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT EmployeesList API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                resp = new GetEmployeesListResponse { ErrorMessage = ex.Message };
+            }
+            return resp;
+        }
     }
 }
 

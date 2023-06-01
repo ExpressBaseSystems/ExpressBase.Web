@@ -794,6 +794,7 @@ namespace ExpressBase.Web.Controllers
             EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
             EbObjectObjListAllVerResponse All_mobilePages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 13 });
             EbObjectObjListAllVerResponse All_HtmlPages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.HtmlPage.IntCode });
+            EbObjectObjListAllVerResponse All_DataReaders = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.DataReader.IntCode });
             GetUserTypesResponse _userTypesResp = this.ServiceClient.Get(new GetUserTypesRequest());
 
             Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
@@ -801,6 +802,7 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
                 ViewBag.defaultHtmlPageRefid = solutionObj.SolutionSettings.DefaultHtmlPageRefid;
+                ViewBag.getEmployeesDrRefid = solutionObj.SolutionSettings.GetEmployeesDrRefid;
                 if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
                 {
                     foreach (var item in _userTypesResp.UserTypes)
@@ -818,6 +820,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.all_objlist = all_resp.Data;
             ViewBag.MobilePages = All_mobilePages.Data;
             ViewBag.HtmlPages = All_HtmlPages.Data;
+            ViewBag.DataReaders = All_DataReaders.Data;
             ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
             ViewBag.WebFormSettings = solutionObj.SolutionSettings?.WebSettings ?? new EbWebFormSettings(true);
             ViewBag.SystemColumns = solutionObj.SolutionSettings?.SystemColumns ?? new EbSystemColumns(EbSysCols.Values);

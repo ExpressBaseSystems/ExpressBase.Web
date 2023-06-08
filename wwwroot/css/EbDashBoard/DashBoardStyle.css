@@ -1323,7 +1323,7 @@ body {
             line-height: 20px;
             color: #a0a0a0;
             font-weight: 100;
-            white-space: nowrap;
+            white-space: pre;
             overflow: hidden;
             text-overflow: ellipsis;
         }

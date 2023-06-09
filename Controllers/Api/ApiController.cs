@@ -1451,8 +1451,8 @@ namespace ExpressBase.Web.Controllers
             return pr;
         }
 
-        [HttpGet("api/get_zkteco_attendance_device_list")]
-        public ActionResult<GetAttendanceDeviceListResponse> GetZKTecoAttendanceDeviceList()
+        [HttpGet("api/get_attendance_device_list")]
+        public ActionResult<GetAttendanceDeviceListResponse> GetAttDeviceList()
         {
             if (!Authenticated)
             {
@@ -1464,13 +1464,10 @@ namespace ExpressBase.Web.Controllers
             {
                 if (Authenticated)
                 {
-                    resp = this.ServiceClient.Get(new GetAttendanceDeviceListRequest
-                    {
-                        Device = 1
-                    });
+                    resp = this.ServiceClient.Get(new GetAttendanceDeviceListRequest());
                 }
                 else
-                    resp = new GetAttendanceDeviceListResponse { Message = "Unauthenticated" };
+                    resp = new GetAttendanceDeviceListResponse { message = "Unauthenticated" };
             }
             catch (Exception ex)
             {
@@ -1496,16 +1493,77 @@ namespace ExpressBase.Web.Controllers
                     resp = this.ServiceClient.Get(new GetEmployeesListRequest() { LocationId = eb_loc_id });
                 }
                 else
-                    resp = new GetEmployeesListResponse { ErrorMessage = "Unauthenticated" };
+                    resp = new GetEmployeesListResponse { errorMessage = "Unauthenticated" };
             }
             catch (Exception ex)
             {
                 Console.WriteLine("EXCEPTION AT EmployeesList API" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
-                resp = new GetEmployeesListResponse { ErrorMessage = ex.Message };
+                resp = new GetEmployeesListResponse { errorMessage = ex.Message };
             }
             return resp;
         }
+
+        [HttpPost("api/att_device_backup_user_info")]
+        public ActionResult<AttDeviceBackUpUserInfoResponse> AttDeviceBackUpUserInfo([FromBody] AttDeviceBackUpUserInfoRequest request)
+        {
+            if (!Authenticated)
+            {
+                return Unauthorized();
+            }
+
+            AttDeviceBackUpUserInfoResponse resp;
+            try
+            {
+                if (Authenticated)
+                {
+                    if (request.userList.Count > 0)
+                        resp = this.ServiceClient.Post(request);
+                    else
+                        resp = new AttDeviceBackUpUserInfoResponse { errorMessage = "User list is empty" };
+                }
+                else
+                    resp = new AttDeviceBackUpUserInfoResponse { errorMessage = "Unauthenticated" };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT AttDeviceBackUpUserInfo API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                resp = new AttDeviceBackUpUserInfoResponse { errorMessage = ex.Message };
+            }
+            return resp;
+        }
+
+        [HttpPost("api/att_device_save_punch_records")]
+        public ActionResult<AttDeviceSaveRawPunchRecordsResp> AttDeviceSaveRawPunchRecords([FromBody] AttDeviceSaveRawPunchRecordsReq request)
+        {
+            if (!Authenticated)
+            {
+                return Unauthorized();
+            }
+
+            AttDeviceSaveRawPunchRecordsResp resp;
+            try
+            {
+                if (Authenticated)
+                {
+                    if (request.punchRecords.Count > 0)
+                        resp = this.ServiceClient.Post(request);
+                    else
+                        resp = new AttDeviceSaveRawPunchRecordsResp { errorMessage = "Punch record is empty" };
+                }
+                else
+                    resp = new AttDeviceSaveRawPunchRecordsResp { errorMessage = "Unauthenticated" };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT AttDeviceSaveRawPunchRecords API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                resp = new AttDeviceSaveRawPunchRecordsResp { errorMessage = ex.Message };
+            }
+            return resp;
+        }
+
     }
 }
 

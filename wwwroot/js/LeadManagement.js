@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, Nurse_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SubCategoryList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, Nurse_Info, F_List, B_List, S_List, GP_List, CCityList, CCountryList, CityList, SubCategoryList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -17,6 +17,7 @@
     this.FeedbackList = F_List || [];
     this.BillingList = B_List || [];
     this.SurgeryList = S_List || [];
+    this.GfcPrpList = GP_List || [];
     //DOM ELEMENTS
     this.$CostCenter = $("#selCostCenter");
     this.$EnDate = $("#txtEnDate");
@@ -108,6 +109,18 @@
     this.$SrgyMethod = $("#selSrgyMethod");
     this.$SrgyComnt = $("#txaSrgyComnt");
     this.$SrgySave = $("#btnSrgySave");
+    //GFC/PRP
+    this.divGfcPrp = "divGfcPrp";
+    this.$btnNewGfcPrpDtls = $("#btnNewGfcPrpDtls");
+    this.$MdlGfcPrp = $("#mdlGfcPrp");
+    this.$GfcPrpDate = $("#txtGfcPrpDate");
+    this.$GfcPrpBranch = $("#selGfcPrpBranch");
+    this.$GfcOrPrp = $("#selGfcOrPrp");
+    this.$GfcPrpCmpltry = $("#selGfcPrpCmpltry");
+    this.$GfcPrpSession = $("#selGfcPrpSession");
+    this.$GfcPrpDnBy = $("#selGfcPrpDnBy");
+    this.$GfcPrpComnt = $("#txaGfcPrpComnt");
+    this.$GfcPrpSave = $("#btnGfcPrpSave");
     //ATTACH
     //this.$FirstImgPage = $("#btnFirstImgPage");
     //this.$PrevImgPage = $("#btnPrevImgPage");
@@ -245,18 +258,21 @@
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
         this.$ProcedureDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
-        //FEEDBACK  BILLING  SURGERY 
+        //FEEDBACK  BILLING  SURGERY GFC/PRP
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
+        this.initGfcPrpModal();
         //this.initAttachTab();
         //this.initDrake();
 
         this.$CostCenter.children().remove();
         this.$SrgyBranch.children().remove();
+        this.$GfcPrpBranch.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {
             this.$CostCenter.append(`<option value='${key}'>${val}</option>`);
             this.$SrgyBranch.append(`<option value='${key}'>${val}</option>`);
+            this.$GfcPrpBranch.append(`<option value='${key}'>${val}</option>`);
         }.bind(this));
 
         this.$Doctor.children().remove();
@@ -265,11 +281,13 @@
         this.$SrgyConsentBy.children().remove();
         this.$SrgyAnasthBy.children().remove();
         this.$SrgyPostBrfBy.children().remove();
+        this.$GfcPrpDnBy.children().remove();
         this.$SrgyExtrDnBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyImplantBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyConsentBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyAnasthBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyPostBrfBy.append(`<option value='0'>- Select -</option>`);
+        this.$GfcPrpDnBy.append(`<option value='0'>- Select -</option>`);
         $.each(this.DoctorInfo, function (key, val) {
             this.$Doctor.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyExtrDnBy.append(`<option value='${val}'>${key}</option>`);
@@ -277,6 +295,7 @@
             this.$SrgyConsentBy.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyAnasthBy.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);
+            this.$GfcPrpDnBy.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
         //this.$SrgyExtrDnBy.multiselect({
@@ -901,6 +920,96 @@
         }.bind(this));
     };
 
+    this.initGfcPrpModal = function () {
+        this.$btnNewGfcPrpDtls.on("click", function () {
+            if (this.AccId === 0) {
+                EbMessage("show", { Message: 'Save Customer Information then try to add GFC/PRP Details', AutoHide: true, Background: '#aa0000' });
+            }
+            else {
+                this.$MdlGfcPrp.modal('show');
+            }
+        }.bind(this));
+
+        this.$GfcPrpDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
+
+        this.$GfcPrpSave.on("click", function () {
+            var id = 0;
+            this.$GfcPrpSave.children().show();
+            this.$GfcPrpSave.prop("disabled", true);
+            if (this.$MdlGfcPrp.attr("data-id") !== '')
+                id = parseInt(this.$MdlGfcPrp.attr("data-id"));
+            var GfcPrpObj = {
+                Id: id,
+                Date: this.$GfcPrpDate.val(),
+                Branch: this.$GfcPrpBranch.val(),
+                GfcOrPrp: this.$GfcOrPrp.val(),
+                Done_By: this.$GfcPrpDnBy.val(),
+                Complimentary: this.$GfcPrpCmpltry.val(),
+                GfcPrpSession: this.$GfcPrpSession.val(),
+                Comment: this.$GfcPrpComnt.val(),
+                Account_Code: this.AccId
+            };
+            $.ajax({
+                type: "POST",
+                url: "../CustomPage/SaveGfcPrpDtls",
+                data: { GfcPrpInfo: JSON.stringify(GfcPrpObj) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.$GfcPrpSave.prop("disabled", false);
+                    this.$GfcPrpSave.children().hide();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
+                success: function (result) {
+                    this.$GfcPrpSave.prop("disabled", false);
+                    this.$GfcPrpSave.children().hide();
+                    if (result) {
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#0b851a' });
+                        this.$MdlGfcPrp.modal('hide');
+                        location.reload();////////
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#a40000' });
+                    }
+                }.bind(this)
+            });
+        }.bind(this));
+                
+        $.each(this.GfcPrpList, function (i, obj) {
+            obj["Done_By"] = this.getKeyByValue(this.DoctorInfo, obj["Done_By"]);
+        }.bind(this));
+
+        new ListViewCustom(this.divGfcPrp, this.GfcPrpList, function (id, tempObj) {
+            this.$MdlGfcPrp.attr("data-id", id);
+            this.$GfcPrpDate.val(tempObj.Date);
+            $('#selGfcPrpBranch option').filter(function () { return $(this).html() === tempObj.Branch; }).prop("selected", true);
+            $('#selGfcPrpDnBy option').filter(function () { return $(this).html() === tempObj.Done_By; }).prop("selected", true);
+            this.$GfcOrPrp.val(tempObj.GfcOrPrp);
+            this.$GfcPrpCmpltry.val(tempObj.Complimentary);
+            this.$GfcPrpSession.val(tempObj.GfcPrpSession);
+            this.$SrgyComnt.val(tempObj.Comment);
+
+            this.$MdlGfcPrp.modal('show');
+        }.bind(this));
+
+        this.$MdlGfcPrp.on('shown.bs.modal', function (e) {
+            if (this.$MdlGfcPrp.attr("data-id") === "") {
+                this.$GfcPrpDate.val(moment(new Date()).format("DD-MM-YYYY"));
+                this.$GfcPrpBranch.val("1");
+                this.$GfcOrPrp.val("GFC");
+                this.$GfcPrpCmpltry.val("No");
+                this.$GfcPrpSession.val("1");
+                this.$GfcPrpDnBy.val("0");
+                this.$GfcPrpComnt.val("");
+                this.$GfcPrpSave.children().hide();
+                this.$GfcPrpSave.prop("disabled", false);
+            }
+        }.bind(this));
+
+        this.$MdlGfcPrp.on('hidden.bs.modal', function (e) {
+            this.$MdlGfcPrp.attr("data-id", "");
+        }.bind(this));
+        
+    };
+
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["eb_loc_id"]);
         this.$EnDate.val(this.CustomerInfo["trdate"]);
@@ -1115,6 +1224,9 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         else if (this.ParentDivId === "divSrgy") {
             this.metadata = ["13", "Id", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Complimentary", "Method", "Comment", "Created_By", "_surgery"];
         }
+        else if (this.ParentDivId === "divGfcPrp") {
+            this.metadata = ["9", "Id", "Date", "Branch", "GfcOrPrp", "Done_By", "Complimentary", "GfcPrpSession", "Comment", "Created_By", "_gfcprp"];
+        }
         this.setTable();
 
         $("#" + this.ParentDivId).on("click", ".editclass" + this.ParentDivId, this.onClickEdit.bind(this));
@@ -1143,6 +1255,10 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         else if (this.metadata.indexOf("_surgery") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]], 10: this.itemList[i][this.metadata[10]], 11: this.itemList[i][this.metadata[11]], 12: this.itemList[i][this.metadata[12]], 13: this.itemList[i][this.metadata[13]] });
+        }
+        else if (this.metadata.indexOf("_gfcprp") !== -1) {
+            for (i = 0; i < this.itemList.length; i++)
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]] });
         }
 
         this.table = $("#" + this.TableId).DataTable({

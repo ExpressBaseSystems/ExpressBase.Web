@@ -423,6 +423,7 @@
                 <li><a data-toggle="tab" href="#menuBilling">Billing</a></li>
             }
             <li><a data-toggle="tab" href="#menuSurgery">Surgery Details</a></li>
+            <li><a data-toggle="tab" href="#menuGfcPrp">GFC/PRP Details</a></li>
             <li><a data-toggle="tab" href="#menuAttach">Attach</a></li>
             <li><a data-toggle="tab" href="#menuPRP">PRP</a></li>
         </ul>
@@ -705,6 +706,16 @@
                 </div>
                 <div class="lm-form-inline">
                     <div id="divSrgy"></div>
+                </div>
+            </div>
+                        
+            <!-- GFC/PRP Details Menu -->
+            <div id="menuGfcPrp" class="tab-pane fade" style="min-height: calc(100vh - 266px);">
+                <div style="text-align:right; padding: 15px 15px;">
+                    <button id="btnNewGfcPrpDtls" class="ebbtn btn eb_btn-sm eb_btnblue"><i class="fa fa-plus"></i>&nbsp;New</button>
+                </div>
+                <div class="lm-form-inline">
+                    <div id="divGfcPrp"></div>
                 </div>
             </div>
 
@@ -1009,6 +1020,77 @@
     </div>
 </div>
 
+<!-- GFC/PRP Details Modal -->
+<div class="modal fade" id="mdlGfcPrp" role="dialog" data-id="">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #f8f8f8;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">GFC/PRP Details</h4>
+            </div>
+            <div class="modal-body" style="height: 230px;">
+                <div class="lm-form-inline">
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>Date</label>
+                            <div class="input-group">
+                                <input id="txtGfcPrpDate" type="text" class="form-control" autocomplete="off">
+                                <span class="input-group-addon" onclick="$('#txtGfcPrpDate').focusin();"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>Branch</label>
+                            <select id="selGfcPrpBranch" class="form-control"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>GFC/PRP</label>
+                            <select id="selGfcOrPrp" class="form-control">
+                                <option value="GFC">GFC</option>
+                                <option value="PRP">PRP</option>
+                            </select>
+                        </div>
+                        <div class="lm-form-group">
+                            <label>Complimentary</label>
+                            <select id="selGfcPrpCmpltry" class="form-control">
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+                        <div class="lm-form-group">
+                            <label>GFC/PRP Session</label>
+                            <select id="selGfcPrpSession" class="form-control">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>                        
+                    </div>
+                    <div class="col-md-8">
+                        <div class="lm-form-group">
+                            <label>Done By</label>
+                            <select id="selGfcPrpDnBy" class="form-control"></select>
+                        </div>
+                        <div class="lm-form-group">
+                            <label>Comment</label>
+                            <textarea id="txaGfcPrpComnt" class="form-control" style="height: 76px !important; resize:none;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnGfcPrpSave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
+                <button type="button" class="ebbtn eb_btn-sm eb_btnblue" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ViewImage Modal -->
 @*<div class="modal fade" id="mdlViewImage" role="dialog" data-id="">
         <div class="modal-dialog">
@@ -1080,12 +1162,12 @@
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
     var SurgeryList = (Html.Raw(ViewBag.SurgeryList).ToString() == "") ? "null" : Html.Raw(ViewBag.SurgeryList);
-
+    var GfcPrpList = (Html.Raw(ViewBag.GfcPrpList).ToString() == "") ? "null" : Html.Raw(ViewBag.GfcPrpList);
 }
 
 <script>
     var intSpecialPermission = '@ViewBag.Permission';
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @GfcPrpList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
     let uploadedFileRefList = {};
     let _fupCutstomMenu = [{ name: "Set as DP", icon: "fa-user" }];
     if (ebcontext.user.Roles.includes("Custom Image Delete Role"))

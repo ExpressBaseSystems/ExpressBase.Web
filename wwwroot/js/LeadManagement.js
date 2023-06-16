@@ -945,7 +945,7 @@
                 Branch: this.$GfcPrpBranch.val(),
                 GfcOrPrp: this.$GfcOrPrp.val(),
                 Done_By: this.$GfcPrpDnBy.val(),
-                Complimentary: this.$GfcPrpCmpltry.val(),
+                Service_Type: this.$GfcPrpCmpltry.val(),
                 GfcPrpSession: this.$GfcPrpSession.val(),
                 Comment: this.$GfcPrpComnt.val(),
                 Account_Code: this.AccId
@@ -984,7 +984,7 @@
             $('#selGfcPrpBranch option').filter(function () { return $(this).html() === tempObj.Branch; }).prop("selected", true);
             $('#selGfcPrpDnBy option').filter(function () { return $(this).html() === tempObj.Done_By; }).prop("selected", true);
             this.$GfcOrPrp.val(tempObj.GfcOrPrp);
-            this.$GfcPrpCmpltry.val(tempObj.Complimentary);
+            this.$GfcPrpCmpltry.val(tempObj.Service_Type);
             this.$GfcPrpSession.val(tempObj.GfcPrpSession);
             this.$SrgyComnt.val(tempObj.Comment);
 
@@ -1226,7 +1226,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
             this.metadata = ["13", "Id", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Complimentary", "Method", "Comment", "Created_By", "_surgery"];
         }
         else if (this.ParentDivId === "divGfcPrp") {
-            this.metadata = ["9", "Id", "Date", "Branch", "GfcOrPrp", "Done_By", "Complimentary", "GfcPrpSession", "Comment", "Created_By", "_gfcprp"];
+            this.metadata = ["9", "Id", "Date", "Branch", "GfcOrPrp", "Done_By", "Service_Type", "GfcPrpSession", "Comment", "Created_By", "_gfcprp"];
         }
         this.setTable();
 

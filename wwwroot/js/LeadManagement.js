@@ -319,6 +319,7 @@
             //this.$SrgyAnasthBy.append(`<option value='${val + 1000}'>${key}</option>`);//
             this.$SrgyConsentBy.append(`<option value='${val}'>${key}</option>`);//
             this.$SrgyAnasthBy.append(`<option value='${val}'>${key}</option>`);//
+            this.$GfcPrpDnBy.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
         this.$Mobile.on("change", function (e) {
@@ -974,7 +975,7 @@
         }.bind(this));
                 
         $.each(this.GfcPrpList, function (i, obj) {
-            obj["Done_By"] = this.getKeyByValue(this.DoctorInfo, obj["Done_By"]);
+            obj["Done_By"] = this.getKeyByValue(this.DoctorInfo, obj["Done_By"]) || this.getKeyByValue(this.NurseInfo, obj["Done_By"]);
         }.bind(this));
 
         new ListViewCustom(this.divGfcPrp, this.GfcPrpList, function (id, tempObj) {
@@ -995,7 +996,7 @@
                 this.$GfcPrpDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$GfcPrpBranch.val("1");
                 this.$GfcOrPrp.val("GFC");
-                this.$GfcPrpCmpltry.val("No");
+                this.$GfcPrpCmpltry.val("Complimentary");
                 this.$GfcPrpSession.val("1");
                 this.$GfcPrpDnBy.val("0");
                 this.$GfcPrpComnt.val("");

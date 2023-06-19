@@ -1047,6 +1047,10 @@ body .stickBtn {
     padding: 2px 0px 0px 0px;
 }
 
+    .tile_dt_cont_view .card-body p:nth-child(2) {
+        white-space: pre-line;
+    }
+
 .gaugeChart {
     width: 100%;
     height: 100%;

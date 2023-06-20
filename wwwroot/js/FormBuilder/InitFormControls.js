@@ -1217,7 +1217,7 @@
             ctrl.setValue = function (renderer, p1) {
                 if (!renderer.isInitiallyPopulating) {
                     let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
-                    if (this.RenderAs == 2)//Html
+                    if (this.RenderAs == 1 || this.RenderAs == 2)//Link or Html
                         $lbl.html(p1 || '');
                     else
                         $lbl.text(p1 || '');

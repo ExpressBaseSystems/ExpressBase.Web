@@ -986,7 +986,7 @@
             this.$GfcOrPrp.val(tempObj.GfcOrPrp);
             this.$GfcPrpCmpltry.val(tempObj.Service_Type);
             this.$GfcPrpSession.val(tempObj.GfcPrpSession);
-            this.$SrgyComnt.val(tempObj.Comment);
+            this.$GfcPrpComnt.val(tempObj.Comment);
 
             this.$MdlGfcPrp.modal('show');
         }.bind(this));
@@ -1242,7 +1242,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
             tblcols.push({ data: i, title: this.metadata[i].replace("_", " ").replace("_", " "), orderable: true, className: "MyTempColStyle" });
-        if (intSpecialPermission === "True" && (this.metadata.indexOf("_feedback") !== -1 || this.metadata.indexOf("_surgery") !== -1))
+        if (intSpecialPermission === "True" && (this.metadata.indexOf("_feedback") !== -1 || this.metadata.indexOf("_surgery") !== -1 || this.metadata.indexOf("_gfcprp") !== -1))
             tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center" });
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data

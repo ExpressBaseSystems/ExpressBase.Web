@@ -363,7 +363,8 @@ const WebFormRender = function (option) {
 
         this.RQCs = getFlatContObjsOfType(this.FormObj, "RenderQuestionsControl");// all RQCs in formObject
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
-        this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject
+        this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject        
+        this.GroupBoxes = getFlatContObjsOfType(this.FormObj, "GroupBox");
         this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
         this.setExecReviewCont();

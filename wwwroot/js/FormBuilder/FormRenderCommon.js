@@ -408,9 +408,14 @@
                         return "not found";
                 }
                 else {
-                    ctrl = eval(path);
-                    if (!ctrl)
-                        return "not found";
+                    if (this.FO.GroupBoxes && this.FO.GroupBoxes.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        ctrl = this.FO.GroupBoxes.filter(function (obj) { return obj.Name == pathArr[1] })[0];
+                    }
+                    else {
+                        ctrl = eval(path);
+                        if (!ctrl)
+                            return "not found";
+                    }
                 }
                 return ctrl;
             }

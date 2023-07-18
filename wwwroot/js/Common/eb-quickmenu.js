@@ -27,13 +27,13 @@
             $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
 
             if (this.login === "uc") {
-                $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
-                $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+                $("#ebm-objectcontainer").off("click", ".btn-setfav").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
+                $("#ebm-objectcontainer").off("click", ".favourited").on("click", ".favourited", this.removeFavorite.bind(this));
             }
-            $("#ebm-objectcontainer").on("click", ".btn-new-tab", this.openInNewTab.bind(this));
+            $("#ebm-objectcontainer").off("click", ".btn-new-tab").on("click", ".btn-new-tab", this.openInNewTab.bind(this));
         }
         //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
-        $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
+        $("#ebm-overlayfade").off("click").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
     };
 
     this.reset = function () {

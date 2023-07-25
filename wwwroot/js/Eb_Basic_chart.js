@@ -285,7 +285,7 @@ var EbBasicChart = function (Option) {
                 },
                 zoom: {
                     // Boolean to enable zooming
-                    enabled: true,
+                    enabled: !Option.zoomDisabled,
 
                     // Zooming directions. Remove the appropriate direction to disable 
                     // Eg. 'y' would only allow zooming in the y direction

@@ -739,6 +739,7 @@
             o.tableId = "tb1" + id;
             o.dvObject = obj;
             o.filtervalues = this.filtervalues;
+            o.zoomDisabled = obj.DisableZoom;
             var dt = new EbBasicChart(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
             $(`#${id}`).addClass("box-shadow-style");

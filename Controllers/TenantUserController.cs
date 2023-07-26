@@ -1,4 +1,4 @@
-﻿  using ExpressBase.Common;
+﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
@@ -140,6 +140,8 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult EbLocations(int id)
         {
+            if (!HasLocEditPermission())
+                return Redirect("/StatusCode/404");
             Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
             ViewBag.Meta = _jsResult.AllMetas;
@@ -156,6 +158,8 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public int CreateLocation(string locid, string lname, string sname, string img, string meta)
         {
+            if (!HasLocEditPermission())
+                return 0;
             if (img == null)
                 img = "../img";
             var resp = ServiceClient.Post<SaveLocationMetaResponse>(new SaveLocationMetaRequest { Locid = Convert.ToInt32(locid), Longname = lname, Shortname = sname, Img = img, ConfMeta = meta });
@@ -165,6 +169,8 @@ namespace ExpressBase.Web2.Controllers
 
         public int CreateLocationH(EbLocation loc)
         {
+            if (!HasLocEditPermission())
+                return 0;
             if (loc.Logo == null)
                 loc.Logo = "../img";
             SaveLocationResponse resp = ServiceClient.Post<SaveLocationResponse>(new SaveLocationRequest { Location = loc });
@@ -173,20 +179,32 @@ namespace ExpressBase.Web2.Controllers
 
         public int DeletelocConf(int id)
         {
+            if (!HasLocEditPermission())
+                return 0;
             DeleteLocResponse resp = ServiceClient.Post<DeleteLocResponse>(new DeleteLocRequest { Id = id });
             return resp.id;
         }
 
         public CreateLocationTypeResponse CreateLocationType(EbLocationType loctype)
         {
+            if (!HasLocEditPermission())
+                return null;
             CreateLocationTypeResponse resp = this.ServiceClient.Post(new CreateLocationTypeRequest { LocationType = loctype });
             return resp;
         }
 
         public DeleteLocationTypeResponse DeleteLocationType(int id)
         {
+            if (!HasLocEditPermission())
+                return null;
             DeleteLocationTypeResponse resp = this.ServiceClient.Post(new DeleteLocationTypeRequest { Id = id });
             return resp;
+        }
+
+        private bool HasLocEditPermission()
+        {
+            return this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
+                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString());
         }
 
         public string GetLocationTree()
@@ -196,7 +214,7 @@ namespace ExpressBase.Web2.Controllers
             parent_id, (CASE WHEN is_group = 'F' THEN false ELSE true END) as is_group,
             eb_location_types_id, meta_json  FROM eb_locations WHERE COALESCE(eb_del,'F') = 'F';";
             string[] arrayy = new string[] { "id", "longname", "shortname", "image", "parent_id", "is_group", "eb_location_types_id", "meta_json" };
-            DVColumnCollection DVColumnCollection = GetColumnsForLocationTree(arrayy);            
+            DVColumnCollection DVColumnCollection = GetColumnsForLocationTree(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = DVColumnCollection, AutoGen = false, IsPaging = false };
             return EbSerializers.Json_Serialize(Visualization);
         }
@@ -229,8 +247,17 @@ namespace ExpressBase.Web2.Controllers
                     if (str == "shortname")
                         _col = new DVStringColumn { Data = 2, Name = str, sTitle = "Short Name", Type = EbDbTypes.String, bVisible = true };
                     if (str == "image")
-                        _col = new DVStringColumn { Data = 3, Name = str, sTitle = "Logo", Type = EbDbTypes.String, bVisible = true, RenderAs=StringRenderType.Image,
-                        ImageHeight = 50, ImageWidth = 50};
+                        _col = new DVStringColumn
+                        {
+                            Data = 3,
+                            Name = str,
+                            sTitle = "Logo",
+                            Type = EbDbTypes.String,
+                            bVisible = true,
+                            RenderAs = StringRenderType.Image,
+                            ImageHeight = 50,
+                            ImageWidth = 50
+                        };
                     if (str == "parent_id")
                         _col = new DVNumericColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
                     if (str == "is_group")

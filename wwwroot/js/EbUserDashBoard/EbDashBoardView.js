@@ -387,6 +387,20 @@
                     }.bind(this));
                     if (currentobj.LinksColl) {
                         $.each(currentobj.LinksColl.$values, function (i, obj) {
+
+                            if (currentobj.HiddenExpr && currentobj.HiddenExpr.Code && currentobj.HiddenExpr.Lang == 0) {
+                                try {
+                                    let valRes = new Function('Rowdata', `event`, atob(currentobj.HiddenExpr.Code)).bind(currentobj, this.Rowdata)();
+                                    if (valRes) {
+                                        $(`#${this.CurrentTile}`).hide();
+                                        return;
+                                    }
+                                }
+                                catch (e) {
+                                    console.error(e);
+                                }
+                            }
+
                             this.loader.EbLoader("show");
                             var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
                             this.makeElement(eb_type, obj);

@@ -131,7 +131,7 @@ namespace ExpressBase.Web.Controllers
                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
                 var Columns = GetColumns(__columns);
-                if (columnresp != null && columnresp.DataSet != null && columnresp.DataSet.Tables[0] != null && columnresp.DataSet.Tables[0].Rows[0] != null && columnresp.DataSet.Tables[0].Rows[0].Count > 0)
+                if (columnresp != null && columnresp.DataSet != null && columnresp.DataSet.Tables.Count > 0 && columnresp.DataSet.Tables[0].Rows.Count > 0)
                 {
                     var _row = columnresp.DataSet.Tables[0].Rows[0];
                     obj = new DashboardControlReturn { Columns = EbSerializers.Json_Serialize(Columns), Row = _row };

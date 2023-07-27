@@ -319,6 +319,8 @@
                     $(`#${t_id}`).attr("eb-type", "gauge");
                     $(`#${t_id} .tile-header`).removeClass("tile-header");
 
+                    this.waitDrawTiles = false;
+                    this.EbObject.__continueDrawTiles = this.continueDrawTiles.bind(this, currentobj, t_id);
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
                             this.Procs[Cobj.EbSid] = Cobj;
@@ -329,102 +331,8 @@
                         }
                     }.bind(this));
 
-                    $.each(currentobj.ControlsColl.$values, function (i, obj) {
-                        var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
-                        this.makeElement(eb_type, obj);
-                        let object = this.Procs[this.currentId];
-                        this.TileCollection[t_id].ControlsColl.$values[i] = object;
-                        $(`[data-id="${this.CurrentTile}"]`).append(object.$Control[0]);
-                        //this.labelstyleApply(this.CurrentTile);
-                        if (eb_type === "Gauge") {
-                            if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
-                                let xx = EbGaugeWrapper(obj, { isEdit: false });
-                            }
-                            this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "Gauge");
-                        }
-                        else if (eb_type === "SpeedoMeter") {
-                            if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
-                                let xx = SpeedoMeterWrapper(obj, { isEdit: false });
-                                this.loader.EbLoader("hide");
-                            }
-                            this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "speedometer");
-                        }
-                        else if (eb_type === "ProgressGauge") {
-                            if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
-                                let xx = ProgressGaugeWrapper(obj, { isEdit: false });
-                            }
-                            $(`#${object.EbSid}`).css("max-width", $(`#${object.EbSid}`).height() + 10 + "px");
-                            this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "ProgressGauge");
-                        }
-                    }.bind(this));
-                    Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
-                    $.each(currentobj.LabelColl.$values, function (i, obj) {
-
-                        if (currentobj.HiddenExpr && currentobj.HiddenExpr.Code && currentobj.HiddenExpr.Lang == 0) {
-                            try {
-                                let valRes = new Function('Rowdata', `event`, atob(currentobj.HiddenExpr.Code)).bind(currentobj, this.Rowdata)();
-                                if (valRes) {
-                                    $(`#${this.CurrentTile}`).hide();
-                                    return;
-                                }
-                            }
-                            catch (e) {
-                                console.error(e);
-                            }
-                        }
-
-                        var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
-                        this.makeElement(eb_type, obj);
-                        this.LabelDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid);
-                        let object = this.Procs[this.currentId];
-                        let designHtml = this.MakeDashboardLabel(object);
-                        $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
-                        this.labelstyleApply(this.CurrentTile);
-                        EbDataLabelFn(obj, this.CurrentTile);
-                        if (obj.Object_Selector)
-                            $(`[data-id="${this.CurrentTile}"] .label-cont`).off("click").on("click", this.DisplayBlockLink.bind(this))
-                        this.TileCollection[t_id].LabelColl.$values[i] = object;
-                    }.bind(this));
-                    if (currentobj.LinksColl) {
-                        $.each(currentobj.LinksColl.$values, function (i, obj) {
-
-                            if (currentobj.HiddenExpr && currentobj.HiddenExpr.Code && currentobj.HiddenExpr.Lang == 0) {
-                                try {
-                                    let valRes = new Function('Rowdata', `event`, atob(currentobj.HiddenExpr.Code)).bind(currentobj, this.Rowdata)();
-                                    if (valRes) {
-                                        $(`#${this.CurrentTile}`).hide();
-                                        return;
-                                    }
-                                }
-                                catch (e) {
-                                    console.error(e);
-                                }
-                            }
-
-                            this.loader.EbLoader("show");
-                            var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
-                            this.makeElement(eb_type, obj);
-                            let object = this.Procs[this.currentId];
-                            let designHtml = this.MakeLinks(object);
-                            $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
-                            $(`#${this.CurrentTile}`).addClass("eb-tile-link");
-                            //$(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");//
-                            $(`#${this.CurrentTile} .db-title-parent`).css("display", "none");
-                            $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
-                            $(`#${tile_id}`).removeClass('ext-linktoform').addClass('ext-linktoform');
-                            this.labelstyleApply(this.CurrentTile);
-                            LinkStyle(obj, this.CurrentTile, this.TabNum, this.GetFilterValuesForDataSource());
-                            this.TileCollection[t_id].LinksColl.$values[i] = object;
-                            this.loader.EbLoader("hide");
-                            $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
-                            //$(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
-                        }.bind(this));
-                    }
-                    if (currentobj.Transparent) {
-                        this.labelstyleApply(this.CurrentTile);
-                    }
-                    this.RedrwFnHelper(this.CurrentTile);
-                    this.loader.EbLoader("hide");
+                    if (!this.waitDrawTiles)
+                        this.EbObject.__continueDrawTiles();
                 }
 
             }
@@ -433,12 +341,111 @@
         }
         else {
             //this.GridStackInit
+            grid.movable('.grid-stack-item', false);
+            grid.resizable('.grid-stack-item', false);
+            this.loader.EbLoader("hide");
         }
-        grid.movable('.grid-stack-item', false);
-        grid.resizable('.grid-stack-item', false);
-        this.loader.EbLoader("hide");
     };
 
+    this.continueDrawTiles = function (currentobj, t_id) {
+        this.EbObject.__continueDrawTiles = null;
+        $.each(currentobj.ControlsColl.$values, function (i, obj) {
+            var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+            this.makeElement(eb_type, obj);
+            let object = this.Procs[this.currentId];
+            this.TileCollection[t_id].ControlsColl.$values[i] = object;
+            $(`[data-id="${this.CurrentTile}"]`).append(object.$Control[0]);
+            //this.labelstyleApply(this.CurrentTile);
+            if (eb_type === "Gauge") {
+                if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
+                    let xx = EbGaugeWrapper(obj, { isEdit: false });
+                }
+                this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "Gauge");
+            }
+            else if (eb_type === "SpeedoMeter") {
+                if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
+                    let xx = SpeedoMeterWrapper(obj, { isEdit: false });
+                    this.loader.EbLoader("hide");
+                }
+                this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "speedometer");
+            }
+            else if (eb_type === "ProgressGauge") {
+                if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
+                    let xx = ProgressGaugeWrapper(obj, { isEdit: false });
+                }
+                $(`#${object.EbSid}`).css("max-width", $(`#${object.EbSid}`).height() + 10 + "px");
+                this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "ProgressGauge");
+            }
+        }.bind(this));
+        Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
+        $.each(currentobj.LabelColl.$values, function (i, obj) {
+
+            if (currentobj.HiddenExpr && currentobj.HiddenExpr.Code && currentobj.HiddenExpr.Lang == 0) {
+                try {
+                    let valRes = new Function('Rowdata', `event`, atob(currentobj.HiddenExpr.Code)).bind(currentobj, this.Rowdata)();
+                    if (valRes) {
+                        $(`#${this.CurrentTile}`).hide();
+                        return;
+                    }
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            }
+
+            var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+            this.makeElement(eb_type, obj);
+            this.LabelDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid);
+            let object = this.Procs[this.currentId];
+            let designHtml = this.MakeDashboardLabel(object);
+            $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+            this.labelstyleApply(this.CurrentTile);
+            EbDataLabelFn(obj, this.CurrentTile);
+            if (obj.Object_Selector)
+                $(`[data-id="${this.CurrentTile}"] .label-cont`).off("click").on("click", this.DisplayBlockLink.bind(this))
+            this.TileCollection[t_id].LabelColl.$values[i] = object;
+        }.bind(this));
+        if (currentobj.LinksColl) {
+            $.each(currentobj.LinksColl.$values, function (i, obj) {
+
+                if (currentobj.HiddenExpr && currentobj.HiddenExpr.Code && currentobj.HiddenExpr.Lang == 0) {
+                    try {
+                        let valRes = new Function('Rowdata', `event`, atob(currentobj.HiddenExpr.Code)).bind(currentobj, this.Rowdata)();
+                        if (valRes) {
+                            $(`#${this.CurrentTile}`).hide();
+                            return;
+                        }
+                    }
+                    catch (e) {
+                        console.error(e);
+                    }
+                }
+
+                this.loader.EbLoader("show");
+                var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+                this.makeElement(eb_type, obj);
+                let object = this.Procs[this.currentId];
+                let designHtml = this.MakeLinks(object);
+                $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+                $(`#${this.CurrentTile}`).addClass("eb-tile-link");
+                //$(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");//
+                $(`#${this.CurrentTile} .db-title-parent`).css("display", "none");
+                $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
+                $(`#${tile_id}`).removeClass('ext-linktoform').addClass('ext-linktoform');
+                this.labelstyleApply(this.CurrentTile);
+                LinkStyle(obj, this.CurrentTile, this.TabNum, this.GetFilterValuesForDataSource());
+                this.TileCollection[t_id].LinksColl.$values[i] = object;
+                this.loader.EbLoader("hide");
+                $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
+                //$(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
+            }.bind(this));
+        }
+        if (currentobj.Transparent) {
+            this.labelstyleApply(this.CurrentTile);
+        }
+        this.RedrwFnHelper(this.CurrentTile);
+        this.loader.EbLoader("hide");
+    };
 
 
     this.labelstyleApply = function (tileId) {
@@ -606,6 +613,12 @@
         this.Rowdata[obj.EbSid + "Row"] = null;
         //this.GetFilterValuesForDataSource();
         this.loader.EbLoader("show");
+        this.waitDrawTiles = true;
+        if (!obj.__syncObj) {
+            obj.__syncObj = { sendReqts: 0, receiveReqts: 0 };
+        }
+        obj.__syncObj.sendReqts++;
+
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
@@ -624,6 +637,10 @@
                         }
                     }
                 });
+                obj.__syncObj.receiveReqts++;
+                if (obj.__syncObj.sendReqts == obj.__syncObj.receiveReqts && this.EbObject.__continueDrawTiles) {
+                    this.EbObject.__continueDrawTiles();
+                }
             }.bind(this),
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
@@ -631,6 +648,12 @@
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
                 this.loader.EbLoader("hide");
+
+                obj.__syncObj.receiveReqts++;
+                if (obj.__syncObj.sendReqts == obj.__syncObj.receiveReqts && this.EbObject.__continueDrawTiles) {
+                    this.EbObject.__continueDrawTiles();
+                }
+
             }.bind(this)
         });
     };

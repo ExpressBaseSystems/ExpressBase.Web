@@ -320,7 +320,7 @@
                     $(`#${t_id} .tile-header`).removeClass("tile-header");
 
                     this.waitDrawTiles = false;
-                    this.EbObject.__continueDrawTiles = this.continueDrawTiles.bind(this, currentobj, t_id);
+                    this.EbObject.__continueDrawTiles = this.continueDrawTiles.bind(this, currentobj, t_id, tile_id);
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
                             this.Procs[Cobj.EbSid] = Cobj;
@@ -347,7 +347,7 @@
         }
     };
 
-    this.continueDrawTiles = function (currentobj, t_id) {
+    this.continueDrawTiles = function (currentobj, t_id, tile_id) {
         this.EbObject.__continueDrawTiles = null;
         $.each(currentobj.ControlsColl.$values, function (i, obj) {
             var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];

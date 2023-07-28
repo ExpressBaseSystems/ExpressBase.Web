@@ -338,6 +338,8 @@
             }
             //this.addTilecontext()
             //this.Tilecontext();
+            grid.movable('.grid-stack-item', false);
+            grid.resizable('.grid-stack-item', false);
         }
         else {
             //this.GridStackInit

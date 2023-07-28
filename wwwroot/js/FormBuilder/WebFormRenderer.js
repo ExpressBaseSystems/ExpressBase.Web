@@ -829,7 +829,11 @@ const WebFormRender = function (option) {
                 }
                 setTimeout(function () {
                     //ebcontext.setup.se.onLogOutMsg();
-                    document.location.href = '/Ext/UsrSignIn?Page=False';
+                    //document.location.href = '/Ext/UsrSignIn?Page=False';
+                    if (this.FormObj.AfterSavePage) {
+                        document.location.href = `/pages/${this.FormObj.AfterSavePage}`;
+                        return;
+                    }
                 }, 3000);
                 return;
             }

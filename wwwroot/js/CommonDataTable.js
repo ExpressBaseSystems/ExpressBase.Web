@@ -221,8 +221,12 @@
                 this.FD = true;
                 if (this.isPipped || this.isContextual) {
                     this.placefiltervalues();
-                    if (!this.FilterDialog.FormObj.AutoRun)
+                    if (this.isContextual) {
+                        this.filterValues = this.getFilterValues();
+                    }
+                    if (!this.FilterDialog.FormObj.AutoRun) {
                         this.$submit.trigger("click");
+                    }
                 }
                 else {
                     this.FDCont.show();

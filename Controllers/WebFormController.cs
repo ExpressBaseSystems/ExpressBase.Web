@@ -251,7 +251,8 @@ namespace ExpressBase.Web.Controllers
                         SourceRowId = sRowId,
                         SourceCtrl = sCtrl,
                         CurrentLoc = _locId,
-                        RenderMode = WebFormRenderModes.Normal
+                        RenderMode = WebFormRenderModes.Normal,
+                        IsClone = (int)WebFormModes.Clone_Mode == _mode
                     });
                     resp.FormDataWrap = Resp.FormDataWrap;
                     resp.Mode = ((WebFormModes)_mode).ToString().Replace("_", " ");

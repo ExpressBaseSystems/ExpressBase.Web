@@ -720,8 +720,49 @@ input:checked + .proslider:before {
     height: 27.44px;
 }
 
-/*medial queries for mobile*/
-@media (min-width: 20px) and (max-width: 450px) {
+@media (max-width: 768px) {
+    .language-switcher {
+        display: none !important;
+    }
+
+    .toolb-srchbx-wrpr {
+        display: none !important;
+    }
+
+    .obj_dash_proimage {
+        border-radius: 5px;
+        margin-right: unset;
+    }
+
+    .obj_dash_proname {
+        display: none;
+    }
+
+    #notificaionandprofile {
+        margin: 0;
+        display: inline-block;
+    }
+
+    .obj_icons {
+        display: inline-block;
+    }
+
+    .toolicons .btn {
+        margin: unset;
+        padding: 3px 6px;
+    }
+
+    .objectDashB-toolbar .solution_logo_cont {
+        display: none;
+    }
+
+    .LocInfCr {
+        padding: 0 5px;
+    }
+
+    .EbQuickMoverlaySideWRpr {
+        min-width: unset !important;
+    }
 }
 
 /*medial queries for tablets*/

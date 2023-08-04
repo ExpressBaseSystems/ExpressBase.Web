@@ -70,21 +70,18 @@
                         </div>
                     </div>
                     <div class="LocInfCr" id="switch_finyear" title="Switch Financial Year" style="display:none;">
-                        <div>
-                            <span>
-                                <i class="fa fa-usd" style="font-size: 12px;"></i>
-                                <i class="fa fa-calendar-check-o" style="font-size: 20px;"></i>
-                            </span>
+                        <div style="color: #336699;">
+                            <span>FY</span>
                             <span style="margin-left:5px;" class="fa fa-caret-down"></span>
                         </div>
                     </div>
                 }
             }
 
-            <div class="brd_cr_t EbHeadTitle hidden-xs">
+            <div class="brd_cr_t EbHeadTitle">
                 @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
                 {
-                    <div class="brd_row">
+                    <div class="brd_row hidden-xs">
 
                         @{
                             if (ViewBag.wc == "tc")
@@ -192,5 +189,5 @@
     //$(document).ready(function () {
     if (window.ebcontext.wc === 'uc')
         window.ebcontext.header.insertGlobalSearch();
-        //});
+            //});
 </script>

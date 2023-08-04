@@ -172,6 +172,8 @@ const WebFormRender = function (option) {
                 }
             }.bind(this));
 
+            $Tab.find('.tab-content').css('height', `calc(100vh - 112px - ${$Tab.children('.nav').css('height')})`);
+
         }.bind(this));
     };
 

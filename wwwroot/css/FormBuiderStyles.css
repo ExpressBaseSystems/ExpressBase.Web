@@ -1598,9 +1598,20 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     table-layout: fixed;
 }
 
-.form-render-table-Td {
+[isrendermode="true"] .form-render-table-Td {
     /*width: 100%;*/
     /*vertical-align: top;*/
+    padding: 1px;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    [isrendermode="true"] .form-render-table-Td {
+        width: 100% !important;
+    }
+}
+
+[isrendermode="false"] .form-render-table-Td {
     padding: 1px;
     height: 0px; /*to fix drop issue by preventing auto padding in td*/
 }

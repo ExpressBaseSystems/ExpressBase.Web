@@ -273,11 +273,26 @@ function Eb_Dashboard_Bg(EbObject) {
         $("#layout_div").css("background", EbObject.BackgroundColor);
         $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
         if (EbObject.BackgroundImage) {
+
+            function responsiveDbBgImg(maxWidth) {
+                if (maxWidth.matches) {
+                    $("#layout_div").css("background-image", `unset`);
+                }
+                else {
+                    $("#layout_div").css("background-image", `url("/images/${EbObject.BackgroundImage}.jpg")`);
+                }
+            }
+
             $("#layout_div")
                 .css("background-image", `url("/images/${EbObject.BackgroundImage}.jpg")`)
                 .css("background-size", "100% 100%").css("background-repeat", "no-repeat")
                 .css("background-position-x", "center")
                 .css("background-position-y", "top");
+
+            var maxWidth = window.matchMedia("(max-width: 768px)");
+
+            responsiveDbBgImg(maxWidth);
+            maxWidth.addListener(responsiveDbBgImg);
         }
         else
             $("#layout_div").css("background-image", "");
@@ -344,8 +359,8 @@ function GetUrl4Link(refid, filtervalues) {
             _url = "../ReportRender/Index?refid=" + refid;
         }
         else if (objTypeName === "WebForm") {
-            let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale(): 0;
-            _url = "../WebForm/Index?_r=" + refid + "&_p" + btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))+"&_lo=" + _locale;
+            let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale() : 0;
+            _url = "../WebForm/Index?_r=" + refid + "&_p" + btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))) + "&_lo=" + _locale;
         }
         else if (objTypeName === "DashBoard") {
             _url = "../DashBoard/DashBoardView?refid=" + refid + "&filterValues=" + btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));

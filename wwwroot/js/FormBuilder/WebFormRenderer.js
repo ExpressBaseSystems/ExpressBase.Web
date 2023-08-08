@@ -172,7 +172,10 @@ const WebFormRender = function (option) {
                 }
             }.bind(this));
 
-            $Tab.find('.tab-content').css('height', `calc(100vh - 112px - ${$Tab.children('.nav').css('height')})`);
+            let w = 'unset';
+            if (window.innerWidth > 768)
+                w = `calc(100vh - 112px - ${$Tab.children('.nav').css('height')})`;
+            $Tab.find('.tab-content').css('height', w);
 
         }.bind(this));
     };

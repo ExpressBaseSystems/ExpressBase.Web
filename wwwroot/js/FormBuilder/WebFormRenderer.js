@@ -100,7 +100,7 @@ const WebFormRender = function (option) {
             $Tab.smartWizard({
                 theme: 'arrows',
                 enableUrlHash: false, // Enable selection of the step based on url hash
-                autoAdjustHeight: false,
+                autoAdjustHeight: window.innerWidth <= 768,
                 transition: {
                     animation: 'none', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
                     speed: '200', // Transion animation speed
@@ -153,6 +153,11 @@ const WebFormRender = function (option) {
                 return leave;
             }.bind(this));
 
+            $Tab.off("showStep").on("showStep", function (e, anchorObject, stepIndex, stepDirection, stepPosition) {
+                $Tab.find('.tab-content').scrollTop(0);
+                $Tab.closest('[eb-root-obj-container]').scrollTop(0);
+            });
+
             $Tab.off('click', '.sw-btn-save-draft').on('click', '.sw-btn-save-draft', function (e) {
                 if (this.FormObj.CanSaveAsDraft && this.Mode.isNew) {
                     this.saveAsDraft();
@@ -172,10 +177,14 @@ const WebFormRender = function (option) {
                 }
             }.bind(this));
 
-            let w = 'unset';
-            if (window.innerWidth > 768)
-                w = `calc(100vh - 112px - ${$Tab.children('.nav').css('height')})`;
-            $Tab.find('.tab-content').css('height', w);
+            if (window.innerWidth > 768) {
+                let w = `calc(100vh - 112px - ${$Tab.children('.nav').css('height')})`;
+                $Tab.find('.tab-content').css('height', w);
+            }
+            else {
+                $Tab.find('.tab-content').css('height', 'unset');
+                $Tab.closest('[eb-root-obj-container]').css('padding-bottom', '38px');
+            }
 
         }.bind(this));
     };

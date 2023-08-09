@@ -1433,6 +1433,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     min-height: 30px;
 }
 
+[isrendermode=true] .tdInnerDiv {
+    min-height: 0px;
+}
+
+[isrendermode=true] .tdDropable {
+    min-height: 0px;
+}
+
 .list-ctrl-box {
     display: flex;
     flex-direction: column;

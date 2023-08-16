@@ -183,7 +183,7 @@ const WebFormRender = function (option) {
             }
             else {
                 $Tab.find('.tab-content').css('height', 'unset');
-                $Tab.closest('[eb-root-obj-container]').css('padding-bottom', '38px');
+                $Tab.closest('[eb-root-obj-container]').css('padding-bottom', '62px');
             }
 
         }.bind(this));
@@ -2431,6 +2431,8 @@ const WebFormRender = function (option) {
         }
         else if (reqstMode === "Draft Mode" && this.draftId > 0)
             modeText = "Draft";
+
+        modeText = modeText.replace(' Mode', '');
 
         if (this.renderMode === 2) {//partial
             ebcontext.webform.SetPopupFormTitle(this.FormObj.DisplayName + title_val, modeText, _html);

@@ -78,7 +78,7 @@
                 }
             }
 
-            <div class="brd_cr_t EbHeadTitle hidden-xs">
+            <div class="brd_cr_t EbHeadTitle">
                 @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
                 {
                     <div class="brd_row">
@@ -115,7 +115,24 @@
                 <div class='toolicons form-inline'>
                     <div id="obj_icons" style="display:inline"></div>
                     <div class='form-group' id="notificaionandprofile">
-                        <div class="dropdown obj_dash_proimage_drp">
+                        @{
+                            if (ViewBag.wc == "uc" && Solution.IsMultiLanguageEnabled)
+                            {
+                                <div id="language-switcher-btn" class="btn-select" style="margin-left: -20px;">
+                                    <i class="fa fa-language" aria-hidden="true" style="position: relative; left: 30px; top: 2px; color: #336699; font-size: 18px;"></i>
+                                    <select class="selectpicker" id="language-switcher"></select>
+                                </div>
+                            }
+                            if (ViewBag.wc == "uc")
+                            {
+                                <button class="btn notification_menu" id="eb-expand-nfWindow">
+                                    <i class="fa fa-bell" aria-expanded="false"></i>
+                                    <div class="notification_alert" id="notification-count" style="display:none;"></div>
+                                </button>
+                            }
+                        }
+
+                        <div class="obj_dash_proimage_drp">
                             <div data-toggle="dropdown" class="dropdown-toggle">
                                 <img src="~/images/proimg.jpg" data-src=@DpUrl class="obj_dash_proimage Eb_Image" />
                                 <div class="obj_dash_proname">@ViewBag.UserDisplayName</div>
@@ -157,24 +174,14 @@
                                     {
                                         <li class="drp_item"><a href="../ResetPassword/ResetLink"><i class="fa fa-key" aria-hidden="true"></i>Reset Password</a></li>
                                     }
+                                    @if (ViewBag.wc == "uc")
+                                    {
+                                        <li class="drp_item" id="upro_drp_itm_noti"><a href="#" onclick="$('#eb-expand-nfWindow').click()"><i class="fa fa-bell" aria-hidden="true"></i>Notifications</a></li>                                        
+                                    }
                                     <li class="drp_item"><a onclick="return Leave();" href="@Url.Action("Logout", "Tenantuser")"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                                 </ul>
                             </div>
                         </div>
-                        @{
-                            if (ViewBag.wc == "uc" && Solution.IsMultiLanguageEnabled)
-                            {
-                                <select class="form-control language-switcher" id="language-switcher" style="display:none;">
-                                </select>
-                            }
-                            if (ViewBag.wc == "uc")
-                            {
-                                <button class="btn notification_menu" id="eb-expand-nfWindow">
-                                    <i class="fa fa-bell" aria-expanded="false"></i>
-                                    <div class="notification_alert" id="notification-count" style="display:none;"></div>
-                                </button>
-                            }
-                        }
                         <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                     </div>
                 </div>
@@ -189,5 +196,5 @@
     //$(document).ready(function () {
     if (window.ebcontext.wc === 'uc')
         window.ebcontext.header.insertGlobalSearch();
-            //});
+    //});
 </script>

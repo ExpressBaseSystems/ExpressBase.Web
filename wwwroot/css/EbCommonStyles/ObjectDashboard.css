@@ -219,7 +219,8 @@
     }
 /*profile image and dropdown style*/
 .obj_dash_proimage_drp {
-    float: right;
+    /*float: right;*/
+    display: inline-block;
 }
 
     .obj_dash_proimage_drp .dropdown-menu {
@@ -712,18 +713,16 @@ input:checked + .proslider:before {
         font-size: 11px;
     }
 
-.language-switcher {
-    display: inline-flex;
-    margin: auto;
-    padding: 0px 0px 0px 10px;
-    position: relative;
-    height: 27.44px;
+
+#language-switcher-btn .dropdown-toggle {
+    background: transparent;
 }
 
-@media (max-width: 768px) {
-    .language-switcher {
-        display: none !important;
+    #language-switcher-btn .dropdown-toggle:hover {
+        background-color: #e4e4e430 !important;
     }
+
+@media (max-width: 768px) {
 
     .obj_dash_proimage {
         border-radius: 5px;
@@ -745,7 +744,7 @@ input:checked + .proslider:before {
 
     .toolicons .btn {
         margin: unset;
-        padding: 3px 6px;
+        padding: 3px 4px;
     }
 
     .objectDashB-toolbar .solution_logo_cont {
@@ -753,15 +752,45 @@ input:checked + .proslider:before {
     }
 
     .LocInfCr {
-        padding: 0 5px;
+        display: none !important;
     }
 
     .EbQuickMoverlaySideWRpr {
         min-width: unset !important;
     }
+
+    .brd_cr_t.EbHeadTitle .brd_row {
+        display: none !important;
+    }
+
+    #eb-expand-nfWindow {
+        display: none !important;
+    }
+
+    .Obj_title {
+        max-width: 150px;
+        word-wrap: break-word;
+        white-space: normal;
+        line-height: 1.2;
+    }
+
+    #webformprint-selbtn, #subformprint-selbtn {
+        display: none !important;
+    }
 }
+
 @media (max-width: 1020px) {
     .toolb-srchbx-wrpr {
+        display: none !important;
+    }
+}
+
+@media (min-width: 768px) {
+    #mnuLocSwchBtn {
+        display: none !important;
+    }
+
+    #upro_drp_itm_noti {
         display: none !important;
     }
 }
@@ -1047,7 +1076,7 @@ input:checked + .proslider:before {
     display: inline-flex;
     margin: auto;
     border: solid 1px #8080873b;
-    padding: 0px 0px 0px 10px;
+    padding: 0 0 0 4px;
     border-radius: 4px;
     position: relative;
     height: 27.44px;
@@ -1100,6 +1129,7 @@ input:checked + .proslider:before {
 .toolb-srchbx {
     border: none;
     outline: none !important;
+    width: 100px;
 }
 
 #platformsearch {

@@ -772,6 +772,9 @@ input:checked + .proslider:before {
         word-wrap: break-word;
         white-space: normal;
         line-height: 1.2;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
     }
 
     #webformprint-selbtn, #subformprint-selbtn {

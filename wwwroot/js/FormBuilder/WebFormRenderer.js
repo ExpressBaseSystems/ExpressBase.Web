@@ -1266,7 +1266,7 @@ const WebFormRender = function (option) {
                                     _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
                                     _val = this.FRC.getProcessedValue(ctrl, _val);
                                     if ((_val || '') != (ctrl.getValue() || '')) {
-                                        EbMessage("show", { Message: `Data inconsistency found in grid '${DGB.ctrl.Label || DGB.ctrl.Name}', Column '${ctrl.Title || ctrl.Name}' Row#${idx} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'. Please re-enter Row#${idx}`, AutoHide: false, Background: '#aa0000' });
+                                        EbMessage("show", { Message: `Data inconsistency found in grid '${DGB.ctrl.Label || DGB.ctrl.Name}', Column '${ctrl.Title || ctrl.Name}' Row#${idx} with value '${ctrl.getValue()}' suggested value '${_val}'. Please re-enter Row#${idx}`, AutoHide: false, Background: '#aa0000' });
                                         return false;
                                     }
                                 }
@@ -1309,7 +1309,7 @@ const WebFormRender = function (option) {
                             _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
                             _val = this.FRC.getProcessedValue(ctrl, _val);
                             if ((_val || '') != (ctrl.getValue() || '')) {
-                                EbMessage("show", { Message: `Data inconsistency found - ${ctrl.Label || ctrl.Name} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'`, AutoHide: false, Background: '#aa0000' });
+                                EbMessage("show", { Message: `Data inconsistency found - ${ctrl.Label || ctrl.Name} with value '${ctrl.getValue()}' suggested value '${_val}'`, AutoHide: false, Background: '#aa0000' });
                                 return false;
                             }
                         }

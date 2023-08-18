@@ -1243,43 +1243,23 @@ const WebFormRender = function (option) {
         if (!this.FormObj.CheckDataConsistency)
             return true;
 
-        for (let i = 0; i < this.flatControls.length; i++) {
-            let ctrl = this.flatControls[i];
-            if (ctrl.ValueExpr && ctrl.ValueExpr.Code) {
-                if ((ctrl.Hidden && !(ctrl.HiddenExpr && ctrl.HiddenExpr.Code)) || (ctrl.IsDisable && !(ctrl.DisableExpr && ctrl.DisableExpr.Code))) {
-                    if (ctrl.__initDataValue == undefined || (ctrl.__initDataValue || '') != (ctrl.getValue() || '')) {
-                        let _val = null;
-                        try {
-                            let _FnStr = atob(ctrl.ValueExpr.Code);
-                            _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
-                            _val = this.FRC.getProcessedValue(ctrl, _val);
-                            if ((_val || '') != (ctrl.getValue() || '')) {
-                                EbMessage("show", { Message: `Data inconsistency found - ${ctrl.Label || ctrl.Name} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'`, AutoHide: false, Background: '#aa0000' });
-                                return false;
-                            }
-                        }
-                        catch (e) {
-                            console.error(e);
-                            EbMessage("show", { Message: `Data inconsistency found - Calculation issue: ${ctrl.Label || ctrl.Name} - ${e.message}`, AutoHide: false, Background: '#aa0000' });
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-
         for (let eid in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[eid];
             let idx = 1;
+            let DgChanged = false;
 
             for (let rowId in DGB.objectMODEL) {
                 DGB.setCurRow(rowId);
+                let rowChanged = false;
                 let _ctrls = DGB.objectMODEL[rowId];
                 for (let i = 0; i < _ctrls.length; i++) {
                     let ctrl = _ctrls[i];
+                    if ((ctrl.__initDataValue || '') != (ctrl.getValue() || ''))
+                        rowChanged = true;
                     if (ctrl.ValueExpr && ctrl.ValueExpr.Code) {
                         if ((ctrl.Hidden && !(ctrl.HiddenExpr && ctrl.HiddenExpr.Code)) || (ctrl.IsDisable && !(ctrl.DisableExpr && ctrl.DisableExpr.Code))) {
-                            if (ctrl.__initDataValue == undefined || (ctrl.__initDataValue || '') != (ctrl.getValue() || '')) {
+                            if (ctrl.__initDataValue == undefined || (ctrl.__initDataValue || '') != (ctrl.getValue() || '') || rowChanged) {
+                                DgChanged = true;
                                 let _val = null;
                                 try {
                                     let _FnStr = atob(ctrl.ValueExpr.Code);
@@ -1300,6 +1280,46 @@ const WebFormRender = function (option) {
                     }
                 }
                 idx++;
+            }
+
+            if (DgChanged) {
+                let ctrls = DGB.ctrl.Controls.$values;
+                for (let i = 0; i < ctrls.length; i++) {
+                    let depCtrlsP = ctrls[i].DependedValExp ? ctrls[i].DependedValExp.$values : [];
+                    for (let j = 0; j < depCtrlsP.length; j++) {
+                        if (depCtrlsP[j].split('.').length == 2) {
+                            let ctrl = this.formObject.__getCtrlByPath(depCtrlsP[j]);
+                            if (ctrl == 'not found')
+                                continue;
+                            ctrl.__forceIntegrityCheck = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let ctrl = this.flatControls[i];
+            if (ctrl.ValueExpr && ctrl.ValueExpr.Code) {
+                if ((ctrl.Hidden && !(ctrl.HiddenExpr && ctrl.HiddenExpr.Code)) || (ctrl.IsDisable && !(ctrl.DisableExpr && ctrl.DisableExpr.Code))) {
+                    if (ctrl.__initDataValue == undefined || ctrl.__forceIntegrityCheck || (ctrl.__initDataValue || '') != (ctrl.getValue() || '')) {
+                        let _val = null;
+                        try {
+                            let _FnStr = atob(ctrl.ValueExpr.Code);
+                            _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
+                            _val = this.FRC.getProcessedValue(ctrl, _val);
+                            if ((_val || '') != (ctrl.getValue() || '')) {
+                                EbMessage("show", { Message: `Data inconsistency found - ${ctrl.Label || ctrl.Name} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'`, AutoHide: false, Background: '#aa0000' });
+                                return false;
+                            }
+                        }
+                        catch (e) {
+                            console.error(e);
+                            EbMessage("show", { Message: `Data inconsistency found - Calculation issue: ${ctrl.Label || ctrl.Name} - ${e.message}`, AutoHide: false, Background: '#aa0000' });
+                            return false;
+                        }
+                    }
+                }
             }
         }
 

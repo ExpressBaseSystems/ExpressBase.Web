@@ -1247,20 +1247,22 @@ const WebFormRender = function (option) {
             let ctrl = this.flatControls[i];
             if (ctrl.ValueExpr && ctrl.ValueExpr.Code) {
                 if ((ctrl.Hidden && !(ctrl.HiddenExpr && ctrl.HiddenExpr.Code)) || (ctrl.IsDisable && !(ctrl.DisableExpr && ctrl.DisableExpr.Code))) {
-                    let _val = null;
-                    try {
-                        let _FnStr = atob(ctrl.ValueExpr.Code);
-                        _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
-                        _val = this.FRC.getProcessedValue(ctrl, _val);
-                        if ((_val || '') != (ctrl.getValue() || '')) {
-                            EbMessage("show", { Message: `Data inconsistency found - ${ctrl.Label || ctrl.Name} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'`, AutoHide: false, Background: '#aa0000' });
+                    if (ctrl.__initDataValue == undefined || (ctrl.__initDataValue || '') != (ctrl.getValue() || '')) {
+                        let _val = null;
+                        try {
+                            let _FnStr = atob(ctrl.ValueExpr.Code);
+                            _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
+                            _val = this.FRC.getProcessedValue(ctrl, _val);
+                            if ((_val || '') != (ctrl.getValue() || '')) {
+                                EbMessage("show", { Message: `Data inconsistency found - ${ctrl.Label || ctrl.Name} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'`, AutoHide: false, Background: '#aa0000' });
+                                return false;
+                            }
+                        }
+                        catch (e) {
+                            console.error(e);
+                            EbMessage("show", { Message: `Data inconsistency found - Calculation issue: ${ctrl.Label || ctrl.Name} - ${e.message}`, AutoHide: false, Background: '#aa0000' });
                             return false;
                         }
-                    }
-                    catch (e) {
-                        console.error(e);
-                        EbMessage("show", { Message: `Data inconsistency found - Calculation issue: ${ctrl.Label || ctrl.Name} - ${e.message}`, AutoHide: false, Background: '#aa0000' });
-                        return false;
                     }
                 }
             }
@@ -1277,20 +1279,22 @@ const WebFormRender = function (option) {
                     let ctrl = _ctrls[i];
                     if (ctrl.ValueExpr && ctrl.ValueExpr.Code) {
                         if ((ctrl.Hidden && !(ctrl.HiddenExpr && ctrl.HiddenExpr.Code)) || (ctrl.IsDisable && !(ctrl.DisableExpr && ctrl.DisableExpr.Code))) {
-                            let _val = null;
-                            try {
-                                let _FnStr = atob(ctrl.ValueExpr.Code);
-                                _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
-                                _val = this.FRC.getProcessedValue(ctrl, _val);
-                                if ((_val || '') != (ctrl.getValue() || '')) {
-                                    EbMessage("show", { Message: `Data inconsistency found in grid '${DGB.ctrl.Label || DGB.ctrl.Name}', Column '${ctrl.Title || ctrl.Name}' Row#${idx} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'. Please re-enter Row#${idx}`, AutoHide: false, Background: '#aa0000' });
+                            if (ctrl.__initDataValue == undefined || (ctrl.__initDataValue || '') != (ctrl.getValue() || '')) {
+                                let _val = null;
+                                try {
+                                    let _FnStr = atob(ctrl.ValueExpr.Code);
+                                    _val = new Function("form", "user", "sourcectrl", `event`, _FnStr).bind(ctrl, this.formObject, this.userObject, null)();
+                                    _val = this.FRC.getProcessedValue(ctrl, _val);
+                                    if ((_val || '') != (ctrl.getValue() || '')) {
+                                        EbMessage("show", { Message: `Data inconsistency found in grid '${DGB.ctrl.Label || DGB.ctrl.Name}', Column '${ctrl.Title || ctrl.Name}' Row#${idx} with value '${ctrl.getValue() || ''}' suggested value '${_val || ''}'. Please re-enter Row#${idx}`, AutoHide: false, Background: '#aa0000' });
+                                        return false;
+                                    }
+                                }
+                                catch (e) {
+                                    console.error(e);
+                                    EbMessage("show", { Message: `Data inconsistency found in grid '${DGB.ctrl.Label || DGB.ctrl.Name}', Column '${ctrl.Title || ctrl.Name}' Row#${idx} - Calculation issue - ${e.message}`, AutoHide: false, Background: '#aa0000' });
                                     return false;
                                 }
-                            }
-                            catch (e) {
-                                console.error(e);
-                                EbMessage("show", { Message: `Data inconsistency found in grid '${DGB.ctrl.Label || DGB.ctrl.Name}', Column '${ctrl.Title || ctrl.Name}' Row#${idx} - Calculation issue - ${e.message}`, AutoHide: false, Background: '#aa0000' });
-                                return false;
                             }
                         }
                     }

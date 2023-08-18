@@ -69,6 +69,7 @@
                 let inpCtrl = new EbObjects_w[inpCtrlType](ctrlEbSid, col);// creates object
                 inpCtrl.__isEditing = false;
                 inpCtrl.DataVals = getObjByval(dataRow.Columns, "Name", col.Name);
+                inpCtrl.__initDataValue = inpCtrl.DataVals ? inpCtrl.DataVals.Value : undefined;
                 inpCtrl.curRowDataVals = JSON.parse(JSON.stringify(getObjByval(this.curRowDataMODEL.Columns, "Name", col.Name)));
                 inpCtrl.curRowDataVals = Object.assign(inpCtrl.curRowDataVals, inpCtrl.DataVals);
                 this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowId);
@@ -969,6 +970,7 @@
             let SingleColumn = getObjByval(row.Columns, "Name", inpCtrl.Name);
             if (SingleColumn) {
                 inpCtrl.DataVals = SingleColumn;
+                inpCtrl.__initDataValue = SingleColumn.Value;
                 inpCtrl.curRowDataVals = $.extend(true, {}, SingleColumn);
             }
         }

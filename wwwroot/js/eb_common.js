@@ -1169,6 +1169,7 @@ function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
             let SingleColumn = getObjByval(row.Columns, "Name", ctrlName);
             if (SingleColumn) {
                 obj.DataVals = SingleColumn;
+                obj.__initDataValue = SingleColumn.Value;
                 return;
             }
         }

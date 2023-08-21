@@ -1608,7 +1608,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [isrendermode="true"] .form-render-table-Td {
     /*width: 100%;*/
-    /*vertical-align: top;*/
+    vertical-align: top;
     padding: 1px;
     display: inline-block;
 }

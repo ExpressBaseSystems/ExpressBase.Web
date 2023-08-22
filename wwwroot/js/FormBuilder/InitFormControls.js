@@ -877,8 +877,11 @@
             dropupAuto: false,
         });
 
-        $input.find("select option[value='Hourly']").attr("selected", "selected");
-        $input.find("select").trigger("change");
+        //$input.find("select option[value='Hourly']").attr("selected", "selected");
+        //$input.find("select").trigger("change");
+
+        $input.find("select").selectpicker("val", "Hourly");
+
     };
 
     this.SetDateFromDateTo = function ($input, e) {

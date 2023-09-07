@@ -57,6 +57,7 @@
     this.$Comments = $("#txtComments");
     this.$btnNewPatient = $("#btnNewPatient");
     this.$btnNewHtEvaluation = $("#btnNewHtEvaluation");
+    this.$btnSendSms = $("#btnSendSms");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -252,6 +253,14 @@
                 let url = `../WebForm/Index?_r=hairocraft-hairocraft-0-945-1627-945-1627&_p=${_p}&_m=2&_l=${this.CustomerInfo["eb_loc_id"]}`;
                 window.open(url, '_blank');
             }
+        }.bind(this));
+                
+        this.$btnSendSms.on("click", function () {            
+            let params = [];
+            params.push(new fltr_obj(11, "customers_id", this.AccId));
+            let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+            let url = `../WebForm/Index?_r=hairocraft-hairocraft-0-1026-1708-1026-1708&_p=${_p}&_m=2&_l=${this.CustomerInfo["eb_loc_id"]}`;
+            window.open(url, '_blank');
         }.bind(this));
 
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
@@ -1067,6 +1076,8 @@
             this.$btnNewHtEvaluation.html(this.$btnNewHtEvaluation.html().replace('New HT Evaluation Record', 'View HT Evaluation Record'));
         }
         this.$btnNewHtEvaluation.closest('.col-md-1').show();
+
+        this.$btnSendSms.closest('.col-md-1').show();
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);

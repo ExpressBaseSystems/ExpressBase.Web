@@ -1,4 +1,5 @@
 ﻿@using ExpressBase.Common.Helpers;
+@using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
     string home = string.Empty;
@@ -12,9 +13,9 @@
     }
     if (ViewBag.Env == "Staging")
     {
-        home = "https://eb-test.shop";
-        sociallink = "https://ss.eb-test.shop";
-        signinLink = "https://myaccount.eb-test.shop";
+        home = "https://" + RoutingConstants.STAGEHOST;
+        sociallink = "https://ss." + RoutingConstants.STAGEHOST;
+        signinLink = "https://myaccount." + RoutingConstants.STAGEHOST;
     }
     if (ViewBag.Env == "Production")
     {

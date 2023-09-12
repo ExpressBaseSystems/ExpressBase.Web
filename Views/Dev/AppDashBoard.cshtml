@@ -17,8 +17,8 @@
     }
     if (ViewBag.Env == "Staging")
     {
-        domurl = "https://" + solutionid + ".eb-test.shop";
-        jssrc = "https://" + sol_cid + ".eb-test.shop";
+        domurl = "https://" + solutionid + "." + RoutingConstants.STAGEHOST;
+        jssrc = "https://" + sol_cid + "." + RoutingConstants.STAGEHOST;
     }
     if (ViewBag.Env == "Production")
     {

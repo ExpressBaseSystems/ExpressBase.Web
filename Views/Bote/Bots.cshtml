@@ -1,4 +1,5 @@
 ﻿@using ExpressBase.Common.Helpers;
+@using ExpressBase.Common;
 <!DOCTYPE html>
 <html>
 @{
@@ -184,7 +185,7 @@
                     if (d.ebmod === 'Production')
                         jssrc = "https://"+solutionId+".expressbase.com";
                     else if (d.ebmod === 'Staging')
-                        jssrc = "https://" + solutionId + ".eb-test.shop";
+                        jssrc = "https://" + solutionId + "." + "@RoutingConstants.STAGEHOST";
                     
                     window.EXPRESSbase_SOLUTION_ID ='@ViewBag.SolutionIdExt';
                     window.EXPRESSbase_cid = '@ViewBag.SolutionId';

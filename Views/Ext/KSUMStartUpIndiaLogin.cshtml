@@ -1,9 +1,10 @@
-﻿<head>
+﻿@using ExpressBase.Common;
+<head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script type="text/javascript">
             sih_auth_api_key = "kerala";
-            sih_auth_callback_uri ="https://ksum.eb-test.shop/Ext/StartUpIndiaRedirect";
+        sih_auth_callback_uri = "https://ksum." + "@RoutingConstants.STAGEHOST" + "/Ext/StartUpIndiaRedirect";
     </script>
 
 </head>

@@ -1,4 +1,5 @@
-﻿@using ExpressBase.Objects.ServiceStack_Artifacts
+﻿@using ExpressBase.Common;
+@using ExpressBase.Objects.ServiceStack_Artifacts
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     AppStore appstore = ViewBag.appstore;
@@ -375,7 +376,7 @@
                 Toggle: "#uploadscreenshot",
                 Container: "appstore-scshot",
                 Multiple: true,
-                ServerEventUrl: 'https://se.eb-test.shop',
+                ServerEventUrl: 'https://se.' + '@RoutingConstants.STAGEHOST',
                 EnableTag: false,
                 EnableCrop: true,
                 ResizeViewPort: true,

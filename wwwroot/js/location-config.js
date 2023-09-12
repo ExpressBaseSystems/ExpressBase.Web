@@ -119,7 +119,7 @@
             SolutionId: "",
             Container: container,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.shop',
+            ServerEventUrl: 'https://se.eb-test.fyi',
             EnableTag: false,
             MaxSize: 1,
             EnableCrop: true,

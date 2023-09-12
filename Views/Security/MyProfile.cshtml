@@ -6,6 +6,7 @@
     }
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 
+@using ExpressBase.Common;
     @using Newtonsoft.Json;
 
     var LocsData = Html.Raw(JsonConvert.SerializeObject(ViewBag.LocsData));
@@ -307,7 +308,7 @@
         window.location.href = r;
     });
 
-    //window.location.href = "https://myaccount.eb-test.shop/Security/MyProfile"
+    //window.location.href = "https://myaccount." + "@RoutingConstants.STAGEHOST" + "/Security/MyProfile"
     var myProfileJs = function (UserData, Mode, LocsData) {
         this.mode = Mode;
         this.UserData = UserData;
@@ -525,7 +526,7 @@
         SolutionId: "@ViewBag.SolnId",
         Container: "DisplayPicture",
         Multiple: false,
-        ServerEventUrl: 'https://se.eb-test.shop',
+        ServerEventUrl: 'https://se.' + '@RoutingConstants.STAGEHOST',
         EnableTag: false,
         EnableCrop: true,
         Context: "dp",//if single and crop,

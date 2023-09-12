@@ -53,7 +53,7 @@ namespace ExpressBase.Web2
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder
                      .SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins("https://*.eb-test.shop", "https://*.expressbase.com")
+                    .WithOrigins("https://*.expressbase.com", "https://*." + RoutingConstants.STAGEHOST)
                     .AllowAnyMethod());
             });
 
@@ -211,8 +211,8 @@ namespace ExpressBase.Web2
                 context.Response.Headers.Remove("X-Frame-Options");
                 if (env.IsStaging())
                 {
-                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.eb-test.shop");
-                    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.shop *.eb-test.shop;");
+                    context.Response.Headers.Add("X-Frame-Options", $"ALLOW-FROM SAMEDOMAIN *.{RoutingConstants.STAGEHOST}");
+                    context.Response.Headers.Add("Content-Security-Policy", $"frame-ancestors 'self' {RoutingConstants.STAGEHOST} *.{RoutingConstants.STAGEHOST};");
                 }
                 if (env.IsProduction())
                     context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN");

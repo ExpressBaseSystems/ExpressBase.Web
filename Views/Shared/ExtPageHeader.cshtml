@@ -1,4 +1,5 @@
 ﻿@using ExpressBase.Common.Helpers;
+@using ExpressBase.Common;
 @{
     string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
     if (ViewBag.Env == "Development")
@@ -8,8 +9,8 @@
     }
     if (ViewBag.Env == "Staging")
     {
-        home = "https://eb-test.shop";
-        signinurl = "https://myaccount.eb-test.shop";
+        home = "https://" + RoutingConstants.STAGEHOST;
+        signinurl = "https://myaccount." + RoutingConstants.STAGEHOST;
     }
     if (ViewBag.Env == "Production")
     {

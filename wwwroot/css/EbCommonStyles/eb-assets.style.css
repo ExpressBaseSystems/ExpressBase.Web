@@ -612,7 +612,7 @@
         display: block;
     }
 /*locswitch*/
-.loc_switchModal, .finyear_switchModal {
+.loc_switchModal {
     display: none;
     position: fixed;
     width: 100%;
@@ -632,7 +632,7 @@
     display: flex;
 }
 
-.finyear_switchModal_box {
+/*.finyear_switchModal_box {
     background: white;
     box-shadow: var(--eb-shadow);
     min-width: 40%;
@@ -649,9 +649,9 @@
     justify-content: center;
     align-items: center;
     background-color: #000000b8;
-}
+}*/
 
-.loc_switchModal_box .locs_head, .finyear_switchModal_box .fin_head {
+.loc_switchModal_box .locs_head {
     padding: 5px 20px;
     padding-top: 10px;
     background: #ececec;
@@ -697,7 +697,7 @@
                 color: green;
             }
 
-.loc_switchModal_close, .finyear_switchModal_close {
+.loc_switchModal_close {
     float: right;
     font-size: 28px;
     font-weight: 700;
@@ -711,7 +711,7 @@
     margin-bottom: 10px;
 }
 
-    .loc_switchModal_close:hover, .finyear_switchModal_close:hover {
+    .loc_switchModal_close:hover {
         color: #000;
         text-decoration: none;
         cursor: pointer;
@@ -784,23 +784,23 @@
 
 #eb-location-switch .search-box {
     max-width: 200px;
-    margin-left:auto;
+    margin-left: auto;
 }
 
 #eb-location-switch .locs_bdy::-webkit-scrollbar {
     width: 10px;
 }
 
-    #eb-location-switch .locs_bdy::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
+#eb-location-switch .locs_bdy::-webkit-scrollbar-track {
+    background-color: transparent;
+}
 
-    #eb-location-switch .locs_bdy::-webkit-scrollbar-thumb {
-        background-color: #ececec;
-        border-radius: 100px;
-    }
+#eb-location-switch .locs_bdy::-webkit-scrollbar-thumb {
+    background-color: #ececec;
+    border-radius: 100px;
+}
 
-.finyear_switchModal_box .fin_bdy {
+/*.finyear_switchModal_box .fin_bdy {
     overflow: auto;
     max-height: 50vh;
     overflow-y: auto;
@@ -810,13 +810,13 @@
 
     .finyear_switchModal_box .fin_bdy .table > thead > tr > th {
         border-bottom: none;
-    }
+    }*/
 
-    .loc_switchModal_box .locs_bdy li.active-loc a:first-child {
-        background-color: #e5f5f3;
-    }
+.loc_switchModal_box .locs_bdy li.active-loc a:first-child {
+    background-color: #e5f5f3;
+}
 
-    .finyear_switchModal_box .fin_bdy tr[lock='false']:hover {
+/*.finyear_switchModal_box .fin_bdy tr[lock='false']:hover {
         background-color: #f0f8ff;
         cursor: pointer;
     }
@@ -833,8 +833,11 @@
     .finyear_switchModal_box .fin_bdy table, .finyear_switchModal_box .fin_bdy th {
         text-align: center;
     }
+.finyear_switchModal_box .fin_bdy td {
+    font-size: 12px;
+}*/
 
-.loc_switchModal_box .locs_foot, .finyear_switchModal_box .fin_foot {
+.loc_switchModal_box .locs_foot {
     padding: 7px 20px 7px 10px;
     background: #ececec;
 }
@@ -843,7 +846,7 @@
         padding: 2px 5px;
     }
 
-    .loc_switchModal_box .locs_foot .loc-switchbtn, .finyear_switchModal_box .fin_foot .fin-switchbtn {
+    .loc_switchModal_box .locs_foot .loc-switchbtn {
         letter-spacing: 0.1em;
         font-weight: 500;
         background-color: #508bf9;
@@ -855,7 +858,7 @@
             background: #8a8a8a;
         }
 
-.loc_switchModal_fade, .finyear_switchModal_fade {
+.loc_switchModal_fade {
     display: none;
     position: fixed;
     top: 0;
@@ -1171,7 +1174,7 @@ pd-10 {
         border: 1px solid #ccc;
         flex: 1;
         padding: 5px;
-        overflow-y:auto;
+        overflow-y: auto;
     }
 
     .import_data_mdl_mdlbdy .import_data_cols {

@@ -26,6 +26,9 @@
             if (this.loc_count > 20) {
                 $(".locs_bdy").css('min-height', '70vh');
             }
+            if (this.loc_count == 1) {
+                $(TriggerId).hide();
+            }
             $("#loc_tot_count").text(this.loc_count + " locations");
             this.CurrentLoc = this.getCurrent();
             this.PrevLocation = this.CurrentLoc;
@@ -276,6 +279,7 @@
             let $overlay = $("#eb-location-switch-overlay");
 
             ebcontext.menu.close();
+            ebcontext.finyears.close();
 
             if (!$overlay.is(":visible")) {
                 $("#eb-location-switch-fade").show();
@@ -546,7 +550,8 @@ let LanguagePicker = function (options) {
 
             this.appendDD = function () {
                 for (let i = 0; i < this.languages.length; i++) {
-                    this.$switcherbtn.append(`<option value = "${this.languages[i][1]}" locale ="${this.languages[i][0].match(/\((.*)\)/)[1]}">${this.languages[i][0]}</option>`);
+                    let lcl = this.languages[i][0].match(/\((.*)\)/);
+                    this.$switcherbtn.append(`<option value = "${this.languages[i][1]}" locale ="${lcl[1]}">${this.languages[i][0].replace(lcl[0], '').trim()}</option>`);
                 }
 
                 this.$switcherbtn.on("change", this.language_change.bind(this));
@@ -594,50 +599,84 @@ let FinYearPicker = function (options) {
         this.Tid = options.Tid || null;
         this.Uid = options.Uid || null;
         this.$toggleBtn = $("#switch_finyear");
-        this.storeKey = "Eb_Fy-" + this.Tid + this.Uid;
+        this.storeKey = "Eb_Fy-" + this.Tid + this.Uid;//to store active period id
         this.SELECTORS_FY = [];
         this.SELECTORS_AP = [];
+        this.DATE_CTRLS = [];//[{ctrl: null, formRenderer: null}]
+        this.DtFormat = ebcontext.user.Preference.ShortDatePattern;
 
         this.init = function () {
-            if (this.finyears == null || this.finyears.List == null || this.finyears.List.length <= 0)
+            if (this.finyears == null || this.finyears.List == null)
                 return;
-            this.appendModal();
+            this.setupDom();
             this.$toggleBtn.show();
-
-            this.$toggleBtn.on('click', this.toggleBtnClicked.bind(this));
-            this.$modalClose.on('click', this.closeBtnClicked.bind(this));
-            this.$switchBtn.on('click', this.switchBtnClicked.bind(this));
-            this.$modalTbl.on('click', 'tr[lock="false"][active="false"]', this.clickedOnTr.bind(this));
         };
 
         this.switchBtnClicked = function (e) {
-            store.set(this.storeKey, this.$modalTbl.find(`tr[active='true']`).attr('data-id'));
-            this.closeBtnClicked();
+            let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+            if (opt.length > 0) {
+                let id = parseInt(opt.attr('data-id'));
+                let locked = opt.attr('data-lkd') == 't';
+                let plkd = opt.attr('data-plkd') == 't';
+                if (!locked && !plkd) {
+                    store.set(this.storeKey, id);
+                    this.resetAllDateInputs();
+                    this.close();
+                }
+                else if (!locked && plkd && (this.finyears.IsFyAdmin || this.finyears.IsFyUser)) {
+                    store.set(this.storeKey, id);
+                    this.resetAllDateInputs();
+                    this.close();
+                }
+                else {
+                    EbDialog("show", {
+                        Message: "Can't switch to Locked active period",
+                        Buttons: { "Ok": { Background: "green", Align: "right", FontColor: "white;" } }
+                    });
+                }
+            }
         };
 
-        this.clickedOnTr = function (e) {
-            this.$modalTbl.find('tr[active="true"]').attr('active', 'false');
-            $(e.currentTarget).attr('active', 'true');
-        };
 
         this.toggleBtnClicked = function (e) {
-            this.setActiveInDom();
-            this.resetAllDateInputs();
-            this.$modal.show('fast');
-            this.$fade.show('fast');
+            //this.setActiveInDom();
+            //this.resetAllDateInputs();
+            //this.$modal.show('fast');
+            //this.$fade.show('fast');
+
+            ebcontext.menu.close();
+            ebcontext.locations.close();
+
+            let $overlay = $("#eb-finyear-overlay");
+            if (!$overlay.is(":visible")) {
+                $("#eb-finyear-fade").show();
+                this.drawFyList();
+                $overlay.show('slide', { direction: 'left' }, function () {
+                    //this.locWindowOnOpen();
+                }.bind(this));
+            }
+            else {
+                $("#eb-finyear-fade").hide();
+                $overlay.hide();
+            }
         };
 
-        this.closeBtnClicked = function (e) {
-            this.$modal.hide('fast');
-            this.$fade.hide('fast');
-            this.resetAllDateInputs();
-        };
+        this.close = function () {
+            $("#eb-finyear-fade").hide();
+            $("#eb-finyear-overlay").hide();
+        }.bind(this);
 
         this.setActiveInDom = function () {
-            this.$modalTbl.find('tr[active="true"]').attr('active', 'false');
+            this.$body.find('li.ebfy').removeClass('active');
             let obj = this.getCurrent();
             if (obj) {
-                this.$modalTbl.find(`tr[data-id=${obj.Id}]`).attr('active', 'true');
+                let $li = this.$body.find(`li.ebfy[data-id=${obj.FyId}]`);
+                $li.addClass('active');
+                $li.find(`select.selectpicker`).selectpicker('val', obj.ActStart_disp);
+                this.setBtnVisibility();
+            }
+            else if (this.finyears.IsFyAdmin) {
+                this.$newFyBtn.show();
             }
         };
 
@@ -647,124 +686,596 @@ let FinYearPicker = function (options) {
             let id = store.get(this.storeKey);
             let obj = null;
             if (id) {
-                obj = this.finyears.List.find(e => e.Id == id);
+                obj = this.getActivePeriodById(id);
             }
             if (!obj) {
                 store.set(this.storeKey, this.finyears.Current);
-                obj = this.finyears.List.find(e => e.Id == this.finyears.Current);
+                obj = this.getActivePeriodById(this.finyears.Current);
+            }
+            return obj;
+        };
+
+        this.getActivePeriodById = function (id) {
+            let obj = null;
+            for (let i = 0; i < this.finyears.List.length; i++) {
+                let fy = this.finyears.List[i];
+                obj = fy.List.find(e => e.Id == id);
+                if (obj)
+                    break;
+            }
+            return obj;
+        };
+
+        this.getActivePeriodByDate = function (date) {
+            let _date = moment(date, 'YYYY-MM-DD');
+            let obj = null;
+            for (let i = 0; i < this.finyears.List.length; i++) {
+                let fy = this.finyears.List[i];
+                for (let j = 0; j < fy.List.length; j++) {
+                    let startDt = moment(fy.List[j].ActStart_s, this.DtFormat);
+                    let endDt = moment(fy.List[j].ActEnd_s, this.DtFormat);
+                    if (startDt <= _date && endDt >= _date) {
+                        obj = fy.List[j];
+                        break;
+                    }
+                }
+                if (obj)
+                    break;
             }
             return obj;
         };
 
         this.resetAllDateInputs = function () {
-            for (let i = 0; i < this.SELECTORS_AP.length; i++) {
-                this.setFinacialYear(this.SELECTORS_AP[i], true);
-            }
-            for (let i = 0; i < this.SELECTORS_FY.length; i++) {
-                this.setFinacialYear(this.SELECTORS_FY[i], false);
+            for (let i = 0; i < this.DATE_CTRLS.length; i++) {
+                this.setFinacialYear(this.DATE_CTRLS[i]);
             }
         };
 
+        //EXTERNAL fn - wenformrender
+        this.canSwitchToEditMode = function (MultiRenderCxt) {
+            let locId = ebcontext.locations.CurrentLocObj.LocId;
+            for (let i = 0; i < this.DATE_CTRLS.length; i++) {
+                let o = this.DATE_CTRLS[i];
+                if (o.formRenderer.__MultiRenderCxt == MultiRenderCxt) {
+                    let fp = this.getActivePeriodByDate(o.ctrl.getValue());
+                    if (!fp || fp.LockedIds.includes(locId) || (fp.PartiallyLockedIds.includes(locId) && !(this.finyears.IsFyAdmin || this.finyears.IsFyUser))) {
+                        let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s}` : '';
+                        EbMessage("show", { Message: `Edit is blocked - Financial Period ${period} is locked`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                        return false;
+                    }
+                }
+            }
+            return true;
+        };
+
         //EXTERNAL fn - initformctrls
-        this.setFinacialYear = function (selector, isActivePeriod = false) {
-            let obj = this.getCurrent();
-            if (!obj) return;
-            if (isActivePeriod) {
-                if (!this.SELECTORS_AP.includes(selector))
-                    this.SELECTORS_AP.push(selector);
+        this.setFinacialYear = function (opts) {
 
-                $(selector).datetimepicker({
-                    minDate: obj.ActStart_s,
-                    maxDate: obj.ActEnd_s,
-                });
+            if (opts.ctrl.RestrictionRule != 1 && opts.ctrl.RestrictionRule != 2)
+                return;
+
+            let fpObj = this.getCurrent();
+            if (!fpObj) return;
+
+            let objIdx = this.DATE_CTRLS.findIndex(o => o.ctrl.EbSid_CtxId == opts.ctrl.EbSid_CtxId);
+            if (objIdx >= 0) {
+                if (this.DATE_CTRLS[objIdx].formRenderer.__MultiRenderCxt != opts.formRenderer.__MultiRenderCxt) {
+                    this.DATE_CTRLS.splice(objIdx, 1);
+                    this.DATE_CTRLS.push(opts);
+                }
             }
             else {
-                if (!this.SELECTORS_FY.includes(selector))
-                    this.SELECTORS_FY.push(selector);
-
-                $(selector).datetimepicker({
-                    minDate: obj.FyStart_s,
-                    maxDate: obj.FyEnd_s,
-                });
+                this.DATE_CTRLS.push(opts);
             }
+
+            //$('#' + opts.ctrl.EbSid_CtxId).datetimepicker({
+            //    minDate: fpObj.ActStart_s,
+            //    maxDate: fpObj.ActEnd_s
+            //});
+
         }.bind(this);
 
         //EXTERNAL fn - frc
-        this.checkDate = function (dateIn_s, isActivePeriod = false) {
+        this.getWarningMessage = function (dateIn_s) {
+            let fp = this.getActivePeriodByDate(dateIn_s);
+            let locId = ebcontext.locations.CurrentLocObj.LocId;
+            if (!fp || fp.LockedIds.includes(locId) || (fp.PartiallyLockedIds.includes(locId) && !(this.finyears.IsFyAdmin || this.finyears.IsFyUser))) {
+                let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s}` : '';
+                EbMessage("show", { Message: `Financial Period ${period} is locked`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                return 'Locked date';
+            }
+            return null;
+        }.bind(this);
+
+        //EXTERNAL fn - frc
+        this.getWarningMessage = function (dateIn_s) {
             let obj = this.getCurrent();
-            if (!obj || !dateIn_s) return true;
+            if (!obj || !dateIn_s)
+                return null;
             let startDt, endDt, date;
-            if (isActivePeriod) {
-                startDt = moment(obj.ActStart_s, ebcontext.user.Preference.ShortDatePattern);
-                endDt = moment(obj.ActEnd_s, ebcontext.user.Preference.ShortDatePattern);
+
+            startDt = moment(obj.ActStart_s, this.DtFormat);
+            endDt = moment(obj.ActEnd_s, this.DtFormat);
+
+            date = moment(dateIn_s, 'YYYY-MM-DD');
+            if (startDt <= date && endDt >= date) {
+                return null;
             }
             else {
-                startDt = moment(obj.FyStart_s, ebcontext.user.Preference.ShortDatePattern);
-                endDt = moment(obj.FyEnd_s, ebcontext.user.Preference.ShortDatePattern);
+                let fp = this.getActivePeriodByDate(dateIn_s);
+                let locId = ebcontext.locations.CurrentLocObj.LocId;
+                if (!fp || fp.LockedIds.includes(locId) || (fp.PartiallyLockedIds.includes(locId) && !(this.finyears.IsFyAdmin || this.finyears.IsFyUser))) {
+                    let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s}` : '';
+                    EbMessage("show", { Message: `Financial Period ${period} is locked`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                    return 'Locked date';
+                }
+                else {
+                    EbDialog("show",
+                        {
+                            Message: `Entered date (${date.format(this.DtFormat)}) is not inside current active period! Click Ok to switch active period.`,
+                            Buttons: {
+                                "Ok": { Background: "blue", Align: "right", FontColor: "white;" },
+                                "Cancel": { Background: "green", Align: "left", FontColor: "white;" }
+                            },
+                            CallBack: function (fp, name) {
+                                if (name == "Ok") {
+                                    store.set(this.storeKey, parseInt(fp.Id));
+                                    EbMessage("show", { Message: `Current active period is switched to ${fp.ActStart_disp}. Please try again to save the form.`, AutoHide: true, Background: '#0000aa', Delay: 4000 });
+                                }
+                            }.bind(this, fp)
+                        });
+                    return 'Active period mismatch';
+                }
             }
-            date = moment(dateIn_s, 'YYYY-MM-DD');
-            if (startDt <= date && endDt >= date)
-                return true;
 
-            return false;
+            return null;
         }.bind(this);
 
-        //EXTERNAL fn - frc
-        this.getDateRangeToDisplay = function (isActivePeriod = false) {
-            let obj = this.getCurrent();
-            if (!obj) return true;
-            if (isActivePeriod)
-                return obj.ActStart_s + ' and ' + obj.ActEnd_s;
-            else
-                return obj.FyStart_s + ' and ' + obj.FyEnd_s;
-        }.bind(this);
+        this.setupDom = function () {
+            let hhhtml = `
+<div class="EbMsideBaroverlay_fade" id="eb-finyear-fade"></div>
+<div class="EbQuickMoverlaySideWRpr" id="eb-finyear-overlay" style="min-width:500px;">
+    <div class="EbQuickMoverlaySideWRpr-inner">
+        <div class="header" id="eb-finyear-head" style="height:41px;">
+            <h5 style="margin:0;margin-left:10px;">Financial Years</h5>
+            <button class="btn c_btn" title="Close" id="eb-finyear-close" style="right:5px; position:absolute;">
+                <i class="material-icons">close</i>
+            </button>
+        </div>
+        <div class="InnerBlock finyearModal_outer">
+            <div class="h-100 w-100" style="padding-top:10px;">
+                <div id="eb-finyear-body" class="h-100" style="overflow-y:auto;padding-right:10px;">
 
-        this.appendModal = function () {
-            $('body').prepend(`<div id="finyear_switch_warp">
-                                    <div class="finyear_switchModal_fade" id="finyear_modal_fade"></div>
-                                    <div class="finyear_switchModal" id="finyear_modal">
-                                        <div class="finyear_switchModal_outer">
-                                            <div class="finyear_switchModal_box">
-                                                <div class="fin_head">
-                                                    <button type="button" id="finyear_modal_close" class="finyear_switchModal_close">&times;</button>                    
-                                                    <h5 style="color:#333;">Switch Financial Years</h5>
-                                                </div>
-                                                <div class="fin_bdy"></div>
-                                                <div class="fin_foot">
-                                                    <button class="btn btn-sm fin-switchbtn pull-right" id="setfinyear">Switch</button>
-                                                </div>
-                                            </div>
-                                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="FooterBlock" style="padding: 0 10px;">
+            <div class="footer-buttons w-100">
+                <button class="footer-btn" id="eb-finyear-new-fy" style="display:none;">Create FY</button>
+                <button class="footer-btn" id="eb-finyear-edit-fy" style="display:none;">Edit FY</button>
+                <button class="footer-btn" id="eb-finyear-lock-fy" style="display:none;">Lock FY</button>
+                <button class="footer-btn" id="eb-finyear-lock-fp" style="display:none;">Lock Period</button>
+                <button class="footer-btn" id="eb-finyear-plock-fp" style="display:none;">Partial Lock Period</button>
+                <button class="footer-btn" id="eb-finyear-sw-btn">Switch</button>
+            </div>
+        </div>
+    </div>
+</div>`;
+
+            $('#eb-finyear-switch').html(hhhtml);
+
+            this.$overlay = $("#eb-finyear-overlay");
+            this.$fade = $("#eb-finyear-fade");
+            this.$closeBtn = $("#eb-finyear-close,#eb-finyear-fade");
+            this.$head = $("#eb-finyear-head");
+            this.$body = $("#eb-finyear-body");
+
+            this.$newFyBtn = $("#eb-finyear-new-fy");
+            this.$editFyBtn = $("#eb-finyear-edit-fy");
+            this.$lockFyBtn = $("#eb-finyear-lock-fy");
+            this.$lockFpBtn = $("#eb-finyear-lock-fp");
+            this.$plockFpBtn = $("#eb-finyear-plock-fp");
+            this.$switchBtn = $("#eb-finyear-sw-btn");
+
+            this.$toggleBtn.off('click').on('click', this.toggleBtnClicked.bind(this));
+            this.$closeBtn.off('click').on('click', this.toggleBtnClicked.bind(this));
+            this.$body.off('click', 'li').on('click', 'li', this.liClicked.bind(this));
+            this.$switchBtn.off('click').on('click', this.switchBtnClicked.bind(this));
+            this.$newFyBtn.off('click').on('click', this.newFyBtnClicked.bind(this));
+            this.$editFyBtn.off('click').on('click', this.editFyBtnClicked.bind(this));
+            this.$lockFyBtn.off('click').on('click', this.lockFyBtnClicked.bind(this));
+            this.$lockFpBtn.off('click').on('click', this.lockFpBtnClicked.bind(this));
+            this.$plockFpBtn.off('click').on('click', this.plockFpBtnClicked.bind(this));
+        };
+
+        this.newFyBtnClicked = function () {
+            this.appendCreateFyHtml();
+            this.setNewFinancialYearStart();
+            this.showNewFyMdl();
+        };
+
+        this.editFyBtnClicked = function () {
+            this.appendCreateFyHtml();
+            this.setEditFinancialYearStart();
+            this.showNewFyMdl();
+        };
+
+        this.appendCreateFyHtml = function () {
+            if ($("#create_fy_mdl_warp").length == 0) {
+                $('body').prepend(`
+<div id="create_fy_mdl_warp">
+    <div class="create_fy_mdl_fade" id="create_fy_mdl_fade"></div>
+    <div class="create_fy_modal" id="create_fy_modal">
+        <div class="create_fy_mdl_outer">
+            <div class="create_fy_mdl_box">
+                <div class="create_fy_mdl_head">
+                    <button type="button" id="create_fy_mdl_close" class="create_fy_mdl_close">&times;</button>                    
+                    <h5 style="color:#333;">Create New Financial Year</h5>
+                </div>
+                <div class="create_fy_mdl_bdy">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div style='text-align: center'><i>Financial Year</i></div>
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <div class="input-group">
+                                    <input id="create_fy_mdl_stDate" type="text" class="form-control" autocomplete="off">
+                                    <span class="input-group-addon" onclick="$('#create_fy_mdl_stDate').focusin();"><i class="fa fa-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>End Date</label>
+                                <div class="input-group">
+                                    <input id="create_fy_mdl_enDate" type="text" class="form-control" autocomplete="off" disabled>
+                                    <span class="input-group-addon" onclick="$('#create_fy_mdl_enDate').focusin();"><i class="fa fa-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div style='text-align: center'><i>Active Periods</i></div>
+                            <div>Periodicity:</div>
+                            <div class="row" style="padding: 5px 0px;">
+                                <div class="create_fy_mdl_rad-div">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad1" name="create_fy_mdl_optrad" value="Yearly" checked>
+                                        <label class="form-check-label" for="create_fy_mdl_rad1">Yearly</label>
                                     </div>
-                                </div>`);
-            this.$modal = $("#finyear_modal");
-            this.$fade = $("#finyear_modal_fade");
-            this.$modalClose = $("#finyear_modal_close");
-            this.$modalbody = $("#finyear_modal .fin_bdy");
-            this.$switchBtn = $("#setfinyear");
+                                </div>
+                                <div class="create_fy_mdl_rad-div">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad2" name="create_fy_mdl_optrad" value="Half Yearly">
+                                        <label class="form-check-label" for="create_fy_mdl_rad2">Half Yearly</label>
+                                    </div>
+                                </div>
+                                <div class="create_fy_mdl_rad-div">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad3" name="create_fy_mdl_optrad" value="Quarterly">
+                                        <label class="form-check-label" for="create_fy_mdl_rad3">Quarterly</label>
+                                    </div>
+                                </div>
+                                <div class="create_fy_mdl_rad-div">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad4" name="create_fy_mdl_optrad" value="Monthly">
+                                        <label class="form-check-label" for="create_fy_mdl_rad4">Monthly</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="create_fy_mdl_prds">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="create_fy_mdl_foot">
+                    <button class="btn btn-sm create_fy_mdl_btn pull-right" id="create_fy_mdl_btn">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`);
 
-            let tableHtm = `<table class='table'>
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Year Start</th>
-                                        <th>Year End</th>
-                                        <th>Active Period</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
+                this.$new_fy_mdl = $("#create_fy_modal");
+                this.$new_fy_fade = $("#create_fy_mdl_fade");
+                this.$new_fy_head = $("#create_fy_modal .create_fy_mdl_head");
+                this.$new_fy_close_btn = $("#create_fy_mdl_close");
+                this.$new_fy_create_btn = $("#create_fy_mdl_btn");
+                this.$new_fy_startDate = $("#create_fy_mdl_stDate");
+                this.$new_fy_endDate = $("#create_fy_mdl_enDate");
+
+                this.$new_fy_close_btn.off("click").on("click", this.hideNewFyMdl.bind(this));
+                this.$new_fy_create_btn.off("click").on("click", this.createNewFy.bind(this));
+                this.$new_fy_startDate.off("change").on("change", this.newFyStartDateChanged.bind(this));
+                $('input[type=radio][name=create_fy_mdl_optrad]').off("change").on("change", this.frequencyBtnChanged.bind(this));
+            }
+        };
+
+        this.frequencyBtnChanged = function (e) {
+            let val = $('input[type=radio][name=create_fy_mdl_optrad]:checked').val();
+            let freq = 12;
+            if (val == "Half Yearly")
+                freq = 6;
+            else if (val == "Quarterly")
+                freq = 3;
+            else if (val == "Monthly")
+                freq = 1;
+            this.showNewActivePeriods(freq);
+        };
+
+        this.showNewActivePeriods = function (freq) {
+            let fyEnd = moment(this.$new_fy_endDate.val(), this.DtFormat);
+            let nwFpStart = moment(this.$new_fy_startDate.val(), this.DtFormat);
+            let nwFpEnd = nwFpStart.clone().add(freq, 'months').add(-1, 'days');
+            let _html = '';
+            let cnt = 1;
+            while (nwFpEnd <= fyEnd) {
+                _html += `<div>${cnt++}. ${nwFpStart.format(this.DtFormat)} to ${nwFpEnd.format(this.DtFormat)} </div>`;
+                nwFpStart = nwFpEnd.add(1, 'days');
+                nwFpEnd = nwFpStart.clone().add(freq, 'months').add(-1, 'days');
+            }
+
+            $("#create_fy_mdl_prds").html(_html);
+        };
+
+        this.newFyStartDateChanged = function () {
+            let stDate = moment(this.$new_fy_startDate.val(), this.DtFormat);
+            stDate = stDate.add(1, 'years').add(-1, 'days');
+            this.$new_fy_endDate.val(stDate.format(this.DtFormat));
+            this.frequencyBtnChanged();
+        };
+
+        this.setEditFinancialYearStart = function () {
+            let fyId = this.$body.find(`li.ebfy.active`).attr(`data-id`);
+            this.$new_fy_head.data('data-id', fyId);
+            this.$new_fy_head.find('h5').text('Edit Financial Year');
+            this.$new_fy_create_btn.text('Update');
+            let _date = null;
+            for (let i = 0; i < this.finyears.List.length; i++) {
+                if (this.finyears.List[i].Id == fyId) {
+                    _date = this.finyears.List[i].FyStart_s;
+                    break;
+                }
+            }
+            if (_date != null) {
+                this.$new_fy_startDate.val(_date);
+                this.$new_fy_startDate.prop("disabled", true);
+                this.newFyStartDateChanged();
+                this.frequencyBtnChanged();
+            }
+        };
+
+        this.setNewFinancialYearStart = function () {
+            this.$new_fy_head.data('data-id', '0');
+            this.$new_fy_head.find('h5').text('Create New Financial Year');
+            this.$new_fy_create_btn.text('Create');
+            let _date = moment().startOf('year');
+            let f = false;
+            for (let i = 0; i < this.finyears.List.length; i++) {
+                let endDt = moment(this.finyears.List[i].FyEnd_s, this.DtFormat);
+                if (endDt > _date) {
+                    _date = endDt.add(1, 'days');
+                    f = true;
+                }
+            }
+            this.$new_fy_startDate.val(_date.format(this.DtFormat));
+            this.newFyStartDateChanged();
+            if (!f) {
+                this.$new_fy_startDate.datetimepicker({
+                    datepicker: true,
+                    timepicker: false,
+                    formatDate: this.DtFormat,
+                    format: this.DtFormat
+                });
+                this.$new_fy_startDate.prop("disabled", false);
+            }
+            else {
+                this.$new_fy_startDate.prop("disabled", true);
+            }
+            this.frequencyBtnChanged();
+        };
+
+        this.showNewFyMdl = function () {
+            this.$new_fy_mdl.show("fast");
+            this.$new_fy_fade.show("fast");
+        };
+
+        this.hideNewFyMdl = function () {
+            this.$new_fy_mdl.hide("fast");
+            this.$new_fy_fade.hide("fast");
+        };
+
+        this.createNewFy = function () {
+            let _duration = $('input[type=radio][name=create_fy_mdl_optrad]:checked').val();
+            let _start = moment(this.$new_fy_startDate.val(), this.DtFormat).format('YYYY-MM-DD');
+            this.hideNewFyMdl();
+            $("#eb_common_loader").EbLoader("show");
+            $.ajax({
+                type: "POST",
+                url: "/TenantUser/CreateEditNewFy",
+                data: {
+                    id: this.$new_fy_head.data('data-id'),
+                    duration: _duration,
+                    start: _start
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                }.bind(this),
+                success: function (resp) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    let obj = JSON.parse(resp);
+                    if (obj.Status == 200) {
+                        this.finyears = obj.RespObject;
+                        this.drawFyList();
+                        EbMessage("show", { Message: obj.Message, AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                    }
+                    else {
+                        EbMessage("show", { Message: obj.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                    }
+                }.bind(this)
+            });
+        };
+
+        this.lockFyBtnClicked = function () {
+
+        };
+
+        this.lockFpBtnClicked = function () {
+            let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+            EbDialog("show",
+                {
+                    Message: `Do you want to ${(opt.attr('data-lkd') == 't' ? 'Unlock' : 'Lock')} for All Locations or Current Location?`,
+                    Buttons: {
+                        "All Locations": { Background: "blue", Align: "left", FontColor: "white;" },
+                        "Current Location": { Background: "green", Align: "right", FontColor: "white;" }
+                    },
+                    CallBack: function (name) {
+                        if (name == "All Locations" || name == "Current Location") {
+                            let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+                            let action = opt.attr('data-lkd') == 't' ? 'unlock' : 'lock';
+                            this.LockUnlockFy(name, action, opt);
+                        }
+                    }.bind(this)
+                });
+        };
+
+        this.plockFpBtnClicked = function () {
+            let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+            if (opt.attr('data-lkd') == 't') {
+                EbMessage("show", { Message: "Unlock the selected active period to continue", AutoHide: true, Background: '#aa0000', Delay: 4000 });
+            }
+            EbDialog("show",
+                {
+                    Message: `Do you want to ${(opt.attr('data-plkd') == 't' ? 'Partial Unlock' : 'Partial Lock')} for All Locations or Current Location?`,
+                    Buttons: {
+                        "All Locations": { Background: "blue", Align: "left", FontColor: "white;" },
+                        "Current Location": { Background: "green", Align: "right", FontColor: "white;" }
+                    },
+                    CallBack: function (name) {
+                        if (name == "All Locations" || name == "Current Location") {
+                            let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+                            let action = opt.attr('data-plkd') == 't' ? 'partial_unlock' : 'partial_lock';
+                            this.LockUnlockFy(name, action, opt);
+                        }
+                    }.bind(this)
+                });
+        };
+
+        this.LockUnlockFy = function (name, action, opt) {
+            $("#eb_common_loader").EbLoader("show");
+            $.ajax({
+                type: "POST",
+                url: "/TenantUser/LockUnlockFy",
+                data: {
+                    req:
+                        JSON.stringify({
+                            FpIdList: [parseInt(opt.attr('data-id'))],
+                            CurrentLoc: (name == "All Locations" ? -1 : ebcontext.locations.CurrentLocObj.LocId),
+                            Action: action
+                        })
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                }.bind(this),
+                success: function (resp) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    let obj = JSON.parse(resp);
+                    if (obj.Status == 200) {
+                        this.finyears = obj.RespObject;
+                        this.drawFyList();
+                        EbMessage("show", { Message: obj.Message, AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                    }
+                    else {
+                        EbMessage("show", { Message: obj.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                    }
+                }.bind(this)
+            });
+        };
+
+        this.setBtnVisibility = function () {
+            this.$newFyBtn.hide();
+            this.$editFyBtn.hide();
+            this.$lockFyBtn.hide();
+            this.$lockFpBtn.hide();
+            this.$plockFpBtn.hide();
+
+            if (this.finyears.IsFyAdmin) {
+                this.$newFyBtn.show();
+                this.$editFyBtn.show();
+                let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+                if (opt.length == 1) {
+                    let locked = opt.attr('data-lkd') == 't';
+                    let plkd = opt.attr('data-plkd') == 't';
+                    this.$lockFpBtn.show();
+                    if (locked) {
+                        this.$lockFpBtn.text('Unlock Period');
+                    }
+                    else {
+                        this.$lockFpBtn.text('Lock Period');
+                        this.$plockFpBtn.show();
+                        if (plkd) {
+                            this.$plockFpBtn.text('Partial Unlock Period');
+                        }
+                        else {
+                            this.$plockFpBtn.text('Partial Lock Period');
+                        }
+                    }
+
+                    let lkdOpt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option[data-lkd=f]`);
+                    if (lkdOpt.length > 0) {
+                        //this.$lockFyBtn.show();
+                    }
+                }
+            }
+        };
+
+        this.drawFyList = function () {
+            let curLocObj = ebcontext.locations.CurrentLocObj;
+
+            this.$head.find('h5').text('Financial Years - ' + curLocObj.ShortName);
+
+            let _html = `<div style='display: flex; justify-content: space-around;'>
+                            <span><i>Financial Year</i></span>
+                            <span><i>Active Period</i></span>
+                         </div><ul class='ebfy'>`;
+
             for (let i = 0; i < this.finyears.List.length; i++) {
                 let fy = this.finyears.List[i];
-                tableHtm += `<tr data-id='${fy.Id}' lock='${(fy.Locked && !this.finyears.SysUser) ? "true" : "false"}' active='false'>
-                                <td style="text-align: left;"><i class="fa fa-globe" title='Global location'></i> ${fy.Locked ? '<i class="fa fa-lock" title="Locked"></i>' : ''}</td>
-                                <td>${fy.FyStart_sl}</td>
-                                <td>${fy.FyEnd_sl}</td>
-                                <td>(${fy.ActStart_sl} &nbsp <i>to</i> &nbsp ${fy.ActEnd_sl})</td>
-                            </tr>`;
+                _html += `<li class='ebfy' data-id='${fy.Id}'>                            
+                            <span>${fy.FyStart_sl} to ${fy.FyEnd_sl}</span>
+                            <span>
+                                <select class='selectpicker'>`;
+
+                for (let j = 0; j < fy.List.length; j++) {
+                    let fp = fy.List[j];
+                    let lkd = fp.LockedIds.includes(curLocObj.LocId) ? 't' : 'f';
+                    let plkd = fp.PartiallyLockedIds.includes(curLocObj.LocId) ? 't' : 'f';
+                    let lockicon = lkd == 't' ? "<i class='fa fa-lock'></i>" : (plkd == 't' ? "<i class='fa fa-unlock-alt'></i>" : "<i class='fa fa-tint'></i>");
+                    _html += `<option data-id='${fp.Id}' data-lkd='${lkd}' data-plkd='${plkd}' data-content="${lockicon} ${fp.ActStart_disp}">${fp.ActStart_disp}</option>`;
+                }
+                _html += `</select>
+                            </span>
+                        </li>`;
             }
-            tableHtm += `</tbody></table>`;
-            this.$modalbody.html(tableHtm);
-            this.$modalTbl = this.$modalbody.find('table');
+            _html += `</ul>`;
+            this.$body.html(_html);
+            this.$body.find('select.selectpicker').selectpicker();
+            this.setActiveInDom();
+        };
+
+        this.liClicked = function (e) {
+            if (!$(e.currentTarget).hasClass('active')) {
+                this.$body.find('li').removeClass('active');
+                $(e.currentTarget).addClass('active');
+            }
+            let $opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+            if ($opt.length > 0) {
+                let fpId = parseInt($opt.attr('data-id'));
+                if (this.lastSelectedFpId != fpId) {
+                    this.lastSelectedFpId = fpId;
+                    this.setBtnVisibility();
+                }
+            }
         };
 
         this.init();

@@ -360,14 +360,41 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     fy.FyStart_s = fy.FyStart.ToString(s, CultureInfo.InvariantCulture);
                     fy.FyEnd_s = fy.FyEnd.ToString(s, CultureInfo.InvariantCulture);
-                    fy.ActStart_s = fy.ActStart.ToString(s, CultureInfo.InvariantCulture);
-                    fy.ActEnd_s = fy.ActEnd.ToString(s, CultureInfo.InvariantCulture);
-                    fy.FyStart_sl = fy.FyStart.ToString(sl, CultureInfo.InvariantCulture);
-                    fy.FyEnd_sl = fy.FyEnd.ToString(sl, CultureInfo.InvariantCulture);
-                    fy.ActStart_sl = fy.ActStart.ToString(sl, CultureInfo.InvariantCulture);
-                    fy.ActEnd_sl = fy.ActEnd.ToString(sl, CultureInfo.InvariantCulture);
+                    fy.FyStart_sl = fy.FyStart.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
+                    fy.FyEnd_sl = fy.FyEnd.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
+                    foreach (EbFinancialPeriod fp in fy.List)
+                    {
+                        fp.ActStart_s = fp.ActStart.ToString(s, CultureInfo.InvariantCulture);
+                        fp.ActEnd_s = fp.ActEnd.ToString(s, CultureInfo.InvariantCulture);
+                        fp.ActStart_disp = fp.ActStart.ToString("MMMM yyyy", CultureInfo.InvariantCulture);
+                        //fp.ActStart_sl = fp.ActStart.ToString(sl, CultureInfo.InvariantCulture);
+                        //fp.ActEnd_sl = fp.ActEnd.ToString(sl, CultureInfo.InvariantCulture);
+
+                        if (fys.Current == 0)
+                        {
+                            if (DateTime.UtcNow >= fp.ActStart && DateTime.UtcNow <= fp.ActEnd)
+                                fys.Current = fp.Id;
+                        }
+                    }
+                    if (fy.List.Count == 1)
+                    {
+                        fy.List[0].ActStart_disp = "Year " + fy.List[0].ActStart.ToString("yyyy", CultureInfo.InvariantCulture);
+                    }
+                    else if (fy.List.Count == 2)
+                    {
+                        fy.List[0].ActStart_disp = "First Half";
+                        fy.List[1].ActStart_disp = "Second Half";
+                    }
+                    else if (fy.List.Count == 4)
+                    {
+                        fy.List[0].ActStart_disp = "Quarter 1";
+                        fy.List[1].ActStart_disp = "Quarter 2";
+                        fy.List[2].ActStart_disp = "Quarter 3";
+                        fy.List[3].ActStart_disp = "Quarter 4";
+                    }
                 }
-                fys.SysUser = user.RoleIds.Exists(e => e < 100);
+                fys.IsFyAdmin = user.RoleIds.Exists(e => e == (int)SystemRoles.FinancialYearAdmin || e == (int)SystemRoles.SolutionOwner);
+                fys.IsFyUser = user.RoleIds.Exists(e => e == (int)SystemRoles.FinancialYearUser);
             }
             return fys;
         }

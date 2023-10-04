@@ -257,10 +257,10 @@
                     mask: true
                 });
                 //$input.val(userObject.Preference.ShortDate);
-                if (ctrl.RestrictionRule == 1)
-                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId);
-                else if (ctrl.RestrictionRule == 2)
-                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId, true);
+                //if (ctrl.RestrictionRule == 1)
+                //    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId);
+                //if (ctrl.RestrictionRule == 2)
+                ebcontext.finyears.setFinacialYear({ ctrl: ctrl, formRenderer: this.Renderer });
             }
             else if (ctrl.EbDateType === 17) { //Time
 

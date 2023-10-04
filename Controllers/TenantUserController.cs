@@ -20,6 +20,7 @@ using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 
 namespace ExpressBase.Web2.Controllers
@@ -290,6 +291,70 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult SolutionQrScan()
         {
             return View();
+        }
+
+        public string LockUnlockFy(string req)
+        {
+            try
+            {
+                if (!(this.LoggedInUser.RoleIds.Contains((int)SystemRoles.SolutionOwner) ||
+                    this.LoggedInUser.RoleIds.Contains((int)SystemRoles.FinancialYearAdmin)))
+                {
+                    return JsonConvert.SerializeObject(new LockUnlockFyResponse
+                    {
+                        Status = (int)HttpStatusCode.Unauthorized,
+                        Message = "Access Denied"
+                    });
+                }
+                LockUnlockFyResponse Resp = ServiceClient.Post<LockUnlockFyResponse>(
+                    new LockUnlockFyRequest { ReqObject = req });
+                if (Resp.Status == 200)
+                {
+                    Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+                    Resp.RespObject = GetFinancialYearsObject(s_obj, this.LoggedInUser);
+                }
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new LockUnlockFyResponse
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        public string CreateEditNewFy(string id, string duration, string start)
+        {
+            try
+            {
+                if (!(this.LoggedInUser.RoleIds.Contains((int)SystemRoles.SolutionOwner) ||
+                    this.LoggedInUser.RoleIds.Contains((int)SystemRoles.FinancialYearAdmin)))
+                {
+                    return JsonConvert.SerializeObject(new CreateNewFyResponse
+                    {
+                        Status = (int)HttpStatusCode.Unauthorized,
+                        Message = "Access Denied"
+                    });
+                }
+                CreateNewFyResponse Resp = ServiceClient.Post<CreateNewFyResponse>(
+                    new CreateNewFyRequest { Id = id, Duration = duration, Start = start });
+                if (Resp.Status == 200)
+                {
+                    Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+                    Resp.RespObject = GetFinancialYearsObject(s_obj, this.LoggedInUser);
+                }
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new CreateNewFyResponse
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                });
+            }
         }
     }
 }

@@ -700,18 +700,27 @@ input:checked + .proslider:before {
     cursor: pointer;
 }
 
-    .LocInfCr:hover, .LocInfCr:active, .LocInfCr:focus {
+#switch_finyear {
+    color: #336699;
+}
+
+    #switch_finyear:hover, #switch_finyear:active, #switch_finyear:focus {
         background: #3487da;
         color: white;
     }
 
-    .LocInfCr .Loc_type {
-        float: left;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        font-size: 11px;
-    }
+.LocInfCr:hover, .LocInfCr:active, .LocInfCr:focus {
+    background: #3487da;
+    color: white;
+}
+
+.LocInfCr .Loc_type {
+    float: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 11px;
+}
 
 
 #language-switcher-btn .dropdown-toggle {

@@ -67,6 +67,9 @@
             if (ebcontext.locations && ebcontext.locations.hasOwnProperty('close')) {
                 ebcontext.locations.close();
             }
+            if (ebcontext.finyears && ebcontext.finyears.hasOwnProperty('close')) {
+                ebcontext.finyears.close();
+            }
 
             $("#ebm-overlayfade").show();
 

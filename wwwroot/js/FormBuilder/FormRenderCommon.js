@@ -718,9 +718,14 @@
                 return false;
             }
         }
-        else if (ctrl.ObjType === "Date" && ctrl.RestrictionRule > 0) {
-            if (!ebcontext.finyears.checkDate(ctrl.getValue(), ctrl.RestrictionRule === 2)) {
-                ctrl.addInvalidStyle("Must be between " + ebcontext.finyears.getDateRangeToDisplay(ctrl.RestrictionRule === 2), 'warning');
+        return true;
+    };
+
+    this.sysValidation4FinYear = function (ctrl) {
+        if (ctrl.ObjType === "Date" && ctrl.RestrictionRule > 0) {
+            let msg = ebcontext.finyears.getWarningMessage(ctrl.getValue());
+            if (msg != null) {
+                //ctrl.addInvalidStyle(msg, 'warning');
                 return false;
             }
         }
@@ -730,20 +735,25 @@
     /////////////
     this.AllRequired_valid_Check = function (ctrlsArray = this.FO.flatControlsWithDG) {
         let required_valid_flag = true;
+        let fyError = false;
         let $notOk1stCtrl = null;
         let notOk1stCtrl = null;
         $.each(ctrlsArray, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
             if (this.FO.EbAlert)
                 this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
-            if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
+
+            let aOk = this.isRequiredOK(ctrl), bOk = this.isValidationsOK(ctrl),
+                cOk = this.sysValidationsOK(ctrl), dOk = this.sysValidation4FinYear(ctrl);
+
+            if (!aOk || !bOk || !cOk) {
                 required_valid_flag = false;
                 this.addInvalidStyle2TabPanes(ctrl);
                 if (this.FO.EbAlert) {
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
-                        head: "Required",
-                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.RenderCollection[" + this.FO.__MultiRenderCxt + "].FRC.goToCtrlwithEbSid()'>"
+                        head: (!aOk ? "Required" : "Validation Error"),
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.RenderCollection[" + (this.FO.__MultiRenderCxt - 1) + "].FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
@@ -754,6 +764,10 @@
                     notOk1stCtrl = ctrl;
                 }
             }
+            else if (!dOk) {
+                fyError = true;
+                required_valid_flag = false;
+            }
             //if (ctrl.__invalidValueValExpr) {
             //    required_valid_flag = false;
             //    EbMessage("show", { Message: `Unable to save. Invalid data in ${ctrl.Lable || ctrl.Name}`, AutoHide: false, Background: '#aa0000' });
@@ -761,11 +775,11 @@
         }.bind(this));
 
         if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
-            this.GoToCtrl(notOk1stCtrl);
+            //this.GoToCtrl(notOk1stCtrl);
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
         if (this.FO.headerObj && this.FO.EbAlert) {
-            if (!required_valid_flag)
+            if (!required_valid_flag && !fyError)
                 this.FO.headerObj.showElement([this.FO.hBtns['GotoInvalid']]);
             else
                 this.FO.headerObj.hideElement([this.FO.hBtns['GotoInvalid']]);

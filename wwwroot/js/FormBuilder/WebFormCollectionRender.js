@@ -342,7 +342,7 @@ const WebFormCollectionRender = function (Option) {
             <div class='sfh-title'> Loading... </div>
             <div class='sfh-toolbar'> 
                 <div class='sfh-tool-btns'>
-                    <button id="subforminvalidmsgs${cxt}" style='display: none;' onclick='ebcontext.webform.RenderCollection[${this.RenderCollection.length}].FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>
+                    <button id="subforminvalidmsgs${cxt}" style='display: none;' onclick='ebcontext.webform.RenderCollection[${this.RenderCollection.length - 1}].FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>
                     <div id="subformprintprev-selbtn${cxt}" style='display: none;' class="btn-select btn">
                         <button id="subformprintprev${cxt}" class="savebtn" title="Print Preview"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
                         <select class="selectpicker" data-opr="preview"></select>

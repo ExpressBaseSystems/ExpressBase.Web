@@ -62,6 +62,10 @@
             border: solid 1px rgb(204, 204, 204);
         }
 
+        .grid-stack > .grid-stack-item > .grid-stack-item-content.usr {
+            touch-action: unset;
+        }
+
         .grid-stack > .grid-stack-item > .ui-resizable-handle {
             position: absolute;
             font-size: .1px;

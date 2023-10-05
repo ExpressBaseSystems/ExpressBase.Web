@@ -54,6 +54,26 @@
         }
     });
 
+    var makeAsShowPwdField = function ($pwdField) {
+        let id = $pwdField.attr("id");
+        $pwdField.after(`<span id="${id}_eop" class="form-control-feedback" style="pointer-events: all; z-index: 3; top: 5px; cursor: pointer; color: #555;" title="Click to show password"><i class="fa fa-eye" aria-hidden="true"></i></span>`);
+        $pwdField.after(`<span id="${id}_ecl" class="form-control-feedback" style="pointer-events: all; z-index: 3; top: 5px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>`);
+        let $eop = $("#" + id + "_eop");
+        let $ecl = $("#" + id + "_ecl");
+        $eop.on("click", function (e) {
+            $pwdField[0].type = "text";
+            $(e.target).closest('span').hide();
+            $(e.target).closest('span').prev().show();
+        });
+        $ecl.on("click", function (e) {
+            $pwdField[0].type = "password";
+            $(e.target).closest('span').hide();
+            $(e.target).closest('span').next().show();
+        });
+    };
+
+    makeAsShowPwdField($("#pass"));
+
     function ve(email) {
         var re = /\S+@\S+\.\S+/;
         return re.test(email);

@@ -254,7 +254,8 @@
                     formatDate: sdp,
                     timepicker: false,
                     datepicker: true,
-                    mask: true
+                    mask: true,
+                    scrollInput: false
                 });
                 //$input.val(userObject.Preference.ShortDate);
                 //if (ctrl.RestrictionRule == 1)
@@ -272,7 +273,8 @@
                     formatTime: stp,
                     formatDate: sdp,
                     timepicker: true,
-                    datepicker: false
+                    datepicker: false,
+                    scrollInput: false
                 });
                 //$input.val(userObject.Preference.ShortTime);
             }
@@ -282,7 +284,8 @@
                     formatTime: stp,
                     formatDate: sdp,
                     timepicker: true,
-                    datepicker: true
+                    datepicker: true,
+                    scrollInput: false
                 });
                 //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }

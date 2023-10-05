@@ -28,6 +28,10 @@
         </div>
     </div>
     <div class="container" id="lgn-usr" hidden>
+        @if (UrlHelper.ContainsOloi(ViewBag.HostValue))
+        {
+            <div style="text-align: right; padding-top: 15px;"><span id="lng-switch">മലയാളം</span></div>
+        }
         <div class="row h-100" style="display: flex;justify-content: center;align-items: center;">
             <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12 login_container_usr">
                 <div class="loader_top" id="loader_profile"></div>
@@ -35,18 +39,18 @@
                     <div class="login-sec-image text-center">
                         <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
                     </div>
-                    <h1 class="text-center">@console Login</h1><br>
+                    <h1 class="text-center" id="lbl1">@console Login</h1><br>
 
                     @if (ViewBag.WhichConsole == "uc" && (ViewBag.Is2fA != null && !ViewBag.Is2fA) && ViewBag.IsOtpSigninEnabled != null && ViewBag.IsOtpSigninEnabled)
                     {
                         <ul class="nav nav-tabs eb-styledTab" role="tablist">
                             <li class="active">
-                                <a href="#withpw_container" role="tab" data-toggle="tab">
+                                <a href="#withpw_container" role="tab" data-toggle="tab" id="lbl2">
                                     With Password
                                 </a>
                             </li>
                             <li>
-                                <a href="#withotp_container" role="tab" data-toggle="tab">
+                                <a href="#withotp_container" role="tab" data-toggle="tab" id="lbl3">
                                     With OTP
                                 </a>
                             </li>
@@ -56,14 +60,14 @@
                     <div class="tab-content @styleClass">
                         <div class="tab-pane fade active in" id="withpw_container">
                             <div class="form-group mb-25" validator="email">
-                                <label>@UrlHelper.GetUserNameLabel(ViewBag.HostValue)</label>
+                                <label id="lbl4">@UrlHelper.GetUserNameLabel(ViewBag.HostValue)</label>
                                 <div class="log-username">
                                     <input type="email" id="uname" name="uname" class="form-control ebtext-lg" placeholder="Email" value="@ViewBag.Email" />
                                 </div>
                                 <div class="validator-error"></div>
                             </div>
                             <div class="form-group mb-25" validator='password'>
-                                <label>Password</label>
+                                <label id="lbl5">Password</label>
                                 <div class="log-pw">
                                     <input type="password" id="pass" name="pass" class="form-control ebtext-lg" placeholder="Password" />
                                 </div>
@@ -104,7 +108,7 @@
                         <div class="tab-pane fade" id="withotp_container">
 
                             <div class="form-group mb-25">
-                                <label>@UrlHelper.GetUserNameLabel(ViewBag.HostValue)</label>
+                                <label id="lbl6">@UrlHelper.GetUserNameLabel(ViewBag.HostValue)</label>
                                 <div class="log-username">
                                     <input type="text" id="uname_otp" name="uname_otp" class="form-control ebtext-lg" value="@ViewBag.Email" />
                                 </div>
@@ -136,7 +140,7 @@
                         <div class="login-sec-image text-center">
                             <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
                         </div>
-                        <h4 class="text-center">Please enter the OTP to verify your account</h4><br>
+                        <h4 class="text-center" id="lbl9">Please enter the OTP to verify your account</h4><br>
                         <div class="otp_warnings"></div>
                         <div class="form-group w-100">
                             <h5 style="margin-left: 18px;">An OTP has been sent to <div><span id="lastDigit"></span></div> </h5>
@@ -166,14 +170,14 @@
                 }
                 @if (!string.IsNullOrEmpty(ViewBag.SsoUrl))
                 {
-                    <button class="btn btn-link" onclick="window.location='@ViewBag.SsoUrl'" style="font-size: 16px;">
+                    <button class="btn btn-link" onclick="window.location='@ViewBag.SsoUrl'" style="font-size: 16px;" id="lbl7">
                         Login with Sulekha
                     </button>
                 }
                 @if (ViewBag.HasSignupForm && UrlHelper.ContainsOloi(ViewBag.HostValue))
                 {
-                    <button class="btn btn-link" onclick="window.location='../Ext/UsrSignUp'" style="font-size: 16px; right: 0px; position: absolute;">
-                        Sign  up as Innovator
+                    <button class="btn btn-link" onclick="window.location='../Ext/UsrSignUp'" style="font-size: 16px; right: 0px; position: absolute;" id="lbl8">
+                        Sign up as Innovator
                     </button>
                 }
             </div>
@@ -188,6 +192,43 @@
     <script>
         $(document).ready(function () {
             $('.Eb_Image').Lazy();
+
+            let lang_map = [
+                { id: "lng-switch", ml: "English", en: "മലയാളം" },
+                { id: "lbl1", en: "User Login", ml: "യൂസർ ലോഗിൻ" },
+                { id: "lbl2", en: "With Password", ml: "പാസ്‌വേഡ് ലോഗിൻ" },
+                { id: "lbl3", en: "With OTP", ml: "ഒടിപി ലോഗിൻ" },
+                { id: "lbl4", en: "Email", ml: "ഇമെയിൽ" },
+                { id: "lbl5", en: "Password", ml: "പാസ്‌വേഡ്" },
+                { id: "logNow", en: "Sign In", ml: "സൈൻ ഇൻ" },
+                { id: "forgotpw", en: "Forgot password?", ml: "പാസ്‌വേഡ് മറന്നോ?" },
+                { id: "lbl6", en: "Email", ml: "ഇമെയിൽ" },
+                { id: "lbl7", en: "Login with Sulekha", ml: "സുലേഖ ഉപയോഗിച്ച് ലോഗിൻ ചെയുക" },
+                { id: "lbl8", en: "Sign up as Innovator", ml: "സൈൻ അപ്പ് ചെയുക" },
+                { id: "otplogin", en: "Send OTP", ml: "ഒടിപി അയക്കുക" },
+                { id: "lbl9", en: "Please enter the OTP to verify your account", ml: "അക്കൗണ്ട് സ്ഥിരീകരിക്കാൻ ഒടിപി ടൈപ്പ് ചെയുക" },
+                { id: "otpvalidate", en: "Verify", ml: "സ്ഥിരീകരിക്കുക" },
+                { id: "resend", en: "Resend", ml: "വീണ്ടും അയക്കുക" },
+            ];
+
+            function switchLang(k) {
+                if (k == "English")
+                    k = "en";
+                else if (k == "മലയാളം")
+                    k = "ml";
+                $.each(lang_map, function (i, o) {
+                    $("#" + o.id).text(o[k]);
+                });
+
+                store.set('Eb_sign_in_language-' + '@ViewBag.SolutionId', k);
+            }
+
+            $("#lng-switch").on("click", function(e) { 
+                switchLang($(e.target).text());
+            });
+
+            if ('@UrlHelper.ContainsOloi(ViewBag.HostValue)' == 'True')
+                switchLang("ml");
         });
 
         function isNumber(evt) {
@@ -258,5 +299,15 @@
 
         #browser-compatibility .br-ic div {
             margin-right: 3rem;
+        }
+
+    #lng-switch {
+        padding: 3px 8px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #555;
+    }
+        #lng-switch:hover {
+            color: #508bf9;
         }
 </style>

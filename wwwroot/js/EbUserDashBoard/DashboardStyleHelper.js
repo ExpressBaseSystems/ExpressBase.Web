@@ -359,7 +359,7 @@ function GetUrl4Link(refid, filtervalues) {
             _url = "../ReportRender/Index?refid=" + refid;
         }
         else if (objTypeName === "WebForm") {
-            let _l = (ebcontext.languages != undefined) ? ebcontext.languages.getCurLanguageCode() : 'en';
+            let _l = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLanguageCode() : 'en';
             _url = "../WebForm/Index?_r=" + refid + "&_p" + btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))) + "&_lg=" + _l;
         }
         else if (objTypeName === "DashBoard") {

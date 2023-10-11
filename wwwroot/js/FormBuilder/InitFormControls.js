@@ -1175,7 +1175,7 @@
             params.push(new fltr_obj(16, "srcCtrl", ctrl.Name));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
             if (ctrl.OpenInNewTab) {
-                let _l = ebcontext.languages.getCurLanguageCode();
+                let _l = ebcontext.languages.getCurrentLanguageCode();
                 let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}&_lg=${_l}`;
                 window.open(url, '_blank');
             }

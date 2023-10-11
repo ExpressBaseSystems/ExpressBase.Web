@@ -232,7 +232,7 @@
         }
 
         if (ebcontext.languages != undefined) {
-            let _l = ebcontext.languages.getCurLanguageCode();
+            let _l = ebcontext.languages.getCurrentLanguageCode();
             if (_l)
                 _url = _url + "&_lg=" + _l;
         }

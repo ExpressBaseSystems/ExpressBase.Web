@@ -1319,7 +1319,7 @@ var EbDataTable = function (Option) {
         }
         else if (splitarray[2] === "0") {
             let _filter = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
-            let _l = ebcontext.languages.getCurLanguageCode();
+            let _l = ebcontext.languages.getCurrentLanguageCode();
             let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }
@@ -2477,7 +2477,7 @@ var EbDataTable = function (Option) {
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let _l = ebcontext.languages.getCurLanguageCode();
+            let _l = ebcontext.languages.getCurrentLanguageCode();
             let url = `../webform/index?_r=${obj.Refid}&_p=""&_m=2&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}&_lg=${_l}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
@@ -2540,7 +2540,7 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let _l = ebcontext.languages.getCurLanguageCode();
+            let _l = ebcontext.languages.getCurrentLanguageCode();
             let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }
@@ -2556,7 +2556,7 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let _l = ebcontext.languages.getCurLanguageCode();
+            let _l = ebcontext.languages.getCurrentLanguageCode();
             let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }
@@ -2572,7 +2572,7 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let _l = ebcontext.languages.getCurLanguageCode();
+            let _l = ebcontext.languages.getCurrentLanguageCode();
             let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }

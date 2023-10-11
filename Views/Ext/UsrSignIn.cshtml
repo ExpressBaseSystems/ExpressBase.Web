@@ -230,7 +230,7 @@
                 switchLang($(e.target).text());
             });
 
-            if ('@UrlHelper.ContainsOloi(ViewBag.HostValue)' == 'True' && store.get('Eb_sign_in_language-' + '@ViewBag.SolutionId') != 'ml')
+            if ('@UrlHelper.ContainsOloi(ViewBag.HostValue)' == 'True' && store.get('Eb_sign_in_language-' + '@ViewBag.SolutionId') != 'en')
                 switchLang("ml");
         });
 

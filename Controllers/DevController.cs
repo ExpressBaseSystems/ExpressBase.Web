@@ -803,6 +803,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
                 ViewBag.defaultHtmlPageRefid = solutionObj.SolutionSettings.DefaultHtmlPageRefid;
                 ViewBag.getEmployeesDrRefid = solutionObj.SolutionSettings.GetEmployeesDrRefid;
+                ViewBag.EnableFinancialYear = solutionObj.SolutionSettings.EnableFinancialYear;
                 if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
                 {
                     foreach (var item in _userTypesResp.UserTypes)

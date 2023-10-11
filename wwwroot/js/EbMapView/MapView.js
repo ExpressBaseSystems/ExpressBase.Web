@@ -614,8 +614,8 @@ var mapView = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    let _locale = ebcontext.languages.getCurrentLocale();
-                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lo=${_locale}`;
+                    let _l = ebcontext.languages.getCurrentLanguageCode();
+                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lg=${_l}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")
@@ -644,7 +644,7 @@ var mapView = function (option) {
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tableId).click(this.Getdata.bind(this));
         $("#obj_icons").append(`           
-            <button id='btnColumnCollapse${ this.tableId}' class='btn' style='display: inline-block;'>
+            <button id='btnColumnCollapse${this.tableId}' class='btn' style='display: inline-block;'>
             <i class="fa fa-cogs" aria-hidden="true"></i>
             </button>`);
 
@@ -905,8 +905,8 @@ var mapView = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    let _locale = ebcontext.languages.getCurrentLocale();
-                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lo=${_locale}`;
+                    let _l = ebcontext.languages.getCurrentLanguageCode();
+                    url = `../webform/index?_r=${this.MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lg=${_l}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")

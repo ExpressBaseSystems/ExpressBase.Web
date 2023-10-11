@@ -850,6 +850,19 @@ input:checked + .proslider:before {
     #webformprint-selbtn, #subformprint-selbtn {
         display: none !important;
     }
+
+    .subformopen, .subformmaximize, .sfh-loc {
+        display: none !important;
+    }
+
+    .sfh-title {
+        border-left: none !important;
+    }
+
+    .sf-cont-body {
+        height: calc(100vh - 38px) !important;
+        top: 19px !important;
+    }
 }
 
 @media (max-width: 1020px) {

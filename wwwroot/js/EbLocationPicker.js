@@ -528,65 +528,120 @@
 
 let LanguagePicker = function (options) {
     try {
-        this.languages = Object.entries(options.LanguagesList);
+        this.langList = options.LanguagesList;
         this.Tid = options.Tid || null;
         this.Uid = options.Uid || null;
-        this.lang_storeKey = "Eb_language-" + this.Tid + this.Uid;
-        this.locale_storeKey = "Eb_locale-" + this.Tid + this.Uid;
+        this.storeKey = "Eb_language-" + this.Tid + this.Uid;
+        this.stKeySignInLang = "Eb_sign_in_language-" + this.Tid;
+        //this.locale_storeKey = "Eb_locale-" + this.Tid + this.Uid;
+        this.$switchBtn = $("#language-switcher");
 
-        if (this.languages.length > 0) {
-            this.$switcherbtn = $("#language-switcher");
-            this.init = function () {
-                if (this.languages == null)
-                    return;
+        this.init = function () {
+            if (this.langList == null || this.langList.length == 0)
+                return;
 
-                this.current_language = store.get(this.lang_storeKey);
-                this.current_locale = store.get(this.locale_storeKey);
-                this.appendDD();
-                if (this.current_language > 0)
-                    this.$switcherbtn.val(this.current_language);
-                this.$switcherbtn.show();
-            };
+            this.appendDD();
+            this.setCurrentLang();
+            this.$switchBtn.show();
+        };
 
-            this.appendDD = function () {
-                for (let i = 0; i < this.languages.length; i++) {
-                    let lcl = this.languages[i][0].match(/\((.*)\)/);
-                    this.$switcherbtn.append(`<option value = "${this.languages[i][1]}" locale ="${lcl[1]}">${this.languages[i][0].replace(lcl[0], '').trim()}</option>`);
+        this.appendDD = function () {
+            for (let i = 0; i < this.langList.length; i++) {
+                let l = this.langList[i];
+                this.$switchBtn.append(`<option value="${l.Code}" data-id="${l.Id}">${l.Name}</option>`);
+            }
+            this.$switchBtn.on("change", this.langChanged.bind(this));
+        };
+
+        this.setCurrentLang = function () {
+            let curLang = store.get(this.storeKey);
+            let cl;
+            if (curLang) {
+                cl = this.getLangByCode(curLang);
+            }
+            else {
+                let curSiLang = store.get(this.stKeySignInLang);
+                if (curSiLang) {
+                    cl = this.getLangByCode(curSiLang);
                 }
-
-                this.$switcherbtn.on("change", this.language_change.bind(this));
-            };
-
-            this.language_change = function (e) {
-                this.current_language = this.$switcherbtn.val();
-                this.current_locale = $("#language-switcher option:selected").attr("locale");
-                store.set(this.lang_storeKey, this.current_language);
-                store.set(this.locale_storeKey, this.current_locale);
-                let _href = window.location.href;
-                if (_href.includes("&_lo=")) {
-                    const myArray = _href.split("&_lo=");
-                    if (myArray.length > 1) {
-                        window.location.href = _href.replace("&_lo=" + myArray[1], "&_lo=" + this.current_locale);
-                    }
+                if (!cl) {
+                    cl = this.getLangByCode('en');
+                    if (!cl)
+                        cl = this.langList[0];
+                    store.set(this.storeKey, cl.Code);
                 }
-            };
-        }
+            }
+            if (cl) {
+                this.updateCookie(cl.Code);
+                this.$switchBtn.val(cl.Code);
+            }
+        };
+
+        this.getLangByCode = function (c) {
+            if (c == null)
+                return null;
+            for (let i = 0; i < this.langList.length; i++) {
+                if (this.langList[i].Code == c) {
+                    return this.langList[i];
+                }
+            }
+            return null;
+        };
+
+        this.updateCookie = function (c_value) {
+            var exdate = moment().add(7, "days").toDate();
+            var val = escape(c_value) + ";expires = " + exdate.toUTCString();
+            document.cookie = "ebLang=" + val;
+        };
+
+        this.langChanged = function (e) {
+            let seltd = this.$switchBtn.val();
+            let cl = this.getLangByCode(seltd);
+            store.set(this.storeKey, cl.Code);
+            this.updateCookie(cl.Code);
+
+            let reld = true;
+            let _href = window.location.href;
+            if (_href.includes("&_lg=")) {
+                const myArray = _href.split("&_lg=");
+                if (myArray.length > 1) {
+                    reld = false;
+                    window.location.href = _href.replace("&_lg=" + myArray[1], "&_lg=" + cl.Code);
+                }
+            }
+            if (reld) {
+                window.location.reload();
+            }
+        };
+
+        //external function
+        this.getCurrentLanguageCode = function () {
+            if (this.langList == null || this.langList.length == 0)
+                return 'en';
+
+            return store.get(this.storeKey);
+        };
 
         this.getCurrentLocale = function () {
-            if (this.languages.length > 0)
-                return store.get(this.locale_storeKey);
-            else return 0;
+            //if (this.langList.length > 0)
+            //    return store.get(this.locale_storeKey);
+            //else
+            return 0;
         };
 
+        //external
         this.getCurrentLanguage = function () {
-            if (this.languages.length > 0)
-                return store.get(this.lang_storeKey);
-            else return 0;
+            if (this.langList == null || this.langList.length == 0)
+                return 0;
+
+            let cl = this.getLangByCode(store.get(this.storeKey));
+            let clObj = this.getLangByCode(cl);
+            if (clObj)
+                return clObj.Id;
+            return 0;
         };
 
-        if (this.languages.length > 0) {
-            this.init();
-        }
+        this.init();
     }
     catch (e) {
         console.error(e);
@@ -681,7 +736,7 @@ let FinYearPicker = function (options) {
         };
 
         this.getCurrent = function () {
-            if (this.finyears.List.length <= 0)
+            if (this.finyears == null || this.finyears.List == null || this.finyears.List.length <= 0)
                 return null;
             let id = store.get(this.storeKey);
             let obj = null;

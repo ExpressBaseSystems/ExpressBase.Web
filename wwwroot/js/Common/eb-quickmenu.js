@@ -232,9 +232,9 @@
         }
 
         if (ebcontext.languages != undefined) {
-            let _locale = ebcontext.languages.getCurrentLocale();
-            if (_locale != 0 && _locale != undefined)
-                _url = _url + "&_lo=" + _locale
+            let _l = ebcontext.languages.getCurLanguageCode();
+            if (_l)
+                _url = _url + "&_lg=" + _l;
         }
         return _url;
     };

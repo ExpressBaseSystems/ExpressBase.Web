@@ -242,7 +242,7 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     ViewBag.IsMultiLanguageEnabled = s_obj.IsMultiLanguageEnabled;
                     if (s_obj.IsMultiLanguageEnabled)
-                        contrlr.ViewBag.Languages = JsonConvert.SerializeObject(new MultiLanguageController(this.ServiceClient, this.Redis).LoadLang());
+                        contrlr.ViewBag.Languages = JsonConvert.SerializeObject(s_obj.Languages);
                 }
             }
             catch (Exception e)

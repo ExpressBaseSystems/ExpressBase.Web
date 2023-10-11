@@ -56,6 +56,33 @@ namespace ExpressBase.Web2.Controllers
                     ObjectIds = this.LoggedInUser.GetDashBoardIds(),
                     SolutionOwner = (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) ? true : false
                 });
+                Eb_Solution solnObj = this.GetSolutionObject(ViewBag.cid);
+                if (solnObj.IsMultiLanguageEnabled)
+                {
+                    List<string> keys = new List<string>();
+                    foreach (KeyValuePair<string, EbDashBoard> _da in Resp.DashBoardObjectIds)
+                    {
+                        if (_da.Value.IsLanguageEnabled)
+                        {
+                            _da.Value.AddMultiLangKeys(keys);
+                        }
+                    }
+                    if (keys.Count > 0)
+                    {
+                        Dictionary<string, string> KeyValue = ServiceClient.Post<GetDictionaryValueResponse>(new GetDictionaryValueRequest
+                        {
+                            Keys = keys.ToArray(),
+                            Language = this.CurrentLanguage ?? "en"
+                        }).Dict;
+                        foreach (KeyValuePair<string, EbDashBoard> _da in Resp.DashBoardObjectIds)
+                        {
+                            if (_da.Value.IsLanguageEnabled)
+                            {
+                                _da.Value.Localize(KeyValue);
+                            }
+                        }
+                    }
+                }
 
                 if (Resp.DashBoardObjectIds.Count != 0)
                 {

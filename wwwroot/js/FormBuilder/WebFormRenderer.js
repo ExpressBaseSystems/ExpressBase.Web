@@ -80,7 +80,7 @@ const WebFormRender = function (option) {
             let extraHtml = '';
             if (this.Mode.isNew) {
                 if (this.FormObj.CanSaveAsDraft)
-                    extraHtml += `<button class="btn sw-btn sw-btn-save-draft">Save as Draft</button>`;
+                    extraHtml += `<button class="btn sw-btn sw-btn-save-draft">${(wizControl.SaveAsDraftButtonText || 'Save as Draft')}</button>`;
                 extraHtml += `<button class="btn sw-btn sw-btn-save ${(wizControl.Controls.$values.length > 1 ? 'disabled' : '')}">${(wizControl.SubmitButtonText || 'Submit')}</button>`;
             }
             else if (this.Mode.isView) {
@@ -120,8 +120,8 @@ const WebFormRender = function (option) {
                     keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
                 },
                 lang: {
-                    next: 'Next >',
-                    previous: '< Previous'
+                    next: (wizControl.NextButtonText || 'Next') + ' >',
+                    previous: '< ' + (wizControl.PreviousButtonText || 'Previous')
                 }
             });
 
@@ -906,8 +906,8 @@ const WebFormRender = function (option) {
                 this.draftId = respObj.DraftId;
                 option.draftId = this.draftId;
                 this.headerObj.setFormMode(`<span mode="Draft Mode" class="fmode">Draft</span>`);
-                let _locale = ebcontext.languages.getCurrentLocale();
-                let _url = `/WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: this.draftId }]))}&_m=8&_l=${this.getLocId()}&_lo=${_locale}`;
+                let _l = ebcontext.languages.getCurLanguageCode();
+                let _url = `/WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: this.draftId }]))}&_m=8&_l=${this.getLocId()}&_lg=${_l}`;
                 let stateObj = { draftId: this.draftId };
                 window.history.replaceState(stateObj, this.FormObj.DisplayName + '(Draft)', _url);
             }
@@ -979,16 +979,16 @@ const WebFormRender = function (option) {
         if (this.renderMode === 1) {
             let stateObj = { id: rowId };
             if (rowId > 0) {
-                let _locale = ebcontext.languages.getCurrentLocale();
-                let _url = `/WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_m=${this.isPartial === 'True' ? 11 : 1}&_l=${this.getLocId()}&_lo=${_locale}`;
+                let _l = ebcontext.languages.getCurLanguageCode();
+                let _url = `/WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify([{ Name: "id", Type: "7", Value: rowId }]))}&_m=${this.isPartial === 'True' ? 11 : 1}&_l=${this.getLocId()}&_lg=${_l}`;
                 //if (this.rowId > 0)
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
                 //else
                 //    window.history.pushState(stateObj, this.FormObj.DisplayName, _url);
             }
             else {
-                let _locale = ebcontext.languages.getCurrentLocale();
-                let _url = `/WebForm/Index?_r=${this.formRefId}&_m=${this.isPartial === 'True' ? 12 : 2}&_l=${this.getLocId()}&_lo=${_locale}`;
+                let _l = ebcontext.languages.getCurLanguageCode();
+                let _url = `/WebForm/Index?_r=${this.formRefId}&_m=${this.isPartial === 'True' ? 12 : 2}&_l=${this.getLocId()}&_lo=${_l}`;
                 window.history.replaceState(stateObj, this.FormObj.DisplayName, _url);
             }
         }
@@ -1184,8 +1184,8 @@ const WebFormRender = function (option) {
     this.cloneForm = function () {
         let params = [];
         params.push(new fltr_obj(11, "srcRowId", this.rowId));
-        let _locale = ebcontext.languages.getCurrentLocale();
-        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=9&_l=${this.getLocId()}&_lo=${_locale}`;
+        let _l = ebcontext.languages.getCurLanguageCode();
+        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=9&_l=${this.getLocId()}&_lo=${_l}`;
         window.open(url, '_blank');
     };
 
@@ -1194,8 +1194,8 @@ const WebFormRender = function (option) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.formData.SrcDataId));
 
-            let _locale = ebcontext.languages.getCurrentLocale();
-            let url = `&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurLanguageCode();
+            let url = `&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}&_lo=${_l}`;
             if (this.formData.SrcRefId?.length > 0)
                 url = `../WebForm/Index?_r=${this.formData.SrcRefId}${url}`;
             else if (this.formData.SrcVerId > 0)
@@ -1948,8 +1948,8 @@ const WebFormRender = function (option) {
         EbMessage("show", { Message: `Sending message...`, AutoHide: true, Background: '#0000aa', Delay: 1000 });
         let params = [];
         params.push(new fltr_obj(11, "id", this.rowId));
-        let _locale = ebcontext.languages.getCurrentLocale();
-        let uurl = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}&_lo=${_locale}`;
+        let _l = ebcontext.languages.getCurLanguageCode();
+        let uurl = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}&_lg=${_l}`;
         $.ajax({
             type: "POST",
             url: "/WebForm/SendNotification",
@@ -2911,14 +2911,14 @@ const WebFormRender = function (option) {
     this.OpenInNewTab = function () {
         let url = this.__MultiRenderUrl;
         if (!url) {
-            let _locale = ebcontext.languages.getCurrentLocale();
-            url = `../WebForm/Index?_r=${this.formRefId}&_m=1&_l=${this.getLocId()}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurLanguageCode();
+            url = `../WebForm/Index?_r=${this.formRefId}&_m=1&_l=${this.getLocId()}&_lg=${_l}`;
         }
         if (this.rowId > 0) {
             let params = [];
             params.push(new fltr_obj(11, "id", this.rowId));
-            let _locale = ebcontext.languages.getCurrentLocale();
-            url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurLanguageCode();
+            url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=1&_l=${this.getLocId()}&_lg=${_l}`;
         }
         window.open(url, '_blank');
     };
@@ -3251,8 +3251,8 @@ const WebFormRender = function (option) {
         options['reverseUpdateData'] = this.reverseUpdateData.bind(this, ctrl.DataFlowMap, rowid, DGB);
 
         if (ctrl.OpenInNewTab) {
-            let _locale = ebcontext.languages.getCurrentLocale();
-            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(JSON.stringify(_params))}&_m=${_mode}&_l=${this.getLocId()}&_lo=${_locale}`;
+            let _lang = ebcontext.languages.getCurLanguageCode();
+            let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${btoa(JSON.stringify(_params))}&_m=${_mode}&_l=${this.getLocId()}&_lg=${_lang}`;
             window.open(url, '_blank');
         }
         else {

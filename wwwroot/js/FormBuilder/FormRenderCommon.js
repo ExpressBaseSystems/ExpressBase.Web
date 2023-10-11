@@ -1426,20 +1426,43 @@
         $.each(flatControls, function (k, Obj) {
             Obj.bindOnChange(this.ctrlChangeListener.bind(this, Obj));
 
+            $("#" + Obj.EbSid_CtxId).on("blur", this.ctrlOnBlurListener.bind(this, Obj));
+
             if (Obj.Required) {
                 if (Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)
                     $("#cont_" + Obj.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
                 else
-                    $("#" + Obj.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+                    $("#" + Obj.EbSid_CtxId).on("focus", this.removeInvalidStyle.bind(this, Obj));
             }
 
-            if (Obj.Unique)
-                $("#" + Obj.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, Obj), 1000));
+            //if (Obj.Required) {
+            //    if (Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)
+            //        $("#cont_" + Obj.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+            //    else
+            //        $("#" + Obj.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+            //}
 
-            if (Obj.Validators && Obj.Validators.$values.length > 0) {
-                $("#" + Obj.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, Obj));
-            }
+            //if (Obj.Unique)
+            //    $("#" + Obj.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, Obj), 1000));
+
+            //if (Obj.Validators && Obj.Validators.$values.length > 0) {
+            //    $("#" + Obj.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, Obj));
+            //}
         }.bind(this));
+    };
+
+    this.ctrlOnBlurListener = function (Obj) {
+        if (Obj.Required && !(Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)) {
+            if (!this.isRequiredOK(Obj))
+                return;
+        }
+        if (Obj.Validators && Obj.Validators.$values.length > 0) {
+            if (!this.isValidationsOK(Obj))
+                return;
+        }
+        if (Obj.Unique) {
+            this.checkUnique(Obj);
+        }
     };
 
     //listener entry point

@@ -1468,7 +1468,10 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbHtmlPage view = this.Redis.Get<EbHtmlPage>(id);
                     if (view != null)
+                    {
+                        view.Html = view.Html.Replace("@eb_current_language_code", this.CurrentLanguage);
                         return base.Content(view.Html, "text/html");
+                    }
                 }
             }
             return Redirect("/StatusCode/404");

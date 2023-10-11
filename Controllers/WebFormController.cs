@@ -35,13 +35,13 @@ namespace ExpressBase.Web.Controllers
     {
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec) : base(_ssclient, _redis, _sec) { }
 
-        public IActionResult Index(string _r, string _p, int _m, int _l, int _rm, string _lo = "")
+        public IActionResult Index(string _r, string _p, int _m, int _l, int _rm, string _lg)
         {
             //_r => refId; _p => params; _m => mode; _l => locId; _rm => renderMode
-            string refId = _r, _params = _p, _locale = _lo;
+            string refId = _r, _params = _p, _language = _lg ?? this.CurrentLanguage ?? "en";
             int _mode = _m, _locId = _l;//
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
-            string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false, false, _locale);
+            string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false, false, _language);
             EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
             if (result.ErrorMessage != null)
             {
@@ -52,10 +52,10 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult Inde(int _r, string _p, int _m, int _l, int _rm, string _lo = "")
+        public IActionResult Inde(int _r, string _p, int _m, int _l, int _rm, string _lg)
         {
             GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = _r });
-            return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm, _lo = _lo });
+            return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm, _lg = _lg ?? this.CurrentLanguage ?? "en" });
         }
 
         [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Any, NoStore = false)]
@@ -79,7 +79,7 @@ namespace ExpressBase.Web.Controllers
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 
-        public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly, bool _randomizeId, string _locale)
+        public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly, bool _randomizeId, string _language)
         {
             Console.WriteLine(string.Format("GetFormForRendering - refid : {0}, prams : {1}, mode : {2}, locid : {3}", _refId, _params, _mode, _locId));
             EbFormAndDataWrapper resp = new EbFormAndDataWrapper();
@@ -93,20 +93,25 @@ namespace ExpressBase.Web.Controllers
             EbWebForm WebForm_L;
             if (WebForm.IsLanguageEnabled && WebForm.SolutionObj.IsMultiLanguageEnabled)
             {
-                string[] Keys = EbWebForm.GetKeys(WebForm);
-                Dictionary<string, string> KeyValue = ServiceClient.Post<GetDictionaryValueResponse>(new GetDictionaryValueRequest
+                string[] Keys = EbWebForm.GetMultiLangKeys(WebForm);
+                if (Keys.Length > 0)
                 {
-                    Keys = Keys,
-                    Locale = _locale
-                }).Dict;
-                WebForm_L = WebForm.Localize(KeyValue) as EbWebForm;
+                    Dictionary<string, string> KeyValue = ServiceClient.Post<GetDictionaryValueResponse>(new GetDictionaryValueRequest
+                    {
+                        Keys = Keys,
+                        Language = _language
+                    }).Dict;
+                    WebForm_L = WebForm.Localize(KeyValue) as EbWebForm;
+                }
+                else
+                    WebForm_L = WebForm;
             }
             else
                 WebForm_L = WebForm;
             resp.RefId = _refId;
             resp.RenderMode = _renderMode > 0 ? _renderMode : 1;
             resp.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-            resp.Url = $"/WebForm/Index?_r={_refId}&_p={_params}&_m={_mode}&_l={_locId}{(_renderMode != 2 ? "&_rm=" + _renderMode : "")}&_lo={_locale}";
+            resp.Url = $"/WebForm/Index?_r={_refId}&_p={_params}&_m={_mode}&_l={_locId}{(_renderMode != 2 ? "&_rm=" + _renderMode : "")}&_lg={_language}";
             resp.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;
 

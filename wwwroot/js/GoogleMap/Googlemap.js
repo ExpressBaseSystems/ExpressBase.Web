@@ -587,8 +587,8 @@ var EbGoogleMap = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    let _locale = ebcontext.languages.getCurrentLocale();
-                    url = `../webform/index?_r=${MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lo=${_locale}`;
+                    let _lang = ebcontext.languages.getCurrentLanguageCode();
+                    url = `../webform/index?_r=${MarkerLink}&_p=${btoa(JSON.stringify([this.markerParams[i]]))}&_m=1&_l=${store.get("Eb_Loc-" + Te_id + Usr_id)}&_lg=${_lang}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")

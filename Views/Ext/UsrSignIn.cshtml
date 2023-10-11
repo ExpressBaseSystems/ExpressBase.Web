@@ -203,8 +203,8 @@
                 { id: "logNow", en: "Sign In", ml: "സൈൻ ഇൻ" },
                 { id: "forgotpw", en: "Forgot password?", ml: "പാസ്‌വേഡ് മറന്നോ?" },
                 { id: "lbl6", en: "Email", ml: "ഇമെയിൽ" },
-                { id: "lbl7", en: "Login with Sulekha", ml: "സുലേഖ ഉപയോഗിച്ച് ലോഗിൻ ചെയുക" },
-                { id: "lbl8", en: "Sign up as Innovator", ml: "സൈൻ അപ്പ് ചെയുക" },
+                { id: "lbl7", en: "Login with Sulekha", ml: "സുലേഖ വഴിയുള്ള ലോഗിൻ" },
+                { id: "lbl8", en: "Sign up as Innovator", ml: "സൈൻ അപ്പ്" },
                 { id: "otplogin", en: "Send OTP", ml: "ഒടിപി അയക്കുക" },
                 { id: "lbl9", en: "Please enter the OTP to verify your account", ml: "അക്കൗണ്ട് സ്ഥിരീകരിക്കാൻ ഒടിപി ടൈപ്പ് ചെയുക" },
                 { id: "otpvalidate", en: "Verify", ml: "സ്ഥിരീകരിക്കുക" },
@@ -221,13 +221,16 @@
                 });
 
                 store.set('Eb_sign_in_language-' + '@ViewBag.SolutionId', k);
+                let exdate = moment().add(7, "days").toDate();
+                let val = escape(k) + ";expires = " + exdate.toUTCString();
+                document.cookie = "ebLang=" + val;
             }
 
-            $("#lng-switch").on("click", function(e) { 
+            $("#lng-switch").on("click", function (e) {
                 switchLang($(e.target).text());
             });
 
-            if ('@UrlHelper.ContainsOloi(ViewBag.HostValue)' == 'True')
+            if ('@UrlHelper.ContainsOloi(ViewBag.HostValue)' == 'True' && store.get('Eb_sign_in_language-' + '@ViewBag.SolutionId') != 'ml')
                 switchLang("ml");
         });
 
@@ -307,6 +310,7 @@
         font-weight: 600;
         color: #555;
     }
+
         #lng-switch:hover {
             color: #508bf9;
         }

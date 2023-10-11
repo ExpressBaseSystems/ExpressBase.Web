@@ -116,7 +116,7 @@
                     <div id="obj_icons" style="display:inline"></div>
                     <div class='form-group' id="notificaionandprofile">
                         @{
-                            if (ViewBag.wc == "uc" && Solution.IsMultiLanguageEnabled)
+                            if (ViewBag.wc == "uc" && Solution.IsMultiLanguageEnabled && Solution.Languages.Count > 0)
                             {
                                 <div id="language-switcher-btn" class="btn-select">
                                     <i class="fa fa-language" aria-hidden="true" style="margin-left: -20px; position: relative; left: 30px; top: 2px; color: #336699; font-size: 18px;"></i>

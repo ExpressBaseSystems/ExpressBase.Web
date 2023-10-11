@@ -1664,8 +1664,8 @@
     };
 
     this.WebFormlink = function (_refid, _filter, _mode) {
-        let _locale = ebcontext.languages.getCurrentLocale();
-        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
+        let _l = ebcontext.languages.getCurLanguageCode();
+        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}&_lg=${_l}`;
         window.open(url, '_blank');
 
         //var _form = document.createElement("form");
@@ -3349,9 +3349,9 @@
                         <ul class="drp_ul"></ul>
                     </div>
                     </div>`);
-        let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale() : 0;
+        let _l = (ebcontext.languages != undefined) ? ebcontext.languages.getCurLanguageCode() : 'en';
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
+            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lg=${_l}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };

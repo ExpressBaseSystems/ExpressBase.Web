@@ -1175,8 +1175,8 @@
             params.push(new fltr_obj(16, "srcCtrl", ctrl.Name));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
             if (ctrl.OpenInNewTab) {
-                let _locale = ebcontext.languages.getCurrentLocale();
-                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}&_lo=${_locale}`;
+                let _l = ebcontext.languages.getCurLanguageCode();
+                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}&_lg=${_l}`;
                 window.open(url, '_blank');
             }
             else {
@@ -1452,7 +1452,7 @@
         $('#webformsave-selbtn').hide();
         if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
             $('#webform_submit').parent().prepend(`<div class = "text-center" id = '${ctrl.EbSid_CtxId}_captcha'> </div>
-                    <input type='text' class = "text-center" placeholder='Enter the captcha' id='${ctrl.EbSid_CtxId}_cpatchaTextBox' />`);
+                    <input type='text' class = "text-center" placeholder='${(ebcontext.languages.getCurrentLanguageCode() == 'ml' ? 'ക്യാപ്ച നൽകുക': 'Enter the captcha')}' id='${ctrl.EbSid_CtxId}_cpatchaTextBox' />`);
 
             ctrlOpts.code = "";
             this.CreateCaptcha(ctrl.EbSid_CtxId, ctrlOpts);

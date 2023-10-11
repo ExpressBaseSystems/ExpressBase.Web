@@ -12,6 +12,7 @@
     string signupFormRefid = ViewBag.signupFormRefid;
     string defaultHtmlPageRefid = ViewBag.defaultHtmlPageRefid;
     string getEmployeesDrRefid = ViewBag.getEmployeesDrRefid;
+    bool EnableFinancialYear = ViewBag.EnableFinancialYear ?? false;
     MobileAppSettings mobile_settings = ViewBag.MobileSettings;
     EbWebFormSettings Web_settings = ViewBag.WebFormSettings;
     string CleanupQueries = ViewBag.CleanupQueries;
@@ -246,6 +247,10 @@
                             }
                         </select>
                     </div>
+                    <label style="margin-top:30px;"> Other Settings </label>
+                    <div>
+                        <input type="checkbox" id="chkEnableFinancialYear" @(EnableFinancialYear ? "checked" : "")> Enable Financial Year
+                    </div>
                 </div>
             </div>
         </div>
@@ -410,7 +415,7 @@
     var MobileSettings = @Html.Raw(JsonConvert.SerializeObject(mobile_settings));
     var MobPageColl = [];
     var SystemColumns = @Html.Raw(JsonConvert.SerializeObject(ViewBag.SystemColumns));
-     let css = @Html.Raw(JsonConvert.SerializeObject(ViewBag.WebFormSettings));
+    let css = @Html.Raw(JsonConvert.SerializeObject(ViewBag.WebFormSettings));
     var stylehelp = new FormStyleHelper(css);
 
     $(document).ready(function () {
@@ -426,7 +431,7 @@
 
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
-        drake.off("drop").on("drop", function () {});
+        drake.off("drop").on("drop", function () { });
     });
 
     $("#webform-style-reset").off("click").on("click", function () {
@@ -445,7 +450,7 @@
         let arr = [];
 
         $(".usr_typ").each(function (index) {
-            arr.push({Id : this.id, RefId :$('#'+this.id +' .user_type_forms').val()});
+            arr.push({ Id: this.id, RefId: $('#' + this.id + ' .user_type_forms').val() });
         });
 
         setMobileSettings();
@@ -455,6 +460,7 @@
             SignupFormRefid: $("#signup_object").val(),
             DefaultHtmlPageRefid: $("#default_html_page").val(),
             GetEmployeesDrRefid: $("#get_employees_dr").val(),
+            EnableFinancialYear: $("#chkEnableFinancialYear").prop("checked"),
             UserTypeForms: arr,
             MobileAppSettings: MobileSettings,
             WebSettings: stylehelp.getStyleObj(),
@@ -463,11 +469,12 @@
         $.post("../Dev/SaveSolutionSettings",
             {
                 obj: JSON.stringify(obj),
-                CleanupQueries: btoa(editor.getValue())},
+                CleanupQueries: btoa(editor.getValue())
+            },
             function (result) {
                 $("#eb_common_loader").EbLoader("hide");
                 EbDialog("show", {
-                    Message: result ,
+                    Message: result,
                     Buttons: {
                         "Ok": {
                             Background: "blue",
@@ -488,7 +495,7 @@
         MobileSettings.LatestAppVersion = $("#txtMobVersion").val();
     }
 
-    function EbProfileUserType(id,name,refid) {
+    function EbProfileUserType(id, name, refid) {
         this.Id = id;
         this.Name = name;
         this.RefId = refid;
@@ -527,13 +534,13 @@
     }
 
     var editor = CodeMirror.fromTextArea(document.getElementById("queries"), {
-            mode: "text/x-pgsql",
-            lineNumbers: true,
-            lineWrapping: false,
-            extraKeys: { "Ctrl-Space": "autocomplete" },
-            autoRefresh: true,
-            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        mode: "text/x-pgsql",
+        lineNumbers: true,
+        lineWrapping: false,
+        extraKeys: { "Ctrl-Space": "autocomplete" },
+        autoRefresh: true,
+        foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
     });
     editor.setValue(atob('@CleanupQueries'));
 </script>

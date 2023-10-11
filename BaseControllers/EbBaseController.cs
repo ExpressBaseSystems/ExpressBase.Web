@@ -44,6 +44,8 @@ namespace ExpressBase.Web.BaseControllers
 
         protected User LoggedInUser { get; set; }
 
+        protected string CurrentLanguage { get; set; }
+
         public IHttpContextAccessor httpContextAccessor { get; set; }
 
         public string RequestSourceIp
@@ -173,6 +175,7 @@ namespace ExpressBase.Web.BaseControllers
             Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole);
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ReCaptchaKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_KEY);
+            this.CurrentLanguage = context.HttpContext.Request.Cookies["ebLang"];
             base.OnActionExecuting(context);
         }
 
@@ -351,6 +354,8 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbFinancialYears GetFinancialYearsObject(Eb_Solution s_obj, User user)
         {
+            if (s_obj.SolutionSettings?.EnableFinancialYear != true)
+                return null;
             EbFinancialYears fys = s_obj?.FinancialYears ?? new EbFinancialYears();
             if (WhichConsole == RoutingConstants.UC)
             {

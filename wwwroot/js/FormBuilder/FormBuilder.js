@@ -93,7 +93,7 @@
                 else {
                     let url = window.location.origin.replace('-dev', '') + "/WebForm/Index?_r=" + this.EbObject.RefId;
                     if (ebcontext.languages != undefined)
-                        url += "&_lo=" + ebcontext.languages.getCurrentLocale();
+                        url += "&_lg=" + ebcontext.languages.getCurrentLanguageCode();
                     window.open(url, '_blank');
                 }
             }.bind(this));

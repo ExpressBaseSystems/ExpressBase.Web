@@ -635,9 +635,9 @@ let LanguagePicker = function (options) {
                 return 0;
 
             let cl = this.getLangByCode(store.get(this.storeKey));
-            let clObj = this.getLangByCode(cl);
-            if (clObj)
-                return clObj.Id;
+            if (cl) {
+                return cl.Id;
+            }
             return 0;
         };
 

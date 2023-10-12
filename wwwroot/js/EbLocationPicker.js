@@ -550,6 +550,7 @@ let LanguagePicker = function (options) {
                 let l = this.langList[i];
                 this.$switchBtn.append(`<option value="${l.Code}" data-id="${l.Id}">${l.Name}</option>`);
             }
+            this.$switchBtn.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
             this.$switchBtn.on("change", this.langChanged.bind(this));
         };
 
@@ -568,7 +569,7 @@ let LanguagePicker = function (options) {
             if (cl) {
                 this.updateCookie(cl.Code);
                 this.$switchBtn.val(cl.Code);
-                setTimeout(function (cl) { $("#language-switcher-btn .filter-option-inner-inner").html(`<i class="fa fa-language" aria-hidden="true" style="font-size:18px"></i>&nbsp;&nbsp;` + cl.DisplayName); }.bind(this, cl), 100);
+                $("#language-switcher-btn .filter-option-inner-inner").html(`<i class="fa fa-language" aria-hidden="true" style="font-size:18px"></i>&nbsp;&nbsp;` + cl.DisplayName);
             }
         };
 

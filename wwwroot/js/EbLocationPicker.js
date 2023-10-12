@@ -568,6 +568,7 @@ let LanguagePicker = function (options) {
             if (cl) {
                 this.updateCookie(cl.Code);
                 this.$switchBtn.val(cl.Code);
+                setTimeout(function (cl) { $("#language-switcher-btn .filter-option-inner-inner").html(`<i class="fa fa-language" aria-hidden="true" style="font-size:18px"></i>&nbsp;&nbsp;` + cl.DisplayName); }.bind(this, cl), 100);
             }
         };
 

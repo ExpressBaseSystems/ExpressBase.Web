@@ -722,13 +722,30 @@ input:checked + .proslider:before {
     font-size: 11px;
 }
 
-
-#language-switcher-btn .dropdown-toggle {
-    background: transparent;
+#language-switcher-btn {
+    display: inline-block;
 }
 
+    #language-switcher-btn .bootstrap-select {
+        width: 62px;
+    }
+
+    #language-switcher-btn .dropdown-toggle {
+        background: transparent;
+        color: #336699;
+        font-size: 12px;
+        padding: 6px 4px;
+        border-radius: 4px;
+        outline: none !important;
+        height: 32px;
+    }
+
+    #language-switcher-btn .bootstrap-select .dropdown-toggle .caret {
+        right: 4px;
+    }
+
     #language-switcher-btn .dropdown-toggle:hover {
-        background-color: #e4e4e430 !important;
+        background-color: #e4e4e4;
     }
 
 

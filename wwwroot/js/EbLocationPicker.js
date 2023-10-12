@@ -531,8 +531,8 @@ let LanguagePicker = function (options) {
         this.langList = options.LanguagesList;
         this.Tid = options.Tid || null;
         this.Uid = options.Uid || null;
-        this.storeKey = "Eb_language-" + this.Tid + this.Uid;
-        this.stKeySignInLang = "Eb_sign_in_language-" + this.Tid;
+        this.storeKey = "Eb_language-" + this.Tid;
+        //this.stKeySignInLang = "Eb_sign_in_language-" + this.Tid;
         //this.locale_storeKey = "Eb_locale-" + this.Tid + this.Uid;
         this.$switchBtn = $("#language-switcher");
 
@@ -560,16 +560,10 @@ let LanguagePicker = function (options) {
                 cl = this.getLangByCode(curLang);
             }
             else {
-                let curSiLang = store.get(this.stKeySignInLang);
-                if (curSiLang) {
-                    cl = this.getLangByCode(curSiLang);
-                }
-                if (!cl) {
-                    cl = this.getLangByCode('en');
-                    if (!cl)
-                        cl = this.langList[0];
-                    store.set(this.storeKey, cl.Code);
-                }
+                cl = this.getLangByCode('en');
+                if (!cl)
+                    cl = this.langList[0];
+                store.set(this.storeKey, cl.Code);
             }
             if (cl) {
                 this.updateCookie(cl.Code);

@@ -220,7 +220,7 @@
                     $("#" + o.id).text(o[k]);
                 });
 
-                store.set('Eb_sign_in_language-' + '@ViewBag.SolutionId', k);
+                store.set('Eb_language-' + '@ViewBag.SolutionId', k);
                 let exdate = moment().add(7, "days").toDate();
                 let val = escape(k) + ";expires = " + exdate.toUTCString();
                 document.cookie = "ebLang=" + val;
@@ -230,7 +230,7 @@
                 switchLang($(e.target).text());
             });
 
-            if ('@UrlHelper.ContainsOloi(ViewBag.HostValue)' == 'True' && store.get('Eb_sign_in_language-' + '@ViewBag.SolutionId') != 'en')
+            if ('@UrlHelper.ContainsOloi(ViewBag.HostValue)' == 'True' && store.get('Eb_language-' + '@ViewBag.SolutionId') != 'en')
                 switchLang("ml");
         });
 

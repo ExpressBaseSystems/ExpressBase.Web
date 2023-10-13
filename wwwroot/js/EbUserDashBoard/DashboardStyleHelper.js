@@ -285,9 +285,10 @@ function Eb_Dashboard_Bg(EbObject) {
 
             $("#layout_div")
                 .css("background-image", `url("/images/${EbObject.BackgroundImage}.jpg")`)
-                .css("background-size", "100% 100%").css("background-repeat", "no-repeat")
-                .css("background-position-x", "center")
-                .css("background-position-y", "top");
+                .css("background-size", "cover")
+                .css("background-repeat", "no-repeat")
+                .css("background-position-x", "left")
+                .css("background-position-y", "calc(0% + 38px)");
 
             var maxWidth = window.matchMedia("(max-width: 768px)");
 

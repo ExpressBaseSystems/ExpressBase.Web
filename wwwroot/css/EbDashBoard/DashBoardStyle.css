@@ -43,7 +43,7 @@
         border-radius: 5px;
         background-color: transparent;
         border: solid 0px;
-        margin: 0%;
+        /*margin: 0%;*/
     }
 
         .grid-stack > .grid-stack-item > .grid-stack-item-content {

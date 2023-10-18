@@ -3430,6 +3430,10 @@ input.locinp {
     pointer-events: none;
 }
 
+[ctype=SubmitButton] input::placeholder {
+    font-size: 10px;
+}
+
 .tv-control-cont .table.dataTable {
     margin-top: 0 !important;
     border-top: 0;

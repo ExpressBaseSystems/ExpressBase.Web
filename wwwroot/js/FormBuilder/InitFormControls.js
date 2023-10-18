@@ -1452,7 +1452,7 @@
         $('#webformsave-selbtn').hide();
         if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
             $('#webform_submit').parent().prepend(`<div class = "text-center" id = '${ctrl.EbSid_CtxId}_captcha'> </div>
-                    <input type='text' class = "text-center" placeholder='${(ebcontext.languages.getCurrentLanguageCode() == 'ml' ? 'ക്യാപ്ച നൽകുക': 'Enter the captcha')}' id='${ctrl.EbSid_CtxId}_cpatchaTextBox' />`);
+                    <input type='text' class = "text-center" placeholder='${(ebcontext.languages.getCurrentLanguageCode() == 'ml' ? 'മുകളിൽ കൊടുത്തിരിക്കുന്ന കോഡ് എഴുതുക' : 'Enter the captcha')}' id='${ctrl.EbSid_CtxId}_cpatchaTextBox' style='border: 1px solid #ccc; margin-bottom: 10px;' />`);
 
             ctrlOpts.code = "";
             this.CreateCaptcha(ctrl.EbSid_CtxId, ctrlOpts);

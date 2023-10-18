@@ -158,7 +158,7 @@
                             grecaptcha.reset();
                         }
                         if (auth.errorMessage == "Invalid Username or Password" && store.get('Eb_language') == 'ml')
-                            auth.errorMessage = "അസാധുവായ ഇമെയിൽ അല്ലെങ്കിൽ പാസ്‌വേഡ്";
+                            auth.errorMessage = "അസാധുവായ ഇമെയിൽ അല്ലെങ്കിൽ പാസ്സ്‌വേർഡ്";
                         EbMessage("show", { Background: "red", Message: auth.errorMessage });
                     }
                 }

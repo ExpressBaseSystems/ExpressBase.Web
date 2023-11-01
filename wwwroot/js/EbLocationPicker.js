@@ -586,7 +586,7 @@ let LanguagePicker = function (options) {
 
         this.updateCookie = function (c_value) {
             var exdate = moment().add(7, "days").toDate();
-            var val = escape(c_value) + ";expires = " + exdate.toUTCString();
+            var val = escape(c_value) + ";expires=" + exdate.toUTCString() + ";path=/";
             document.cookie = "ebLang=" + val;
         };
 

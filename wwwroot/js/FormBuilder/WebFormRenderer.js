@@ -1454,8 +1454,7 @@ const WebFormRender = function (option) {
                 CurrentLoc: this.getLocId(),
                 sseChannel: this.sseChannel,
                 sse_subscrId: ebcontext.subscription_id,
-                fsCxtId: this.fsCxtId,
-                CurrentLang: ebcontext.languages.getCurrentLanguageCode()
+                fsCxtId: this.fsCxtId
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();

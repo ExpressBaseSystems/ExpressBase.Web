@@ -773,7 +773,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             }
         }
 
-        public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId, string fsCxtId, string CurrentLang)
+        public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId, string fsCxtId)
         {
             InsertDataFromWebformResponse Resp;
             try
@@ -824,7 +824,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                             CurrentLoc = CurrentLoc,
                             DraftId = DraftId,
                             FsCxtId = fsCxtId,
-                            CurrentLang = CurrentLang
+                            CurrentLang = this.CurrentLanguage
                         });
                     Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
                     //////using server events enable other opened form edit buttons

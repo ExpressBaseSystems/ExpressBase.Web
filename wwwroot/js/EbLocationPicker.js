@@ -790,8 +790,9 @@ let FinYearPicker = function (options) {
                 if (o.formRenderer.__MultiRenderCxt == MultiRenderCxt) {
                     let fp = this.getActivePeriodByDate(o.ctrl.getValue());
                     if (!fp || fp.LockedIds.includes(locId) || (fp.PartiallyLockedIds.includes(locId) && !(this.finyears.IsFyAdmin || this.finyears.IsFyUser))) {
-                        let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s}` : '';
-                        EbMessage("show", { Message: `Edit is blocked - Financial Period ${period} is locked`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                        let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s} is locked` : 'is not found';
+                        let cName = o.ctrl.Label ? o.ctrl.Label : o.ctrl.Name;
+                        EbMessage("show", { Message: `Edit is blocked by the date control '${cName}' with value '${o.ctrl.getValue()}' - Financial Period ${period}`, AutoHide: false, Background: '#aa0000' });
                         return false;
                     }
                 }
@@ -826,17 +827,17 @@ let FinYearPicker = function (options) {
 
         }.bind(this);
 
-        //EXTERNAL fn - frc
-        this.getWarningMessage = function (dateIn_s) {
-            let fp = this.getActivePeriodByDate(dateIn_s);
-            let locId = ebcontext.locations.CurrentLocObj.LocId;
-            if (!fp || fp.LockedIds.includes(locId) || (fp.PartiallyLockedIds.includes(locId) && !(this.finyears.IsFyAdmin || this.finyears.IsFyUser))) {
-                let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s}` : '';
-                EbMessage("show", { Message: `Financial Period ${period} is locked`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
-                return 'Locked date';
-            }
-            return null;
-        }.bind(this);
+        ////EXTERNAL fn - frc
+        //this.getWarningMessage = function (dateIn_s) {
+        //    let fp = this.getActivePeriodByDate(dateIn_s);
+        //    let locId = ebcontext.locations.CurrentLocObj.LocId;
+        //    if (!fp || fp.LockedIds.includes(locId) || (fp.PartiallyLockedIds.includes(locId) && !(this.finyears.IsFyAdmin || this.finyears.IsFyUser))) {
+        //        let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s}` : '';
+        //        EbMessage("show", { Message: `Financial Period ${period} is locked`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+        //        return 'Locked date';
+        //    }
+        //    return null;
+        //}.bind(this);
 
         //EXTERNAL fn - frc
         this.getWarningMessage = function (dateIn_s) {
@@ -856,14 +857,14 @@ let FinYearPicker = function (options) {
                 let fp = this.getActivePeriodByDate(dateIn_s);
                 let locId = ebcontext.locations.CurrentLocObj.LocId;
                 if (!fp || fp.LockedIds.includes(locId) || (fp.PartiallyLockedIds.includes(locId) && !(this.finyears.IsFyAdmin || this.finyears.IsFyUser))) {
-                    let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s}` : '';
-                    EbMessage("show", { Message: `Financial Period ${period} is locked`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                    let period = fp ? `between ${fp.ActStart_s} and ${fp.ActEnd_s} is locked` : 'is not found';
+                    EbMessage("show", { Message: `Financial Period ${period} - Date '${dateIn_s}' is not allowed`, AutoHide: false, Background: '#aa0000' });
                     return 'Locked date';
                 }
                 else {
                     EbDialog("show",
                         {
-                            Message: `Entered date (${date.format(this.DtFormat)}) is not inside current active period! Click Ok to switch active period.`,
+                            Message: `Entered date (${date.format(this.DtFormat)}) is not inside current active period (${obj.ActStart_s} to ${obj.ActEnd_s}). Click Ok to switch active period.`,
                             Buttons: {
                                 "Ok": { Background: "blue", Align: "right", FontColor: "white;" },
                                 "Cancel": { Background: "green", Align: "left", FontColor: "white;" }
@@ -988,25 +989,25 @@ let FinYearPicker = function (options) {
                             <div class="row" style="padding: 5px 0px;">
                                 <div class="create_fy_mdl_rad-div">
                                     <div class="form-check">
-                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad1" name="create_fy_mdl_optrad" value="Yearly" checked>
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad1" name="create_fy_mdl_optrad" value="Yearly" data-freq="1" checked>
                                         <label class="form-check-label" for="create_fy_mdl_rad1">Yearly</label>
                                     </div>
                                 </div>
                                 <div class="create_fy_mdl_rad-div">
                                     <div class="form-check">
-                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad2" name="create_fy_mdl_optrad" value="Half Yearly">
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad2" name="create_fy_mdl_optrad" value="Half Yearly" data-freq="2">
                                         <label class="form-check-label" for="create_fy_mdl_rad2">Half Yearly</label>
                                     </div>
                                 </div>
                                 <div class="create_fy_mdl_rad-div">
                                     <div class="form-check">
-                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad3" name="create_fy_mdl_optrad" value="Quarterly">
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad3" name="create_fy_mdl_optrad" value="Quarterly" data-freq="4">
                                         <label class="form-check-label" for="create_fy_mdl_rad3">Quarterly</label>
                                     </div>
                                 </div>
                                 <div class="create_fy_mdl_rad-div">
                                     <div class="form-check">
-                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad4" name="create_fy_mdl_optrad" value="Monthly">
+                                        <input type="radio" class="form-check-input" id="create_fy_mdl_rad4" name="create_fy_mdl_optrad" value="Monthly" data-freq="12">
                                         <label class="form-check-label" for="create_fy_mdl_rad4">Monthly</label>
                                     </div>
                                 </div>
@@ -1083,6 +1084,7 @@ let FinYearPicker = function (options) {
             for (let i = 0; i < this.finyears.List.length; i++) {
                 if (this.finyears.List[i].Id == fyId) {
                     _date = this.finyears.List[i].FyStart_s;
+                    $(`input[type=radio][name=create_fy_mdl_optrad][data-freq=${this.finyears.List[i].List.length}]`).prop('checked', true);
                     break;
                 }
             }

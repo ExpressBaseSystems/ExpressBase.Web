@@ -261,7 +261,8 @@
                 //if (ctrl.RestrictionRule == 1)
                 //    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId);
                 //if (ctrl.RestrictionRule == 2)
-                ebcontext.finyears.setFinacialYear({ ctrl: ctrl, formRenderer: this.Renderer });
+                if (ctrl.RestrictionRule == 1 || ctrl.RestrictionRule == 2)
+                    ebcontext.finyears.setFinacialYear({ ctrl: ctrl, formRenderer: this.Renderer });
             }
             else if (ctrl.EbDateType === 17) { //Time
 

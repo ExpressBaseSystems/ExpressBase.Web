@@ -1174,9 +1174,11 @@ let FinYearPicker = function (options) {
 
         this.lockFpBtnClicked = function () {
             let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
+            let fp = this.getActivePeriodById(parseInt(opt.attr('data-id')));
+            let period = fp ? `(${fp.ActStart_s} to ${fp.ActEnd_s})` : '';
             EbDialog("show",
                 {
-                    Message: `Do you want to ${(opt.attr('data-lkd') == 't' ? 'Unlock' : 'Lock')} for All Locations or Current Location?`,
+                    Message: `Do you want to ${(opt.attr('data-lkd') == 't' ? 'Unlock' : 'Lock')} ${period} for All Locations or Current Location (${ebcontext.locations.CurrentLocObj.ShortName})?`,
                     Buttons: {
                         "All Locations": { Background: "blue", Align: "left", FontColor: "white;" },
                         "Current Location": { Background: "green", Align: "right", FontColor: "white;" }
@@ -1195,10 +1197,13 @@ let FinYearPicker = function (options) {
             let opt = this.$body.find(`li.ebfy.active`).find(`select.selectpicker option:selected`);
             if (opt.attr('data-lkd') == 't') {
                 EbMessage("show", { Message: "Unlock the selected active period to continue", AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                return;
             }
+            let fp = this.getActivePeriodById(parseInt(opt.attr('data-id')));
+            let period = fp ? `(${fp.ActStart_s} to ${fp.ActEnd_s})` : '';
             EbDialog("show",
                 {
-                    Message: `Do you want to ${(opt.attr('data-plkd') == 't' ? 'Partial Unlock' : 'Partial Lock')} for All Locations or Current Location?`,
+                    Message: `Do you want to ${(opt.attr('data-plkd') == 't' ? 'Partial Unlock' : 'Partial Lock')} ${period} for All Locations or Current Location (${ebcontext.locations.CurrentLocObj.ShortName})?`,
                     Buttons: {
                         "All Locations": { Background: "blue", Align: "left", FontColor: "white;" },
                         "Current Location": { Background: "green", Align: "right", FontColor: "white;" }

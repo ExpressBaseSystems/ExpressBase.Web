@@ -60,6 +60,9 @@
     }
 </style>
 @{
+    @using ExpressBase.Common.Data;
+    @using ExpressBase.Common.Extensions;
+    @using ExpressBase.Common.Structures;
     @using Newtonsoft.Json;
     var RoleObj = Html.Raw(ViewBag.Roles);
     //var SystemRoles = Html.Raw(ViewBag.SystemRoles);
@@ -72,57 +75,70 @@
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
     var LocConstraint = (Html.Raw(ViewBag.LocConstraint).ToString() == "") ? "null" : Html.Raw(ViewBag.LocConstraint);
+    List<string> disableCtrls = ViewBag.disableCtrls;
+    Dictionary<string, string> uInfo = ViewBag.U_Info;
+    int dataId = Convert.ToInt32(uInfo["eb_data_id"]);
+    string formParam = JsonConvert.SerializeObject(new List<Param>() { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = dataId.ToString() } }).ToBase64();
+    int verId = Convert.ToInt32(uInfo["eb_ver_id"]);
+    string mapUsr = uInfo["eb_is_mapped_user"];
+
+    string GetDisableControlString(string ctrlName)
+    {
+        if (dataId > 0 && disableCtrls.Contains(ctrlName))
+            return "disabled";
+        return "";
+    }
 }
 
 <div class="row s-dash-container h-100">
     @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-            <div class="t-container">
-                <ul class="list-group eb-dashbord-sidebar">
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Security/CommonList?type=Users">
-                            <span class="material-icons t__sidebar_icon">person</span>
-                            <span class="t__sidebar_text">Users</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Security/CommonList?type=UserGroups">
-                            <span class="material-icons t__sidebar_icon">group</span>
-                            <span class="t__sidebar_text">UserGroups</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Security/CommonList?type=Roles">
-                            <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
-                            <span class="t__sidebar_text">Roles</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/AppStore">
-                            <span class="material-icons t__sidebar_icon">store</span>
-                            <span class="t__sidebar_text">App Store</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Survey/SurveyHome">
-                            <span class="material-icons t__sidebar_icon">question_answer</span>
-                            <span class="t__sidebar_text">Survey</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a">
-                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                            <span class="t__sidebar_text">Wiki</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a">
-                            <span class="material-icons t__sidebar_icon">contact_support</span>
-                            <span class="t__sidebar_text">Support</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>*@
+    <div class="t-container">
+    <ul class="list-group eb-dashbord-sidebar">
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Security/CommonList?type=Users">
+    <span class="material-icons t__sidebar_icon">person</span>
+    <span class="t__sidebar_text">Users</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Security/CommonList?type=UserGroups">
+    <span class="material-icons t__sidebar_icon">group</span>
+    <span class="t__sidebar_text">UserGroups</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Security/CommonList?type=Roles">
+    <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
+    <span class="t__sidebar_text">Roles</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/AppStore">
+    <span class="material-icons t__sidebar_icon">store</span>
+    <span class="t__sidebar_text">App Store</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Survey/SurveyHome">
+    <span class="material-icons t__sidebar_icon">question_answer</span>
+    <span class="t__sidebar_text">Survey</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a">
+    <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+    <span class="t__sidebar_text">Wiki</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a">
+    <span class="material-icons t__sidebar_icon">contact_support</span>
+    <span class="t__sidebar_text">Support</span>
+    </a>
+    </li>
+    </ul>
+    </div>
+    </div>*@
     <div class="s-dash-workplace tenant_workpane h-100">
         <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs h-100">
             <div class="mu-parent-div">
@@ -144,13 +160,13 @@
                     </div>
                     <div class="form-group">
                         <label class="label-custom-style">Full Name</label>
-                        <input id="txtFullName" class="form-control input-custom-style" type="text" title="Name" autocomplete="off">
+                        <input id="txtFullName" class="form-control input-custom-style" type="text" title="Name" autocomplete="off" @GetDisableControlString("fullname")>
                     </div>
                     <div class="form-group" style="">
                         <label class="label-custom-style">Nick Name</label>
                         <div class="input-group">
                             <span class="input-group-addon span-custom-style"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input style="padding-right: 25px; border-radius: 0 4px 4px 0;" id="txtNickName" class="form-control input-custom-style" type="text" title="Nick Name" autocomplete="off">
+                            <input style="padding-right: 25px; border-radius: 0 4px 4px 0;" id="txtNickName" class="form-control input-custom-style" type="text" title="Nick Name" autocomplete="off" @GetDisableControlString("nickname")>
                             <span class="span-custom-feedback form-control-feedback" id="spanNickName"></span>
                         </div>
                     </div>
@@ -158,7 +174,7 @@
                         <label class="label-custom-style">Email ID</label>
                         <div class="input-group">
                             <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                            <input style="padding-right: 25px; border-radius: 0 4px 4px 0;" class="form-control input-custom-style txtEmail" type="text" title="Email ID" autocomplete="off">
+                            <input style="padding-right: 25px; border-radius: 0 4px 4px 0;" class="form-control input-custom-style txtEmail" type="text" title="Email ID" autocomplete="off" @GetDisableControlString("email")>
                             <span class="span-custom-feedback form-control-feedback" id="spanEmail"></span>
                         </div>
                     </div>
@@ -190,6 +206,12 @@
                             <button id="btnResetPassword" class="ebbtn eb_btn-sm btn-resetpw" title="Reset Password">Reset Password</button>
                         </div>
                     </div>
+                    @if (dataId > 0 && ViewBag.itemid > 0)
+                    {
+                        <div class="form-group">
+                            <button class="btn btn-primary" onclick="window.open('/WebForm/Inde?_r=@verId&_p=@formParam&_m=1', '_blank')">Open Linked Form</button>
+                        </div>
+                    }
                 </div>
 
                 <div class="col-md-9">
@@ -219,10 +241,10 @@
                                     <div class="form-group">
                                         <label class="label-custom-style">User Status</label>
                                         <br />
-                                        <label class="radio-inline"><input type="radio" name="status" value="0" checked>Active</label>
-                                        <label class="radio-inline"><input type="radio" name="status" value="1">Suspend</label>
-                                        <label class="radio-inline"><input type="radio" name="status" value="2">Terminate</label>
-                                        <label class="radio-inline" style="display: none;"><input type="radio" name="status" value="3">Delete</label>
+                                        <label class="radio-inline"><input type="radio" name="status" value="0" checked @GetDisableControlString("statusid")>Active</label>
+                                        <label class="radio-inline"><input type="radio" name="status" value="1" @GetDisableControlString("statusid")>Suspend</label>
+                                        <label class="radio-inline"><input type="radio" name="status" value="2" @GetDisableControlString("statusid")>Terminate</label>
+                                        <label class="radio-inline" style="display: none;"><input type="radio" name="status" value="3" @GetDisableControlString("statusid")>Delete</label>
                                     </div>
                                     <div class="form-group" id="divVisibility">
                                         <label class="label-custom-style w-100">Visibility </label>
@@ -235,14 +257,14 @@
                                 <div class="row home-tab-cont">
                                     <div class="col-md-6">
                                         @*<div class="form-group" id="divLocConstraint">
-                                                <label class="label-custom-style">Locations white list</label>
-                                                <input id="txtLocations" class="form-control input-custom-style" type="text" title="Locations" autocomplete="off">
-                                            </div>*@
+                                        <label class="label-custom-style">Locations white list</label>
+                                        <input id="txtLocations" class="form-control input-custom-style" type="text" title="Locations" autocomplete="off">
+                                        </div>*@
                                         <label class="myLabel label-custom-style">Locations white list</label>
                                         <div class="input-group ">
                                             <input type="text" id="locWhiteLst" class="form-control " placeholder="Locations white list" disabled autocomplete="off" name="locWhiteLstNm">
                                             <div class="input-group-btn">
-                                                <button id="btnlocWhiteLst" class="btn eb_btnblue  " type="submit">View/Edit</button>
+                                                <button id="btnlocWhiteLst" class="btn eb_btnblue" type="submit" @GetDisableControlString("consadd")>View/Edit</button>
                                             </div>
                                         </div>
                                     </div>
@@ -306,7 +328,7 @@
                                                 <label class="label-custom-style">Alternate Email ID</label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                                                    <input class="form-control txtAlternateEmail input-custom-style" type="text" title="Alternate Email ID" autocomplete="off">
+                                                    <input class="form-control txtAlternateEmail input-custom-style" type="text" title="Alternate Email ID" autocomplete="off" @GetDisableControlString("alternateemail")>
                                                 </div>
                                             </div>
                                             <div class="form-group" id="divGender">
@@ -325,7 +347,6 @@
                                             </div>
                                         </div>
                                         <div class="col-md-8 col-lg-8">
-
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -334,7 +355,7 @@
                                                 <label class="label-custom-style">Primary Phone Number</label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                                    <input id="txtPhPrimary" class="form-control input-custom-style" type="text" title="Primary Phone Number" autocomplete="off" style="border-radius: 0px 4px 4px 0px;">
+                                                    <input id="txtPhPrimary" class="form-control input-custom-style" type="text" title="Primary Phone Number" autocomplete="off" style="border-radius: 0px 4px 4px 0px;" @GetDisableControlString("phprimary")>
                                                     <span class="span-custom-feedback form-control-feedback" id="spanPhone"></span>
                                                 </div>
                                             </div>
@@ -389,7 +410,6 @@
                             <div id="login_activity" class="tab-pane fade">
                                 <div class="loginActivity w-100">
                                     <div id="loginActivityLst">
-
                                     </div>
                                 </div>
                             </div>
@@ -482,64 +502,64 @@
         @Html.Raw(ViewBag.Meta);
         @Html.Raw(ViewBag.JsObjects);
         @Html.Raw(ViewBag.EbObjectTypes);
-    function onSignIn(googleUser) {
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-    }
-
-    function OnClickRemove(e) {
-        if(confirm("Click OK to Remove"))
-            $(e).parents("div.col-md-4").remove();
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
         }
 
-    $('document').ready(function () {
-        var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone, '@ViewBag.Env', @LocConstraint);
-        $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y-m-d" });
-        var d = new EbFileUpload({
-            Type:"image",
-            Toggle: "#btnChngDp",
-            TenantId:"@ViewBag.cid",
-            SolutionId: "@ViewBag.SolnId",
-            Container: "DisplayPicture",
-            Multiple: false,
-            ServerEventUrl: ebcontext.se_url,
-            EnableTag: false,
-            EnableCrop: true,
-            Context: "dp",//if single and crop
-            UserId: @ViewBag.itemid,
-            ResizeViewPort: false //if single and crop
-        });
-
-        d.uploadSuccess = function(fileid){
-            EbMessage("show", { Message: fileid + ': File uploaded successfully.' });
-        }
-        d.windowClose = function () {
-            EbMessage("show", { Message: "window closed",Background: "red" });
+        function OnClickRemove(e) {
+            if (confirm("Click OK to Remove"))
+                $(e).parents("div.col-md-4").remove();
         }
 
+        $('document').ready(function () {
+            var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone, '@ViewBag.Env', @LocConstraint);
+            $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y-m-d" });
+            var d = new EbFileUpload({
+                Type: "image",
+                Toggle: "#btnChngDp",
+                TenantId: "@ViewBag.cid",
+                SolutionId: "@ViewBag.SolnId",
+                Container: "DisplayPicture",
+                Multiple: false,
+                ServerEventUrl: ebcontext.se_url,
+                EnableTag: false,
+                EnableCrop: true,
+                Context: "dp",//if single and crop
+                UserId: @ViewBag.itemid,
+                ResizeViewPort: false //if single and crop
+            });
 
-       ////for login activity
+            d.uploadSuccess = function (fileid) {
+                EbMessage("show", { Message: fileid + ': File uploaded successfully.' });
+            }
+            d.windowClose = function () {
+                EbMessage("show", { Message: "window closed", Background: "red" });
+            }
+
+
+            ////for login activity
 
             $("#loginActivityLst").empty();
-                            $("#loginActivityLst").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
-                            var o = new Object();
-                            o.tableId = "tbl";
-                            o.showCheckboxColumn = false;
-                            o.showFilterRow = true;
-                            o.IsPaging = true;
-                            o.dvObject =  @Html.Raw(ViewBag.VisualObj);
-                            o.Source = "loginActivity";
-                            var dataTable = new EbCommonDataTable(o);
-        $("#layout_div .loader-fb").empty().removeClass("loader-fb");
+            $("#loginActivityLst").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+            var o = new Object();
+            o.tableId = "tbl";
+            o.showCheckboxColumn = false;
+            o.showFilterRow = true;
+            o.IsPaging = true;
+            o.dvObject = @Html.Raw(ViewBag.VisualObj);
+            o.Source = "loginActivity";
+            var dataTable = new EbCommonDataTable(o);
+            $("#layout_div .loader-fb").empty().removeClass("loader-fb");
 
-        $("#login_activityTab").off('shown.bs.tab').on('shown.bs.tab',function(){
-           dataTable.Api.columns.adjust();
+            $("#login_activityTab").off('shown.bs.tab').on('shown.bs.tab', function () {
+                dataTable.Api.columns.adjust();
+            });
+
         });
-
-    });
 
 
 

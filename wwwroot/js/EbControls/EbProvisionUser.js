@@ -116,13 +116,13 @@
                 return;
 
             let _d = JSON.parse(this.DataVals.F);
-            let dataObj = { id: _d['map_id'], fullname: _d['map_fullname'], email: _d['map_email'], phprimary: _d['map_phprimary'] };
+            let dataObj = { id: _d['id'], fullname: _d['fullname'], email: _d['email'], phprimary: _d['phprimary'] };
             this._JsCtrlMng.enableOpenMgUserBtn();
-            if (!_d['map_id']) {
+            if (!_d['id']) {
                 this._JsCtrlMng.appendPuInfo('- Not assigned yet -');
                 this._JsCtrlMng.disableOpenMgUserBtn();
             }
-            else if (_d['id'] === _d['map_id'])
+            else if (_d['eb_is_mapped_user'] === 'F')
                 this._JsCtrlMng.appendPuInfo('Created user details...', null, null, dataObj);
             else
                 this._JsCtrlMng.appendPuInfo('Linked user details...', null, null, dataObj);
@@ -259,11 +259,12 @@
 
     this.Msg = {
         New: 'Data save will create a user with following details.',
-        Link: 'Data save will link to the user with following details.',
+        Link: 'Data save will link and update the user with following details.',
         Choose: 'Choose a user to continue.',
         Select: 'Select the user to continue.',
         Nothing: 'Nothing to update to the following user.',
         Update: 'Data save will also update email/phone of the following user.',
+        WillBeUpdate: 'Data save will be update the following user.',
         UpdateEmail: 'Data save will also update email of the following user.',
         UpdatePhone: 'Data save will also update phone of the following user.',
         EmailAE: 'Given email is already exists for the following user.',
@@ -298,7 +299,7 @@
         if (this.ctrl.DataVals)
             _od = JSON.parse(this.ctrl.DataVals.F);
 
-        if (!_od['map_id']) {//New
+        if (!_od['id']) {//New
             if (respObj.emailData === null && respObj.phoneData === null) {
                 this.appendPuInfo(this.Msg.New, null, null, reqObj);
             }
@@ -310,8 +311,8 @@
                         this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                     }
                     else {
-                        this.appendPuInfo(this.Msg.Link, respObj.emailData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
+                        this.appendPuInfo(this.Msg.Link, null, null, respObj.emailData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                     }
                 }
                 else {
@@ -331,8 +332,8 @@
                         this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                     }
                     else {
-                        this.appendPuInfo(this.Msg.Link, respObj.phoneData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
+                        this.appendPuInfo(this.Msg.Link, null, null, respObj.phoneData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
                     }
                 }
                 else {
@@ -348,8 +349,8 @@
                         this.addInvalidStyle('phprimary', this.POhtml.PhoneUnique);
                     }
                     else {
-                        this.appendPuInfo(this.Msg.Link, respObj.emailData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
+                        this.appendPuInfo(this.Msg.Link, null, null, respObj.emailData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                     }
                 }
                 else {
@@ -360,37 +361,26 @@
         }
         else {//edit
             let dataObj = { id: _od['id'], fullname: _od['fullname'], email: _od['email'], phprimary: _od['phprimary'] };
-            let isUserCreated = _od['map_id'] === _od['id'];
+            let isUserCreated = _od['eb_is_mapped_user'] === 'F';
             if (respObj.emailData === null && respObj.phoneData === null) {
-                if (isUserCreated) {
-                    this.appendPuInfo(this.Msg.Update, null, null, dataObj);
-                    this.$updateChkBx.prop('checked', true);
-                    if (reqObj['email'] !== _od['email']) {
-                        this.addInvalidStyle('email', this.POhtml.EmailUpdate);
-                    }
-                    if (reqObj['phprimary'] !== _od['phprimary']) {
-                        this.addInvalidStyle('phprimary', this.POhtml.PhoneUpdate);
-                    }
+                this.appendPuInfo(this.Msg.Update, null, null, dataObj);
+                this.$updateChkBx.prop('checked', true);
+                if (reqObj['email'] !== _od['email']) {
+                    this.addInvalidStyle('email', this.POhtml.EmailUpdate);
                 }
-                else {
-                    this.appendPuInfo(this.Msg.New, null, null, reqObj);
+                if (reqObj['phprimary'] !== _od['phprimary']) {
+                    this.addInvalidStyle('phprimary', this.POhtml.PhoneUpdate);
                 }
             }
             else if (respObj.emailData !== null && respObj.phoneData !== null) {
-                if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['map_id']) {
-                    if (this.ctrl.AllowExistingUser) {
-                        this.appendPuInfo(this.Msg.Nothing, null, null, respObj.emailData);
-                    }
-                    else if (!isUserCreated) {
-                        this.appendPuInfo(this.Msg.EmailPhoneAE, null, null, respObj.emailData);
-                        this.addInvalidStyle('email', this.POhtml.AlreadyExists);
-                        this.addInvalidStyle('phprimary', this.POhtml.AlreadyExists);
-                    }
+                if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['id']) {
+                    this.appendPuInfo(this.Msg.Update, null, null, dataObj);
+                    this.$updateChkBx.prop('checked', true);
                 }
                 else if (respObj.emailData.id === respObj.phoneData.id) {
                     if (this.ctrl.AllowExistingUser) {
-                        this.appendPuInfo(this.Msg.Link, respObj.emailData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
+                        this.appendPuInfo(this.Msg.Link, null, null, respObj.emailData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                     }
                     else {
                         this.appendPuInfo(this.Msg.EmailPhoneAE, null, null, respObj.emailData);
@@ -398,12 +388,12 @@
                         this.addInvalidStyle('phprimary', this.POhtml.AlreadyExists);
                     }
                 }
-                else if (respObj.emailData.id === _od['map_id'] && this.ctrl.AllowExistingUser) {
+                else if (respObj.emailData.id === _od['id'] && this.ctrl.AllowExistingUser) {
                     this.appendPuInfo(this.Msg.Choose, respObj.emailData, respObj.phoneData);
                     this.addInvalidStyle('email', this.POhtml.PhoneDiff);
                     this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
                 }
-                else if (respObj.phoneData.id === _od['map_id'] && this.ctrl.AllowExistingUser) {
+                else if (respObj.phoneData.id === _od['id'] && this.ctrl.AllowExistingUser) {
                     this.appendPuInfo(this.Msg.Choose, respObj.emailData, respObj.phoneData);
                     this.addInvalidStyle('email', this.POhtml.PhoneDiff);
                     this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
@@ -421,26 +411,13 @@
             }
             else if (respObj.emailData === null && respObj.phoneData !== null) {
                 if (reqObj['email']) {
-                    if (respObj.phoneData.id === _od['map_id']) {
-                        if (isUserCreated) {
-                            this.appendPuInfo(this.Msg.UpdateEmail, null, null, dataObj);
-                            this.addInvalidStyle('email', this.POhtml.EmailUpdate);
-                            this.$updateChkBx.prop('checked', true);
-                        }
-                        else if (this.ctrl.AllowExistingUser) {
-                            this.appendPuInfo(this.Msg.Select, respObj.phoneData);
-                            this.addInvalidStyle('email', this.POhtml.EmailUnique);
-                            this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
-                        }
-                        else {
-                            this.appendPuInfo(this.Msg.PhoneAE, null, null, respObj.phoneData);
-                            this.addInvalidStyle('phprimary', this.POhtml.AlreadyExists);
-                        }
+                    if (respObj.phoneData.id === _od['id']) {
+                        this.appendPuInfo(this.Msg.UpdateEmail, null, null, dataObj);
+                        this.addInvalidStyle('email', this.POhtml.EmailUpdate);
+                        this.$updateChkBx.prop('checked', true);
                     }
                     else if (this.ctrl.AllowExistingUser) {
-                        this.appendPuInfo(this.Msg.Select, respObj.phoneData);
-                        this.addInvalidStyle('email', this.POhtml.EmailUnique);
-                        this.addInvalidStyle('phprimary', this.POhtml.EmailDiff);
+                        this.appendPuInfo(this.Msg.Update, null, null, respObj.phoneData);
                     }
                     else {
                         this.appendPuInfo(this.Msg.PhoneAE, null, null, respObj.phoneData);
@@ -448,13 +425,13 @@
                     }
                 }
                 else {
-                    if (respObj.phoneData.id === _od['map_id'] && (this.ctrl.AllowExistingUser || (isUserCreated && !this.ctrl.AllowExistingUser))) {
-                        this.appendPuInfo(this.Msg.Nothing, respObj.phoneData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
+                    if (respObj.phoneData.id === _od['id']) {
+                        this.appendPuInfo(this.Msg.WillBeUpdate, null, null, respObj.phoneData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
                     }
                     else if (this.ctrl.AllowExistingUser) {
-                        this.appendPuInfo(this.Msg.Link, respObj.phoneData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
+                        this.appendPuInfo(this.Msg.Link, null, null, respObj.phoneData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.phoneData);
                     }
                     else {
                         this.appendPuInfo(this.Msg.PhoneAE, null, null, respObj.phoneData);
@@ -464,26 +441,13 @@
             }
             else if (respObj.emailData !== null && respObj.phoneData === null) {
                 if (reqObj['phprimary']) {
-                    if (respObj.emailData.id === _od['map_id']) {
-                        if (isUserCreated) {
-                            this.appendPuInfo(this.Msg.UpdatePhone, null, null, dataObj);
-                            this.addInvalidStyle('phprimary', this.POhtml.PhoneUpdate);
-                            this.$updateChkBx.prop('checked', true);
-                        }
-                        else if (this.ctrl.AllowExistingUser) {
-                            this.appendPuInfo(this.Msg.Select, respObj.emailData);
-                            this.addInvalidStyle('email', this.POhtml.PhoneDiff);
-                            this.addInvalidStyle('phprimary', this.POhtml.PhoneUnique);
-                        }
-                        else {
-                            this.appendPuInfo(this.Msg.EmailAE, null, null, respObj.emailData);
-                            this.addInvalidStyle('email', this.POhtml.AlreadyExists);
-                        }
+                    if (respObj.emailData.id === _od['id']) {
+                        this.appendPuInfo(this.Msg.UpdatePhone, null, null, dataObj);
+                        this.addInvalidStyle('phprimary', this.POhtml.PhoneUpdate);
+                        this.$updateChkBx.prop('checked', true);
                     }
                     else if (this.ctrl.AllowExistingUser) {
-                        this.appendPuInfo(this.Msg.Select, respObj.emailData);
-                        this.addInvalidStyle('email', this.POhtml.PhoneDiff);
-                        this.addInvalidStyle('phprimary', this.POhtml.PhoneUnique);
+                        this.appendPuInfo(this.Msg.Update, respObj.emailData);
                     }
                     else {
                         this.appendPuInfo(this.Msg.EmailAE, null, null, respObj.emailData);
@@ -491,13 +455,13 @@
                     }
                 }
                 else {
-                    if (respObj.emailData.id === _od['map_id'] && (this.ctrl.AllowExistingUser || (isUserCreated && !this.ctrl.AllowExistingUser))) {
-                        this.appendPuInfo(this.Msg.Nothing, respObj.emailData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
+                    if (respObj.emailData.id === _od['id']) {
+                        this.appendPuInfo(this.Msg.WillBeUpdate, null, null, respObj.emailData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                     }
                     else if (this.ctrl.AllowExistingUser) {
                         this.appendPuInfo(this.Msg.Link, respObj.emailData);
-                        this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
+                        //this.makeUserTileActive(this.$infoUsr1, respObj.emailData);
                     }
                     else {
                         this.appendPuInfo(this.Msg.EmailAE, null, null, respObj.emailData);
@@ -829,7 +793,7 @@ let EbProvUserUniqueChkJs = function (options) {
         let reqObj = {};
         $.each(this.provUserAll, function (i, pucObj) {
             reqObj[pucObj.Name] = {};
-            reqObj[pucObj.Name]['id'] = pucObj.getValue();
+            reqObj[pucObj.Name]['id'] = 0; //pucObj.getValue();
             $.each(pucObj.Fields.$values, function (j, obj) {
                 if (obj.Control) {
                     reqObj[pucObj.Name][obj.Name] = obj.Control.getValue();
@@ -873,7 +837,8 @@ let EbProvUserUniqueChkJs = function (options) {
         AEphone: 'Phone already exists for the following user. Unable to continue.',
         Update: 'Data save will also update email/phone of the following user.',
         UpdateEmail: 'Data save will also update email of the following user.',
-        UpdatePhone: 'Data save will also update phone of the following user.'
+        UpdatePhone: 'Data save will also update phone of the following user.',
+        LinkUpdate: 'Data save will also link/update the following user.'
     };
 
     this.ajaxCallSuccess = function (reqObjAll, resp) {
@@ -890,7 +855,7 @@ let EbProvUserUniqueChkJs = function (options) {
             if (!respObj)
                 return;
 
-            if (!_od['map_id']) {//New
+            if (!_od['id']) {//New
                 if (respObj.emailData === null && respObj.phoneData === null) {
                     fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
                 }
@@ -908,12 +873,13 @@ let EbProvUserUniqueChkJs = function (options) {
                     }
                 }
                 else if (respObj.emailData !== null && respObj.phoneData === null) {
-                    if (reqObj['phprimary']) {
-                        reqObj['email'] = '';
-                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
-                    }
-                    else if (pucObj.AllowExistingUser) {
-                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.emailData);
+                    if (pucObj.AllowExistingUser) {
+                        if (reqObj['phprimary']) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdatePhone, respObj.emailData);
+                        }
+                        else {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.emailData);
+                        }
                     }
                     else {
                         fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEemail, respObj.emailData);
@@ -921,12 +887,13 @@ let EbProvUserUniqueChkJs = function (options) {
                     }
                 }
                 else if (respObj.emailData === null && respObj.phoneData !== null) {
-                    if (reqObj['email']) {
-                        reqObj['phprimary'] = '';
-                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
-                    }
-                    else if (pucObj.AllowExistingUser) {
-                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.phoneData);
+                    if (pucObj.AllowExistingUser) {
+                        if (reqObj['email']) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdateEmail, respObj.phoneData);
+                        }
+                        else {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.phoneData);
+                        }
                     }
                     else {
                         fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEphone, respObj.phoneData);
@@ -937,32 +904,26 @@ let EbProvUserUniqueChkJs = function (options) {
             else {//edit
                 let dataObj = { id: _od['id'], fullname: _od['fullname'], email: _od['email'], phprimary: _od['phprimary'] };
                 if (respObj.emailData === null && respObj.phoneData === null) {
-                    if (_od['map_id'] === _od['id'])
-                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.Update, dataObj);
-                    else
-                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
+                    fullHtml += this.getUserTileHtml(pucObj, this.Msg.Update, dataObj);
                 }
                 else if (respObj.emailData !== null && respObj.phoneData !== null) {
-                    if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['map_id']) {
-                        if (_od['map_id'] !== _od['id'] && !pucObj.AllowExistingUser) {
-                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEsame, respObj.emailData);
-                            this.abortSave = true;
-                        }
+                    if (respObj.emailData.id === respObj.phoneData.id && respObj.phoneData.id === _od['id']) {
+                        fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.emailData);
                     }
                     else if (respObj.emailData.id === respObj.phoneData.id) {
                         if (pucObj.AllowExistingUser) {
-                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.emailData);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.emailData);
                         }
                         else {
                             fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEsame, respObj.emailData);
                             this.abortSave = true;
                         }
                     }
-                    else if (respObj.emailData.id === _od['map_id']) {
+                    else if (respObj.emailData.id === _od['id']) {
                         fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEdiff, respObj.emailData, respObj.phoneData);
                         this.abortSave = true;
                     }
-                    else if (respObj.phoneData.id === _od['map_id']) {
+                    else if (respObj.phoneData.id === _od['id']) {
                         fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEdiff, respObj.emailData, respObj.phoneData);
                         this.abortSave = true;
                     }
@@ -973,32 +934,23 @@ let EbProvUserUniqueChkJs = function (options) {
                 }
                 else if (respObj.emailData !== null && respObj.phoneData === null) {
                     if (reqObj['phprimary']) {
-                        if (respObj.emailData.id === _od['map_id']) {
-                            if (_od['map_id'] === _od['id']) {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdatePhone, dataObj);
-                            }
-                            else if (pucObj.AllowExistingUser) {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link2, respObj.emailData);
-                            }
-                            else {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEemail, respObj.emailData);
-                                this.abortSave = true;
-                            }
+                        if (respObj.emailData.id === _od['id']) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdatePhone, respObj.emailData);
+                        }
+                        else if (pucObj.AllowExistingUser) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.emailData);
                         }
                         else {
-                            reqObj['email'] = '';
-                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEemail, respObj.emailData);
+                            this.abortSave = true;
                         }
                     }
                     else {
-                        if (respObj.emailData.id === _od['map_id']) {
-                            if (_od['map_id'] !== _od['id'] && !pucObj.AllowExistingUser) {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEemail, respObj.emailData);
-                                this.abortSave = true;
-                            }
+                        if (respObj.emailData.id === _od['id']) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdatePhone, respObj.emailData);
                         }
                         else if (pucObj.AllowExistingUser) {
-                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.emailData);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.emailData);
                         }
                         else {
                             fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEemail, respObj.emailData);
@@ -1008,32 +960,23 @@ let EbProvUserUniqueChkJs = function (options) {
                 }
                 else if (respObj.emailData === null && respObj.phoneData !== null) {
                     if (reqObj['email']) {
-                        if (respObj.phoneData.id === _od['map_id']) {
-                            if (_od['map_id'] === _od['id']) {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdateEmail, dataObj);
-                            }
-                            else if (pucObj.AllowExistingUser) {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link2, respObj.phoneData);
-                            }
-                            else {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEphone, respObj.phoneData);
-                                this.abortSave = true;
-                            }
+                        if (respObj.phoneData.id === _od['id']) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdateEmail, respObj.phoneData);
+                        }
+                        else if (pucObj.AllowExistingUser) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.phoneData);
                         }
                         else {
-                            reqObj['phprimary'] = '';
-                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.New, reqObj);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEphone, respObj.phoneData);
+                            this.abortSave = true;
                         }
                     }
                     else {
-                        if (respObj.phoneData.id === _od['map_id']) {
-                            if (_od['map_id'] !== _od['id'] && !pucObj.AllowExistingUser) {
-                                fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEphone, respObj.phoneData);
-                                this.abortSave = true;
-                            }
+                        if (respObj.phoneData.id === _od['id']) {
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.UpdateEmail, respObj.phoneData);
                         }
                         else if (pucObj.AllowExistingUser) {
-                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.Link, respObj.phoneData);
+                            fullHtml += this.getUserTileHtml(pucObj, this.Msg.LinkUpdate, respObj.phoneData);
                         }
                         else {
                             fullHtml += this.getUserTileHtml(pucObj, this.Msg.AEphone, respObj.phoneData);
@@ -1042,7 +985,6 @@ let EbProvUserUniqueChkJs = function (options) {
                     }
                 }
             }
-
         }.bind(this));
 
         this.hideLoaderFn();

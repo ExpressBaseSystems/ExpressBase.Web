@@ -12,6 +12,7 @@
     string signupFormRefid = ViewBag.signupFormRefid;
     string defaultHtmlPageRefid = ViewBag.defaultHtmlPageRefid;
     string getEmployeesDrRefid = ViewBag.getEmployeesDrRefid;
+    string provUserFormRefid = ViewBag.provUserFormRefid;
     bool EnableFinancialYear = ViewBag.EnableFinancialYear ?? false;
     MobileAppSettings mobile_settings = ViewBag.MobileSettings;
     EbWebFormSettings Web_settings = ViewBag.WebFormSettings;
@@ -246,6 +247,21 @@
                                 }
                             }
                         </select>
+
+                        <div>
+                            <label style="padding-top:10px;font-weight: 500;">4.  Provision user form (Private)</label>
+                        </div>
+                        <select class="form-control" id="prov_user_form">
+                            <option value="">  --- Choose Provision User Form --- </option>
+                            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in All_ObjList)
+                            {
+                                @foreach (EbObjectWrapper ver in obj.Value)
+                                {
+                                    <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                }
+                            }
+                        </select>
+
                     </div>
                     <label style="margin-top:30px;"> Other Settings </label>
                     <div>
@@ -428,6 +444,9 @@
         if ("@getEmployeesDrRefid" != "") {
             $("#get_employees_dr").val("@getEmployeesDrRefid");
         }
+        if ("@provUserFormRefid" != "") {
+            $("#prov_user_form").val("@provUserFormRefid");
+        }
 
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
@@ -460,6 +479,7 @@
             SignupFormRefid: $("#signup_object").val(),
             DefaultHtmlPageRefid: $("#default_html_page").val(),
             GetEmployeesDrRefid: $("#get_employees_dr").val(),
+            ProvisionUserFormRefid: $("#prov_user_form").val(),
             EnableFinancialYear: $("#chkEnableFinancialYear").prop("checked"),
             UserTypeForms: arr,
             MobileAppSettings: MobileSettings,

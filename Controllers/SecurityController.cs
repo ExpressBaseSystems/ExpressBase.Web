@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExpressBase.Common.Extensions;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -190,6 +191,28 @@ namespace ExpressBase.Web.Controllers
             if (!HasPemissionToSecurity())
                 return Redirect("/StatusCode/401");
 
+            Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
+            string puFormRefid = _solu?.SolutionSettings?.ProvisionUserFormRefid;
+
+            if (itemid == 0 && !string.IsNullOrWhiteSpace(puFormRefid))
+            {
+                return RedirectToAction("Index", "WebForm", new { _r = puFormRefid, _lg = this.CurrentLanguage ?? "en" });
+            }
+            List<string> disableCtrls = new List<string>();
+            if (!string.IsNullOrWhiteSpace(puFormRefid))
+            {
+                EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(puFormRefid, this.ServiceClient, this.Redis, null);
+                EbProvisionUser puCtrl = (EbProvisionUser)WebForm.Controls.GetAllControlsRecursively().Find(e => e is EbProvisionUser);
+                if (puCtrl != null)
+                {
+                    foreach (UsrLocField fd in puCtrl.Fields)
+                    {
+                        if (!string.IsNullOrWhiteSpace(fd.ControlName))
+                            disableCtrls.Add(fd.Name);
+                    }
+                }
+            }
+            ViewBag.disableCtrls = disableCtrls;
             //Mode - CreateEdit = 1, View = 2, MyProfileView = 3
             ViewBag.Culture = CultureHelper.CulturesAsJson;
             ViewBag.TimeZone = CultureHelper.TimezonesAsJson;

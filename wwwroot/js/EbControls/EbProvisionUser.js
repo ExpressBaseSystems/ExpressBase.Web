@@ -32,6 +32,7 @@
         //this.$refreshBtn.on('click', this.refreshBtnClicked.bind(this));
         this.$selectBtn.on('click', this.selectBtnClicked.bind(this));
         this.$opnMgUserBtn.on('click', this.openMgUserBtnClicked.bind(this));
+        this.$unlinkMgUserBtn.on('click', this.unlinkMgUserBtnClicked.bind(this));
         this.$SelMdlSrch.on('keyup', this.SearchUser.bind(this));
         this.$SelMdlUlist.on('click', '.pu-selmdl-uli .col-md-12', this.ClickedOnUserItem.bind(this));
         this.$SelMdlBtn.on('click', this.SelMdlOkClicked.bind(this));
@@ -48,10 +49,11 @@
             <div class='pu-btn-cont'>
                 <div class='pu-btn-select'><i class='fa fa-search'></i>&nbspSearch</div>
                 <div class='pu-open-mgusr'><i class='fa fa-external-link-square'></i>&nbspOpen</div>
+                <div class='pu-unlink-mgusr' style='pointer-events:none; background: #555'><i class='fa fa-chain-broken'></i>&nbspUnlink</div>
                 <div class='pu-chkbox'><label><input type="checkbox"> Update existing user</label></div>
                 <div class='pu-btn-refresh'><i class='fa fa-refresh'></i></div>
             </div>
-            <div class='pu-txt-info'>- Not assigned yet -</div>
+            <div class='pu-txt-info'>- Not linked yet -</div>
 		    <div class='pu-users-info'>
                 <span class='pu-user' style='display: none;'></span>
                 <span class='pu-user' style='display: none;'></span>
@@ -63,6 +65,7 @@
         this.$refreshBtn = this.$ctrl.find('.pu-btn-refresh');
         this.$selectBtn = this.$ctrl.find('.pu-btn-select');
         this.$opnMgUserBtn = this.$ctrl.find('.pu-open-mgusr');
+        this.$unlinkMgUserBtn = this.$ctrl.find('.pu-unlink-mgusr');
         this.$infoTxt = this.$ctrl.find('.pu-txt-info');
         this.$infoUsr1 = this.$ctrl.find('.pu-users-info .pu-user:eq(0)');
         this.$infoUsr2 = this.$ctrl.find('.pu-users-info .pu-user:eq(1)');
@@ -119,7 +122,7 @@
             let dataObj = { id: _d['id'], fullname: _d['fullname'], email: _d['email'], phprimary: _d['phprimary'] };
             this._JsCtrlMng.enableOpenMgUserBtn();
             if (!_d['id']) {
-                this._JsCtrlMng.appendPuInfo('- Not assigned yet -');
+                this._JsCtrlMng.appendPuInfo('- Not linked yet -');
                 this._JsCtrlMng.disableOpenMgUserBtn();
             }
             else if (_d['eb_is_mapped_user'] === 'F')
@@ -137,6 +140,7 @@
             $c.find('.pu-btn-select').css({ 'pointer-events': 'none', 'background': '#555' });
             $c.find('.pu-user').css('pointer-events', 'none');
             this._JsCtrlMng.disableCheckBox();
+            this._JsCtrlMng.disableUnlinkMgUserBtn();
         }.bind(this.ctrl);
 
         this.ctrl.enable = function () {
@@ -144,6 +148,7 @@
             let $c = $('#' + this.EbSid_CtxId);
             $c.find('.pu-btn-select').css({ 'pointer-events': '', 'background': '' });
             $c.find('.pu-user').css('pointer-events', '');
+            this._JsCtrlMng.enableUnlinkMgUserBtn();
         }.bind(this.ctrl);
 
         $.each(this.ctrl.Fields.$values, function (i, obj) {
@@ -200,6 +205,21 @@
             window.open("/Security/ManageUser?itemid=" + this.ctrl.DataVals.Value, "_blank");
     };
 
+    this.enableUnlinkMgUserBtn = function () {
+        this.$unlinkMgUserBtn.css({ 'pointer-events': '', 'background': '' });
+    }.bind(this);
+
+    this.disableUnlinkMgUserBtn = function () {
+        this.$unlinkMgUserBtn.css({ 'pointer-events': 'none', 'background': '#555' });
+    }.bind(this);
+
+    this.unlinkMgUserBtnClicked = function () {
+        this.updateExtCtrls('email', '', false);
+        this.updateExtCtrls('phprimary', '', false);
+        this.disableUnlinkMgUserBtn();
+        this.refreshBtnClicked();
+    };
+
     this.refreshBtnClicked = function (e) {
         let valChanged = false;
         this.isCtrlValChanged('fullname');
@@ -226,7 +246,17 @@
 
         this.lastReqstObj['id'] = this.ctrl.getValue();
         if (!this.lastReqstObj['email'] && !this.lastReqstObj['phprimary']) {
-            this.appendPuInfo('Please enter email/phone to refresh!');
+            let _od = {};
+            if (this.ctrl.DataVals) {
+                _od = JSON.parse(this.ctrl.DataVals.F);
+                if (_od['id']) {
+                    let dataObj = { id: _od['id'], fullname: _od['fullname'], email: _od['email'], phprimary: _od['phprimary'] };
+                    this.appendPuInfo(this.Msg.UnLink, null, null, dataObj);
+
+                }
+            }
+            if (!_od['id'])
+                this.appendPuInfo('Please enter email/phone to link/create a user!');
             this.$refreshBtn.html(`<i class='fa fa-refresh'></i>`);
             this.hide_inp_loader('email');
             this.hide_inp_loader('phprimary');
@@ -260,6 +290,7 @@
     this.Msg = {
         New: 'Data save will create a user with following details.',
         Link: 'Data save will link and update the user with following details.',
+        UnLink: 'Data save will unlink the following user.',
         Choose: 'Choose a user to continue.',
         Select: 'Select the user to continue.',
         Nothing: 'Nothing to update to the following user.',
@@ -361,7 +392,7 @@
         }
         else {//edit
             let dataObj = { id: _od['id'], fullname: _od['fullname'], email: _od['email'], phprimary: _od['phprimary'] };
-            let isUserCreated = _od['eb_is_mapped_user'] === 'F';
+
             if (respObj.emailData === null && respObj.phoneData === null) {
                 this.appendPuInfo(this.Msg.Update, null, null, dataObj);
                 this.$updateChkBx.prop('checked', true);
@@ -471,10 +502,12 @@
             }
         }
 
-        if (this.ctrl.DataVals && this.ctrl.DataVals.Value)
+        if (this.ctrl.DataVals && this.ctrl.DataVals.Value) {
             this.enableOpenMgUserBtn();
-        else
+        }
+        else {
             this.disableOpenMgUserBtn();
+        }
     };
 
     this.appendPuInfo = function (msg, info1 = null, info2 = null, infoNew1 = null, infoNew2 = null) {
@@ -605,7 +638,7 @@
         this.ctrl.DataVals.Value = dataObj.id;
         this.enableOpenMgUserBtn();
 
-        this.updateExtCtrls('fullname', dataObj.fullname);
+        //this.updateExtCtrls('fullname', dataObj.fullname);
         this.updateExtCtrls('email', dataObj.email);
         this.updateExtCtrls('phprimary', dataObj.phprimary);
 
@@ -720,7 +753,7 @@
             if ($infoUsr) {
                 let dataObj = $infoUsr.data('data-obj');
                 if (dataObj) {
-                    this.updateExtCtrls('fullname', dataObj.fullname);
+                    //this.updateExtCtrls('fullname', dataObj.fullname);
                     this.updateExtCtrls('email', dataObj.email);
                     this.updateExtCtrls('phprimary', dataObj.phprimary);
                 }
@@ -740,6 +773,7 @@ let EbProvUserUniqueChkJs = function (options) {
     this.showLoaderFn = options.showLoaderFn;
     this.hideLoaderFn = options.hideLoaderFn;
     this.renderMode = options.renderMode;
+    this.renderer = options.renderer;;
     this.provUserAll = getFlatObjOfType(this.FormObj, "ProvisionUser");
 
     this.$Modal;
@@ -753,16 +787,16 @@ let EbProvUserUniqueChkJs = function (options) {
             this.CallBackFn(true);
             return;
         }
-        this.initiateAjaxCall();
         this.initModal();
-        this.$OkBtn.off('click').on('click', this.modalOkClicked.bind(this));
-        this.$Modal.off('shown.bs.modal').on('shown.bs.modal', this.modalShown.bind(this));
-        this.$Modal.off('hidden.bs.modal').on('hidden.bs.modal', this.modalHidden.bind(this));
-    };
+        this.initiateAjaxCall();
+        this.$OkBtn.off('click').on('click', this.modalOkClicked);
+        this.$Modal.off('shown.bs.modal').on('shown.bs.modal', this.modalShown);
+        this.$Modal.off('hidden.bs.modal').on('hidden.bs.modal', this.modalHidden);
+    }.bind(this);
 
     this.initModal = function () {
         this.$Modal = $('#ProvUserConfModal');
-        if ($Modal.length === 0) {
+        if (this.$Modal.length === 0) {
             $('body').append(`
             <div class="modal fade" id="ProvUserConfModal" role="dialog">
                 <div class="modal-dialog" style="width: 440px;">
@@ -787,7 +821,7 @@ let EbProvUserUniqueChkJs = function (options) {
         this.$OkBtn = this.$Modal.find('#puConfMdlOk');
 
         //this.$Modal.modal('show');
-    };
+    }.bind(this);
 
     this.initiateAjaxCall = function () {
         let reqObj = {};
@@ -805,7 +839,9 @@ let EbProvUserUniqueChkJs = function (options) {
         }.bind(this));
 
         if ($.isEmptyObject(reqObj)) {
-            this.CallBackFn(true);
+            if (!this.isAlreadyLinkedUserExists()) {
+                this.CallBackFn(true);
+            }
             return;
         }
 
@@ -814,8 +850,8 @@ let EbProvUserUniqueChkJs = function (options) {
             type: "POST",
             url: "/WebForm/CheckEmailAndPhone",
             data: {
-                RefId: this.formRefId,
-                RowId: this.rowId,
+                RefId: this.renderer.formRefId,
+                RowId: this.renderer.rowId,
                 Data: JSON.stringify(reqObj)
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -825,7 +861,28 @@ let EbProvUserUniqueChkJs = function (options) {
             }.bind(this),
             success: this.ajaxCallSuccess.bind(this, reqObj)
         });
-    };
+    }.bind(this);
+
+    this.isAlreadyLinkedUserExists = function () {
+        let fullHtml = '';
+        $.each(this.provUserAll, function (i, pucObj) {
+            let _od = {};
+            if (pucObj.DataVals)
+                _od = JSON.parse(pucObj.DataVals.F);
+            if (_od['id']) {
+                let dataObj = { id: _od['id'], fullname: _od['fullname'], email: _od['email'], phprimary: _od['phprimary'] };
+                fullHtml += this.getUserTileHtml(pucObj, this.Msg.UnLink, dataObj);
+            }
+        }.bind(this));
+        if (fullHtml !== '') {
+            this.$ModalBody.html(fullHtml);
+            if (!(this.renderMode == 5 || this.renderMode == 3)) {
+                this.$Modal.modal('show');
+                return true;
+            }
+        }
+        return false;
+    }.bind(this);
 
     this.Msg = {
         New: 'New user will be created with following details..',
@@ -838,7 +895,8 @@ let EbProvUserUniqueChkJs = function (options) {
         Update: 'Data save will also update email/phone of the following user.',
         UpdateEmail: 'Data save will also update email of the following user.',
         UpdatePhone: 'Data save will also update phone of the following user.',
-        LinkUpdate: 'Data save will also link/update the following user.'
+        LinkUpdate: 'Data save will also link/update the following user.',
+        UnLink: 'Data save will unlink the following user.',
     };
 
     this.ajaxCallSuccess = function (reqObjAll, resp) {
@@ -1001,7 +1059,7 @@ let EbProvUserUniqueChkJs = function (options) {
         }
         else
             this.CallBackFn(true);
-    };
+    }.bind(this);
 
     this.getUserTileHtml = function (pucObj, msg, dataObj1 = null, dataObj2 = null) {
         let html = '';
@@ -1025,16 +1083,16 @@ let EbProvUserUniqueChkJs = function (options) {
             </div>`
 
         return html;
-    };
+    }.bind(this);
 
     this.modalOkClicked = function () {
         this.okBtnClicked = true;
         this.$Modal.modal('hide');
-    };
+    }.bind(this);
 
     this.modalShown = function () {
         this.okBtnClicked = false;
-    };
+    }.bind(this);
 
     this.modalHidden = function () {
         if (this.abortSave || !this.okBtnClicked)
@@ -1042,7 +1100,7 @@ let EbProvUserUniqueChkJs = function (options) {
         else {
             this.CallBackFn(true);
         }
-    };
+    }.bind(this);
 
-    init();
+    this.init();
 };

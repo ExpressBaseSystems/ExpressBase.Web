@@ -206,10 +206,10 @@
                             <button id="btnResetPassword" class="ebbtn eb_btn-sm btn-resetpw" title="Reset Password">Reset Password</button>
                         </div>
                     </div>
-                    @if (dataId > 0 && ViewBag.itemid > 0)
+                    @if ((mapUsr == "T" || mapUsr == "F") && dataId > 0 && ViewBag.itemid > 0)
                     {
                         <div class="form-group">
-                            <button class="btn btn-primary" onclick="window.open('/WebForm/Inde?_r=@verId&_p=@formParam&_m=1', '_blank')">Open Linked Form</button>
+                            <button class="btn btn-primary" onclick="window.open('/WebForm/Inde?_r=@verId&_p=@formParam&_m=1', '_blank')">Open Source/Linked Form to Edit</button>
                         </div>
                     }
                 </div>

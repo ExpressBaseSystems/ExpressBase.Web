@@ -3814,7 +3814,7 @@ input.locinp {
     height: 22px;
 }
 
-[ctype=ProvisionUser] .pu-btn-select, [ctype=ProvisionUser] .pu-open-mgusr {
+[ctype=ProvisionUser] .pu-btn-select, [ctype=ProvisionUser] .pu-open-mgusr, [ctype=ProvisionUser] .pu-unlink-mgusr {
     padding: 2px 6px;
     background: #4987fb;
     color: #fff;

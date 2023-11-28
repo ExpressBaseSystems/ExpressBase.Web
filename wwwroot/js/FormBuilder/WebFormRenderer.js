@@ -1349,12 +1349,13 @@ const WebFormRender = function (option) {
 
                                     //this.FRC.checkUnique4All_save(this.flatControls, true);
 
-                                    EbProvUserUniqueChkJs({
+                                    new EbProvUserUniqueChkJs({
                                         FormObj: this.FormObj,
                                         CallBackFn: this.userProvCallBack.bind(this),
                                         showLoaderFn: this.showLoader,
                                         hideLoaderFn: this.hideLoader,
-                                        renderMode: this.renderMode
+                                        renderMode: this.renderMode,
+                                        renderer: this
                                     });
                                 }
                                 else {
@@ -1369,12 +1370,13 @@ const WebFormRender = function (option) {
             }
         }
         if (clearLockFlag) {
-            EbProvUserUniqueChkJs({
+            new EbProvUserUniqueChkJs({
                 FormObj: this.FormObj,
                 CallBackFn: this.userProvCallBack.bind(this),
                 showLoaderFn: this.showLoader,
                 hideLoaderFn: this.hideLoader,
-                renderMode: this.renderMode
+                renderMode: this.renderMode,
+                renderer: this
             });
         }
     }.bind(this);

@@ -178,6 +178,14 @@
                             <span class="span-custom-feedback form-control-feedback" id="spanEmail"></span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="label-custom-style">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                            <input id="txtPhPrimary" class="form-control input-custom-style" type="text" title="Primary Phone Number" autocomplete="off" style="border-radius: 0px 4px 4px 0px;" @GetDisableControlString("phprimary")>
+                            <span class="span-custom-feedback form-control-feedback" id="spanPhone"></span>
+                        </div>
+                    </div>
                     <div class="form-group" style="margin: 0">
                         <input id="email" type="email" class="form-control" style="padding: 0; width: 0; border: none; height: 0;">
                         <input id="password" type="password" title="Password" class="form-control" style="padding: 0; width: 0; border: none; height: 0;">
@@ -338,27 +346,6 @@
                                                 <label class="radio-inline"><input type="radio" name="gender" value="Female">Female</label>
                                                 <label class="radio-inline"><input type="radio" name="gender" value="Other">Other</label>
                                             </div>
-                                            <div class="form-group">
-                                                <label class="label-custom-style">Date of Birth</label>
-                                                <div class="input-group">
-                                                    <input class="form-control input-custom-style" style="border: 1px solid #ccc;border-right:none;" type="text" id="txtDateOfBirth" title="Date of Birth" autocomplete="off">
-                                                    <span class="input-group-addon span-custom-style" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8 col-lg-8">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="col-md-4 pd-0">
-                                            <div class="form-group">
-                                                <label class="label-custom-style">Primary Phone Number</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                                    <input id="txtPhPrimary" class="form-control input-custom-style" type="text" title="Primary Phone Number" autocomplete="off" style="border-radius: 0px 4px 4px 0px;" @GetDisableControlString("phprimary")>
-                                                    <span class="span-custom-feedback form-control-feedback" id="spanPhone"></span>
-                                                </div>
-                                            </div>
                                         </div>
                                         <div class="col-md-4 pd-r-0">
                                             <div class="form-group">
@@ -366,6 +353,13 @@
                                                 <div class="input-group">
                                                     <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
                                                     <input id="txtPhSecondary" class="form-control input-custom-style" type="text" title="Secondary Phone Number" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="label-custom-style">Date of Birth</label>
+                                                <div class="input-group">
+                                                    <input class="form-control input-custom-style" style="border: 1px solid #ccc;border-right:none;" type="text" id="txtDateOfBirth" title="Date of Birth" autocomplete="off">
+                                                    <span class="input-group-addon span-custom-style" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -377,16 +371,15 @@
                                                     <input id="txtLandPhone" class="form-control input-custom-style" type="text" title="Land Phone Number" autocomplete="off">
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="col-md-4 pd-0">
                                             <div class="form-group">
                                                 <label class="label-custom-style">Extension</label>
                                                 <input id="txtExtension" class="form-control input-custom-style" type="text" title="Extension" autocomplete="off">
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="col-md-4 pd-0">
                                             <div class="form-group">
                                                 <label id="lblFbId" style="font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
                                                 <br />
@@ -395,14 +388,12 @@
                                                 <button id="btnFbConnect" class="" title="Connect Facebook" style="display:none;">Connect Facebook</button>
                                                 <button id="btnFbInvite" class="ebbtn eb_btnblue" title="Invite Facebook" style="display:none;" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Unable to Connect'); $(event.target).prop('disabled', false);}, 1500, event);">Invite Facebook</button>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12" style="padding-top:5%">
-                                        <div class="col-md-4">
                                             <div class="form-check">
                                                 <label class="form-check-label label-custom-style" for="forceresetpw">Force user to reset password</label>
                                                 <input type="checkbox" class="form-check-input" id="forceresetpw" checked="checked">
                                             </div>
+                                        </div>
+                                        <div class="col-md-4">                                            
                                         </div>
                                     </div>
                                 </div>

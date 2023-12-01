@@ -54,6 +54,7 @@
     this.$Stars = $("#selStars");
     this.$CustomerLanguage = $("#selCustomerLanguage");
     this.$ProcedureDate = $("#txtProcedureDate");
+    this.$HtDoneDate = $("#txtHtDoneDate");
     this.$Comments = $("#txtComments");
     this.$btnNewPatient = $("#btnNewPatient");
     this.$btnNewHtEvaluation = $("#btnNewHtEvaluation");
@@ -266,6 +267,7 @@
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
         this.$ProcedureDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
+        this.$HtDoneDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
         //FEEDBACK  BILLING  SURGERY GFC/PRP
         this.initFeedBackModal();
@@ -1055,6 +1057,7 @@
         this.$Stars.val(this.CustomerInfo["stars"]);
         this.$CustomerLanguage.val(this.CustomerInfo["cust_language"]);
         this.$ProcedureDate.val(this.CustomerInfo["procedure_date"]);
+        this.$HtDoneDate.val(this.CustomerInfo["ht_done_date"]);
         this.$Comments.val(this.CustomerInfo["comment"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
@@ -1180,6 +1183,7 @@
         this.pushToList("stars", this.$Stars.val());
         this.pushToList("cust_language", this.$CustomerLanguage.val());
         this.pushToList("procedure_date", this.$ProcedureDate.val());
+        this.pushToList("ht_done_date", this.$HtDoneDate.val());
         this.pushToList("comment", this.$Comments.val());
         this.pushToList("eb_modifiedat", this.CustomerInfo["eb_modifiedat"]);
 

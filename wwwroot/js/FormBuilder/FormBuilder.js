@@ -153,49 +153,136 @@
         localStorage.eb_form_$control = $(`[ebsid='${JSON.parse(localStorage.eb_form_control).EbSid_CtxId}']`)[0].outerHTML;
     }.bind(this);
 
-    this.paste = function (eType, selector, action, originalEvent) {
+    this.copyToClipboard = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let ebsid = $e.attr("ebsid");
+        let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+        let copyCtrlJson = this.getCopyControlJson(ctrl);
+        let $ctrl = $(`[ebsid='${ctrl.EbSid_CtxId}']`)[0].outerHTML;
+        let cpyText = copyCtrlJson + '$$$webform-control-copy$$$' + $ctrl;
+        this.copyTextToClipboard(cpyText);
+        localStorage.removeItem("eb_form_control");
+        localStorage.removeItem("eb_form_$control");
+    }.bind(this);
+
+    this.getCopyControlJson = function (ctrl) {
+        let newCtrl = JSON.parse(JSON.stringify(ctrl));
+
+        let flatControls = getAllctrlsFrom(newCtrl);
+        for (let i = 0; i < flatControls.length; i++) {
+            let _ctrl = flatControls[i];
+            if (_ctrl.ObjType === "PowerSelect" || _ctrl.ObjType === "DGPowerSelectColumn") {
+                _ctrl.Columns.$values = [];
+                _ctrl.DisplayMembers.$values = [];
+                _ctrl.DisplayMember = null;
+                _ctrl.ValueMember = null;
+                _ctrl.DataImportId = null;
+                _ctrl.DataSourceId = null;
+                _ctrl.FormRefId = null;
+            }
+            else if (_ctrl.ObjType === "SimpleSelect" || _ctrl.ObjType === "DGSimpleSelectColumn") {
+                _ctrl.DataSourceId = null;
+                _ctrl.Columns.$values = [];
+                _ctrl.ValueMember = null;
+                _ctrl.DisplayMember = null;
+            }
+            else if (_ctrl.ObjType === "Label" || _ctrl.ObjType === "DGLabelColumn") {
+                _ctrl.LinkedObjects.$values = [];
+            }
+            else if (_ctrl.ObjType === "DataGrid") {
+                _ctrl.DataSourceId = null;
+                _ctrl.CustomSelectDS = null;
+                _ctrl.TableName = '';
+            }
+            else if (_ctrl.ObjType === "ExportButton") {
+                _ctrl.FormRefId = null;
+            }
+        }
+
+        return JSON.stringify(newCtrl);
+    }.bind(this);
+
+    this.getTextFromClipboard = async function (showWarning) {
+        let __val = null;
+        try {
+            let __v = await navigator.clipboard.readText();
+            if (__v && __v.includes('$$$webform-control-copy$$$')) {
+                __val = __v;
+            }
+        }
+        catch (e) {
+            if (showWarning)
+                alert("Failed to read from clipboard: " + e.message);
+            console.error(e.message);
+        }
+        return __val;
+    }.bind(this);
+
+    this.copyTextToClipboard = async function (text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            console.log('Content copied to clipboard');
+        }
+        catch (err) {
+            alert('Failed to copy: ' + err);
+        }
+        return;
+    }.bind(this);
+
+    this.paste = async function (eType, selector, action, originalEvent) {
         let $e = $(event.target); // need optimize
         if (localStorage.eb_form_control) {
-            let ctrl = JSON.parse(localStorage.eb_form_control);
-            let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
-            let copiedCtrl = this.getCopiedCtrl(ctrl);
-            let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl);
-            let offset = $e.closest('.context-menu-list').offset();
-            $('#context-menu-layer').css('z-index', 0);
-            $('.context-menu-list.context-menu-root').css('z-index', 0);
-            let $clickedEl = $(document.elementFromPoint(offset.left, offset.top));//$('.context-menu-active');//
-            let $clickedColTile = $clickedEl.closest('[ebsid]');
-            let clickedCtrl = $clickedColTile[0].hasAttribute('eb-root-obj-container') ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
-
-            if (clickedCtrl.IsContainer) {
-                clickedCtrl.Controls.$values.push(copiedCtrl);
-                ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
-            }
-            else {
-                if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
-                    this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
-                    $copiedCtrl.insertAfter($clickedColTile);
-                }
-            }
-
-            let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
-            for (let i = 0; i < flatControlsModified.length; i++) {
-                this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
-            }
-            this.pushElmsToDraggable($copiedCtrl);
-            EbBlink(copiedCtrl, `[ebsid='${copiedCtrl.EbSid_CtxId}']`);
+            this.paste_inner($e, localStorage.eb_form_control, localStorage.eb_form_$control);
         }
         else {
-            this.EbAlert.clearAlert("pasteError");
-            this.EbAlert.alert({
-                id: "pasteError",
-                head: "Copy again and try.",
-                body: "Try after copying",
-                type: "info",
-                delay: 2100
-            });
+            let st = await this.getTextFromClipboard(true);
+            if (st) {
+                st = st.split('$$$webform-control-copy$$$');
+                this.paste_inner($e, st[0], st[1]);
+            }
+            else {
+                this.EbAlert.clearAlert("pasteError");
+                this.EbAlert.alert({
+                    id: "pasteError",
+                    head: "Copy again and try.",
+                    body: "Try after copying",
+                    type: "info",
+                    delay: 2100
+                });
+            }
         }
     }.bind(this);
+
+    this.paste_inner = function ($e, ctrl_string, ctrl_obj_string) {
+        let ctrl = JSON.parse(ctrl_string);
+        let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
+        let copiedCtrl = this.getCopiedCtrl(ctrl);
+        let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl, ctrl_obj_string);
+        let offset = $e.closest('.context-menu-list').offset();
+        $('#context-menu-layer').css('z-index', 0);
+        $('.context-menu-list.context-menu-root').css('z-index', 0);
+        let $clickedEl = $(document.elementFromPoint(offset.left, offset.top));//$('.context-menu-active');//
+        let $clickedColTile = $clickedEl.closest('[ebsid]');
+        let clickedCtrl = $clickedColTile[0].hasAttribute('eb-root-obj-container') ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
+
+        if (clickedCtrl.IsContainer) {
+            clickedCtrl.Controls.$values.push(copiedCtrl);
+            ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
+        }
+        else {
+            if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
+                this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
+                $copiedCtrl.insertAfter($clickedColTile);
+            }
+        }
+
+        let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
+        for (let i = 0; i < flatControlsModified.length; i++) {
+            this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
+        }
+        this.pushElmsToDraggable($copiedCtrl);
+        EbBlink(copiedCtrl, `[ebsid='${copiedCtrl.EbSid_CtxId}']`);
+    };
 
     this.pushElmsToDraggable = function ($copiedCtrl) {
         $copiedCtrl.closestInners('.ebcont-inner').each(function (i, el) {
@@ -215,10 +302,10 @@
         $ctrl.attr("eb-type", type);
     };
 
-    this.getCopied$Ctrl = function (ModifiedCtrl, OriginalCtrl) {
+    this.getCopied$Ctrl = function (ModifiedCtrl, OriginalCtrl, ctrl_obj_string) {
         let flatControlsModified = getAllctrlsFrom(ModifiedCtrl);
         let flatControlsOriginal = [...getAllctrlsFrom(OriginalCtrl)];
-        let $ctrl = $(localStorage.eb_form_$control).removeClass('context-menu-active').clone();
+        let $ctrl = $(ctrl_obj_string).removeClass('context-menu-active').clone();
         for (let i = 0; i < flatControlsModified.length; i++) {
             let ctrlModified = flatControlsModified[i];
             let $_ctrl = (i === 0) ? $ctrl : $ctrl.find(`[ebsid='${flatControlsOriginal[i].EbSid_CtxId}']`);
@@ -1195,13 +1282,17 @@
                     callback: this.copy,
                     visible: this.cpyVisible
                 },
+                "Copy to clipboard": {
+                    name: "Copy to Clipboard",
+                    icon: "fa-clipboard",
+                    callback: this.copyToClipboard,
+                    visible: this.cpyVisible
+                },
                 "Paste": {
                     name: "Paste",
-                    icon: "fa-clipboard",
+                    icon: "fa-files-o",
                     callback: this.paste,
-                    visible: function (key, opt) {
-                        return localStorage.eb_form_control;
-                    }.bind(this)
+                    visible: this.pasteVisible
                 }
             }
         };
@@ -1215,6 +1306,20 @@
 
     this.cpyVisible = function (key, opt) {
         return !opt.$trigger[0].hasAttribute('eb-root-obj-container');
+    }.bind(this);
+
+    this.pasteVisible = function (key, opt) {
+        if (localStorage.eb_form_control) {
+            return true;
+        }
+        else {
+            this.getTextFromClipboard(false).then(function (key, opt, st) {
+                if (st && st.includes('$$$webform-control-copy$$$')) {
+                    opt.items.Paste.$node.show()
+                }
+            }.bind(this, key, opt));
+        }
+        return false;
     }.bind(this);
 
     this.Init = function () {

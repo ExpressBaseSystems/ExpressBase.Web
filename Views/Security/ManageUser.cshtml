@@ -77,10 +77,10 @@
     var LocConstraint = (Html.Raw(ViewBag.LocConstraint).ToString() == "") ? "null" : Html.Raw(ViewBag.LocConstraint);
     List<string> disableCtrls = ViewBag.disableCtrls;
     Dictionary<string, string> uInfo = ViewBag.U_Info;
-    int dataId = Convert.ToInt32(uInfo["eb_data_id"]);
+    int dataId = uInfo == null ? 0 : Convert.ToInt32(uInfo["eb_data_id"]);
     string formParam = JsonConvert.SerializeObject(new List<Param>() { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = dataId.ToString() } }).ToBase64();
-    int verId = Convert.ToInt32(uInfo["eb_ver_id"]);
-    string mapUsr = uInfo["eb_is_mapped_user"];
+    int verId = uInfo == null ? 0 : Convert.ToInt32(uInfo["eb_ver_id"]);
+    string mapUsr = uInfo == null ? "F" : uInfo["eb_is_mapped_user"];
 
     string GetDisableControlString(string ctrlName)
     {
@@ -393,7 +393,7 @@
                                                 <input type="checkbox" class="form-check-input" id="forceresetpw" checked="checked">
                                             </div>
                                         </div>
-                                        <div class="col-md-4">                                            
+                                        <div class="col-md-4">
                                         </div>
                                     </div>
                                 </div>

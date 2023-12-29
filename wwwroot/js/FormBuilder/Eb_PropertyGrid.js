@@ -87,7 +87,7 @@
                 if (meta._isMultiSelect) {// for multi select
                     this.getValueFuncs[name] = function () {
                         let csv = $('#' + elemId).val();
-                        let ar = csv.split(",");
+                        let ar = csv ? csv.split(",") : [];
                         this.PropsObj[meta.name].$values = ar;
                         return this.PropsObj[meta.name];
                     }.bind(this);

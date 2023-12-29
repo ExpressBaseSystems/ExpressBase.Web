@@ -159,7 +159,7 @@
     //full grid draw
     this.getTrHTML_ = function (rowCtrls, rowid, isAdded) {
         let isAnyColEditable = false;
-        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' rowid='${rowid}' rownum='${++this.rowSLCounter}'>
+        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' rowid='${rowid}' rownum='${++this.rowSLCounter}' ${this.getRowColor(rowid)}>
                     <td class='row-no-td ${(rowid <= 0 ? "new-dgtr' title='Newly added row" : '')}' id='${this.TableId + "_" + this.rowSLCounter}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
 
         let visibleCtrlIdx = 0;
@@ -726,6 +726,7 @@
         this.bindReq_Vali_UniqRow($tr);
         this.updateAggCols();
         this.execDisableExpr();
+        this.execRowColorExpr($tr);
 
         let a = $tr.find('td[tdcoltype]');
         if (a && a.length > 0)
@@ -1422,11 +1423,13 @@
         this.ctrlToSpan_row(rowid);
         if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable) {
             this.onRowPaintFn($tr, "check", e);
+            this.execRowColorExpr($tr);
             //this.addRow();
         }
         else {
             this.setCurRow($addRow.attr("rowid"));
             this.onRowPaintFn($tr, "check", e);
+            this.execRowColorExpr($tr);
         }
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         //this.onRowPaintFn($tr, "check", e);
@@ -1441,6 +1444,41 @@
             }
             catch (e) {
                 console.error('error in onRowPaintFn: ' + this.ctrl.Name);
+                console.warn(e);
+            }
+        }
+    };
+
+    this.getRowColor = function (rowid) {
+        let c = '';
+        if ((this.ctrl.RowColorExpr && this.ctrl.RowColorExpr.Code && this.ctrl.RowColorExpr.Code.trim() !== '')) {
+            try {
+                let FnString = atob(this.ctrl.RowColorExpr.Code);
+                this.setCurRow(rowid);
+                c = new Function("form", "user", "tr", FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject)();
+                if (c) {
+                    c = `style='background-color: ${c} !important'`;
+                }
+            }
+            catch (e) {
+                console.error('error in RowColorExpr: ' + this.ctrl.Name);
+                console.warn(e);
+            }
+        }
+        return c;
+    };
+
+    this.execRowColorExpr = function ($tr) {
+        if ((this.ctrl.RowColorExpr && this.ctrl.RowColorExpr.Code && this.ctrl.RowColorExpr.Code.trim() !== '')) {
+            try {
+                let FnString = atob(this.ctrl.RowColorExpr.Code);
+                let c = new Function("form", "user", "tr", FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject)();
+                if (c) {
+                    $tr.attr('style', `background-color: ${c} !important`);
+                }
+            }
+            catch (e) {
+                console.error('error in execRowColorExpr: ' + this.ctrl.Name);
                 console.warn(e);
             }
         }
@@ -1537,6 +1575,29 @@
     this.sumOfCol = function (updateDpnt, colName) {
         return parseFloat(this.getAggOfCol(colName, updateDpnt));
     }.bind(this);
+
+    this.getColumnTotalByGroup = function (groupByColumn, columnName) {
+        let sum = 0;
+        let grpCtrl = this.ctrl.currentRow[groupByColumn];
+        let colCtrl = this.ctrl.currentRow[columnName];
+        if (!grpCtrl || !colCtrl) {
+            console.error('Error in getColumnTotalByGroup');
+            return 0;
+        }
+        let grpValue = grpCtrl.getValue();
+
+        let rowIds = Object.keys(this.objectMODEL);
+        for (let i = 0; i < rowIds.length; i++) {
+            let rowId = rowIds[i];
+            let rowCtrls = this.objectMODEL[rowId];
+            let g = getObjByval(rowCtrls, "Name", groupByColumn);
+            if (g && g.getValue() == grpValue) {
+                let c = getObjByval(rowCtrls, "Name", columnName);
+                sum += c ? c.getValue() : 0;
+            }
+        }
+        return sum;
+    };
 
     this.updateDepCtrl = function (Col) {
         $.each(Col.DependedValExp.$values, function (i, depCtrl_s) {
@@ -1977,6 +2038,7 @@
         this.ctrl.hideRows = this.hideRows.bind(this);
 
         this.ctrl.getRowBySlno = this.getRowBySlno.bind(this);
+        this.ctrl.getColumnTotalByGroup = this.getColumnTotalByGroup.bind(this);
     };
 
     this.makeColsResizable = function () {

@@ -443,7 +443,7 @@
     flex: 0 0 27px;
     display: flex;
     align-items: center;
-    background: #eee !important;
+    /*background: #eee !important;*/
     display: flex;
 }
 
@@ -552,11 +552,11 @@
 
 .v-select.searchable > .dropdown-toggle {
     border: none;
-    background-color: white;
+    background-color: transparent;
 }
 
 .search-block {
-    background-color: white;
+    /*background-color: white;*/
     display: flex;
     flex-grow: 1;
     width: 100%;
@@ -671,23 +671,23 @@
 }
 
     .v-select .selected-tag:nth-child(5n - 4), [iblock] .selected-tag:nth-child(5n - 4) {
-        background-color: rgb(240 240 240 / 100%) !important
+        background-color: rgb(240 240 240 / 50%) !important
     }
 
     .v-select .selected-tag:nth-child(5n - 3), [iblock] .selected-tag:nth-child(5n - 3) {
-        background-color: rgb(240 240 255 / 100%) !important
+        background-color: rgb(240 240 255 / 50%) !important
     }
 
     .v-select .selected-tag:nth-child(5n - 2), [iblock] .selected-tag:nth-child(5n - 2) {
-        background-color: rgb(240 255 240 / 100%) !important
+        background-color: rgb(240 255 240 / 50%) !important
     }
 
     .v-select .selected-tag:nth-child(5n -1), [iblock] .selected-tag:nth-child(5n -1) {
-        background-color: rgb(240 255 255 / 100%) !important
+        background-color: rgb(240 255 255 / 50%) !important
     }
 
     .v-select .selected-tag:nth-child(5n), [iblock] .selected-tag:nth-child(5n) {
-        background-color: rgb(255 240 240 / 100%) !important
+        background-color: rgb(255 240 240 / 50%) !important
     }
 
 

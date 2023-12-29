@@ -1001,7 +1001,7 @@
     };
 
     this.isValidationsOK = function (ctrl) {
-        if (!ctrl.Validators)
+        if (!ctrl.Validators || ctrl.Validators.$values.length == 0)
             return true;
         let formValidationflag = true;
         ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last

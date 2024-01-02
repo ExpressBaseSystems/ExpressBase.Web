@@ -3,7 +3,7 @@
 :root {
     /*--eb-bluishgray: rgba(36, 36, 42, 0.13);*/
     --eb-bluishgray: rgb(226 226 230 / 80%);
-    --eb-disablegray: #f3f3f5;
+    --eb-disablegray: #f3f3f588;
 }
 
 html {
@@ -1861,6 +1861,30 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-color: var(--eb-disablegray) !important;
     pointer-events: none !important;
 }
+
+.dgtbl td[eb-readonly="true"] {
+    background-color: var(--eb-disablegray) !important;
+}
+
+    .dgtbl td[eb-readonly="true"] .ctrl-cover,
+    .dgtbl td[eb-readonly="true"] .tdtxt {
+        pointer-events: none !important;
+    }
+
+    .dgtbl td[eb-readonly="true"] .ctrlth,
+    .dgtbl td[eb-readonly="true"] .ctrlstd,
+    .dgtbl td[eb-readonly="true"] .v-select .selected-tag .close,
+    .dgtbl td[eb-readonly="true"] .ps-srch {
+        display: none !important;
+    }
+
+    .dgtbl td[eb-readonly="true"] .v-select [type="search"] {
+        visibility: hidden !important;
+    }
+
+    .dgtbl td[eb-readonly="true"] .v-select .selected-tag {
+        filter: grayscale(0.3);
+    }
 
 [isrendermode="false"] .Eb-ctrlContainer .ctrl-cover input, [isrendermode="false"] .Eb-ctrlContainer .ctrl-cover .radio-wrap {
     pointer-events: none;

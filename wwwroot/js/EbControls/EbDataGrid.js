@@ -91,6 +91,21 @@
                     if (inpCtrl.ObjType === "Numeric")
                         inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
                 }
+
+                if (!inpCtrl.Hidden && inpCtrl.DisableExpr && inpCtrl.DisableExpr.Lang === 0 && inpCtrl.DisableExpr.Code) {
+                    try {
+                        let isDisable = new Function("form", "user", `event`, atob(inpCtrl.DisableExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject)();
+                        if (isDisable) {
+                            inpCtrl.IsDisable = true;
+                        }
+                        else {
+                            inpCtrl.IsDisable = false;
+                        }
+                    }
+                    catch (e) {
+                        console.error('dg disable expr error: ' + e.message);
+                    }
+                }
             }
             //this.onRowPaintFn(["tr"], "check", "e");// --
         }.bind(this));
@@ -113,7 +128,7 @@
                             inpCtrl.__IsDisableByExp = false;
                         }
                     }
-                    inpCtrl.IsDisable = val ? true : false;
+                    inpCtrl.IsDisable = isDisable ? true : false;
                 }
             }
             catch (e) {
@@ -184,18 +199,17 @@
     //full grid draw
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-        let html = `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; background-color: @back-color@; display: inline-block;' form-link='@form-link@'>`;
+        let html = `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tabindex='0' tdcoltype='${col.ObjType}' eb-readonly='@isReadonly@' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}; display: inline-block;' form-link='@form-link@'>`;
 
         if (this.canAddCtrlHtml(inpCtrl))
-            html += `<div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>`;
+            html += `<div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>`;
 
         html += `<div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
                    <span>${this.getDispMembr(inpCtrl)}</span>
                  </div >
                </td>`;
 
-        html = html.replace("@isReadonly@", col.IsDisable)
-            .replace("@back-color@", col.IsDisable ? 'rgba(238,238,238,0.6)' : 'transparent')
+        html = html.replace("@isReadonly@", inpCtrl.IsDisable)
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
             .replace("@form-link@", col.FormRefId ? 'true' : 'false')
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -205,10 +219,10 @@
 
     //new row html
     this.getTdHtml = function (inpCtrl, col, i) {
-        let html = `<td id ='td_@ebsid@' ctrltdidx='${i}' tabindex='0' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;' form-link='@form-link@'>`;
+        let html = `<td id ='td_@ebsid@' ctrltdidx='${i}' tabindex='0' tdcoltype='${col.ObjType}' eb-readonly='@isReadonly@' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}; display: inline-block;' form-link='@form-link@'>`;
 
         if (this.canAddCtrlHtml(inpCtrl))
-            html += `<div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>`;
+            html += `<div id='@ebsid@Wraper' class='ctrl-cover' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>`;
 
         html += `<div class='tdtxt' coltype='${col.ObjType}'><span></span></div>
                 </td>`;

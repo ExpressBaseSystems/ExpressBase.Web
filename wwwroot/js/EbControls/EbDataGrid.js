@@ -1161,28 +1161,41 @@
     }.bind(this);
 
     this.performAutoMatching = function (boolCtrl) {
+        if (this.AutoMatchIsInProgress) {
+            console.warn('Auto Match is in Progress...');
+            return;
+        }
+        this.AutoMatchIsInProgress = true;
         this.showLoader();
-        $.each(this.objectMODEL, function (rowId, inpCtrls) {
-            this.setCurRow(rowId);
-            let inpCtrl = getObjByval(inpCtrls, 'Name', boolCtrl.Name);
-            if (inpCtrl.getValue()) {
-                inpCtrl.setValue(false);
+        setTimeout(function (boolCtrl) {
+            try {
+                $.each(this.objectMODEL, function (rowId, inpCtrls) {
+                    this.setCurRow(rowId);
+                    let inpCtrl = getObjByval(inpCtrls, 'Name', boolCtrl.Name);
+                    if (inpCtrl.getValue()) {
+                        inpCtrl.setValue(false);
+                    }
+                }.bind(this));
+
+                let code = atob(this.ctrl.AutoMatchScript.Code);
+
+                $.each(this.objectMODEL, function (rowId, inpCtrls) {
+                    this.setCurRow(rowId);
+                    let inpCtrl = getObjByval(inpCtrls, 'Name', boolCtrl.Name);
+
+                    c = new Function("form", "user", code).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject)();
+
+                    if (c) {
+                        inpCtrl.setValue(true);
+                    }
+                }.bind(this));
+                this.hideLoader();
+                this.AutoMatchIsInProgress = false;
             }
-        }.bind(this));
-
-        let code = atob(this.ctrl.AutoMatchScript.Code);
-
-        $.each(this.objectMODEL, function (rowId, inpCtrls) {
-            this.setCurRow(rowId);
-            let inpCtrl = getObjByval(inpCtrls, 'Name', boolCtrl.Name);
-
-            c = new Function("form", "user", code).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject)();
-
-            if (c) {
-                inpCtrl.setValue(true);
+            catch (e) {
+                this.AutoMatchIsInProgress = false;
             }
-        }.bind(this));
-        this.hideLoader();
+        }.bind(this, boolCtrl), 100);
     }.bind(this);
 
     this.editRow_click = function (e) {

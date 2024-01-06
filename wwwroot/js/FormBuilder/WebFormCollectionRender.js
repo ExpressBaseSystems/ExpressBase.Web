@@ -404,7 +404,8 @@ const WebFormCollectionRender = function (Option) {
                 SourceCxt: options.srcCxt,
                 DestCxt: destCxt,
                 Initiator: options.initiator,
-                ChangeDetected: false
+                ChangeDetected: false,
+                Callback: options.Callback
             });
         }
     };
@@ -445,6 +446,20 @@ const WebFormCollectionRender = function (Option) {
             let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
             if (destRender) {
                 x.Initiator.reverseUpdateData(destRender);
+            }
+        }
+        else if (x.Initiator.ObjType === 'CalendarControl') {
+            if (x.Callback) {
+                try {
+                    let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
+                    if (destRender) {
+                        let vals = destRender.getWebFormVals();
+                        x.Callback(destRender.rowId, vals);
+                    }
+                }
+                catch (e) {
+                    EbMessage("show", { Message: 'CalendarControl callback error: ' + e.message, AutoHide: true, Background: '#aa0000' });
+                }
             }
         }
     };

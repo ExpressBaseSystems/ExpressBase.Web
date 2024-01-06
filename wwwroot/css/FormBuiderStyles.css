@@ -497,7 +497,7 @@ body {
         box-shadow: 0px 1px 2px 0 #000082;
     }
 
-.addrow-btn, .excelupload-btn, .refreshdgdr-btn, .copydg-btn {
+.addrow-btn, .excelupload-btn, .refreshdgdr-btn, .copydg-btn, .match-btn {
     display: inline-block;
     cursor: pointer;
     color: white;
@@ -523,6 +523,10 @@ body {
     background-color: #c658cc !important;
 }
 
+.match-btn {
+    background-color: #369dc0 !important;
+}
+
 .addrow-btn:hover {
     background: linear-gradient(to bottom, #3ebf09 5%, #00D036 100%);
     background-color: #00D036;
@@ -540,7 +544,11 @@ body {
     background: linear-gradient(to bottom, #c79aca 5%, #9f4ca3 100%);
 }
 
-[eb-form="true"][mode="view"] .addrow-btn, [eb-form="true"][mode="view"] .excelupload-btn, [eb-form="true"][mode="view"] .refreshdgdr-btn {
+.match-btn:hover {
+    background: linear-gradient(to bottom, #73a5b6 5%, #0f6b8a 100%);
+}
+
+[eb-form="true"][mode="view"] .addrow-btn, [eb-form="true"][mode="view"] .excelupload-btn, [eb-form="true"][mode="view"] .refreshdgdr-btn, [eb-form="true"][mode="view"] .match-btn {
     display: none;
 }
 
@@ -656,7 +664,7 @@ eb-disable {
     display: block;
 }*/
 
-.grid-cont[is-disabled='true'] .addrow-btn, .grid-cont[is-disabled='true'] .excelupload-btn, .grid-cont[is-disabled='true'] .refreshdgdr-btn {
+.grid-cont[is-disabled='true'] .addrow-btn, .grid-cont[is-disabled='true'] .excelupload-btn, .grid-cont[is-disabled='true'] .refreshdgdr-btn, .grid-cont[is-disabled='true'] .match-btn {
     color: #333;
     pointer-events: none;
     background: #dddddd;
@@ -1195,7 +1203,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     color: #555;
 }
 
-.Eb-ctrlContainer[eb-readonly="true"] .addrow-btn, .Eb-ctrlContainer[eb-readonly="true"] .excelupload-btn, .Eb-ctrlContainer[eb-readonly="true"] .refreshdgdr-btn, .eb-disablebtn {
+.Eb-ctrlContainer[eb-readonly="true"] .addrow-btn,
+.Eb-ctrlContainer[eb-readonly="true"] .excelupload-btn,
+.Eb-ctrlContainer[eb-readonly="true"] .refreshdgdr-btn,
+.Eb-ctrlContainer[eb-readonly="true"] .match-btn, .eb-disablebtn {
     filter: grayscale(90%);
     pointer-events: none;
 }

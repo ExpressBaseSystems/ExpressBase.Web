@@ -1107,6 +1107,84 @@
         temp.remove();
     }.bind(this);
 
+    this.matchBtn_clicked = function () {
+        if (!this.ctrl.EnableAutoMatch) {
+            EbMessage("show", { Message: `Auto matching is not enabled`, AutoHide: false, Background: '#aa0000' });
+            return;
+        }
+
+        if (!(this.ctrl.AutoMatchScript && this.ctrl.AutoMatchScript.Code && this.ctrl.AutoMatchScript.Lang === 0)) {
+            EbMessage("show", { Message: `Auto matching script not found`, AutoHide: false, Background: '#aa0000' });
+            return;
+        }
+
+        let boolCtrl = getObjByval(this.DGcols, 'ObjType', 'DGBooleanColumn');
+
+        if (!boolCtrl) {
+            EbMessage("show", { Message: `Boolean column not found for Auto matching`, AutoHide: false, Background: '#aa0000' });
+            return;
+        }
+
+        try {
+            let alreadyChkd = false;
+
+            $.each(this.objectMODEL, function (rowId, inpCtrls) {
+                let inpCtrl = getObjByval(inpCtrls, 'Name', boolCtrl.Name);
+                if (inpCtrl.getValue()) {
+                    alreadyChkd = true;
+                    return false;
+                }
+            }.bind(this));
+
+            if (alreadyChkd) {
+                EbDialog("show",
+                    {
+                        Message: "Already matched data will be lost. Do you want ot continue?",
+                        Buttons: {
+                            "Continue": { Background: "green", Align: "left", FontColor: "white;" },
+                            "Cancel": { Background: "violet", Align: "right", FontColor: "white;" }
+                        },
+                        CallBack: function (name) {
+                            if (name === "Continue") {
+                                this.performAutoMatching(boolCtrl);
+                            }
+                        }.bind(this)
+                    });
+            }
+            else {
+                this.performAutoMatching(boolCtrl);
+            }
+        }
+        catch (e) {
+            EbMessage("show", { Message: `Error while Auto matching: ${e.message}`, AutoHide: false, Background: '#aa0000' });
+        }
+    }.bind(this);
+
+    this.performAutoMatching = function (boolCtrl) {
+        this.showLoader();
+        $.each(this.objectMODEL, function (rowId, inpCtrls) {
+            this.setCurRow(rowId);
+            let inpCtrl = getObjByval(inpCtrls, 'Name', boolCtrl.Name);
+            if (inpCtrl.getValue()) {
+                inpCtrl.setValue(false);
+            }
+        }.bind(this));
+
+        let code = atob(this.ctrl.AutoMatchScript.Code);
+
+        $.each(this.objectMODEL, function (rowId, inpCtrls) {
+            this.setCurRow(rowId);
+            let inpCtrl = getObjByval(inpCtrls, 'Name', boolCtrl.Name);
+
+            c = new Function("form", "user", code).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject)();
+
+            if (c) {
+                inpCtrl.setValue(true);
+            }
+        }.bind(this));
+        this.hideLoader();
+    }.bind(this);
+
     this.editRow_click = function (e) {
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
@@ -2511,6 +2589,7 @@
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".excelupload-btn", this.excelUploadBtn_click);
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".refreshdgdr-btn", this.refreshDgDrBtn_clicked);
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".copydg-btn", this.copyDgBtn_clicked);
+        $(`#${this.ctrl.EbSid}Wraper`).on("click", ".match-btn", this.matchBtn_clicked);
         this.$table.on("click", ".check-row", this.checkRow_click_New);
         this.$table.on("click", ".cancel-row", this.cancelRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

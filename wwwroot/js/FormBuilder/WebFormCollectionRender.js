@@ -80,6 +80,17 @@ const WebFormCollectionRender = function (Option) {
     };
 
     this.PopupForm = function (refId, params, mode, options = {}) {
+
+        //$.extend({
+        //    srcCxt: 0,//source context id
+        //    initiator: {},//initiating control object
+        //    locId: 0,
+        //    Callback: function (dataId, isSaved, dataAsParams) { },//called when popup form is closed
+        //    editModePrefill: false,
+        //    editModePrefillParams: null,
+        //    editModeAutoSave: false
+        //}, options);
+
         if (!refId) {
             console.error('Invalid refId for popup form');
             return;
@@ -162,6 +173,8 @@ const WebFormCollectionRender = function (Option) {
                 headerObj: this.subFormHeaderObj,
                 formHTML: _obj.formHTML,
                 disableEditBtn: resp.DisableEditButton,
+                editModePrefillParams: (resp.RowId > 0 && options.editModePrefill && options.editModePrefillParams) ? options.editModePrefillParams : null,
+                editModeAutoSave: options.editModeAutoSave,
                 __MultiRenderCxt: cxt
             });
             WebForm.__MultiRenderUrl = resp.Url;

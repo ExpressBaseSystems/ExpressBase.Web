@@ -2857,6 +2857,24 @@ const WebFormRender = function (option) {
         //}
     };
 
+    this.editModePrefill = function (opts) {
+        try {
+            let p = JSON.parse(atob(opts.editModePrefillParams));
+            for (let i = 0; i < p.length; i++) {
+                let c = this.formObject.__getCtrlByPath('form.' + p[i].Name);
+                if (c != "not found") {
+                    c.setValue(p[i].Value);
+                }
+            }
+            if (opts.editModeAutoSave) {
+                opts.editModeAutoSave = false;
+                this.saveForm();
+            }
+        }
+        catch (e) {
+            console.error('Edit mode prefill error: ' + e.message);
+        }
+    }.bind(this);
 
     this.bindEventFns = function () {
         $("[eb-form=true]").off("submit").on("submit", function () { event.preventDefault(); });
@@ -3471,6 +3489,9 @@ const WebFormRender = function (option) {
             //this.SwitchToEditMode();
             this.locInit4viewMode();
         }
+
+        if (option.editModePrefillParams)
+            this.editModePrefill(option);
 
         //this.LocationInit();
 

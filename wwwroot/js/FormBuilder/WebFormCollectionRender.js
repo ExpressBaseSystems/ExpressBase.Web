@@ -405,17 +405,35 @@ const WebFormCollectionRender = function (Option) {
                 DestCxt: destCxt,
                 Initiator: options.initiator,
                 ChangeDetected: false,
-                Callback: options.Callback
+                Callback: options.Callback ? options.Callback : function (dataId, isSaved, dataAsParams) { }
             });
         }
     };
 
     this.refreshRelatedForm = function (cxt) {
         let x = this.InterContextObj.find(e => e.DestCxt === cxt);
-        if (!x || !x.ChangeDetected)
+        if (!x)
             return;
         let srcRen = this.RenderCollection.find(e => e.__MultiRenderCxt === x.SourceCxt);
         if (!srcRen)
+            return;
+
+        if (x.Initiator.ObjType === 'CalendarControl') {
+            if (x.Callback) {
+                try {
+                    let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
+                    if (destRender) {
+                        let vals = destRender.getWebFormVals();
+                        x.Callback(destRender.rowId, x.ChangeDetected, vals);
+                    }
+                }
+                catch (e) {
+                    EbMessage("show", { Message: 'CalendarControl callback error: ' + e.message, AutoHide: true, Background: '#aa0000' });
+                }
+            }
+        }
+
+        if (!x.ChangeDetected)
             return;
         if (x.Initiator.ObjType === 'ExportButton') {
             let tvCtrls = getFlatObjOfType(srcRen.FormObj, "TVcontrol");
@@ -446,20 +464,6 @@ const WebFormCollectionRender = function (Option) {
             let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
             if (destRender) {
                 x.Initiator.reverseUpdateData(destRender);
-            }
-        }
-        else if (x.Initiator.ObjType === 'CalendarControl') {
-            if (x.Callback) {
-                try {
-                    let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
-                    if (destRender) {
-                        let vals = destRender.getWebFormVals();
-                        x.Callback(destRender.rowId, vals);
-                    }
-                }
-                catch (e) {
-                    EbMessage("show", { Message: 'CalendarControl callback error: ' + e.message, AutoHide: true, Background: '#aa0000' });
-                }
             }
         }
     };

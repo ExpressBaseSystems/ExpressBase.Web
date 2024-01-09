@@ -1146,7 +1146,7 @@
                         },
                         CallBack: function (name) {
                             if (name === "Continue") {
-                                this.performAutoMatching(boolCtrl);
+                                this.performAutoMatching(boolCtrl, 1000);
                             }
                         }.bind(this)
                     });
@@ -1160,7 +1160,7 @@
         }
     }.bind(this);
 
-    this.performAutoMatching = function (boolCtrl) {
+    this.performAutoMatching = function (boolCtrl, delay = 100) {
         if (this.AutoMatchIsInProgress) {
             console.warn('Auto Match is in Progress...');
             return;
@@ -1195,7 +1195,7 @@
             catch (e) {
                 this.AutoMatchIsInProgress = false;
             }
-        }.bind(this, boolCtrl), 100);
+        }.bind(this, boolCtrl), delay);
     }.bind(this);
 
     this.editRow_click = function (e) {

@@ -1152,6 +1152,9 @@
 
         if (this.FO.WizardControls)
             this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
+
+        if (this.FO.GroupBoxes)
+            this.FindCtrlsWithNoDependency_inner_2(this.FO.GroupBoxes, ExprName, DepHandleObj, prop1, prop2);
     };
 
     this.FindCtrlsWithNoDependency_inner = function (ctrlConts, ExprName, DepHandleObj, prop1, prop2) {
@@ -1163,6 +1166,17 @@
                         DepHandleObj[prop1].push(tCtrlPane.__path);
                         DepHandleObj[prop2].push(tCtrlPane);
                     }
+                }
+            }
+        }
+    };
+
+    this.FindCtrlsWithNoDependency_inner_2 = function (ctrls, ExprName, DepHandleObj, prop1, prop2) {
+        for (let i = 0; i < ctrls.length; i++) {
+            if (ctrls[i][ExprName] && ctrls[i][ExprName].Code && ctrls[i][ExprName].Lang === 0) {
+                if (!DepHandleObj[prop1].includes(ctrls[i].__path)) {
+                    DepHandleObj[prop1].push(ctrls[i].__path);
+                    DepHandleObj[prop2].push(ctrls[i]);
                 }
             }
         }

@@ -151,7 +151,9 @@ const WebFormCollectionRender = function (Option) {
         let cxt = this.RenderCounter++;
         let _formObj = JSON.parse(_obj.formObj);
         this.SetSubFormModal(cxt, _formObj.DisableOpenInNewTab);
-        this.showSubForm(cxt);
+        let keepHidden = this.isFormKeepHidden(resp, _formObj, options);
+        if (!keepHidden)
+            this.showSubForm(cxt);
         this.CurrentSubForm = null;
         try {
             let WebForm = new WebFormRender({
@@ -175,6 +177,7 @@ const WebFormCollectionRender = function (Option) {
                 disableEditBtn: resp.DisableEditButton,
                 editModePrefillParams: (resp.RowId > 0 && options.editModePrefill && options.editModePrefillParams) ? options.editModePrefillParams : null,
                 editModeAutoSave: options.editModeAutoSave,
+                keepHidden: keepHidden,
                 __MultiRenderCxt: cxt
             });
             WebForm.__MultiRenderUrl = resp.Url;
@@ -189,6 +192,15 @@ const WebFormCollectionRender = function (Option) {
             this.RenderCollection.push({ __MultiRenderCxt: cxt, Mode: { isEdit: false }, DISPOSE: function () { } });//DUMMY rendObj
             this.hideSubForm(cxt);
         }
+    };
+
+    this.isFormKeepHidden = function (resp, _formObj, options) {
+        if (resp.RowId > 0 && options.editModePrefill && options.editModePrefillParams && options.editModeAutoSave) {
+            if (_formObj.FormModeAfterEdit == 3 && !_formObj.EditReasonCtrl) { //close mode
+                return true;
+            }
+        }
+        return false;
     };
 
     this.GetSlaveHeaderBtns = function (cxt) {

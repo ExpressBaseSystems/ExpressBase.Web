@@ -890,6 +890,8 @@ const WebFormRender = function (option) {
             //    Message: respObj.Message,
             //    Buttons: { "Ok": { Background: "green", Align: "right", FontColor: "white;" } }
             //});
+            if (this.keepHidden)
+                ebcontext.webform.showSubForm(this.__MultiRenderCxt);
             EbMessage("show", { Message: respObj.Message, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: respObj.MessageInt + ' ' + respObj.StackTraceInt });
             console.error(respObj.MessageInt);
         }
@@ -1229,6 +1231,8 @@ const WebFormRender = function (option) {
                 ret = true;
 
             if (ret) {
+                if (this.keepHidden)
+                    ebcontext.webform.showSubForm(this.__MultiRenderCxt);
                 this.LockSave = false;
                 return;
             }
@@ -1386,8 +1390,11 @@ const WebFormRender = function (option) {
         if (ok) {
             this.FRC.checkUnique4All_save(this.flatControls, true);
         }
-        else
+        else {
             this.LockSave = false;
+            if (this.keepHidden)
+                ebcontext.webform.showSubForm(this.__MultiRenderCxt);
+        }
     };
 
     this.saveAsDraft_Call = function (title) {
@@ -1461,6 +1468,8 @@ const WebFormRender = function (option) {
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
                 this.LockSave = false;
+                if (this.keepHidden)
+                    ebcontext.webform.showSubForm(this.__MultiRenderCxt);
                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
             }.bind(this),
             success: this.saveSuccess.bind(this)
@@ -2872,6 +2881,8 @@ const WebFormRender = function (option) {
             }
         }
         catch (e) {
+            if (this.keepHidden)
+                ebcontext.webform.showSubForm(this.__MultiRenderCxt);
             console.error('Edit mode prefill error: ' + e.message);
         }
     }.bind(this);
@@ -3392,6 +3403,7 @@ const WebFormRender = function (option) {
         this.rendererName = 'WebForm';
         this.__MultiRenderCxt = option.__MultiRenderCxt;
         this.fsCxtId = Date.now().toString(36);
+        this.keepHidden = option.keepHidden;
 
         this.$formCont = option.$formCont;
         this.formHTML = option.formHTML;

@@ -848,7 +848,10 @@ const WebFormRender = function (option) {
                         document.location.href = `/pages/${this.FormObj.AfterSavePage}`;
                         return;
                     }
-                }, 3000);
+                    else {
+                        document.location.href = '/Ext/UsrSignIn?Page=False';
+                    }
+                }.bind(this), 3000);
                 return;
             }
             if (this.FormObj.AfterSavePage) {

@@ -1450,7 +1450,7 @@
 
     this.SubmitButton = function (ctrl, ctrlOpts) {
         //checksubmitbutton
-        this.$saveSelBtn.hide();
+        this.Renderer.$saveSelBtn.hide();
         //$('#webformsave-selbtn').hide();
         if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
             $(`#webform_submit_${ctrl.EbSid_CtxId}`).parent().prepend(`<div class = "text-center" id = '${ctrl.EbSid_CtxId}_captcha'> </div>

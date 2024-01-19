@@ -2262,8 +2262,15 @@ const WebFormRender = function (option) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {// ctrl+S -> save
                 if ((this.Mode.isEdit || (this.Mode.isNew && !this.FormObj.IsDisable)) && this.preventCheck(event)) {
-                    if (this.renderMode === 3 || this.renderMode === 5)//signup or public
-                        $('#webform_submit').click();
+                    if (this.renderMode === 3 || this.renderMode === 5) {//signup or public
+                        let c = getFlatContObjsOfType(this.FormObj, "SubmitButton");
+                        if (c) {
+                            $(`#webform_submit_${c[0].EbSid_CtxId}`).click();
+                        }
+                        else {
+                            $('#webform_submit').click();
+                        }
+                    }
                     else
                         this.saveForm();
                 }

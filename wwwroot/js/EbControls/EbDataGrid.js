@@ -1704,6 +1704,57 @@
         return sum;
     };
 
+    this.updateGroupSummary = function (groupByColumn, summarizingColumnName, summaryColumnId, summaryColumnIdValue) {
+        let sum = 0;
+        let curRowId = this.curRowId;
+        let grpCtrl = this.ctrl.currentRow[groupByColumn];
+        let colCtrl = this.ctrl.currentRow[summarizingColumnName];
+        let idColCtrl = this.ctrl.currentRow[summaryColumnId];//summary-column-identifier column name
+        if (!grpCtrl || !colCtrl || !idColCtrl) {
+            console.error('Error in updateGroupSummary');
+            return false;
+        }
+        if (idColCtrl.getValue() == summaryColumnIdValue) {
+            console.warn('warning updateGroupSummary: current row is a summary row');
+            return false;
+        }
+
+        let grpValue = grpCtrl.getValue();
+        let rowIds = Object.keys(this.objectMODEL);
+        let summaryColumnCtrl = null;
+        let summaryColumnRowId = 0;
+
+        for (let i = 0; i < rowIds.length; i++) {
+            let rowId = rowIds[i];
+            let rowCtrls = this.objectMODEL[rowId];
+            let g = getObjByval(rowCtrls, "Name", groupByColumn);
+            if (g && g.getValue() == grpValue) {
+                let c = getObjByval(rowCtrls, "Name", summarizingColumnName);
+                let id = getObjByval(rowCtrls, "Name", summaryColumnId);
+                if (c && id && id.getValue() == summaryColumnIdValue) {
+                    if (summaryColumnCtrl) {
+                        console.error('Error in updateGroupSummary: Summary column found more than once');
+                        return false;
+                    }
+                    summaryColumnCtrl = c;
+                    summaryColumnRowId = rowId;
+                    continue;
+                }
+                sum += c ? c.getValue() : 0;
+            }
+        }
+
+        if (summaryColumnCtrl) {
+            if (curRowId != summaryColumnRowId) {
+                this.setCurRow(summaryColumnRowId);
+                summaryColumnCtrl.setValue(sum);
+                this.setCurRow(curRowId);
+                return true;
+            }
+        }
+        return false;
+    };
+
     this.updateDepCtrl = function (Col) {
         $.each(Col.DependedValExp.$values, function (i, depCtrl_s) {
             try {
@@ -2144,6 +2195,7 @@
 
         this.ctrl.getRowBySlno = this.getRowBySlno.bind(this);
         this.ctrl.getColumnTotalByGroup = this.getColumnTotalByGroup.bind(this);
+        this.ctrl.updateGroupSummary = this.updateGroupSummary.bind(this);
     };
 
     this.makeColsResizable = function () {

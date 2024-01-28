@@ -789,6 +789,9 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 $('#dbReadOnlyPassword').val(temp1["ReadOnlyPassword"]);
                 $('#dbIsSSLInput    ').prop('checked', temp1["IsSSL"]);
                 $('#dbTimeoutInput').val(temp1["Timeout"]);
+                $('#dbRoServerInput').val(temp1["RoServer1"]);
+                $('#dbRoPortInput').val(temp1["RoPort1"]);
+                $('#dbRoTimeoutInput').val(temp1["RoTimeout1"]);
                 break;
             }
         }

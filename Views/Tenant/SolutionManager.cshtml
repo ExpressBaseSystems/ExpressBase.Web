@@ -277,15 +277,15 @@
                                         </div>
                                     </div>
                                     @*<div id="OSM" class="connection_wrap_outer" data-toggle="modal" data-target="#OSMConnectionEdit" data-whatever="Maps">
-                                            <div class="connection_wrap w-100">
-                                                <div class="connection_wrap_header w-100 image-hover" id="OSMConnection_config">
-                                                    <img class="img-responsive image-vender" src="~/images/open-street-map-medium-1.png" style="height: 80%; width: 80%;" />
-                                                    <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>*@
+                                    <div class="connection_wrap w-100">
+                                    <div class="connection_wrap_header w-100 image-hover" id="OSMConnection_config">
+                                    <img class="img-responsive image-vender" src="~/images/open-street-map-medium-1.png" style="height: 80%; width: 80%;" />
+                                    <div class="image-add">
+                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div>*@
                                     <div id="MobileConfig" class="connection_wrap_outer" data-toggle="modal" data-target="#MobileConfigEdit" data-whatever="Maps">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="MobileConfig_config">
@@ -421,7 +421,6 @@
                                             </div>
                                             <div id="EbFILES" class="panel-collapse collapse">
                                                 <div id="EbFILES-All" class="panel-body">
-
                                                 </div>
                                             </div>
                                         </div>
@@ -435,7 +434,6 @@
                                             </div>
                                             <div id="SUPPORTINGDATA" class="panel-collapse collapse">
                                                 <div id="SUPPORTINGDATA-All" class="panel-body">
-
                                                 </div>
                                             </div>
                                         </div>
@@ -449,7 +447,6 @@
                                             </div>
                                             <div id="SMTP_call" class="panel-collapse collapse">
                                                 <div id="SMTP-All" class="panel-body">
-
                                                 </div>
                                             </div>
                                         </div>
@@ -463,7 +460,6 @@
                                             </div>
                                             <div id="Cloudinary" class="panel-collapse collapse">
                                                 <div id="Cloudinary-all" class="panel-body">
-
                                                 </div>
                                             </div>
                                         </div>
@@ -503,7 +499,6 @@
                                             </div>
                                             <div id="ICHAT" class="panel-collapse collapse">
                                                 <div id="ICHAT-all" class="panel-body">
-
                                                 </div>
                                             </div>
                                         </div>
@@ -517,7 +512,6 @@
                                             </div>
                                             <div id="AUTHENTICATION" class="panel-collapse collapse">
                                                 <div id="AUTHENTICATION-all" class="panel-body">
-
                                                 </div>
                                             </div>
                                         </div>
@@ -531,7 +525,6 @@
                                             </div>
                                             <div id="MOBILE_CONFIG" class="panel-collapse collapse">
                                                 <div id="MOBILECONFIG-all" class="panel-body">
-
                                                 </div>
                                             </div>
                                         </div>
@@ -553,15 +546,15 @@
                 <div class="tab-pane" id="home" role="tabpanel">
                     <div class="eb-sdash-general-container flex-center">
                         @*<div class="eb-sdash-longdiv w-100" style="margin-bottom:20px;">
-                                <div class="eb-sdash-upgradecont">
-                                    <div class="col-md-8">
-                                        <p>Change your solution info</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
-                                    </div>
-                                 </div>
-                            </div>*@
+                        <div class="eb-sdash-upgradecont">
+                        <div class="col-md-8">
+                        <p>Change your solution info</p>
+                        </div>
+                        <div class="col-md-4">
+                        <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
+                        </div>
+                        </div>
+                        </div>*@
 
                         @*logo*@
                         <div class="eb-sdash-longdiv col-md-12 col-sm-12" style="margin-bottom:20px;">
@@ -600,7 +593,8 @@
                                 </div>
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
                                     <div class="uname-advanced-sec signin-del-check">
-                                        @{ if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
+                                        @{
+                                            if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
                                             {
                                                 <div>Select OTP method</div>
                                                 <div class="form-check form-check-inline checkbox-group">
@@ -643,9 +637,10 @@
                                 </div>
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
                                     <div class="uname-advanced-sec 2fa-del-check">
-                                        @{ if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
+                                        @{
+                                            if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
                                             {
-                                                // <label class="label-custom-style" style="display:inline-block">Select OTP delivery method</label>
+                // <label class="label-custom-style" style="display:inline-block">Select OTP delivery method</label>
                                                 <div>Select OTP method</div>
                                                 <div class="form-check form-check-inline checkbox-group">
                                                     <div class="col-md-12">
@@ -701,10 +696,10 @@
                                     <div class="uname-advanced-sec">
                                         @*<label>Switch Versioning</label>*@
                                         @*<label class="switch">
-                                                    <input type="checkbox" id="VersioningSwitch" style="display:inline">
-                                                    <span class="slider round"></span>
-                                                </label>
-                                            <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>*@
+                                        <input type="checkbox" id="VersioningSwitch" style="display:inline">
+                                        <span class="slider round"></span>
+                                        </label>
+                                        <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>*@
                                         <input id="VersioningSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" @*data-on="Versioning On" data-off="Versioning Off"*@>
                                     </div>
                                 </div>
@@ -814,6 +809,29 @@
                                 </div>
                                 <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
                                 <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                            </div>
+                            <div class="col-md-12 col-lg-12 pd-0">
+                                <div class="col-md-4 pd-l-0">
+                                    <div class="form-group">
+                                        <label>Server Address ReadOnly</label>
+                                        <input id="dbRoServerInput" name="RoServer1" type="text" class="form-control Inputclear eb_input-h" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-4">
+                                    <div class="form-group">
+                                        <label>Port</label>
+                                        <input id="dbRoPortInput" name="RoPort1" pattern="^[0-9]*$" maxlength="5" type="number" class="form-control Inputclear eb_input-h" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-4 pd-r-0">
+                                    <div class="form-group">
+                                        <label>TimeOut</label>
+                                        <input id="dbRoTimeoutInput" name="RoTimeout1" pattern="^[0-9]*$" type="text" class="form-control Inputclear eb_input-h" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-12 pd-0">
                                 <div class="uname-advanced-sec">
@@ -1410,7 +1428,7 @@
                                         <input id="EmailInputNickname" type="text" name="NickName" class="form-control Inputclear eb_input-h" value="" required />
                                     </div>
                                 </div>
-                                <input type="hidden" id="IntegrationId" name="IntegrationId"/>
+                                <input type="hidden" id="IntegrationId" name="IntegrationId" />
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Protocol</label>
@@ -1542,53 +1560,53 @@
     </div>
 
     @*<div id="OSMConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content" id="OSM_mask">
-                    <form action="" method="post" id="OSMConnectionSubmit" data-toggle="validator">
-                        <div class="modal-header relative border-style-none">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Open Street Maps</h4>
-                            <div id="OSM_loader" class="MapConnection_loder"></div>
-                        </div>
-                        <div class="modal-body" style="display:flex">
-                            <div class="vender-data-holder" style="width:25%">
-                                <img class='img-responsive' src='~/images/open-street-map-medium-1.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
-                                <div class="connection-vender-desp">
-                                    <span>Build customized, agile experiences that bring the real world to your users with static and dynamic maps, Street View imagery, and 360° views.</span>
-                                </div>
-                            </div>
-                            <div class="connection-data-holder">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <input name="OSMVendor" type="hidden" value="OSM" class="form-control Vendor" readonly />
-                                        <div class="form-group">
-                                            <label>Nick Name</label>
-                                            <input id="OSMInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label>ApiKey</label>
-                                                <input id="OSMInputApiKey" name="ApiKey" type="text" class="form-control Inputclear eb_input-h" required />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
-                                <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
-                            </div>
-                        </div>
+    <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="OSM_mask">
+    <form action="" method="post" id="OSMConnectionSubmit" data-toggle="validator">
+    <div class="modal-header relative border-style-none">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">Open Street Maps</h4>
+    <div id="OSM_loader" class="MapConnection_loder"></div>
+    </div>
+    <div class="modal-body" style="display:flex">
+    <div class="vender-data-holder" style="width:25%">
+    <img class='img-responsive' src='~/images/open-street-map-medium-1.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+    <div class="connection-vender-desp">
+    <span>Build customized, agile experiences that bring the real world to your users with static and dynamic maps, Street View imagery, and 360° views.</span>
+    </div>
+    </div>
+    <div class="connection-data-holder">
+    <div class="row">
+    <div class="col-md-12">
+    <input name="OSMVendor" type="hidden" value="OSM" class="form-control Vendor" readonly />
+    <div class="form-group">
+    <label>Nick Name</label>
+    <input id="OSMInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+    </div>
+    </div>
+    </div>
+    <div class="row">
+    <div class="form-group">
+    <div class="col-md-12">
+    <div class="form-group">
+    <label>ApiKey</label>
+    <input id="OSMInputApiKey" name="ApiKey" type="text" class="form-control Inputclear eb_input-h" required />
+    </div>
+    </div>
+    </div>
+    </div>
+    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+    <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
+    </div>
+    </div>
 
-                        <div class="modal-footer border-style-none">
-                            <button type="submit" class="ebbtn eb_btnblue eb_btn-sm MapConnection">Save</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>*@
+    <div class="modal-footer border-style-none">
+    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm MapConnection">Save</button>
+    </div>
+    </form>
+    </div>
+    </div>
+    </div>*@
 
     <div id="MobileConfigEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="" display: block;>
         <div class="modal-dialog modal-lg">
@@ -2048,12 +2066,12 @@
     <div class="eb-cropie" id="cropsection"></div>
     @section JsCode{
         <script>
-        let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
-        let GoogleRedirecturi = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Env));
-	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.IsolutionId', '@ViewBag.Connections.SolutionInfo.IsVersioningEnabled', '@ViewBag.Connections.SolutionInfo.EsolutionId', '@ViewBag.Connections.SolutionInfo.SolutionName');
-	    $("#no_user").change(function (e) {
-		    $("#user_countForm").val(e.target.value);
-        });
+            let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
+            let GoogleRedirecturi = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Env));
+            var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.IsolutionId', '@ViewBag.Connections.SolutionInfo.IsVersioningEnabled', '@ViewBag.Connections.SolutionInfo.EsolutionId', '@ViewBag.Connections.SolutionInfo.SolutionName');
+            $("#no_user").change(function (e) {
+                $("#user_countForm").val(e.target.value);
+            });
         </script>
     }
 

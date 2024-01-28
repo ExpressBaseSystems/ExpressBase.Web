@@ -93,6 +93,9 @@ namespace ExpressBase.Web.Controllers
                     DatabaseName = req["databaseName"],
                     Server = req["server"],
                     Port = Convert.ToInt32(req["port"]),
+                    RoServer1 = req["roServer1"],
+                    RoPort1 = Convert.ToInt32(req["roPort1"]),
+                    RoTimeout1 = Convert.ToInt32(req["roTimeout1"]),
                     UserName = req["userName"],
                     Password = req["password"],
                     ReadWriteUserName = req["readWriteUserName"],
@@ -413,7 +416,7 @@ namespace ExpressBase.Web.Controllers
                         ConfigId = response.Id,
                         Preference = ConPreferences.MULTIPLE,
                         Type = type,
-                        Id = !String.IsNullOrEmpty(req["IntegrationId"]) ? Convert.ToInt32( req["IntegrationId"]): 0
+                        Id = !String.IsNullOrEmpty(req["IntegrationId"]) ? Convert.ToInt32(req["IntegrationId"]) : 0
                     };
                     Integrate(JsonConvert.SerializeObject(integration), false, req["SolnId"], false);
                 }

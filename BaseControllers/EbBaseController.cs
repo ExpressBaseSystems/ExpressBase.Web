@@ -354,7 +354,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbFinancialYears GetFinancialYearsObject(Eb_Solution s_obj, User user)
         {
-            if (s_obj.SolutionSettings?.EnableFinancialYear != true)
+            if (s_obj?.SolutionSettings?.EnableFinancialYear != true)
                 return null;
             EbFinancialYears fys = s_obj?.FinancialYears ?? new EbFinancialYears();
             if (WhichConsole == RoutingConstants.UC)

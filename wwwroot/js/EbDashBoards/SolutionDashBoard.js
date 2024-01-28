@@ -683,7 +683,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
     this.validateConnection = function (form) {
         let f = true;
         for (let k in form) {
-            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken", "IsNew"].indexOf(k) < 0) {
+            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken", "IsNew", "RoServer1", "RoTimeout1", "RoPort1"].indexOf(k) < 0) {
                 if (form[k].length <= 0)
                     f = false;
             }
@@ -2088,7 +2088,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
         let html = [];
         var count = 0;
         InteConfig = this.Connections.IntegrationsConfig;
-        $.each(InteConfig, function (i, rows) { 
+        $.each(InteConfig, function (i, rows) {
             $.each(rows, function (j, rowss) {
                 html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rowss.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
                                 <div id = "nm" class="inteConfContainer_Image ">

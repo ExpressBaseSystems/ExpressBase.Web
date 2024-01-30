@@ -1264,7 +1264,7 @@ const WebFormRender = function (option) {
                     if ((ctrl.__initDataValue || '') != (ctrl.getValue() || ''))
                         rowChanged = true;
                     if (ctrl.ValueExpr && ctrl.ValueExpr.Code && ctrl.ValueExpr.Lang == 0) {
-                        if (ctrl.IsDisable && !(ctrl.DisableExpr && ctrl.DisableExpr.Code)) {
+                        if (ctrl.IsDisable && (!(ctrl.DisableExpr && ctrl.DisableExpr.Code) || (ctrl.DisableExpr && ctrl.DisableExpr.Code && ctrl.__IsDisableByExp))) {
                             if (ctrl.__initDataValue == undefined || (ctrl.__initDataValue || '') != (ctrl.getValue() || '') || rowChanged) {
                                 DgChanged = true;
                                 let _val = null;
@@ -1308,7 +1308,7 @@ const WebFormRender = function (option) {
         for (let i = 0; i < this.flatControls.length; i++) {
             let ctrl = this.flatControls[i];
             if (ctrl.ValueExpr && ctrl.ValueExpr.Code && ctrl.ValueExpr.Lang == 0) {
-                if (ctrl.IsDisable && !(ctrl.DisableExpr && ctrl.DisableExpr.Code)) {
+                if (ctrl.IsDisable && (!(ctrl.DisableExpr && ctrl.DisableExpr.Code) || (ctrl.DisableExpr && ctrl.DisableExpr.Code && ctrl.__IsDisableByExp))) {
                     if (ctrl.__initDataValue == undefined || ctrl.__forceIntegrityCheck || (ctrl.__initDataValue || '') != (ctrl.getValue() || '')) {
                         let _val = null;
                         try {

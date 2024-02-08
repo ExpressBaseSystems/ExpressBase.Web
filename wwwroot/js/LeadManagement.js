@@ -1038,6 +1038,8 @@
         this.$HomeCity.val(this.CustomerInfo["city"]);
         this.$HomeDistrict.val(this.CustomerInfo["district"]);///////
         this.$Service.val(this.CustomerInfo["typeofcustomer"].trim().toLowerCase());
+        if (this.$Service.val())
+            this.$Service.prop("disabled", true);
         this.$LeadOwner.val(this.CustomerInfo["leadowner"]);/////////
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);

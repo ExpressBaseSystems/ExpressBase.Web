@@ -254,8 +254,8 @@
                 window.open(url, '_blank');
             }
         }.bind(this));
-                
-        this.$btnSendSms.on("click", function () {            
+
+        this.$btnSendSms.on("click", function () {
             let params = [];
             params.push(new fltr_obj(11, "customers_id", this.AccId));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
@@ -982,7 +982,7 @@
                 }.bind(this)
             });
         }.bind(this));
-                
+
         $.each(this.GfcPrpList, function (i, obj) {
             obj["Done_By"] = this.getKeyByValue(this.DoctorInfo, obj["Done_By"]) || this.getKeyByValue(this.NurseInfo, obj["Done_By"]);
         }.bind(this));
@@ -1017,7 +1017,7 @@
         this.$MdlGfcPrp.on('hidden.bs.modal', function (e) {
             this.$MdlGfcPrp.attr("data-id", "");
         }.bind(this));
-        
+
     };
 
     this.fillCustomerData = function () {
@@ -1038,8 +1038,8 @@
         this.$HomeCity.val(this.CustomerInfo["city"]);
         this.$HomeDistrict.val(this.CustomerInfo["district"]);///////
         this.$Service.val(this.CustomerInfo["typeofcustomer"].trim().toLowerCase());
-        if (this.$Service.val())
-            this.$Service.prop("disabled", true);
+        //if (this.$Service.val())
+        //    this.$Service.prop("disabled", true);
         this.$LeadOwner.val(this.CustomerInfo["leadowner"]);/////////
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);

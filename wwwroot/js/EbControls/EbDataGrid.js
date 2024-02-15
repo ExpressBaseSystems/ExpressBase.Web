@@ -2665,7 +2665,8 @@
         this.$table.on("focusin", ".dgtr > td", this.row_focusin.bind(this));
         this.$table.on("focus", ".dgtr > td", this.row_focus.bind(this));
         //this.$table.on("focusout", ".dgtr", this.row_focusout.bind(this));
-        $(document).on('mouseup', this.row_focusout.bind(this));
+        this.formRenderer.$formCont.on('mouseup', ".form-cont-first", this.row_focusout.bind(this));
+        //$(document).on('mouseup', this.row_focusout.bind(this));
         this.$table.on("click", ".dgtr > td[tdcoltype='DGPowerSelectColumn'] > [coltype='DGPowerSelectColumn'] .selected-tag", this.clickedOnPsSeletedTag.bind(this));
         this.$table.on("click", ".dgtr > td[tdcoltype='DGLabelColumn'] > [coltype='DGLabelColumn'] span", this.clickedOnLabelLink.bind(this));
         this.$table.on("click", ".dgtr > td[tdcoltype='DGLabelColumn'] .ebdg-label-link span", this.clickedOnLabelLink.bind(this));

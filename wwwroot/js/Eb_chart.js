@@ -104,7 +104,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         "area": "fa fa-area-chart",
         "horizontalBar": "fa fa-bar-chart"
     };
-
+    this.ApexChartObj = null;
+    this.ApexChartLegendColor = [];
     var split = new splitWindow("parent-div0", "contBox");
 
     split.windowOnFocus = function (ev) {
@@ -417,7 +418,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.$filter.click(this.CloseParamDiv.bind(this));
         }
         $("#obj_icons").append(`<div style='display: inline;'>
-            <div class='dropdown' id='graphDropdown_tab${ this.tableId}' style='display: inline-block;padding-top: 1px;'>
+            <div class='dropdown' id='graphDropdown_tab${this.tableId}' style='display: inline-block;padding-top: 1px;'>
             <button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>
             <span class='caret'></span>
             </button>
@@ -463,7 +464,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             </ul>
             </div>
            
-            <button id='btnColumnCollapse${ this.tableId}' class='btn' style='display: inline-block;'>
+            <button id='btnColumnCollapse${this.tableId}' class='btn' style='display: inline-block;'>
             <i class="fa fa-cogs" aria-hidden="true"></i>
             </button>`);
         //}
@@ -489,7 +490,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $(".toolicons").hide();
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-9");
             $("#columnsDisplay" + this.tableId).removeClass("col-md-2").addClass("col-md-3").addClass("botdata_cont").show();
-
         }
     };
 
@@ -843,17 +843,134 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
     this.drawGraph = function () {
         this.EbObject.Type = this.type;
-        var canvas = document.getElementById("myChart" + this.tableId);
+        if (this.EbObject.ChartLibrary == 0) {
 
-        this.chartApi = new Chart(canvas, {
-            type: this.EbObject.Type.trim(),
-            data: this.gdata,
-            options: this.goptions,
-        });
-        this.isSecondTime = true;
-        $("#eb_common_loader").EbLoader("hide");
+            var canvas = document.getElementById("myChart" + this.tableId);
+
+            this.chartApi = new Chart(canvas, {
+                type: this.EbObject.Type.trim(),
+                data: this.gdata,
+                options: this.goptions,
+            });
+            this.isSecondTime = true;
+            $("#eb_common_loader").EbLoader("hide");
+        }
+        else if (this.EbObject.ChartLibrary == 1) {
+
+            let _series = [];
+            this.ApexChartLegendColor = [];
+            $("#canvasDiv" + this.tableId).empty();
+            $("#canvasDiv" + this.tableId).append("<div id='ApexChartColorPane" + this.tableId + "'></div>");
+            this.EbObject.LegendColor.$values.forEach(function (value, index) {
+                $("#ApexChartColorPane" + this.tableId).append(`<input type="color" class="ApexChartColors" id="${index}" value="${value.Color}" style="margin: 10px;">${value.Name}</input>`);
+                this.ApexChartLegendColor.push(value.Color);
+            }.bind(this));
+            $(".ApexChartColors").off("change").on("change", this.UpdateApexChart.bind(this));
+            this.gdata.datasets.forEach(function (value, index, array) {
+                let data = {};
+                data["name"] = value.label;
+                data["data"] = value.data;
+                _series.push(data);
+            });
+
+            var options = {
+                chart: {
+                    type: this.EbObject.Type.trim() == "horizontalBar" ? "bar" : this.EbObject.Type.trim(),
+                    height: 500,
+                },
+            };
+
+            switch (this.EbObject.Type) {
+                case "bar":
+                case "horizontalBar":
+                    options["series"] = _series;
+                    options["stroke"] = {};
+                    options["stroke"]['show'] = true;
+                    options["stroke"]['width'] = 2;
+                    options["stroke"]['colors'] = ['transparent'];
+
+                    options["plotOptions"] = {
+                        'bar': {
+                            'horizontal': this.EbObject.Type.trim() == "horizontalBar" ? true : false,
+                            'columnWidth': '55%',
+                            'endingShape': 'rounded',
+                            borderRadius: 0,
+                        }
+                    }
+
+                    options["dataLabels"] = {
+                        "enabled": false
+                    };
+
+                    options["xaxis"] = {
+                        "categories": this.gdata.labels,
+                        "title": {
+                            "text": this.EbObject.XaxisTitle
+                        }
+                    };
+                    options["yaxis"] = {
+                        "title": {
+                            "text": this.EbObject.YaxisTitle
+                        }
+                    };
+                    options["fill"] = {
+                        "opacity": 1,
+                        "fill": {
+                            "colors": ['#f82828', '#E91E63', '#9C27B0']
+                        }
+                    };
+                    options["colors"] = this.ApexChartLegendColor;
+                    options["tooltip"] = {
+                        enabled: this.EbObject.ShowTooltip,
+                        "y": {
+                            "formatter": function (val) {
+                                return val; 
+                            }
+                        }
+                    };
+
+                    break;
+                case "line":
+                    options["colors"] = this.ApexChartLegendColor;
+                    options["series"] = _series;
+                    options["stroke"] = {};
+                    options["stroke"]['curve'] = "straight";
+                    break;
+                case "pie":
+                case "donut":
+                    options["series"] = _series[0]['data'].map(function (value, index, array) { return parseInt(value) });
+                    options["labels"] = this.gdata.labels;
+                    options["responsive"] = [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }];
+                    $("#canvasDiv" + this.tableId).empty();
+                    break;
+            }
+
+
+            $("#canvasDiv" + this.tableId).append("<div id='ApexChart" + this.tableId + "'></div>");
+
+            this.ApexChartObj = new ApexCharts(document.querySelector("#ApexChart" + this.tableId), options);
+            this.ApexChartObj.render();
+
+        }
     };
 
+
+    this.UpdateApexChart = function (e) {
+        this.ApexChartLegendColor[e.target.id] = this.EbObject.LegendColor.$values[e.target.id].Color = e.target.value;
+        this.ApexChartObj.updateOptions({
+            colors: this.ApexChartLegendColor
+        });
+    }
     this.ResetZoom = function () {
         this.chartApi.resetZoom();
     };

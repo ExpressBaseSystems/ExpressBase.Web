@@ -460,7 +460,7 @@ var DashBoardWrapper = function (options) {
             }
             $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
-        $(".grid-stack , .Eb-ctrlContainer").off("click").on("click", this.TileSelectorJs.bind(this));
+        $(".grid-stack , .grid-stack-item-content").off("click").on("click", this.TileSelectorJs.bind(this));
     };
 
     this.labelstyleApply = function (tileId) {
@@ -657,7 +657,7 @@ var DashBoardWrapper = function (options) {
     };
 
     this.FocusOnControlObject = function (e) {
-        let elem = $(e.target).closest("Eb-ctrlContainer");
+        let elem = $(e.target).closest(".Eb-ctrlContainer");
         let id = elem.attr("id");
         if (id === undefined) {
             elem = $($(e.target).parents(".Eb-ctrlContainer")[0]);
@@ -744,7 +744,7 @@ var DashBoardWrapper = function (options) {
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
         $('#myDropdown').on('hide.bs.dropdown', this.DropDownClose.bind(this));
         $('#myDropdown').on('click.bs.dropdown.data-api', '.dropdown.keep-inside-clicks-open', this.DropDownClose2.bind(this));
-        $(".grid-stack , .Eb-ctrlContainer").off("click").on("click", this.TileSelectorJs.bind(this));
+        $(".grid-stack , .grid-stack-item-content").off("click").on("click", this.TileSelectorJs.bind(this));
     }
 
     this.DropDownClose = function (e) {
@@ -760,10 +760,11 @@ var DashBoardWrapper = function (options) {
     };
 
     this.TileOptions = function (e) {
-        var tileid = e.target.parentElement.getAttribute("u-id");
+        debugger;
+        this.CurrentTile = e.target.getAttribute("tile-id");
         var id = e.target.getAttribute("link");
-        if (id === "ext-link") {
-            let TileRefid = this.TileCollection[tileid].RefId;
+        if (id === "open") {
+            let TileRefid = this.TileCollection[this.CurrentTile].RefId;
             //window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
             let url = "../DV/dv?refid=" + TileRefid;
 
@@ -784,12 +785,12 @@ var DashBoardWrapper = function (options) {
             document.body.removeChild(_form);
         }
         else if (id === "close") {
-            var abc = $(`#${tileid}`).closest(".grid-stack-item");
+            var abc = $(`#${this.CurrentTile}`).closest(".grid-stack-item");
             grid.removeWidget(abc);
         }
-        else if (id === "restart-tile") {
+        else if (id === "refresh") {
             $(`[data-id="${this.CurrentTile}"]`).empty();
-            let Refid = this.TileCollection[tileid].RefId;
+            let Refid = this.TileCollection[this.CurrentTile].RefId;
             this.Ajax4fetchVisualization(Refid);
         }
     }
@@ -837,15 +838,23 @@ var DashBoardWrapper = function (options) {
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 this.drop_id = "drop_" + t_id;
-                grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2"> 
+                //grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2">
+                //    <div class="grid-stack-item-content" id=${t_id}>
+                //    <div style="display:flex" class="db-title-parent tile-header">
+                //    <div class="db-title" data-toggle="move" title="move tile"  data-placement="bottom"  name-id="${t_id}" style="display:float"></div>
+                //    <div style="float:right;display:flex" u-id="${t_id}">
+                //    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
+                //    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
+                //    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
+                //    </div></div>
+                //    <div id="${this.TabNum}_Label_${t_id}"></div>
+                //    <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${this.drop_id}">
+                //    </div></div></div>`, x, y, dw, dh, false);
+
+                grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2">
+               
                     <div class="grid-stack-item-content" id=${t_id}>
-                    <div style="display:flex" class="db-title-parent tile-header">
-                    <div class="db-title" data-toggle="move" title="move tile"  data-placement="bottom"  name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}">
-                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
-                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
-                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
-                    </div></div>
+                    
                     <div id="${this.TabNum}_Label_${t_id}"></div>
                     <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${this.drop_id}">
                     </div></div></div>`, x, y, dw, dh, false);
@@ -881,11 +890,19 @@ var DashBoardWrapper = function (options) {
                 }
                 else {
                     this.loader.show();
-                    $(`#${this.TabNum}_restart_${t_id}`).remove();
-                    $(`#${this.TabNum}_link_${t_id}`).remove();
-                    $(`#${t_id}`).attr("eb-type", "gauge");
-                    $(`#${t_id} .tile-header`).removeClass("tile-header");
+                    $(`#${tile_id}`).prepend(`            
+                <div class="dropdown dropleft float-right" id="${t_id}_grid_menu">
+                    <i class="fa fa-bars float-right " aria-hidden="true" dropdown-toggle" data-toggle="dropdown"></i>
+                     <ul class="dropdown-menu">
+                       <li><a class="grid-menu-list"  link="close" tile-id="${t_id}">Close grid</a></li>
+                    </ul>
+                </div>
+             `);
+                    $(".grid-menu-list").off("click").on("click", this.TileOptions.bind(this));
+                    //$(`#${t_id}`).attr("eb-type", "gauge");
+                    //$(`#${t_id} .tile-header`).removeClass("tile-header");
 
+                    debugger;
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
                             var eb_type = Cobj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
@@ -897,6 +914,8 @@ var DashBoardWrapper = function (options) {
                             this.GetComponentColumns(Cobject);
                         }
                     }.bind(this));
+
+                    $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
 
                     this.drake.containers.push(document.getElementById(this.drop_id));
 
@@ -979,7 +998,7 @@ var DashBoardWrapper = function (options) {
         else {
             this.GridStackInit();
         }
-        $(".grid-stack , .Eb-ctrlContainer").on("click", this.TileSelectorJs.bind(this));
+        $(".grid-stack , .grid-stack-item-content").on("click", this.TileSelectorJs.bind(this));
         //this.addTilecontext()
         this.Tilecontext();
 
@@ -1012,26 +1031,28 @@ var DashBoardWrapper = function (options) {
 
         grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" >                      
                         <div class="grid-stack-item-content" id="${t_id}">
-                    <div style="display:flex;" class="db-title-parent tile-header">
-                    <div class="db-title" data-toggle="move" title="move tile" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}">
-                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
-                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
-                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
-                    </div></div>
-                 <div id="${this.TabNum}_Label_${t_id}" class=""></div>
+                                     <div id="${this.TabNum}_Label_${t_id}" class=""></div>
                  <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${drop_id}" ></div></div>
                      <div class="tile-footer"></div>
                         </div></div>`, 0, 0, this.data_width, this.data_height, true);
         this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
         this.CurrentTile = t_id;
+        $(`#${tile_id}`).prepend(`            
+                <div class="dropdown dropleft float-right" id="${t_id}_grid_menu">
+                    <i class="fa fa-bars float-right " aria-hidden="true" dropdown-toggle" data-toggle="dropdown"></i>
+                     <ul class="dropdown-menu">
+                       <li><a class="grid-menu-list"  link="close" tile-id="${t_id}">Close grid</a></li>
+                    </ul>
+                </div>
+             `);
+        $(".grid-menu-list").off("click").on("click", this.TileOptions.bind(this));
         Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
         return drop_id;
     };
 
 
     //focus Ebobjects
-    this.TileSelectorJs = function (e) {
+    this.TileSelectorJs = function (event) {
         let procId;
         this.CurrentTile = $(event.target).closest(".tile_dt_cont").attr("data-id");
         if ($(event.target).closest(".guage").attr("id")) {
@@ -1193,14 +1214,14 @@ var DashBoardWrapper = function (options) {
             this.GetFilterValuesForDataSource();
         }
         let obj = JSON.parse(data);
-        $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
         //this.TileCollection[id].TileObject = obj;
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
-
-            $(`[data-id="${id}"]`).append(`<div id="content_tb1${id}" class="wrapper-cont"><table id="tb1${id}" class="table display table-bordered compact"></table></div>`);
+            this.AppendMenuForVisualization(id);
+            $(`[data-id="${id}"]`).append(`<div id="content_tb1${id}" class="wrapper-cont"><table id="tb1${id}" class="uk-table uk-table-hover uk-table-striped" ></table></div>`);
             var o = {};
             o.dsid = obj.DataSourceRefId;
             o.tableId = "tb1" + id;
+            o.tableParentId = "content_tb1" + id;
             o.containerId = id;
             o.columns = obj.Columns.$values;
             o.dvObject = obj;
@@ -1220,6 +1241,9 @@ var DashBoardWrapper = function (options) {
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
+
+            this.AppendMenuForVisualization(id);
+
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
             $(`#${id}`).addClass("chart-tile-opt");
             var o = {};
@@ -1250,6 +1274,7 @@ var DashBoardWrapper = function (options) {
             //$(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
+            this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
             var o = {};
             o.tableId = "tb1" + id;
@@ -1265,6 +1290,29 @@ var DashBoardWrapper = function (options) {
         $(".dash-loader").hide();
     }
 
+    this.AppendMenuForVisualization = function (id) {
+        debugger;
+        try {
+            $(`#${id}_grid_menu`).remove();
+        }
+        catch (err) {
+
+        }
+        finally {
+            $(`#${id}`).parent().prepend(`            
+                <div class="dropdown dropleft float-right" id="${id}_grid_menu">
+                    <i class="fa fa-bars float-right " aria-hidden="true" dropdown-toggle" data-toggle="dropdown"></i>
+                     <ul class="dropdown-menu">
+                        <li><a class="grid-menu-list" link="open" tile-id="${id}">Open</a></li>
+                        <li><a class="grid-menu-list" link="refresh" tile-id="${id}">Refresh</a></li>
+                        <li class="divider"></li>
+                        <li><a class="grid-menu-list"  link="close" tile-id="${id}">Close grid</a></li>
+                    </ul>
+                </div>
+             `);
+            $(".grid-menu-list").off("click").on("click", this.TileOptions.bind(this));
+        }   
+    }
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");
         let a = $(`#${id} .dataTables_scrollHeadInner`).height();

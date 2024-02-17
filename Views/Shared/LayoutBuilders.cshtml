@@ -227,6 +227,20 @@
         <script type="text/javascript" src="~/js/EbControls/Eb_FontEditor.js"></script>
     </environment>
 
+    <script type="text/javascript" src="~/js//DV/apexcharts.js"></script>
+    <link rel="stylesheet" href="~/css//DV/Apexchart.css" />
+
+
+    <script type="text/javascript" src="~/js/CalendarView/EbCalendar/EbCalendarView.js"></script>
+    <script type="text/javascript" src="~/js/CalendarView/dist/index.global.min.js"></script>
+    <script type="text/javascript" src="~/js/EbControls/EbListView.js"></script>
+
+    <link rel="stylesheet" href="~/css/Calendar/CalendarStyle.css" />
+    <link rel="stylesheet" href="~/css/EbControls//EbListView.css" />
+    <script src="~/js/EbListView/jquery.resizableColumns.js"></script>
+
+
+
     @*BUNDLES*@
     <environment exclude="Development">
         <script type="text/javascript" src="~/js/Bundles/eb-common.bundle.js" asp-append-version=@bApnd></script>
@@ -257,22 +271,22 @@
         //if (Offline.options)
         //    Offline.options.requests = false;
 
-            reload_if_session_expired();
-            AllMetasRoot = {};
-            window.ebcontext = {
-                sid: "@ViewBag.cid",
-                user: @Html.Raw(ViewBag.UserObject) || null,
-                menu: {},
-                locations: {},
-                header: {},
-                env:'@ViewBag.Env',
-                font:@Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
-                EbObjectMeta:@Html.Raw(ViewBag.EbObjectTypeMeta),
-                se_url: '@ViewBag.ServerEventUrl',
-                setup: {},
-                subscription_id: null,
-                sse_channels:[]
-            };
+        reload_if_session_expired();
+        AllMetasRoot = {};
+        window.ebcontext = {
+            sid: "@ViewBag.cid",
+            user: @Html.Raw(ViewBag.UserObject) || null,
+            menu: {},
+            locations: {},
+            header: {},
+            env: '@ViewBag.Env',
+            font: @Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
+            EbObjectMeta: @Html.Raw(ViewBag.EbObjectTypeMeta),
+            se_url: '@ViewBag.ServerEventUrl',
+            setup: {},
+            subscription_id: null,
+            sse_channels: []
+        };
     </script>
 </head>
 <body>
@@ -281,13 +295,17 @@
             if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
             {
                 <div id="eb-common-menu">
-                    @{ await Html.RenderPartialAsync("EbQuickMenu");}
+                    @{
+                        await Html.RenderPartialAsync("EbQuickMenu");
+                    }
                 </div>
             }
             if (ViewBag.wc == "uc")
             {
                 <div id="eb-location-switch">
-                    @{ await Html.RenderPartialAsync("EbLocationSwitch");}
+                    @{
+                        await Html.RenderPartialAsync("EbLocationSwitch");
+                    }
                 </div>
                 <div id='eb-finyear-switch'></div>
             }
@@ -305,7 +323,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="eb-common-popup-ok" class="btn btn-primary">OK</button>
@@ -332,25 +349,25 @@
 
     @if (ViewBag.wc == "uc")
     {
-<script>
+        <script>
             let loc__ = new LocationPicker({
                 Location: '@Html.Raw(ViewBag.Locations)',
                 Tid: '@ViewBag.cid',
-                Uid:'@ViewBag.UId',
-                Current:@ViewBag.CurrentLocation
-            });
+                Uid: '@ViewBag.UId',
+                Current: @ViewBag.CurrentLocation
+                                                });
             window.ebcontext.locations = loc__;
             window.ebcontext.finyears = new FinYearPicker({
                 FinYears: @Html.Raw(ViewBag.FinYears),
                 Tid: '@ViewBag.cid',
-                Uid:'@ViewBag.UId',
+                Uid: '@ViewBag.UId',
             });
             window.ebcontext.languages = new LanguagePicker({
-                 LanguagesList:@Html.Raw(ViewBag.Languages??"''"),
-                 Tid: '@ViewBag.cid',
-                 Uid:'@ViewBag.UId',
+                LanguagesList: @Html.Raw(ViewBag.Languages??"''"),
+                Tid: '@ViewBag.cid',
+                Uid: '@ViewBag.UId',
             });
-</script>
+        </script>
     }
 
     @if (IsSectionDefined("JsCode"))

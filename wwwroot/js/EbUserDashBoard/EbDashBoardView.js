@@ -273,15 +273,12 @@
                 let y = this.EbObject.Tiles.$values[i].TileDiv.Data_y;
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
-                grid.addWidget(`<div id="${tile_id}"> 
-                    <div class="grid-stack-item-content usr" id=${t_id}>
-                    <div style="display:flex" class="db-title-parent tile-header">
-                    <div class="db-title" name-id="${t_id}" style="display:flex"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}">
-                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
-                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
-                    </div></div>
-                    <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont_view">
+                grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2">
+               
+                    <div class="grid-stack-item-content" id=${t_id}>
+                    
+                    <div id="${this.TabNum}_Label_${t_id}"></div>
+                    <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${this.drop_id}">
                     </div></div></div>`, x, y, dw, dh, false);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
@@ -700,12 +697,11 @@
 
 
     this.TileOptions = function (e) {
-        var tileid = e.target.parentElement.getAttribute("u-id");
-        this.CurrentTile = tileid;
+        this.CurrentTile = e.target.getAttribute("tile-id");
         var id = e.target.getAttribute("link");
-        if (id === "ext-link") {
+        if (id === "open") {
             //let TileRefid = this.TileCollection[tileid].RefId;
-            this.linkDV = this.TileCollection[tileid].RefId;
+            this.linkDV = this.TileCollection[this.CurrentTile].RefId;
             let url = "../DV/dv?refid=" + this.linkDV;
             this.DvExternalLinkTrigger();
             //let _form = document.createElement("form");
@@ -724,9 +720,9 @@
             //_form.submit();
             //document.body.removeChild(_form);
         }
-        if (id === "restart-tile") {
+        if (id === "refresh") {
             $(`[data-id="${this.CurrentTile}"]`).empty();
-            let Refid = this.TileCollection[tileid].RefId;
+            let Refid = this.TileCollection[this.CurrentTile].RefId;
             this.Ajax4fetchVisualization(Refid);
         }
     };
@@ -755,7 +751,7 @@
         let obj = JSON.parse(data);
         $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
-
+            this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="content_tb1${id}" class="wrapper-cont"><table id="tb1${id}" class="table display table-bordered compact"></table></div>`);
             var o = {};
             o.dsid = obj.DataSourceRefId;
@@ -773,6 +769,7 @@
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
+            this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
             var o = {};
             o.tableId = "tb1" + id;
@@ -799,6 +796,7 @@
             //$(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
+            this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
             var o = {};
             o.tableId = "tb1" + id;
@@ -813,6 +811,28 @@
         this.loader.EbLoader("hide");
     };
 
+
+    this.AppendMenuForVisualization = function (id) {
+        debugger;
+        try {
+            $(`#${id}_grid_menu`).remove();
+        }
+        catch (err) {
+
+        }
+        finally {
+            $(`#${id}`).parent().prepend(`            
+                <div class="dropdown dropleft float-right" id="${id}_grid_menu">
+                    <i class="fa fa-bars float-right " aria-hidden="true" dropdown-toggle" data-toggle="dropdown"></i>
+                     <ul class="dropdown-menu">
+                        <li><a class="grid-menu-list" link="open" tile-id="${id}">Open</a></li>
+                        <li><a class="grid-menu-list" link="refresh" tile-id="${id}">Refresh</a></li>
+                    </ul>
+                </div>
+             `);
+            $(".grid-menu-list").off("click").on("click", this.TileOptions.bind(this));
+        }
+    }
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");
         let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;

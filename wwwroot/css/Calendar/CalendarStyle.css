@@ -1,0 +1,90 @@
+﻿.ebcalendar-container {
+    border: none;
+}
+
+    .ebcalendar-container .ebcalendar {
+        border: solid
+    }
+
+    .ebcalendar-container table {
+        border-top: none;
+    }
+
+    .ebcalendar-container .fc-header-toolbar {
+        background-color: #009e69;
+        color: white;
+        padding: 1.2% .5%;
+        margin-bottom: 0px !important;
+    }
+
+    .ebcalendar-container .fc-col-header {
+        background-color: #009e69;
+        color: white;
+    }
+
+        .ebcalendar-container .fc-col-header thead, th {
+            background-color: #009e69;
+            color: white !important;
+            border: none;
+        }
+
+        .ebcalendar-container .fc-col-header thead {
+            border: solid;
+        }
+
+    .ebcalendar-container  .fc .fc-scrollgrid-liquid {
+        height: 100%;
+        border-top:none !important;
+    }
+.fc-theme-standard .fc-scrollgrid{
+    border:none !important;
+}
+.fc-theme-standard th {
+    border:none !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+    display: inline-block;
+    padding: 2px 4px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.fc-timegrid-event-harness-inset .fc-timegrid-event, .fc-timegrid-event.fc-event-mirror, .fc-timegrid-more-link {
+    box-shadow: none;
+    border-radius: 0px;
+    margin: 1px;
+    background: repeating-linear-gradient( -249deg, #222, #222 10px, #333 10px, #333 20px );
+    border: solid 1px #222;
+}
+
+.fc-timegrid-event-harness > .fc-timegrid-event {
+    inset: 0px;
+    position: absolute;
+}
+.fc-daygrid-event-harness .fc-h-event  {
+    box-shadow: none;
+    border-radius: 0px;
+    margin: 1px;
+    background: repeating-linear-gradient( -249deg, #222, #222 10px, #333 10px, #333 20px );
+    border: solid 1px #222;
+}
+.fc .fc-daygrid-day-bottom {
+    font-size: 1rem;
+    margin: 0px 2px;
+}
+.fc .fc-daygrid-more-link {
+    border-radius: 1px;
+    cursor: pointer;
+    line-height: 1;
+    margin-top: 1px;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 2px;
+    position: relative;
+    white-space: nowrap;
+    z-index: 4;
+    font-size:14px;
+}

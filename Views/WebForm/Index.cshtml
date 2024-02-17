@@ -143,6 +143,11 @@
 <script src="~/js/jquery.smartWizard.js" type="text/javascript" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="/webform/cxt2js?v=@ExpressBase.Common.Singletons.BuildInfo.Md5Version"></script>
 <script type="text/javascript" src="/webform/cxt2js_vis?v=@ExpressBase.Common.Singletons.BuildInfo.Md5Version"></script>
+<script type="text/javascript" src="/js/CalendarView/EbCalendar/EbCalendarView.js"></script>
+<script type="text/javascript" src="/js/CalendarView/dist/index.global.min.js"></script> 
+<script type="text/javascript" src="/js/EbControls/EbListView.js"></script> 
+<link rel="stylesheet" href="/css//Calendar/CalendarStyle.css" />
+<link rel="stylesheet" href="/css/EbControls/EbListView.css" />
 
 <script>
     var t1 = performance.now();
@@ -154,7 +159,7 @@
 <style>
     .webform-cont {
         /*margin-top: 38px;
-        height: calc(100vh - 38px);*/
+            height: calc(100vh - 38px);*/
         margin-left: -15px;
         width: calc(100% + 30px);
         height: 100vh;
@@ -170,11 +175,11 @@
 
     .webform-save {
         /*background-color: #2827a0;
-        border: none;
-        padding: 3px 11px;
-        color: white;
-        box-shadow: -2px 2px 3px 0 #00000059;
-        border-radius: 2px;*/
+            border: none;
+            padding: 3px 11px;
+            color: white;
+            box-shadow: -2px 2px 3px 0 #00000059;
+            border-radius: 2px;*/
     }
 
     .radiog-cont {
@@ -278,20 +283,20 @@
 
 <script>
     $("body").prepend(`
-<div class="modal fade" id="AuditHistoryModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
-                <h4 class="modal-title">Audit Trail</h4>
-            </div>
-            <div class="modal-body">
-                <div id="divAuditTrail"> </div>
+    <div class="modal fade" id="AuditHistoryModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" style="opacity: 1;">&times;</button>
+                    <h4 class="modal-title">Audit Trail</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="divAuditTrail"> </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-`);
+    `);
 
     $("body").prepend(` <input type="file" name="excelfile" id="excelfile" style="display: none;" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">`);
 
@@ -307,14 +312,14 @@
 
         _formData: (__resp.DraftId > 0 ? JSON.parse(__resp.Draft_FormData) : JSON.parse(__resp.FormDataWrap).FormData),
 
-        _userObject:  ebcontext.user,
+        _userObject: ebcontext.user,
         _mode: __resp.Mode,
         _cid: "@ViewBag.Cid",
         _env: "@ViewBag.Env",
         _ispartial: __resp.IsPartial,
         _formPermissions: __resp.FormPermissions,
         _renderMode: __resp.RenderMode,
-        _formHTML:  __resp.WebFormHtml,
+        _formHTML: __resp.WebFormHtml,
 
         _disableEditButton: __resp.DisableEditButton
     };
@@ -325,6 +330,6 @@
 
 @Html.JsCode(
     @<script>
-         CallWebFormCollectionRender(_masterData);
+             CallWebFormCollectionRender(_masterData);
     </script>
 )

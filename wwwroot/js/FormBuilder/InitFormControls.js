@@ -2080,6 +2080,10 @@
 
     }
 
+
+    this.ListView = function (ctrl) {
+        var DBobj = new EbListView(ctrl, this.Renderer);
+    }
     this.TagInput = function (ctrl) {
         var $ctrl = $("#" + ctrl.EbSid_CtxId + '_tagId');
         if (ctrl.AutoSuggestion === true) {

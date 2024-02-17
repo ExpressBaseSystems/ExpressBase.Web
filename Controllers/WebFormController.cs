@@ -1393,5 +1393,38 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             }
             return b;
         }
+
+        public string CalendarDataReaderRequest(string _refid, string _triggerctrl, string _fromdate ="", string _todate ="",string _location="")
+        {
+            try
+            {
+                if (_refid.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0120);
+                if (_triggerctrl.IsNullOrEmpty())
+                    throw new FormException(FormErrors.E0121);
+                CalendarDataReaderResponse Resp = ServiceClient.Post<CalendarDataReaderResponse>(new CalendarDataReaderRequest
+                {
+                    RefId = _refid,
+                    TriggeredCtrl = _triggerctrl,
+                    FromDate = _fromdate,
+                    ToDate = _todate,
+                    Location = _location
+                });
+
+                return  JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
+                {
+                    Message = ex.Message,
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    MessageInt = "Exception in PSImportFormData",
+                    StackTraceInt = ex.StackTrace
+                });
+            }
+
+        }
     }
 }

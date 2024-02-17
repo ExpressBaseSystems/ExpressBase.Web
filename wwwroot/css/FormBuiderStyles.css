@@ -155,7 +155,8 @@ body {
     display: inline-block;
     vertical-align: top;
     overflow-y: auto;
-    height: calc(100% - 27px);
+    /*height: calc(100% - 27px);*/
+    height: 63rem;
 }
 
 

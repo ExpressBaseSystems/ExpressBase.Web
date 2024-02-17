@@ -443,7 +443,7 @@ const WebFormCollectionRender = function (Option) {
         if (!srcRen)
             return;
 
-        if (x.Initiator.ObjType === 'CalendarControl') {
+        if (x.Initiator.ObjType === 'ListView' ) {
             if (x.Callback) {
                 try {
                     let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);

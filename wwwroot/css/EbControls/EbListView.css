@@ -1,0 +1,191 @@
+﻿.rc-handle-container {
+    position: relative;
+}
+
+.rc-handle {
+    position: absolute;
+    width: 7px;
+    cursor: ew-resize;
+    margin-left: -3px;
+    z-index: 2;
+}
+
+table.rc-table-resizing {
+    cursor: ew-resize;
+}
+
+    table.rc-table-resizing thead,
+    table.rc-table-resizing thead > th,
+    table.rc-table-resizing thead > th > a {
+        cursor: ew-resize;
+    }
+
+
+.eb-list-view-continer {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+    .eb-list-view-continer .eb-list-view-left {
+        height: 40rem;
+        border: dashed 1px #7c7c7c;
+    }
+
+    .eb-list-view-continer .eb-list-view-right {
+        height: 40rem;
+        border: dashed 1px #7c7c7c;
+    }
+
+.eb-list-view-left .datalabel-div {
+    height: 8rem;
+    border: dashed 1px #a5a4a4;
+    margin: 1rem 0px;
+}
+
+.eb-list-view-left .listview-filter {
+    margin: 1rem 0px 2rem 0px;
+}
+
+    .eb-list-view-left .listview-filter .list-view-filter-btn {
+        border: dashed 1px !important;
+        margin: 0px;
+        color: #666565 !important;
+        overflow: hidden;
+    }
+
+.eb-list-view-left .listviewlayout {
+}
+
+.eb-list-view-left table {
+    border: dashed 1px;
+    min-height: 17px;
+}
+
+    .eb-list-view-left table td {
+        height: 30px;
+        border: 1px dashed #a5a4a4;
+        position: relative;
+        min-width: 10px;
+        padding: 4px;
+    }
+
+.eb-list-view-continer .eb-list-view-right .calendar-container {
+    height: 35rem;
+    margin: 2rem 0rem;
+}
+
+.eb-list-view-continer .listviewlayout .styl {
+    margin: 4px;
+    border: dashed 1px #919191;
+    background: #e4e4e4;
+}
+
+.eb-list-view-continer .list-view-form-link {
+    border: solid 1px #919191;
+    background-color: #919191;
+}
+
+
+/*userside*/
+
+.list-view-continer-userside  {
+    --sb-track-color: #ffffff;
+    --sb-thumb-color: #828282;
+    --sb-size: 5px;
+}
+
+    .list-view-continer-userside ::-webkit-scrollbar {
+        width: var(--sb-size);
+    }
+
+    .list-view-continer-userside ::-webkit-scrollbar-track {
+        background: var(--sb-track-color);
+        border-radius: 1px;
+    }
+
+    .list-view-continer-userside ::-webkit-scrollbar-thumb {
+        background: var(--sb-thumb-color);
+        border-radius: 1px;
+    }
+
+@supports not selector(::-webkit-scrollbar) {
+    .list-view-continer-userside  {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+    }
+}
+
+[ctype=ListView] .ctrl-cover {
+    border: none;
+}
+
+.list-view-continer-userside {
+    margin-right: 0px;
+    margin-left: 0px;
+    height: 90vh;
+}
+
+    .list-view-continer-userside .eb-list-view-left {
+        border: solid 1px #cbcbcb;
+        height: 90vh;
+        padding: 0px;
+        border-right: none;
+    }
+
+    .list-view-continer-userside .eb-list-view-right {
+        border: solid 1px #c9c9c9;
+        height: 90vh;
+        padding: 2vh;
+    }
+
+    .list-view-continer-userside .listviewlayout {
+        border-top: solid 1px #c1c1c1;
+        overflow-y: scroll;
+        height: 76vh;
+
+
+    }
+
+
+        .list-view-continer-userside .listviewlayout .event-list-pane {
+            border: solid 1px #cbcbcb;
+            border-radius: 4px;
+            margin: 1rem;
+            box-shadow: 0px 0px 5px -1px rgb(131 131 131 / 75%)
+            /*display: flex;*/
+        }
+
+            .list-view-continer-userside .listviewlayout .event-list-pane i {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 20px;
+                /*color: #d6d6d6;*/
+                padding: 5px;
+            }
+
+    .list-view-continer-userside .eb-list-view-left table {
+        border: none;
+    }
+
+        .list-view-continer-userside .eb-list-view-left table td {
+            border: none;
+            height: 15px;
+            position: relative;
+            min-width: 10px;
+            padding: 0px;
+        }
+
+        .list-view-continer-userside .listviewlayout .styl {
+            margin: 4px 6px;
+        }
+    .list-view-continer-userside .user-side-list-view-filter-btn {
+        margin: 0px;
+        cursor:pointer;
+    }
+
+  /*  .list-view-continer-userside .listview-filter-td {
+        border: none;
+        height: 15px;
+        position: relative;
+        min-width: 10px;
+    }*/

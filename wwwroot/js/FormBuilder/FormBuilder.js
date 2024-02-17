@@ -504,6 +504,10 @@
             let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
             this.initWizard(ctrlobjt);
         }
+        else if (type == "ListView") {
+            let ctrlObj = this.rootContainerObj.Controls.GetByName(ebsid);
+            var DBobj = new EbListViewDev(ctrlObj, this);
+        }
         this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 
@@ -722,6 +726,7 @@
                 let ctrlObj = new this.EbObjects["Eb" + type](ebsid);
                 let $ctrl = ctrlObj.$Control;
 
+
                 if (type === "UserControl") {///user control refid set on ctrlobj
                     ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');
                     this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]);
@@ -772,6 +777,12 @@
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
                 $ctrl.focus();
+                switch (type) {
+                    case "ListView":
+                        var DBobj = new EbListViewDev(ctrlObj, this);
+                        break;
+
+                }
                 this.updateControlUI(ebsid);
             }
             //drop from blk-cont to form(Eb Data object control)
@@ -913,6 +924,8 @@
     this.CreateRelationString = function () { };
 
     this.movesfn = function (el, source, handle, sibling) {
+        if ($(handle).hasClass("rc-handle")) // for table layout for list view control
+            return false;
         if ($(handle).hasClass("ui-resizable-handle"))//if handle is resizable's handle of table layout
             return false;
         return true;

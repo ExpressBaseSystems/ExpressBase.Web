@@ -244,19 +244,7 @@
 }
 
 
-.db-title {
-    width: 100%;
-    font-weight: 300;
-    font-size: 1.3em;
-    line-height: 3.5vh;
-    height: 3rem;
-    cursor: move;
-    align-items: center;
-    display: flex;
-    padding-left: 2rem;
-}
-
-.usr .db-title {
+/*.usr .db-title {
     width: 100%;
     font-weight: 300;
     font-size: 1.3em;
@@ -267,7 +255,7 @@
     align-items: center;
     display: flex;
     padding-left: 2rem;
-}
+}*/
 
 
 .db-tbl-wraper {
@@ -332,11 +320,21 @@
     background: #000000a6;
 }
 
-.db-title-parent .db-title {
+.grid-stack-item-content .db-title {
     color: #fff !important;
+    width: 100%;
+    font-weight: 300;
+    font-size: 1.3em;
+    line-height: 3.5vh;
+    height: 3rem;
+    cursor: move;
+    align-items: center;
+    display: flex;
+    padding-left: 2rem;
+    background: #000000bf;
 }
 
-.grid-stack-item .db-title-parent:hover .tile-opt {
+/*.grid-stack-item .db-title-parent:hover .tile-opt {
     color: #fff;
     width: 25px;
     height: 2.5rem;
@@ -347,7 +345,7 @@
     background-color: #555555;
     transition: width 2s, height 2s;
 }
-
+*/
 #dashbord-user-view .CanvasDiv {
     height: 100% !important;
 }

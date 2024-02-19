@@ -274,10 +274,8 @@
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2">
-               
                     <div class="grid-stack-item-content" id=${t_id}>
-                    
-                    <div id="${this.TabNum}_Label_${t_id}"></div>
+                    <div id="${this.TabNum}_heading_${t_id}" class="db-title"></div>
                     <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${this.drop_id}">
                     </div></div></div>`, x, y, dw, dh, false);
                 this.CurrentTile = t_id;
@@ -749,8 +747,8 @@
             this.GetFilterValuesForDataSource();
         }
         let obj = JSON.parse(data);
-        $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
+            
             this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="content_tb1${id}" class="wrapper-cont"><table id="tb1${id}" class="table display table-bordered compact"></table></div>`);
             var o = {};
@@ -767,8 +765,10 @@
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
             var dt = new EbCommonDataTable(o);
             $(`#${id}`).addClass("box-shadow-style");
+            $(`#${this.TabNum}_heading_${id}`).empty().append(obj.DisplayName);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
+            $(`#${this.TabNum}_heading_${id}`).remove();
             this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
             var o = {};

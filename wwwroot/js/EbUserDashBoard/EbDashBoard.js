@@ -851,11 +851,9 @@ var DashBoardWrapper = function (options) {
                 //    <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${this.drop_id}">
                 //    </div></div></div>`, x, y, dw, dh, false);
 
-                grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2">
-               
-                    <div class="grid-stack-item-content" id=${t_id}>
-                    
-                    <div id="${this.TabNum}_Label_${t_id}"></div>
+                grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2">              
+                    <div class="grid-stack-item-content" id=${t_id}>                    
+                    <div id="${this.TabNum}_heading_${t_id}" class="db-title"></div>
                     <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${this.drop_id}">
                     </div></div></div>`, x, y, dw, dh, false);
                 this.CurrentTile = t_id;
@@ -1031,7 +1029,7 @@ var DashBoardWrapper = function (options) {
 
         grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" >                      
                         <div class="grid-stack-item-content" id="${t_id}">
-                                     <div id="${this.TabNum}_Label_${t_id}" class=""></div>
+                                     <div id="${this.TabNum}_heading_${t_id}" class="db-title"></div>
                  <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${drop_id}" ></div></div>
                      <div class="tile-footer"></div>
                         </div></div>`, 0, 0, this.data_width, this.data_height, true);
@@ -1216,6 +1214,7 @@ var DashBoardWrapper = function (options) {
         let obj = JSON.parse(data);
         //this.TileCollection[id].TileObject = obj;
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
+
             this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="content_tb1${id}" class="wrapper-cont"><table id="tb1${id}" class="uk-table uk-table-hover uk-table-striped" ></table></div>`);
             var o = {};
@@ -1237,11 +1236,14 @@ var DashBoardWrapper = function (options) {
             //$(`[data-id="${id}"]`).parent().removeAttr("style");
             //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
             //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
-            $("#objname").empty().text(this.EbObject.DisplayName);
+            /*$("#objname").empty().text(this.EbObject.DisplayName);*/
+            $(`#${this.TabNum}_heading_${id}`).empty().append(obj.DisplayName);
+
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
 
+            $(`#${this.TabNum}_heading_${id}`).remove();
             this.AppendMenuForVisualization(id);
 
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -1311,7 +1313,7 @@ var DashBoardWrapper = function (options) {
                 </div>
              `);
             $(".grid-menu-list").off("click").on("click", this.TileOptions.bind(this));
-        }   
+        }
     }
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");

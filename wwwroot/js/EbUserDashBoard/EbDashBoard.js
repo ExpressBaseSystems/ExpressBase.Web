@@ -760,7 +760,6 @@ var DashBoardWrapper = function (options) {
     };
 
     this.TileOptions = function (e) {
-        debugger;
         this.CurrentTile = e.target.getAttribute("tile-id");
         var id = e.target.getAttribute("link");
         if (id === "open") {
@@ -900,7 +899,6 @@ var DashBoardWrapper = function (options) {
                     //$(`#${t_id}`).attr("eb-type", "gauge");
                     //$(`#${t_id} .tile-header`).removeClass("tile-header");
 
-                    debugger;
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
                             var eb_type = Cobj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
@@ -1242,8 +1240,10 @@ var DashBoardWrapper = function (options) {
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
-
-            $(`#${this.TabNum}_heading_${id}`).remove();
+            if (obj.ChartLibrary === 1)
+                $(`#${this.TabNum}_heading_${id}`).remove();
+            else
+                $(`#${this.TabNum}_heading_${id}`).empty().append(obj.DisplayName);
             this.AppendMenuForVisualization(id);
 
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -1293,7 +1293,6 @@ var DashBoardWrapper = function (options) {
     }
 
     this.AppendMenuForVisualization = function (id) {
-        debugger;
         try {
             $(`#${id}_grid_menu`).remove();
         }

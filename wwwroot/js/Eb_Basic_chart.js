@@ -396,7 +396,7 @@ var EbBasicChart = function (Option) {
 
     this.drawGraph = function () {
         this.EbObject.Type = this.type;
-        if (this.EbObject.ChartLibrary = 0) {
+        if (this.EbObject.ChartLibrary === 0) {
             var canvas = document.getElementById("myChart" + this.tableId);
 
             this.chartApi = new Chart(canvas, {
@@ -406,7 +406,7 @@ var EbBasicChart = function (Option) {
             });
         }
 
-        else if (this.EbObject.ChartLibrary = 1) {
+        else if (this.EbObject.ChartLibrary === 1) {
             let _series = [];
             this.ApexChartLegendColor = [];
             $("#canvasDiv" + this.tableId).empty();

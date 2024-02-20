@@ -768,7 +768,10 @@
             $(`#${this.TabNum}_heading_${id}`).empty().append(obj.DisplayName);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
-            $(`#${this.TabNum}_heading_${id}`).remove();
+            if (obj.ChartLibrary === 1)
+                $(`#${this.TabNum}_heading_${id}`).remove();
+            else
+                $(`#${this.TabNum}_heading_${id}`).empty().append(obj.DisplayName);
             this.AppendMenuForVisualization(id);
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
             var o = {};
@@ -813,7 +816,6 @@
 
 
     this.AppendMenuForVisualization = function (id) {
-        debugger;
         try {
             $(`#${id}_grid_menu`).remove();
         }

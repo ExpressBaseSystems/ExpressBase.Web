@@ -809,12 +809,9 @@ let FinYearPicker = function (options) {
             let fpObj = this.getCurrent();
             if (!fpObj) return;
 
-            let objIdx = this.DATE_CTRLS.findIndex(o => o.ctrl.EbSid_CtxId == opts.ctrl.EbSid_CtxId);
+            let objIdx = this.DATE_CTRLS.findIndex(o => o.ctrl.EbSid_CtxId == opts.ctrl.EbSid_CtxId && o.formRenderer.__MultiRenderCxt == opts.formRenderer.__MultiRenderCxt);
             if (objIdx >= 0) {
-                if (this.DATE_CTRLS[objIdx].formRenderer.__MultiRenderCxt != opts.formRenderer.__MultiRenderCxt) {
-                    this.DATE_CTRLS.splice(objIdx, 1);
-                    this.DATE_CTRLS.push(opts);
-                }
+                this.DATE_CTRLS.splice(objIdx, 1, opts);
             }
             else {
                 this.DATE_CTRLS.push(opts);

@@ -381,6 +381,8 @@
                 //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
             });
 
+            if (this.Renderer.updateCtrlUI)
+                this.Renderer.updateCtrlUI(ctrl);
 
             let $DD = $input.siblings(".dropdown-menu[role='combobox']");
             //$DD.addClass("dd_of_" + ctrl.EbSid_CtxId);

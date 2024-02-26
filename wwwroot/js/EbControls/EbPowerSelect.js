@@ -158,8 +158,10 @@ const EbPowerSelect = function (ctrl, options) {
                     this.ComboObj.Padding = { $type: "ExpressBase.Common.Objects.UISides, ExpressBase.Common", Top: 7, Right: 10, Bottom: 7, Left: 10 }
             }
 
-            if (this.ComboObj.Padding)
-                this.$searchBoxes.css("padding", `${this.ComboObj.Padding.Top}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`);
+            if (this.ComboObj.Padding) {
+                let pd = `${this.ComboObj.Padding.Top}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`;
+                $(`<style>#cont_${this.ComboObj.EbSid_CtxId} input[type=search] { padding: ${pd}; }; .selected-tag { padding: ${pd}; }</style>`).appendTo('body');
+            }
 
             if (this.ComboObj.IsInsertable) {
                 this.ComboObj.__AddButtonInit({

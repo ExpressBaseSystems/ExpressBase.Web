@@ -504,6 +504,10 @@
             let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
             this.initWizard(ctrlobjt);
         }
+        else if (type === "SimpleSelect" || type === "BooleanSelect") {
+            $el.find(".selectpicker").selectpicker();
+            this.updateControlUI(ebsid);
+        }
         this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 

@@ -421,7 +421,7 @@
     height: 100%;
     box-shadow: inherit;
     align-items: stretch;
-    min-height: 32px;
+    /*min-height: 32px;*/
 }
 
 .ps-cont .eb-loader-prcbar, .ps-cont .eb-loader-prcbar:before {
@@ -601,12 +601,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    height: auto;
+    height: calc(100% - 2px);
+    display: flex;
+    align-items: center;
     color: rgb(51 51 51);
     border: none !important;
     border-radius: 2px !important;
-    padding: 2px 5px;
-    margin: 3px !important;
+    /*padding: 2px 5px;*/
+    margin: 1px !important;
     font-size: 13px;
     border-radius: 8px !important;
     padding-right: 19px !important;
@@ -624,6 +626,12 @@
 .tdtxt [iblock] {
     width: 100%;
     display: inline-flex;
+}
+
+[tdcoltype="DGPowerSelectColumn"] .ctrl-cover .selected-tag {
+    padding: 2px 5px;
+    margin: 2px !important;
+    height: auto;
 }
 
 /*.v-select .selected-tag .close {// old rounded style close style
@@ -647,7 +655,8 @@
     position: absolute;
     top: 1.5px;
     right: 3px;
-    padding: 3px;
+    /*padding: 3px;*/
+    height: 100%;
     font-size: 21px;
     outline: none;
     font-weight: 500;
@@ -665,8 +674,8 @@
 
 [iblock] .selected-tag {
     /*padding: 0.1em .45em 0.15em 0.45em !important;*/
-    /*padding: 5px 8px;*/
-    padding: 4px 8px;
+    padding: 5px 8px;
+    /*padding: 4px 8px;*/
     padding-right: 8px !important;
 }
 

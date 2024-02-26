@@ -1450,8 +1450,8 @@
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
-            //$("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
-            //$("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
             if (!this.IsTree && this.showFilterRow && !this.EbObject.IsDataFromApi) {
 
                 this.createFilterRowHeader();

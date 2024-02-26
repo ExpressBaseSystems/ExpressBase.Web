@@ -306,7 +306,12 @@ namespace ExpressBase.Web.BaseControllers
             else if (this.Redis != null)
             {
                 if (this.PooledRedisManager != null)
-                    solnId = this.PooledRedisManager.GetReadOnlyClient().Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                {
+                    using (var redis = this.PooledRedisManager.GetReadOnlyClient())
+                    {
+                        solnId = redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                    }
+                }
                 else
                     solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
                 if (solnId == null || solnId == string.Empty)

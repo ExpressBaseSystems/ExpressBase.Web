@@ -133,7 +133,7 @@ namespace ExpressBase.Web2
             //}
             //else
             //{
-            var redisConnectionString = string.Format("redis://{1}:{2}", redisPassword, redisServer, redisPort);
+            var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
             var redisManager = new RedisManagerPool(redisConnectionString);
             services.AddScoped<IRedisClient, IRedisClient>(serviceProvider =>
             {

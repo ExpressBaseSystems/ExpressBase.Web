@@ -34,6 +34,8 @@ namespace ExpressBase.Web.BaseControllers
 
         protected EbServerEventClient ServerEventClient { get; set; }
 
+        protected PooledRedisClientManager PooledRedisManager { get; set; }
+
         public string Host { get; set; }
 
         public string ExtSolutionId { get; set; }
@@ -145,6 +147,14 @@ namespace ExpressBase.Web.BaseControllers
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
             this.ServerEventClient = _sec as EbServerEventClient;
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.ServerEventClient = _sec as EbServerEventClient;
+            this.PooledRedisManager = pooledRedisManager;
         }
 
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc)
@@ -295,7 +305,10 @@ namespace ExpressBase.Web.BaseControllers
                 solnId = CoreConstants.ADMIN;
             else if (this.Redis != null)
             {
-                solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                if (this.PooledRedisManager != null)
+                    solnId = this.PooledRedisManager.GetReadOnlyClient().Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                else
+                    solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
                 if (solnId == null || solnId == string.Empty)
                 {
                     this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest { ExtSolutionId = esid });

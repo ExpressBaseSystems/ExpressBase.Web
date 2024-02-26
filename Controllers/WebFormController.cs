@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class WebFormController : EbBaseIntCommonController
     {
-        public WebFormController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec) : base(_ssclient, _redis, _sec) { }
+        public WebFormController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, _sec, pooledRedisManager) { }
 
         public IActionResult Index(string _r, string _p, int _m, int _l, int _rm, string _lg)
         {

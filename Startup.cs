@@ -16,6 +16,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace ExpressBase.Web2
 {
@@ -132,12 +133,19 @@ namespace ExpressBase.Web2
             //}
             //else
             //{
-                var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
-                var redisManager = new RedisManagerPool(redisConnectionString);
-                services.AddScoped<IRedisClient, IRedisClient>(serviceProvider =>
-                {
-                    return redisManager.GetClient();
-                });
+            var redisConnectionString = string.Format("redis://{1}:{2}", redisPassword, redisServer, redisPort);
+            var redisManager = new RedisManagerPool(redisConnectionString);
+            services.AddScoped<IRedisClient, IRedisClient>(serviceProvider =>
+            {
+                return redisManager.GetClient();
+            });
+
+            var listRWRedis = new List<string>() { redisConnectionString }; var listRORedis = new List<string>() { redisConnectionString.Replace("-master", "-replicas") };
+            PooledRedisClientManager pooledRedisManager = new PooledRedisClientManager(listRWRedis, listRORedis);
+            services.AddSingleton<PooledRedisClientManager, PooledRedisClientManager>(serviceProvider =>
+            {
+                return pooledRedisManager;
+            });
             //}
 
             ////Setting Assembly version in Redis

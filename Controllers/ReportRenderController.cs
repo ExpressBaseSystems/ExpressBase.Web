@@ -20,14 +20,16 @@ namespace ExpressBase.Web.Controllers
     {
         private IActionResult Pdf { get; set; }
 
-        public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+        public ReportRenderController(IServiceClient sclient, IRedisClient redis, PooledRedisClientManager pooledRedisManager) : base(sclient, redis, pooledRedisManager) { }
 
         public IActionResult Index(string refid, bool renderLimit = false)
         {
             ViewBag.Refid = refid;
-            EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-            EbReport Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
-            Report.AfterRedisGet(this.Redis, this.ServiceClient);
+            EbReport Report = EbFormHelper.GetEbObject<EbReport>(refid, this.ServiceClient, this.Redis, null, this.PooledRedisManager);
+            //EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            //EbReport Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
+            using (var redisReadOnly = this.PooledRedisManager.GetReadOnlyClient())
+                Report.AfterRedisGet(Redis, this.ServiceClient, redisReadOnly as RedisClient);
             ViewBag.Fd = Report;
             ViewBag.RenderLimit = renderLimit;
             ViewBag.DispName = Report.DisplayName;

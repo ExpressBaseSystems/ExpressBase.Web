@@ -34,6 +34,10 @@ namespace ExpressBase.Web.BaseControllers
         {
         }
 
+        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, pooledRedisManager)
+        {
+        }
+
         public EbBaseIntCommonController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc)
         {
         }

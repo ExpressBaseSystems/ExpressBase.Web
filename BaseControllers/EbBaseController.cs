@@ -1,4 +1,5 @@
-﻿using ExpressBase.Common;
+﻿using DocumentFormat.OpenXml.Presentation;
+using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
@@ -107,6 +108,13 @@ namespace ExpressBase.Web.BaseControllers
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, PooledRedisClientManager pooledRedisManager)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.PooledRedisManager = pooledRedisManager;
         }
 
         public EbBaseController(IServiceClient _ssclient, IEbMqClient _mqc)
@@ -328,7 +336,13 @@ namespace ExpressBase.Web.BaseControllers
             Eb_Solution s_obj = null;
             try
             {
-                s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+                if (this.PooledRedisManager != null)
+                {
+                    using (var redis = this.PooledRedisManager.GetReadOnlyClient())
+                        s_obj = redis.Get<Eb_Solution>(string.Format("solution_{0}", cid));
+                }
+                else
+                    s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
 
                 if (s_obj == null)
                 {
@@ -353,7 +367,13 @@ namespace ExpressBase.Web.BaseControllers
                     string[] parts = userAuthId.Split(":"); // iSolutionId:UserId:WhichConsole
                     if (parts.Length == 3)
                     {
-                        user = this.Redis.Get<User>(userAuthId);
+                        if (this.PooledRedisManager != null)
+                        {
+                            using (var redis = this.PooledRedisManager.GetReadOnlyClient())
+                                user = redis.Get<User>(userAuthId);
+                        }
+                        else
+                            user = this.Redis.Get<User>(userAuthId);
                         if (user == null)
                         {
                             this.ServiceClient.Post(new UpdateUserObjectRequest() { SolnId = parts[0], UserId = Convert.ToInt32(parts[1]), UserAuthId = userAuthId, WC = parts[2] });

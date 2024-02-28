@@ -38,7 +38,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class DVController : EbBaseIntCommonController
     {
-        public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
+        public DVController(IServiceClient _ssclient, IRedisClient _redis, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, pooledRedisManager) { }
 
         private ActionResult ExcelFileResult { get; set; }
 
@@ -63,18 +63,21 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
-            EbObjectWithRelatedDVResponse resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = this.LoggedInUser.EbObjectIds.ToString(), DsRefid = null });
-            EbDataVisualization dsobj = resultlist.Dsobj;
+            //EbObjectWithRelatedDVResponse resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = this.LoggedInUser.EbObjectIds.ToString(), DsRefid = null });
+            EbDataVisualization dsobj = EbFormHelper.GetEbObject<EbDataVisualization>(refid, this.ServiceClient, this.Redis, null, this.PooledRedisManager);
             if (dsobj.DataSourceRefId != string.Empty)
-                dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
+            {
+                using (var redisReadOnly = this.PooledRedisManager.GetReadOnlyClient())
+                    dsobj.AfterRedisGet(this.Redis, this.ServiceClient, redisReadOnly);
+            }
             ViewBag.dvObject = dsobj;
             ViewBag.DispName = dsobj.DisplayName;
             ViewBag.dvRefId = refid;
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
             ViewBag.rowData = rowData;
-            ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);
-            ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
+            ViewBag.DvList = "[]"; //JsonConvert.SerializeObject(resultlist.DvList);
+            ViewBag.DvTaggedList = "[]"; //JsonConvert.SerializeObject(resultlist.DvTaggedList);
             ViewBag.TypeRegister = _jsResult.TypeRegister;
             return View();
         }
@@ -89,7 +92,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag, string wc, string contextId, bool customcolumn, string _curloc, string submitId)
         {
             EbDataVisualization dvObject = EbSerializers.Json_Deserialize(dvobj);
-            dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
+            using (var redisReadOnly = this.PooledRedisManager.GetReadOnlyClient())
+                dvObject.AfterRedisGet(this.Redis, this.ServiceClient, redisReadOnly);
             Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
             return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = s_obj, contextId = contextId, CustomColumn = customcolumn, wc = ViewBag.wc, curloc = _curloc, submitId = submitId });
         }
@@ -97,7 +101,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult GetFilterBody(string dvobj, string contextId)
         {
             EbDataVisualization dsObject = EbSerializers.Json_Deserialize(dvobj);
-            dsObject.AfterRedisGetforFilter(this.Redis, this.ServiceClient);
+            using (var redisReadOnly = this.PooledRedisManager.GetReadOnlyClient())
+                dsObject.AfterRedisGetforFilter(this.Redis, this.ServiceClient, redisReadOnly);
 
             Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
             if (dsObject.EbFilterDialog != null)
@@ -111,7 +116,8 @@ namespace ExpressBase.Web.Controllers
             EbApi _api = this.Redis.Get<EbApi>(dsObject.ApiRefId);
             var dsrefid = _api.Resources.First(res => res is EbSqlReader).Reference;
             dsObject.DataSourceRefId = dsrefid;
-            dsObject.AfterRedisGetforFilter(this.Redis, this.ServiceClient);
+            using (var redisReadOnly = this.PooledRedisManager.GetReadOnlyClient())
+                dsObject.AfterRedisGetforFilter(this.Redis, this.ServiceClient, redisReadOnly);
 
             Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
             if (dsObject.EbFilterDialog != null)
@@ -123,11 +129,13 @@ namespace ExpressBase.Web.Controllers
         {
             EbDataVisualization dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ReturnColumns returnobj = new ReturnColumns();
-            dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
+            using (var redisReadOnly = this.PooledRedisManager.GetReadOnlyClient())
+                dvobj.AfterRedisGet(this.Redis, this.ServiceClient, redisReadOnly);
             try
             {
-                DataSourceColumnsResponse columnresp = new DataSourceColumnsResponse();
-                columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
+                DataSourceColumnsResponse columnresp = null;
+                using (var redisReadOnly = this.PooledRedisManager.GetReadOnlyClient())
+                    columnresp = redisReadOnly.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
                 if (columnresp == null || columnresp.Columns == null || columnresp.Columns.Count == 0)
                 {
                     Console.WriteLine("Column Object in Redis is null or count 0");
@@ -506,12 +514,12 @@ namespace ExpressBase.Web.Controllers
             return resultlist1;
         }
 
-          [HttpPost]
+        [HttpPost]
         public DataSourceDataResponse getData4PowerSelect(string req)
         {
             try
             {
-                TableDataRequest request = JsonConvert.DeserializeObject<TableDataRequest>(req);                
+                TableDataRequest request = JsonConvert.DeserializeObject<TableDataRequest>(req);
                 request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = false;
                 //if (request.DataVizObjString != null)

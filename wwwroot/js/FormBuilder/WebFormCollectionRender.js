@@ -23,20 +23,20 @@ const WebFormCollectionRender = function (Option) {
     this.Init = function (Op) {
         if (Op === null) return;
         if (Op._source === 'master' && Op._formObjJsUrl) {
-            this.LoadScriptSync(Op._formObjJsUrl, this.InitInner.bind(this, Op));
+            this.LoadScriptSync(Op._formObjJsUrl, this.InitInner.bind(this, Op, true));
         }
         else {
-            this.InitInner(Op);
+            this.InitInner(Op, false);
         }
     }
 
-    this.InitInner = function (Op) {
+    this.InitInner = function (Op, JsonCached) {
         if (Op === null) return;
 
         if (Op._source === 'master') {
 
             let _obj = {
-                formObj: JSON.stringify(eval(Op._formRefId.replaceAll('-', '_'))), //Op._formObj,
+                formObj: JsonCached ? JSON.stringify(eval(Op._formRefId.replaceAll('-', '_'))) : Op._formObj,
                 formRefId: Op._formRefId,
                 formHTML: Op._formHTML,
                 formPermissions: Op._formPermissions

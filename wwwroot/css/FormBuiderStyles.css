@@ -2611,6 +2611,7 @@ input.locinp {
     background-image: var(--txtarea-bg);
     line-height: 19px;
     padding: 2px 11px;
+    border-radius: 4px;
 }
 
 .webform-cont .Dg_body .eb-textarea:focus,

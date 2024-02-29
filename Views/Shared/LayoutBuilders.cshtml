@@ -178,7 +178,11 @@
     <script src="/js/FilterDialogBuilder/Eb_FilterDialogRender.js" type="text/javascript" asp-append-version=@bApnd></script>
 
     @*FormRelated*@
-    <script type="text/javascript" src="/webform/cxt2js?v=@ExpressBase.Common.Singletons.BuildInfo.Md5Version"></script>
+    @if (ViewBag.wc != "dc")
+    {
+        <script type="text/javascript" src="/webform/cxt2js?v=@ExpressBase.Common.Singletons.BuildInfo.Md5Version"></script>
+    }
+    
     <script type="text/javascript" src="~/js/FormBuilder/WebFormCollectionRender.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
     @*<script type="text/javascript" src="~/js/Common/offline.js" asp-append-version=@bApnd></script>*@

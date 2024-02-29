@@ -62,12 +62,12 @@
     $("#layout_div").addClass("for-modal-blur");
     $('[data-toggle="tooltip"]').tooltip();
 
-    @Html.Raw(_toolBox.EbObjectTypes);
-    @Html.Raw(_toolBox.AllControlls);
-    @Html.Raw(_toolBox.AllMetas);
-    @Html.Raw(_toolBox.JsonToJsObjectFuncs);
-    @Html.Raw(_toolBox.TypeRegister);
-    @Html.Raw(_toolBox.EbOnChangeUIfns);
+    //Html.Raw(_toolBox.EbObjectTypes);
+    //Html.Raw(_toolBox.AllControlls);
+    //Html.Raw(_toolBox.AllMetas);
+    //Html.Raw(_toolBox.JsonToJsObjectFuncs);
+    //Html.Raw(_toolBox.TypeRegister);
+    //Html.Raw(_toolBox.EbOnChangeUIfns);
 
     if (!ebcontext.Roles)
         ebcontext.Roles = @Html.Raw(ViewBag.RolesList);

@@ -331,6 +331,109 @@ namespace ExpressBase.Web.Controllers
                 return Redirect("/StatusCode/401");
         }
 
+        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Any, NoStore = false)]
+        public FileContentResult cxt2js_dev(int t)
+        {
+            EbObjectType objType = EbObjectTypes.Get(t);
+            Context2Js _c2js = null;
+
+            if (objType.Equals(EbObjectTypes.DataReader))
+            {
+                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.DataReader, typeof(EbDataSourceMain));
+            }
+            else if (objType.Equals(EbObjectTypes.HtmlPage))
+            {
+                Type[] typeArray = typeof(EbHtmlPageBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.HtmlPage, typeof(EbHtmlPageBase));
+            }
+            else if (objType.Equals(EbObjectTypes.DataWriter))
+            {
+                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.DataWriter, typeof(EbDataSourceMain));
+            }
+            else if (objType.Equals(EbObjectTypes.SqlFunction))
+            {
+                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.SqlFunctions, typeof(EbDataSourceMain));
+            }
+            else if (objType.Equals(EbObjectTypes.TableVisualization) || objType.Equals(EbObjectTypes.ChartVisualization) || objType.Equals(EbObjectTypes.MapView))
+            {
+                Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject), typeof(EbObject));
+            }
+            else if (objType.Equals(EbObjectTypes.Report))
+            {
+                Type[] typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
+            }
+            else if (objType.Equals(EbObjectTypes.EmailBuilder))
+            {
+                Type[] typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
+            }
+            else if (objType.Equals(EbObjectTypes.FilterDialog))
+            {
+                Type[] typeArray = typeof(EbFilterDialog).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.FilterDialog, typeof(EbFilterDialog));
+            }
+            else if (objType.Equals(EbObjectTypes.SmsBuilder))
+            {
+                Type[] typeArray = typeof(EbSmsTemplateBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.SmsBuilder, typeof(EbSmsTemplateBase));
+            }
+            else if (objType.Equals(EbObjectTypes.Api))
+            {
+                Type[] typeArray = typeof(EbApiWrapper).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.ApiBuilder, typeof(EbApiWrapper));
+            }
+            else if (objType.Equals(EbObjectTypes.MobilePage))
+            {
+                Type[] typeArray = typeof(EbMobilePageBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.MobilePage, typeof(EbMobilePageBase), typeof(EbObject));
+            }
+            else if (objType.Equals(EbObjectTypes.DashBoard))
+            {
+                Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
+            }
+            else if (objType.Equals(EbObjectTypes.CalendarView))
+            {
+                Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.Calendar, typeof(EbCalendarWrapper), typeof(EbObject));
+            }
+            else if (objType.Equals(EbObjectTypes.SqlJob))
+            {
+                Type[] typeArray = typeof(EbSqlJobWrapper).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.SqlJob, typeof(EbSqlJobWrapper), typeof(EbObject));
+            }
+
+            if (_c2js != null)
+            {
+                string st = _c2js.AllMetas + ';' + _c2js.JsObjects + ';' + _c2js.EbObjectTypes + ';' + _c2js.TypeRegister + ';';
+                return File(st.ToUtf8Bytes(), "text/javascript");
+            }
+
+            EbToolbox _toolBox = null;
+            if (objType.Equals(EbObjectTypes.WebForm))
+                _toolBox = new EbToolbox(BuilderType.WebForm);
+            else if (objType.Equals(EbObjectTypes.BotForm))
+                _toolBox = new EbToolbox(BuilderType.BotForm);
+            else if (objType.Equals(EbObjectTypes.FilterDialog))
+                _toolBox = new EbToolbox(BuilderType.FilterDialog);
+            else if (objType.Equals(EbObjectTypes.UserControl))
+                _toolBox = new EbToolbox(BuilderType.UserControl);
+            //else if (objType.Equals(EbObjectTypes.SurveyControl??))
+            //    _toolBox = new EbToolbox(BuilderType.SurveyControl);
+
+            if (_toolBox != null)
+            {
+                string all = _toolBox.EbObjectTypes + ';' + _toolBox.AllControlls + ';' + _toolBox.AllMetas + ';' + _toolBox.JsonToJsObjectFuncs + ';' + _toolBox.TypeRegister + ';' + _toolBox.EbOnChangeUIfns + ';';
+                return File(all.ToUtf8Bytes(), "text/javascript");
+            }
+            return File(string.Empty.ToUtf8Bytes(), "text/javascript");
+        }
+
         public EbRootObjectResponse CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, string _apps)
         {
             EbRootObjectResponse _response = new EbRootObjectResponse();

@@ -3427,6 +3427,7 @@ const WebFormRender = function (option) {
         ebcontext.renderContext = "WebForm";//reference - Eb_select.js, InitformControls
         this.FormObj = JSON.parse(JSON.stringify(option.formObj));
         this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
+        this.relatedData = option.relatedData;
 
         this.Env = option.env;
         this.initControls = new InitControls(this);

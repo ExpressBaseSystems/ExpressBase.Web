@@ -79,6 +79,41 @@ namespace ExpressBase.Web.Controllers
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 
+        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Any, NoStore = false)]
+        public FileContentResult cxt2js_form(string k1, string k2, string k3)
+        {
+            string objKey = string.Format(RedisKeyPrefixConstants.EbWebformObj, ViewBag.cid, k2);
+            if (k3 != null)
+            {
+                objKey += $"_{k3}";
+            }
+            string objStr = this.Redis.Get<string>(objKey);
+            objStr = $"var {k2.Replace("-", "_")} = {objStr};";
+            return File(objStr.ToUtf8Bytes(), "text/javascript");
+        }
+
+        private string GetCxt2JsWebformUrl(string refId, string webForm, string _language)
+        {
+            string objKey = string.Format(RedisKeyPrefixConstants.EbWebformObj, ViewBag.cid, refId);
+            string md5Key = string.Format(RedisKeyPrefixConstants.EbWebformMd5, ViewBag.cid, refId);
+            if (_language != null)
+            {
+                objKey += $"_{_language}";
+                md5Key += $"_{_language}";
+            }
+
+            string md5Value = this.Redis.Get<string>(md5Key);
+            string buildMd5 = Common.Singletons.BuildInfo.Md5Version;
+
+            if (md5Value == null || md5Value != buildMd5)
+            {
+                this.Redis.Set(md5Key, buildMd5);
+                this.Redis.Set(objKey, webForm);
+            }
+
+            return $"/webform/cxt2js_form?k1={buildMd5}&k2={refId}{(_language == null ? string.Empty : $"&k3={_language}")}";
+        }
+
         public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly, bool _randomizeId, string _language)
         {
             Console.WriteLine(string.Format("GetFormForRendering - refid : {0}, prams : {1}, mode : {2}, locid : {3}", _refId, _params, _mode, _locId));
@@ -91,6 +126,7 @@ namespace ExpressBase.Web.Controllers
             WebForm.SolutionObj = GetSolutionObject(ViewBag.cid);
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             EbWebForm WebForm_L;
+            string _lang = null;
             if (WebForm.IsLanguageEnabled && WebForm.SolutionObj.IsMultiLanguageEnabled)
             {
                 string[] Keys = EbWebForm.GetMultiLangKeys(WebForm);
@@ -102,6 +138,7 @@ namespace ExpressBase.Web.Controllers
                         Language = _language
                     }).Dict;
                     WebForm_L = WebForm.Localize(KeyValue) as EbWebForm;
+                    _lang = _language;
                 }
                 else
                     WebForm_L = WebForm;
@@ -143,11 +180,11 @@ namespace ExpressBase.Web.Controllers
                 }
                 try
                 {
-                    EbFormHelper.InitFromDataBase(WebForm_L, this.ServiceClient, this.Redis, ViewBag.wc);
+                    resp.RelatedData = EbFormHelper.GetFormObjectRelatedData(WebForm_L, this.ServiceClient, this.Redis, ViewBag.wc);
                 }
                 catch (Exception ex)
                 {
-                    string t = $"Exception in InitFromDataBase.\n Message: {ex.Message}\n StackTrace: {ex.StackTrace}";
+                    string t = $"Exception in GetFormObjectRelatedData.\n Message: {ex.Message}\n StackTrace: {ex.StackTrace}";
                     Console.WriteLine(t);
                     resp.Message = ex.Message;
                     resp.ErrorMessage = t;
@@ -157,6 +194,12 @@ namespace ExpressBase.Web.Controllers
 
                 resp.WebFormHtml = WebForm_L.GetHtml();
                 resp.WebFormObj = EbSerializers.Json_Serialize(WebForm_L);
+                if (WebForm_L.EnableCaching)
+                {
+                    resp.WebFormObjJsUrl = _randomizeId ? null : GetCxt2JsWebformUrl(_refId, resp.WebFormObj, _lang);
+                    if (resp.WebFormObjJsUrl != null)
+                        resp.WebFormObj = null;
+                }
                 resp.FormPermissions = WebForm.GetLocBasedPermissions();
                 resp.HtmlHead = WebForm_L.GetHead();
             }

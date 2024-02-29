@@ -22,21 +22,33 @@ const WebFormCollectionRender = function (Option) {
 
     this.Init = function (Op) {
         if (Op === null) return;
+        if (Op._source === 'master' && Op._formObjJsUrl) {
+            this.LoadScriptSync(Op._formObjJsUrl, this.InitInner.bind(this, Op));
+        }
+        else {
+            this.InitInner(Op);
+        }
+    }
+
+    this.InitInner = function (Op) {
+        if (Op === null) return;
 
         if (Op._source === 'master') {
+
             let _obj = {
-                formObj: Op._formObj,
+                formObj: JSON.stringify(eval(Op._formRefId.replaceAll('-', '_'))), //Op._formObj,
                 formRefId: Op._formRefId,
                 formHTML: Op._formHTML,
                 formPermissions: Op._formPermissions
             };
             this.ObjectCollection.push(_obj);
             this.IsMasterAvail = true;
+            let tmp = JSON.parse(_obj.formObj);
 
             let _options = {
-                formObj: JSON.parse(Op._formObj),
+                formObj: tmp,
                 $formCont: $("#WebForm-cont"),
-                headerBtns: this.GetMasterHeaderBtns(Op),
+                headerBtns: this.GetMasterHeaderBtns(tmp),
                 formRefId: Op._formRefId,
                 mode: Op._mode,
                 renderMode: Op._renderMode,
@@ -52,7 +64,8 @@ const WebFormCollectionRender = function (Option) {
                 headerObj: this.MasterHeader,
                 formHTML: Op._formHTML,
                 disableEditBtn: Op._disableEditButton,
-                __MultiRenderCxt: this.RenderCounter++
+                __MultiRenderCxt: this.RenderCounter++,
+                relatedData: Op._relatedData
             };
 
             let WebForm = new WebFormRender(_options);
@@ -79,6 +92,17 @@ const WebFormCollectionRender = function (Option) {
         $(window).off("keydown").on("keydown", this.windowKeyDownListener);
     };
 
+    this.LoadScriptSync = function (src, callback) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.type = "text/javascript";
+        s.async = false;
+        s.onload = function () {
+            callback();
+        }
+        document.getElementsByTagName('head')[0].appendChild(s);
+    };
+
     this.PopupForm = function (refId, params, mode, options = {}) {
 
         //$.extend({
@@ -96,7 +120,7 @@ const WebFormCollectionRender = function (Option) {
             return;
         }
         let randomizeId = this.RenderCollection.findIndex(e => e.formRefId === refId) >= 0;
-        let dataOnly = this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 && !randomizeId;
+        let dataOnly = this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 && !randomizeId && !!eval(refId.replaceAll('-', '_'));
 
         this.showSubFormLoader();
         $.ajax({
@@ -129,16 +153,33 @@ const WebFormCollectionRender = function (Option) {
             EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });
             return;
         }
+        if (!dataOnly && resp.WebFormObjJsUrl) {
+            this.LoadScriptSync(resp.WebFormObjJsUrl, this.GetFormForRenderingSuccess_inner.bind(this, resp, dataOnly, randomizeId, options, result));
+        }
+        else {
+            this.GetFormForRenderingSuccess_inner(resp, dataOnly, randomizeId, options, result)
+        }
+    };
+
+    this.GetFormForRenderingSuccess_inner = function (resp, dataOnly, randomizeId, options, result) {
         let _obj;
         if (!dataOnly) {
-            let FormObj = JSON.parse(resp.WebFormObj);
+            let FormJson;
+            if (resp.WebFormObjJsUrl) {
+                FormJson = JSON.stringify(eval(resp.RefId.replaceAll('-', '_')));
+            }
+            else {
+                FormJson = resp.WebFormObj;
+            }
+            let FormObj = JSON.parse(FormJson);
+
             if (!FormObj.MakeEbSidUnique) {
                 console.error('MakeEbSidUnique must be true for popup form');
                 EbMessage("show", { Message: "Form rendering failed. Contact admin. [MakeEbSidUnique]", AutoHide: false, Background: '#aa0000' });
                 return;
             }
             _obj = {
-                formObj: resp.WebFormObj,
+                formObj: FormJson,
                 formRefId: resp.RefId,
                 formHTML: resp.WebFormHtml,
                 formPermissions: resp.FormPermissions
@@ -178,7 +219,8 @@ const WebFormCollectionRender = function (Option) {
                 editModePrefillParams: (resp.RowId > 0 && options.editModePrefill && options.editModePrefillParams) ? options.editModePrefillParams : null,
                 editModeAutoSave: options.editModeAutoSave,
                 keepHidden: keepHidden,
-                __MultiRenderCxt: cxt
+                __MultiRenderCxt: cxt,
+                relatedData: resp.RelatedData
             });
             WebForm.__MultiRenderUrl = resp.Url;
             this.RenderCollection.push(WebForm);
@@ -301,7 +343,7 @@ const WebFormCollectionRender = function (Option) {
             $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.GetMasterHeaderBtns = function (Op) {
+    this.GetMasterHeaderBtns = function (_formObj) {
         let header = new EbHeader();
         header.insertButton(`<button id="webformdetails" class='btn' title='Details & More Options' style='display: none;'><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformdiscardedit" class='btn' title='Discard Changes (Ctrl+Q)' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>`);
@@ -329,7 +371,7 @@ const WebFormCollectionRender = function (Option) {
                             </div>`);
         header.insertButton(`<button id="webforminvalidmsgs" onclick='ebcontext.webform.RenderCollection[0].FRC.toggleInvalidMSGs()' role="invalid-msgs" class="btn" title="Show all invalid inputs"><i class="icofont-exclamation-circle"></i></i></button>`);
 
-        header.addRootObjectHelp(Op._formObj);
+        header.addRootObjectHelp(_formObj);
         this.MasterHeader = header;
 
         let headerBtns = {

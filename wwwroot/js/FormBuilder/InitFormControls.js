@@ -1688,7 +1688,7 @@
     this.UserSelect = function (ctrl, ctrlopts) {
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
-            itemList: ctrl.UserList.$values,
+            itemList: this.Renderer.relatedData[ctrl.EbSid_CtxId],
             EbSid_CtxId: ctrl.EbSid_CtxId
         });
         itemList.ctrl = ctrl;
@@ -1703,7 +1703,7 @@
         }
         else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {
-                $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
+                $ctrl.autocomplete({ source: this.Renderer.relatedData[ctrl.EbSid_CtxId] });
             }
             //if (ctrl.TextTransform === 1)
             //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
@@ -2088,7 +2088,7 @@
             var BloodhoundEngine = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.whitespace,
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
-                local: ctrl.Suggestions.$values
+                local: this.Renderer.relatedData[ctrl.EbSid_CtxId]
             });
             BloodhoundEngine.initialize();
             $ctrl.tagsinput({

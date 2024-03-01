@@ -36,7 +36,7 @@ const WebFormCollectionRender = function (Option) {
         if (Op._source === 'master') {
 
             let _obj = {
-                formObj: JsonCached ? JSON.stringify(eval(Op._formRefId.replaceAll('-', '_'))) : Op._formObj,
+                formObj: JsonCached ? JSON.stringify(this.TryEval(Op._formRefId)) : Op._formObj,
                 formRefId: Op._formRefId,
                 formHTML: Op._formHTML,
                 formPermissions: Op._formPermissions
@@ -103,6 +103,17 @@ const WebFormCollectionRender = function (Option) {
         document.getElementsByTagName('head')[0].appendChild(s);
     };
 
+    this.TryEval = function (id) {
+        let v = null;
+        try {
+            v = eval(id.replaceAll('-', '_'))
+        }
+        catch (e) {
+            console.error('Object eval failed: ' + e.message);
+        }
+        return v;
+    };
+
     this.PopupForm = function (refId, params, mode, options = {}) {
 
         //$.extend({
@@ -120,7 +131,7 @@ const WebFormCollectionRender = function (Option) {
             return;
         }
         let randomizeId = this.RenderCollection.findIndex(e => e.formRefId === refId) >= 0;
-        let dataOnly = this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 && !randomizeId && !!eval(refId.replaceAll('-', '_'));
+        let dataOnly = (this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 || this.TryEval(refId) != null) && !randomizeId;
 
         this.showSubFormLoader();
         $.ajax({
@@ -166,7 +177,7 @@ const WebFormCollectionRender = function (Option) {
         if (!dataOnly) {
             let FormJson;
             if (resp.WebFormObjJsUrl) {
-                FormJson = JSON.stringify(eval(resp.RefId.replaceAll('-', '_')));
+                FormJson = JSON.stringify(this.TryEval(resp.RefId));
             }
             else {
                 FormJson = resp.WebFormObj;

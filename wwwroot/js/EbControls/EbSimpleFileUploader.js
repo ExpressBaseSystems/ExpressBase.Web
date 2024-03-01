@@ -143,7 +143,7 @@
             if (prelod) {
 
                 if (cntype == 1) {
-                    filelurl = `/images/small/${refid}.jpg`;
+                    filelurl = `/images/${refid}.jpg`;
                 } else {
                     let arr = file.name.split('.');
                     let exten = arr[arr.length - 1];

@@ -194,7 +194,7 @@ namespace ExpressBase.Web.Controllers
 
                 resp.WebFormHtml = WebForm_L.GetHtml();
                 resp.WebFormObj = EbSerializers.Json_Serialize(WebForm_L);
-                if (WebForm_L.EnableCaching)
+                if (!WebForm_L.DisableCaching)
                 {
                     resp.WebFormObjJsUrl = _randomizeId ? null : GetCxt2JsWebformUrl(_refId, resp.WebFormObj, _lang);
                     if (resp.WebFormObjJsUrl != null)

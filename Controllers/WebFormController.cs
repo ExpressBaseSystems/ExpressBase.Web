@@ -58,7 +58,7 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _p, _m = _m, _l = _l, _rm = _rm, _lg = _lg ?? this.CurrentLanguage ?? "en" });
         }
 
-        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Client, NoStore = false)]
         public FileContentResult cxt2js()
         {
             EbToolbox _toolBox = new EbToolbox(BuilderType.WebForm);
@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 
-        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Client, NoStore = false)]
         public FileContentResult cxt2js_vis()
         {
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
@@ -79,39 +79,50 @@ namespace ExpressBase.Web.Controllers
             return File(all.ToUtf8Bytes(), "text/javascript");
         }
 
-        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Any, NoStore = false)]
-        public FileContentResult cxt2js_form(string k1, string k2, string k3)
+        [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Client, NoStore = false)]
+        public FileContentResult cxt2js_form(string v, string r, string l)
         {
-            string objKey = string.Format(RedisKeyPrefixConstants.EbWebformObj, ViewBag.cid, k2);
-            if (k3 != null)
+            string objKey = string.Format(RedisKeyPrefixConstants.EbWebformObject, ViewBag.cid, r);
+            if (l != null)
             {
-                objKey += $"_{k3}";
+                objKey += $"_{l}";
             }
-            string objStr = this.Redis.Get<string>(objKey);
-            objStr = $"var {k2.Replace("-", "_")} = {objStr};";
+            string objStr = null;
+
+            using (var redis = this.PooledRedisManager.GetReadOnlyClient())
+                objStr = redis.Get<string>(objKey);
+
+            objStr = $"var {r.Replace("-", "_")} = {objStr};";
             return File(objStr.ToUtf8Bytes(), "text/javascript");
         }
 
         private string GetCxt2JsWebformUrl(string refId, string webForm, string _language)
         {
-            string objKey = string.Format(RedisKeyPrefixConstants.EbWebformObj, ViewBag.cid, refId);
+            string objRedisKey = string.Format(RedisKeyPrefixConstants.EbWebformObject, ViewBag.cid, refId);
             string md5Key = string.Format(RedisKeyPrefixConstants.EbWebformMd5, ViewBag.cid, refId);
+            string md5Build_Version = null;
+            string latestBuild = Objects.Singletons.BuildInfo.Md5Version;
+
             if (_language != null)
             {
-                objKey += $"_{_language}";
+                objRedisKey += $"_{_language}";
                 md5Key += $"_{_language}";
             }
 
-            string md5Value = this.Redis.Get<string>(md5Key);
-            string buildMd5 = Common.Singletons.BuildInfo.Md5Version;
+            using (var redis = this.PooledRedisManager.GetReadOnlyClient())
+                md5Build_Version = redis.Get<string>(md5Key);
 
-            if (md5Value == null || md5Value != buildMd5)
+            if (md5Build_Version != null && md5Build_Version.Split("_")[0] != latestBuild)
+                md5Build_Version = null;
+
+            if (md5Build_Version == null)
             {
-                this.Redis.Set(md5Key, buildMd5);
-                this.Redis.Set(objKey, webForm);
+                md5Build_Version = latestBuild + "_" + webForm.ToMD5Hash();
+                this.Redis.Set(objRedisKey, webForm);
+                this.Redis.Set(md5Key, md5Build_Version);
             }
 
-            return $"/webform/cxt2js_form?k1={buildMd5}&k2={refId}{(_language == null ? string.Empty : $"&k3={_language}")}";
+            return $"/webform/cxt2js_form?v={md5Build_Version}&r={refId}{(_language == null ? string.Empty : $"&l={_language}")}";
         }
 
         public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly, bool _randomizeId, string _language)

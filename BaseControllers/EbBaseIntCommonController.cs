@@ -146,7 +146,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.StaticFileServerUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STATICFILESERVER_EXT_URL);
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
 
-                    this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
+                    this.LoggedInUser = this.GetUserObject(bToken.Payload[TokenConstants.SUB].ToString());
                     controller.ViewBag.UserDisplayName = this.LoggedInUser.FullName;
 
                     controller.ViewBag.UserObject = JsonConvert.SerializeObject(this.LoggedInUser);

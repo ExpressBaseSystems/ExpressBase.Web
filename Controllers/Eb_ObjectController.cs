@@ -372,11 +372,6 @@ namespace ExpressBase.Web.Controllers
                 Type[] typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
             }
-            else if (objType.Equals(EbObjectTypes.FilterDialog))
-            {
-                Type[] typeArray = typeof(EbFilterDialog).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.FilterDialog, typeof(EbFilterDialog));
-            }
             else if (objType.Equals(EbObjectTypes.SmsBuilder))
             {
                 Type[] typeArray = typeof(EbSmsTemplateBase).GetTypeInfo().Assembly.GetTypes();

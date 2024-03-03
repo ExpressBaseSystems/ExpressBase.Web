@@ -1189,7 +1189,7 @@
 
 <script>
     var intSpecialPermission = '@ViewBag.Permission';
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @GfcPrpList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @GfcPrpList, @CCityList, @CCountryList, @CityList, @SubCategoryList , eval(@ViewBag.DisableSave.ToString().ToLower()));
     let uploadedFileRefList = {};
     let _fupCutstomMenu = [{ name: "Set as DP", icon: "fa-user" }];
     if (ebcontext.user.Roles.includes("Custom Image Delete Role"))

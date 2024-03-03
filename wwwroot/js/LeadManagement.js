@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, Nurse_Info, F_List, B_List, S_List, GP_List, CCityList, CCountryList, CityList, SubCategoryList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, Nurse_Info, F_List, B_List, S_List, GP_List, CCityList, CCountryList, CityList, SubCategoryList, DisableSave) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -12,6 +12,7 @@
     this.CCountryList = CCountryList || [];
     this.CityList = CityList || [];
     this.SubCategoryList = SubCategoryList || [];
+    this.DisableSave = DisableSave;
 
     //this.ImageIdList = ImageIdList || [];
     this.FeedbackList = F_List || [];
@@ -541,6 +542,10 @@
                 EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Background: '#aa0000' });
             }
             else {
+                if (this.DisableSave) {
+                    EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
+                    return;
+                }
                 this.$MdlFeedBack.modal('show');
             }
         }.bind(this));
@@ -551,6 +556,10 @@
         this.$FlUpSave.on("click", function () {
             if (this.AccId === 0) {
                 EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
+            if (this.DisableSave) {
+                EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
                 return;
             }
             if (this.$FlUpDate.val().trim() === "" || this.$FlUpStatus.val().trim() === "" || this.$FlUpFolDate.val().trim() === "" || this.$FlUpComnt.val().trim() === "") {
@@ -684,7 +693,11 @@
             if (this.AccId === 0) {
                 EbMessage("show", { Message: 'Save Customer Information then try to add Billing Details', AutoHide: true, Background: '#aa0000' });
             }
-            else {
+            else {                
+                if (this.DisableSave) {
+                    EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
+                    return;
+                }
                 this.$MdlBilling.modal('show');
             }
         }.bind(this));
@@ -712,6 +725,10 @@
         this.$BlngSave.on("click", function () {
             if (this.AccId === 0) {
                 EbMessage("show", { Message: 'Save Customer Information then try to add Billing Details', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
+            if (this.DisableSave) {
+                EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
                 return;
             }
             if (this.$BlngDate.val() === "" || this.$BlngTotal.val() === "" || this.$BlngRcvd.val() === "" || this.$BlngBal.val() === "" || this.$BlngPaid.val() === "" || this.$BlngMode.val() === "" || this.$BlngClrDate.val() === "" || this.$BlngNarr.val() === "") {
@@ -827,6 +844,10 @@
                 EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Background: '#aa0000' });
             }
             else {
+                if (this.DisableSave) {
+                    EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
+                    return;
+                }
                 this.$MdlSurgery.modal('show');
             }
         }.bind(this));
@@ -835,6 +856,10 @@
 
         this.$SrgySave.on("click", function () {
             //EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
+            if (this.DisableSave) {
+                EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
             var id = 0;
             this.$SrgySave.children().show();
             this.$SrgySave.prop("disabled", true);
@@ -936,6 +961,10 @@
                 EbMessage("show", { Message: 'Save Customer Information then try to add GFC/PRP Details', AutoHide: true, Background: '#aa0000' });
             }
             else {
+                if (this.DisableSave) {
+                    EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
+                    return;
+                }
                 this.$MdlGfcPrp.modal('show');
             }
         }.bind(this));
@@ -943,6 +972,10 @@
         this.$GfcPrpDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
         this.$GfcPrpSave.on("click", function () {
+            if (this.DisableSave){
+                EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
             var id = 0;
             this.$GfcPrpSave.children().show();
             this.$GfcPrpSave.prop("disabled", true);
@@ -1093,6 +1126,10 @@
     };
 
     this.onClickBtnSave = function () {
+        if (this.DisableSave) {
+            EbMessage("show", { Message: 'Lead management form is disabled. Please use All Opportunities list.', AutoHide: true, Background: '#aa0000' });
+            return;
+        }
         if (this.validateAndPrepareData()) {
             $("#btnSave").prop("disabled", true);
             $("#eb_common_loader").EbLoader("show");

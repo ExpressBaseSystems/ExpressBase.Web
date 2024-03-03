@@ -805,6 +805,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.getEmployeesDrRefid = solutionObj.SolutionSettings.GetEmployeesDrRefid;
                 ViewBag.provUserFormRefid = solutionObj.SolutionSettings.ProvisionUserFormRefid;
                 ViewBag.EnableFinancialYear = solutionObj.SolutionSettings.EnableFinancialYear;
+                ViewBag.DisbleLeadManagementSave = solutionObj.SolutionSettings.DisbleLeadManagementSave;
                 if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
                 {
                     foreach (var item in _userTypesResp.UserTypes)

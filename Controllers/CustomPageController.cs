@@ -53,6 +53,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.CustomerCategoryDict = fr.CustomerCategoryDict;
             ViewBag.AttachImgInfo = fr.AttachImgInfo;
             ViewBag.PrpImgInfo = fr.PrpImgInfo;
+            ViewBag.DisableSave = fr.DisbleSave;
 
             ViewBag.BillPerm = true;// permission
             if (!ViewBag.BillPerm)

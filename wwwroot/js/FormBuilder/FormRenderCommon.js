@@ -1777,11 +1777,22 @@
         depCtrl.__continue = null;
 
         if (depCtrl.ObjType === "TVcontrol") {
-            if (DepHandleObj.isInitSetup) {
-                depCtrl.reloadWithParamAll();
+            let $tabpane = $("#cont_" + depCtrl.EbSid_CtxId).closest('[ctype="TabPane"]');
+            if ($tabpane.length > 0 && $tabpane.is(':visible')) {
+                if (DepHandleObj.isInitSetup) {
+                    depCtrl.reloadWithParamAll();
+                }
+                else {
+                    depCtrl.reloadWithParam(curCtrl);
+                }
             }
             else {
-                depCtrl.reloadWithParam(curCtrl);
+                if (DepHandleObj.isInitSetup) {
+                    depCtrl.__reloadWithParamAll = true;
+                }
+                else if (!depCtrl.__reloadWithParamAll) {
+                    depCtrl.__reloadWithParam = true;
+                }
             }
         }
         else if (depCtrl.ObjType === "PowerSelect") {

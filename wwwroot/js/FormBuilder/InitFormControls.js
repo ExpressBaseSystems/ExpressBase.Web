@@ -803,14 +803,24 @@
             return 0;
         }.bind(this, ctrl);
 
-        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
+        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (ctrl, event) {
             if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
-                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted && ctrl.initializer.isSecondTime) {
-                    ctrl.initializer.Api.columns.adjust();
-                    ctrl.initializer.__ColAdjusted = true;
+                if (ctrl.__reloadWithParamAll) {
+                    ctrl.reloadWithParamAll();
+                    ctrl.__reloadWithParamAll = false;
+                }
+                else if (ctrl.__reloadWithParam) {
+                    ctrl.reloadWithParam();
+                    ctrl.__reloadWithParam = true;
+                }
+                else {
+                    if (ctrl.initializer && !ctrl.initializer.__ColAdjusted && ctrl.initializer.isSecondTime) {
+                        ctrl.initializer.Api.columns.adjust();
+                        ctrl.initializer.__ColAdjusted = true;
+                    }
                 }
             }
-        });
+        }.bind(this, ctrl));
     };
 
     this.CalendarControl = function (ctrl) {

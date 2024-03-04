@@ -513,7 +513,7 @@ const WebFormCollectionRender = function (Option) {
 
         if (!x.ChangeDetected)
             return;
-        if (x.Initiator.ObjType === 'ExportButton') {
+        if (x.Initiator.ObjType === 'ExportButton' || x.Initiator.ObjType === 'Label') {
             let tvCtrls = getFlatObjOfType(srcRen.FormObj, "TVcontrol");
             for (let i = 0; i < tvCtrls.length; i++) {
                 if (!tvCtrls[i].AssocCtrls || tvCtrls[i].AssocCtrls.$values.length === 0)
@@ -537,12 +537,6 @@ const WebFormCollectionRender = function (Option) {
                 }
             }
             x.Initiator.DDrefresh();
-        }
-        else if (x.Initiator.ObjType === 'Label') {
-            let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
-            if (destRender) {
-                x.Initiator.reverseUpdateData(destRender);
-            }
         }
     };
 

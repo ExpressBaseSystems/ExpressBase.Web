@@ -1179,7 +1179,7 @@
 
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        $ctrl[0].onclick = function () {
+        $ctrl.off('click').on('click', function (ctrl, ctrlOpts) {
             if ($('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled'))
                 return;
             let params = [];
@@ -1195,8 +1195,9 @@
             else {
                 ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
             }
-        }.bind(this);
-        $ctrl.on('mouseenter', function (ctrl, e) {
+        }.bind(this, ctrl, ctrlOpts));
+
+        $ctrl.off('mouseenter').on('mouseenter', function (ctrl, e) {
             if (this.Renderer.Mode.isNew)
                 ctrl.attr('title', 'Not available in New Mode');
             else if (this.Renderer.Mode.isEdit && ctrl.DisableInEditMode)

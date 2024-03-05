@@ -19,6 +19,7 @@ const WebFormCollectionRender = function (Option) {
     this.CurrentSubForm = null;//critical - must updated on each event
     this.LastResponse = {};//for debugging
     this.InterContextObj = [];//inter form communication (eg: export btn save -> tv refresh)
+    this.PopupLoading = false;
 
     this.Init = function (Op) {
         if (Op === null) return;
@@ -130,10 +131,13 @@ const WebFormCollectionRender = function (Option) {
             console.error('Invalid refId for popup form');
             return;
         }
+        if (this.PopupLoading)
+            return;
+        this.PopupLoading = true;
+        this.showSubFormLoader();
         let randomizeId = this.RenderCollection.findIndex(e => e.formRefId === refId) >= 0;
         let dataOnly = (this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 || this.TryEval(refId) != null) && !randomizeId;
 
-        this.showSubFormLoader();
         $.ajax({
             type: "POST",
             url: "/WebForm/GetFormForRendering",
@@ -147,6 +151,7 @@ const WebFormCollectionRender = function (Option) {
                 _randomizeId: randomizeId
             },
             error: function (xhr, ajaxOptions, thrownError) {
+                this.PopupLoading = false;
                 this.hideSubFormLoader();
                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
             }.bind(this),
@@ -154,14 +159,14 @@ const WebFormCollectionRender = function (Option) {
         });
     };
 
-    this.GetFormForRenderingSuccess = function (dataOnly, randomizeId, options, result) {
-        this.hideSubFormLoader();
+    this.GetFormForRenderingSuccess = function (dataOnly, randomizeId, options, result) {        
         let resp = JSON.parse(result);
         this.LastResponse = resp;
-
         if (resp.ErrorMessage) {
             console.error(resp.ErrorMessage);
             EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });
+            this.PopupLoading = false;
+            this.hideSubFormLoader();
             return;
         }
         if (!dataOnly && resp.WebFormObjJsUrl) {
@@ -173,6 +178,8 @@ const WebFormCollectionRender = function (Option) {
     };
 
     this.GetFormForRenderingSuccess_inner = function (resp, dataOnly, randomizeId, options, result) {
+        this.PopupLoading = false;
+        this.hideSubFormLoader();
         let _obj;
         if (!dataOnly) {
             let FormJson;

@@ -159,7 +159,8 @@ const EbPowerSelect = function (ctrl, options) {
             }
 
             if (this.ComboObj.Padding) {
-                let pd = `${this.ComboObj.Padding.Top}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`;
+                let pdTop = this.ComboObj.Padding.Top;
+                let pd = `${(pdTop > 1 ? pdTop - 1 : pdTop)}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`;
                 $(`<style>#cont_${this.ComboObj.EbSid_CtxId} input[type=search] { padding: ${pd}; }; .selected-tag { padding: ${pd}; }</style>`).appendTo('body');
             }
 

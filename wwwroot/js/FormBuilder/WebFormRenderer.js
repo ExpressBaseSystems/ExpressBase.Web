@@ -2564,11 +2564,11 @@ const WebFormRender = function (option) {
     this.AdjustBtnsVisibility = function (reqstMode) {
         let currentLoc = this.getLocId();
         let _html = '';
-        this.headerObj.hideElement([this.hBtns['SaveSel'], this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['PrintPrevSel'], this.hBtns['Clone'], this.hBtns['ExcelSel'], this.hBtns['Discard'], this.hBtns['Details']]);
+        this.headerObj.hideElement([this.hBtns['SaveSel'], this.hBtns['NewSel'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['PrintPrevSel'], this.hBtns['Clone'], this.hBtns['ExcelSel'], this.hBtns['Discard'], this.hBtns['Details']]);
 
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (this.Mode.isEdit) {
-            this.headerObj.showElement(this.filterHeaderBtns([this.hBtns['New'], this.hBtns['SaveSel']], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns([this.hBtns['NewSel'], this.hBtns['SaveSel']], currentLoc, reqstMode));
             this.headerObj.showElement([this.hBtns['Discard'], this.hBtns['Details']]);
         }
         else if (this.Mode.isNew) {
@@ -2579,7 +2579,7 @@ const WebFormRender = function (option) {
             }
         }
         else if (this.Mode.isView) {
-            let btnsArr = [this.hBtns['New'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['PrintPrevSel'], this.hBtns['Clone']];
+            let btnsArr = [this.hBtns['NewSel'], this.hBtns['Edit'], this.hBtns['PrintSel'], this.hBtns['PrintPrevSel'], this.hBtns['Clone']];
             if (this.formData.IsReadOnly || this.formData.IsLocked || this.formData.IsCancelled)
                 btnsArr.splice(1, 1);//
             if (this.formData.IsReadOnly) {
@@ -2620,8 +2620,12 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['Edit'] && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)))
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['New'] && this.formPermissions[loc].includes(op.New) && !this.FormObj.IsDisable)
-                    r.push(btns[i]);
+                else if (btns[i] === this.hBtns['NewSel']) {
+                    if (this.FormObj.WebFormLinks && this.FormObj.WebFormLinks.$values.length > 0)
+                        r.push(btns[i]);
+                    else if (this.formPermissions[loc].includes(op.New) && !this.FormObj.IsDisable)
+                        r.push(btns[i]);
+                }
                 else if ((btns[i] === this.hBtns['PrintSel'] || btns[i] === this.hBtns['PrintPrevSel']) && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['ExcelSel'] && this.formPermissions[loc].includes(op.ExcelImport) && mode === 'New Mode' && this.FormObj.EnableExcelImport)
@@ -2744,6 +2748,8 @@ const WebFormRender = function (option) {
             this.setupPrintiFrame();
             let $sel = $(`#${this.hBtns['PrintSel']} .selectpicker`);
             let $sel2 = $(`#${this.hBtns['PrintPrevSel']} .selectpicker`);
+            $sel.empty();
+            $sel2.empty();
             for (let i = 0; i < this.FormObj.PrintDocs.$values.length; i++) {
                 let tle = this.FormObj.PrintDocs.$values[i].Title || this.FormObj.PrintDocs.$values[i].ObjDisplayName;
                 let str = `<option data-token="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`;
@@ -2772,6 +2778,34 @@ const WebFormRender = function (option) {
             setTimeout(function () { ebcontext.webform.showLoader(); }, 100);
         else
             ebcontext.webform.showLoader();
+    };
+
+    this.initNewMenu = function () {
+
+        let $sel = $(`#${this.hBtns['NewSel']} .selectpicker`);
+        $sel.empty();
+
+        if (this.FormObj.WebFormLinks && this.FormObj.WebFormLinks.$values.length > 0) {
+            let arr = this.FormObj.WebFormLinks.$values;
+            for (let i = 0; i < arr.length; i++) {
+                $sel.append(`<option data-token="${arr[i].ObjRefId}" data-title="${arr[i].ObjDisplayName}">${arr[i].ObjDisplayName}</option>`);
+            }
+        }
+        else {
+            $sel.append(`<option data-token="${this.formRefId}" data-title="${this.FormObj.DisplayName}">${this.FormObj.DisplayName}</option>`);
+        }
+        $sel.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+        this.$newSelBtn.off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", function (e) {
+            let refid = $(e.currentTarget).closest('.btn-select').find(`.selectpicker option:selected`).attr("data-token");
+            if (refid == this.formRefId) {
+                this.startNewMode();
+            }
+            else {
+                let _l = ebcontext.languages.getCurrentLanguageCode();
+                url = `../WebForm/Index?_r=${refid}&_m=2&_l=${this.getLocId()}&_lg=${_l}`;
+                window.open(url, '_blank');
+            }
+        }.bind(this));
     };
 
     this.initSaveMenu = function () {
@@ -2924,6 +2958,7 @@ const WebFormRender = function (option) {
         }
 
         this.$saveSelBtn = $('#' + this.hBtns['SaveSel']);
+        this.$newSelBtn = $('#' + this.hBtns['NewSel']);
         this.$cloneBtn = $('#' + this.hBtns['Clone']);
         this.$printBtn = $('#' + this.hBtns['Print']);
         this.$printSelBtn = $('#' + this.hBtns['PrintSel']);
@@ -3493,6 +3528,7 @@ const WebFormRender = function (option) {
         this.initWebFormCtrls();
         this.initPrintMenu();
         this.initSaveMenu();
+        this.initNewMenu();
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
         this.isInitiallyPopulating = false;
 

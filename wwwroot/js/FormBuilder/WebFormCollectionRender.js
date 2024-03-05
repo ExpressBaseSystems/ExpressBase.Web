@@ -259,6 +259,7 @@ const WebFormCollectionRender = function (Option) {
     this.GetSlaveHeaderBtns = function (cxt) {
         return {
             New: "subformnew" + cxt,
+            NewSel: "subformnew-selbtn" + cxt,
             Edit: "subformedit" + cxt,
             Save: "subformsave" + cxt,
             SaveSel: "subformsave-selbtn" + cxt,
@@ -359,7 +360,13 @@ const WebFormCollectionRender = function (Option) {
         header.insertButton(`<button id="webformdetails" class='btn' title='Details & More Options' style='display: none;'><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformdiscardedit" class='btn' title='Discard Changes (Ctrl+Q)' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>`);
         header.insertButton(`<button id="webformclone" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>`);
-        header.insertButton(`<button id="webformnew" class="btn" title="New form (Alt+N)"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
+        //header.insertButton(`<button id="webformnew" class="btn" title="New form (Alt+N)"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
+
+        header.insertButton(`<div id="webformnew-selbtn"  style='display: none;' class="btn-select btn">
+                                <button id="webformnew" class="savebtn" title="New form (Alt+N)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                <select class="selectpicker"></select>
+                            </div>`);
+
         header.insertButton(`<button id="webformedit" class='btn' title='Edit (Ctrl+E)' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
         header.insertButton(`<div id="webformsave-selbtn"  style='display: none;' class="btn-select btn">
                                 <button id="webformsave" class="savebtn" title="Save form (Ctrl+S)"><i class="fa fa-save" aria-hidden="true"></i></button>
@@ -387,6 +394,7 @@ const WebFormCollectionRender = function (Option) {
 
         let headerBtns = {
             New: "webformnew",
+            NewSel: "webformnew-selbtn",
             Edit: "webformedit",
             Save: "webformsave",
             SaveSel: "webformsave-selbtn",
@@ -434,7 +442,12 @@ const WebFormCollectionRender = function (Option) {
                         <select class="selectpicker"></select>
                     </div>                    
                     <button id="subformedit${cxt}" class='btn' title='Edit (Ctrl+E)' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>
-                    <button id="subformnew${cxt}" class="btn" title="New (Alt+N)" style='display: none;'><i class="fa fa-plus" aria-hidden="true"></i></button>
+                    
+                    <div id="subformnew-selbtn${cxt}"  style='display: none;' class="btn-select btn">
+                        <button id="subformnew${cxt}" class="savebtn" title="New (Alt+N)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <select class="selectpicker"></select>
+                    </div> 
+
                     <button id="subformclone${cxt}" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>
                     <button id="subformdiscardedit${cxt}" class='btn' title='Discard Changes (Ctrl+Q)' style='display: none;'><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
                     <button id="subformdetails${cxt}" class='btn' title='Details & More Options'><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>

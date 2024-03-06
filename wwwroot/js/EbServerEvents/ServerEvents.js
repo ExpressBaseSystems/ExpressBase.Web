@@ -101,7 +101,7 @@
 
     this.updateUserMenu = function (m, e) {
         localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
-       localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+        localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
         // $('#menu_refresh').click();
     }
     this.userDisabled = function (m) {
@@ -131,7 +131,7 @@
         EbMessage("show", { Message: m, AutoHide: true, Background: 'blue' });
         $(`.objectDashB-toolbar #webformedit`).attr("disabled", b);
     }
-    
+
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
@@ -181,9 +181,19 @@
             importApplication: this.importApplication.bind(this),
             UpdateUserMenu: this.updateUserMenu.bind(this),
             userDisabled: this.userDisabled.bind(this),
-          //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
-          //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
+            //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
+            //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
 
         }
     });
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            if (this.sEvent && this.sEvent.eventSourceStop)
+                this.sEvent.eventSourceStop = false;
+        } else {
+            if (this.sEvent && !this.sEvent.eventSourceStop)
+                this.sEvent.eventSourceStop = true;
+        }
+    }.bind(this));
 };

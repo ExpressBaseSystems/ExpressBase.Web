@@ -297,6 +297,35 @@ body {
     border-radius: 0 4px 4px 0 !important;
 }
 
+.Eb-ctrlContainer[ctype="Numeric"] .numplus-btn, [tdcoltype="DGNumericColumn"] .numplus-btn {
+    width: 25px !important;
+    z-index: 1;
+    position: absolute;
+    background: transparent;
+    display: inline-flex;
+    box-shadow: inset 0px 0 0 1px #ddddde;
+    right: 50px;
+    font-size: 14px;
+    height: 100%;
+    cursor: pointer;
+}
+
+    .Eb-ctrlContainer[ctype="Numeric"] .numplus-btn:hover, [tdcoltype="DGNumericColumn"] .numplus-btn:hover {
+        color: #528ff0;
+    }
+
+    .Eb-ctrlContainer[ctype="Numeric"] .numplus-btn i, [tdcoltype="DGNumericColumn"] .numplus-btn i {
+        margin: auto;
+    }
+
+.Eb-ctrlContainer[ctype="Numeric"] .numplus-inp, [tdcoltype="DGNumericColumn"] .numplus-inp {
+    width: 50px;
+    outline: none;
+    text-align: right;
+    position: absolute;
+    right: 0px
+}
+
 .Eb-ctrlContainer [type="RadioGroup"] {
     /*padding: 5px;*/
 }

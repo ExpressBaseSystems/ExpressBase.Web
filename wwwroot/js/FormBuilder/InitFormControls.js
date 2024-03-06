@@ -1800,6 +1800,46 @@
             });
         }
 
+        if (ctrl.ShowAddInput){
+            let $btn, $inp;
+            if (ctrl.IsDGCtrl) {
+                $btn = $(`#td_${ctrl.EbSid_CtxId} .numplus-btn`);
+                $inp = $(`#td_${ctrl.EbSid_CtxId} .numplus-inp`);
+            }
+            else {                
+                $btn = $(`#cont_${ctrl.EbSid_CtxId} .numplus-btn`);
+                $inp = $(`#cont_${ctrl.EbSid_CtxId} .numplus-inp`);
+            }
+            $inp.val('0');
+            
+            $inp.inputmask("currency", {
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
+                allowMinus: true,
+                groupSeparator: "",
+                digits: 0,
+                prefix: '',
+                autoGroup: true
+            });
+
+            $inp.off('focus').on('focus', function(){
+                $(this).select();
+            });
+
+            $inp.off('keypress').on('keypress', function($btn, e) {
+                if (e.keyCode == 13) {
+                    $btn.click();
+                    return false;
+                }   
+            }.bind(this, $btn));
+
+
+            $btn.off('click').on('click', function(ctrl, $inp){
+                let val = ctrl.getValue() + parseInt($inp.val());
+                ctrl.setValue(val);
+                $inp.val('0');
+            }.bind(this, ctrl, $inp));
+        }
+
         $input.focus(function () { $(this).select(); });
 
         //$input.focusout(function () {

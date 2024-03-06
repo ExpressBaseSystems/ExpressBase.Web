@@ -500,15 +500,15 @@
         //    $(`.ctrlstd[mode] `).attr("mode", "new");
     };
 
-    this.focusOnFirstInput = function ($tr) {
-        let a = $tr.find('td input:enabled:visible');
-        if (a.length > 0) {
-            if (!(this.DGcols[0].Hidden || this.DGcols[0].IsDisable))
-                $(a[0]).focus();
-            else if (a.filter('[ui-inp]').length > 0)
-                $(a.filter('[ui-inp]')[0]).focus();
-        }
-    };
+    //this.focusOnFirstInput = function ($tr) {
+    //    let a = $tr.find('td input:enabled:visible');
+    //    if (a.length > 0) {
+    //        if (!(this.DGcols[0].Hidden || this.DGcols[0].IsDisable))
+    //            $(a[0]).focus();
+    //        else if (a.filter('[ui-inp]').length > 0)
+    //            $(a.filter('[ui-inp]')[0]).focus();
+    //    }
+    //};
 
     this.SwitchToEditMode = function () {
         this.rowSLCounter = this.rowSLCounter - $(`#${this.TableId} tbody [is-editing=true]`).remove().length;
@@ -1338,7 +1338,10 @@
         let enabledUiInps = $td.find("input:enabled:visible");//[ui-inp]:enabled:visible
         if (enabledUiInps.length > 0) {
             setTimeout(function () {
-                $(enabledUiInps[0]).focus();
+                if ($td.attr('tdcoltype') == 'DGNumericColumn' && enabledUiInps.length > 1)
+                    $(enabledUiInps[1]).focus();
+                else
+                    $(enabledUiInps[0]).focus();
             }, 10);
             //$(enabledUiInps[0]).select();
         }
@@ -1382,11 +1385,16 @@
 
             if ((e.which === 37 || e.which === 39) && !(event.altKey || event.metaKey)) {
                 let $td = $(e.target).closest('td');
-                let uiInp = $td.find("input:enabled:visible");
+                let uiInps = $td.find("input:enabled:visible");
+                let uiInp = null;
+                if ($td.attr('tdcoltype') == 'DGNumericColumn' && uiInps.length > 1)
+                    uiInp = uiInps[1];
+                else if (uiInps.length > 0)
+                    uiInp = uiInps[0];
 
-                if (uiInp.length && uiInp[0].type == 'text') {
-                    if (!(((e.which === 39 && uiInp[0].selectionEnd == uiInp[0].value.length) || (e.which === 37 && uiInp[0].selectionStart == 0)) &&
-                        uiInp[0].selectionStart == uiInp[0].selectionEnd))
+                if (uiInps.length && uiInp.type == 'text') {
+                    if (!(((e.which === 39 && uiInp.selectionEnd == uiInp.value.length) || (e.which === 37 && uiInp.selectionStart == 0)) &&
+                        uiInp.selectionStart == uiInp.selectionEnd))
                         return;
                 }
             }
@@ -1419,12 +1427,16 @@
                     $nxtTd = $td.siblings(sel);
                 }
                 else {
-                    let uiInp = $td.find("input:enabled:visible");
-                    let func = null;
-                    if (uiInp.length && uiInp[0].type == 'text') {
-                        if (((e.which === 39 && uiInp[0].selectionEnd == uiInp[0].value.length) ||
-                            (e.which === 37 && uiInp[0].selectionStart == 0)) &&
-                            uiInp[0].selectionStart == uiInp[0].selectionEnd)
+                    let uiInps = $td.find("input:enabled:visible");
+                    let func = null, uiInp = null;
+                    if ($td.attr('tdcoltype') == 'DGNumericColumn' && uiInps.length > 1)
+                        uiInp = uiInps[1]
+                    else if (uiInps.length > 0)
+                        uiInp = uiInps[0];
+                    if (uiInps.length && uiInp.type == 'text') {
+                        if (((e.which === 39 && uiInp.selectionEnd == uiInp.value.length) ||
+                            (e.which === 37 && uiInp.selectionStart == 0)) &&
+                            uiInp.selectionStart == uiInp.selectionEnd)
                             func = e.which === 39 ? 'next' : 'prev';
                     }
                     else

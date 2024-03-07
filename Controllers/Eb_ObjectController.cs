@@ -332,7 +332,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [ResponseCache(Duration = 1296000, Location = ResponseCacheLocation.Any, NoStore = false)]
-        public FileContentResult cxt2js_dev(int t)
+        public FileContentResult cxt2js_dev(string v, int t)
         {
             EbObjectType objType = EbObjectTypes.Get(t);
             Context2Js _c2js = null;

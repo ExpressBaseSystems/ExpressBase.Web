@@ -298,13 +298,13 @@ body {
 }
 
 .Eb-ctrlContainer[ctype="Numeric"] .numplus-btn, [tdcoltype="DGNumericColumn"] .numplus-btn {
-    width: 25px !important;
+    width: 16px !important;
     z-index: 1;
     position: absolute;
     background: transparent;
     display: inline-flex;
     box-shadow: inset 0px 0 0 1px #ddddde;
-    right: 50px;
+    right: 32px;
     font-size: 14px;
     height: 100%;
     cursor: pointer;
@@ -319,7 +319,7 @@ body {
     }
 
 .Eb-ctrlContainer[ctype="Numeric"] .numplus-inp, [tdcoltype="DGNumericColumn"] .numplus-inp {
-    width: 50px;
+    width: 32px;
     outline: none;
     text-align: right;
     position: absolute;

@@ -1541,17 +1541,18 @@
 
     this.SysLocation = function (ctrl) {
         let locObj = this.Renderer.getLocObj();
+        let valPropName = ctrl.ShowLongName ? 'LongName' : 'ShortName';
         if (!locObj)
             return;
         //if (ctrl.DataVals && !ctrl.DataVals.Value && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
         if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
-            ctrl.DataVals.Value = locObj.LocId;
-            ctrl.DataVals.F = locObj.ShortName;
+            ctrl.DataVals.Value = locObj.LocId
+            ctrl.DataVals.F = locObj[valPropName];
         }
         if (!(ctrl.IsDisable)) {
             let temp = [];
             $.each(ebcontext.locations.Locations, function (intex, obj) {
-                temp.push({ k: obj.LocId, v: obj.ShortName || '' });
+                temp.push({ k: obj.LocId, v: obj[valPropName] || '' });
             });
             temp.sort(function (a, b) {
                 let v1 = a.v.toLowerCase();

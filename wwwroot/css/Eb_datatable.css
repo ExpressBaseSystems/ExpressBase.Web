@@ -118,10 +118,15 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
     border: none;
 }
 
+[eb-type="WebForm"] .dataTables_scrollHead {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
 .dataTables_scrollHead {
     padding-bottom: 150px !important;
     margin-bottom: -150px !important;
-    /*width: calc( 100% - 17px ) !important;*/    
+    /*width: calc( 100% - 17px ) !important;*/
 }
 
 .dataTables_scrollFoot {
@@ -143,12 +148,22 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
     z-index: 3;
 }
 
+[eb-type="WebForm"] .DTFC_LeftHeadWrapper, [eb-type="WebForm"] .DTFC_RightHeadWrapper {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
 .DTFC_LeftHeadWrapper, .DTFC_RightHeadWrapper {
     padding-bottom: 150px !important;
     margin-bottom: -150px !important;
 }
 
 .DTFC_LeftBodyWrapper {
+}
+
+[eb-type="WebForm"] .DTFC_LeftFootWrapper, [eb-type="WebForm"] .DTFC_RightFootWrapper {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
 }
 
 .DTFC_LeftFootWrapper, .DTFC_RightFootWrapper {

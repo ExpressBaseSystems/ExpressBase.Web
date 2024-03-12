@@ -40,9 +40,17 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.DisableNewUser = "false";
                 GetUsersResponse1 fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
                 ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
-                //Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
+                Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
                 //if (_solu.PlanUserCount <= _solu.NumberOfUsers)
                 //    ViewBag.DisableNewUser = "true";
+
+                string puFormRefid = _solu?.SolutionSettings?.ProvisionUserFormRefid;
+                if (!string.IsNullOrWhiteSpace(puFormRefid))
+                {
+                    EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(puFormRefid, this.ServiceClient, this.Redis, null);
+                    ViewBag.ProvUserFormName = WebForm.DisplayName;
+                    ViewBag.ProvUserFormRefid = puFormRefid;
+                }
             }
             else if (type == "roles")
             {
@@ -194,10 +202,6 @@ namespace ExpressBase.Web.Controllers
             Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
             string puFormRefid = _solu?.SolutionSettings?.ProvisionUserFormRefid;
 
-            if (itemid == 0 && !string.IsNullOrWhiteSpace(puFormRefid))
-            {
-                return RedirectToAction("Index", "WebForm", new { _r = puFormRefid, _lg = this.CurrentLanguage ?? "en" });
-            }
             List<string> disableCtrls = new List<string>();
             if (!string.IsNullOrWhiteSpace(puFormRefid))
             {

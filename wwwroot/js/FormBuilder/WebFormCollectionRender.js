@@ -40,7 +40,8 @@ const WebFormCollectionRender = function (Option) {
                 formObj: JsonCached ? JSON.stringify(this.TryEval(Op._formRefId)) : Op._formObj,
                 formRefId: Op._formRefId,
                 formHTML: Op._formHTML,
-                formPermissions: Op._formPermissions
+                formPermissions: Op._formPermissions,
+                relatedData: Op._relatedData
             };
             this.ObjectCollection.push(_obj);
             this.IsMasterAvail = true;
@@ -200,7 +201,8 @@ const WebFormCollectionRender = function (Option) {
                 formObj: FormJson,
                 formRefId: resp.RefId,
                 formHTML: resp.WebFormHtml,
-                formPermissions: resp.FormPermissions
+                formPermissions: resp.FormPermissions,
+                relatedData: resp.RelatedData
             }
             if (!randomizeId)
                 this.ObjectCollection.push(_obj);
@@ -238,7 +240,7 @@ const WebFormCollectionRender = function (Option) {
                 editModeAutoSave: options.editModeAutoSave,
                 keepHidden: keepHidden,
                 __MultiRenderCxt: cxt,
-                relatedData: resp.RelatedData
+                relatedData: _obj.relatedData
             });
             WebForm.__MultiRenderUrl = resp.Url;
             this.RenderCollection.push(WebForm);

@@ -160,7 +160,7 @@ const WebFormCollectionRender = function (Option) {
         });
     };
 
-    this.GetFormForRenderingSuccess = function (dataOnly, randomizeId, options, result) {        
+    this.GetFormForRenderingSuccess = function (dataOnly, randomizeId, options, result) {
         let resp = JSON.parse(result);
         this.LastResponse = resp;
         if (resp.ErrorMessage) {
@@ -552,13 +552,15 @@ const WebFormCollectionRender = function (Option) {
             }
         }
         else if (x.Initiator.ObjType === 'PowerSelect') {
+            let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
             if (x.Initiator.IsDGCtrl) {
-                let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
                 if (destRender) {
                     x.Initiator.reverseUpdateData(destRender);
                 }
             }
-            x.Initiator.DDrefresh();
+            if (x.Callback && x.Initiator.PsJsObj) {
+                x.Callback(destRender.rowId);
+            }
         }
     };
 

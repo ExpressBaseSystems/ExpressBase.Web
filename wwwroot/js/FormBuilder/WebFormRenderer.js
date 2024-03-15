@@ -2799,7 +2799,7 @@ const WebFormRender = function (option) {
         this.$newBtn.off("click").on("click", this.newBtnClickListener);
     };
 
-    this.newBtnClickListener = function(e) {
+    this.newBtnClickListener = function (e) {
         let refid = $(e.currentTarget).closest('.btn-select').find(`.selectpicker option:selected`).attr("data-token");
         if (refid == this.formRefId) {
             this.startNewMode();
@@ -2940,7 +2940,7 @@ const WebFormRender = function (option) {
         this.$newBtn = $('#' + this.hBtns['New']);
         this.$editBtn = $('#' + this.hBtns['Edit']);
         this.$saveBtn = $('#' + this.hBtns['Save']);
-                
+
         this.$editBtn.off("click").on("click", this.SwitchToEditMode.bind(this));
         this.$saveBtn.off("click").on("click", this.saveForm.bind(this));
 
@@ -3300,7 +3300,7 @@ const WebFormRender = function (option) {
             return;
         if (options.IsDGCtrl) {
             $btn.removeAttr("disabled");
-            $btn.on('click', this.PsAddBtnClicked.bind(this, $btn, options));
+            $btn.off('click').on('click', this.PsAddBtnClicked.bind(this, $btn, options));
         }
     }.bind(this);
 
@@ -3334,11 +3334,20 @@ const WebFormRender = function (option) {
             window.open(url, '_blank');
         }
         else {
+            let clBkFn = null;
+            if (options.PsJsObj) {
+                clBkFn = function (id) {
+                    this.data = undefined;
+                    this.DDrefresh();
+                    this.ComboObj.setValue(id);
+                }.bind(options.PsJsObj);
+            }
             ebcontext.webform.PopupForm(ctrl.FormRefId, btoa(JSON.stringify(_params)), _mode,
                 {
                     srcCxt: this.__MultiRenderCxt,
                     initiator: options,
-                    locId: this.getLocId()
+                    locId: this.getLocId(),
+                    Callback: clBkFn
                 });
         }
     };

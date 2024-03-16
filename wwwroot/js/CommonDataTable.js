@@ -3374,7 +3374,7 @@
                 $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" data-params="${obj.UseParams}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
             }.bind(this));
 
-            $(`#PrintDocsdd${this.tableId}`).off(".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
+            $(`#PrintDocsdd${this.tableId}`).off("click", ".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
         }
     };
 

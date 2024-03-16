@@ -3379,6 +3379,12 @@
     };
 
     this.printDocument = function (e) {
+
+        if (this.pdfDownloadBtnClicked)
+            return;
+        this.pdfDownloadBtnClicked = true;
+        setTimeout(function () { this.pdfDownloadBtnClicked = false; }.bind(this), 2000);
+
         if (!ebcontext.webform) {
             ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
         }

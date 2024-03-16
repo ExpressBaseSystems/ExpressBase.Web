@@ -15,7 +15,7 @@
     this.onExcelExportSuccess = function (m, e) { };
     this.onPdfDownloadSuccess = function (m, e) { };
 
-
+    return;///////// 
 
     this.onConnect = function (sub) {
         console.log("sse connected! " + sub.displayName, sub.id);

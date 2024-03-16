@@ -2811,7 +2811,7 @@
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
         //this.printAllbtn.off("click").on("click", this.printAll.bind(this));
         this.printSelectedbtn.off("click").on("click", this.printSelected.bind(this));
-        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcel.bind(this));
+        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcelSync.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         //$("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
@@ -3401,7 +3401,7 @@
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (rowIds.length == 1) {
+            if (rowIds.length <= 10) {
                 let url = "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowIds[0];
                 ebcontext.webform.showLoader();
                 $("#iFramePdf4dv").attr("src", url);
@@ -4770,6 +4770,44 @@
             type: "POST",
             url: "../DV/exportToexcel",
             data: { req: ob }
+        });
+    };
+
+    this.ExportToExcelSync = function (e) {
+        if (this.excelDownloadBtnClicked)
+            return;
+        this.excelDownloadBtnClicked = true;
+        EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 30000 });
+        this.excelbtn.prop("disabled", true);
+        this.RemoveColumnRef();
+        var ob = new Object();
+        ob.dvRefId = this.EbObject.RefId;
+        ob.Params = this.filterValues;
+        ob.TFilters = this.columnSearch;
+
+        $.ajax({
+            type: "POST",
+            url: "../DV/exportToexcelSync",
+            data: { req: ob },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.excelDownloadBtnClicked = false;
+                this.excelbtn.prop("disabled", false);
+                EbMessage("show", { Message: `Something Unexpected Occurred when tried to download`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+            }.bind(this),
+            success: function (res, msg) {
+                this.excelDownloadBtnClicked = false;
+                this.excelbtn.prop("disabled", false);
+                if (res.item1 == -1) {
+                    EbMessage("show", { Message: `Internal server error: ${res.item2}`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+                }
+                else if (res.item1 == 0) {
+                    EbMessage("show", { Message: `Internal server error. Please try again later.`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+                }
+                else {
+                    EbMessage("show", { Message: 'Excel file being downloaded...', AutoHide: true, Background: '#0055aa', Delay: 3000 });
+                    window.location.href = res.item2;
+                }
+            }.bind(this)
         });
     };
 

@@ -3395,8 +3395,9 @@
         if (useParams == 'true') {
             let params = btoa(JSON.stringify(this.filterValues));
             let url = "/ReportRender/Renderlink?refid=" + rptRefid + "&_params=" + params;
-            ebcontext.webform.showLoader();
+            //ebcontext.webform.showLoader();
             $("#iFramePdf4dv").attr("src", url);
+            EbMessage("show", { Message: 'Generating PDF...', AutoHide: true, Background: '#00aa55', Delay: 5000 });
             return;
         }
 
@@ -3407,22 +3408,23 @@
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (rowIds.length <= 10) {
-                let url = "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowIds[0];
-                ebcontext.webform.showLoader();
+            if (rowIds.length <= 25) {
+                let url = "/ReportRender/RenderLinkMultiSync?refId=" + rptRefid + "&rowId=" + rowIds;
+                //ebcontext.webform.showLoader();
+                EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 15000 });
                 $("#iFramePdf4dv").attr("src", url);
                 return;
             }
 
-            $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
-            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit Downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
-            ebcontext.webform.showLoader();
+            //$(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
+            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 60000 });
+            //ebcontext.webform.showLoader();
 
             let SubscriptionId = window.ebcontext.subscription_id;
             this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
             this.ss.onPdfDownloadSuccess = function (url) {
                 $("#iFramePdf4dv").attr("src", url);
-                $(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
+                //$(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
                 event.stopPropagation();
             }.bind(this);
 

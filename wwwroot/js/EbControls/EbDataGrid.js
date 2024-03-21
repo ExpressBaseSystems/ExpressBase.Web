@@ -278,11 +278,15 @@
             if (!this.canAddCtrlHtml(inpCtrl))
                 continue;
             let opt = {};
-            if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
+            if (inpCtrl.ObjType === "PowerSelect" && !inpCtrl.RenderAsSimpleSelect) {// || inpCtrl.ObjType === "DGPowerSelectColumn")
                 opt.getAllCtrlValuesFn = this.getFormVals;
+            }
             else if (inpCtrl.ObjType === "Date") {
                 opt.source = "webform";
                 opt.userObject = this.ctrl.__userObject;
+            }
+            else if (inpCtrl.ObjType === "PowerSelect" || inpCtrl.ObjType === "SimpleSelect" || inpCtrl.ObjType === "BooleanSelect") {
+                opt.parentCont = this.formRenderer.FormObj.EbSid_CtxId;
             }
 
             //let t0 = performance.now();

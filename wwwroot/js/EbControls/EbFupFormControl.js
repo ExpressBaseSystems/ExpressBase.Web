@@ -369,14 +369,14 @@
             var arr = o.FileName.split('.');
             var exten = arr[arr.length - 1];
             if (exten !== 'pdf') {
-                return `<img src="/images/file-image.png" data-src="${src}" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
+                return `<img src="/images/file-image.png" data-src="${src}" data-src2="${src}" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
             else {
-                return `<img src="/images/pdf-image.png" data-src="${src}" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
+                return `<img src="/images/pdf-image.png" data-src="${src}" data-src2="${src}" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
         }
         else {
-            return `<img data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
+            return `<img data-src="${src}" data-src2="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
         }
     }
 
@@ -956,7 +956,7 @@
         o["fold3"] = {
             "name": "Open in New Tab", icon: "fa-external-link",
             callback: function (eType, selector, action, originalEvent) {
-                let url = $(selector.$trigger).find("img").attr("data-src") || $(selector.$trigger).find("iframe").attr("src");
+                let url = $(selector.$trigger).find("img").attr("data-src2") || $(selector.$trigger).find("iframe").attr("src");
                 if ($(selector.$trigger).attr("recent") == "true") {
                     var newTab = window.open();
                     newTab.document.body.innerHTML = `<img style="max-height: 100vh;" src="${url}">`

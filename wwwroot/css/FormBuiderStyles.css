@@ -895,10 +895,15 @@ eb-disable {
     opacity: 0.6;
     cursor: pointer;
     font-weight: 400;
+    width: 24px;
+    height: 26px;
+    overflow: hidden;
+    transition: 500ms;
 }
 
     .fs-grid-cont .reset-btn:hover, .fs-grid-cont .pullback-btn:hover {
         opacity: 1;
+        width: auto;
     }
 
 .fs-grid-cont .fs-submit-cont {

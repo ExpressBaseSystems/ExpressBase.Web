@@ -75,11 +75,11 @@
             files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.Name || ctrl.EbSid][0].Columns[0].Value);
         }
 
-        if (fileType === 'image') {
+        //if (fileType === 'image') {
             $.each(ctrlOpts.DpControlsList, function (i, obj) {
                 customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
             });
-        }
+        //}
 
         let imgup = new FUPFormControl({
             Type: fileType,

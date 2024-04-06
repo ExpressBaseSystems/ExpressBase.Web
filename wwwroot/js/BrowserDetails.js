@@ -1,4 +1,4 @@
-﻿var SolutionDashBoard = function () {
+﻿var SolutionDashBoard = function (param1) {
     this.browserName = "";
     this.browserVersion;
     this.fullBrowserVersion;
@@ -61,6 +61,10 @@
 
     this.Init = function () {
         debugger;
+        if (param1 == 'all') {
+            $("#lgn-usr").show().slideDown();
+            return;
+        }
         this.getBrowserName();
         if (this.browserName == "Google Chrome") {
             this.checkBrowserVersion(80);

@@ -350,7 +350,7 @@ namespace ExpressBase.Web.Controllers
             return string.Empty;
         }
 
-        public IActionResult UsrSignIn(bool Page = true)
+        public IActionResult UsrSignIn(bool Page = true, string browser = "")
         {
             if (isAvailSolution())
             {
@@ -411,6 +411,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.ErrorMsg = TempData["ErrorMessage"];
                 ViewBag.Email = TempData["Email"];
                 ViewBag.Title = UrlHelper.GetLoginPageDescription(ViewBag.HostValue);
+                ViewBag.AllowBrowser = browser.ToLower();
                 return View();
             }
             else

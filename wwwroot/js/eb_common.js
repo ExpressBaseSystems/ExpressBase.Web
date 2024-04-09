@@ -827,7 +827,7 @@ function getValsForViz(formObj) {
             if (obj.EbDbType === 7 || obj.EbDbType === 8 || obj.EbDbType === 11)
                 value = 0;
             else if (obj.EbDbType === 16)
-                value = "0";
+                value = "";
         }
         if (obj.ObjType === "CalendarControl") {
             fltr_collection.push(new fltr_obj(obj.EbDbType, "datefrom", value.split(",")[0]));

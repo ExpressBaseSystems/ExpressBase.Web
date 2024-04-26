@@ -9,6 +9,7 @@
     Dictionary<string, List<EbObjectWrapper>> mobile_allpages = ViewBag.MobilePages;
     Dictionary<string, List<EbObjectWrapper>> All_HtmlPages = ViewBag.HtmlPages;
     Dictionary<string, List<EbObjectWrapper>> All_DataReaders = ViewBag.DataReaders;
+    Dictionary<string, List<EbObjectWrapper>> All_MatViews = ViewBag.MatViews;
     string signupFormRefid = ViewBag.signupFormRefid;
     string defaultHtmlPageRefid = ViewBag.defaultHtmlPageRefid;
     string getEmployeesDrRefid = ViewBag.getEmployeesDrRefid;
@@ -18,6 +19,8 @@
     MobileAppSettings mobile_settings = ViewBag.MobileSettings;
     EbWebFormSettings Web_settings = ViewBag.WebFormSettings;
     string CleanupQueries = ViewBag.CleanupQueries;
+    string MaterializedViewDate = ViewBag.MaterializedViewDate;
+    List<string> MaterializedViews = ViewBag.MaterializedViews ?? new List<string>();
 }
 <style>
     .switch {
@@ -155,6 +158,8 @@
 </style>
 <script src='~/js/Eb_dragula.js' type="text/javascript"></script>
 <script src="~/js/EbDashBoards/FormStyleHelper.js" type="text/javascript"></script>
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css">
 
 <div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
@@ -414,6 +419,40 @@
                 </div>
             </div>
         </div>
+
+        <div style="padding:10px 15px; width: 100%;">
+            <h5>Materialized View</h5>
+            <div style="border: 1px solid #ccc; border-radius: 6px; padding: 10px; background-color: #eee;">
+                <div style="padding: 15px 0;">
+                    <span style="padding-top:10px;">Materialized view Date:</span>
+                    <input type="text" id="txtMatViewDate" style="border: 1px solid #ccc;" value="@MaterializedViewDate">
+                </div>
+                <div>
+                    <label>Select active materialized views:</label>
+                    <div class="">
+                        @foreach (KeyValuePair<string, List<EbObjectWrapper>> pair in All_MatViews)
+                        {
+                            @foreach (EbObjectWrapper ver in pair.Value)
+                            {
+                                <div class="" style="padding: 5px 25px;">
+                                    <input class="mat-view-chkbx" type="checkbox" style="display:inline-block;" data-id="@ver.RefId" @(MaterializedViews.Contains(ver.RefId) ? "checked" : "") />
+                                    <div style="display:inline-block;"> @ver.DisplayName (@ver.VersionNumber)</div>
+                                </div>
+                                MaterializedViews.Remove(ver.RefId);
+                            }
+                        }
+                        @foreach (string st in MaterializedViews)
+                        {
+                            <div class="" style="padding: 5px 25px;">
+                                <input class="mat-view-chkbx" type="checkbox" style="display:inline-block;" data-id="@st" checked) />
+                                <div style="display:inline-block;"> @st </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="queries w-100" style="padding:10px 15px">
             <h5>Cleanup Queries</h5>
             <div class="query-container display-flex">
@@ -455,6 +494,15 @@
         containers = document.getElementById("profile_setup_pages")
         var drake = dragula([document.getElementById("profile_setup_pages")]);
         drake.off("drop").on("drop", function () { });
+
+        $("#txtMatViewDate").datetimepicker({
+            format: "Y-m-d",
+            formatTime: "h:mm A",
+            formatDate: "Y-m-d",
+            timepicker: false,
+            datepicker: true,
+            scrollInput: false
+        });
     });
 
     $("#webform-style-reset").off("click").on("click", function () {
@@ -478,6 +526,10 @@
 
         setMobileSettings();
         setSystemColumns();
+        let MatViewsArr = [];
+        $.each($('.mat-view-chkbx:checked'), function (i, o) {
+            MatViewsArr.push($(o).attr('data-id'));
+        }.bind(this));
 
         let obj = {
             SignupFormRefid: $("#signup_object").val(),
@@ -489,7 +541,9 @@
             UserTypeForms: arr,
             MobileAppSettings: MobileSettings,
             WebSettings: stylehelp.getStyleObj(),
-            SystemColumns: SystemColumns
+            SystemColumns: SystemColumns,
+            MaterializedViewDate: $("#txtMatViewDate").val(),
+            MaterializedViews: MatViewsArr
         };
         $.post("../Dev/SaveSolutionSettings",
             {

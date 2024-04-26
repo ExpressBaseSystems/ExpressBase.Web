@@ -319,10 +319,11 @@
                 src = o.FileB64;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
+            let flName = this.Options.ShowFileName ? `<p class="fnamethumb text-center">${o.FileName}</p>` : ``;
             return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
-                                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                <div class="widthfull">${flName}
                                     ${upTime}
                                      <i class="fa fa-info-circle filesave_info" data-toggle="tooltip" data-placement="bottom" title="will be saved only if form is saved " ></i>
                                 </div>
@@ -345,10 +346,11 @@
                 src = `/images/${o.FileRefId}.jpg`;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
+            let flName = this.Options.ShowFileName ? `<p class="fnamethumb text-center">${o.FileName}</p>` : ``;
             return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
-                            <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                            <div class="widthfull">${flName}
                                 ${upTime}
                                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                             </div>

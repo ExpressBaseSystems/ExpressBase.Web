@@ -99,6 +99,7 @@
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,
             ShowUploadDate: ctrl.ShowUploadDate,
+            ShowFileName: ctrl.ShowFileName,
             ViewByCategory: ctrl.ViewByCategory,
             Renderer: this.Renderer,
             ViewerPosition: ctrl.ViewerPosition

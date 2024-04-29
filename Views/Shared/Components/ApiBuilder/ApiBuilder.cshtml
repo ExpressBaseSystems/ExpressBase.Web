@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="~/css/ApiRelated/leader-line.css" asp-append-version=@bApnd />
     <link rel="stylesheet" href="~/css/ApiRelated/EbPrettyJson.css" asp-append-version=@bApnd />
     <link rel="stylesheet" href="~/css/ApiRelated/Eb_ApiAssets.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/EbSqlJob/SqlJob.css" asp-append-version=@bApnd>
 
     <script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript" asp-append-version=@bApnd></script>
     <script src="~/js/ApiBuilder/EbPrettyJson.js" type="text/javascript" asp-append-version=@bApnd></script>
@@ -78,11 +79,17 @@
                         <div eb-type="EmailRetriever" ctrname="EmailRetriever" class="resource_items draggable">
                             <div class="resource_items-inner"><i class="fa fa-envelope-o "></i>EmailRetriever</div>
                         </div>
+                        <div eb-type="Loop" ctrname="Loop" class="resource_items draggable">
+                            <div class="resource_items-inner">  <i class="fa fa-refresh"> </i> Loop</div>
+                        </div>
+                        <div eb-type="Transaction" ctrname="Transaction" class="resource_items draggable">
+                            <div class="resource_items-inner">  <i class="fa fa-undo"></i> Transaction</div>
+                        </div>
                         @*<div eb-type="Encrypt" ctrname="Encrypt" class="resource_items draggable">
-                            <div class="resource_items-inner"><i class="fa fa-lock "></i>Encrypt</div>
+                        <div class="resource_items-inner"><i class="fa fa-lock "></i>Encrypt</div>
                         </div>
                         <div eb-type="Decrypt" ctrname="Decrypt" class="resource_items draggable">
-                            <div class="resource_items-inner"><i class="fa fa-unlock "></i>Decrypt</div>
+                        <div class="resource_items-inner"><i class="fa fa-unlock "></i>Decrypt</div>
                         </div>*@
                     </div>
                 </div>
@@ -91,7 +98,6 @@
                 <div class="resource_Body" id="@("tb" + ViewBag.tabnum + "_resource_Body_drparea")">
                     <div class="apiPrcItem" id="@("tb" + ViewBag.tabnum + "_start_item")">
                         <div class="strt_circ" id="start">
-
                         </div>
                     </div>
                     <div class='apiPrcItem' eb-type='Request' id="@("tb" + ViewBag.tabnum + "_api_request")">
@@ -101,14 +107,12 @@
                     </div>
                     <div class="apiPrcItem" id="@("tb" + ViewBag.tabnum + "_end_item")">
                         <div class="stop_circ" id="stop">
-
                         </div>
                     </div>
                 </div>
             </div>
             <div class="pgContainer" id="@("tb" + ViewBag.tabnum + "_pgContainer")">
                 <div class="pgContainer_wrpr" id="@("tb" + ViewBag.tabnum + "_pgContainer_wrpr")">
-
                 </div>
             </div>
         </div>
@@ -173,7 +177,6 @@
             <i class="fa fa-close pull-right" onclick="$('@("#tb" + ViewBag.tabnum + "_api_RqFullSwrapr")').hide();"></i>
         </div>
         <div class="FS_bdy">
-
         </div>
     </div>
 
@@ -200,7 +203,6 @@
                         <div class="Custom_Param_val">
                             <Label>Value</Label>
                             <div class="CpVcdMIrror" id="@("tb" + ViewBag.tabnum + "_CpVcdMIrror")" contenteditable="true">
-
                             </div>
                         </div>
                     </div>
@@ -213,9 +215,9 @@
     </div>
 </div>
 <script>
-     if (@ViewBag.tabnum === 0) {
+    if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
-     }
+    }
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = EB_Api_entry({
         Wc: '@ViewBag.wc',
         TenantId: '@ViewBag.cid',
@@ -241,22 +243,22 @@
         }
     }
 
-    $("#tb"+@ViewBag.tabnum+"_pin_jswindow").click(function (ev) {
-        $("#tb"+@ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 10 }, 300).css("top","unset");
+    $("#tb" + @ViewBag.tabnum+"_pin_jswindow").click(function (ev) {
+        $("#tb" + @ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 10 }, 300).css("top", "unset");
         $(`#tb${@ViewBag.tabnum}_unpin_jswindow`).show();
-        $("#tb"+@ViewBag.tabnum+"_pin_jswindow").hide();
-        toggleParameterWindow(@ViewBag.tabnum,"hide");
+        $("#tb" + @ViewBag.tabnum+"_pin_jswindow").hide();
+        toggleParameterWindow(@ViewBag.tabnum, "hide");
     });
     $("#tb" + @ViewBag.tabnum + "_unpin_jswindow").click(function (ev) {
-        $("#tb"+@ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 250 }, 300).css("top", "unset");
+        $("#tb" + @ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 250 }, 300).css("top", "unset");
         $(`#tb${@ViewBag.tabnum}_unpin_jswindow`).hide();
-        $("#tb"+@ViewBag.tabnum+"_pin_jswindow").show();
-       toggleParameterWindow(@ViewBag.tabnum,"show");
+        $("#tb" + @ViewBag.tabnum+"_pin_jswindow").show();
+        toggleParameterWindow(@ViewBag.tabnum, "show");
     });
 
     $("#param_type")
 
     for (key in EbEnums.EbDbTypes) {
-        $("#tb"+@ViewBag.tabnum+"_param_type").append(`<option value='${EbEnums.EbDbTypes[key]}'>${key}</option>`);
+        $("#tb" + @ViewBag.tabnum+"_param_type").append(`<option value='${EbEnums.EbDbTypes[key]}'>${key}</option>`);
     }
 </script>

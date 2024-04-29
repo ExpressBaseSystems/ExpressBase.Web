@@ -1564,6 +1564,33 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        public string GetFRKColomns(string Refid) //first reader keycolumns for using in Apiloop
+        {
+            List<string> ColomnList = new List<string>();
+            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Refid));
+            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
+            {
+                RefId = Refid
+            });
+            var drObj = EbSerializers.Json_Deserialize(Resp.Data[0].Json) as EbDataReader;
+            drObj.AfterRedisGet(this.Redis, this.ServiceClient);
+            if (columnresp == null || columnresp.Columns.Count == 0)
+            {
+                Console.WriteLine("Column Object in Redis is null or count 0");
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = Refid, Params = (drObj.FilterDialog != null) ? drObj.FilterDialog.GetDefaultParams() : null });
+                if (columnresp == null || columnresp.Columns.Count == 0)
+                {
+                    Console.WriteLine("Column Object from SS is null or count 0");
+                    throw new Exception("Object Not found(Redis + SS)");
+                }
+            }
+            for (int i = 0; i < columnresp.Columns[0].Count; i++)
+            {
+                ColomnList.Add(columnresp.Columns[0][i].ColumnName);
+            }
+            //return EbSerializers.Json_Serialize(ColomnList);
+            return EbSerializers.Json_Serialize(columnresp.Columns[0]);
+        }
     }
 }
 

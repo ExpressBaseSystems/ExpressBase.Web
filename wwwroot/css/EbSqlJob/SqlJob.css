@@ -33,34 +33,29 @@
     border: 1px solid #dedede;
 }
 
-.sql-item-border {
+.api-item-border {
     position: relative;
     margin: 0 auto;
 }
 
-    .sql-item-border:before {
-        background: none;
-        border: 1px dashed #a5a4a4;
-        border-radius: 4px;
-        content: "";
-        display: block;
-        position: absolute;
-        top: 3.2em;
-        left: 0px;
-        right: 0px;
-        bottom: 3.2em;
-        z-index: -1;
-    }
-
-
-.SqlJobItem {
-    display: flex;
-    width: 90%;
-    margin: 0 auto;
-    justify-content: center;
+.api-item-border:before {
+    background: none;
+    border: 1px dashed #a5a4a4;
+    border-radius: 4px;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 3.2em;
+    left: 0px;
+    right: 0px;
+    bottom: 3.2em;
+    z-index: -1;
+}
+ 
+.jobItem {
     z-index: 0;
 }
-.sqljob-item-inner {
+.api-item-inner {
     width: 100%;
     display: flex;
     flex-direction: column;

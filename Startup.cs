@@ -117,11 +117,11 @@ namespace ExpressBase.Web2
             services.AddScoped<IEbServerEventClient, EbServerEventClient>(serviceProvider =>
             {
                 return new EbServerEventClient();
-            });
+            }); var redisServer = "127.0.0.1";
 
             //  StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
             string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
-            var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
+            //var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
             //if (env == "Development")
@@ -133,7 +133,7 @@ namespace ExpressBase.Web2
             //}
             //else
             //{
-            var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
+            var redisConnectionString = string.Format("redis://{0}:{1}", redisServer, redisPort);
             var redisManager = new RedisManagerPool(redisConnectionString);
             services.AddScoped<IRedisClient, IRedisClient>(serviceProvider =>
             {

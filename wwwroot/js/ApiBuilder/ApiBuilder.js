@@ -36,6 +36,9 @@ function EbApiBuild(config) {
     this.ResultData = {};
     this.Request = { Default: [], Custom: [] };
     this.Customparams = {};
+    this.drg;
+    this.OuterEl = [];
+    this.ProcIdArr = [];
 
     //jquery selectors
     var $paramWLabel = $(`#tb${this.TabNumber}_Json_reqOrRespWrp .reqLabel`);
@@ -50,7 +53,7 @@ function EbApiBuild(config) {
 
     this.DragDrop_Items = function () {
         let dritem = `tb${this.TabNumber}_draggable`;
-        var drg = dragula([document.getElementById(dritem), document.getElementById(`tb${this.TabNumber}_resource_Body_drparea`)],
+        this.drg = dragula([document.getElementById(dritem), document.getElementById(`tb${this.TabNumber}_resource_Body_drparea`)],
             {
                 copy: function (el, source) {
                     return source === document.getElementById(dritem);
@@ -59,7 +62,7 @@ function EbApiBuild(config) {
                     return target !== document.getElementById(dritem);
                 }
             });
-        drg.on("drop", this.onDropFn.bind(this));
+        this.drg.on("drop", this.onDropFn.bind(this));
     };//drag drop starting func
 
     this.onDropFn = function (el, target, source, yy) {
@@ -67,6 +70,10 @@ function EbApiBuild(config) {
             let o = this.makeElement(el);
             $(el).replaceWith(o.$Control.outerHTML());
             this.RefreshControl(o);
+
+            if ((o.Label === "Transaction" || o.Label === "Loop") && target !== null) {
+                this.drg.containers.push($(`#${o.EbSid} .Sql_Dropable`)[0]);
+            }
         }
         this.resetLinks();
     };
@@ -160,24 +167,77 @@ function EbApiBuild(config) {
         return this.reidStat;
     };//save
 
+    //this.prepareApiobject = function () {
+    //    $(`#${this.dropArea}`).find(".apiPrcItem").each(this.loopProcess.bind(this));
+    //};
+
     this.prepareApiobject = function () {
-        $(`#${this.dropArea}`).find(".apiPrcItem").each(this.loopProcess.bind(this));
+        var $elementsAll = $(`#${this.dropArea}`).find(".apiPrcItem");
+        var $FirstLevel = $elementsAll.not($elementsAll.children().find($elementsAll));
+        for (let i = 0; i < $FirstLevel.length; i++) {
+            this.OuterEl.push($FirstLevel[i].id);
+        }
+        this.loopProcess($FirstLevel, this.EbObject.Resources)
     };
 
-    this.loopProcess = function (i, o) {
-        if ([`tb${this.TabNumber}_start_item`, `tb${this.TabNumber}_end_item`, `tb${this.TabNumber}_api_request`].indexOf(o.id) < 0) {
+    //this.loopProcess = function (i, o) {
+    //    if ([`tb${this.TabNumber}_start_item`, `tb${this.TabNumber}_end_item`, `tb${this.TabNumber}_api_request`].indexOf(o.id) < 0) {
 
-            if (this.validateRefid(o.id)) {
-                this.Procs[o.id].RouteIndex = $(o).index();
-                this.EbObject.Resources.$values.push(this.Procs[o.id]);
+    //        if (this.validateRefid(o.id)) {
+    //            this.Procs[o.id].RouteIndex = $(o).index();
+    //            this.EbObject.Resources.$values.push(this.Procs[o.id]);
+    //        }
+    //        else {
+    //            this.reidStat = false;
+    //            $(o).children(".drpbox").toggleClass("refIdMsetNotfy");
+    //        }
+    //    }
+    //};
+
+    this.loopProcess = function (ele, obj) {
+        ele.each(function (i, o) {
+
+            if ([`tb${this.TabNumber}_start_item`, `tb${this.TabNumber}_end_item`, `tb${this.TabNumber}_api_request`].indexOf(o.id) < 0) {
+                if (o.getAttribute("eb-type") === "Loop" || o.getAttribute("eb-type") === "Transaction") {
+                    this.Procs[o.id].RouteIndex = $(o).index();
+                    this.LoopProcess2(o.id, this.Procs[o.id].InnerResources);
+                }
+                else if (this.validateRefid(o.id)) {
+                    this.Procs[o.id].RouteIndex = $(o).index();
+                    obj.$values.push(this.Procs[o.id]);
+
+                }
+                else {
+                    this.reidStat = false;
+                    $(o).children(".drpbox").toggleClass("refIdMsetNotfy");
+                }
             }
-            else {
-                this.reidStat = false;
-                $(o).children(".drpbox").toggleClass("refIdMsetNotfy");
-            }
+        }.bind(this));
+    }
+
+    this.LoopProcess2 = function (id, obj) {
+        this.ProcIdArr.push(id);
+        var $elementsAll = $(`#${id} .Sql_Dropable`).find(`.apiPrcItem`);
+        var inner = $elementsAll.not($elementsAll.children().find($elementsAll));
+        this.Procs[id].InnerResources.$values.length = 0;
+        this.Current_Eb_Type = this.Procs[id].$type.split(",")[0].split(".").pop().substring(2);
+        this.loopProcess(inner, this.Procs[id].InnerResources);
+        if (this.OuterEl.includes(id)) {
+            this.addToProcsLoop();
         }
     };
 
+    this.addToProcsLoop = function () {
+        for (let k = this.ProcIdArr.length - 1; k >= 0; k--) {
+            if (this.OuterEl.includes(this.ProcIdArr[k])) {
+                this.EbObject.Resources.$values.push(this.Procs[this.ProcIdArr[k]]);
+            }
+            else {
+                this.Procs[this.ProcIdArr[k - 1]].InnerResources.$values.push(this.Procs[this.ProcIdArr[k]])
+            }
+        }
+        this.ProcIdArr = [];
+    };
     this.validateRefid = function (id) {
         if ('Reference' in this.Procs[id]) {
             if (this.Procs[id].Reference === "" || this.Procs[id].Reference === null)
@@ -189,12 +249,22 @@ function EbApiBuild(config) {
             return true;
     };
 
-    this.pg.PropertyChanged = function (obj, pname) {
+    this.pg.PropertyChanged = function (obj, pname, newval, oldval) {
         if (pname === "Reference" && obj.Reference !== "" && obj.Reference !== null) {
             $("#" + obj.EbSid).children(".drpbox").removeClass("refIdMsetNotfy");
+
+            if ($(`#${this.dropArea} [eb-type="SqlReader"]`)[0].id === obj.$Control[0].id && $(`#${this.dropArea} [eb-type="Loop"]`).length > 0) {
+                $.post("../Api/GetFRKColomns", { Refid: newval }, this.AppendFRColomns.bind(this));
+            }
+
             this.getComponent(obj);
         }
     }.bind(this);
+
+    this.AppendFRColomns = function (data) {
+        this.EbObject.FirstReaderKeyColumnsColl = JSON.parse(data);
+        this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
+    };
 
     this.getComponent = function (obj) {
         if (obj.Reference) {
@@ -275,16 +345,27 @@ function EbApiBuild(config) {
         }
     }
 
-    this.drawProcsEmode = function () {
-        var o = this.EditObj.Resources.$values;
+    this.drawProcsEmode = function (o, cont, isInnerLoop) {
         for (let i = 0; i < o.length; i++) {
             var ebtype = o[i].$type.split(",")[0].split(".").pop().substring(2);
             var id = "tb" + this.TabNumber + ebtype + CtrlCounters[ebtype + "Counter"]++;
             var obj = new EbObjects["Eb" + ebtype](id);
             $.extend(obj, o[i]);
-            $(`#${this.dropArea} #tb${this.TabNumber}_end_item`).before(obj.$Control.outerHTML());
             this.Procs[id] = obj;
+
+            if (isInnerLoop) {
+                cont.append(obj.$Control.outerHTML());
+            }
+            else {
+                ($(`${cont} #tb${this.TabNumber}_end_item`)).before(obj.$Control.outerHTML());
+            }
+
             this.RefreshControl(this.Procs[id]);
+
+            if ((this.Procs[id].Label === "Transaction" || this.Procs[id].Label === "Loop")) {
+                this.drg.containers.push($(`#${this.Procs[id].EbSid} .Sql_Dropable`)[0]);
+                this.drawProcsEmode(this.Procs[id].InnerResources.$values, $($(`#${this.Procs[id].EbSid} .Sql_Dropable`)[0]), true);
+            }
         }
     };
 
@@ -296,6 +377,7 @@ function EbApiBuild(config) {
     };
 
     this.newApi = function () {
+        this.EbObject = new EbObjects["EbApi"]("tb" + this.TabNumber + "Api");
         this.EbObject = new EbObjects["EbApi"]("tb" + this.TabNumber + "Api");
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
         //this.setLine('start', 'stop');
@@ -310,7 +392,11 @@ function EbApiBuild(config) {
         }
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
         this.EbObject.Resources.$values.length = 0;
-        this.drawProcsEmode();
+
+        var o = this.EditObj.Resources.$values;
+        let cont = `#${this.dropArea}`;
+        this.drawProcsEmode(o, cont, false);
+
         this.resetLinks();
         this.setRequestW(this.EbObject.Request.Default.$values);
         this.setRequestW(this.EbObject.Request.Custom.$values, 'custom');
@@ -463,11 +549,11 @@ function EbApiBuild(config) {
 
     this.start = function () {
         this.setBtns();
+        this.DragDrop_Items();
         if (this.EditObj === null || this.EditObj === undefined)
             this.newApi();
         else
             this.editApi();
-        this.DragDrop_Items();
         this.ApiMenu = new ApiMenu(this);
 
         $(`#tb${this.TabNumber}_Json_reqOrRespWrp`).resizable({

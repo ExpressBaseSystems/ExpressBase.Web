@@ -594,12 +594,13 @@ var EbMenu = function (option) {
             $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
 
             if (this.login === "uc") {
-                $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
-                $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+                $("#ebm-objectcontainer").off("click", ".btn-setfav").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
+                $("#ebm-objectcontainer").off("click", ".favourited").on("click", ".favourited", this.removeFavorite.bind(this));
             }
+            $("#ebm-objectcontainer").off("click", ".btn-new-tab").on("click", ".btn-new-tab", this.openInNewTab.bind(this));
         }
         //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
-        $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
+        $("#ebm-overlayfade").off("click").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
     };
 
     this.reset = function () {
@@ -632,6 +633,9 @@ var EbMenu = function (option) {
 
             if (ebcontext.locations && ebcontext.locations.hasOwnProperty('close')) {
                 ebcontext.locations.close();
+            }
+            if (ebcontext.finyears && ebcontext.finyears.hasOwnProperty('close')) {
+                ebcontext.finyears.close();
             }
 
             $("#ebm-overlayfade").show();
@@ -768,33 +772,36 @@ var EbMenu = function (option) {
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}
+                                                        <button class="btn-new-tab" title="Open in new tab">
+                                                            <i class="fa fa-external-link"></i>
+                                                        </button>
                                                   </div>`);
     };
 
     this.decideUrl = function (_obj) {
-        var _url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
+        var _url = `/Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
         if (this.login === "uc") {
             if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "MapView" || _obj.EbType === "OpenStreetMap") {
-                _url = "../DV/dv?refid=" + _obj.Refid;
+                _url = "/DV/dv?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "Report") {
-                _url = "../ReportRender/Index?refid=" + _obj.Refid;
+                _url = "/ReportRender/Index?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "WebForm") {
-                _url = "../WebForm/Index?_r=" + _obj.Refid;
+                _url = "/WebForm/Index?_r=" + _obj.Refid;
             }
             else if (_obj.EbType === "DashBoard") {
-                _url = "../DashBoard/DashBoardView?refid=" + _obj.Refid;
+                _url = "/DashBoard/DashBoardView?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "CalendarView") {
-                _url = "../Calendar/CalendarView?refid=" + _obj.Refid;
+                _url = "/Calendar/CalendarView?refid=" + _obj.Refid;
             }
         }
 
         if (ebcontext.languages != undefined) {
-            let _locale = ebcontext.languages.getCurrentLocale();
-            if (_locale != 0 && _locale != undefined)
-                _url = _url + "&_lo=" + _locale
+            let _l = ebcontext.languages.getCurrentLanguageCode();
+            if (_l)
+                _url = _url + "&_lg=" + _l;
         }
         return _url;
     };
@@ -918,6 +925,12 @@ var EbMenu = function (option) {
         }.bind(this));
     };
 
+    this.openInNewTab = function (e) {
+        let url = $(e.target).closest('.obj-item').find('a').attr('href');
+        if (url)
+            window.open(url, '_blank');
+    };
+
     this.showfavourites = function (e) {
         this.active($(e.target));
         {
@@ -975,6 +988,9 @@ var EbMenu = function (option) {
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}
+                                                        <button class="btn-new-tab" title="Open in new tab">
+                                                            <i class="fa fa-external-link"></i>
+                                                        </button>
                                                   </div>`);
 
         let len = $(`#ebm-objectcontainer #ctypeContaner${_obj.EbObjectType}`).find(".obj-item").length;
@@ -1054,7 +1070,7 @@ class Setup {
         $.extend(this.option, option);
         this.initContainers_DomEvents();
         this.initServerEvents();
-        this.getNotifications();
+        //this.getNotifications();
         //this.userNotification();aler
         this.modal = new EbCommonModal();
     }
@@ -1083,6 +1099,7 @@ class Setup {
 
     toggleNFWindow() {
         if (!this.nf_window.is(":visible")) {
+            this.getNotifications();
             this.nf_fade.show();
             this.nf_window.show("slide", { direction: 'right' });
         }
@@ -1112,6 +1129,7 @@ class Setup {
     }
 
     getNotifications() {
+        this.nf_container.html(`<p class="nf-window-eptylbl" style="margin:auto;"><i class="fa fa-spinner fa-pulse"></i> Loading...</p>`);
         $.ajax({
             type: "GET",
             url: "../Notifications/GetNotifications",

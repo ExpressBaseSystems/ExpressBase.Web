@@ -8,7 +8,8 @@ function EB_SqlJob_entry(option) {
 
     if (this.validate()) {
         if (window.SqlJob === null || window.SqlJob === undefined) {
-            window.SqlJob = {};}
+            window.SqlJob = {};
+        }
         window.SqlJob["Tab" + this.Config.TabNum] = {};
         window.SqlJob["Tab" + this.Config.TabNum].Creator = new EbSqlJob(this.Config);
         return window.SqlJob["Tab" + this.Config.TabNum].Creator;
@@ -65,18 +66,18 @@ function EbSqlJob(options) {
             }
             this.getComponent(obj);
         }
-         if (pname === "Filter_Dialogue") {
+        if (pname === "Filter_Dialogue") {
             $.post("../SqlJob/AppendPKColomns", { Refid: newval }, this.AppendPKColomns.bind(this));
         }
-         if (pname === "Pusher") {
+        if (pname === "Pusher") {
             $.post("../WebForm/GetDataPusherJson",
-                { RefId: newval }, 
-                this.SetPusherJson.bind(this,obj)
+                { RefId: newval },
+                this.SetPusherJson.bind(this, obj)
             );
         }
     }.bind(this);
 
-    this.SetPusherJson = function (obj,data) {
+    this.SetPusherJson = function (obj, data) {
         obj.PushJson = data;
         this.pg.refresh();
     };
@@ -138,7 +139,7 @@ function EbSqlJob(options) {
         //$(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonReq_CMW .table tbody`).append(html.join(""));
     };
 
-    this.GenerateButtons = function () {};
+    this.GenerateButtons = function () { };
 
     this.newSqlJob = function () {
         this.EbObject = new EbObjects["EbSqlJob"]("SqlJob" + Date.now().toString(36));
@@ -164,12 +165,14 @@ function EbSqlJob(options) {
         //this.Request.Default = this.EbObject.Request.Default.$values;
         //this.Request.Custom = this.EbObject.Request.Custom.$values;
     };
+
     this.drawSqlObj = function () {
         var o = this.EditObj.Resources.$values;
         let cont = $(`#${this.dropArea}`);
-        this.drawProcsEmode(o , cont);
-    }
-    this.drawProcsEmode = function (o , cont) {
+        this.drawProcsEmode(o, cont);
+    };
+
+    this.drawProcsEmode = function (o, cont) {
         for (let i = 0; i < o.length; i++) {
             var ebtype = o[i].$type.split(",")[0].split(".").pop().substring(2);
             var id = "tb" + this.conf.TabNum + ebtype + CtrlCounters[ebtype + "Counter"]++;
@@ -187,12 +190,12 @@ function EbSqlJob(options) {
         }
     };
 
-    this.drawProcInnerMode = function (obj, ext, ebtype, cont ) {
+    this.drawProcInnerMode = function (obj, ext, ebtype, cont) {
 
         if (ebtype === "Transaction" || ebtype === "Loop") {
             var o = obj.InnerResources.$values;
             let cont = $(`#${this.dropArea} #${obj.EbSid} .Sql_Dropable`);
-            this.drawProcsEmode(o , cont);
+            this.drawProcsEmode(o, cont);
         }
     }
 
@@ -351,21 +354,23 @@ function EbSqlJob(options) {
         }
         this.loopProcess($FirstLevel, this.EbObject.Resources)
     }
-    this.loopProcess = function (ele, obj ) {
 
+    this.loopProcess = function (ele, obj) {
         ele.each(function (i, o) {
-            if (o.getAttribute("eb-type") === "Loop" || o.getAttribute("eb-type") === "Transaction") {
-                this.Procs[o.id].RouteIndex = $(o).index();
-                this.LoopProcess2(o.id, this.Procs[o.id].InnerResources);
-            }
-            else if (o.id) {
-                this.Procs[o.id].RouteIndex = $(o).index();
-                obj.$values.push(this.Procs[o.id]);
+            if ([`tb${this.TabNumber}_start_item`, `tb${this.TabNumber}_end_item`, `tb${this.TabNumber}_api_request`].indexOf(o.id) < 0) {
+                if (o.getAttribute("eb-type") === "Loop" || o.getAttribute("eb-type") === "Transaction") {
+                    this.Procs[o.id].RouteIndex = $(o).index();
+                    this.LoopProcess2(o.id, this.Procs[o.id].InnerResources);
+                }
+                else if (o.id) {
+                    this.Procs[o.id].RouteIndex = $(o).index();
+                    obj.$values.push(this.Procs[o.id]);
 
-            }
-            else {
-                this.reidStat = false;
-                $(o).children(".drpbox").toggleClass("refIdMsetNotfy");
+                }
+                else {
+                    this.reidStat = false;
+                    $(o).children(".drpbox").toggleClass("refIdMsetNotfy");
+                }
             }
         }.bind(this));
 
@@ -382,6 +387,7 @@ function EbSqlJob(options) {
             this.addToProcsLoop();
         }
     };
+
     this.addToProcsLoop = function () {
         for (let k = this.ProcIdArr.length - 1; k >= 0; k--) {
             if (this.OuterEl.includes(this.ProcIdArr[k])) {

@@ -63,7 +63,7 @@ var RptBuilder = function (option) {
         var NewHtml = obj.$Control.outerHTML();
 
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
-        
+
         if (pname && metas && !metas.find(m => m.name === pname)?.IsUIproperty) { return; }
 
         $.each(metas, function (i, meta) {
@@ -76,7 +76,7 @@ var RptBuilder = function (option) {
         $("#" + obj.EbSid).replaceWith(NewHtml);
 
         if ('Font' in obj) { this.repExtern.setFontProp(obj); }
-            
+
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
                 cursor: "crosshair", containment: this.containment, appendTo: "body", zIndex: 100,
@@ -98,9 +98,9 @@ var RptBuilder = function (option) {
         $("#" + obj.EbSid).not(".locked").off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
 
-    this.getSectionDroppableItems = function () {
-
-    }
+    this.getType = function (assembly) {
+        return assembly.split(",")[0].split(".")[2];
+    };
 
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
@@ -401,8 +401,9 @@ var RptBuilder = function (option) {
         var l1 = this.leftwithMargin();
         var top = this.getPositionTop();
         this.dropLoc.append(this.col.css({ left: l1, top: top }));
-        obj1.Top = this.col.position().top;
-        obj1.Left = this.col.position().left;
+        const position = this.getPosition(this.col);
+        obj1.Top = position.top;
+        obj1.Left = position.left;
         obj1.Width = this.col.innerWidth();
         obj1.Height = this.col.innerHeight();
         obj1.ParentName = this.dropLoc.attr("eb-type");
@@ -535,6 +536,15 @@ var RptBuilder = function (option) {
                                 <div class='guid-hb' id='guid-hb'></div>`);
     };//drag stop fn of control
 
+    this.getPosition = function ($element) {
+        const left = $element.css('left').toLowerCase().replace('px', '');
+        const top = $element.css('top').toLowerCase().replace('px', '');
+        return {
+            left: parseFloat(left),
+            top: parseFloat(top)
+        }
+    }
+
     this.CreateRelationString = function () { };
 
     this.BeforeSave = function () {
@@ -593,10 +603,13 @@ var RptBuilder = function (option) {
     };
 
     this.updateCntrolDimension = function (elemId) {
-        this.objCollection[elemId].Width = $(`#${elemId}`).width();
-        this.objCollection[elemId].Height = $(`#${elemId}`).height();
-        this.objCollection[elemId].Left = $(`#${elemId}`).position().left;
-        this.objCollection[elemId].Top = $(`#${elemId}`).position().top;
+        const $element = $(`#${elemId}`);
+        const positions = this.getPosition($element);
+
+        this.objCollection[elemId].Width = $element.width();
+        this.objCollection[elemId].Height = $element.height();
+        this.objCollection[elemId].Left = positions.left;
+        this.objCollection[elemId].Top = positions.top;
     };
 
     this.pushToSections = function ($elements, index, eb_typeCntl, section) {
@@ -839,9 +852,6 @@ var RptBuilder = function (option) {
 
     this.init();
 };
-
-
-
 var ReportExtended = function (Rpt_obj) {
     this.Rpt = Rpt_obj;
     this.sideBar = $("#side-toolbar");

@@ -1450,8 +1450,10 @@
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
-            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
-            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
+            if (this.Source != "WebForm") {
+                $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
+                $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
+            }
             if (!this.IsTree && this.showFilterRow && !this.EbObject.IsDataFromApi) {
 
                 this.createFilterRowHeader();
@@ -2809,7 +2811,7 @@
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
         //this.printAllbtn.off("click").on("click", this.printAll.bind(this));
         this.printSelectedbtn.off("click").on("click", this.printSelected.bind(this));
-        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcel.bind(this));
+        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcelSync.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         //$("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
@@ -3372,11 +3374,17 @@
                 $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" data-params="${obj.UseParams}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
             }.bind(this));
 
-            $(`#PrintDocsdd${this.tableId}`).off(".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
+            $(`#PrintDocsdd${this.tableId}`).off("click", ".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
         }
     };
 
     this.printDocument = function (e) {
+
+        if (this.pdfDownloadBtnClicked)
+            return;
+        this.pdfDownloadBtnClicked = true;
+        setTimeout(function () { this.pdfDownloadBtnClicked = false; }.bind(this), 2000);
+
         if (!ebcontext.webform) {
             ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
         }
@@ -3387,8 +3395,9 @@
         if (useParams == 'true') {
             let params = btoa(JSON.stringify(this.filterValues));
             let url = "/ReportRender/Renderlink?refid=" + rptRefid + "&_params=" + params;
-            ebcontext.webform.showLoader();
+            //ebcontext.webform.showLoader();
             $("#iFramePdf4dv").attr("src", url);
+            EbMessage("show", { Message: 'Generating PDF...', AutoHide: true, Background: '#00aa55', Delay: 5000 });
             return;
         }
 
@@ -3399,22 +3408,23 @@
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (rowIds.length == 1) {
-                let url = "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowIds[0];
-                ebcontext.webform.showLoader();
+            if (rowIds.length <= 25) {
+                let url = "/ReportRender/RenderLinkMultiSync?refId=" + rptRefid + "&rowId=" + rowIds;
+                //ebcontext.webform.showLoader();
+                EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 30000 });
                 $("#iFramePdf4dv").attr("src", url);
                 return;
             }
 
-            $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
-            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit Downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
-            ebcontext.webform.showLoader();
+            //$(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
+            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 60000 });
+            //ebcontext.webform.showLoader();
 
             let SubscriptionId = window.ebcontext.subscription_id;
             this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
             this.ss.onPdfDownloadSuccess = function (url) {
                 $("#iFramePdf4dv").attr("src", url);
-                $(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
+                //$(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
                 event.stopPropagation();
             }.bind(this);
 
@@ -4768,6 +4778,44 @@
             type: "POST",
             url: "../DV/exportToexcel",
             data: { req: ob }
+        });
+    };
+
+    this.ExportToExcelSync = function (e) {
+        if (this.excelDownloadBtnClicked)
+            return;
+        this.excelDownloadBtnClicked = true;
+        EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 30000 });
+        this.excelbtn.prop("disabled", true);
+        this.RemoveColumnRef();
+        var ob = new Object();
+        ob.dvRefId = this.EbObject.RefId;
+        ob.Params = this.filterValues;
+        ob.TFilters = this.columnSearch;
+
+        $.ajax({
+            type: "POST",
+            url: "../DV/exportToexcelSync",
+            data: { req: ob },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.excelDownloadBtnClicked = false;
+                this.excelbtn.prop("disabled", false);
+                EbMessage("show", { Message: `Something Unexpected Occurred when tried to download`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+            }.bind(this),
+            success: function (res, msg) {
+                this.excelDownloadBtnClicked = false;
+                this.excelbtn.prop("disabled", false);
+                if (res.item1 == -1) {
+                    EbMessage("show", { Message: `Internal server error: ${res.item2}`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+                }
+                else if (res.item1 == 0) {
+                    EbMessage("show", { Message: `Internal server error. Please try again later.`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+                }
+                else {
+                    EbMessage("show", { Message: 'Excel file being downloaded...', AutoHide: true, Background: '#0055aa', Delay: 3000 });
+                    window.location.href = res.item2;
+                }
+            }.bind(this)
         });
     };
 

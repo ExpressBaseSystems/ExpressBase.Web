@@ -319,10 +319,11 @@
                 src = o.FileB64;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
+            let flName = this.Options.ShowFileName ? `<p class="fnamethumb text-center">${o.FileName}</p>` : ``;
             return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}" recent=true>
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
-                                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                                <div class="widthfull">${flName}
                                     ${upTime}
                                      <i class="fa fa-info-circle filesave_info" data-toggle="tooltip" data-placement="bottom" title="will be saved only if form is saved " ></i>
                                 </div>
@@ -345,10 +346,11 @@
                 src = `/images/${o.FileRefId}.jpg`;
             }
             let upTime = this.Options.ShowUploadDate ? ` <div class="upload-time">${o.UploadTime}</div>` : "<div></div>";
+            let flName = this.Options.ShowFileName ? `<p class="fnamethumb text-center">${o.FileName}</p>` : ``;
             return (`<div class="eb_uplGal_thumbO ${this.Options.Container}_preview ${this.Options.Container}_eb_Gal_thumb" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                         <div class="eb_uplGal_thumbO_img">
                             ${this.getThumbType(o, src)}
-                            <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
+                            <div class="widthfull">${flName}
                                 ${upTime}
                                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                             </div>
@@ -369,14 +371,14 @@
             var arr = o.FileName.split('.');
             var exten = arr[arr.length - 1];
             if (exten !== 'pdf') {
-                return `<img src="/images/file-image.png" data-src="${src}" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
+                return `<img src="/images/file-image.png" data-src="${src}" data-src2="${src}" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
             else {
-                return `<img src="/images/pdf-image.png" data-src="${src}" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
+                return `<img src="/images/pdf-image.png" data-src="${src}" data-src2="${src}" class="EbFupThumbLzy" style="display: block;" alt='pdf' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
         }
         else {
-            return `<img data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
+            return `<img data-src="${src}" data-src2="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
         }
     }
 
@@ -956,7 +958,7 @@
         o["fold3"] = {
             "name": "Open in New Tab", icon: "fa-external-link",
             callback: function (eType, selector, action, originalEvent) {
-                let url = $(selector.$trigger).find("img").attr("data-src") || $(selector.$trigger).find("iframe").attr("src");
+                let url = $(selector.$trigger).find("img").attr("data-src2") || $(selector.$trigger).find("iframe").attr("src");
                 if ($(selector.$trigger).attr("recent") == "true") {
                     var newTab = window.open();
                     newTab.document.body.innerHTML = `<img style="max-height: 100vh;" src="${url}">`

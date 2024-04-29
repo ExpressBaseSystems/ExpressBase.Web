@@ -2795,18 +2795,21 @@ const WebFormRender = function (option) {
             $sel.append(`<option data-token="${this.formRefId}" data-title="${this.FormObj.DisplayName}">${this.FormObj.DisplayName}</option>`);
         }
         $sel.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
-        this.$newSelBtn.off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", function (e) {
-            let refid = $(e.currentTarget).closest('.btn-select').find(`.selectpicker option:selected`).attr("data-token");
-            if (refid == this.formRefId) {
-                this.startNewMode();
-            }
-            else {
-                let _l = ebcontext.languages.getCurrentLanguageCode();
-                url = `../WebForm/Index?_r=${refid}&_m=2&_l=${this.getLocId()}&_lg=${_l}`;
-                window.open(url, '_blank');
-            }
-        }.bind(this));
+        this.$newSelBtn.off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.newBtnClickListener);
+        this.$newBtn.off("click").on("click", this.newBtnClickListener);
     };
+
+    this.newBtnClickListener = function (e) {
+        let refid = $(e.currentTarget).closest('.btn-select').find(`.selectpicker option:selected`).attr("data-token");
+        if (refid == this.formRefId) {
+            this.startNewMode();
+        }
+        else {
+            let _l = ebcontext.languages.getCurrentLanguageCode();
+            url = `../WebForm/Index?_r=${refid}&_m=2&_l=${this.getLocId()}&_lg=${_l}`;
+            window.open(url, '_blank');
+        }
+    }.bind(this);
 
     this.initSaveMenu = function () {
         let $sel = $(`#${this.hBtns['SaveSel']} .selectpicker`);
@@ -2938,7 +2941,6 @@ const WebFormRender = function (option) {
         this.$editBtn = $('#' + this.hBtns['Edit']);
         this.$saveBtn = $('#' + this.hBtns['Save']);
 
-        this.$newBtn.off("click").on("click", this.startNewMode.bind(this));
         this.$editBtn.off("click").on("click", this.SwitchToEditMode.bind(this));
         this.$saveBtn.off("click").on("click", this.saveForm.bind(this));
 
@@ -3298,7 +3300,7 @@ const WebFormRender = function (option) {
             return;
         if (options.IsDGCtrl) {
             $btn.removeAttr("disabled");
-            $btn.on('click', this.PsAddBtnClicked.bind(this, $btn, options));
+            $btn.off('click').on('click', this.PsAddBtnClicked.bind(this, $btn, options));
         }
     }.bind(this);
 
@@ -3332,11 +3334,20 @@ const WebFormRender = function (option) {
             window.open(url, '_blank');
         }
         else {
+            let clBkFn = null;
+            if (options.PsJsObj) {
+                clBkFn = function (id) {
+                    this.data = undefined;
+                    this.DDrefresh();
+                    this.ComboObj.setValue(id);
+                }.bind(options.PsJsObj);
+            }
             ebcontext.webform.PopupForm(ctrl.FormRefId, btoa(JSON.stringify(_params)), _mode,
                 {
                     srcCxt: this.__MultiRenderCxt,
                     initiator: options,
-                    locId: this.getLocId()
+                    locId: this.getLocId(),
+                    Callback: clBkFn
                 });
         }
     };

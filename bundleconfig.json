@@ -58,12 +58,15 @@
     }
   },
   {
-    "outputFileName": "wwwroot/css/Bundles/eb-plugins.bundle.min.css",
+    "outputFileName": "wwwroot/css/Bundles/eb-plugins.bundle.css",
     "inputFiles": [
       "wwwroot/css/EbControls/EbFileUpload.css",
       "wwwroot/css/EbControls/EbDialogBox.css",
       "wwwroot/css/EbControls/eb-walkthrough.css"
-    ]
+    ],
+    "minify": {
+      "enabled": false
+    }
   },
   {
     "outputFileName": "wwwroot/js/Bundles/eb-plugins.bundle.js",

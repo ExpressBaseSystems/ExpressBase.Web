@@ -18,41 +18,41 @@
 
 <div class="row s-dash-container h-100">
     @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-            <div class="t-container">
-                <ul class="list-group eb-dashbord-sidebar">
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Security/CommonList?type=Users">
-                            <span class="material-icons t__sidebar_icon">person</span>
-                            <span class="t__sidebar_text">Users</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Security/CommonList?type=UserGroups">
-                            <span class="material-icons t__sidebar_icon">group</span>
-                            <span class="t__sidebar_text">UserGroups</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Security/CommonList?type=Roles">
-                            <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
-                            <span class="t__sidebar_text">Roles</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Wiki">
-                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                            <span class="t__sidebar_text">Wiki</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a">
-                            <span class="material-icons t__sidebar_icon">contact_support</span>
-                            <span class="t__sidebar_text">Support</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>*@
+    <div class="t-container">
+    <ul class="list-group eb-dashbord-sidebar">
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Security/CommonList?type=Users">
+    <span class="material-icons t__sidebar_icon">person</span>
+    <span class="t__sidebar_text">Users</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Security/CommonList?type=UserGroups">
+    <span class="material-icons t__sidebar_icon">group</span>
+    <span class="t__sidebar_text">UserGroups</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Security/CommonList?type=Roles">
+    <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
+    <span class="t__sidebar_text">Roles</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a" href="/Wiki">
+    <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+    <span class="t__sidebar_text">Wiki</span>
+    </a>
+    </li>
+    <li class="list-group-item outer_li text-center">
+    <a class="t_a">
+    <span class="material-icons t__sidebar_icon">contact_support</span>
+    <span class="t__sidebar_text">Support</span>
+    </a>
+    </li>
+    </ul>
+    </div>
+    </div>*@
     <div class="s-dash-workplace tenant_workpane h-100">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 col-lg-7 col-sm-7 col-xs-12 pd-0">
@@ -83,10 +83,16 @@
             </div>
             <div class="col-md-5 col-lg-5 col-sm-5 col-xs-12 pd-0 s-dash-btnwraper">
                 @*<div class="input-group eb-search-box" style="margin-left: 15px;">
-                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                        <input type="text" id="txtSrchCmnList" class="form-control" placeholder="Search...">
-                    </div>*@
+                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                <input type="text" id="txtSrchCmnList" class="form-control" placeholder="Search...">
+                </div>*@
                 <button class="ebbtn eb_btnblue eb_btn-sm new_sol_lk" id="btnNewCmnList">New</button>
+                @if (ViewBag.ProvUserFormName != null)
+                {
+                    <button class="ebbtn eb_btngreen eb_btn-sm new_sol_lk" id="btnNewUserCmnList" data-id="@ViewBag.ProvUserFormRefid" style="margin-right: 5px;" onclick="window.open('/WebForm/Index?_r=' + '@ViewBag.ProvUserFormRefid' + '&_m=2', '_blank')">
+                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; @ViewBag.ProvUserFormName
+                    </button>
+                }
             </div>
         </div>
         <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
@@ -216,44 +222,44 @@
     </div>
 </div>
 <script>
-        $(document).ready(function () {
-            var mnuBarObj = new EbHeader();
-            if ("@ViewBag.ListType" === "users") {
-                mnuBarObj.setName("Users");
-                document.title = "Users";
-                //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
-                var _metadata = [9, "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Location", "User_Type", "Status", "_user"];//"_profPic"
-                if ('@ViewBag.DisableNewUser' === 'true')
-                    _metadata.push('_disableNewUser');
-                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
-                $($(".eb-dashbord-sidebar").children()[0]).hide();
-            }
-            else if ("@ViewBag.ListType" === "anonymoususers") {
-                mnuBarObj.setName("Anonymous Users");
-                document.title = "Anonymous Users";
-                var _metadata = [8, "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic"];
-                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
-            }
-            else if ("@ViewBag.ListType" === "usergroups") {
-                mnuBarObj.setName("User Groups");
-                document.title = "User Groups";
-                var _metadata = [3, "Id", "Name", "Description", "_userGroup"];
-                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
-                $($(".eb-dashbord-sidebar").children()[1]).hide();
-            }
-            else if ("@ViewBag.ListType" === "roles") {
-                mnuBarObj.setName("Roles");
-                document.title = "Roles";
-                //mnuBarObj.BuildMenu(`<button class='btn' title='New' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i></button>`);
-                var _metadata = [7, "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
-                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
-                $($(".eb-dashbord-sidebar").children()[2]).hide();
-            }
-            else if ("@ViewBag.ListType" === "usertypes") {
-                mnuBarObj.setName("User Types");
-                document.title = "User Types";
-                var _metadata = [2, "Id", "Name","_userTypes"];
-                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
-            }
+    $(document).ready(function () {
+        var mnuBarObj = new EbHeader();
+        if ("@ViewBag.ListType" === "users") {
+            mnuBarObj.setName("Users");
+            document.title = "Users";
+            //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
+            var _metadata = [9, "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Location", "User_Type", "Status", "_user"];//"_profPic"
+            if ('@ViewBag.DisableNewUser' === 'true')
+                _metadata.push('_disableNewUser');
+            var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
+            $($(".eb-dashbord-sidebar").children()[0]).hide();
+        }
+        else if ("@ViewBag.ListType" === "anonymoususers") {
+            mnuBarObj.setName("Anonymous Users");
+            document.title = "Anonymous Users";
+            var _metadata = [8, "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic"];
+            var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
+        }
+        else if ("@ViewBag.ListType" === "usergroups") {
+            mnuBarObj.setName("User Groups");
+            document.title = "User Groups";
+            var _metadata = [3, "Id", "Name", "Description", "_userGroup"];
+            var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
+            $($(".eb-dashbord-sidebar").children()[1]).hide();
+        }
+        else if ("@ViewBag.ListType" === "roles") {
+            mnuBarObj.setName("Roles");
+            document.title = "Roles";
+            //mnuBarObj.BuildMenu(`<button class='btn' title='New' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i></button>`);
+            var _metadata = [7, "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
+            var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
+            $($(".eb-dashbord-sidebar").children()[2]).hide();
+        }
+        else if ("@ViewBag.ListType" === "usertypes") {
+            mnuBarObj.setName("User Types");
+            document.title = "User Types";
+            var _metadata = [2, "Id", "Name", "_userTypes"];
+            var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
+        }
     });
 </script>

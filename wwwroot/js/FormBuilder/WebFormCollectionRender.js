@@ -19,6 +19,7 @@ const WebFormCollectionRender = function (Option) {
     this.CurrentSubForm = null;//critical - must updated on each event
     this.LastResponse = {};//for debugging
     this.InterContextObj = [];//inter form communication (eg: export btn save -> tv refresh)
+    this.PopupLoading = false;
 
     this.Init = function (Op) {
         if (Op === null) return;
@@ -39,7 +40,8 @@ const WebFormCollectionRender = function (Option) {
                 formObj: JsonCached ? JSON.stringify(this.TryEval(Op._formRefId)) : Op._formObj,
                 formRefId: Op._formRefId,
                 formHTML: Op._formHTML,
-                formPermissions: Op._formPermissions
+                formPermissions: Op._formPermissions,
+                relatedData: Op._relatedData
             };
             this.ObjectCollection.push(_obj);
             this.IsMasterAvail = true;
@@ -130,10 +132,13 @@ const WebFormCollectionRender = function (Option) {
             console.error('Invalid refId for popup form');
             return;
         }
+        if (this.PopupLoading)
+            return;
+        this.PopupLoading = true;
+        this.showSubFormLoader();
         let randomizeId = this.RenderCollection.findIndex(e => e.formRefId === refId) >= 0;
         let dataOnly = (this.ObjectCollection.findIndex(e => e.formRefId === refId) >= 0 || this.TryEval(refId) != null) && !randomizeId;
 
-        this.showSubFormLoader();
         $.ajax({
             type: "POST",
             url: "/WebForm/GetFormForRendering",
@@ -147,6 +152,7 @@ const WebFormCollectionRender = function (Option) {
                 _randomizeId: randomizeId
             },
             error: function (xhr, ajaxOptions, thrownError) {
+                this.PopupLoading = false;
                 this.hideSubFormLoader();
                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
             }.bind(this),
@@ -155,13 +161,13 @@ const WebFormCollectionRender = function (Option) {
     };
 
     this.GetFormForRenderingSuccess = function (dataOnly, randomizeId, options, result) {
-        this.hideSubFormLoader();
         let resp = JSON.parse(result);
         this.LastResponse = resp;
-
         if (resp.ErrorMessage) {
             console.error(resp.ErrorMessage);
             EbMessage("show", { Message: resp.Message, AutoHide: true, Background: '#aa0000' });
+            this.PopupLoading = false;
+            this.hideSubFormLoader();
             return;
         }
         if (!dataOnly && resp.WebFormObjJsUrl) {
@@ -173,6 +179,8 @@ const WebFormCollectionRender = function (Option) {
     };
 
     this.GetFormForRenderingSuccess_inner = function (resp, dataOnly, randomizeId, options, result) {
+        this.PopupLoading = false;
+        this.hideSubFormLoader();
         let _obj;
         if (!dataOnly) {
             let FormJson;
@@ -193,7 +201,8 @@ const WebFormCollectionRender = function (Option) {
                 formObj: FormJson,
                 formRefId: resp.RefId,
                 formHTML: resp.WebFormHtml,
-                formPermissions: resp.FormPermissions
+                formPermissions: resp.FormPermissions,
+                relatedData: resp.RelatedData
             }
             if (!randomizeId)
                 this.ObjectCollection.push(_obj);
@@ -231,7 +240,7 @@ const WebFormCollectionRender = function (Option) {
                 editModeAutoSave: options.editModeAutoSave,
                 keepHidden: keepHidden,
                 __MultiRenderCxt: cxt,
-                relatedData: resp.RelatedData
+                relatedData: _obj.relatedData
             });
             WebForm.__MultiRenderUrl = resp.Url;
             this.RenderCollection.push(WebForm);
@@ -543,13 +552,15 @@ const WebFormCollectionRender = function (Option) {
             }
         }
         else if (x.Initiator.ObjType === 'PowerSelect') {
+            let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
             if (x.Initiator.IsDGCtrl) {
-                let destRender = this.RenderCollection.find(e => e.__MultiRenderCxt === cxt);
                 if (destRender) {
                     x.Initiator.reverseUpdateData(destRender);
                 }
             }
-            x.Initiator.DDrefresh();
+            if (x.Callback && x.Initiator.PsJsObj) {
+                x.Callback(destRender.rowId);
+            }
         }
     };
 

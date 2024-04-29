@@ -194,6 +194,7 @@
                 if (document.getElementById("iFramePdf4dv").contentWindow.document.embeds.length === 1) {
                     document.getElementById("iFramePdf4dv").focus();
                     document.getElementById("iFramePdf4dv").contentWindow.print();
+                    EbMessage("show", { Message: 'The pdf file is opening...', AutoHide: true, Background: '#00aa55', Delay: 2000 });
                 }
                 else {
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });

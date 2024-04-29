@@ -618,7 +618,28 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception: " + e.ToString());
             }
+        }
 
+        [HttpPost]
+        public (int, string) exportToexcelSync(ExportToExcelSyncRequest req)
+        {
+            try
+            {
+                if (req.TFilters != null)
+                {
+                    foreach (TFilters para in req.TFilters)
+                    {
+                        if (para.Type == EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                    }
+                }
+                ExportToExcelSyncResponse resp = this.ServiceClient.Post(req);
+                return (resp.Id, resp.Msg);
+            }
+            catch (Exception e)
+            {
+                return (-1, e.Message);
+            }
         }
 
         public IActionResult GetExcel(int id)

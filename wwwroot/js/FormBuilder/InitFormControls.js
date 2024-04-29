@@ -75,11 +75,11 @@
             files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.Name || ctrl.EbSid][0].Columns[0].Value);
         }
 
-        if (fileType === 'image') {
+        //if (fileType === 'image') {
             $.each(ctrlOpts.DpControlsList, function (i, obj) {
                 customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
             });
-        }
+        //}
 
         let imgup = new FUPFormControl({
             Type: fileType,
@@ -99,6 +99,7 @@
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,
             ShowUploadDate: ctrl.ShowUploadDate,
+            ShowFileName: ctrl.ShowFileName,
             ViewByCategory: ctrl.ViewByCategory,
             Renderer: this.Renderer,
             ViewerPosition: ctrl.ViewerPosition
@@ -1179,7 +1180,7 @@
 
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        $ctrl[0].onclick = function () {
+        $ctrl.off('click').on('click', function (ctrl, ctrlOpts) {
             if ($('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled'))
                 return;
             let params = [];
@@ -1195,8 +1196,9 @@
             else {
                 ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
             }
-        }.bind(this);
-        $ctrl.on('mouseenter', function (ctrl, e) {
+        }.bind(this, ctrl, ctrlOpts));
+
+        $ctrl.off('mouseenter').on('mouseenter', function (ctrl, e) {
             if (this.Renderer.Mode.isNew)
                 ctrl.attr('title', 'Not available in New Mode');
             else if (this.Renderer.Mode.isEdit && ctrl.DisableInEditMode)
@@ -1346,6 +1348,10 @@
                 if (!destCtrl)
                     continue;
                 if (pMap[i].SrcCtrlName === 'id') {
+                    if (destCtrl.ObjType == 'PowerSelect') {
+                        destCtrl.initializer.data = undefined;
+                        destCtrl.initializer.DDrefresh();
+                    }
                     destCtrl.setValue(destRender.rowId);
                 }
                 else {
@@ -1457,7 +1463,17 @@
 
     this.Button = function (ctrl) {//////////////////////////////////////
         $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
-        $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
+        $('#' + ctrl.EbSid_CtxId).off('click').on('click', function () {
+            let clBkFn = null;
+            if (ctrl.PsJsObj) {
+                clBkFn = function (id) {
+                    this.data = undefined;
+                    this.DDrefresh();
+                    this.ComboObj.setValue(id);
+                }.bind(ctrl.PsJsObj);
+            }
+            ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId(), Callback: clBkFn });
+        }.bind(this, ctrl));
     }.bind(this);
 
     this.SubmitButton = function (ctrl, ctrlOpts) {
@@ -1540,17 +1556,18 @@
 
     this.SysLocation = function (ctrl) {
         let locObj = this.Renderer.getLocObj();
+        let valPropName = ctrl.ShowLongName ? 'LongName' : 'ShortName';
         if (!locObj)
             return;
         //if (ctrl.DataVals && !ctrl.DataVals.Value && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
         if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
-            ctrl.DataVals.Value = locObj.LocId;
-            ctrl.DataVals.F = locObj.ShortName;
+            ctrl.DataVals.Value = locObj.LocId
+            ctrl.DataVals.F = locObj[valPropName];
         }
         if (!(ctrl.IsDisable)) {
             let temp = [];
             $.each(ebcontext.locations.Locations, function (intex, obj) {
-                temp.push({ k: obj.LocId, v: obj.ShortName || '' });
+                temp.push({ k: obj.LocId, v: obj[valPropName] || '' });
             });
             temp.sort(function (a, b) {
                 let v1 = a.v.toLowerCase();
@@ -1797,6 +1814,46 @@
                 prefix: '',
                 autoGroup: true
             });
+        }
+
+        if (ctrl.ShowAddInput) {
+            let $btn, $inp;
+            if (ctrl.IsDGCtrl) {
+                $btn = $(`#td_${ctrl.EbSid_CtxId} .numplus-btn`);
+                $inp = $(`#td_${ctrl.EbSid_CtxId} .numplus-inp`);
+            }
+            else {
+                $btn = $(`#cont_${ctrl.EbSid_CtxId} .numplus-btn`);
+                $inp = $(`#cont_${ctrl.EbSid_CtxId} .numplus-inp`);
+            }
+            $inp.val('0');
+
+            $inp.inputmask("currency", {
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
+                allowMinus: true,
+                groupSeparator: "",
+                digits: 0,
+                prefix: '',
+                autoGroup: true
+            });
+
+            $inp.off('focus').on('focus', function () {
+                $(this).select();
+            });
+
+            $inp.off('keypress').on('keypress', function ($btn, e) {
+                if (e.keyCode == 13) {
+                    $btn.click();
+                    return false;
+                }
+            }.bind(this, $btn));
+
+
+            $btn.off('click').on('click', function (ctrl, $inp) {
+                let val = ctrl.getValue() + parseInt($inp.val());
+                ctrl.setValue(val);
+                $inp.val('0');
+            }.bind(this, ctrl, $inp));
         }
 
         $input.focus(function () { $(this).select(); });

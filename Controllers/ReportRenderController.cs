@@ -95,6 +95,22 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        public IActionResult RenderLinkMultiSync(string refId, string rowId)
+        {
+            try
+            {
+                using (ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient))
+                {
+                    List<Param> p = new List<Param> { new Param { Name = "id", Value = rowId, Type = "16" } };
+                    ReportRenderMultipleSyncResponse Res = pclient.Get<ReportRenderMultipleSyncResponse>(new ReportRenderMultipleSyncRequest { Refid = refId, RenderingUserAuthId = this.LoggedInUser.AuthId, Params = p });
+                    if (Res.Id > 0)
+                        return Redirect(Res.Message);
+                }
+            }
+            catch (Exception e) { }
+            return Redirect("/StatusCode/500");
+        }
+
         public IActionResult RenderforBot(string refid)
         {
             Render(refid, null);

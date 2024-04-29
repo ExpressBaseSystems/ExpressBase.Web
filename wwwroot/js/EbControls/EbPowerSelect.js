@@ -171,7 +171,8 @@ const EbPowerSelect = function (ctrl, options) {
                     OpenInNewTab: this.ComboObj.OpenInNewTab,
                     ObjType: 'PowerSelect',
                     DDrefresh: this.DDrefresh.bind(this),
-                    IsDGCtrl: this.ComboObj.IsDGCtrl
+                    IsDGCtrl: this.ComboObj.IsDGCtrl,
+                    PsJsObj: this
                 });
             }
 

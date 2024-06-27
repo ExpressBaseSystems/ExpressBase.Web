@@ -45,7 +45,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Name = "ToDate",
                     Type = ((int)EbDbTypes.DateTime).ToString(),
-                    Value = DateTime.Now.ToString()
+                    Value = DateTime.Now.ToString("yyyy-MM-dd")
                 },
             };
 

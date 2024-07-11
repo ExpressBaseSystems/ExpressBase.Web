@@ -249,7 +249,7 @@ body {
 }
 
     .form-buider-form:focus {
-        border: solid 1px green;
+        /*border: solid 1px green;*/
     }
 
     .form-buider-form .ctrl-cover input[type="text"], .form-buider-form input[type="email"], .form-buider-form input[type="number"], .form-buider-form input[type="password"], .form-buider-form input[type="singleline"] {

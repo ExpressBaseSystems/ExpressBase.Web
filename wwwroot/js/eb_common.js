@@ -180,6 +180,15 @@ function fltr_obj(type, name, value) {
     this.Value = value;
 };
 
+function fltr_obj(type, name, value, formttedName, formattedValue, isHidden) {
+    this.Type = type;
+    this.Name = name;
+    this.Value = value;
+    this.NameF = formttedName;
+    this.ValueF = formattedValue;
+    this.isHidden = isHidden;
+};
+
 var filter_obj = function (colu, oper, valu, typ) {
     this.Column = colu;
     this.Operator = oper;
@@ -834,8 +843,36 @@ function getValsForViz(formObj) {
             fltr_collection.push(new fltr_obj(obj.EbDbType, "dateto", value.split(",")[1]));
             fltr_collection.push(new fltr_obj(7, "id", value.split(",")[2]));
         }
-        else
-            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        else {
+            let nameF = obj.Label || obj.Name;
+            let valF = obj.getDisplayMemberFromDOM() || (value + '');
+            let isHidden = (obj.Hidden && !obj.__IsDisable) || obj.__IsDisable;
+            if (obj.ObjType == "UserLocation") {
+                if (value == "-1")
+                    valF = "All locations";
+                else {
+                    let arr = value.split(',');
+                    if (arr.length == 1) {
+                        let lobj = ebcontext.locations.Locations.find(e => e.LocId == arr[0]);
+                        if (lobj) valF = lobj.LongName;
+                    }
+                    else {
+                        valF = "Selected " + arr.length + " locations";
+                    }
+                }
+            }
+            else if (obj.ObjType == "PowerSelect" && typeof (valF) == "object") {
+                let dmArr = Object.values(valF);
+                valF = "";
+                for (let i = 0; i < dmArr.length; i++) {
+                    valF = Object.values(dmArr[i]).toString() + " ";
+                }
+            }
+            else if (obj.EbDbType === 16 && value == "0") {
+                valF = "";
+            }
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value, nameF, valF, isHidden));
+        }
     });
     return fltr_collection;
 }

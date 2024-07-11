@@ -133,6 +133,7 @@
 }
 
     .objectDashB-toolbar .toolbar-brd-Container {
+        max-width: 55%;
     }
 
     .objectDashB-toolbar .toolbar-buttons-Container {
@@ -153,7 +154,7 @@
 }
 
 .brd_cr_t {
-    float: left;
+    /*float: left;*/
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -174,6 +175,9 @@
 .Obj_title {
     font-size: 13px;
     font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .pd-0 {

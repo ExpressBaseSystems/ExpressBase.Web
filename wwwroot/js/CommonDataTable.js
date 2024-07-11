@@ -522,6 +522,7 @@
                     return;
                 this.filterValues = this.getFilterValues("filter");
             }
+            this.updateTitle();
         }
         this.isSecondTime = false;
         this.totalcount = 0;
@@ -531,6 +532,18 @@
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
         this.dvName = this.EbObject.Name;
+    };
+
+    this.updateTitle = function () {
+        let title = this.EbObject.DisplayName;
+        for (let i = 0; i < this.filterValues.length; i++) {
+            let f = this.filterValues[i];
+            if (!f.isHidden && f.ValueF)
+                title += " - " + f.ValueF;
+        }
+        $("#objname").text(title);
+        $("#objname").prop("title", title);
+        $('title').text(title);
     };
 
     this.check4Customcolumn = function () {
@@ -983,7 +996,7 @@
             if (this.Source === "Bot")
                 fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp for bot
             else
-                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1));
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1, "Location", ebcontext.locations.CurrentLocObj.LongName, true));
         }
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
@@ -2978,6 +2991,7 @@
                                 $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
                         }.bind(this));
                         dvcontainerObj.modifyNavigation();
+                        this.updateTitle();
                     }
                 }
                 //this.CreatePgButton();
@@ -3408,7 +3422,7 @@
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (rowIds.length <= 25) {
+            if (rowIds.length <= 50) {
                 let url = "/ReportRender/RenderLinkMultiSync?refId=" + rptRefid + "&rowId=" + rowIds;
                 //ebcontext.webform.showLoader();
                 EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 30000 });

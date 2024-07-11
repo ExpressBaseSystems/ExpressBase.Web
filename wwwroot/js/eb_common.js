@@ -854,7 +854,7 @@ function getValsForViz(formObj) {
                     let arr = value.split(',');
                     if (arr.length == 1) {
                         let lobj = ebcontext.locations.Locations.find(e => e.LocId == arr[0]);
-                        if (lobj) valF = lobj.LongName;
+                        if (lobj) valF = lobj.ShortName;
                     }
                     else {
                         valF = "Selected " + arr.length + " locations";
@@ -864,9 +864,10 @@ function getValsForViz(formObj) {
             else if (obj.ObjType == "PowerSelect" && typeof (valF) == "object") {
                 let dmArr = Object.values(valF);
                 valF = "";
-                for (let i = 0; i < dmArr.length; i++) {
-                    valF = Object.values(dmArr[i]).toString() + " ";
-                }
+                if (dmArr.length == 1)
+                    valF = Object.values(dmArr[0]).toString();
+                else if (dmArr.length >= 2)
+                    valF = Object.values(dmArr[1]).toString();
             }
             else if (obj.EbDbType === 16 && value == "0") {
                 valF = "";

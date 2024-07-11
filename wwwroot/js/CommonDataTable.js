@@ -996,7 +996,7 @@
             if (this.Source === "Bot")
                 fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp for bot
             else
-                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1, "Location", ebcontext.locations.CurrentLocObj.LongName, true));
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1, "Location", ebcontext.locations.CurrentLocObj.ShortName, true));
         }
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)

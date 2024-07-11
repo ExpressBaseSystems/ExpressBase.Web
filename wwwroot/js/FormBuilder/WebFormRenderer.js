@@ -1256,6 +1256,11 @@ const WebFormRender = function (option) {
             //let DgChanged = false;
 
             for (let rowId in DGB.objectMODEL) {
+
+                let rowDataModel = getObjByval(DGB.DataMODEL, "RowId", rowId);
+                if (!rowDataModel || (rowDataModel && rowDataModel.IsDelete))
+                    continue;
+
                 DGB.setCurRow(rowId);
                 //let rowChanged = false;
                 let _ctrls = DGB.objectMODEL[rowId];

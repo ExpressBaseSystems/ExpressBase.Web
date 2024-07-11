@@ -864,10 +864,12 @@ function getValsForViz(formObj) {
             else if (obj.ObjType == "PowerSelect" && typeof (valF) == "object") {
                 let dmArr = Object.values(valF);
                 valF = "";
-                if (dmArr.length == 1)
-                    valF = Object.values(dmArr[0]).toString();
-                else if (dmArr.length >= 2)
-                    valF = Object.values(dmArr[1]).toString();
+                for (let i = 0; i < dmArr.length; i++) {
+                    let t = Object.values(dmArr[i]);
+                    if (t.length == 1) valF += t[0] + " ";
+                    else if (t.length >= 2) valF += t[1] + " ";
+                }
+                valF = valF.trim();
             }
             else if (obj.EbDbType === 16 && value == "0") {
                 valF = "";

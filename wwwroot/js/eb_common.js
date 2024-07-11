@@ -852,7 +852,7 @@ function getValsForViz(formObj) {
                     valF = "All locations";
                 else {
                     let arr = value.split(',');
-                    if (arr.length == 1) {
+                    if (arr.length == 1 && ebcontext.locations && ebcontext.locations.Locations) {
                         let lobj = ebcontext.locations.Locations.find(e => e.LocId == arr[0]);
                         if (lobj) valF = lobj.ShortName;
                     }

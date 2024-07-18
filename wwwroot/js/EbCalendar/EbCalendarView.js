@@ -143,7 +143,7 @@
             //this.CreatePgButton();
             this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
         }
-        this.ChangeFDParams(this.EbObject.DefaultCalendarType);
+        //this.ChangeFDParams(this.EbObject.DefaultCalendarType);
     };
 
     this.CloseParamDiv = function () {

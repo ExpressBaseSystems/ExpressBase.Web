@@ -862,54 +862,62 @@
             $input.find("#date").datetimepicker('show');
         });
 
-        $input.find("select").on('change', function (e) {
-            $(e.target).siblings("button").find(" .filter-option").text(this.value);
-            $input.find("select option:not([value='" + this.value + "'])").removeAttr("selected");
-            if (this.value === "Hourly") {
-                $input.children("[name=date]").show();
-                $input.children("[name=month]").hide();
-                $input.children("[name=fromyear]").hide();
-                $input.children("[name=toyear]").hide();
-            }
-            else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
-                $input.children("[name=month]").show();
-                $input.children("[name=date]").hide();
-                $input.children("[name=fromyear]").hide();
-                $input.children("[name=toyear]").hide();
-            }
-            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly") {
-                $input.children("[name=fromyear]").show();
-                $input.children("[name=toyear]").show();
-                $input.children("[name=date]").hide();
-                $input.children("[name=month]").hide();
-            }
+        $input.find("#month").val(moment().format('MM/YYYY'));
+        $input.find("#fromyear").val(moment().format('YYYY'));
+        $input.find("#toyear").val(moment().format('YYYY'));
 
-            let obj = $(this).data('data-calndr-obj');
-            if (obj) {
-                let newval = EbEnums.AttendanceType[this.value];
-                obj.CalendarType = parseInt(newval);
-            }
-        });
-
-        $input.find("#date").on('change', this.SetDateFromDateTo.bind(this, $input));
-
-        $input.find("#fromyear").on('change', this.SetDateFromDateTo.bind(this, $input));
-        $input.find("#toyear").on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("select").off('change').on('change', this.calendarCtrlSelectChanged.bind(this, $input));
+        $input.find("#date").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#fromyear").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#toyear").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select").selectpicker({///////////////////////////////////////////////////////////
             dropupAuto: false,
         });
 
-        $input.find("#month").val(moment().format('MM/YYYY'));
-        $input.find("#fromyear").val(moment().format('YYYY'));
-        $input.find("#toyear").val(moment().format('YYYY'));
-
-        this.SetDateFromDateTo($input);
+        //this.SetDateFromDateTo($input);
+        this.calendarCtrlSelectChanged($input);
 
         //$input.find("select option[value='Hourly']").attr("selected", "selected");
         //$input.find("select").trigger("change");
 
         //$input.find("select").selectpicker("val", "Hourly");
+
+    };
+
+    this.calendarCtrlSelectChanged = function ($input, e) {
+
+        let _this = $input.find("select")[0];
+        $input.find("select").siblings("button").find(".filter-option").text(_this.value);
+
+        //$(e.target).siblings("button").find(" .filter-option").text(_this.value);
+
+        $input.find("select option:not([value='" + _this.value + "'])").removeAttr("selected");
+        if (_this.value === "Hourly") {
+            $input.children("[name=date]").show();
+            $input.children("[name=month]").hide();
+            $input.children("[name=fromyear]").hide();
+            $input.children("[name=toyear]").hide();
+        }
+        else if (_this.value === "DayWise" || _this.value === "Weekely" || _this.value === "Fortnightly") {
+            $input.children("[name=month]").show();
+            $input.children("[name=date]").hide();
+            $input.children("[name=fromyear]").hide();
+            $input.children("[name=toyear]").hide();
+        }
+        else if (_this.value === "Monthly" || _this.value === "Quarterly" || _this.value === "HalfYearly" || _this.value === "Yearly") {
+            $input.children("[name=fromyear]").show();
+            $input.children("[name=toyear]").show();
+            $input.children("[name=date]").hide();
+            $input.children("[name=month]").hide();
+        }
+
+        let obj = $(_this).data('data-calndr-obj');
+        if (obj) {
+            let newval = EbEnums.AttendanceType[_this.value];
+            obj.CalendarType = parseInt(newval);
+        }
+        this.SetDateFromDateTo($input);
 
     };
 

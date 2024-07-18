@@ -76,9 +76,9 @@
         }
 
         //if (fileType === 'image') {
-            $.each(ctrlOpts.DpControlsList, function (i, obj) {
-                customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
-            });
+        $.each(ctrlOpts.DpControlsList, function (i, obj) {
+            customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
+        });
         //}
 
         let imgup = new FUPFormControl({
@@ -883,9 +883,15 @@
                 $input.children("[name=date]").hide();
                 $input.children("[name=month]").hide();
             }
+
+            let obj = $(this).data('data-calndr-obj');
+            if (obj) {
+                let newval = EbEnums.AttendanceType[this.value];
+                obj.CalendarType = parseInt(newval);
+            }
         });
 
-        $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#date").on('change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("#fromyear").on('change', this.SetDateFromDateTo.bind(this, $input));
         $input.find("#toyear").on('change', this.SetDateFromDateTo.bind(this, $input));
@@ -894,10 +900,16 @@
             dropupAuto: false,
         });
 
+        $input.find("#month").val(moment().format('MM/YYYY'));
+        $input.find("#fromyear").val(moment().format('YYYY'));
+        $input.find("#toyear").val(moment().format('YYYY'));
+
+        this.SetDateFromDateTo($input);
+
         //$input.find("select option[value='Hourly']").attr("selected", "selected");
         //$input.find("select").trigger("change");
 
-        $input.find("select").selectpicker("val", "Hourly");
+        //$input.find("select").selectpicker("val", "Hourly");
 
     };
 

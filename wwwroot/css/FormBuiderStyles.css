@@ -284,6 +284,10 @@ body {
         height: 100% !important;
     }
 
+.Eb-ctrlContainer[ctype="CalendarControl"] > div.ctrl-cover {
+    border: none;
+}
+
 .Eb-ctrlContainer[ctype="AutoId"] .input-group-addon {
     font-size: 18px;
     color: #aaa;

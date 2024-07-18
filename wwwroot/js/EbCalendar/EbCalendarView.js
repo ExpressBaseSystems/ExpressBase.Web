@@ -117,11 +117,12 @@
             this.filterDialog = FilterDialog;
             let id = FilterDialog.FormObj.Controls.$values[0].EbSid_CtxId;
             let $input = $("#" + id);
-
-            $input.find("select").on('change', function (e) {
-                let newval = EbEnums.AttendanceType[$(e.target).val()];
-                this.EbObject.CalendarType = parseInt(newval);
-            }.bind(this));
+            this.EbObject.CalendarType = this.EbObject.DefaultCalendarType;
+            $input.find("select").data('data-calndr-obj', this.EbObject);
+            //$input.find("select").on('change', function (e) {
+            //    let newval = EbEnums.AttendanceType[$(e.target).val()];
+            //    this.EbObject.CalendarType = parseInt(newval);
+            //}.bind(this));
             this.filterid = "filter" + this.tableId;
             this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
             $("#obj_icons").append(this.$filter);
@@ -207,6 +208,8 @@
         if (result) {
             this.result = result;
             this.EbObject = JSON.parse(result.returnObjString);
+            if (this.filterDialog)
+                $("#" + this.filterDialog.FormObj.Controls.$values[0].EbSid_CtxId).find("select").data('data-calndr-obj', this.EbObject);
             if (this.Wc === "dc")
                 this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
             this.formatteddata = result.formattedData;

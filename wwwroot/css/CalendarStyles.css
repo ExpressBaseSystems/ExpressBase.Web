@@ -15,7 +15,7 @@
 }
 
 #calendar-user-view .dataTables_scrollBody {
-    height: calc( 100% - 78px ) !important;
+    height: calc( 100% - 96px ) !important;
 }
 
 #ShowDataColumndd button {

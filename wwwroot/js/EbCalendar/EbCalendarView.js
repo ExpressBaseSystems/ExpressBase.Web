@@ -214,7 +214,20 @@
                 this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
             this.formatteddata = result.formattedData;
             this.drawCalendar();
+            this.updateTitle();
         }
+    };
+
+    this.updateTitle = function () {
+        let title = this.EbObject.DisplayName;
+        for (let i = 0; i < this.filtervalues.length; i++) {
+            let f = this.filtervalues[i];
+            if (!f.isHidden && f.ValueF)
+                title += " - " + f.ValueF;
+        }
+        $("#objname").text(title);
+        $("#objname").prop("title", title);
+        $('title').text(title);
     };
 
     this.drawCalendar = function () {
@@ -266,27 +279,29 @@
                 symbol = "&lowast;";
             else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Sum)
                 symbol = "&sum;";
-            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-symbol="${symbol}" data-item='${obj.name}' data-index='${i}'>${symbol} ${obj.name} </a>`);
+            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-symbol="${symbol}" data-item='${obj.name}' data-title='${obj.sTitle ?? obj.name}' data-index='${i}'>${symbol} ${obj.sTitle ?? obj.name} </a>`);
             if (i > 0)
                 $(`.${obj.name}_class`).hide();
             else
                 firstSymbol = symbol;
         }.bind(this));
         $(`#ShowDataColumndd a`).off("click").on("click", this.showDatColumn.bind(this));
-        $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].name);
+        $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].sTitle ?? this.VisibleDataCols[0].name);
         $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${firstSymbol}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.dt.Api.columns.adjust();
     };
 
     this.showDatColumn = function (e) {
+        $("#eb_common_loader").EbLoader("show");
         $(".dataclass").hide();
         $(`.${$(e.target).attr("data-item")}_class`).show();
-        $(`#ShowDataColumndd #action`).text($(e.target).attr("data-item"));
+        $(`#ShowDataColumndd #action`).text($(e.target).attr("data-title"));
         $(`#ShowDataColumndd .datacolumnsymbol`).remove();
         $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${$(e.target).attr("data-symbol")}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.setFooterVals(e);
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.setFooterVals = function (e) {

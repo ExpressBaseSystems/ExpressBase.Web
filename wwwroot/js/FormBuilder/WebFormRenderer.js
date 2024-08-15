@@ -897,8 +897,41 @@ const WebFormRender = function (option) {
                 ebcontext.webform.showSubForm(this.__MultiRenderCxt);
             EbMessage("show", { Message: respObj.Message, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: respObj.MessageInt + ' ' + respObj.StackTraceInt });
             console.error(respObj.MessageInt);
+            if (respObj.Message.includes('This form submission is already in progress')) {
+                if (!this.autoRetryCount)
+                    this.autoRetryCount = 1;
+                else
+                    this.autoRetryCount++;
+
+                if (this.autoRetryCount == 2) {
+                    this.autoRetryCount = 0;
+                    EbMessage("show", { Message: respObj.Message + ' Auto retry also failed. Please check after sometime. ', AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: respObj.MessageInt + ' ' + respObj.StackTraceInt });
+                }
+                else {
+                    this.showLoader();
+                    let mint = 3, secd = 3;
+                    this.formSaveAfterTimeout(mint, secd, respObj);
+                }
+            }
         }
     }.bind(this);
+
+    this.formSaveAfterTimeout = function (mint, secd, respObj) {
+        setTimeout(function (mint, secd, respObj) {
+            secd--;
+            if (secd == -1) {
+                mint--;
+                if (mint == -1) {
+                    this.hideLoader();
+                    this.saveForm();
+                    return;
+                }
+                secd = 59;
+            }
+            EbMessage("show", { Message: `${respObj.Message} It will auto retry after ${mint}:${secd.toString().padStart(2, '0')} `, AutoHide: false, Background: '#aa0000', ShowCopyBtn: true, Details: respObj.MessageInt + ' ' + respObj.StackTraceInt });
+            this.formSaveAfterTimeout(mint, secd, respObj);
+        }.bind(this, mint, secd, respObj), 1000);
+    };
 
     this.saveDraftSuccess = function (_respObj) {
         this.hideLoader();

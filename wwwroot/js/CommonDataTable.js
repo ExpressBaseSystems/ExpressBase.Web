@@ -4434,7 +4434,8 @@
                 _refId: this.linkDV,
                 _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
                 _mode: this.dvformMode,
-                _locId: ebcontext.locations.CurrentLoc
+                _locId: ebcontext.locations.CurrentLoc,
+                _callback: this.getColumnsSuccess.bind(this)
             });
             //$("#iFrameFormPopupModal").modal("show");
             //let url = `../WebForm/Index?_r=${this.linkDV}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_m=1${this.dvformMode}&_l=${ebcontext.locations.CurrentLoc}`;

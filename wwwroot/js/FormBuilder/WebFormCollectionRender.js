@@ -74,7 +74,7 @@ const WebFormCollectionRender = function (Option) {
             this.RenderCollection.push(WebForm);
         }
         else if (Op._source === 'tv') {
-            this.PopupForm(Op._refId, Op._params, Op._mode);
+            this.PopupForm(Op._refId, Op._params, Op._mode, { Callback: Op._callback, srcCxt: 99999, initiator: { ObjType: 'TVcontrol' } });
         }
         else if (Op._source === 'ps') {
             this.PopupForm(Op._refId, Op._params, Op._mode, { locId: Op._locId });
@@ -514,6 +514,12 @@ const WebFormCollectionRender = function (Option) {
         let x = this.InterContextObj.find(e => e.DestCxt === cxt);
         if (!x)
             return;
+
+        if (x.Initiator.ObjType === 'TVcontrol' && x.ChangeDetected && x.Callback) {
+            x.Callback();
+            return;
+        }
+
         let srcRen = this.RenderCollection.find(e => e.__MultiRenderCxt === x.SourceCxt);
         if (!srcRen)
             return;
@@ -650,16 +656,16 @@ const WebFormCollectionRender = function (Option) {
 }
 
 
-    //this.SetEbSidUnique = function (obj) {
-    //    let allCtrls = getAllctrlsFrom(obj);
-    //    let ts = Date.now().toString(36);
-    //    for (let i = 0; i < allCtrls.length; i++) {
-    //        let id = allCtrls[i].EbSid_CtxId;
-    //        if (id) {
-    //            if (id.includes('_'))
-    //                allCtrls[i].EbSid_CtxId = id.substr(0, id.lastIndexOf('_')) + '_' + ts;
-    //            else
-    //                allCtrls[i].EbSid_CtxId = id + '_' + ts;
-    //        }
-    //    }
-    //};
+//this.SetEbSidUnique = function (obj) {
+//    let allCtrls = getAllctrlsFrom(obj);
+//    let ts = Date.now().toString(36);
+//    for (let i = 0; i < allCtrls.length; i++) {
+//        let id = allCtrls[i].EbSid_CtxId;
+//        if (id) {
+//            if (id.includes('_'))
+//                allCtrls[i].EbSid_CtxId = id.substr(0, id.lastIndexOf('_')) + '_' + ts;
+//            else
+//                allCtrls[i].EbSid_CtxId = id + '_' + ts;
+//        }
+//    }
+//};

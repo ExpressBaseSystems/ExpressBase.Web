@@ -922,6 +922,7 @@ const WebFormRender = function (option) {
             if (secd == -1) {
                 mint--;
                 if (mint == -1) {
+                    EbMessage("show", { Message: `Retrying...`, AutoHide: true, Background: '#0000aa' });
                     this.hideLoader();
                     this.saveForm();
                     return;

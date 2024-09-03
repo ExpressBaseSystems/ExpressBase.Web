@@ -1752,6 +1752,7 @@ const WebFormRender = function (option) {
                                         else
                                             window.top.close();
                                     }.bind(this), 3000);
+                                    ebcontext.webform.UpdateInterCxtObj(this.__MultiRenderCxt);
                                 }
                                 else if (result === -1) {
                                     EbMessage("show", { Message: 'Delete operation failed due to validation failure.', AutoHide: true, Background: '#aa0000', Delay: 4000 });
@@ -1864,6 +1865,7 @@ const WebFormRender = function (option) {
                                     this.formData.IsCancelled = !this.formData.IsCancelled;
                                     this.formData.ModifiedAt = result.item2;
                                     this.setHeader(this.mode);
+                                    ebcontext.webform.UpdateInterCxtObj(this.__MultiRenderCxt);
                                 }
                                 else if (result.item1 === -1) {
                                     EbMessage("show", { Message: `${this.formData.IsCancelled ? 'Revoke Cancel' : 'Cancel'} operation failed due to validation failure.`, AutoHide: true, Background: '#aa0000', Delay: 4000 });

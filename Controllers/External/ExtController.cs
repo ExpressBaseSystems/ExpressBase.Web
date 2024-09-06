@@ -980,10 +980,17 @@ namespace ExpressBase.Web.Controllers
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
 
-                        if (string.IsNullOrEmpty(redirect_url))
-                            authresp.RedirectUrl = this.RouteToDashboard(WhichConsole);
-                        else
+                        string rdrct_url = this.HttpContext.Request.Cookies[RoutingConstants.REDIRECT_URL];
+
+                        if (!string.IsNullOrEmpty(redirect_url))
                             authresp.RedirectUrl = redirect_url;
+                        else if (string.IsNullOrEmpty(authresp.RedirectUrl) && !string.IsNullOrEmpty(rdrct_url))
+                        {
+                            Response.Cookies.Append(RoutingConstants.REDIRECT_URL, string.Empty, options);
+                            authresp.RedirectUrl = rdrct_url;
+                        }
+                        else
+                            authresp.RedirectUrl = this.RouteToDashboard(WhichConsole);
                     }
                 }
                 else

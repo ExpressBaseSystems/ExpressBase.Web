@@ -10,9 +10,9 @@
         if (ebmod === 'Production')
             return "https://" + window.EXPRESSbase_cid + ".expressbase.com/";
         else if (ebmod === 'Staging')
-            return "https://" + window.EXPRESSbase_cid + ".eb-test.fyi/";
+            return "https://" + window.EXPRESSbase_cid + ".eb-test.shop/";
         else
-            return "https://" + window.EXPRESSbase_cid + ".localhost:41502/";
+            return "http://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41500/";
     };
    
     //appIdColl??

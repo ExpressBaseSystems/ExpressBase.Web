@@ -165,7 +165,7 @@
                 @if (UrlHelper.IsLogoVisible(ViewBag.HostValue))
                 {
                         <div style="display:flex;justify-content:center;align-items:center;margin-top:15px;font-weight: 500;">
-                            <span>Powered by </span><img style="height:25px;" src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" />
+                            <span>Powered by </span>&nbsp;<img style="height:25px;" src="@UrlHelper.GetSmallLogoPath(ViewBag.HostValue)" />
                         </div>
                 }
                 @if (!string.IsNullOrEmpty(ViewBag.SsoUrl))

@@ -1883,6 +1883,28 @@ const WebFormRender = function (option) {
             });
     };
 
+    this.shareForm = function (e) {
+        if (this.copyShareLinkClicked)
+            return;
+        this.copyShareLinkClicked = true;
+        $(e.target).html('<i class="fa fa-spinner fa-pulse"></i> Loading Share Link');
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/getShareUrl",
+            data: { refId: this.formRefId, dataId: this.rowId, locId: this.getLocId() },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.copyShareLinkClicked = false;
+                $(e.target).html('<i class="fa fa-link"></i> Copy Share Link');
+            }.bind(this),
+            success: function (result) {
+                this.copyShareLinkClicked = false;
+                setTimeout(function () { $(this).html('<i class="fa fa-check"></i> Copied Share Link'); }.bind(e.target), 500);
+                setTimeout(function () { $(this).html('<i class="fa fa-link"></i> Copy Share Link'); }.bind(e.target), 5000);
+                navigator.clipboard.writeText(location.origin + result);
+            }.bind(this)
+        });
+    };
+
     this.lockUnlockForm = function () {
         this.hideInfoWindow();
         EbDialog("show",
@@ -3147,6 +3169,8 @@ const WebFormRender = function (option) {
                 $cont.append(`<div class='wfd-cancel wfd-linkdiv'><span>Cancel</span> this Form Submission</div>`);
         }
 
+        $cont.append(`<div class='wfd-share wfd-linkdiv'><span><i class="fa fa-link"></i> Copy Share Link</span> of this Form Submission</div>`);
+
         if (this.checkPermission('AuditTrail')) {
             $cont.append(`<div class='wfd-audtrail wfd-btndiv'>
                 <div><i class="fa fa-info-circle"></i> Detailed Audit Trail</div>
@@ -3159,6 +3183,7 @@ const WebFormRender = function (option) {
 
         $cont.find('.wfd-lock span').off("click").on("click", this.lockUnlockForm.bind(this));
         $cont.find('.wfd-cancel span').off("click").on("click", this.cancelForm.bind(this));
+        $cont.find('.wfd-share span').off("click").on("click", this.shareForm.bind(this));
         $cont.find('.wfd-audtrail div').off("click").on("click", this.GetAuditTrail.bind(this));
         $cont.find('.wfd-notify div').off("click").on("click", this.NotifyBtnClicked.bind(this));
 

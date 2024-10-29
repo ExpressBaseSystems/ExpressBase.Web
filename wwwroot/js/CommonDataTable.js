@@ -3422,7 +3422,7 @@
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (rowIds.length <= 50) {
+            if (rowIds.length <= 75) {
                 let url = "/ReportRender/RenderLinkMultiSync?refId=" + rptRefid + "&rowId=" + rowIds;
                 //ebcontext.webform.showLoader();
                 EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 30000 });

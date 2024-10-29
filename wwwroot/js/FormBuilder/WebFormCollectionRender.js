@@ -67,7 +67,8 @@ const WebFormCollectionRender = function (Option) {
                 formHTML: Op._formHTML,
                 disableEditBtn: Op._disableEditButton,
                 __MultiRenderCxt: this.RenderCounter++,
-                relatedData: Op._relatedData
+                relatedData: Op._relatedData,
+                disableLocCheck: Op._disableLocCheck
             };
 
             let WebForm = new WebFormRender(_options);

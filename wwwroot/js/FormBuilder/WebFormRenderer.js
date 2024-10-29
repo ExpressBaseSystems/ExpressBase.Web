@@ -2927,7 +2927,7 @@ const WebFormRender = function (option) {
     //};
 
     this.locInit4viewMode = function () {
-        if (this.FormObj.IsLocIndependent)
+        if (this.FormObj.IsLocIndependent || this.disableLocCheck)
             return;
 
         let locId = this.getLocId();
@@ -3168,8 +3168,9 @@ const WebFormRender = function (option) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableCancel()))
                 $cont.append(`<div class='wfd-cancel wfd-linkdiv'><span>Cancel</span> this Form Submission</div>`);
         }
-
-        $cont.append(`<div class='wfd-share wfd-linkdiv'><span><i class="fa fa-link"></i> Copy Share Link</span> of this Form Submission</div>`);
+        if (this.FormObj.EnableShareUrl) {
+            $cont.append(`<div class='wfd-share wfd-linkdiv'><span><i class="fa fa-link"></i> Copy Share Link</span> of this Form Submission</div>`);
+        }
 
         if (this.checkPermission('AuditTrail')) {
             $cont.append(`<div class='wfd-audtrail wfd-btndiv'>
@@ -3555,6 +3556,7 @@ const WebFormRender = function (option) {
         this.hBtns = option.headerBtns;
         this.formPermissions = option.formPermissions;
         this.uploadedFileRefList = {};
+        this.disableLocCheck = option.disableLocCheck;
 
         this.formData = option.formData;
         this.formDataBackUp = JSON.parse(JSON.stringify(this.formData));

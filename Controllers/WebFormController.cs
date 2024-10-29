@@ -100,27 +100,27 @@ namespace ExpressBase.Web.Controllers
         public string getShareUrl(string refId, int dataId, int locId)
         {
             if (!this.HasPermission(refId, OperationConstants.VIEW, locId, false))
-                return "Permission denied";
-
-            string url = "/webform/view?id={0}&vid={1}&uid={2}&l={3}&exp={4}&h={5}",
+                return "/StatusCode/404";
+            string url = "/webform/view?p={0}-{1}-{2}-{3}-{4}-{5}",
                 vid = refId.Split("-")[4],
                 exp = DateTime.UtcNow.AddDays(1).ToString("yyyyMMddHHmmss");
-            string hash = refId + dataId + this.IntSolutionId + this.LoggedInUser.UserId + locId + exp + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD);
+            string hash = refId + dataId + locId + this.IntSolutionId + this.LoggedInUser.UserId + exp + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD);
             hash = hash.ToMD5Hash();
-            return string.Format(url, dataId, vid, this.LoggedInUser.UserId, locId, exp, hash);
+            return string.Format(url, dataId, vid, locId, this.LoggedInUser.UserId, exp, hash);
         }
 
-        public IActionResult view(int id, int vid, int uid, int l, string exp, string h)
+        public IActionResult view(string p)
         {
-            DateTime exptime = DateTime.ParseExact(exp, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            string[] _p = p.Split("-");
+            DateTime exptime = DateTime.ParseExact(_p[4], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             if (exptime < DateTime.UtcNow)
                 return Redirect("/StatusCode/404");
-            GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = vid });
-            string computed_hash = (Resp.RefId + id + this.IntSolutionId + uid + l + exp + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD)).ToMD5Hash();
-            if (h != computed_hash)
+            GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = Convert.ToInt32(_p[1]) });
+            string computed_hash = (Resp.RefId + _p[0] + _p[2] + this.IntSolutionId + _p[3] + _p[4] + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD)).ToMD5Hash();
+            if (_p[5] != computed_hash)
                 return Redirect("/StatusCode/404");
-            TempData["readonlyurlloc"] = l;
-            string _params = JsonConvert.SerializeObject(new List<Param>() { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = id.ToString() } }).ToBase64();
+            TempData["readonlyurlloc"] = _p[2];
+            string _params = JsonConvert.SerializeObject(new List<Param>() { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = _p[0] } }).ToBase64();
 
             return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _params, _m = 1, _l = 0, _rm = 1, _lg = this.CurrentLanguage ?? "en" });
         }
@@ -274,9 +274,10 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (RowId > 0)
                 {
-                    if (!(int.TryParse(Convert.ToString(TempData["readonlyurlloc"]), out int xyz) && xyz == _locId))
+                    if (!(int.TryParse(Convert.ToString(TempData["readonlyurlloc"]), out int xyz) && xyz == _locId && webForm.EnableShareUrl))
                         xyz = 0;
                     TempData.Remove("readonlyurlloc");
+                    resp.DisableLocCheck = xyz > 0;
 
                     bool neglectLocId = webForm.IsLocIndependent || xyz > 0;
                     if (!(this.HasPermission(webForm.RefId, OperationConstants.VIEW, _locId, neglectLocId) || this.HasPermission(webForm.RefId, OperationConstants.EDIT, _locId, neglectLocId) ||

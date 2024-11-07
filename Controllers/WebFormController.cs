@@ -277,6 +277,10 @@ namespace ExpressBase.Web.Controllers
                     if (!(int.TryParse(Convert.ToString(TempData["readonlyurlloc"]), out int xyz) && xyz == _locId && webForm.EnableShareUrl))
                         xyz = 0;
                     TempData.Remove("readonlyurlloc");
+
+                    if (webForm.MultiLocAccess && xyz == 0 && wdr.FormData.LocPermissions.Any(x => this.LoggedInUser.LocationIds.Contains(x)))
+                        xyz = _locId;
+
                     resp.DisableLocCheck = xyz > 0;
 
                     bool neglectLocId = webForm.IsLocIndependent || xyz > 0;

@@ -967,6 +967,22 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             return (Resp.Status, Resp.ModifiedAt);
         }
 
+        public (int, string) ChangeLocationWebformData(string RefId, int RowId, int CurrentLoc, int NewLoc, string ModifiedAt)
+        {
+            try
+            {
+                if (!this.HasPermission(RefId, OperationConstants.CHANGE_LOCATION, CurrentLoc) ||
+                    !this.HasPermission(RefId, OperationConstants.CHANGE_LOCATION, NewLoc))
+                    return (-2, "Access denied to change the location");
+                ChangeLocationWebFormDataResponse Resp = ServiceClient.Post(new ChangeLocationWebFormDataRequest { RefId = RefId, RowId = RowId, CurrentLocId = CurrentLoc, NewLocId = NewLoc, ModifiedAt = ModifiedAt });
+                return (Resp.Status, Resp.Message);
+            }
+            catch (Exception ex)
+            {
+                return (-2, ex.Message);
+            }
+        }
+
         public string GetPushedDataInfo(string RefId, int RowId, int CurrentLoc)
         {
             if (!this.HasPermission(RefId, OperationConstants.AUDIT_TRAIL, CurrentLoc))

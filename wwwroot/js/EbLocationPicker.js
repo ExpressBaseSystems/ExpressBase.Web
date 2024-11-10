@@ -783,8 +783,8 @@ let FinYearPicker = function (options) {
         };
 
         //EXTERNAL fn - wenformrender
-        this.canSwitchToEditMode = function (MultiRenderCxt) {
-            let locId = ebcontext.locations.CurrentLocObj.LocId;
+        this.canSwitchToEditMode = function (MultiRenderCxt, LocationId) {
+            let locId = LocationId ? LocationId : ebcontext.locations.CurrentLocObj.LocId;
             for (let i = 0; i < this.DATE_CTRLS.length; i++) {
                 let o = this.DATE_CTRLS[i];
                 if (o.formRenderer.__MultiRenderCxt == MultiRenderCxt) {

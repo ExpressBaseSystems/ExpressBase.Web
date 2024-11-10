@@ -1637,7 +1637,7 @@ const WebFormRender = function (option) {
     this.SwitchToEditMode = function () {
         if (!this.S2EmodeReviewCtrl()) // switch to Edit mode  - ReviewCtrl
             return;
-        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt))
+        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, this.getLocId()))
             return;
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
@@ -1907,9 +1907,13 @@ const WebFormRender = function (option) {
 
     this.changeLocation = function (e) {
         this.hideInfoWindow();
-        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt))
-            return;
         let newLocId = parseInt($(e.target).val());
+
+        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, this.getLocId()))
+            return;
+        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, newLocId))
+            return;
+
         let msg = `from ${this.getLocObj().ShortName} to ${$(e.target).find('option:selected').text()}`;
         EbDialog("show",
             {

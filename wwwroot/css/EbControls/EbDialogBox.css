@@ -39,6 +39,10 @@
     display: flex;
 }
 
+    .eb_dlogBox_container .msgbdy .eb_dlogBox_bdyin {
+        width: 100%;
+    }
+
 .eb_dlogBox_container .cnfrmBox-btnc {
     width: 100%;
 }

@@ -32,8 +32,7 @@
             $('body').append(`<div class="eb_dlgMsk"></div>
                                 <div class="eb_dlogBox_container" id="eb_dlogBox_container">
                                     <div class="cw">
-                                        @title@
-                                        @close@
+                                        <div class="bxhead">@title@@close@</div>
                                         <div class="msgbdy">${setMessage()}</div>
                                         <div class="cnfrmBox-btnc">
                                             ${generateBtn()}
@@ -42,6 +41,7 @@
                                 </div>`.replace("@title@", settings.Title ? `<div class="_title">${settings.Title}</div>` : '')
                 .replace("@close@", settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>'));
         else {
+            $(`#eb_dlogBox_container .bxhead`).html(setHeader());
             $(`#eb_dlogBox_container .msgbdy`).html(setMessage());
             $(`#eb_dlogBox_container .cnfrmBox-btnc`).html(generateBtn());
         }
@@ -66,8 +66,14 @@
         });
     }
 
+    function setHeader() {
+        let _htm = settings.Title ? `<div class="_title">${settings.Title}</div>` : '';
+        _htm += settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>';
+        return _htm;
+    };
+
     function setMessage() {
-        let _htm = '<div>';
+        let _htm = '<div class="eb_dlogBox_bdyin">';
         if (settings.IncludeSelectInput) {
             _htm += `<div> <label class="eb_dlogBox_select_label">${settings.SelectInputLabel} <sup style="color: red">*</sup></label> <select id='eb_dlogBox_select_input' class='eb_dlogBox_select_input'><option value='0' disabled selected>-- Select --</option>`;
             $.each(settings.SelectInputOptions, function (indx, obj) {

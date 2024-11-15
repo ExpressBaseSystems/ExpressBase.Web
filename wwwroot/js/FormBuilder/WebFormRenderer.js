@@ -1920,7 +1920,7 @@ const WebFormRender = function (option) {
         let docId = '';
         let p = getFlatObjOfType(this.FormObj, "AutoId");
         if (p && p.length > 0)
-            docId = ` (${[0].getValue()})`;
+            docId = ` (${p[0].getValue()})`;
 
         EbDialog("show",
             {
@@ -3215,10 +3215,10 @@ const WebFormRender = function (option) {
                 let locObj = getObjByval(ebcontext.locations.Locations, "LocId", this.getLocId());
 
                 if (locObj && !this.draftId && locObj.ShortName == info.CreFrom && !this.formData.IsReadOnly && !this.formData.IsLocked && this.checkPermission('ChangeLocation')) {
-                    $cont.append(`<div class='wfd-linkdiv wfd-locdiv'> Owner Location: ${info.CreFrom} <span>Edit<span></div>`);
+                    $cont.append(`<div class='wfd-linkdiv wfd-locdiv'> Owner Location: ${info.CreFrom} <span>Change<span></div>`);
                 }
                 else
-                    $cont.append(`<div class='wfd-linkdiv'> Owner Location: ${info.CreFrom} </div>`);
+                    $cont.append(`<div class='wfd-linkdiv'> Owner Location ${info.CreFrom} </div>`);
             }
         }
         if (this.formData.IsReadOnly)

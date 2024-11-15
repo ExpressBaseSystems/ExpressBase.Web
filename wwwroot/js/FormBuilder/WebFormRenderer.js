@@ -1907,23 +1907,41 @@ const WebFormRender = function (option) {
 
     this.changeLocation = function (e) {
         this.hideInfoWindow();
-        let newLocId = parseInt($(e.target).val());
-
-        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, this.getLocId()))
-            return;
-        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, newLocId))
+        let curLocId = this.getLocId();
+        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, curLocId))
             return;
 
-        let msg = `from ${this.getLocObj().ShortName} to ${$(e.target).find('option:selected').text()}`;
+        let _opts = [];
+        $.each(ebcontext.locations.Locations, function (indx, obj) {
+            if (curLocId != obj.LocId)
+                _opts.push({ value: obj.LocId, text: obj.ShortName });
+        });
+
+        let docId = '';
+        let p = getFlatObjOfType(this.FormObj, "AutoId");
+        if (p && p.length > 0)
+            docId = ` (${[0].getValue()})`;
+
         EbDialog("show",
             {
-                Message: `Are you sure to change the location ${msg}?`,
+                Title: 'Change Location?',
+                Message: `<div style='font-size: 12px;line-height: 1.25em;margin: 22px;'>The Document ID${docId} will not be changed due to this location change activity. <br>The owner location of all related/dependent form submissions will also be changed to the selected location.</div> <label>Are you sure to change the location?</label>`,
                 Buttons: {
                     "Yes": { Background: "green", Align: "left", FontColor: "white;" },
                     "No": { Background: "violet", Align: "right", FontColor: "white;" }
                 },
-                CallBack: function (name) {
+                IncludeSelectInput: true,
+                SelectInputOptions: _opts,
+                SelectInputLabel: `You are going to change the location of this submission from ${this.getLocObj().ShortName}. <br> <label style='margin-top: 10px;font-weight: 400;'>Select new owner location:</label>`,
+                CallBack: function (name, prompt, selected) {
                     if (name === "Yes") {
+                        if (!selected) {
+                            EbMessage("show", { Message: 'Please select a location', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                            return true;
+                        }
+                        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, selected.value))
+                            return true;
+
                         this.showLoader();
                         $.ajax({
                             type: "POST",
@@ -1932,7 +1950,7 @@ const WebFormRender = function (option) {
                                 RefId: this.formRefId,
                                 RowId: this.rowId,
                                 CurrentLoc: this.getLocId(),
-                                NewLoc: newLocId,
+                                NewLoc: selected.value,
                                 ModifiedAt: this.formData.ModifiedAt
                             },
                             error: function (xhr, ajaxOptions, thrownError) {
@@ -1943,8 +1961,8 @@ const WebFormRender = function (option) {
                                 this.hideLoader();
                                 if (result.item1 > 0) {
                                     this.formData.ModifiedAt = result.item2;
-                                    EbMessage("show", { Message: `Location changed ${msg}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
-                                    this.setLocId(newLocId);
+                                    EbMessage("show", { Message: `Location changed from ${this.getLocObj().ShortName} to ${selected.text}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
+                                    this.setLocId(selected.value);
                                     if (this.formData.Info)
                                         this.formData.Info.CreFrom = this.getLocObj().ShortName;
                                 }
@@ -1959,7 +1977,6 @@ const WebFormRender = function (option) {
                     }
                 }.bind(this)
             });
-
     };
 
     this.lockUnlockForm = function () {
@@ -3198,16 +3215,10 @@ const WebFormRender = function (option) {
                 let locObj = getObjByval(ebcontext.locations.Locations, "LocId", this.getLocId());
 
                 if (locObj && !this.draftId && locObj.ShortName == info.CreFrom && !this.formData.IsReadOnly && !this.formData.IsLocked && this.checkPermission('ChangeLocation')) {
-                    let selHtml = `<select>`;
-                    $.each(ebcontext.locations.Locations, function (indx, obj) {
-                        selHtml += `<option value='${obj.LocId}'>${obj.ShortName}</option>`;
-                    });
-                    selHtml += `<select>`;
-                    $cont.append(`<div class='wfd-info wfd-locdiv'> Created From Location: ${selHtml} </div>`);
-                    $cont.find('.wfd-locdiv select').val(locObj.LocId);
+                    $cont.append(`<div class='wfd-linkdiv wfd-locdiv'> Owner Location: ${info.CreFrom} <span>Edit<span></div>`);
                 }
                 else
-                    $cont.append(`<div class='wfd-info'> Created From Location: ${info.CreFrom} </div>`);
+                    $cont.append(`<div class='wfd-linkdiv'> Owner Location: ${info.CreFrom} </div>`);
             }
         }
         if (this.formData.IsReadOnly)
@@ -3259,7 +3270,7 @@ const WebFormRender = function (option) {
             <div><i class="fa fa-paper-plane"></i> Send Message</div>
         </div>`);
 
-        $cont.find('.wfd-locdiv select').off("change").on("change", this.changeLocation.bind(this));
+        $cont.find('.wfd-locdiv span').off("click").on("click", this.changeLocation.bind(this));
         $cont.find('.wfd-lock span').off("click").on("click", this.lockUnlockForm.bind(this));
         $cont.find('.wfd-cancel span').off("click").on("click", this.cancelForm.bind(this));
         $cont.find('.wfd-share span').off("click").on("click", this.shareForm.bind(this));

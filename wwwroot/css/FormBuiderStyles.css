@@ -4244,6 +4244,11 @@ input.locinp {
                 text-decoration: underline;
             }
 
+    .webformdetails .wfd-locdiv span {
+        font-size: 11px;
+        padding-left: 6px;
+    }
+
     .webformdetails .wfd-btndiv {
         padding: 10px;
         display: flex;

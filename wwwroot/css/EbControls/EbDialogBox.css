@@ -33,7 +33,7 @@
     padding: 5px 0 20px 0;
     font-size: 16px;
     line-height: 2em;
-    word-break: break-all;
+    /*word-break: break-all;*/
     flex-grow: 1;
     align-items: center;
     display: flex;
@@ -69,15 +69,30 @@
     font-size: 16px;
 }
 
+.eb_dlogBox_container ._title {
+    padding: 0px 0px 10px 0px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
 .eb_dlogBox_container .eb_dlogBox_prompt_inputContainer {
     display: flex;
     flex-flow: column nowrap;
     width: 100%;
 }
 
-.eb_dlogBox_container .eb_dlogBox_prompt_label {
+.eb_dlogBox_container .eb_dlogBox_prompt_label, .eb_dlogBox_container .eb_dlogBox_select_label {
     font-weight: 400;
     color: #222;
+    line-height: 1.5em;
+}
+
+.eb_dlogBox_container .eb_dlogBox_select_input {
+    width: 100%;
+    padding: 6px 10px;
+    height: 34px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
 .eb_dlogBox_container .eb_dlogBox_prompt_input {

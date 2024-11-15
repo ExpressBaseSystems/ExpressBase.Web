@@ -640,7 +640,7 @@
             options += "<option mode='text/x-plsql'  type='2' hint='sql'>SQL Script Editor</option>";
         this.ScrEHelper("Javascript Editor", 'JE_txtEdtr', "javascript", "javascript");
         $("#editorsel").empty();
-        $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<div style='width: 200px; display: inline-block;'><select id='editorsel' class='selectpicker'></div>" + options + "</select>");
+        $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<div style='width: 200px; display: inline-block;'><select id='editorsel' class='selectpicker'>" + options + "</select></div>");
         $("#editorsel").selectpicker('refresh');
         $("#editorsel").selectpicker().on('changed.bs.select', this.editorSelChange.bind(this));
     };

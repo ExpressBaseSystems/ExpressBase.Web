@@ -241,7 +241,8 @@ const WebFormCollectionRender = function (Option) {
                 editModeAutoSave: options.editModeAutoSave,
                 keepHidden: keepHidden,
                 __MultiRenderCxt: cxt,
-                relatedData: _obj.relatedData
+                relatedData: _obj.relatedData,
+                disableLocCheck: resp.DisableLocCheck
             });
             WebForm.__MultiRenderUrl = resp.Url;
             this.RenderCollection.push(WebForm);

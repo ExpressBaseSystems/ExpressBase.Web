@@ -2759,9 +2759,9 @@ const WebFormRender = function (option) {
             for (let i = 0; i < btns.length; i++) {
                 if (btns[i] === this.hBtns['SaveSel'] && this.formPermissions[loc].includes(op.New) && (mode === 'New Mode'))
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['SaveSel'] && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)) && mode === 'Edit Mode')
+                else if (btns[i] === this.hBtns['SaveSel'] && mode === 'Edit Mode' && this.isEditEnabled(loc, op))
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['Edit'] && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)))
+                else if (btns[i] === this.hBtns['Edit'] && this.isEditEnabled(loc, op))
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['NewSel']) {
                     if (this.FormObj.WebFormLinks && this.FormObj.WebFormLinks.$values.length > 0)
@@ -2778,6 +2778,21 @@ const WebFormRender = function (option) {
             }
         }
         return r;
+    };
+
+    this.isEditEnabled = function (loc, op) {
+        if (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId))
+            return true;
+        let i = false;
+        if (this.FormObj.MultiLocEdit && this.formData.MultiLocEditAccess) {
+            $.each(this.formPermissions, function (k, v) {
+                if (v.includes(op.Edit)) {
+                    i = true;
+                    return false;
+                }
+            }.bind(this));
+        }
+        return i;
     };
 
     this.checkPermission = function (opStr) {
@@ -3215,7 +3230,7 @@ const WebFormRender = function (option) {
                 let locObj = getObjByval(ebcontext.locations.Locations, "LocId", this.getLocId());
 
                 if (locObj && !this.draftId && locObj.ShortName == info.CreFrom && !this.formData.IsReadOnly && !this.formData.IsLocked && this.checkPermission('ChangeLocation')) {
-                    $cont.append(`<div class='wfd-linkdiv wfd-locdiv'> Owner Location: ${info.CreFrom} <span>Change<span></div>`);
+                    $cont.append(`<div class='wfd-linkdiv wfd-locdiv'> Owner Location ${info.CreFrom} <span>Change<span></div>`);
                 }
                 else
                     $cont.append(`<div class='wfd-linkdiv'> Owner Location ${info.CreFrom} </div>`);

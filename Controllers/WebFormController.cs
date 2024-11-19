@@ -278,7 +278,7 @@ namespace ExpressBase.Web.Controllers
                         xyz = 0;
                     TempData.Remove("readonlyurlloc");
 
-                    if (webForm.MultiLocAccess && xyz == 0 && wdr.FormData.LocPermissions.Any(x => this.LoggedInUser.LocationIds.Contains(x)))
+                    if ((webForm.MultiLocView || webForm.MultiLocEdit) && (wdr.FormData.MultiLocViewAccess || wdr.FormData.MultiLocEditAccess) && xyz == 0)
                         xyz = _locId;
 
                     resp.DisableLocCheck = xyz > 0;
@@ -874,7 +874,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                 if (RowId > 0)
                     Operation = OperationConstants.EDIT;
                 EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
-                bool neglectLocId = WebForm.IsLocIndependent;
+                bool neglectLocId = WebForm.IsLocIndependent || (RowId > 0 ? WebForm.MultiLocEdit : false);
                 if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = FormErrors.E0127, MessageInt = $"Access denied. Info: [{RefId}, {Operation}, {CurrentLoc}, {neglectLocId}]" });
 

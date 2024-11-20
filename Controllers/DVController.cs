@@ -48,6 +48,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult dv(string refid, string rowData, string filterValues, int tabNum)
         {
+            if (!EbFormHelper.HasPermission(this.LoggedInUser, refid, OperationConstants.CUSTOMIZE, 0, true))
+                return Redirect("/StatusCode/401");
 
             ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             //string objid, EbObjectType objtype

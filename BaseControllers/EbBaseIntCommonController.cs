@@ -272,7 +272,7 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     Name = objectType.Alias,
                     IntCode = objectType.IntCode,
-                    BMW = objectType.BMW,
+                    BMWP = objectType.BMWP,
                     IsUserFacing = objectType.IsUserFacing,
                     Icon = objectType.Icon
                 });

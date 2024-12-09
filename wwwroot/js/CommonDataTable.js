@@ -2803,6 +2803,7 @@
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".webformlink" + this.tableId).off("click").on("click", this.openWebform.bind(this));
         $("#" + this.tableId).off("click", ".tablelink4calendar").on("click", ".tablelink4calendar", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -3422,7 +3423,7 @@
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (rowIds.length <= 50) {
+            if (rowIds.length <= 75) {
                 let url = "/ReportRender/RenderLinkMultiSync?refId=" + rptRefid + "&rowId=" + rowIds;
                 //ebcontext.webform.showLoader();
                 EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 30000 });
@@ -4448,6 +4449,16 @@
             this.OpeninNewTab(idx, cData);
         }
         //this.filterValues = [];
+    };
+
+    this.openWebform = function (e) {
+        let _a = $(e.target).closest("a");
+        let _v = _a.attr("data-ver");
+        let _i = _a.attr("data-id");
+        let _f = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", _i)]))));
+
+        let url = `../WebForm/Inde?_r=${_v}&_p=${_f}&_m=${1}`;
+        window.open(url, '_blank');
     };
 
     this.link2NewTableFromColumn = function (e) {

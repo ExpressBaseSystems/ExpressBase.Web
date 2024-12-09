@@ -52,10 +52,15 @@
                         <i class="fa fa-android"></i> Bot <span class="apps_count botcount"></span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#posapps_tab" role="tab">
+                        <i class="fa fa-desktop"></i> Pos <span class="apps_count poscount"></span>
+                    </a>
+                </li>
             </ul>
             <div class="tab-content">
                 @{
-                    int webcount = 0; int botcount = 0; int mobcount = 0;
+                    int webcount = 0; int botcount = 0; int mobcount = 0; int poscount = 0;
                     if (appList != null)
                     {
                         <div class="tab-pane active" id="webapps_tab" role="tabpanel">
@@ -136,6 +141,32 @@
                                 }
                             </div>
                         </div>
+                        <div class="tab-pane" id="posapps_tab" role="tabpanel">
+                            <div class="tabpane-flex">
+                                @foreach (AppWrapper aw in appList)
+                                {
+                                    var apptype = (EbApplicationTypes)aw.AppType;
+
+                                    string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                    if (aw.AppType == 4)
+                                    {
+                                        poscount = poscount + 1;
+                                        <div class="appcontainer">
+                                            <a class="appcontainer_inner h-100" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                                <div class="appcontainer-icon-container">
+                                                    <span class="fa @aw.Icon appcontainer-icon"></span>
+                                                </div>
+                                                <div class="appcontainer-body">
+                                                    <div name="appname" class="title txtdecor_none">@aw.Name</div>
+                                                    <p class="mr-0 description txtdecor_none">@desc</p>
+                                                </div>
+                                                <i class="fa fa-external-link openinnew"></i>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
                     }
                 }
             </div>
@@ -151,6 +182,7 @@
             $(".mobcount").text('(@mobcount)');
             $(".webcount").text("(@webcount)");
             $(".botcount").text("(@botcount)");
+            $(".poscount").text("(@poscount)");
 
             //js function to reset store
             @ViewBag.JavaScriptFunction;

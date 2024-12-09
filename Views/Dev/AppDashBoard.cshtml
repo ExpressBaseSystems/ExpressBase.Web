@@ -63,6 +63,8 @@
         else if (appinfo.AppType == 2) { typeIcon = "/images/svg/smartphone-call.svg"; }
 
         else if (appinfo.AppType == 3) { typeIcon = "/images/svg/chat1.svg"; }
+
+        else if (appinfo.AppType == 4) { typeIcon = "/images/svg/form1.svg"; }
     }
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 s-dash-solution-desc border-style-none">
@@ -635,10 +637,8 @@
                         </div>
 
                     }
-                    else if (appinfo.AppType == 2)
+                    else if (appinfo.AppType == 2 || appinfo.AppType == 4)
                     {
-                        EbMobileSettings MobSettings = (ViewBag.AppSettings as EbMobileSettings);
-
                         <div class="appdash_typedmob_readerWraper">
                             <div class="appdash_readerinner">
                                 <div class="body" id="reader_body" style="display:flex;flex-flow:column;">
@@ -653,10 +653,37 @@
                                             </tr>
                                         </thead>
                                         <tbody id="import_reftable_body">
-                                            @{
+                                            @if (appinfo.AppType == 2)
+                                            {
+                                                EbMobileSettings MobSettings = (ViewBag.AppSettings as EbMobileSettings);
+
                                                 if (MobSettings.DataImport.Count > 0)
                                                 {
                                                     foreach (DataImportMobile di in MobSettings.DataImport)
+                                                    {
+                                                        <tr>
+                                                            <td><input type="text" class="import_reftable_input" value="@di.TableName" name="@(di.RefId + "_input")" /></td>
+                                                            <td>
+                                                                <a href="/Eb_Object/Index?objid=@di.RefId.Split("-")[3]&objtype=@di.RefId.Split("-")[2]" target="_blank">@di.DisplayName</a>
+                                                            </td>
+                                                            <td class="text-center"><button class="rm_refbtn pull-right" ref="@di.RefId"><i class="fa fa-close"></i></button></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr class="empty_tr">
+                                                        <td colspan="3" style="text-align:center">empty</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else if (appinfo.AppType == 4)
+                                            {
+                                                EbPosSettings PosSettings = (ViewBag.AppSettings as EbPosSettings);
+
+                                                if (PosSettings.DataImport.Count > 0)
+                                                {
+                                                    foreach (DataImportMobile di in PosSettings.DataImport)
                                                     {
                                                         <tr>
                                                             <td><input type="text" class="import_reftable_input" value="@di.TableName" name="@(di.RefId + "_input")" /></td>
@@ -679,54 +706,57 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="appdash-mobile-menuvalidator">
-                            <h4>Menu Before Render</h4>
-                            <div class="menuvalidator-inner">
-                                <div class="meta" id="menuload-api-meta">
-                                    @{
-                                        string apiText = "Not selected";
-                                        if (MobSettings.MenuApi != null)
-                                        {
-                                            apiText = $"{MobSettings.MenuApi.DisplayName} (../{MobSettings.MenuApi.Name}/{MobSettings.MenuApi.Version}/json)";
-                                        }
-                                        <span>@apiText</span>
-                                    }
-                                </div>
-                                <a class="obj-selector-btn" data-target="#mobile-preloadmenu_mdl" data-toggle="modal">
-                                    ...
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="appdash-mobile-menuvalidator">
-                            <h4>DashBoard</h4>
-                            <div class="menuvalidator-inner">
-                                <div class="meta" id="mobile-dash-refid">
-                                    @{
-                                        string dashboardText = "Not selected";
-
-                                        if (!string.IsNullOrEmpty(MobSettings.DashBoardRefId))
-                                        {
-                                            dashboardText = MobSettings.DashBoardRefId;
-
-                                            if (list.TryGetValue(13, out var collection) && collection.Objects != null)
+                        @if (appinfo.AppType == 2)
+                        {
+                            <div class="appdash-mobile-menuvalidator">
+                                <h4>Menu Before Render</h4>
+                                <div class="menuvalidator-inner">
+                                    <div class="meta" id="menuload-api-meta">
+                                        @{
+                                            EbMobileSettings MobSettings = (ViewBag.AppSettings as EbMobileSettings);
+                                            string apiText = "Not selected";
+                                            if (MobSettings.MenuApi != null)
                                             {
-                                                ObjWrap obj = collection.Objects.Find(x => x.Refid == MobSettings.DashBoardRefId);
-                                                if (obj != null)
+                                                apiText = $"{MobSettings.MenuApi.DisplayName} (../{MobSettings.MenuApi.Name}/{MobSettings.MenuApi.Version}/json)";
+                                            }
+                                            <span>@apiText</span>
+                                        }
+                                    </div>
+                                    <a class="obj-selector-btn" data-target="#mobile-preloadmenu_mdl" data-toggle="modal">
+                                        ...
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="appdash-mobile-menuvalidator">
+                                <h4>DashBoard</h4>
+                                <div class="menuvalidator-inner">
+                                    <div class="meta" id="mobile-dash-refid">
+                                        @{
+                                            string dashboardText = "Not selected";
+
+                                            if (!string.IsNullOrEmpty(MobSettings.DashBoardRefId))
+                                            {
+                                                dashboardText = MobSettings.DashBoardRefId;
+
+                                                if (list.TryGetValue(13, out var collection) && collection.Objects != null)
                                                 {
-                                                    dashboardText = obj.DisplayName + " (" + MobSettings.DashBoardRefId + ")";
+                                                    ObjWrap obj = collection.Objects.Find(x => x.Refid == MobSettings.DashBoardRefId);
+                                                    if (obj != null)
+                                                    {
+                                                        dashboardText = obj.DisplayName + " (" + MobSettings.DashBoardRefId + ")";
+                                                    }
                                                 }
                                             }
+                                            <span>@dashboardText</span>
                                         }
-                                        <span>@dashboardText</span>
-                                    }
+                                    </div>
+                                    <a class="obj-selector-btn" data-target="#mobile-dashboard_mdl" data-toggle="modal">
+                                        ...
+                                    </a>
                                 </div>
-                                <a class="obj-selector-btn" data-target="#mobile-dashboard_mdl" data-toggle="modal">
-                                    ...
-                                </a>
                             </div>
-                        </div>
+                        }
 
                         <div class="appseting-footer" style="margin-top:2em;width:50%">
                             <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="save-appsettings-btn">
@@ -795,7 +825,7 @@
                 </div>
                 <div class="modal-body" style="flex:1;overflow-y:auto;">
                     @{
-                        if (appinfo.AppType == 2)
+                        if (appinfo.AppType == 2 || appinfo.AppType == 4)
                         {
                             <div class="import_data_mdl_mdlbdy">
                                 <div class="import_data_cols import_data_objects w-100">

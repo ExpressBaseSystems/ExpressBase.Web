@@ -20,6 +20,10 @@
         IsPrompt: false,
         PromptLines: 1,
         hideClose: false,
+        IncludeSelectInput: false,
+        SelectInputOptions: [],
+        SelectInputLabel: '',
+        Title: '',
         CallBack: function (name, prompt) { console.log(name + ":" + prompt); }
     }, options);
 
@@ -28,14 +32,16 @@
             $('body').append(`<div class="eb_dlgMsk"></div>
                                 <div class="eb_dlogBox_container" id="eb_dlogBox_container">
                                     <div class="cw">
-                                        @close@
+                                        <div class="bxhead">@title@@close@</div>
                                         <div class="msgbdy">${setMessage()}</div>
                                         <div class="cnfrmBox-btnc">
                                             ${generateBtn()}
                                         </div>
                                     </div>
-                                </div>`.replace("@close@", settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>'));
+                                </div>`.replace("@title@", settings.Title ? `<div class="_title">${settings.Title}</div>` : '')
+                .replace("@close@", settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>'));
         else {
+            $(`#eb_dlogBox_container .bxhead`).html(setHeader());
             $(`#eb_dlogBox_container .msgbdy`).html(setMessage());
             $(`#eb_dlogBox_container .cnfrmBox-btnc`).html(generateBtn());
         }
@@ -44,8 +50,13 @@
 
             let n = $(ev.target).attr("name");
             let prompt = settings.IsPrompt ? $("#eb_dlogBox_prompt_input").val() : undefined;
+            let selected = {};
+            if (settings.IncludeSelectInput) {
+                let _v = $("#eb_dlogBox_select_input").val();
+                selected = settings.SelectInputOptions.find(function (e) { return e.value == _v; });
+            }
 
-            if (!settings.CallBack(n, prompt))
+            if (!settings.CallBack(n, prompt, selected))
                 hideMsg();
         });
 
@@ -55,18 +66,34 @@
         });
     }
 
+    function setHeader() {
+        let _htm = settings.Title ? `<div class="_title">${settings.Title}</div>` : '';
+        _htm += settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>';
+        return _htm;
+    };
+
     function setMessage() {
+        let _htm = '<div class="eb_dlogBox_bdyin">';
+        if (settings.IncludeSelectInput) {
+            _htm += `<div> <label class="eb_dlogBox_select_label">${settings.SelectInputLabel} <sup style="color: red">*</sup></label> <select id='eb_dlogBox_select_input' class='eb_dlogBox_select_input'><option value='0' disabled selected>-- Select --</option>`;
+            $.each(settings.SelectInputOptions, function (indx, obj) {
+                _htm += `<option value='${obj.value}'>${obj.text}</option>`;
+            });
+            _htm += `</select></div>`;
+        }
+
         if (settings.IsPrompt) {
-            let _htm = `<div class="eb_dlogBox_prompt_inputContainer"> <label class="eb_dlogBox_prompt_label">${settings.Message}<sup style="color: red">*</sup></label>`;
+            _htm += `<div class="eb_dlogBox_prompt_inputContainer"> <label class="eb_dlogBox_prompt_label">${settings.Message}<sup style="color: red">*</sup></label>`;
             if (settings.PromptLines && settings.PromptLines > 1)
                 _htm += `<textarea type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" rows="${settings.PromptLines}">${settings.DefaultText}</textarea>`;
             else
                 _htm += `<input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" value='${settings.DefaultText}'/>`;
             _htm += `</div>`;
-            return _htm;
         }
         else
-            return settings.Message;
+            _htm += settings.Message;
+        _htm += '</div>';
+        return _htm;
     }
 
     function showMsg() {

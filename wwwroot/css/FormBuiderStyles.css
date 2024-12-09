@@ -4225,6 +4225,10 @@ input.locinp {
         padding: 0 0 10px 0;
     }
 
+    .webformdetails .wfd-locdiv select {
+        border-color: lightgray;
+    }
+
     .webformdetails .wfd-linkdiv {
         padding: 5px 0 5px 0;
     }
@@ -4239,6 +4243,10 @@ input.locinp {
                 color: #23527c;
                 text-decoration: underline;
             }
+
+    .webformdetails .wfd-locdiv span {
+        padding-left: 6px;
+    }
 
     .webformdetails .wfd-btndiv {
         padding: 10px;

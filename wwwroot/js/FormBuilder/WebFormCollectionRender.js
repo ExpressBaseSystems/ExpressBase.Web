@@ -67,7 +67,8 @@ const WebFormCollectionRender = function (Option) {
                 formHTML: Op._formHTML,
                 disableEditBtn: Op._disableEditButton,
                 __MultiRenderCxt: this.RenderCounter++,
-                relatedData: Op._relatedData
+                relatedData: Op._relatedData,
+                disableLocCheck: Op._disableLocCheck
             };
 
             let WebForm = new WebFormRender(_options);
@@ -240,7 +241,8 @@ const WebFormCollectionRender = function (Option) {
                 editModeAutoSave: options.editModeAutoSave,
                 keepHidden: keepHidden,
                 __MultiRenderCxt: cxt,
-                relatedData: _obj.relatedData
+                relatedData: _obj.relatedData,
+                disableLocCheck: resp.DisableLocCheck
             });
             WebForm.__MultiRenderUrl = resp.Url;
             this.RenderCollection.push(WebForm);

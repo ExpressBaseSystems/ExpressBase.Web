@@ -909,7 +909,7 @@ const WebFormRender = function (option) {
                 }
                 else {
                     this.showLoader();
-                    let mint = 3, secd = 3;
+                    let mint = 3, secd = 59;
                     this.formSaveAfterTimeout(mint, secd, respObj);
                 }
             }
@@ -1637,7 +1637,7 @@ const WebFormRender = function (option) {
     this.SwitchToEditMode = function () {
         if (!this.S2EmodeReviewCtrl()) // switch to Edit mode  - ReviewCtrl
             return;
-        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt))
+        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, this.getLocId()))
             return;
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
@@ -1875,6 +1875,102 @@ const WebFormRender = function (option) {
                                 }
                                 else {
                                     EbMessage("show", { Message: `Something went wrong`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
+    };
+
+    this.shareForm = function (e) {
+        if (this.copyShareLinkClicked)
+            return;
+        this.copyShareLinkClicked = true;
+        $(e.target).html('<i class="fa fa-spinner fa-pulse"></i> Loading Share Link');
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/getShareUrl",
+            data: { refId: this.formRefId, dataId: this.rowId, locId: this.getLocId() },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.copyShareLinkClicked = false;
+                $(e.target).html('<i class="fa fa-link"></i> Copy Share Link');
+            }.bind(this),
+            success: function (result) {
+                this.copyShareLinkClicked = false;
+                setTimeout(function () { $(this).html('<i class="fa fa-check"></i> Copied Share Link'); }.bind(e.target), 500);
+                setTimeout(function () { $(this).html('<i class="fa fa-link"></i> Copy Share Link'); }.bind(e.target), 5000);
+                navigator.clipboard.writeText(location.origin + result);
+            }.bind(this)
+        });
+    };
+
+    this.changeLocation = function (e) {
+        this.hideInfoWindow();
+        let curLocId = this.getLocId();
+        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, curLocId))
+            return;
+
+        let _opts = [];
+        $.each(ebcontext.locations.Locations, function (indx, obj) {
+            if (curLocId != obj.LocId)
+                _opts.push({ value: obj.LocId, text: obj.ShortName });
+        });
+
+        let docId = '';
+        let p = getFlatObjOfType(this.FormObj, "AutoId");
+        if (p && p.length > 0)
+            docId = ` (${p[0].getValue()})`;
+
+        EbDialog("show",
+            {
+                Title: 'Change Location?',
+                Message: `<div style='font-size: 12px;line-height: 1.25em;margin: 22px;'>The Document ID${docId} will not be changed due to this location change activity. <br>The owner location of all related/dependent form submissions will also be changed to the selected location.</div> <label>Are you sure to change the location?</label>`,
+                Buttons: {
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                },
+                IncludeSelectInput: true,
+                SelectInputOptions: _opts,
+                SelectInputLabel: `You are going to change the location of this submission from ${this.getLocObj().ShortName}. <br> <label style='margin-top: 10px;font-weight: 400;'>Select new owner location:</label>`,
+                CallBack: function (name, prompt, selected) {
+                    if (name === "Yes") {
+                        if (!selected) {
+                            EbMessage("show", { Message: 'Please select a location', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                            return true;
+                        }
+                        if (!ebcontext.finyears.canSwitchToEditMode(this.__MultiRenderCxt, selected.value))
+                            return true;
+
+                        this.showLoader();
+                        $.ajax({
+                            type: "POST",
+                            url: "/WebForm/ChangeLocationWebformData",
+                            data: {
+                                RefId: this.formRefId,
+                                RowId: this.rowId,
+                                CurrentLoc: this.getLocId(),
+                                NewLoc: selected.value,
+                                ModifiedAt: this.formData.ModifiedAt
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                                this.hideLoader();
+                            }.bind(this),
+                            success: function (result) {
+                                this.hideLoader();
+                                if (result.item1 > 0) {
+                                    this.formData.ModifiedAt = result.item2;
+                                    EbMessage("show", { Message: `Location changed from ${this.getLocObj().ShortName} to ${selected.text}`, AutoHide: true, Background: '#00aa00', Delay: 3000 });
+                                    this.setLocId(selected.value);
+                                    if (this.formData.Info)
+                                        this.formData.Info.CreFrom = this.getLocObj().ShortName;
+                                }
+                                else if (result.item1 === -2) {
+                                    EbMessage("show", { Message: `Operation failed. Error message: ${result.item2}`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                                }
+                                else {
+                                    EbMessage("show", { Message: `Something went wrong (${result.item2})`, AutoHide: true, Background: '#aa0000', Delay: 4000 });
                                 }
                             }.bind(this)
                         });
@@ -2249,6 +2345,12 @@ const WebFormRender = function (option) {
             ebcontext.webform.hideSubFormLoader(this.__MultiRenderCxt);
         else
             $("#eb_common_loader").EbLoader("hide");
+    };
+
+    this.setLocId = function (newLocId) {
+        let d = this.DataMODEL;
+        let t = this.FormObj.TableName;
+        d[t][0].LocId = newLocId;
     };
 
     this.getLocId = function (strictMode = false) {
@@ -2657,9 +2759,9 @@ const WebFormRender = function (option) {
             for (let i = 0; i < btns.length; i++) {
                 if (btns[i] === this.hBtns['SaveSel'] && this.formPermissions[loc].includes(op.New) && (mode === 'New Mode'))
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['SaveSel'] && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)) && mode === 'Edit Mode')
+                else if (btns[i] === this.hBtns['SaveSel'] && mode === 'Edit Mode' && this.isEditEnabled(loc, op))
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['Edit'] && (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId)))
+                else if (btns[i] === this.hBtns['Edit'] && this.isEditEnabled(loc, op))
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['NewSel']) {
                     if (this.FormObj.WebFormLinks && this.FormObj.WebFormLinks.$values.length > 0)
@@ -2678,11 +2780,26 @@ const WebFormRender = function (option) {
         return r;
     };
 
+    this.isEditEnabled = function (loc, op) {
+        if (this.formPermissions[loc].includes(op.Edit) || (this.formPermissions[loc].includes(op.OwnData) && this.formData.CreatedBy === this.userObject.UserId))
+            return true;
+        let i = false;
+        if (this.FormObj.MultiLocEdit && this.formData.MultiLocEditAccess) {
+            $.each(this.formPermissions, function (k, v) {
+                if (v.includes(op.Edit)) {
+                    i = true;
+                    return false;
+                }
+            }.bind(this));
+        }
+        return i;
+    };
+
     this.checkPermission = function (opStr) {
         let loc = this.FormObj.IsLocIndependent ? 0 : this.getLocId();
         if (!this.formPermissions[loc])
             return false;
-        let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11 };
+        let op = { New: 0, View: 1, Edit: 2, Delete: 3, Cancel: 4, AuditTrail: 5, Clone: 6, ExcelImport: 7, OwnData: 8, LockUnlock: 9, RevokeDelete: 10, RevokeCancel: 11, ChangeLocation: 12 };
         if (opStr === 'DraftSave')
             return this.formPermissions[loc].includes(op['New']) && this.FormObj.CanSaveAsDraft && this.Mode.isNew;
         if (opStr === 'DraftDelete')
@@ -2905,7 +3022,7 @@ const WebFormRender = function (option) {
     //};
 
     this.locInit4viewMode = function () {
-        if (this.FormObj.IsLocIndependent)
+        if (this.FormObj.IsLocIndependent || this.disableLocCheck)
             return;
 
         let locId = this.getLocId();
@@ -3108,8 +3225,16 @@ const WebFormRender = function (option) {
                 $cont.append(`<div class='wfd-info'> Created By <br/> ${info.CreBy} at ${info.CreAt}</div>`);
             if (info.ModBy && info.ModAt)
                 $cont.append(`<div class='wfd-info'> Last Modified By <br/> ${info.ModBy} at ${info.ModAt}</div>`);
-            if (info.CreFrom)
-                $cont.append(`<div class='wfd-info'> Created From Location: ${info.CreFrom} </div>`);
+            if (info.CreFrom) {
+
+                let locObj = getObjByval(ebcontext.locations.Locations, "LocId", this.getLocId());
+
+                if (locObj && !this.draftId && locObj.ShortName == info.CreFrom && !this.formData.IsReadOnly && !this.formData.IsLocked && this.checkPermission('ChangeLocation')) {
+                    $cont.append(`<div class='wfd-linkdiv wfd-locdiv'> Owner Location ${info.CreFrom} <span>Change<span></div>`);
+                }
+                else
+                    $cont.append(`<div class='wfd-linkdiv'> Owner Location ${info.CreFrom} </div>`);
+            }
         }
         if (this.formData.IsReadOnly)
             $cont.append(`<div class='wfd-linkdiv'> This is a <b> Read Only </b> record. </div>`);
@@ -3146,6 +3271,9 @@ const WebFormRender = function (option) {
             if (!(this.isBtnDisableFor_eb_default() || this.isDisableCancel()))
                 $cont.append(`<div class='wfd-cancel wfd-linkdiv'><span>Cancel</span> this Form Submission</div>`);
         }
+        if (this.FormObj.EnableShareUrl) {
+            $cont.append(`<div class='wfd-share wfd-linkdiv'><span><i class="fa fa-link"></i> Copy Share Link</span> of this Form Submission</div>`);
+        }
 
         if (this.checkPermission('AuditTrail')) {
             $cont.append(`<div class='wfd-audtrail wfd-btndiv'>
@@ -3157,8 +3285,10 @@ const WebFormRender = function (option) {
             <div><i class="fa fa-paper-plane"></i> Send Message</div>
         </div>`);
 
+        $cont.find('.wfd-locdiv span').off("click").on("click", this.changeLocation.bind(this));
         $cont.find('.wfd-lock span').off("click").on("click", this.lockUnlockForm.bind(this));
         $cont.find('.wfd-cancel span').off("click").on("click", this.cancelForm.bind(this));
+        $cont.find('.wfd-share span').off("click").on("click", this.shareForm.bind(this));
         $cont.find('.wfd-audtrail div').off("click").on("click", this.GetAuditTrail.bind(this));
         $cont.find('.wfd-notify div').off("click").on("click", this.NotifyBtnClicked.bind(this));
 
@@ -3530,6 +3660,7 @@ const WebFormRender = function (option) {
         this.hBtns = option.headerBtns;
         this.formPermissions = option.formPermissions;
         this.uploadedFileRefList = {};
+        this.disableLocCheck = option.disableLocCheck;
 
         this.formData = option.formData;
         this.formDataBackUp = JSON.parse(JSON.stringify(this.formData));

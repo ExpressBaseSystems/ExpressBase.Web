@@ -294,7 +294,7 @@
 
     this.showDatColumn = function (e) {
         $("#eb_common_loader").EbLoader("show");
-        $(".dataclass").hide();
+        $(".dataclass:visible").hide();
         $(`.${$(e.target).attr("data-item")}_class`).show();
         $(`#ShowDataColumndd #action`).text($(e.target).attr("data-title"));
         $(`#ShowDataColumndd .datacolumnsymbol`).remove();

@@ -63,6 +63,8 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
             else if (Type == EbApplicationTypes.Mobile)
                 ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
+            else if (Type == EbApplicationTypes.Pos)
+                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbPosSettings>(_objects.AppInfo.AppSettings) ?? new EbPosSettings();
             else if (Type == EbApplicationTypes.Bot)
             {
                 EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);

@@ -882,7 +882,7 @@ const WebFormRender = function (option) {
             this.relatedSubmissionsHtml = null;
 
             if (this.AfterSavePrintDoc) {
-                this.printDocument_inner(this.AfterSavePrintDoc, respObj.RowId);
+                this.printDocument_inner(this.AfterSavePrintDoc, respObj.RowId, 'print', true);
                 this.AfterSavePrintDoc = null;
             }
             ebcontext.webform.UpdateInterCxtObj(this.__MultiRenderCxt);
@@ -2926,12 +2926,12 @@ const WebFormRender = function (option) {
         let sel = $(e.currentTarget).closest('.btn-select').find(`.selectpicker`);
         let op = sel.attr('data-opr');
         let rptRefid = sel.find("option:selected").attr("data-token");
-        this.printDocument_inner(rptRefid, this.rowId, op);
+        this.printDocument_inner(rptRefid, this.rowId, op, false);
     };
 
-    this.printDocument_inner = function (rptRefid, rowId, op = 'print') {
+    this.printDocument_inner = function (rptRefid, rowId, op, userw) {
         $("#iFramePdf").data('data-opr', op);
-        $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowId);
+        $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + rowId + "&rw=" + userw);
         if (this.defaultAfterSavemodeS === 'close')
             setTimeout(function () { ebcontext.webform.showLoader(); }, 100);
         else

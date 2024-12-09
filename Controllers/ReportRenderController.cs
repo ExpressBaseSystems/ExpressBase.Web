@@ -12,6 +12,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace ExpressBase.Web.Controllers
@@ -44,11 +45,16 @@ namespace ExpressBase.Web.Controllers
                 ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
                 Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUserAuthId = this.LoggedInUser.AuthId, ReadingUserAuthId = this.LoggedInUser.AuthId, Params = Params, UseRwDb = useRwDb });
                 Res.StreamWrapper.Memorystream.Position = 0;
+                // Set the Content-Disposition header for the file name
+                Response.Headers.Add("Content-Disposition", $"inline; filename={Res.ReportName}");
             }
             catch (Exception e)
             {
                 Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
-            }
+            } 
+
+
+            // Return the PDF file 
             Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf")
            // { FileDownloadName = Res.ReportName }
            ;

@@ -46,7 +46,7 @@ namespace ExpressBase.Web.Controllers
                 Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUserAuthId = this.LoggedInUser.AuthId, ReadingUserAuthId = this.LoggedInUser.AuthId, Params = Params });
                 Res.StreamWrapper.Memorystream.Position = 0;
                 // Set the Content-Disposition header for the file name
-                Response.Headers.Add("Content-Disposition", $"inline; filename={Res.ReportName}");
+                Response.Headers.Add("Content-Disposition", $"inline; filename={Res.ReportName + ".pdf"}");
             }
             catch (Exception e)
             {

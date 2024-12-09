@@ -1025,7 +1025,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             return JsonConvert.SerializeObject(Resp.Response);
         }
 
-        public IActionResult GetPdfReport(string refId, string rowId, bool rw)
+        public IActionResult GetPdfReport(string refId, string rowId)
         {
             if (!this.HasPermission(refId, OperationConstants.PRINT, 0, true))
                 return Redirect("/StatusCode/401");
@@ -1035,7 +1035,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             };
             string s = JsonConvert.SerializeObject(p);
             s = s.ToBase64();
-            return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s + "&rw=" + rw);
+            return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s + "&rw=true");
         }
 
         //list view print

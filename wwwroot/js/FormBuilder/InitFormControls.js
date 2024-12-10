@@ -119,6 +119,18 @@
                 EbMessage("show", { Message: 'Changes affect only if form is saved', AutoHide: true, Background: '#0000aa', Delay: 3000 });
         }.bind(this);
 
+        ctrl.isRequiredOK = function (ctrl, files) {
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
+                return true;
+
+            let f = files.filter(function (i) { return !i.Recent; });
+
+            if (f.length > 0)
+                return true;
+
+            return false;
+        }.bind(this, ctrl, files);
+
         imgup.customTrigger = function (DpControlsList, name, refids) {
             if (name === "Delete") {
                 if (name === "Delete") {

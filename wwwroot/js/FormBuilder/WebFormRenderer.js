@@ -1220,12 +1220,57 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.cloneForm = function () {
+    this.cloneForm_inner = function (locId) {
         let params = [];
         params.push(new fltr_obj(11, "srcRowId", this.rowId));
         let _l = ebcontext.languages.getCurrentLanguageCode();
-        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=9&_l=${this.getLocId()}&_lo=${_l}`;
+        let url = `../WebForm/Index?_r=${this.formRefId}&_p=${btoa(JSON.stringify(params))}&_m=9&_l=${locId}&_lo=${_l}`;
         window.open(url, '_blank');
+    };
+
+    this.cloneForm = function () {
+
+        let locId = ebcontext.locations.getCurrent();
+
+        if (this.formPermissions.hasOwnProperty(locId) && this.formPermissions[locId].includes(6)) {
+            this.cloneForm_inner(locId);
+            return;
+        }
+
+        let _opts = [];
+        $.each(ebcontext.locations.Locations, function (indx, obj) {
+            if (this.formPermissions.hasOwnProperty(obj.LocId) && this.formPermissions[obj.LocId].includes(6)) {
+                _opts.push({ value: obj.LocId, text: obj.ShortName });
+            }
+        }.bind(this));
+
+        EbDialog("show",
+            {
+                Title: '',
+                Message: `<label style='margin-top: 20px;'>Are you sure to switch the location and clone the form submission?</label>`,
+                Buttons: {
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                },
+                IncludeSelectInput: true,
+                SelectInputOptions: _opts,
+                SelectInputLabel: `<label style='font-weight: 400;'>Select the location:</label>`,
+                CallBack: function (name, prompt, selected) {
+                    if (name === "Yes") {
+                        if (!selected) {
+                            EbMessage("show", { Message: 'Please select a location', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                            return true;
+                        }
+
+                        if (!ebcontext.locations.SwitchLocation(selected.value)) {
+                            EbMessage("show", { Message: 'Unable to continue with the selected loccation', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                            return;
+                        }
+
+                        this.cloneForm_inner(selected.value);
+                    }
+                }.bind(this)
+            });
     };
 
     this.openSourceForm = function () {
@@ -2773,11 +2818,22 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === this.hBtns['ExcelSel'] && this.formPermissions[loc].includes(op.ExcelImport) && mode === 'New Mode' && this.FormObj.EnableExcelImport)
                     r.push(btns[i]);
-                else if (btns[i] === this.hBtns['Clone'] && this.formPermissions[loc].includes(op.Clone) && mode === 'View Mode' && !this.FormObj.IsDisable)
+                else if (btns[i] === this.hBtns['Clone'] && this.checkAnyLocPermission(op.Clone) && mode === 'View Mode' && !this.FormObj.IsDisable)
                     r.push(btns[i]);
             }
         }
         return r;
+    };
+
+    this.checkAnyLocPermission = function (opr) {
+        let f = false;
+        for (let k in this.formPermissions) {
+            if (this.formPermissions[k].includes(opr)) {
+                f = true;
+                break;
+            }
+        }
+        return f;
     };
 
     this.isEditEnabled = function (loc, op) {

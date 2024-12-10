@@ -1205,7 +1205,7 @@
 
     this.execAllDefaultValExpr = function () {
         let DepHandleObj;
-        if (this.FO.mode != "Clone Mode" && this.FO.mode != "Draft Mode") { // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
+        if ((this.FO.mode != "Clone Mode" || !this.FO.FormObj.EnableDefValExprForClone) && this.FO.mode != "Draft Mode") { // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
             if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
                 console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
                 return;
@@ -1611,8 +1611,8 @@
                     else {
                         if (!this.FO.Mode.isView) {
                             depCtrl.enable();
-                            depCtrl.__IsDisableByExp = false;
                         }
+                        depCtrl.__IsDisableByExp = false;
                     }
                 }
             }

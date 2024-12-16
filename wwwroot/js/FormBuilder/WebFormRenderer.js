@@ -1232,7 +1232,7 @@ const WebFormRender = function (option) {
 
         let locId = ebcontext.locations.getCurrent();
 
-        if (this.formPermissions.hasOwnProperty(locId) && this.formPermissions[locId].includes(6)) {
+        if (this.FormObj.IsLocIndependent || (this.formPermissions.hasOwnProperty(locId) && this.formPermissions[locId].includes(6))) {
             this.cloneForm_inner(locId);
             return;
         }

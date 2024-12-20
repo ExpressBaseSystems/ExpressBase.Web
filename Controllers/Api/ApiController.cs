@@ -930,6 +930,23 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        [HttpPost("api/get_pos_offline_data_v1")]
+        public ActionResult<EbPosSolutionData> GetPosOfflineDataV1(string metadata)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            EbPosSolutionData resp = this.ServiceClient.Post(new PosSolutionDataRequestV1()
+            {
+                MetaData = metadata
+            });
+
+            if (resp == null)
+            {
+                return NotFound();
+            }
+            return resp;
+        }
+
         [HttpPost("api/pull_latest_autoid")]
         public ActionResult<EbMobileAutoIdDataResponse> GetLatestAutoId(string data)
         {

@@ -545,7 +545,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res?.ResponseStatus?.Message);
             }
             return res.FileRefId;
         }

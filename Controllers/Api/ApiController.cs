@@ -257,18 +257,20 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/auth")]
         [HttpPost("/api/auth")]
-        public ApiAuthResponse ApiLoginByMd5(string username, string password, string deviceid, bool anonymous = false)
+        public ApiAuthResponse ApiLoginByMd5(string username, string password, string deviceid, bool anonymous = false, string wc = RoutingConstants.MC)
         {
             ApiAuthResponse response = null;
             try
             {
+                if (!(wc == RoutingConstants.MC || wc == RoutingConstants.PC))
+                    wc = RoutingConstants.MC;
                 Authenticate authRequest = new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = password,
                     Meta = new Dictionary<string, string> {
-                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { RoutingConstants.WC, wc },
                         { TokenConstants.CID, this.IntSolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
                         { RoutingConstants.USER_AGENT, this.UserAgent},
@@ -930,7 +932,7 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpPost("api/get_pos_offline_data_v1")]
+        [HttpGet("api/get_pos_offline_data_v1")]
         public ActionResult<EbPosSolutionData> GetPosOfflineDataV1(string metadata)
         {
             if (!Authenticated) return Unauthorized();

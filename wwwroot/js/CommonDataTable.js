@@ -4793,6 +4793,9 @@
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
         ob.SubscriptionId = window.ebcontext.subscription_id;
+        if (this.CurrentRowGroup !== null)
+            ob.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        ob.OrderBy = this.getOrderByInfo();
 
         this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["ExportToExcel"] });
         this.ss.onExcelExportSuccess = function (url) {
@@ -4818,6 +4821,9 @@
         ob.dvRefId = this.EbObject.RefId;
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
+        if (this.CurrentRowGroup !== null)
+            ob.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        ob.OrderBy = this.getOrderByInfo();
 
         $.ajax({
             type: "POST",

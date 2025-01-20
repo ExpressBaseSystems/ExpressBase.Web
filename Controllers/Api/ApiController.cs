@@ -821,6 +821,35 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
+        [HttpGet("/api/file/get_file_ref_id")]
+        public ActionResult<FileUploadResponse> GetEbFilesRefIdByInsertingNewRow(string table, string column, string value, int object_id, string file_control_name, string file_name, string file_type, EbFileCategory file_category = EbFileCategory.File)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            FileUploadResponse resp = new FileUploadResponse { ResponseStatus = new ResponseStatus() { Message = "Success" } };
+
+            try
+            {
+                resp = this.FileClient.Get(new GetFileRefIdByInsertingNewRowRequest()
+                {
+                    Table = table.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                    Column = column.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                    Value = value,
+                    ObjectId = object_id,
+                    FileControlName = file_control_name.ToLower().Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                    FileName = file_name,
+                    FileType = file_type,
+                    FileCategory = file_category
+                });
+            }
+            catch (Exception e)
+            {
+                resp.ResponseStatus.Message = e.Message;
+            }
+
+            return resp;
+        }
+
         private string GetMime(string fname)
         {
             return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];

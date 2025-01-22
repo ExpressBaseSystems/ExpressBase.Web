@@ -822,7 +822,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/file/get_file_ref_id")]
-        public ActionResult<FileUploadResponse> GetEbFilesRefIdByInsertingNewRow(string table, string column, string value, int object_id, string file_control_name, string file_name, string file_type, EbFileCategory file_category = EbFileCategory.File)
+        public ActionResult<FileUploadResponse> GetEbFilesRefIdByInsertingNewRow(string table, string column, string value, int object_id, string file_control_name, string file_name, string file_type, string filestore_sid, Int64 file_size, EbFileCategory file_category = EbFileCategory.Images)
         {
             if (!Authenticated) return Unauthorized();
 
@@ -830,17 +830,42 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                resp = this.FileClient.Get(new GetFileRefIdByInsertingNewRowRequest()
+                if (string.IsNullOrWhiteSpace(table))
+                    resp.ResponseStatus.Message = "Parameter 'table' is required";
+                else if (string.IsNullOrWhiteSpace(column))
+                    resp.ResponseStatus.Message = "Parameter 'column' is required";
+                else if (string.IsNullOrWhiteSpace(value))
+                    resp.ResponseStatus.Message = "Parameter 'value' is required";
+                else if (object_id <= 0)
+                    resp.ResponseStatus.Message = "Parameter 'object_id' is required";
+                else if (string.IsNullOrWhiteSpace(file_control_name))
+                    resp.ResponseStatus.Message = "Parameter 'file_control_name' is required";
+                else if (string.IsNullOrWhiteSpace(file_name))
+                    resp.ResponseStatus.Message = "Parameter 'file_name' is required";
+                else if (string.IsNullOrWhiteSpace(file_type))
+                    resp.ResponseStatus.Message = "Parameter 'file_type' is required";
+                else if (string.IsNullOrWhiteSpace(filestore_sid))
+                    resp.ResponseStatus.Message = "Parameter 'filestore_sid' is required";
+                else if (file_size <= 0)
+                    resp.ResponseStatus.Message = "Parameter 'file_size' is required";
+                else if (file_category != EbFileCategory.Images)
+                    resp.ResponseStatus.Message = "file_category supported images only";
+                else
                 {
-                    Table = table.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
-                    Column = column.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
-                    Value = value,
-                    ObjectId = object_id,
-                    FileControlName = file_control_name.ToLower().Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
-                    FileName = file_name,
-                    FileType = file_type,
-                    FileCategory = file_category
-                });
+                    resp = this.FileClient.Get(new GetFileRefIdByInsertingNewRowRequest()
+                    {
+                        Table = table.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        Column = column.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        Value = value,
+                        ObjectId = object_id,
+                        FileControlName = file_control_name.ToLower().Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        FileName = file_name,
+                        FileType = file_type,
+                        FileCategory = file_category,
+                        FilestoreSid = filestore_sid,
+                        FileSize = file_size
+                    });
+                }
             }
             catch (Exception e)
             {

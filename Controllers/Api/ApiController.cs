@@ -876,11 +876,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/file/file_ref_simpleuploader_upsert")]
-        public ActionResult<FileUploadResponse> FileRefSimpleuploaderUpsert(string table, string column, string value, string file_control_name, string file_name, string file_type, string filestore_sid, Int64 file_size, EbFileCategory file_category = EbFileCategory.Images)
+        public ActionResult<GetFileRefSimpleuploaderUpsertResponse> FileRefSimpleuploaderUpsert(string table, string column, string value, string file_control_name, string file_name, string file_type, string filestore_sid, Int64 file_size, EbFileCategory file_category = EbFileCategory.Images)
         {
             if (!Authenticated) return Unauthorized();
 
-            FileUploadResponse resp = new FileUploadResponse { ResponseStatus = new ResponseStatus() { Message = "Success" } };
+            GetFileRefSimpleuploaderUpsertResponse resp = new GetFileRefSimpleuploaderUpsertResponse { ResponseStatus = new ResponseStatus() { Message = "Success" } };
 
             try
             {

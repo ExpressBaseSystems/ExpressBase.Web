@@ -445,6 +445,13 @@
 
         //----------
         if (this.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
+
+            if ($.fn.DataTable.isDataTable('#' + this.tableId)) {
+                this.table_jQO.off();
+                this.table_jQO.DataTable().clear().destroy(true);
+                this.table_jQO.empty();
+            }
+
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
 

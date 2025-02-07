@@ -702,6 +702,7 @@
         o.Source = this.Renderer.rendererName;
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+        o.refid = o.dvObject.RefId;
         o.drawCallBack = function (ctrl) {
             ctrl.___isNotUpdateValExpDepCtrls = false;
             let DepHandleObj = this.Renderer.FRC.GetDepHandleObj(ctrl);

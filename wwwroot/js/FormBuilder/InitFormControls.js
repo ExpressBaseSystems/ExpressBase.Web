@@ -709,6 +709,8 @@
             this.Renderer.FRC.ctrlChangeListener_inner0(DepHandleObj);
         }.bind(this, ctrl);
 
+        ctrl.__SelfRefreshCount = 0;
+
         let initFilterValues = function (ctrl) {
             if (!ctrl.__filterValues)
                 ctrl.__filterValues = [];
@@ -767,6 +769,12 @@
         ////ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 
         ctrl.reloadWithParam = function (depCtrl) {
+            if (ctrl.SelfRefreshLimit && ctrl.SelfRefreshLimit == ctrl.__SelfRefreshCount) {
+                ctrl.__SelfRefreshCount = 0;
+                window.location.reload();
+                return;
+            }
+
             if (depCtrl) {
                 let val = depCtrl.getValue();
                 let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
@@ -782,9 +790,16 @@
                 o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
                 ctrl.initializer = new EbCommonDataTable(o);
             }
+            ctrl.__SelfRefreshCount++;
         };
 
         ctrl.reloadWithParamAll = function () {
+            if (ctrl.SelfRefreshLimit && ctrl.SelfRefreshLimit == ctrl.__SelfRefreshCount) {
+                ctrl.__SelfRefreshCount = 0;
+                window.location.reload();
+                return;
+            }
+
             let a = ctrl.__filterControls;
             if (a) {
                 for (let i = 0; i < a.length; i++) {
@@ -803,6 +818,7 @@
                 o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
                 ctrl.initializer = new EbCommonDataTable(o);
             }
+            ctrl.__SelfRefreshCount++;
         };
 
         ctrl.sum = function (ctrl, colName) {

@@ -3412,7 +3412,7 @@ const WebFormRender = function (option) {
     //}.bind(this);
 
     this.isCloseConfirmRequired = function () {
-        if (this.Mode.isNew || this.Mode.isEdit) {
+        if ((this.Mode.isNew || this.Mode.isEdit) && !this.FormObj.IsDisable) {
             return this.manualChangeInData;
         }
         return false;

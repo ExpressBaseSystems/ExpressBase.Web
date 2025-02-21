@@ -108,7 +108,7 @@
     this.ObjectLinks = Option.ObjectLinks || [];
     this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
     this.AllowSorting = typeof Option.AllowSorting !== 'undefined' ? Option.AllowSorting : true;
-
+    this.SelfRefreshLimit = Option.SelfRefreshLimit ? Option.SelfRefreshLimit : 0;
 
     if (this.Source === "EbDataTable") {
         if (this.EbObject && this.EbObject.ApiRefId !== null && this.EbObject.ApiRefId !== "")
@@ -393,6 +393,10 @@
             this.Done4All();
         }
         else if (this.Source === "WebForm") {
+            if (this.SelfRefreshLimit && this.SelfRefreshLimit < this.ajaxCallCounter) {
+                window.location.reload();
+                return;
+            }
             this.MainData = null;
             this.totalcount = 0;
             this.Done4All();

@@ -58,15 +58,27 @@
         }
     };
 
-    this.ns = function (e) { 
+    this.ns = function (e) {
         if (scount <= 3) {
-            this.ncs();
-            this.cs(function (res) {
-                if (res.status)
-                    self.EbPopBox("show", { Message: "Solution created :)" });
-                else
-                    self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
-            });
+            EbDialog("show",
+                {
+                    Message: "Are you sure to create new solution?",
+                    Buttons: {
+                        "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                        "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                    },
+                    CallBack: function (name) {
+                        if (name === "Yes") {
+                            this.ncs();
+                            this.cs(function (res) {
+                                if (res.status)
+                                    self.EbPopBox("show", { Message: "Solution created :)" });
+                                else
+                                    self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
+                            });
+                        }
+                    }.bind(this)
+                });
         }
         else {
             self.EbPopBox("show", {

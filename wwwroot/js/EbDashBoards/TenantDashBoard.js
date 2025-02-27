@@ -59,7 +59,7 @@
     };
 
     this.ns = function (e) {
-        if (scount <= 3) {
+        if (scount < 3) {
             EbDialog("show",
                 {
                     Message: "Are you sure to create new solution?",

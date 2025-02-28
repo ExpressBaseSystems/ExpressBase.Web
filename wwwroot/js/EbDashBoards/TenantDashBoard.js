@@ -73,8 +73,10 @@
                             this.cs(function (res) {
                                 if (res.status)
                                     self.EbPopBox("show", { Message: "Solution created :)" });
-                                else
-                                    self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
+                                else {
+                                    let msg = res.responseStatus ? res.responseStatus.message : '';
+                                    self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution! " + msg });
+                                }
                             });
                         }
                     }.bind(this)

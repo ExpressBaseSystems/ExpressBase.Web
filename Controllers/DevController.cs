@@ -757,7 +757,11 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = name,
                         Version = vers,
-                        Data = d
+                        Data = d,
+                        SolnId = this.IntSolutionId,
+                        UserId = this.LoggedInUser.UserId,
+                        UserAuthId = this.LoggedInUser.AuthId,
+                        WhichConsole = WhichConsole
                     });
 
                     watch.Stop();

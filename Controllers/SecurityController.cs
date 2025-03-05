@@ -401,6 +401,112 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        public string IsApiKeyExists(int userId)
+        {
+            IsApiKeyExistsResponse resp = new IsApiKeyExistsResponse() { KeyId = -1 };
+            if (userId <= 0)
+            {
+                resp.ResponseStatus.Message = "Invalid user id";
+            }
+            else if (!HasPemissionToSecurity())
+            {
+                resp.ResponseStatus.Message = "Unauthorized access";
+            }
+            else
+            {
+                try
+                {
+                    resp = this.ServiceClient.Post<IsApiKeyExistsResponse>(new IsApiKeyExistsRequest { Id = userId });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception in IsApiKeyExists : " + ex.Message);
+                    resp.ResponseStatus.Message = ex.Message;
+                }
+            }
+
+            return JsonConvert.SerializeObject(resp);
+        }
+
+        public string ViewApiKey(int userId)
+        {
+            ViewApiKeyResponse resp = new ViewApiKeyResponse();
+            if (userId <= 0)
+            {
+                resp.ResponseStatus.Message = "Invalid user id";
+            }
+            else if (!HasPemissionToSecurity())
+            {
+                resp.ResponseStatus.Message = "Unauthorized access";
+            }
+            else
+            {
+                try
+                {
+                    resp = this.ServiceClient.Post<ViewApiKeyResponse>(new ViewApiKeyRequest { Id = userId });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception in ViewApiKey: " + ex.Message);
+                    resp.ResponseStatus.Message = ex.Message;
+                }
+            }
+
+            return JsonConvert.SerializeObject(resp);
+        }
+
+        public string DeleteApiKey(int userId)
+        {
+            DeleteApiKeyResponse resp = new DeleteApiKeyResponse();
+            if (userId <= 0)
+            {
+                resp.ResponseStatus.Message = "Invalid user id";
+            }
+            else if (!HasPemissionToSecurity())
+            {
+                resp.ResponseStatus.Message = "Unauthorized access";
+            }
+            else
+            {
+                try
+                {
+                    resp = this.ServiceClient.Post<DeleteApiKeyResponse>(new DeleteApiKeyRequest { Id = userId });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception in DeleteApiKey: " + ex.Message);
+                    resp.ResponseStatus.Message = ex.Message;
+                }
+            }
+
+            return JsonConvert.SerializeObject(resp);
+        }
+
+        public string GenerateApiKey(int userId)
+        {
+            GenerateApiKeyResponse resp = new GenerateApiKeyResponse();
+            if (userId <= 0)
+            {
+                resp.ResponseStatus.Message = "Invalid user id";
+            }
+            else if (!HasPemissionToSecurity())
+            {
+                resp.ResponseStatus.Message = "Unauthorized access";
+            }
+            else
+            {
+                try
+                {
+                    resp = this.ServiceClient.Post<GenerateApiKeyResponse>(new GenerateApiKeyRequest { Id = userId });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception in GenerateApiKey : " + ex.Message);
+                    resp.ResponseStatus.Message = ex.Message;
+                }
+            }
+            return JsonConvert.SerializeObject(resp);
+        }
 
         //--------------MANAGE ANONYMOUS USER START------------------------------------
         [EbBreadCrumbFilter("Security")]

@@ -312,21 +312,18 @@
                             <div id="api" class="tab-pane fade">
                                 <label class="label-custom-style">Api Key</label>
                                 <div style="display:flex;">
-                                    <div class="col-md-6 pd-l-0">
+                                    <div class="col-md-8 pd-l-0">
                                         <div class="form-group">
-                                            <label class="" style="font-weight: 300;">Development</label>
-                                            <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
+                                            <textarea id="txtApiKey" class="form-control input-custom-style" type="text" title="" style="height: 200px; resize: none;" autocomplete="off" readonly></textarea>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 pd-r-0">
-                                        <div class="form-group">
-                                            <label class="" style="font-weight: 300;">Live</label>
-                                            <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
-                                        </div>
+                                    <div class="col-md-4 pd-l-0">
+                                        With API key authentication, you include a key-value pair in the <b>request headers</b> when calling the API. The key should be named <b>api-key</b>, and the value should be the API key you generated.
                                     </div>
                                 </div>
-
-                                <button class="ebbtn eb_btn-sm eb_btnblue" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Api key generation is temporarily suspended'); $(event.target).prop('disabled', false);}, 2000, event);">Generate</button>
+                                <button class="ebbtn eb_btn-sm eb_btnblue" id="btnApiKeyGenerate">Generate</button>
+                                <button class="ebbtn eb_btn-sm eb_btngreen" id="btnApiKeyView">View</button>
+                                <button class="ebbtn eb_btn-sm eb_btnorange" id="btnApiKeyDelete">Delete</button>
                             </div>
                             <div id="profile" class="tab-pane fade in active">
                                 <div class="row home-tab-cont">

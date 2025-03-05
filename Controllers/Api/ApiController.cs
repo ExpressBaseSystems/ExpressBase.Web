@@ -54,7 +54,11 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = _name,
                         Version = _version,
-                        Data = parameters
+                        Data = parameters,
+                        SolnId = this.IntSolutionId,
+                        UserId = this.LoggedInUser.UserId,
+                        UserAuthId = this.LoggedInUser.AuthId,
+                        WhichConsole = WhichConsole
                     });
 
                     if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
@@ -134,7 +138,11 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = _name,
                         Version = _version,
-                        Data = parameters
+                        Data = parameters,
+                        SolnId = this.IntSolutionId,
+                        UserId = this.LoggedInUser.UserId,
+                        UserAuthId = this.LoggedInUser.AuthId,
+                        WhichConsole = WhichConsole
                     });
 
                     if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))

@@ -228,7 +228,7 @@
             mnuBarObj.setName("Users");
             document.title = "Users";
             //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
-            var _metadata = [9, "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Location", "User_Type", "Status", "_user"];//"_profPic"
+            var _metadata = [10, "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Location", "User_Type", "Status", "Api_Key", "_user"];//"_profPic"
             if ('@ViewBag.DisableNewUser' === 'true')
                 _metadata.push('_disableNewUser');
             var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);

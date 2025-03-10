@@ -272,9 +272,9 @@
 
         this.hideDDclickOutside = function (e) {
             let $srchDD = $('.search-dd');
-           /* if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
-                $('.search-dd').slideUp(100);
-            }*/
+            /* if ((!this.$srchWrap.is(e.target) && this.$srchWrap.has(e.target).length === 0)) {
+                 $('.search-dd').slideUp(100);
+             }*/
 
             if (this.$srchWrap.has(e.target).length === 0 && !$srchDD.is(e.target) && $srchDD.has(e.target).length === 0) {
                 $('.search-dd').slideUp(100);
@@ -538,7 +538,10 @@
     };
 }
 catch (er) {
-    if (window.location.pathname != ("/SupportTicket/bugsupport") && window.location.pathname != ("/SupportTicket/EditTicket")) {
+    // Check if the current page is not one of the listed paths
+    if (window.location.pathname != "/SupportTicket/bugsupport" &&
+        window.location.pathname != "/SupportTicket/EditTicket" &&
+        window.location.pathname != "/SupportTicket/DevTicket") {
 
         var message = {
             'Error_Message': er.stack,
@@ -546,7 +549,9 @@ catch (er) {
             'Line': "",
             'Column': "",
             'Error_object': ""
-        }
+        };
+
+        // Send the error details to the server
         $.ajax({
             url: "../Security/BrowserExceptions",
             data: { errorMsg: JSON.stringify(message) },
@@ -554,11 +559,13 @@ catch (er) {
             type: "POST"
         });
 
-        if (confirm("An error occured while setting headers, do you want to report it?")) {
+        // Ask the user if they want to report the error
+        if (confirm("An error occurred while setting headers, do you want to report it?")) {
+            // Redirect to the bug support page if they confirm
             window.location = '/SupportTicket/bugsupport';
         } else {
-            window.location = "/Tenantuser/Logout"
+            // Redirect to the logout page if they don't confirm
+            window.location = "/Tenantuser/Logout";
         }
-
     }
 }

@@ -1032,6 +1032,537 @@ input:checked + .proslider:before {
     font-weight: 500;
 }
 
+/*#region SupportTicket*/
+#tr-window.tr {
+    width: 550px !important;
+}
+
+#tr-window .trhead {
+    color: #4D86D6;
+    font-family: 'Blinker', sans-serif;
+    font-weight: 600;
+    font-size: 29px;
+}
+
+#tr-window .trhlo {
+    margin-left: -39rem;
+}
+
+#tr-window .trli {
+    font-family: 'Blinker', sans-serif;
+    font-size: 18px !important;
+}
+
+
+
+#tr-window .trfooter-btn {
+    background-color: #4D86D6; /* Background color for the button */
+    color: white;
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+
+    #tr-window .trfooter-btn:hover {
+        background-color: #3C70A4;
+    }
+
+    #tr-window .trfooter-btn i {
+        margin-right: 5px;
+    }
+
+#tr-window .trcreate-ticket-btn {
+    text-decoration: none;
+}
+
+#tr-window .trfstyled-tab-container {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#tr-window .trfstyled-tab {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: none;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+#tr-window .trfstyled-tab-item {
+    flex: 1;
+    text-align: center;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+    #tr-window .trfstyled-tab-item a {
+        display: block;
+        padding: 10px 0;
+        color: #333;
+        text-decoration: none;
+        border: none;
+        border-radius: 0;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    #tr-window .trfstyled-tab-item .active {
+        background-color: #182E50 !important;
+        color: #fff !important;
+    }
+
+
+    #tr-window .trfstyled-tab-item a:hover {
+        background-color: #182E50 !important;
+        color: #fff !important;
+    }
+
+
+    #tr-window .trfstyled-tab-item:first-child a {
+        border-radius: 8px 0 0 8px; /* Rounded corners for the first item */
+    }
+
+    #tr-window .trfstyled-tab-item:last-child a {
+        border-radius: 0 8px 8px 0; /* Rounded corners for the last item */
+    }
+
+
+
+#tr-window .tinf_form {
+    display: flex; /* Flexbox for layout */
+    flex-wrap: wrap; /* Wrap to new line if needed */
+}
+
+#tr-window .tinf_row {
+    display: flex; /* Flexbox for horizontal alignment */
+    gap: 20px; /* Space between columns */
+    width: 100%; /* Full width */
+    height: 55vh;
+}
+
+#tr-window .tinf_col {
+    flex-basis: 70%; /* Default to 70% */
+}
+
+#tr-window .tinf_col-right {
+    flex-basis: 30%; /* 30% width for the right column */
+    margin-left: -12px;
+}
+
+#tr-window .tinf_form-group {
+    margin-bottom: 15px; /* Spacing between form groups */
+}
+
+#tr-window #tinf_status,
+#tr-window #tinf_comments {
+    width: 98%; /* Full width for inputs */
+    border-radius: 4px; /* Rounded corners */
+    border: 1px solid #ccc; /* Border for inputs */
+    padding: 10px; /* Padding for inputs */
+}
+
+
+
+#tr-window .tinf_type-radio {
+    display: none; /* Hide default radio buttons */
+}
+
+#tr-window .tinf_type-switch {
+    display: flex; /* Flexbox for switch */
+    align-items: center; /* Align items vertically */
+    justify-content: space-between; /* Distribute space evenly between items */
+    border: 1px solid #182E50; /* Border for the switch */
+    border-radius: 25px; /* Rounded corners for the entire switch */
+    overflow: hidden; /* Clip content inside rounded corners */
+    background-color: transparent; /* Make background transparent */
+    width: 140px; /* Fixed width for switch */
+    cursor: pointer; /* Pointer cursor for switch */
+    position: relative; /* Position relative for inner elements */
+}
+
+#tr-window .tinf_type-label {
+    flex: 1; /* Each label takes equal space */
+    padding: 10px 0; /* Padding for labels (adjusted) */
+    text-align: center; /* Center text */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transitions */
+    border-radius: 25px; /* Make individual labels' corners rounded */
+    font-weight: 400;
+    line-height: 1; /* Ensure proper line height */
+    margin: 0; /* Remove margin */
+    display: flex; /* Use flexbox for inner alignment */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    height: 100%; /* Full height of the switch */
+}
+
+#tr-window .tinf_type-radio:checked + .tinf_type-label {
+    background-color: #182E50; /* Active background color */
+    color: white; /* Active text color */
+    height: calc(100% + 4px); /* Slightly larger to fill the border space */
+    margin: -2px 0; /* Adjust margin to align with the border */
+}
+
+
+#tr-window #tinf_priority {
+    width: 100%; /* Full width for select */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px; /* Padding for select */
+    appearance: none; /* Remove default styling */
+    -moz-appearance: none; /* Remove Firefox default styling */
+    -webkit-appearance: none; /* Remove Safari default styling */
+    background-position: right 10px center; /* Position the arrow */
+    background-repeat: no-repeat; /* Prevent repeating background */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='none' stroke='%23333' stroke-width='1.5' d='M1 3l4 4 4-4'/%3E%3C/svg%3E"); /* Custom arrow */
+}
+
+    #tr-window #tinf_priority option {
+        padding: 10px; /* Padding for options */
+        color: black; /* Text color for options */
+        font-size: 14px; /* Font size for readability */
+    }
+
+        #tr-window #tinf_priority option:before {
+            content: '\25CF '; /* Unicode character for dot */
+            color: inherit; /* Use inherited color for dot */
+            display: inline-block; /* Ensure dot stays with text */
+            margin-right: 5px; /* Space between dot and text */
+            vertical-align: middle; /* Align dot with text */
+        }
+
+
+#tr-window .thumbnail-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#tr-window .thumbnail {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+    #tr-window .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+#tr-window .close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#tr-window .attachment-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Slightly darker background */
+    z-index: 9999;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Prevent overflow */
+    padding: 20px; /* Padding to ensure content is not right against the edges */
+}
+
+#tr-window .attachment-popup-content {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    width: 90%; /* Maximum width relative to the screen size */
+    max-width: 600px; /* Set a maximum width */
+    max-height: 80%; /* Maximum height to prevent overflow */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    #tr-window .attachment-popup-content img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; /* Ensures the image fits well within its container */
+    }
+
+    #tr-window .attachment-popup-content .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        z-index: 100; /* Ensures the close button is above other elements */
+    }
+
+        #tr-window .attachment-popup-content .close:hover {
+            color: #ff3c41;
+        }
+
+#tr-window .attachment-item img {
+    width: 100px; /* Thumbnail size */
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+    #tr-window .attachment-item img:hover {
+        transform: scale(1.05); /* Slightly enlarge on hover for effect */
+    }
+
+#tr-window .attachment-item {
+    position: relative;
+}
+
+#tr-window .remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 3px 7px;
+    font-size: 14px;
+    color: #333;
+}
+
+    #tr-window .remove-btn:hover {
+        background: rgba(255, 255, 255, 1);
+    }
+
+
+#tr-window .trcmnt_comments-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden; /* Ensure it fits within the available space */
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 10px; /* Gap between comments and input */
+}
+
+#tr-window #comments-tab .trcmnt_form {
+    position: relative; /* Use relative positioning to stay above footer */
+    bottom: 0; /* Align at the bottom of the parent container */
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    z-index: 10; /* Ensure it is above other content */
+}
+
+#tr-window #comments-tab .trcmnt_comments-display {
+    max-height: calc(100% - 60px); /* Adjust for footer height */
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+}
+
+#tr-window .trcmnt_input-group {
+    display: flex;
+    align-items: center;
+}
+
+#tr-window .trcmnt_input {
+    flex-grow: 1;
+    margin-right: 10px;
+    border-radius: 25px;
+    border: 1px solid black;
+}
+
+#tr-window .trcmnt_send-btn {
+    padding: 6px 12px;
+}
+
+#tr-window .trcmnt_comment-box {
+    background-color: #D0E2FF;
+    border: 1px solid #D0E2FF;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+    #tr-window .trcmnt_comment-box small {
+        font-size: 10px;
+        color: #666;
+    }
+
+#tr-window .trcmnt_username {
+    position: absolute;
+    top: 5px;
+    left: 10px; /* Move username to the left side */
+}
+
+#tr-window .trcmnt_timestamp {
+    position: absolute;
+    top: 5px;
+    right: 10px; /* Move timestamp to the right side */
+}
+
+#tr-window .trcmnt_para {
+    margin-top: 2rem;
+}
+
+/* Adjust the footer positioning */
+#tr-window .tr-footer {
+    position: sticky;
+    bottom: 0;
+    background-color: #182E50;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 20; /* Make sure it's on top of the form */
+}
+
+
+#tr-window .trsuc_circle-checkmark {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 60px auto; /* Center the circle-checkmark below the text */
+}
+
+    #tr-window .trsuc_circle-checkmark .circle {
+        width: 100%;
+        height: 100%;
+        background-color: #4CAF50;
+        border-radius: 50%;
+        animation: circleInOut 5s ease-in-out forwards;
+        /* Animation will leave the circle visible */
+    }
+
+    #tr-window .trsuc_circle-checkmark .checkmark {
+        position: absolute;
+        font-size: 60px;
+        color: white;
+        animation: checkmarkInOut 4s ease-in-out forwards;
+        /* Animation will leave the checkmark visible */
+    }
+
+#tr-window .ch2 {
+    font-family: 'Blinker', sans-serif;
+    color: #182E50;
+    margin-top: 13rem;
+    font-size: 20px
+}
+
+@keyframes circleInOut {
+    0% {
+        transform: scale(0);
+    }
+
+    20% {
+        transform: scale(1);
+    }
+
+    80% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes checkmarkInOut {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    30% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    70% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+#tr-window .tactive-mbox {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #D0E2FF;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+    #tr-window .tactive-mbox h3 {
+        margin-top: 0;
+        font-size: 1.2em;
+    }
+
+    #tr-window .tactive-mbox p {
+        margin: 5px 0 0;
+        padding-bottom: 1.5rem;
+        color: #787878;
+    }
+
+#tr-window .bug-icon {
+    font-size: 20px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+#tr-window .tam {
+    padding-left: 6px;
+}
+
+#tr-window .taround-box-input {
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    background-color: #4D86D6;
+    color: white;
+    padding: 5px 10px;
+}
+/*#endregion SupportTicket*/
+
 .color-warning {
     color: #f0ad4e;
 }

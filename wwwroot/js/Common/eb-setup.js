@@ -23,32 +23,55 @@
     }
 
     initContainers_DomEvents() {
-        this.nf_container = $(`#nf-window #nf-container`);
-        this.actn_container = $(`#nf-window #actn_container`);
-        this.meeting_container = $(`#nf-window #meeting_container`);
-        this.nf_window = $("#nf-window.eb-notification-window");
-        this.nf_fade = $("#nf-window-fade");
+        // Notification Containers
+        this.nf_container = $('#nf-window #nf-container');
+        this.actn_container = $('#nf-window #actn_container');
+        this.meeting_container = $('#nf-window #meeting_container');
+        this.nf_window = $('#nf-window.eb-notification-window');
+        this.nf_fade = $('#nf-window-fade');
 
-        $("#eb-expand-nfWindow").off("click").on("click", this.toggleNFWindow.bind(this));
-        this.nf_fade.on("click", this.toggleNFWindow.bind(this));
+        // Ticket Containers
+        this.tr_container = $('#tr-window #tr-container');
+        this.actntr_container = $('#tr-window #trtractn_container');
+        this.meetingtr_container = $('#tr-window #trmeeting_container');
+        this.tr_window = $('#tr-window.eb-notification-window');
+        this.tr_fade = $('#tr-window-fade');
+
+        // Event Listeners
+        $('#eb-expand-nfWindow').off('click').on('click', this.toggleNFWindow.bind(this));
+        this.nf_fade.on('click', this.toggleNFWindow.bind(this));
+
+        $('#eb-expand-trWindow').off('click').on('click', this.toggleTRWindow.bind(this));
+        this.tr_fade.on('click', this.toggleTRWindow.bind(this));
+        // Add an event listener for the new button
+
     }
-
     RMW() {
-        $("#eb-expndLinkswrprWdgt").remove();
+        $('#eb-expndLinkswrprWdgt').remove();
     }
 
     toggleNFWindow() {
-        if (!this.nf_window.is(":visible")) {
+        if (!this.nf_window.is(':visible')) {
             this.getNotifications();
             this.nf_fade.show();
-            this.nf_window.show("slide", { direction: 'right' });
+            this.nf_window.show('slide', { direction: 'right' });
         }
         else {
             this.nf_fade.hide();
             this.nf_window.hide();
         }
     }
-    
+
+    toggleTRWindow() {
+        if (!this.tr_window.is(':visible')) {
+            this.tr_fade.show();
+            this.tr_window.show('slide', { direction: 'right' });
+        } else {
+            this.tr_fade.hide();
+            this.tr_window.hide();
+        }
+    }
+
     initServerEvents() {
         window.ebcontext.sse_channels.push("file-upload");
         this.se = new EbServerEvents({
@@ -63,9 +86,9 @@
     }
 
     notified(msg) {
-        var o = JSON.parse(msg);       
+        var o = JSON.parse(msg);
         //start again       
-        this.onGetNotificationsSuccess(o,false);
+        this.onGetNotificationsSuccess(o, false);
     }
 
     getNotifications() {
@@ -77,12 +100,12 @@
                 var data = JSON.parse(getNF);
                 this.onGetNotificationsSuccess(data, true);
             }.bind(this)
-                
+
         });
     }
 
-    onGetNotificationsSuccess(data,onload) {
-       
+    onGetNotificationsSuccess(data, onload) {
+
         if (data === null || data === undefined) return;
         else {
             if ("Notification" in data && Array.isArray(data.Notification)) {
@@ -95,7 +118,7 @@
                 this.drawMeetings(data.MyMeetings, onload);
             }
         }
-      //  ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
+        //  ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
         $('.status-time').tooltip({
             placement: 'top'
         });
@@ -141,11 +164,11 @@
                     this.notification_count += 1;
                 }
 
-                $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);                
+                $("#nf-window #nf-notification-count").text(`(${this.notification_count})`);
             }
-            
+
         }
-       
+
         if (nf.length > 0) {
             $('#closeAll_nf').prop("disabled", false);
             $('#closeAll_nf').off("click").on('click', this.ClearAll_NF.bind(this));
@@ -184,14 +207,14 @@
                     this.actn_container.prepend(_htm);
                     this.actions_count += 1;
                 }
-                
+
             }
         }
         else {
             if (onload) {
                 this.actn_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
             }
-            
+
         }
         if (onload) {
             $("#nf-window #nf-pendingact-count").text(`(${pa.length})`);
@@ -200,7 +223,7 @@
         else {
             $("#nf-window #nf-pendingact-count").text(`(${this.actions_count})`);
         }
-       
+
 
         ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
 
@@ -295,7 +318,7 @@
         }.bind(this);
     }
 
-    UpdateNotification (e) {
+    UpdateNotification(e) {
         let notification_id = $(e.target).closest("div").attr("notification-id");
         let link_url = $(e.target).closest("div").attr("link-url");
         $.ajax({
@@ -325,9 +348,9 @@
         var nf = $(".nf-lst");
         var nfArray = [];
         if (nf.length > 0) {
-            nf.each(function (i,ob) {
+            nf.each(function (i, ob) {
                 nfArray.push($(ob).attr("notification-id"));
-            })           
+            })
             $.ajax({
                 type: "POST",
                 url: "../Notifications/ClearAllNotifications",
@@ -346,11 +369,11 @@
                     $('#closeAll_nf').prop("disabled", true);
                 }.bind(this)
             });
-           
+
         }
     }
 
-    CloseNotification (e) {
+    CloseNotification(e) {
         let notification_id = $(e.target).closest('li').attr("notification-id");
         $.ajax({
             type: "POST",
@@ -367,7 +390,7 @@
         e.stopPropagation();
     }
 
-    MeetingRequestView (e) {
+    MeetingRequestView(e) {
         let id = $(e.target).closest("a").attr("data-id");
         //alert(id);
         $.post("../EbMeeting/GetSlotDetails", { id: id }, function (data) {
@@ -486,7 +509,7 @@
                         }
                     });
                 });
-                $(".unblocked-slot").off('click').on('click', function (e   ) {
+                $(".unblocked-slot").off('click').on('click', function (e) {
                     let _id = e.target.getAttribute('id');
                     $('#pick-slot').attr("data-id", _id);
                     $(".unblocked-slot").removeClass('selected');
@@ -509,7 +532,7 @@
 
     };
 
-    GetMeetingsDetails (e) {
+    GetMeetingsDetails(e) {
         let id = $(e.target).closest("a").attr("data-id");
         //alert(id);
         $.post("../EbMeeting/GetMeetingsDetails", { meetingid: id }, function (data) {

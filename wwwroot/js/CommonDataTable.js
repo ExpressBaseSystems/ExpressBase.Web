@@ -911,7 +911,7 @@
         var ia = [];
         for (var i = 0; i < 5; i++)
             ia[i] = (this.EbObject.PageLength * (i + 1));
-        return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
+        return JSON.parse("[ [{0}], [{0}] ]".replace(/\{0\}/g, ia.join(',')));
     };
 
     this.ajaxData = function (dq) {

@@ -29,7 +29,6 @@
       "wwwroot/js/Common/Eb_CommonHeader.js",
       "wwwroot/js/Common/eb-quickmenu.js",
       "wwwroot/js/Common/eb-setup.js",
-      "wwwroot/js/Common/eb-ticket.js",
       "wwwroot/js/EbServerEvents/eventsource.min.js",
       "wwwroot/js/EbServerEvents/ss-utils.js",
       "wwwroot/js/EbServerEvents/ServerEvents.js"

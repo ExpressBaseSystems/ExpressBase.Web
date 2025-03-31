@@ -154,6 +154,16 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.dsObj = _object;
                     }
                 }
+                else if (type.Equals(EbObjectTypes.PrintLayout))
+                {
+                    Type[] typeArray = typeof(EbPrintLayoutBase).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.PrintLayout, typeof(EbPrintLayoutBase));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis, ServiceClient);
+                        ViewBag.dsObj = _object;
+                    }
+                }
                 else if (type.Equals(EbObjectTypes.DataWriter))
                 {
                     Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
@@ -376,6 +386,11 @@ namespace ExpressBase.Web.Controllers
             {
                 Type[] typeArray = typeof(EbPosFormBase).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.PosForm, typeof(EbPosFormBase));
+            }
+            else if (objType.Equals(EbObjectTypes.PrintLayout))
+            {
+                Type[] typeArray = typeof(EbPrintLayoutBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.PrintLayout, typeof(EbPrintLayoutBase));
             }
             else if (objType.Equals(EbObjectTypes.DataWriter))
             {

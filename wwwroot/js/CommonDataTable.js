@@ -1006,6 +1006,8 @@
         if (temp.length === 0) {
             if (this.Source === "Bot")
                 fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp for bot
+            else if (this.Source === "AppsToObjectTable")
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp
             else
                 fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1, "Location", ebcontext.locations.CurrentLocObj.ShortName, true));
         }

@@ -203,6 +203,10 @@
                 {
                     @await Component.InvokeAsync("PosFormBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
                 }
+                else if (ViewBag.ObjType == (int)EbObjectTypes.PrintLayout)
+                {
+                    @await Component.InvokeAsync("PrintLayoutBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+                }
             }
         </div>
         @if (ViewBag.ObjType == (int)EbObjectTypes.Report)

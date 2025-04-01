@@ -1333,6 +1333,10 @@
             obj = new this.EbObjects.ObjectBasicSMS(ObjName + "ppty");
             type = "ObjectBasicSMS";
         }
+        else if (parseInt(refId.split("-")[2]) === EbObjectTypes.PrintLayout) {
+            obj = new this.EbObjects.ObjectBasicPrintLayout(ObjName + "ppty");
+            type = "ObjectBasicPrintLayout";
+        }
         else
             obj = new this.EbObjects.ObjectBasicVis(ObjName + "ppty");
         let versionNumber = $e.find(".selectpicker option:selected").attr("ver-no");
@@ -1364,6 +1368,8 @@
             type = "ObjectBasicReport";
         else if (parseInt(type) === EbObjectTypes.SmsBuilder)
             type = "ObjectBasicSMS";
+        else if (parseInt(type) === EbObjectTypes.PrintLayout)
+            type = "ObjectBasicPrintLayout";
         else
             type = "ObjectBasicVis";
         //this.loadPG($e, name);

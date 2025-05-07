@@ -700,7 +700,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.ajaxData = function () {
         this.EbObject = new EbTableVisualization("Container");// used by all ebobejcts
-        this.filterValues = this.getFilterValuesFn();
+        this.filterValues = this.getFilterValuesFn(this.ComboObj.ParamsList);
 
         if (!getObjByval(this.filterValues, 'Name', this.ComboObj.Name)) {
             this.filterValues.push(new fltr_obj(this.ComboObj.EbDbType, this.ComboObj.Name, 0));

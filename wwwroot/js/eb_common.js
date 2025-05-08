@@ -767,7 +767,7 @@ function getValsFromForm(formObj, ParamsList) {
 
     $.each(ctrl_arr, function (i, obj) {
 
-        if (ParamsList != null && ParamsList.findIndex(e => e.Name == obj.Name) != -1)
+        if (ParamsList == null || ParamsList.findIndex(e => e.Name == obj.Name) != -1)
             fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
 
         //if (obj.ObjType === "PowerSelect")

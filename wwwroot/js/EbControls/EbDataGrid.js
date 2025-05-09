@@ -860,8 +860,8 @@
         EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, ctrl);
     };
 
-    this.getFormVals = function () {
-        return getValsFromForm(this.formObject_Full);
+    this.getFormVals = function (ParamsList) {
+        return getValsFromForm(this.formObject_Full, ParamsList);
     }.bind(this);
 
     this.getValues = function () {

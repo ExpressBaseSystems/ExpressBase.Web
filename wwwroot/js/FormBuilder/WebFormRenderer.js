@@ -629,8 +629,8 @@ const WebFormRender = function (option) {
     //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
     //};
 
-    this.getWebFormVals = function () {
-        let fltr_collection = getValsFromForm(this.FormObj);
+    this.getWebFormVals = function (paramsList) {
+        let fltr_collection = getValsFromForm(this.FormObj, paramsList);
         fltr_collection.push(new fltr_obj(11, this.FormObj.TableName + '_id', this.rowId));
         fltr_collection.push(new fltr_obj(11, 'id', this.rowId));
         return fltr_collection;

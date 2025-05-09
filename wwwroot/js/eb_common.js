@@ -752,9 +752,10 @@ function RecurFlatControls(src_obj, dest_coll) {
     });
 }
 
-function getValsFromForm(formObj) {
+function getValsFromForm(formObj, ParamsList) {
     let fltr_collection = [];
     let flag = 1;
+    ParamsList = ParamsList && ParamsList.$values ? ParamsList.$values : null;
     let ctrl_arr = getFlatCtrlObjs(formObj);
     let DGs = getFlatContObjsOfType(formObj, "DataGrid");
     for (let i = 0; i < DGs.length; i++) {
@@ -765,9 +766,10 @@ function getValsFromForm(formObj) {
     }
 
     $.each(ctrl_arr, function (i, obj) {
-        if (obj.ObjType === "FileUploader")
-            return;
-        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+
+        if (ParamsList == null || ParamsList.findIndex(e => e.Name == obj.Name) != -1)
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+
         //if (obj.ObjType === "PowerSelect")
         //    flag++;
     });

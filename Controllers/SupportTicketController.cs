@@ -12,6 +12,7 @@ using System.Net.Http.Formatting;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Specialized;
 using System.IO;
+using ExpressBase.Common.LocationNSolution;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -48,19 +49,40 @@ namespace ExpressBase.Web.Controllers
             FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest());
 
             // Debugging: Log the count of tickets fetched
-            if (fsr.supporttkt != null)
+            Console.WriteLine($"Active Tickets Count: {fsr.ActiveTicket?.Count ?? 0}");
+            Console.WriteLine($"Closed Tickets Count: {fsr.ClosedTicket?.Count ?? 0}");
+
+            // Return both Active and Closed tickets as JSON
+            var result = new
             {
-                Console.WriteLine($"Fetched Tickets Count: {fsr.supporttkt.Count}");
+                ActiveTickets = fsr.ActiveTicket ?? new List<TicketLite>(),
+                ClosedTickets = fsr.ClosedTicket ?? new List<TicketLite>()
+            };
+
+            return Json(result);
+        }
+        [HttpGet]
+        public IActionResult GetTicketById(string ticketId)
+        {
+            if (string.IsNullOrWhiteSpace(ticketId))
+            {
+                return BadRequest("Ticket ID is required.");
+            }
+
+            // Call service to get the ticket details
+            var request = new GetTicketByIdRequest { TicketId = ticketId };
+            GetTicketByIdResponse response = this.ServiceClient.Get(request);
+
+            if (response?.Ticket != null)
+            {
+                return Json(response.Ticket);
             }
             else
             {
-                Console.WriteLine("No tickets found in the response.");
+                return NotFound("Ticket not found.");
             }
-
-            // Directly return all tickets as JSON response
-            // No filtering is done here
-            return Json(fsr.supporttkt ?? new List<SupportTktCls>());
         }
+
 
 
         public IActionResult EditTicket(string tktno)
@@ -184,7 +206,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public SubmitTicketResponse SubmitTicketDetails(string title, string stats, string descp, string priority, string solid, string type, object fileCollection)
+        public SubmitTicketResponse SubmitTicketDetails(string title, string stats, string descp, string priority, string solid, string type)
         {
             var stresponse = new SubmitTicketResponse();
             string usrtyp = null;
@@ -214,43 +236,41 @@ namespace ExpressBase.Web.Controllers
                 // File upload part
                 if (httpreq.Files.Count > 0)
                 {
-                    byte[] fileData = null;
+                    Console.WriteLine($"Total files received: {httpreq.Files.Count}");
 
-                    for (int i = 0; i < httpreq.Files.Count; i++)
+                    foreach (var file in httpreq.Files)
                     {
-                        var file = httpreq.Files[i];
-                        if ((file.ContentType == "image/jpeg") || (file.ContentType == "image/jpg") || (file.ContentType == "image/png") || (file.ContentType == "application/pdf"))
+                        Console.WriteLine($"Received File: {file.FileName} - {file.ContentType} - {file.Length} bytes");
+
+                        if (file != null && file.Length > 0)
                         {
-                            if (file.Length < 2097152) // File size limit: 2MB
+                            FileUploadCls flup = new FileUploadCls();
+                            using (var memoryStream = new MemoryStream())
                             {
-                                FileUploadCls flup = new FileUploadCls();
-                                using (var memoryStream = new MemoryStream())
-                                {
-                                    file.CopyTo(memoryStream);
-                                    memoryStream.Seek(0, SeekOrigin.Begin);
-                                    fileData = new byte[memoryStream.Length];
-                                    memoryStream.ReadAsync(fileData, 0, fileData.Length);
-                                    flup.Filecollection = fileData;
-                                }
-                                flup.FileName = file.FileName;
-                                flup.ContentType = file.ContentType;
-                                strequest.Fileuploadlst.Add(flup);
+                                file.CopyTo(memoryStream);
+                                flup.Filecollection = memoryStream.ToArray();
                             }
+                            flup.FileName = file.FileName;
+                            flup.ContentType = file.ContentType;
+                            strequest.Fileuploadlst.Add(flup);
                         }
                     }
                 }
-
 
                 // Populate the SubmitTicketRequest object with form data
                 strequest.title = httpreq["title"].ToString();
                 strequest.description = httpreq["description"].ToString();
                 strequest.priority = httpreq["priority"].ToString();
-                strequest.solutionid = solid;
-                strequest.type_b_f = httpreq["type"].ToString();
-                strequest.status = httpreq["stats"].ToString();
+                strequest.solutionid = solid; // Use the 'solid' parameter
+                strequest.type_b_f = httpreq["type_f_b"].ToString(); // Use type_f_b from js
+                strequest.status = httpreq["status"].ToString();
                 strequest.usertype = usrtyp;
                 strequest.fullname = this.LoggedInUser.FullName;
                 strequest.email = this.LoggedInUser.Email;
+                strequest.onBehalfOf = httpreq.ContainsKey("onBehalfOf") && int.TryParse(httpreq["onBehalfOf"], out int onBehalfValue)
+             ? onBehalfValue
+             : 0; // Default to 0 if no valid ID is provided
+
 
                 // Post the ticket request to the service
                 stresponse = this.ServiceClient.Post<SubmitTicketResponse>(strequest);
@@ -281,57 +301,109 @@ namespace ExpressBase.Web.Controllers
             return stresponse;
         }
 
-        public void UpdateTicket(string filedelet, string solu_id, string tktid, string updtkt)
+        [HttpGet]
+        public Dictionary<int,string> GetUsers(string cid)
         {
-
-            UpdateTicketRequest Uptkt = new UpdateTicketRequest();
-            var httpreq = this.HttpContext.Request.Form;
-
-            Dictionary<string, string> chngtkt = JsonConvert.DeserializeObject<Dictionary<string, string>>(updtkt);
-            if (httpreq.Files.Count > 0)
-            {
-                byte[] fileData = null;
-
-                for (int i = 0; i < httpreq.Files.Count; i++)
+           
+                Eb_Solution s_obj = GetSolutionObject(cid); // Retrieve solution object
+                if (s_obj != null && s_obj.Users != null)
                 {
+                    //    var usersList = s_obj.Users.Select(user => new
+                    //    {
+                    //        Id = user.UserId, // Adjust according to actual user properties
+                    //        Name = user.UserName
+                    //    }).ToList();
 
-                    var file = httpreq.Files[i];
-                    if ((file.ContentType == "image/jpeg") || (file.ContentType == "image/jpg") || (file.ContentType == "image/png") || (file.ContentType == "application/pdf"))
+                    //    return Ok(usersList);
+                    return  s_obj.Users;
+                }
+                return null;
+            
+           
+        }
+
+
+
+        [HttpPost]
+        public IActionResult UpdateTicket()
+        {
+            try
+            {
+                var httpRequest = HttpContext.Request.Form;
+                UpdateTicketRequest uptkt = new UpdateTicketRequest
+                {
+                    Fileuploadlst = new List<FileUploadCls>()
+                };
+
+                // Check required fields
+                if (string.IsNullOrEmpty(httpRequest["updtkt"]))
+                {
+                    return Json(new { errorMessage = "Error: 'updtkt' field is missing in the request." });
+                }
+                if (string.IsNullOrEmpty(httpRequest["ticketId"]))
+                {
+                    return Json(new { errorMessage = "Error: 'ticketId' field is missing in the request." });
+                }
+                if (string.IsNullOrEmpty(httpRequest["solu_id"]))
+                {
+                    return Json(new { errorMessage = "Error: 'solu_id' field is missing in the request." });
+                }
+
+                // Deserialize JSON input
+                Dictionary<string, string> changedTkt = JsonConvert.DeserializeObject<Dictionary<string, string>>(httpRequest["updtkt"]);
+                uptkt.chngedtkt = changedTkt;
+                uptkt.ticketid = httpRequest["ticketId"];
+                uptkt.solution_id = httpRequest["solu_id"];
+                uptkt.usrname = this.LoggedInUser?.FullName ?? "Unknown User";
+
+                // Process uploaded files
+                foreach (var file in httpRequest.Files)
+                {
+                    if (file.Length < 2097152) // Keep size restriction (2MB)
                     {
-                        if (file.Length < 2097152)
+                        using (var memoryStream = new MemoryStream())
                         {
-                            FileUploadCls flup = new FileUploadCls();
-                            using (var memoryStream = new MemoryStream())
+                            file.CopyTo(memoryStream);
+                            byte[] fileData = memoryStream.ToArray();
+
+                            uptkt.Fileuploadlst.Add(new FileUploadCls
                             {
-                                file.CopyTo(memoryStream);
-                                memoryStream.Seek(0, SeekOrigin.Begin);
-                                fileData = new byte[memoryStream.Length];
-                                memoryStream.ReadAsync(fileData, 0, fileData.Length);
-                                flup.Filecollection = fileData;
-                            }
-                            flup.FileName = file.FileName;
-                            flup.ContentType = file.ContentType;
-                            Uptkt.Fileuploadlst.Add(flup);
+                                Filecollection = fileData,
+                                FileName = file.FileName,
+                                ContentType = file.ContentType
+                            });
                         }
                     }
                 }
-            }
 
-            Uptkt.Filedel = JsonConvert.DeserializeObject<int[]>(filedelet);
-            Uptkt.usrname = this.LoggedInUser.FullName;
-            Uptkt.chngedtkt = chngtkt;
-            Uptkt.ticketid = tktid;
-            if (this.LoggedInUser.wc.Equals("tc"))
-            {
-                Uptkt.solution_id = solu_id;
-            }
-            else
-            {
-                Uptkt.solution_id = ViewBag.cid;
-            }
-            UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
 
+                // Debugging logs
+                Console.WriteLine("Ticket update request received:");
+                Console.WriteLine($"Ticket ID: {uptkt.ticketid}");
+                Console.WriteLine($"Solution ID: {uptkt.solution_id}");
+                Console.WriteLine($"Username: {uptkt.usrname}");
+                Console.WriteLine($"Changes: {JsonConvert.SerializeObject(uptkt.chngedtkt)}");
+                Console.WriteLine($"Attached Files: {uptkt.Fileuploadlst.Count}");
+
+                // Call service
+                UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(uptkt);
+
+                if (upr.status)
+                {
+                    return Json(new { successMessage = "Ticket updated successfully" });
+                }
+                else
+                {
+                    return Json(new { errorMessage = "Failed to update ticket" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { errorMessage = $"Error: {ex.Message}" });
+            }
         }
+
+
 
         public void UpdateTicketAdmin(string updtkt, string tktid, string solid)
         {
@@ -362,18 +434,36 @@ namespace ExpressBase.Web.Controllers
 
 
         }
-        public void Comment(string tktno, string cmnt)
+        [HttpPost]
+        public IActionResult Comment(string TicketNo, string Comments, string UserName, string Solution_id)
         {
             CommentResponse Cr = this.ServiceClient.Post<CommentResponse>(new CommentRequest
             {
-                TicketNo = tktno,
-                Comments = cmnt,
-                UserName = this.LoggedInUser.FullName,
-                Solution_id = ViewBag.cid
+                TicketNo = TicketNo,
+                Comments = Comments,
+                UserName = UserName,
+                Solution_id = Solution_id
             });
 
-
+            return Json(Cr);
         }
+
+
+        [HttpGet]
+        public IActionResult CommentsByTicket(string tktno)
+        {
+            var response = this.ServiceClient.Post<CommentListResponse>(
+                new CommentListRequest
+                {
+                    TicketNo = tktno
+                });
+
+            return Json(response);
+        }
+
+
+
+
 
     }
 }

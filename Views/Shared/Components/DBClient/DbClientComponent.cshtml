@@ -1,10 +1,21 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @using Newtonsoft.Json;
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+@using System.Collections.Generic;
+@using System.Linq;
+
+
 @{
     if (ViewBag.Message == null)
     {
         <script>
-            if (window.DBExplorer != undefined) {
+            // Ensure DBExplorer is initialized properly
+            if (typeof window.DBExplorer === 'undefined') {
+                window.DBExplorer = new Eb_DBExplorer({
+                    TCobj: @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables))
+                                                                                        });
+            } else {
                 window.DBExplorer.TCobj = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables));
             }
         </script>
@@ -32,111 +43,494 @@
         <div class="dbTyper" dt="@ViewBag.DB_Name" dOwn="@ViewBag.IsAdminOwn"></div>
 
         <div class="db_client_toolbox TablePannelHead">
-            <i class="fa fa-database" aria-hidden="true"></i>        @ViewBag.DB_Name 
+            <i class="fa fa-database" aria-hidden="true"></i> @ViewBag.DB_Name
             <input type="text" id="myInput" placeholder="Search for Table.." title="Table Name">
         </div>
         <div class="mytree db_client_toolbox_bdy" id="myUL">
-
             <div>
-                <span>Tables ( @ViewBag.TableCount )</span>
-                @{ foreach (KeyValuePair<string, EbDbExplorerTable> Table_kvp in ViewBag.Tables.TableCollection)
+                <span><i class="fa fa-folder" aria-hidden="true"></i> Schemas</span>
+                @{
+                    // Initialize a dictionary to group tables by schema
+                    var schemaGroups = new Dictionary<string, List<KeyValuePair<string, EbDbExplorerTable>>>();
+                    var tableCollection = ViewBag.Tables.TableCollection as Dictionary<string, EbDbExplorerTable>;
+
+                    // Group tables by schema
+                    foreach (var table_kvp in tableCollection)
                     {
-                        <div table-name="@Table_kvp.Key" id="@Table_kvp.Key" class="treecontextmenu">
-                            @*<i class="fa fa-plus-square-o treecontextmenu parent" aria-hidden="true"></i>
-                                <i class="fa fa-minus-square-o treecontextmenu expanded" aria-hidden="true" style="visibility:hidden"></i>*@
-                            @{
-                                EbDbExplorerTable table = Table_kvp.Value;
-                                string schema = table.Schema;
-                                List<string> Indexes = table.Index;
-                                List<EbDbExplorerColumn> Columns = table.Columns;
-
-                                <span class="table-name " data-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns : @Columns.Count()">@Table_kvp.Key</span>
-
-                                <div>
-                                    <span>Schema ( @schema )</span>
-                                </div>
-                                <div>
-                                    <span>Index (@Indexes.Count())</span>
-                                    @foreach (string Index in Indexes)
-                                    {
-                                        <div>@Index</div>
-                                    }
-                                </div>
-                                <div>
-                                    <span data-toggle="tooltip" data-placement="left" title="Count : @Columns.Count()">Column (@Columns.Count())</span>
-                                    @foreach (EbDbExplorerColumn Column in Columns)
-                                    {
-                                        <div>
-                                            @{ if (Column.ColumnKey == "Primary key")
-                                                { <i class="fa fa-key fa-1x gold" aria-hidden="true"></i> }
-                                                else if (Column.ColumnKey == "Foreign key")
-                                                {<i class="fa fa-key fa-1x fkey" aria-hidden="true"></i> }
-                                                if (Column.ColumnType == "integer" || Column.ColumnType == "numeric")
-                                                {
-                                                    <i class="fa fa-sort-numeric-asc data-type" aria-hidden="true"></i>
-                                                }
-                                                else if (Column.ColumnType == "text" || Column.ColumnType == "character")
-                                                {
-                                                    <i class="fa fa-font data-type" aria-hidden="true"></i>
-                                                }
-                                                if (Column.ColumnType == "timestamp without time zone")
-                                                {
-                                                    <i class="fa fa-calendar fa-1 data-type" aria-hidden="true"></i>
-                                                }
-                                            } <span id="@Column.ColumnName" data-toggle="tooltip" data-placement="left" title="@Column.ColumnType :: @Column.ColumnKey">@Column.ColumnName     @Column.ColumnTable</span>
-                                        </div>
-                                    }
-                                </div>                               
-                            }
-                        </div>
+                        var schema = table_kvp.Value.Schema;
+                        if (!schemaGroups.ContainsKey(schema))
+                        {
+                            schemaGroups[schema] = new List<KeyValuePair<string, EbDbExplorerTable>>();
+                        }
+                        schemaGroups[schema].Add(table_kvp);
                     }
-                }
-            </div> 
-            <div>
 
-                @{ List<EbDbExplorerFunctions> Functions = ViewBag.Tables.FunctionCollection;
-                    <span>Functions ( @Functions.Count() )</span>
-                    foreach (EbDbExplorerFunctions Function in Functions)
+                    // Get function collection
+                    var functions = ViewBag.Tables.FunctionCollection as List<EbDbExplorerFunctions> ?? new List<EbDbExplorerFunctions>();
+
+                    // Render the schema groups with tables and functions
+                    foreach (var schemaGroup in schemaGroups)
                     {
-                        <div Function-name="@Function.FunctionName" id="@Function.FunctionName">
-                            @{
-                                <span class="table-name " data-name="@Function.FunctionName" data-toggle="tooltip" data-placement="left">@Function.FunctionName</span>
+                        var schema = schemaGroup.Key;
+                        var tables = schemaGroup.Value;
+                        <div class="schema-group">
+                            <span><i class="fa fa-sitemap" aria-hidden="true"></i> Schema: @schema</span>
+                            <div>
+                                <span><i class="fa fa-table" aria-hidden="true"></i> Tables (@tables.Count)</span>
+                                @foreach (var Table_kvp in tables)
+                                {
+                                    <div table-name="@Table_kvp.Key" id="@Table_kvp.Key">
+                                        @{
+                                            EbDbExplorerTable table = Table_kvp.Value;
+                                            List<string> Indexes = table.Index;
+                                            List<EbDbExplorerColumn> Columns = table.Columns;
+                                            int constraintCount = Columns.Count(c => !string.IsNullOrEmpty(c.ColumnKey) && !string.IsNullOrEmpty(c.ConstraintName));
 
-                                <div>
-                                    <span>@Function.FunctionQuery</span>
-                                </div>
-                            }
+                                        }
+                                        <span class="table-name treecontextmenu" data-name="@Table_kvp.Key" data-table-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns: @Columns.Count">
+                                            <i class="fa fa-table" aria-hidden="true"></i> @Table_kvp.Key
+                                        </span>
+                                        <div id="indexList">
+                                            <span class="indexcount"><i class="fa fa-list-alt" aria-hidden="true"></i> Indexes (@Indexes.Count)</span>
+                                            @foreach (string Index in Indexes)
+                                            {
+                                                <div class="indexcontextmenu" data-index="@Index">
+                                                    <i class="fa fa-list-alt" aria-hidden="true"></i> @Index
+                                                </div>
+                                            }
+                                        </div>
+
+
+                                        <div>
+                                            <span data-toggle="tooltip" data-placement="left" title="Count: @Columns.Count">
+                                                <i class="fa fa-columns" aria-hidden="true"></i> Columns (@Columns.Count)
+                                            </span>
+                                            @foreach (var Column in Columns.OrderBy(c => c.ColumnName))
+                                            {
+                                                <div class="column-context-menu" data-column-name="@Column.ColumnName" data-table-name="@Table_kvp.Key">
+
+                                                    @{
+                                                        if (Column.ColumnKey == "Primary key")
+                                                        {
+                                                            <i class="fa fa-key fa-1x gold" aria-hidden="true"></i>
+                                                        }
+                                                        else if (Column.ColumnKey == "Foreign key")
+                                                        {
+                                                            <i class="fa fa-key fa-1x fkey" aria-hidden="true"></i>
+                                                        }
+
+                                                        string iconClass = null;
+                                                        if (Column.ColumnType == "integer")
+                                                        {
+                                                            iconClass = "fa fa-sort-numeric-asc";
+                                                        }
+                                                        else if (Column.ColumnType == "numeric")
+                                                        {
+                                                            iconClass = "fa fa-hashtag";
+                                                        }
+                                                        else if (Column.ColumnType == "text")
+                                                        {
+                                                            iconClass = "fa fa-font";
+                                                        }
+                                                        else if (Column.ColumnType == "character")
+                                                        {
+                                                            iconClass = "fa fa-quote-left";
+                                                        }
+                                                        else if (Column.ColumnType == "boolean")
+                                                        {
+                                                            iconClass = "fa fa-check-square";
+                                                        }
+                                                        else if (Column.ColumnType == "character varying")
+                                                        {
+                                                            iconClass = "fa fa-text-width";
+                                                        }
+                                                        else if (Column.ColumnType == "smallint")
+                                                        {
+                                                            iconClass = "fa fa-sort-amount-down";
+                                                        }
+                                                        else if (Column.ColumnType == "bigint")
+                                                        {
+                                                            iconClass = "fa fa-sort-amount-up";
+                                                        }
+                                                        else if (Column.ColumnType == "date")
+                                                        {
+                                                            iconClass = "fa fa-calendar-day";
+                                                        }
+                                                        else if (Column.ColumnType == "timestamp without time zone")
+                                                        {
+                                                            iconClass = "fa fa-calendar";
+                                                        }
+
+                                                        if (iconClass != null)
+                                                        {
+                                                            <i class="@iconClass data-type" aria-hidden="true"></i>
+                                                        }
+                                                    }
+                                                    <span id="@Column.ColumnName" data-toggle="tooltip" data-placement="left" title="@Column.ColumnType :: @Column.ColumnKey">
+                                                        @Column.ColumnName @Column.ColumnTable
+                                                    </span>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div id="constraintList">
+                                            <span>
+                                                <i class="fa fa-lock" aria-hidden="true"></i> Constraints (<span class="constraint-count">@constraintCount</span>)
+                                            </span>
+                                            @foreach (EbDbExplorerColumn Column in Columns)
+                                            {
+                                                if (!string.IsNullOrEmpty(Column.ColumnKey) && !string.IsNullOrEmpty(Column.ConstraintName))
+                                                {
+                                                    <div class="constraintcontextmenu" data-key="@Column.ColumnKey" data-column="@Column.ColumnName" data-toggle="tooltip" data-placement="left" title="@Column.ColumnTable">
+                                                        <!-- Place the icon and text in a flex container -->
+                                                        <span class="constraint-item">
+                                                            @{
+                                                                if (Column.ColumnKey == "Primary key")
+                                                                {
+                                                                    <i class="fa fa-key gold" aria-hidden="true"></i>
+                                                                }
+                                                                else if (Column.ColumnKey == "Foreign key")
+                                                                {
+                                                                    <i class="fa fa-key fkey" aria-hidden="true"></i>
+                                                                }
+                                                                else if (Column.ColumnKey == "Unique key")
+                                                                {
+                                                                    <i class="fa fa-key unique" aria-hidden="true"></i>
+                                                                }
+                                                            }
+                                                            <!-- Ensure the constraint name and type follow the icon -->
+                                                            <span class="constraint-details">@Column.ConstraintName (<span class="constraint-type">@Column.ColumnKey</span>)</span>
+                                                        </span>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+
+                                    </div>
+                                }
+                            </div>
+                            <div>
+                                @{
+                                    List<EbDbExplorerFunctions> Functions = ViewBag.Tables.FunctionCollection;
+                                }
+                                <span>
+                                    <i class="fa fa-cogs" aria-hidden="true"></i> Functions (@Functions.Count)
+                                </span>
+                                @foreach (var function in Functions)
+                                {
+                                    <div Function-name="@function.FunctionName" id="@function.FunctionName" class="functioncontextmenu" data-function-name="@function.FunctionName">
+                                        <span class="table-name" data-name="@function.FunctionName" data-toggle="tooltip" data-placement="left">
+                                            <i class="fa fa-cogs" aria-hidden="true"></i> @function.FunctionName
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+
                         </div>
                     }
                 }
             </div>
-
-
         </div>
+        <div class="modal fade" id="createIndexModal" tabindex="-1" role="dialog" aria-labelledby="createIndexModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createIndexModalLabel">Create Index</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createIndexForm">
+                            <div class="form-group">
+                                <label for="tableName">Table Name</label>
+                                <input type="text" class="form-control" id="tableName" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="columnName">Column Name</label>
+                                <input type="text" class="form-control" id="columnName" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="indexName">Index Name</label>
+                                <input type="text" class="form-control" id="indexName" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="createIndex()">Create Index</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="successModalLabel">Success</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="successModalBody">
+                        Index created successfully.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="errorModalBody">
+                        Failed to create index.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Index Modal -->
+        <div id="editIndexModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Index</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="currentIndexName" value="">
+                        <div class="form-group">
+                            <label for="newIndexName">New Index Name</label>
+                            <input type="text" id="newIndexName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveIndexChanges">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Create Constraint Modal -->
+        <div id="createConstraintModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createConstraintModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createConstraintModalLabel">Create Constraint</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="constraintTableName">Table Name</label>
+                            <input type="text" class="form-control" id="constraintTableName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="constraintColumnName">Column Name</label>
+                            <input type="text" class="form-control" id="constraintColumnName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="constraintType">Constraint Type</label>
+                            <select class="form-control" id="constraintType">
+                                <option value="Primary Key">Primary Key</option>
+                                <option value="Unique Key">Unique Key</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="constraintName">Constraint Name</label>
+                            <input type="text" class="form-control" id="constraintName" readonly>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="createConstraint()">Create Constraint</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <script>
-    //window.onload = function () {
-        if (window.DBExplorer !== null || window.DBExplorer !== undefined) {
-            window.DBExplorer = new Eb_DBExplorer({
-                TCobj: @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables))
+            function showCreateIndexModal(tb_name, col_name) {
+                // Set table name in the modal
+                $('#createIndexModal').find('.modal-body #tableName').val(tb_name);
+
+                // Set the column name directly instead of populating a dropdown
+                $('#createIndexModal').find('.modal-body #columnName').val(col_name);
+
+                // Set default index name using the right-clicked column
+                $('#indexName').val(tb_name + '_' + col_name + '_idx');
+
+                // Show the modal
+                $('#createIndexModal').modal('show');
+            }
+
+            // Attach the function to your global object
+            window.DBExplorer.showCreateIndexModal = showCreateIndexModal.bind(window.DBExplorer);
+
+            function createIndex() {
+                var tableName = $('#tableName').val();
+                var columnName = $('#columnName').val(); // Correct usage of columnName
+                var indexName = $('#indexName').val();
+
+                if (tableName && indexName && columnName) { // Updated validation check
+                    // Perform AJAX call
+                    $.ajax({
+                        type: 'POST',
+                        url: '../DbClient/CreateIndex',
+                        data: {
+                            tableName: tableName,
+                            indexName: indexName,
+                            indexColumns: columnName // Use columnName here
+                        },
+                        success: function (data) {
+                            // Handle success
+                            console.log('Index created successfully:', data);
+
+                            // Close the create index modal if open
+                            $('#createIndexModal').modal('hide');
+                            // Show success modal
+                            $('#successModalBody').text('Index created successfully.');
+                            $('#successModal').modal('show');
+
+                            // Append new index to the list
+                            var newIndexHtml = '<div class="indexcontextmenu" data-index="' + indexName + '"><i class="fa fa-list-alt" aria-hidden="true"></i> ' + indexName + '</div>';
+
+                            // Find the specific table's indexList and append the new index
+                            $('#' + tableName + ' #indexList').append(newIndexHtml);
+
+                            // Update the index count
+                            var indexCountSpan = $('#' + tableName + ' .indexcount');
+                            var currentCount = parseInt(indexCountSpan.text().match(/\d+/)[0]);
+                            indexCountSpan.text('Indexes (' + (currentCount + 1) + ')');
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error
+                            console.error('Failed to create index:', status, error);
+                            // Show error modal
+                            $('#errorModalBody').text('Failed to create index: ' + error);
+                            $('#errorModal').modal('show');
+                        }
+                    });
+                } else {
+                    alert('Please fill in all fields.');
+                }
+            }
+
+            function showCreateConstraintModal(tb_name, col_name) {
+                $('#createConstraintModal').find('#constraintTableName').val(tb_name);
+                $('#createConstraintModal').find('#constraintColumnName').val(col_name);
+
+                // Generate initial constraint name based on default type
+                updateConstraintName();
+
+                $('#createConstraintModal').modal('show');
+            }
+
+            function generateConstraintName(tb_name, col_name, constraint_type) {
+                return tb_name + '_' + col_name + '_' + constraint_type.replace(' ', '_') + '_constraint';
+            }
+
+            function updateConstraintName() {
+                var tableName = $('#constraintTableName').val();
+                var columnName = $('#constraintColumnName').val();
+                var constraintType = $('#constraintType').val();
+                var constraintName = generateConstraintName(tableName, columnName, constraintType);
+                $('#constraintName').val(constraintName);
+            }
+
+            function createConstraint() {
+                var tableName = $('#constraintTableName').val();
+                var columnName = $('#constraintColumnName').val();
+                var constraintType = $('#constraintType').val();
+                var constraintName = generateConstraintName(tableName, columnName, constraintType);
+
+                if (tableName && columnName && constraintType && constraintName) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/DbClient/CreateConstraint',
+                        data: {
+                            tableName: tableName,
+                            columnName: columnName,
+                            constraintType: constraintType,
+                            constraintName: constraintName
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                console.log('Constraint created successfully:', data);
+
+                                // Update the constraint list
+                                var newConstraintHtml = '<div><i class="fa fa-lock" aria-hidden="true"></i> ' + constraintName + ' (' + constraintType + ')</div>';
+                                $('#' + tableName + ' #constraintList').append(newConstraintHtml);
+
+                                // Update the constraint count
+                                var constraintCountSpan = $('#' + tableName + ' .constraint-count');
+                                var currentCount = parseInt(constraintCountSpan.text().match(/\d+/)[0]);
+                                constraintCountSpan.text('Constraints (' + (currentCount + 1) + ')');
+
+                                // Show success modal
+                                $('#successModalBody').text(data.message);
+                                $('#successModal').modal('show');
+
+                                // Close the create constraint modal
+                                $('#createConstraintModal').modal('hide');
+                            } else {
+                                // Show error modal
+                                $('#errorModalBody').text(data.message);
+                                $('#errorModal').modal('show');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Failed to create constraint:', status, error);
+                            $('#errorModalBody').text('Failed to create constraint: ' + error);
+                            $('#errorModal').modal('show');
+                        }
+                    });
+                } else {
+                    alert('Please fill in all fields.');
+                }
+            }
+
+
+
+
+
+            $(document).ready(function () {
+                // Add event listener to update constraint name when constraint type changes
+                $('#constraintType').change(updateConstraintName);
             });
-        }
-        else {
-            window.DBExplorer.TCobj = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables));
-       }
-    //}
+
+
         </script>
     }
     else
     {
-
         <script>
-    $(document).ready(function () {
-        EbMessage("show", { Message: '@ViewBag.Message', Background: "red" });
-        setTimeout(function () {
-            location.reload(true);
-        }, 5000);
-    });
+            $(document).ready(function () {
+                EbMessage("show", { Message: '@ViewBag.Message', Background: "red" });
+                setTimeout(function () {
+                    location.reload(true);
+                }, 5000);
+            });
         </script>
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="..." crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     }
 }

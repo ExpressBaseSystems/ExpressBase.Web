@@ -1,6 +1,6 @@
 ﻿
 <!-- Tickets Modal -->
-<div class="eb-notification-window  tr" id="tr-window">
+<div class="eb-notification-window tr " id="tr-window">
     <div class="notification-inner h-100" style="padding-top: 38px; display: flex; flex-direction: column;">
         <!-- Main Content Wrapper -->
         <div id="main-content" style="flex: 1; display: flex; flex-direction: column;">
@@ -32,7 +32,7 @@
                 <div id="alltickets-tab" class="tab-pane h-100 active">
                     <div class="allnotification-tab-inner h-100" style="display: flex; flex-flow: column nowrap;">
                         <!-- Set the container to be scrollable with a defined height -->
-                        <ul class="new_notifications nf-link-container" id="tr-container" style="flex: 1; overflow-y: auto; max-height: 400px; padding-right: 10px;">
+                        <ul class="new_notifications nf-link-container" id="tr-container" style="flex: 1; overflow-y: auto; max-height: 380px ; padding-right: 10px;">
                             <!-- Active Tickets will be populated here -->
                         </ul>
                         <!-- Image to display when there are no active tickets -->
@@ -73,7 +73,7 @@
 
                             <!-- Create New Ticket Button -->
                             <a href="#" class="trcreate-ticket-btn" style="text-decoration: none;" id="create-ticket-button-closed">
-                                <button class="trfooter-btn" style="margin-right: 5px;">
+                                <button class="trfooter-btn" style="margin-right: 5px;" >
                                     <i class="fa fa-plus" aria-hidden="true"></i> Create New Ticket
                                 </button>
                             </a>
@@ -150,7 +150,7 @@
                 </div>
 
                 <!-- Info Form -->
-                <div class="ticket-form-body" style="flex: 1; padding: 20px;">
+                <div class="ticket-form-body" style="flex: 1; padding: 2rem;">
                     <form id="ticket-form-info">
                         <div class="form-group">
                             <label for="ticket-title">Title</label>
@@ -166,7 +166,7 @@
                 </div>
 
                 <!-- Styled Tabs -->
-                <div class="trfstyled-tab-container" style="border-radius: 8px; overflow: hidden; margin-top:-25px;">
+                <div class="trfstyled-tab-container" style="border-radius: 8px; overflow: hidden; margin-top:-1rem;">
                     <ul class="trfstyled-tab" style="height: 41px; display: flex; justify-content: space-between; border: none;">
                         <li class="trfstyled-tab-item" style="flex: 1; text-align: center;">
                             <a class="trli trfstyled-tab-link active" data-toggle="tab" role="tab" href="#info-tab">
@@ -179,15 +179,16 @@
                             </a>
                         </li>
                         <li class="trfstyled-tab-item" style="flex: 1; text-align: center;">
-                            <a class="trli trfstyled-tab-link" data-toggle="tab" role="tab" href="#comments-tab">
-                                Comments
+                            <a class="trli trfstyled-tab-link" data-toggle="tab" role="tab" href="#comments-tab" id="comments-tab-link">
+                                Comments <span id="new-comment-indicator" style="display:none; color: red; font-weight: bold;">• New</span>
                             </a>
                         </li>
+
                     </ul>
                 </div>
 
                 <!-- Form Tabs Content -->
-                <div class="tab-content" style="flex: 1; padding: 15px; overflow-y: auto; border-radius: 0 0 8px 8px; background-color: #FFF;">
+                <div class="tab-content" style="flex: 1; padding: 1.7rem; overflow-y: auto; border-radius: 0 0 8px 8px; background-color: #FFF;">
                     <!-- Info Tab -->
                     <div id="info-tab" class="tab-pane h-100 active">
                         <form id="tinf_ticket-form-info" class="tinf_form">
@@ -196,11 +197,20 @@
                                 <div class="tinf_col">
                                     <div class="tinf_form-group">
                                         <label for="tinf_status">Status</label>
-                                        <input type="text" class="tinf_form-control" id="tinf_status" value="New" disabled>
+                                        <select class="tinf_form-control" id="tinf_status">
+                                            <option value="New" selected>New</option>
+                                            <option value="Assigned">Assigned</option>
+                                            <option value="Need more Info">Need more Info</option>
+                                            <option value="Rejected">Rejected</option>
+                                            <option value="Resolved">Resolved</option>
+                                            <option value="Reopened">Reopened</option>
+                                            <option value="Deferred">Deferred</option>
+                                        </select>
                                     </div>
 
+
                                     <div class="tinf_form-group">
-                                        <textarea class="tinf_form-control" id="tinf_comments" rows="3" readonly placeholder="//comments"></textarea>
+                                        <textarea class="tinf_form-control" id="tinf_comments" rows="3" placeholder="//comments"></textarea>
                                     </div>
 
                                     <!-- Estimated Hours and ETA in the same row (Label & Input side by side) -->
@@ -208,12 +218,12 @@
                                         <div style="display: flex; align-items: center; gap: 5px;">
                                             <label for="tinf_estimated_hours" style="white-space: nowrap;">Estimated Hours:</label>
                                             <input type="number" class="tinf_form-control" id="tinf_estimated_hours"
-                                                   style="width: 85px; padding: 5px; font-size: 14px;" readonly>
+                                                   style="width: 85px; padding: 5px; font-size: 14px;">
                                         </div>
                                         <div style="display: flex; align-items: center; gap: 5px;">
                                             <label for="tinf_eta" style="white-space: nowrap;">ETA:</label>
-                                            <input type="text" class="tinf_form-control" id="tinf_eta"
-                                                   style="width: 85px; padding: 5px; font-size: 14px;" readonly>
+                                            <input type="date" class="tinf_form-control" id="tinf_eta"
+                                                   style="width: 85px; padding: 5px; font-size: 14px;" >
                                         </div>
                                     </div>
 
@@ -221,7 +231,7 @@
                                     <div style="display: flex; align-items: center; gap: 32px;" class="tinf_form-group">
                                         <label for="tinf_actual_hours">Actual Hours</label>
                                         <input type="number" class="tinf_form-control" id="tinf_actual_hours"
-                                               style="width: 85px; padding: 5px; font-size: 14px;" readonly>
+                                               style="width: 85px; padding: 5px; font-size: 14px;">
                                     </div>
                                 </div>
 
@@ -251,11 +261,10 @@
                                     <div class="tinf_form-group">
                                         <label>Raising on someone’s behalf?</label>
                                         <div style="display: flex; gap: 10px; align-items: center;">
-                                            <!-- Add the onclick functions to toggle the dropdown -->
-                                            <input type="radio" id="tinf_raising_self" name="tinf_raising" value="self" onclick="toggleDropdown(false)">
+                                            <input type="radio" id="tinf_raising_self" name="tinf_raising" value="self">
                                             <label for="tinf_raising_self">No, Self</label>
 
-                                            <input type="radio" id="tinf_raising_yes" name="tinf_raising" value="yes" onclick="toggleDropdown(true)">
+                                            <input type="radio" id="tinf_raising_yes" name="tinf_raising" value="yes">
                                             <label for="tinf_raising_yes">Yes</label>
                                         </div>
 
@@ -263,6 +272,7 @@
                                         <select id="tinf_names" class="tinf_form-control" style="display: none; margin-top: 10px; width: 150px; padding: 8px;">
                                             <option value="">Select Name</option>
                                         </select>
+
                                     </div>
                                 </div>
 
@@ -326,16 +336,17 @@
                         <div id="comments-display" class="trcmnt_comments-display flex-grow-1"></div>
 
                         <!-- Comments Input Form -->
-                        @* <form id="ticket-form-comments" class="trcmnt_form"> *@
-                        @*     <div class="form-group trcmnt_form-group mb-0"> *@
-                        @*         <div class="trcmnt_input-group"> *@
-                        @*             <input type="text" class="form-control trcmnt_input" style="margin-top:-55px"; id="ticket-comments" placeholder="Enter comments"> *@
-                        @*             <button type="button" class="btn btn-primary trcmnt_send-btn" style="margin-top:-55px" ; id="send-comment-btn"> *@
-                        @*                 <i class="fa fa-paper-plane"></i> <!-- Font Awesome icon --> *@
-                        @*             </button> *@
-                        @*         </div> *@
-                        @*     </div> *@
-                        @* </form> *@
+                        <form id="ticket-form-comments" class="trcmnt_form"> 
+                            <input type="hidden" id="current-username" value="@ViewBag.UserDisplayName" />
+                            <div class="form-group trcmnt_form-group mb-0"> 
+                                <div class="trcmnt_input-group"> 
+                                    <input type="text" class="form-control trcmnt_input" style="margin-top:-44px"; id="ticket-comments" placeholder="Enter comments"> 
+                                    <button type="button" class="btn btn-primary trcmnt_send-btn" style="margin-top:-44px; margin-right: 1.5rem"; id="send-comment-btn">
+                                        <i class="fa fa-paper-plane"></i> <!-- Font Awesome icon --> 
+                                    </button> 
+                                </div> 
+                            </div> 
+                        </form> 
                     </div>
 
 
@@ -362,7 +373,9 @@
 
         </div>
     </div>
+</div>
 
+    <div class="nf-fade" id="tr-window-fade" style="position: fixed;top:0; width: 100%;height: 100%;z-index: 7;background: black;opacity: 0.4;display: none;"></div>
     <script>
         // Tab switching functionality
         document.querySelectorAll('.trfstyled-tab-item a').forEach(function (tabLink) {
@@ -378,34 +391,8 @@
                 this.classList.add('active');
             });
         });
+         window.ViewBag = window.ViewBag || {};
+           window.ViewBag.wc = "@ViewBag.wc";
 
-              function toggleDropdown(show) {
-            let dropdown = $("#tinf_names");
-            if (show) {
-                dropdown.show();
-                fetchUsers();
-            } else {
-                dropdown.hide().empty().append('<option value="">Select Name</option>');
-            }
-        }
-
-                function fetchUsers() {
-            $.ajax({
-                url: '/SupportTicket/GetUsers', // Matches the controller route
-                type: 'GET',
-                data: { cid: '@ViewBag.Cid' }, // Use Razor to insert the Cid value
-                success: function (data) {
-                    let dropdown = $("#tinf_names");
-                    dropdown.empty().append('<option value="">Select Name</option>');
-                    $.each(data, function (index, user) {
-                        dropdown.append(`<option value="${user.Id}">${user.Name}</option>`);
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", xhr.responseText);
-                    alert("Failed to load user names.");
-                }
-            });
-        }
 
     </script>

@@ -26,7 +26,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (ViewBag.wc != RoutingConstants.DC)
+                if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
                     return Redirect("/StatusCode/401");
                 //GetDbTablesResponse res = null;
                 //if (ViewBag.cid == "admin" && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
@@ -58,9 +58,6 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult DbClientt()
         {
-            if (ViewBag.wc != RoutingConstants.DC)
-                return Redirect("/StatusCode/401");
-
             GetDbTablesResponse res = null;
             if (ViewBag.cid == "admin")
                 if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
@@ -74,21 +71,21 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SearchSolution(string clientSolnid)
         {
-            if (ViewBag.wc != RoutingConstants.DC)
+            if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
                 return Redirect("/StatusCode/401");
             var user = this.LoggedInUser;
             return ViewComponent("DBClient", new { clientSolnid = clientSolnid, _user = user });
         }
 
         public List<DbClientQueryResponse> ExecuteQuery(string Query, string solution, bool Isadmin)
-        {
+        { // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             solutionid = solution;
             IsAdmin = Isadmin;
             List<DbClientQueryResponse> responses = new List<DbClientQueryResponse>();
-
-            if (ViewBag.wc != RoutingConstants.DC)
-                return responses;
-
             string[] QueryList = Query.Split(";");
             try
             {
@@ -96,13 +93,6 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (SplitQuery != string.Empty)
                     {
-                        if (Query.IndexOf("delete ", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            Query.IndexOf("drop ", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            Query.IndexOf("truncate ", StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            break;
-                        }
-
                         if (Query.IndexOf("insert into ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             DbClientQueryResponse ress = new DbClientQueryResponse();
@@ -111,17 +101,35 @@ namespace ExpressBase.Web.Controllers
                         }
                         else if (Query.IndexOf("select ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
-                            if (Query.IndexOf("eb_", StringComparison.OrdinalIgnoreCase) < 0 || IsAdmin)
+                            // if (Query.IndexOf("eb_", StringComparison.OrdinalIgnoreCase) < 0 || IsAdmin)
                             {
                                 DbClientQueryResponse ress = new DbClientQueryResponse();
                                 ress = SelectQuery(SplitQuery);
                                 responses.Add(ress);
                             }
                         }
+                        else if (Query.IndexOf("delete ", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            DbClientQueryResponse ress = new DbClientQueryResponse();
+                            ress = DeleteQuery(SplitQuery);
+                            responses.Add(ress);
+                        }
+                        else if (Query.IndexOf("drop ", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            DbClientQueryResponse ress = new DbClientQueryResponse();
+                            ress = DropQuery(SplitQuery);
+                            responses.Add(ress);
+                        }
                         else if (Query.IndexOf("alter table ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             DbClientQueryResponse ress = new DbClientQueryResponse();
                             ress = AlterQuery(SplitQuery);
+                            responses.Add(ress);
+                        }
+                        else if (Query.IndexOf("truncate ", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            DbClientQueryResponse ress = new DbClientQueryResponse();
+                            ress = TruncateQuery(SplitQuery);
                             responses.Add(ress);
                         }
                         else if (Query.IndexOf("update ", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -136,6 +144,7 @@ namespace ExpressBase.Web.Controllers
                             ress = CreateQuery(SplitQuery);
                             responses.Add(ress);
                         }
+                        else { }
                     }
                 }
             }
@@ -146,11 +155,20 @@ namespace ExpressBase.Web.Controllers
             return responses;
         }
 
+
+
+
+
+
+
+
         public DbClientQueryResponse SelectQuery(string Query)
-        {
-            DbClientQueryResponse ress = new DbClientQueryResponse();
+        {  // Check if the user is a developer
             if (ViewBag.wc != RoutingConstants.DC)
-                return ress;
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
+            DbClientQueryResponse ress = new DbClientQueryResponse();
             //bool containsSearchResult = Query.Contains("select");
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientSelectRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             if (ress.Dataset != null)
@@ -166,54 +184,187 @@ namespace ExpressBase.Web.Controllers
             return ress;
         }
 
-        private DbClientQueryResponse InsertQuery(string Query)
+
+
+
+        public ActionResult CreateIndex(string tableName, string indexName, string indexColumns)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                return Unauthorized();
+            }
+
+            // Create the request object
+            DbClientIndexRequest request = new DbClientIndexRequest
+            {
+                TableName = tableName,
+                IndexName = indexName,
+                IndexColumns = indexColumns,
+                ClientSolnid = solutionid,
+                IsAdminOwn = IsAdmin
+            };
+
+            // Execute the request
+            DbClientIndexResponse response = this.ServiceClient.Post<DbClientIndexResponse>(request);
+
+            // Return the appropriate ActionResult
+            if (response.Result == 0) // Assuming 0 indicates success, adjust as needed
+            {
+                return Json(new { success = true, message = "Index created successfully." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Failed to create index.", error = response.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public ActionResult EditIndexName(string currentIndexName, string newIndexName, string tableName)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                return Unauthorized();
+            }
+
+            // Create the request object
+            DbClientEditIndexRequest request = new DbClientEditIndexRequest
+            {
+                CurrentIndexName = currentIndexName,
+                NewIndexName = newIndexName,
+                TableName = tableName,
+                ClientSolnid = solutionid,
+                IsAdminOwn = IsAdmin
+            };
+
+            // Execute the request
+            DbClientEditIndexResponse response = this.ServiceClient.Post<DbClientEditIndexResponse>(request);
+
+            // Return the appropriate ActionResult
+            if (response.Result == 0) // Assuming 0 indicates success, adjust as needed
+            {
+                return Json(new { success = true, message = "Index name updated successfully." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Failed to update index name.", error = response.Message });
+            }
+        }
+
+
+
+        [HttpPost]
+        public ActionResult CreateConstraint(string tableName, string columnName, string constraintType, string constraintName)
         {
+            // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                return Unauthorized();
+            }
+
+            // Create the request object
+            DbClientConstraintRequest request = new DbClientConstraintRequest
+            {
+                TableName = tableName,
+                ColumnName = columnName,
+                ConstraintType = constraintType,
+                ConstraintName = constraintName,
+                ClientSolnid = solutionid,
+                IsAdminOwn = IsAdmin
+            };
+
+            // Execute the request
+            DbClientConstraintResponse response = this.ServiceClient.Post<DbClientConstraintResponse>(request);
+
+            // Ensure the message consistency
+            if (response.Message == "Constraint created successfully")
+            {
+                return Json(new { success = true, message = response.Message });
+            }
+            else
+            {
+                string errorMessage = response.Message.StartsWith("Error: ") ? response.Message : "Failed to create constraint: " + response.Message;
+                return Json(new { success = false, message = errorMessage });
+            }
+        }
+
+
+        public DbClientQueryResponse InsertQuery(string Query)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientInsertRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
-        private DbClientQueryResponse DropQuery(string Query)
-        {
+        public DbClientQueryResponse DropQuery(string Query)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             DbClientQueryResponse ress = new DbClientQueryResponse();
             return ress;
         }
 
-        private DbClientQueryResponse DeleteQuery(string Query)
-        {
+        public DbClientQueryResponse DeleteQuery(string Query)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientDeleteRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
-        private DbClientQueryResponse AlterQuery(string Query)
-        {
+        public DbClientQueryResponse AlterQuery(string Query)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientAlterRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
         private DbClientQueryResponse CreateQuery(string Query)
-        {
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientCreateRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
-        private DbClientQueryResponse TruncateQuery(string Query)
-        {
+        public DbClientQueryResponse TruncateQuery(string Query)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             DbClientQueryResponse ress = new DbClientQueryResponse();
             return ress;
         }
 
-        private DbClientQueryResponse UpdateQuery(string Query)
-        {
+        public DbClientQueryResponse UpdateQuery(string Query)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access");
+            }
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientUpdateRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
-        private DVColumnCollection ConvertColumns(ColumnColletion __columns)
+        public DVColumnCollection ConvertColumns(ColumnColletion __columns)
         {
             DVColumnCollection Columns = new DVColumnCollection();
             foreach (EbDataColumn column in __columns)

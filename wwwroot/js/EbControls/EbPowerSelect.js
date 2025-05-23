@@ -298,7 +298,7 @@ const EbPowerSelect = function (ctrl, options) {
             else if (op === EbEnums_w.PsSearchOperators.Equals)
                 text = '^' + text + '$';
         }
-        else if (text && typeof (text) === 'string') {
+        if (text && typeof (text) === 'string') {
             text = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 

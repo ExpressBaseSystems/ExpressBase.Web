@@ -289,6 +289,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getSearchTextRegex = function (text) {
+        if (text && typeof (text) === 'string') {
+            text = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
         if (typeof (this.ComboObj.SearchOperator) === 'number') {
             let op = this.ComboObj.SearchOperator.toString();
             if (op === EbEnums_w.PsSearchOperators.StartsWith)
@@ -298,10 +301,6 @@ const EbPowerSelect = function (ctrl, options) {
             else if (op === EbEnums_w.PsSearchOperators.Equals)
                 text = '^' + text + '$';
         }
-        if (text && typeof (text) === 'string') {
-            text = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-
         return text;
     };
 

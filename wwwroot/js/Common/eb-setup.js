@@ -66,6 +66,13 @@
         if (!this.tr_window.is(':visible')) {
             this.tr_fade.show();
             this.tr_window.show('slide', { direction: 'right' });
+            if (userContext === "dc") {
+                $('#create-ticket-button').hide();
+                $('#create-ticket-button-closed').hide();
+            } else {
+                $('#create-ticket-button').show();
+                $('#create-ticket-button-closed').show();
+            }
         } else {
             this.tr_fade.hide();
             this.tr_window.hide();

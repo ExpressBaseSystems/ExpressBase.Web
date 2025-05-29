@@ -147,6 +147,8 @@
                         <strong>Solution ID:</strong><br>
                         <span sol_id="@ViewBag.Cid" type="text" value="@ViewBag.Cid" id="soluid">@ViewBag.Cid</span>
                     </div>
+                    <span style="display: none;">uid <span id="Uid">@ViewBag.Uid</span> </span>
+
                 </div>
 
                 <!-- Info Form -->
@@ -180,7 +182,10 @@
                         </li>
                         <li class="trfstyled-tab-item" style="flex: 1; text-align: center;">
                             <a class="trli trfstyled-tab-link" data-toggle="tab" role="tab" href="#comments-tab" id="comments-tab-link">
-                                Comments <span id="new-comment-indicator" style="display:none; color: red; font-weight: bold;">• New</span>
+                                Comments<span id="new-comment-indicator" style="display:none; margin-left: 6px;">
+                                    <i class="fa fa-commenting" style="color: green;"></i>
+                                </span>
+
                             </a>
                         </li>
 

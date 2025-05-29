@@ -1360,6 +1360,18 @@ input:checked + .proslider:before {
         background: rgba(255, 255, 255, 1);
     }
 
+#comments-tab {
+    height: calc(43vh - 80px); /* subtract footer height to fit within screen */
+    overflow: hidden;
+}
+.tab-pane {
+    display: none; 
+}
+
+    .tab-pane.active {
+        display: flex !important; /* use flex so comments layout still works */
+        flex-direction: column;
+    }
 
 #tr-window .trcmnt_comments-container {
     display: flex;
@@ -1372,33 +1384,29 @@ input:checked + .proslider:before {
 }
 
 #tr-window #comments-tab .trcmnt_form {
-    position: relative; /* Use relative positioning to stay above footer */
-    bottom: 0; /* Align at the bottom of the parent container */
-    left: 0;
-    right: 0;
-    padding: 10px;
+    position: sticky;
+    bottom: 0;
     background-color: #fff;
+    padding: 10px;
     border-top: 1px solid #ddd;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-    z-index: 10; /* Ensure it is above other content */
+    z-index: 5; /* Ensure it is above other content */
 }
 
 #tr-window #comments-tab .trcmnt_comments-display {
-    max-height: calc(100% - 60px); /* Adjust for footer height */
+    flex-grow: 1;
     overflow-y: auto;
     padding: 10px;
     background-color: #f9f9f9;
-    margin-bottom: 10px;
 }
 
 #tr-window .trcmnt_input-group {
     display: flex;
     align-items: center;
-}
+} 
 
 #tr-window .trcmnt_input {
     flex-grow: 1;
-    margin-right: 10px;
+    margin-right: 1rem;
     border-radius: 25px;
     border: 1px solid black;
 }
@@ -1444,6 +1452,7 @@ input:checked + .proslider:before {
     background-color: #182E50;
     padding: 10px;
     display: flex;
+    height: 60px; /* used in calc above */
     align-items: center;
     justify-content: space-between;
     z-index: 20; /* Make sure it's on top of the form */

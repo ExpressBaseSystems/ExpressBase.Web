@@ -33,30 +33,30 @@ div .mytree div {
         display: none;
         cursor: pointer;
     }
-    .treecontextmenu:hover {
-        border: solid 1px #d5d5d5;
-    } 
+.treecontextmenu:hover {
+    border: solid 1px #d5d5d5;
+}
 
-        div.mytree div.parent {
-            cursor: pointer;
-            background: transparent /*url(http://www3.telus.net/jianlu58/plus.gif)*/ no-repeat top left;
-            background-image: url('data:image/gif;base64,R0lGODlhDwANAJEAAP///2ZmZgAAAMDAwCH5BAEAAAMALAAAAAAPAA0AQAIlnI95AS0NgmIOSoVx2JxPIIRhNHVdhiIU1Fwq9LRfJScr66ZJAQA7');
-            background-position-y: 4px;
-        }
+div.mytree div.parent {
+    cursor: pointer;
+    background: transparent /*url(http://www3.telus.net/jianlu58/plus.gif)*/ no-repeat top left;
+    background-image: url('data:image/gif;base64,R0lGODlhDwANAJEAAP///2ZmZgAAAMDAwCH5BAEAAAMALAAAAAAPAA0AQAIlnI95AS0NgmIOSoVx2JxPIIRhNHVdhiIU1Fwq9LRfJScr66ZJAQA7');
+    background-position-y: 4px;
+}
 
 
 
-        div.mytree div.expanded {
-            background: transparent /*url(http://www3.telus.net/jianlu58/minus.gif)*/ no-repeat top left;
-            background-image: url('data:image/gif;base64,R0lGODlhEwATAJEDAP///4CAgAAAAO7u7iH5BAEAAAMALAAAAAATABMAAAIonI+py+0PYwu0VheA3iBgvnkTqIlMJqRp95Hmkrkt+CrWLeX6zvdDAQA7');
-            background-position-y: 2px;
-        }
+div.mytree div.expanded {
+    background: transparent /*url(http://www3.telus.net/jianlu58/minus.gif)*/ no-repeat top left;
+    background-image: url('data:image/gif;base64,R0lGODlhEwATAJEDAP///4CAgAAAAO7u7iH5BAEAAAMALAAAAAATABMAAAIonI+py+0PYwu0VheA3iBgvnkTqIlMJqRp95Hmkrkt+CrWLeX6zvdDAQA7');
+    background-position-y: 2px;
+}
 
-    div.mytree div.selected{
-        background-color:#ffff;
-    }
+div.mytree div.selected {
+    background-color: #ffff;
+}
 
-    .db_client_toolbox {
+.db_client_toolbox {
     background-color: #eee;
     border: 1px solid #ccc;
     padding: 5px;
@@ -100,7 +100,6 @@ div .mytree div {
     }
 
         .table-box .t_drophead .tname {
-
             max-width: 80%;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -108,21 +107,21 @@ div .mytree div {
             display: inline-block;
         }
     .table-box .t_dropbdy {
-    padding: 5px;
-    line-height: 2.2rem;
-    overflow: scroll;
-    height: calc(100% - 25px);
-}
+        padding: 5px;
+        line-height: 2.2rem;
+        overflow: scroll;
+        height: calc(100% - 25px);
+    }
 
-    .fa-key {
+.fa-key {
     float: right;
 }
 
-       .data-type {
+.data-type {
     font-size: smaller;
 }
 
-    .drag-box {
+.drag-box {
     width: 150px;
     height: 150px;
     padding: 0.5em;
@@ -133,13 +132,12 @@ div .mytree div {
     overflow-x: hidden;
     z-index: 10;
 }
+
 .page_grid {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2UwZTBlMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=");
-    
-    
 }
 
-    .drop-box {
+.drop-box {
     width: 100%;
     height: 546px;
     /*background: #d2cfcf75;*/
@@ -147,13 +145,26 @@ div .mytree div {
     /*padding: 10px;*/
 }
 
-    .gold {
+.gold {
     color: goldenrod;
 }
 
-    .fkey {
+.fkey {
     color: #97948d;
 }
+
+.Resize_toolbox {
+    resize: both; /* Allows resizing both horizontally and vertically */
+    overflow: auto; /* Ensures the content is scrollable if it overflows */
+    min-width: 150px; /* Optional: Minimum width to prevent resizing too small */
+    min-height: 150px; /* Optional: Minimum height to prevent resizing too small */
+    max-width: 100%; /* Optional: Maximum width to prevent overflow */
+    max-height: 100vh; /* Optional: Maximum height relative to viewport */
+    border: 1px solid #ccc; /* Optional: Add a border for visual indication */
+    padding: 10px; /* Optional: Padding for internal content */
+    box-sizing: border-box; /* Ensures padding and border are included in element's width/height */
+}
+
 
 #pannel {
     padding: 0px 10px 10px 10px;
@@ -170,7 +181,7 @@ div .mytree div {
 }
 
 .Result_Cont {
-    margin-top:10px;
+    margin-top: 10px;
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     height: 26rem;
@@ -195,7 +206,9 @@ div .mytree div {
     top: 12px;
     height: 321px;
     /*z-index: auto;*/
-}*/
+}
+
+*/
 
 .CodeMirror-wrap pre {
     word-wrap: break-word !important;
@@ -210,6 +223,7 @@ div .mytree div {
     border-bottom: 4px solid #f2f2f2;
     /*padding: 0px 10px 10px 10px;*/
 }
+
 .nav-tabs {
     background-color: #f2f2f2;
     border-bottom: 2px solid #316396;
@@ -227,7 +241,7 @@ div .mytree div {
         clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
     }
 
-.cetab{
+.cetab {
     background-color: transparent;
     width: 150px;
     padding: 4px 15px;
@@ -239,8 +253,8 @@ div .mytree div {
     border-top-left-radius: 2px;
 }
 
-.CodeMirror-gutters{
-    z-index:auto;
+.CodeMirror-gutters {
+    z-index: auto;
 }
 
 /*.tab-section-common .nav-tabs .active a {
@@ -255,6 +269,7 @@ color: white;
 .tttab-session ul {
     height: 5vh;
 }
+
     .tttab-session ul li {
         margin-top: 5px;
         margin-bottom: -7px;
@@ -262,24 +277,28 @@ color: white;
         height: 100%;
         width: 200px;
     }
+
         .tttab-session ul li a {
             display: flex;
             width: 200px;
             height: 100%;
             padding: 6px;
         }
+
             .tttab-session ul li a p {
                 font-size: 14px;
                 width: 55%;
                 text-align: left;
                 padding-left: 15px;
             }
-        .tttab-session ul li a button {
-            padding: 6px;
-            height: 100%;
-            background: #fff;
-            border: solid 1px #c7c7c7;
-        }
+
+            .tttab-session ul li a button {
+                padding: 6px;
+                height: 100%;
+                background: #fff;
+                border: solid 1px #c7c7c7;
+            }
+
             .tttab-session ul li a i {
                 padding: 5px;
                 font-size: 14px;
@@ -326,24 +345,25 @@ color: white;
                 padding-left: 10px;
             }
 
-.tab-content{
-
+.tab-content {
 }
-    .Result_Cont{
-        width:100%;
-    }
-    .tab-content .dataTables_wrapper, .tab-content .dataTables_scroll {
-        height: 100%;
-    }
 
-    .tab-content .dataTables_scrollBody {
-        height: calc(74%) !important;
-    }
+.Result_Cont {
+    width: 100%;
+}
+
+.tab-content .dataTables_wrapper, .tab-content .dataTables_scroll {
+    height: 100%;
+}
+
+.tab-content .dataTables_scrollBody {
+    height: calc(74%) !important;
+}
 
 
-    .tab-content .dataTables_scrollHeadInner .table {
-        margin-top: 0px !important;
-    }
+.tab-content .dataTables_scrollHeadInner .table {
+    margin-top: 0px !important;
+}
 
 
 .tab-content .dataTables_scrollBody::-webkit-scrollbar {
@@ -351,25 +371,25 @@ color: white;
     height: 1.5vh;
 }
 
-    .tab-content .dataTables_scrollBody:hover::-webkit-scrollbar {
-        width: 1.5vh;
-        height: 1.5vh;
-    }
+.tab-content .dataTables_scrollBody:hover::-webkit-scrollbar {
+    width: 1.5vh;
+    height: 1.5vh;
+}
 
-    /* Track */
-    .tab-content .dataTables_scrollBody::-webkit-scrollbar-track {
-        background: #f1f1f1 !important;
-    }
+/* Track */
+.tab-content .dataTables_scrollBody::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+}
 
-    /* Handle */
-    .tab-content .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: #888 !important;
-    }
+/* Handle */
+.tab-content .dataTables_scrollBody::-webkit-scrollbar-thumb {
+    background: #888 !important;
+}
 
-        /* Handle on hover */
-        .tab-content .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
-            background: #555 !important;
-        }
+    /* Handle on hover */
+    .tab-content .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+        background: #555 !important;
+    }
 
 
 .tab-content th {
@@ -380,63 +400,63 @@ color: white;
     font-weight: 500;
 }
 
-    .tab-content .group td b {
-        font-weight: 400;
-    }
+.tab-content .group td b {
+    font-weight: 400;
+}
 
-    .tab-content td {
-        font-size: 16px;
-        text-overflow: ellipsis !important;
-        overflow: hidden !important;
-        white-space: nowrap !important;
-        font-size: 14px;
-        height: 5vh !important;
-    }
+.tab-content td {
+    font-size: 16px;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    font-size: 14px;
+    height: 5vh !important;
+}
 
-    .tab-content tr:hover {
-        background-color: #00000040 !important;
-    }
+.tab-content tr:hover {
+    background-color: #00000040 !important;
+}
 
-    .tab-content .group {
+.tab-content .group {
+    border-top: solid 1px #f1f1f1 !important;
+    background-color: #00000029 !important;
+}
+
+    .tab-content .group:hover {
         border-top: solid 1px #f1f1f1 !important;
+        /*background-color: #00000029 !important;*/
+    }
+
+    .tab-content .group tr td {
         background-color: #00000029 !important;
     }
 
-        .tab-content .group:hover {
-            border-top: solid 1px #f1f1f1 !important;
-            /*background-color: #00000029 !important;*/
-        }
+.tab-content .group-sum td {
+    background-color: #00000029 !important;
+    /*border-bottom: solid 3px #ffffff14 !important;*/
+}
 
-        .tab-content .group tr td {
-            background-color: #00000029 !important;
-        }
+.tab-content tr {
+    background-color: transparent !important;
+    border-bottom: 1px !important;
+    border-bottom: solid #dcdcdc !important;
+    border-bottom-width: 1px !important;
+    height: 4vh !important;
+}
 
-    .tab-content .group-sum td {
-        background-color: #00000029 !important;
-        /*border-bottom: solid 3px #ffffff14 !important;*/
-    }
+.tab-content table.dataTable thead .sorting:after {
+    opacity: 0.2;
+    content: "\e150";
+    font-size: 12px;
+}
 
-    .tab-content tr {
-        background-color: transparent !important;
-        border-bottom: 1px !important;
-        border-bottom: solid #dcdcdc !important;
-        border-bottom-width: 1px !important;
-        height: 4vh !important;
-    }
+.tab-content .dataTables_scrollBody thead:first-child tr {
+    height: 0vh !important;
+}
 
-    .tab-content table.dataTable thead .sorting:after {
-        opacity: 0.2;
-        content: "\e150";
-        font-size: 12px;
-    }
-
-    .tab-content .dataTables_scrollBody thead:first-child tr {
-        height: 0vh !important;
-    }
-
-    .tab-content .odd {
-        background: rgba(0, 0, 0, 0.09) !important;
-    }
+.tab-content .odd {
+    background: rgba(0, 0, 0, 0.09) !important;
+}
 
 .red-tooltip + .tooltip > .tooltip-inner {
     background-color: #f00;
@@ -445,3 +465,48 @@ color: white;
 .red-tooltip + .tooltip > .tooltip-arrow {
     border-bottom-color: #f00;
 }
+
+
+.constraintcontextmenu {
+    display: flex; /* Align items in a row */
+    align-items: center; /* Center the items vertically */
+    margin-bottom: 5px; /* Space between entries */
+}
+
+.constraint-item {
+    display: flex; /* Align icon and text in a row */
+    align-items: center; /* Center the items vertically */
+    gap: 5px; /* Space between icon and text */
+}
+
+.constraint-details {
+    white-space: nowrap; /* Prevents line breaks within the constraint details */
+}
+
+.fa-key {
+    margin-right: 5px;
+}
+
+
+.modal-fullscreen {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+    .modal-fullscreen .modal-content {
+        height: auto;
+        min-height: 100%;
+        border-radius: 0;
+    }
+
+.functioncontextmenu .table-name {
+    display: flex;
+    align-items: center;
+}
+
+    .functioncontextmenu .table-name i {
+        margin-right: 5px;
+    }

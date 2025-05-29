@@ -435,14 +435,17 @@ namespace ExpressBase.Web.Controllers
 
         }
         [HttpPost]
-        public IActionResult Comment(string TicketNo, string Comments, string UserName, string Solution_id)
+        public IActionResult Comment(string TicketNo, string Comments, string UserName, string Solution_id,string currentUserid)
         {
             CommentResponse Cr = this.ServiceClient.Post<CommentResponse>(new CommentRequest
             {
                 TicketNo = TicketNo,
                 Comments = Comments,
                 UserName = UserName,
-                Solution_id = Solution_id
+                Solution_id = Solution_id,
+                currentUserid=currentUserid
+
+
             });
 
             return Json(Cr);

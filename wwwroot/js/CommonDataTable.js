@@ -2884,7 +2884,7 @@
         });
 
         $('.btn-approval_popover').off('shown.bs.popover').on('shown.bs.popover', function (e) {
-            $(".stage_actions").selectpicker();
+            $(".stage_actions").selectpicker({ dropupAuto: false });
             let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
             $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
@@ -4588,7 +4588,7 @@
         });
 
         $popoverBtn.off('shown.bs.popover').on('shown.bs.popover', function (e) {
-            $(".stage_actions").selectpicker();
+            $(".stage_actions").selectpicker({ dropupAuto: false });
             let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
             $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));

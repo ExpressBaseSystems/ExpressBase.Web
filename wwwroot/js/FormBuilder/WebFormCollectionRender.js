@@ -1,5 +1,5 @@
 ﻿const CallWebFormCollectionRender = function (Option) {
-    if (ebcontext.webform)
+    if (ebcontext.webform && ebcontext.webform.Init)
         ebcontext.webform.Init(Option);
     else if (Option._source === 'master')
         ebcontext.webform = new WebFormCollectionRender(Option);

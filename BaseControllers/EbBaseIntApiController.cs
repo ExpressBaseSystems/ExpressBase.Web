@@ -43,13 +43,7 @@ namespace ExpressBase.Web.BaseControllers
                 sRToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
             }
 
-            string authHeader = context.HttpContext.Request.Headers["Authorization"];
-            string sAPIKey = string.Empty;
-
-            if (authHeader != null && authHeader.StartsWith("APIKEY"))
-            {
-                sAPIKey = authHeader.Substring("APIKEY ".Length).Trim();
-            }
+            string sAPIKey = context.HttpContext.Request.Headers[RoutingConstants.API_KEY];
 
             Controller controller = (Controller)context.Controller;
 
@@ -70,15 +64,7 @@ namespace ExpressBase.Web.BaseControllers
                 Authenticated = false;
                 controller.ViewBag.Message = "Authentication token not present in request header";
             }
-            else if (!IsTokensValid(sRToken, sBToken, this.ExtSolutionId) && string.IsNullOrEmpty(sAPIKey))
-            {
-                Console.WriteLine("B:  " + sBToken);
-                Console.WriteLine("R:  " + sRToken);
-                controller.ViewBag.IsValid = false;
-                Authenticated = false;
-                controller.ViewBag.Message = "Authentication failed";
-            }
-            else
+            else if (IsTokensValid(sRToken, sBToken, this.ExtSolutionId))
             {
                 try
                 {
@@ -95,13 +81,13 @@ namespace ExpressBase.Web.BaseControllers
                         Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID]
                     };
 
-                    this.ServiceClient.BearerToken = (string.IsNullOrEmpty(sAPIKey)) ? sBToken : sAPIKey;
+                    this.ServiceClient.BearerToken = sBToken;
                     this.ServiceClient.RefreshToken = sRToken;
                     this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
 
                     if (this.FileClient != null)
                     {
-                        this.FileClient.BearerToken = (string.IsNullOrEmpty(sAPIKey)) ? sBToken : sAPIKey;
+                        this.FileClient.BearerToken = sBToken;
                         this.FileClient.RefreshToken = sRToken;
                         this.FileClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
                     }
@@ -114,6 +100,20 @@ namespace ExpressBase.Web.BaseControllers
                         return;
                     }
                 }
+            }
+            else if (IsValidApiKey(sAPIKey))
+            {
+                controller.ViewBag.IsValid = true;
+                Authenticated = true;
+                controller.ViewBag.Message = "Authenticated";
+            }
+            else
+            {
+                Console.WriteLine("B:  " + sBToken);
+                Console.WriteLine("R:  " + sRToken);
+                controller.ViewBag.IsValid = false;
+                Authenticated = false;
+                controller.ViewBag.Message = "Authentication failed";
             }
         }
 

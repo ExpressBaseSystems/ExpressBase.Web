@@ -158,8 +158,8 @@ const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onS
             //}.bind(this));
         };
 
-        this.getFormVals = function () {
-            return getValsFromForm(this.FormObj);
+        this.getFormVals = function (ParamsList) {
+            return getValsFromForm(this.FormObj, ParamsList);
         }.bind(this);
 
         this.initFormObject2 = function () {

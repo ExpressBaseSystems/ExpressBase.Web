@@ -117,11 +117,12 @@
             this.filterDialog = FilterDialog;
             let id = FilterDialog.FormObj.Controls.$values[0].EbSid_CtxId;
             let $input = $("#" + id);
-
-            $input.find("select").on('change', function (e) {
-                let newval = EbEnums.AttendanceType[$(e.target).val()];
-                this.EbObject.CalendarType = parseInt(newval);
-            }.bind(this));
+            this.EbObject.CalendarType = this.EbObject.DefaultCalendarType;
+            $input.find("select").data('data-calndr-obj', this.EbObject);
+            //$input.find("select").on('change', function (e) {
+            //    let newval = EbEnums.AttendanceType[$(e.target).val()];
+            //    this.EbObject.CalendarType = parseInt(newval);
+            //}.bind(this));
             this.filterid = "filter" + this.tableId;
             this.$filter = $("<button id='" + this.filterid + "' class='btn commonControl'><i class='fa fa-filter' aria-hidden='true'></i></button>");
             $("#obj_icons").append(this.$filter);
@@ -142,7 +143,7 @@
             //this.CreatePgButton();
             this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
         }
-        this.ChangeFDParams(this.EbObject.DefaultCalendarType);
+        //this.ChangeFDParams(this.EbObject.DefaultCalendarType);
     };
 
     this.CloseParamDiv = function () {
@@ -207,11 +208,26 @@
         if (result) {
             this.result = result;
             this.EbObject = JSON.parse(result.returnObjString);
+            if (this.filterDialog)
+                $("#" + this.filterDialog.FormObj.Controls.$values[0].EbSid_CtxId).find("select").data('data-calndr-obj', this.EbObject);
             if (this.Wc === "dc")
                 this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
             this.formatteddata = result.formattedData;
             this.drawCalendar();
+            this.updateTitle();
         }
+    };
+
+    this.updateTitle = function () {
+        let title = this.EbObject.DisplayName;
+        for (let i = 0; i < this.filtervalues.length; i++) {
+            let f = this.filtervalues[i];
+            if (!f.isHidden && f.ValueF)
+                title += " - " + f.ValueF;
+        }
+        $("#objname").text(title);
+        $("#objname").prop("title", title);
+        $('title').text(title);
     };
 
     this.drawCalendar = function () {
@@ -263,27 +279,29 @@
                 symbol = "&lowast;";
             else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Sum)
                 symbol = "&sum;";
-            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-symbol="${symbol}" data-item='${obj.name}' data-index='${i}'>${symbol} ${obj.name} </a>`);
+            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-symbol="${symbol}" data-item='${obj.name}' data-title='${obj.sTitle ?? obj.name}' data-index='${i}'>${symbol} ${obj.sTitle ?? obj.name} </a>`);
             if (i > 0)
                 $(`.${obj.name}_class`).hide();
             else
                 firstSymbol = symbol;
         }.bind(this));
         $(`#ShowDataColumndd a`).off("click").on("click", this.showDatColumn.bind(this));
-        $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].name);
+        $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].sTitle ?? this.VisibleDataCols[0].name);
         $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${firstSymbol}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.dt.Api.columns.adjust();
     };
 
     this.showDatColumn = function (e) {
-        $(".dataclass").hide();
+        $("#eb_common_loader").EbLoader("show");
+        $(".dataclass:visible").hide();
         $(`.${$(e.target).attr("data-item")}_class`).show();
-        $(`#ShowDataColumndd #action`).text($(e.target).attr("data-item"));
+        $(`#ShowDataColumndd #action`).text($(e.target).attr("data-title"));
         $(`#ShowDataColumndd .datacolumnsymbol`).remove();
         $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${$(e.target).attr("data-symbol")}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.setFooterVals(e);
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.setFooterVals = function (e) {

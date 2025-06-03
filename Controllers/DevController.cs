@@ -33,57 +33,73 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MyApplications")]
         public IActionResult DevDashboard()
         {
-            GetAllApplicationResponse apps = this.ServiceClient.Get(new GetAllApplicationRequest());
-            ViewBag.apps = apps.Data;
-            ViewBag.Msg = TempData[Msg];
-            ViewBag.Title = "Developer Home";
-            ViewBag.JavaScriptFunction = TempData["ResetStore"] ?? "";
-            TempData.Remove("ResetStore");
-            return View();
+            if (ViewBag.wc == "dc")
+            {
+                GetAllApplicationResponse apps = this.ServiceClient.Get(new GetAllApplicationRequest());
+                ViewBag.apps = apps.Data;
+                ViewBag.Msg = TempData[Msg];
+                ViewBag.Title = "Developer Home";
+                ViewBag.JavaScriptFunction = TempData["ResetStore"] ?? "";
+                TempData.Remove("ResetStore");
+                return View();
+            }
+            else
+            {
+                return Redirect("/StatusCode/401");
+            }
         }
 
         [EbBreadCrumbFilter("Applications/", "AppName", new string[] { "/MyApplications" })]
         [HttpGet]
         public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {
-            Dictionary<int, string> _dict = new Dictionary<int, string>();
-
-            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            if (ViewBag.wc == "dc")
             {
-                if (objectType.IsAvailableIn(Type))
-                {
-                    _dict.Add(objectType.IntCode, objectType.Name);
-                }
-            }
-            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });
-            ViewBag.ObjectCollection = _objects.Data;
-            ViewBag.AppInfo = _objects.AppInfo;
+                Dictionary<int, string> _dict = new Dictionary<int, string>();
 
-            if (Type == EbApplicationTypes.Web)
-                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
-            else if (Type == EbApplicationTypes.Mobile)
-                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
-            else if (Type == EbApplicationTypes.Bot)
-            {
-                EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
-                if (settings != null)
+                foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
                 {
-                    //////change count if any css Constant is added or removed
-                    if (settings.CssContent == null || settings.CssContent.Count < 11)
+                    if (objectType.IsAvailableIn(Type))
                     {
-
-                        settings.CssContent = CssContent(settings.CssContent);
+                        _dict.Add(objectType.IntCode, objectType.Name);
                     }
-
                 }
-                ViewBag.AppSettings = settings ?? new EbBotSettings() { };
-                ViewBag.EbfontLst = EbFont.FontFamilies;
-            }
+                GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });
+                ViewBag.ObjectCollection = _objects.Data;
+                ViewBag.AppInfo = _objects.AppInfo;
 
-            this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
-            ViewBag.Title = _objects.AppInfo.Name;
-            ViewBag.ObjectsCount = _objects.ObjectsCount;
-            return View();
+                if (Type == EbApplicationTypes.Web)
+                    ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
+                else if (Type == EbApplicationTypes.Mobile)
+                    ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
+                else if (Type == EbApplicationTypes.Pos)
+                    ViewBag.AppSettings = JsonConvert.DeserializeObject<EbPosSettings>(_objects.AppInfo.AppSettings) ?? new EbPosSettings();
+                else if (Type == EbApplicationTypes.Bot)
+                {
+                    EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
+                    if (settings != null)
+                    {
+                        //////change count if any css Constant is added or removed
+                        if (settings.CssContent == null || settings.CssContent.Count < 11)
+                        {
+
+                            settings.CssContent = CssContent(settings.CssContent);
+                        }
+
+                    }
+                    ViewBag.AppSettings = settings ?? new EbBotSettings() { };
+                    ViewBag.EbfontLst = EbFont.FontFamilies;
+                }
+
+                this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
+                ViewBag.Title = _objects.AppInfo.Name;
+                ViewBag.ObjectsCount = _objects.ObjectsCount;
+                return View();
+            }
+            else
+            {
+                return Redirect("/StatusCode/401");
+            }
         }
 
         public IActionResult ExportPackage()
@@ -532,20 +548,27 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult CreateApplication(int Id, EbApplicationTypes Type)
         {
-            if (Id > 0)
+            if (ViewBag.wc == "dc")
             {
-                ViewBag.Op = "Edit Application";
-                HttpContext.Items["link"] = "Edit";
-                GetApplicationResponse appData = this.ServiceClient.Get(new GetApplicationRequest { Id = Id });
-                ViewBag.AppInfo = appData.AppInfo;
+                if (Id > 0)
+                {
+                    ViewBag.Op = "Edit Application";
+                    HttpContext.Items["link"] = "Edit";
+                    GetApplicationResponse appData = this.ServiceClient.Get(new GetApplicationRequest { Id = Id });
+                    ViewBag.AppInfo = appData.AppInfo;
+                }
+                else
+                {
+                    ViewBag.Op = "New Application";
+                    HttpContext.Items["link"] = "New";
+                    ViewBag.AppInfo = new AppWrapper { Id = 0, AppType = 1, Icon = "fa-home" };
+                }
+                return View();
             }
             else
             {
-                ViewBag.Op = "New Application";
-                HttpContext.Items["link"] = "New";
-                ViewBag.AppInfo = new AppWrapper { Id = 0, AppType = 1, Icon = "fa-home" };
+                return Redirect("/StatusCode/401");
             }
-            return View();
         }
 
         public IActionResult DeleteApplication(int Id)
@@ -755,7 +778,11 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = name,
                         Version = vers,
-                        Data = d
+                        Data = d,
+                        SolnId = this.IntSolutionId,
+                        UserId = this.LoggedInUser.UserId,
+                        UserAuthId = this.LoggedInUser.AuthId,
+                        WhichConsole = WhichConsole
                     });
 
                     watch.Stop();
@@ -790,55 +817,62 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SolutionConsole()
         {
-            EbObjectObjListAllVerResponse public_res = this.ServiceClient.Get(new PublicObjListAllVerRequest { EbObjectType = 0 });
-            EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
-            EbObjectObjListAllVerResponse All_mobilePages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 13 });
-            EbObjectObjListAllVerResponse All_HtmlPages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.HtmlPage.IntCode });
-            EbObjectObjListAllVerResponse All_DataReaders = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.DataReader.IntCode });
-            EbObjectObjListAllVerResponse All_MatViews = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.MaterializedView.IntCode });
-            GetUserTypesResponse _userTypesResp = this.ServiceClient.Get(new GetUserTypesRequest());
-
-            Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
-            if (solutionObj != null && solutionObj.SolutionSettings != null)
+            if (ViewBag.wc == "dc")
             {
-                ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
-                ViewBag.defaultHtmlPageRefid = solutionObj.SolutionSettings.DefaultHtmlPageRefid;
-                ViewBag.getEmployeesDrRefid = solutionObj.SolutionSettings.GetEmployeesDrRefid;
-                ViewBag.provUserFormRefid = solutionObj.SolutionSettings.ProvisionUserFormRefid;
-                ViewBag.EnableFinancialYear = solutionObj.SolutionSettings.EnableFinancialYear;
-                ViewBag.DisbleLeadManagementSave = solutionObj.SolutionSettings.DisbleLeadManagementSave;
-                ViewBag.MaterializedViewDate = solutionObj.SolutionSettings.MaterializedViewDate;
-                ViewBag.MaterializedViews = solutionObj.SolutionSettings.MaterializedViews;
-                if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
-                {
-                    foreach (var item in _userTypesResp.UserTypes)
-                    {
-                        var itemInB = solutionObj.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == item.Id);
+                EbObjectObjListAllVerResponse public_res = this.ServiceClient.Get(new PublicObjListAllVerRequest { EbObjectType = 0 });
+                EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
+                EbObjectObjListAllVerResponse All_mobilePages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 13 });
+                EbObjectObjListAllVerResponse All_HtmlPages = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.HtmlPage.IntCode });
+                EbObjectObjListAllVerResponse All_DataReaders = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.DataReader.IntCode });
+                EbObjectObjListAllVerResponse All_MatViews = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = EbObjectTypes.MaterializedView.IntCode });
+                GetUserTypesResponse _userTypesResp = this.ServiceClient.Get(new GetUserTypesRequest());
 
-                        if (itemInB != null)
-                            item.RefId = itemInB.RefId;
+                Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
+                if (solutionObj != null && solutionObj.SolutionSettings != null)
+                {
+                    ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
+                    ViewBag.defaultHtmlPageRefid = solutionObj.SolutionSettings.DefaultHtmlPageRefid;
+                    ViewBag.getEmployeesDrRefid = solutionObj.SolutionSettings.GetEmployeesDrRefid;
+                    ViewBag.provUserFormRefid = solutionObj.SolutionSettings.ProvisionUserFormRefid;
+                    ViewBag.EnableFinancialYear = solutionObj.SolutionSettings.EnableFinancialYear;
+                    ViewBag.DisbleLeadManagementSave = solutionObj.SolutionSettings.DisbleLeadManagementSave;
+                    ViewBag.MaterializedViewDate = solutionObj.SolutionSettings.MaterializedViewDate;
+                    ViewBag.MaterializedViews = solutionObj.SolutionSettings.MaterializedViews;
+                    if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
+                    {
+                        foreach (var item in _userTypesResp.UserTypes)
+                        {
+                            var itemInB = solutionObj.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == item.Id);
+
+                            if (itemInB != null)
+                                item.RefId = itemInB.RefId;
+                        }
                     }
                 }
+
+                ViewBag.userTypes = _userTypesResp.UserTypes;
+                ViewBag.objlist = public_res.Data;
+                ViewBag.all_objlist = all_resp.Data;
+                ViewBag.MobilePages = All_mobilePages.Data;
+                ViewBag.HtmlPages = All_HtmlPages.Data;
+                ViewBag.DataReaders = All_DataReaders.Data;
+                ViewBag.MatViews = All_MatViews.Data;
+                ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
+                ViewBag.WebFormSettings = solutionObj.SolutionSettings?.WebSettings ?? new EbWebFormSettings(true);
+                ViewBag.SystemColumns = solutionObj.SolutionSettings?.SystemColumns ?? new EbSystemColumns(EbSysCols.Values);
+
+                if (solutionObj.SolutionSettings?.MobileAppSettings == null)
+                {
+                    ViewBag.MobileSettings = new MobileAppSettings();
+                }
+                GetCleanupQueryResponse response = this.ServiceClient.Post<GetCleanupQueryResponse>(new GetCleanupQueryRequest { });
+                ViewBag.CleanupQueries = response.CleanupQueries;
+                return View();
             }
-
-            ViewBag.userTypes = _userTypesResp.UserTypes;
-            ViewBag.objlist = public_res.Data;
-            ViewBag.all_objlist = all_resp.Data;
-            ViewBag.MobilePages = All_mobilePages.Data;
-            ViewBag.HtmlPages = All_HtmlPages.Data;
-            ViewBag.DataReaders = All_DataReaders.Data;
-            ViewBag.MatViews = All_MatViews.Data;
-            ViewBag.MobileSettings = solutionObj.SolutionSettings?.MobileAppSettings;
-            ViewBag.WebFormSettings = solutionObj.SolutionSettings?.WebSettings ?? new EbWebFormSettings(true);
-            ViewBag.SystemColumns = solutionObj.SolutionSettings?.SystemColumns ?? new EbSystemColumns(EbSysCols.Values);
-
-            if (solutionObj.SolutionSettings?.MobileAppSettings == null)
+            else
             {
-                ViewBag.MobileSettings = new MobileAppSettings();
+                return Redirect("/StatusCode/401");
             }
-            GetCleanupQueryResponse response = this.ServiceClient.Post<GetCleanupQueryResponse>(new GetCleanupQueryRequest { });
-            ViewBag.CleanupQueries = response.CleanupQueries;
-            return View();
         }
 
         public string ResetWebSettings()

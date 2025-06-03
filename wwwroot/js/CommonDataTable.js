@@ -108,7 +108,7 @@
     this.ObjectLinks = Option.ObjectLinks || [];
     this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
     this.AllowSorting = typeof Option.AllowSorting !== 'undefined' ? Option.AllowSorting : true;
-
+    this.SelfRefreshLimit = Option.SelfRefreshLimit ? Option.SelfRefreshLimit : 0;
 
     if (this.Source === "EbDataTable") {
         if (this.EbObject && this.EbObject.ApiRefId !== null && this.EbObject.ApiRefId !== "")
@@ -393,6 +393,10 @@
             this.Done4All();
         }
         else if (this.Source === "WebForm") {
+            if (this.SelfRefreshLimit && this.SelfRefreshLimit < this.ajaxCallCounter) {
+                window.location.reload();
+                return;
+            }
             this.MainData = null;
             this.totalcount = 0;
             this.Done4All();
@@ -445,6 +449,13 @@
 
         //----------
         if (this.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
+
+            if ($.fn.DataTable.isDataTable('#' + this.tableId)) {
+                this.table_jQO.off();
+                this.table_jQO.DataTable().clear().destroy(true);
+                this.table_jQO.empty();
+            }
+
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
 
@@ -522,6 +533,7 @@
                     return;
                 this.filterValues = this.getFilterValues("filter");
             }
+            this.updateTitle();
         }
         this.isSecondTime = false;
         this.totalcount = 0;
@@ -531,6 +543,18 @@
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
         this.dvName = this.EbObject.Name;
+    };
+
+    this.updateTitle = function () {
+        let title = this.EbObject.DisplayName;
+        for (let i = 0; i < this.filterValues.length; i++) {
+            let f = this.filterValues[i];
+            if (!f.isHidden && f.ValueF)
+                title += " - " + f.ValueF;
+        }
+        $("#objname").text(title);
+        $("#objname").prop("title", title);
+        $('title').text(title);
     };
 
     this.check4Customcolumn = function () {
@@ -887,7 +911,7 @@
         var ia = [];
         for (var i = 0; i < 5; i++)
             ia[i] = (this.EbObject.PageLength * (i + 1));
-        return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
+        return JSON.parse("[ [{0}], [{0}] ]".replace(/\{0\}/g, ia.join(',')));
     };
 
     this.ajaxData = function (dq) {
@@ -982,8 +1006,10 @@
         if (temp.length === 0) {
             if (this.Source === "Bot")
                 fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp for bot
+            else if (this.Source === "AppsToObjectTable")
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp
             else
-                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1));
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1, "Location", ebcontext.locations.CurrentLocObj.ShortName, true));
         }
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
@@ -2790,6 +2816,7 @@
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".webformlink" + this.tableId).off("click").on("click", this.openWebform.bind(this));
         $("#" + this.tableId).off("click", ".tablelink4calendar").on("click", ".tablelink4calendar", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -2857,7 +2884,7 @@
         });
 
         $('.btn-approval_popover').off('shown.bs.popover').on('shown.bs.popover', function (e) {
-            $(".stage_actions").selectpicker();
+            $(".stage_actions").selectpicker({ dropupAuto: false });
             let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
             $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
@@ -2978,6 +3005,7 @@
                                 $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
                         }.bind(this));
                         dvcontainerObj.modifyNavigation();
+                        this.updateTitle();
                     }
                 }
                 //this.CreatePgButton();
@@ -3408,7 +3436,7 @@
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
-            if (rowIds.length <= 25) {
+            if (rowIds.length <= 75) {
                 let url = "/ReportRender/RenderLinkMultiSync?refId=" + rptRefid + "&rowId=" + rowIds;
                 //ebcontext.webform.showLoader();
                 EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 30000 });
@@ -4420,7 +4448,8 @@
                 _refId: this.linkDV,
                 _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
                 _mode: this.dvformMode,
-                _locId: ebcontext.locations.CurrentLoc
+                _locId: ebcontext.locations.CurrentLoc,
+                _callback: this.getColumnsSuccess.bind(this)
             });
             //$("#iFrameFormPopupModal").modal("show");
             //let url = `../WebForm/Index?_r=${this.linkDV}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_m=1${this.dvformMode}&_l=${ebcontext.locations.CurrentLoc}`;
@@ -4433,6 +4462,16 @@
             this.OpeninNewTab(idx, cData);
         }
         //this.filterValues = [];
+    };
+
+    this.openWebform = function (e) {
+        let _a = $(e.target).closest("a");
+        let _v = _a.attr("data-ver");
+        let _i = _a.attr("data-id");
+        let _f = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", _i)]))));
+
+        let url = `../WebForm/Inde?_r=${_v}&_p=${_f}&_m=${1}`;
+        window.open(url, '_blank');
     };
 
     this.link2NewTableFromColumn = function (e) {
@@ -4549,7 +4588,7 @@
         });
 
         $popoverBtn.off('shown.bs.popover').on('shown.bs.popover', function (e) {
-            $(".stage_actions").selectpicker();
+            $(".stage_actions").selectpicker({ dropupAuto: false });
             let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
             $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
@@ -4767,6 +4806,9 @@
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
         ob.SubscriptionId = window.ebcontext.subscription_id;
+        if (this.CurrentRowGroup !== null)
+            ob.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        ob.OrderBy = this.getOrderByInfo();
 
         this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["ExportToExcel"] });
         this.ss.onExcelExportSuccess = function (url) {
@@ -4792,6 +4834,9 @@
         ob.dvRefId = this.EbObject.RefId;
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
+        if (this.CurrentRowGroup !== null)
+            ob.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        ob.OrderBy = this.getOrderByInfo();
 
         $.ajax({
             type: "POST",

@@ -85,6 +85,10 @@
     this.divLocaleInfo = $("#divLocaleInfo");
     this.selectTimeZone = $("#seltimezone");
 
+    this.btnApiKeyGenerate = $("#btnApiKeyGenerate");
+    this.btnApiKeyView = $("#btnApiKeyView");
+    this.btnApiKeyDelete = $("#btnApiKeyDelete");
+
     this.init = function () {
         if (this.itemId > 1) {
             this.menuBarObj.insertButton(`<button id="btnDeleteUser" class='btn' title='Delete'><i class="fa fa-trash-o" aria-hidden="true"></i></button>`);
@@ -109,6 +113,9 @@
         this.btnChangePassword.on("click", this.initChangePwdModal.bind(this));
         this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
 
+        this.btnApiKeyGenerate.on('click', this.apiKeyGenerate.bind(this));
+        this.btnApiKeyView.on('click', this.apiKeyView.bind(this));
+        this.btnApiKeyDelete.on('click', this.apiKeyDelete.bind(this));
 
         $('#btnlocWhiteLst').on('click', this.setLocConstrainFn.bind(this));
 
@@ -154,6 +161,155 @@
 
     //    }.bind(this);
     //};
+
+    this.apiKeyGenerate = function () {
+        if (this.apiKeyGenerateClicked)
+            return;
+        this.apiKeyGenerateClicked = true;
+
+        this.showLoader();
+
+        $.ajax({
+            type: "POST",
+            url: "/Security/IsApiKeyExists",
+            data: { userId: this.itemId },
+            error: function (xhr, ajaxOptions, thrownError) {
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                this.hideLoader();
+                this.apiKeyGenerateClicked = false;
+            }.bind(this),
+            success: function (result) {
+                this.hideLoader();
+                this.apiKeyGenerateClicked = false;
+                let resp = JSON.parse(result);
+                let msg;
+                if (resp.KeyId > 0) {
+                    msg = "Api key is already active! Do you want to regenerate Api key? It will overwrite the existing api key.";
+                }
+                else if (resp.KeyId == 0) {
+                    msg = "Are you sure to generate new Api key?";
+                }
+                else {
+                    EbMessage("show", { Message: resp.ResponseStatus.Message, AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                    return;
+                }
+
+                EbDialog("show",
+                    {
+                        Message: msg,
+                        Buttons: {
+                            "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                            "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                        },
+                        CallBack: function (name) {
+                            if (name === "Yes") {
+                                this.showLoader();
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Security/GenerateApiKey",
+                                    data: { userId: this.itemId },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                                        this.hideLoader();
+                                    }.bind(this),
+                                    success: function (result) {
+                                        this.hideLoader();
+                                        let resp = JSON.parse(result);
+                                        if (resp.ApiKey) {
+                                            $("#txtApiKey").val(resp.ApiKey);
+                                            EbMessage("show", { Message: 'New api key generated successfully', AutoHide: true, Background: '#00aa00', Delay: 4000 });
+                                        }
+                                        else {
+                                            $("#txtApiKey").val('Failed to generate api key. Message: ' + resp.ResponseStatus.Message);
+                                        }
+                                    }.bind(this)
+                                });
+                            }
+                        }.bind(this)
+                    });
+            }.bind(this)
+        });
+    };
+
+    this.apiKeyView = function () {
+        if (this.apiKeyViewClicked)
+            return;
+        this.apiKeyViewClicked = true;
+
+        this.showLoader();
+
+        $.ajax({
+            type: "POST",
+            url: "/Security/ViewApiKey",
+            data: { userId: this.itemId },
+            error: function (xhr, ajaxOptions, thrownError) {
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                this.hideLoader();
+                this.apiKeyViewClicked = false;
+            }.bind(this),
+            success: function (result) {
+                this.hideLoader();
+                this.apiKeyViewClicked = false;
+                let resp = JSON.parse(result);
+                if (resp.ApiKey) {
+                    $("#txtApiKey").val(resp.ApiKey);
+                }
+                else {
+                    $("#txtApiKey").val('Failed to load api key. Message: ' + resp.ResponseStatus.Message);
+                }
+            }.bind(this)
+        });
+    };
+
+    this.apiKeyDelete = function () {
+        EbDialog("show",
+            {
+                Message: "Are you sure to delete existing api key?",
+                Buttons: {
+                    "Yes": { Background: "green", Align: "left", FontColor: "white;" },
+                    "No": { Background: "violet", Align: "right", FontColor: "white;" }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        if (this.apiKeyDeleteClicked)
+                            return;
+                        this.apiKeyDeleteClicked = true;
+
+                        this.showLoader();
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/Security/DeleteApiKey",
+                            data: { userId: this.itemId },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                                this.hideLoader();
+                                this.apiKeyDeleteClicked = false;
+                            }.bind(this),
+                            success: function (result) {
+                                this.hideLoader();
+                                this.apiKeyDeleteClicked = false;
+                                let resp = JSON.parse(result);
+                                if (resp.status > 0) {
+                                    $("#txtApiKey").val('Api key deleted successfully');
+                                }
+                                else {
+                                    $("#txtApiKey").val('Failed to delete api key. Message: ' + resp.ResponseStatus.Message);
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
+    };
+
+    this.showLoader = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: ".s-dash-container" } });
+    }.bind(this);
+
+    this.hideLoader = function () {
+        $("#eb_common_loader").EbLoader("hide");
+    }.bind(this);
 
     this.showConstrainFn = function () {
         var locItems = $.map(this.LocCntr.curItems, function (value, index) {

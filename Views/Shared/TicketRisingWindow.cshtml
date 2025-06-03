@@ -1,0 +1,411 @@
+﻿
+<!-- Tickets Modal -->
+<div class="eb-notification-window  tr" id="tr-window">
+    <div class="notification-inner h-100" style="padding-top: 38px; display: flex; flex-direction: column;">
+        <!-- Main Content Wrapper -->
+        <div id="main-content" style="flex: 1; display: flex; flex-direction: column;">
+            <!-- Main Heading -->
+            <div class="main-heading" id="main-heading" style="text-align: center; margin-bottom: 20px;">
+                <h2 class="trhead" style="line-height: 1.2;">
+                    <span class="trhlo" style="display: block;">Hello!</span>
+                    <span class="trw">Welcome to Expressbase Service Desk.</span>
+                </h2>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs eb-styledTab" style="height: 41px;">
+                <li class="nav-item active">
+                    <a class="nav-link nf-window-tabstyle active trli" data-toggle="tab" role="tab" href="#alltickets-tab">
+                        Active Tickets <span id="tr-notification-count"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nf-window-tabstyle trli" data-toggle="tab" role="tab" href="#closedtickets-tab">
+                        Closed Tickets <span id="tr-closed-count"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tabs Content -->
+            <div class="tab-content" style="flex: 1; height: calc(100% - 40px); overflow-y: auto; background: white;">
+                <!-- Active Tickets Tab -->
+                <div id="alltickets-tab" class="tab-pane h-100 active">
+                    <div class="allnotification-tab-inner h-100" style="display: flex; flex-flow: column nowrap;">
+                        <!-- Set the container to be scrollable with a defined height -->
+                        <ul class="new_notifications nf-link-container" id="tr-container" style="flex: 1; overflow-y: auto; max-height: 400px; padding-right: 10px;">
+                            <!-- Active Tickets will be populated here -->
+                        </ul>
+                        <!-- Image to display when there are no active tickets -->
+                        <img id="no-active-tickets" src="~/images/update-bro.svg" alt="No Active Tickets" style="display: none; width: 100%; max-height: 200px; object-fit: contain; margin: auto;">
+
+                        <!-- Fixed footer for the tab, stays visible even when scrolling -->
+                        <div class="tr-footer" style="background-color: #182E50; padding: 10px; display: flex; align-items: center; justify-content: space-between; position: fixed; bottom:0;width:550px;">
+                            <!-- Image Logo -->
+                            <a href="/home">
+                                <img src="~/images/eb_service_desk_logo.svg" alt="Logo" style="height: 40px;">
+                            </a>
+
+                            <!-- Create New Ticket Button -->
+                            <a href="#" class="trcreate-ticket-btn" style="text-decoration: none;" id="create-ticket-button">
+                                <button class="trfooter-btn" style="margin-right: 5px;">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Create New Ticket
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Closed Tickets Tab -->
+                <div id="closedtickets-tab" class="tab-pane h-100">
+                    <div class="closedtickets-tab-inner h-100" style="display: flex; flex-flow: column nowrap;">
+                        <ul class="closed_tickets nf-link-container" id="closedtr_container">
+                            <!-- Closed Tickets will be populated here -->
+                        </ul>
+                        <!-- Image to display when there are no closed tickets -->
+                        <img id="no-closed-tickets" src="~/images/update-bro.svg" alt="No Closed Tickets" style="display: none; width: 100%; max-height: 200px; object-fit: contain; margin: auto;">
+
+                        <div class="tr-footer" style="background-color: #182E50; padding: 10px; display: flex; align-items: center; justify-content: space-between;">
+                            <!-- Image Logo -->
+                            <a href="/home">
+                                <img src="~/images/eb_service_desk_logo.svg" alt="Logo" style="height: 40px;">
+                            </a>
+
+                            <!-- Create New Ticket Button -->
+                            <a href="#" class="trcreate-ticket-btn" style="text-decoration: none;" id="create-ticket-button-closed">
+                                <button class="trfooter-btn" style="margin-right: 5px;">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Create New Ticket
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Confirmation Message Container (Initially Hidden) -->
+        <div id="confirmation-message" class="trsuc_confirmation-message" style="display: none; text-align: center;">
+
+            <!-- Ticket Form Header -->
+            <div class="ticket-form-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background-color: #182E50;">
+                <div style="display: flex; align-items: center;">
+                    <div style="margin-left: 20px; color: white;">
+                        <strong>Ticket Submission</strong><br>
+                        <span id="submitted-by-date" style="font-size: 12px; display: flex; align-items: center; gap: 15px;">
+                            <span>Submitted By: <span id="submitted-by">@ViewBag.UserDisplayName</span></span>
+                            <span>
+                                Date: <span id="submissionDate"></span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Message Content -->
+            <h2 class="ch2">Your ticket has been submitted successfully!</h2>
+            <div class="trsuc_circle-checkmark">
+                <div class="circle"></div>
+                <div class="checkmark">
+                    <i class="fa fa-check"></i>
+                </div>
+            </div>
+            <!-- View All Tickets Button -->
+            <button id="view-active-ticket-button">VIEW ACTIVE TICKET</button>
+
+
+            <!-- Ticket Form Footer -->
+            <div class="tr-footer" style="background-color: #182E50; padding: 10px; margin-top: 424px; display: flex; align-items: center; justify-content: space-between;">
+                <!-- Image Logo -->
+                <a href="/home">
+                    <img src="~/images/eb_service_desk_logo.svg" alt="Logo" style="height: 40px;">
+                </a>
+            </div>
+
+        </div>
+
+
+
+        <!-- Ticket Form (Initially Hidden) -->
+        <div id="ticket-form" class="tab-pane h-100" style="display: none; flex: 1; flex-direction: column;">
+            <div class="ticket-form-inner h-100" style="display: flex; flex-direction: column;">
+                <div class="ticket-form-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background-color: #182E50;">
+                    <!-- Back Button -->
+                    <div style="display: flex; align-items: center;">
+                        <button id="back-button" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
+                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                        </button>
+                        <div style="margin-left: 20px; color: white;">
+                            <strong id="ticket-id-header">New Ticket</strong><br>
+                            <span id="submitted-by-date" style="font-size: 12px; display: flex; align-items: center; gap: 15px;">
+                                <span>Submitted By: <span id="submitted-by">@ViewBag.UserDisplayName</span></span><br />
+                                <span>Date: <span id="subDate"></span> </span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Solution ID -->
+                    <div style="color: white; text-align: right;">
+                        <strong>Solution ID:</strong><br>
+                        <span sol_id="@ViewBag.Cid" type="text" value="@ViewBag.Cid" id="soluid">@ViewBag.Cid</span>
+                    </div>
+                </div>
+
+                <!-- Info Form -->
+                <div class="ticket-form-body" style="flex: 1; padding: 20px;">
+                    <form id="ticket-form-info">
+                        <div class="form-group">
+                            <label for="ticket-title">Title</label>
+                            <input type="text" class="form-control" id="ticket-title" placeholder="Enter ticket title">
+                            <div id="title-error" class="error-message" style="color: red; font-size: 12px; margin-top: 5px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticket-description">Description</label>
+                            <textarea class="form-control" id="ticket-description" rows="4" placeholder="Enter ticket description"></textarea>
+                            <div id="description-error" class="error-message" style="color: red; font-size: 12px; margin-top: 5px;"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Styled Tabs -->
+                <div class="trfstyled-tab-container" style="border-radius: 8px; overflow: hidden; margin-top:-25px;">
+                    <ul class="trfstyled-tab" style="height: 41px; display: flex; justify-content: space-between; border: none;">
+                        <li class="trfstyled-tab-item" style="flex: 1; text-align: center;">
+                            <a class="trli trfstyled-tab-link active" data-toggle="tab" role="tab" href="#info-tab">
+                                Info
+                            </a>
+                        </li>
+                        <li class="trfstyled-tab-item" style="flex: 1; text-align: center;">
+                            <a class="trli trfstyled-tab-link" data-toggle="tab" role="tab" href="#attachments-tab">
+                                Attachments
+                            </a>
+                        </li>
+                        <li class="trfstyled-tab-item" style="flex: 1; text-align: center;">
+                            <a class="trli trfstyled-tab-link" data-toggle="tab" role="tab" href="#comments-tab">
+                                Comments
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Form Tabs Content -->
+                <div class="tab-content" style="flex: 1; padding: 15px; overflow-y: auto; border-radius: 0 0 8px 8px; background-color: #FFF;">
+                    <!-- Info Tab -->
+                    <div id="info-tab" class="tab-pane h-100 active">
+                        <form id="tinf_ticket-form-info" class="tinf_form">
+                            <div class="tinf_row">
+                                <!-- Left Column -->
+                                <div class="tinf_col">
+                                    <div class="tinf_form-group">
+                                        <label for="tinf_status">Status</label>
+                                        <input type="text" class="tinf_form-control" id="tinf_status" value="New" disabled>
+                                    </div>
+
+                                    <div class="tinf_form-group">
+                                        <textarea class="tinf_form-control" id="tinf_comments" rows="3" readonly placeholder="//comments"></textarea>
+                                    </div>
+
+                                    <!-- Estimated Hours and ETA in the same row (Label & Input side by side) -->
+                                    <div class="tinf_form-group" style="display: flex; gap: 15px; align-items: center;">
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <label for="tinf_estimated_hours" style="white-space: nowrap;">Estimated Hours:</label>
+                                            <input type="number" class="tinf_form-control" id="tinf_estimated_hours"
+                                                   style="width: 85px; padding: 5px; font-size: 14px;" readonly>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <label for="tinf_eta" style="white-space: nowrap;">ETA:</label>
+                                            <input type="text" class="tinf_form-control" id="tinf_eta"
+                                                   style="width: 85px; padding: 5px; font-size: 14px;" readonly>
+                                        </div>
+                                    </div>
+
+                                    <!-- Actual Hours -->
+                                    <div style="display: flex; align-items: center; gap: 32px;" class="tinf_form-group">
+                                        <label for="tinf_actual_hours">Actual Hours</label>
+                                        <input type="number" class="tinf_form-control" id="tinf_actual_hours"
+                                               style="width: 85px; padding: 5px; font-size: 14px;" readonly>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column -->
+                                <div class="tinf_col-right">
+                                    <div class="tinf_form-group">
+                                        <label>Type</label>
+                                        <div class="tinf_type-switch">
+                                            <input type="radio" id="tinf_bug" name="tinf_type" value="bug" class="tinf_type-radio" checked>
+                                            <label for="tinf_bug" class="tinf_type-label">Bug</label>
+
+                                            <input type="radio" id="tinf_feature" name="tinf_type" value="feature" class="tinf_type-radio">
+                                            <label for="tinf_feature" class="tinf_type-label">Feature</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="tinf_form-group">
+                                        <label for="tinf_priority">Priority</label>
+                                        <select id="tinf_priority" class="tinf_form-control">
+                                            <option value="low" data-color="#D6E33F">&#9679; Low</option>
+                                            <option value="medium" data-color="#E3BE3A">&#9679; Medium</option>
+                                            <option value="high" data-color="#C46107">&#9679; High</option>
+                                            <option value="critical" data-color="#CF1A1A">&#9679; Critical</option>
+                                        </select>
+                                    </div>
+                                    <!-- Raising on someone’s behalf? -->
+                                    <div class="tinf_form-group">
+                                        <label>Raising on someone’s behalf?</label>
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <!-- Add the onclick functions to toggle the dropdown -->
+                                            <input type="radio" id="tinf_raising_self" name="tinf_raising" value="self" onclick="toggleDropdown(false)">
+                                            <label for="tinf_raising_self">No, Self</label>
+
+                                            <input type="radio" id="tinf_raising_yes" name="tinf_raising" value="yes" onclick="toggleDropdown(true)">
+                                            <label for="tinf_raising_yes">Yes</label>
+                                        </div>
+
+                                        <!-- Dropdown for selecting names (hidden by default) -->
+                                        <select id="tinf_names" class="tinf_form-control" style="display: none; margin-top: 10px; width: 150px; padding: 8px;">
+                                            <option value="">Select Name</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Attachments Tab -->
+                    <div id="attachments-tab" class="tab-pane h-100">
+                        <form id="ticket-form-attachments">
+                            <!-- Attachments Button Group -->
+                            <div class="attachments-row" style="display: flex; justify-content: space-between; gap: 35px;">
+                                <!-- Capture Screenshot Button -->
+                                <div class="form-group" style="flex: 1;">
+                                    <button type="button" class="btn " style="background-color: #182E50; color: white; border-radius: 25px;" id="capture-screenshot">
+                                        Capture Screenshot <i class="fa fa-camera" aria-hidden="true"></i>
+                                    </button>
+                                    <!-- Container to display screenshot thumbnails -->
+                                    <div id="screenshot-container" style="display: flex; flex-wrap: wrap; margin-top: 10px; gap: 10px;">
+                                        <!-- Thumbnails will be appended here -->
+                                    </div>
+                                </div>
+
+                                <!-- Upload Image Button -->
+                                <div class="form-group" style="flex: 1;">
+                                    <button type="button" class="btn" style="background-color: #182E50; color: white; border-radius: 25px;" id="upload-image-button">
+                                        Upload Image <i class="fa fa-upload" aria-hidden="true"></i>
+                                    </button>
+                                    <input type="file" id="upload-image" class="form-control-file" accept="image/*" style="display: none;">
+                                    <!-- Container to display image thumbnails -->
+                                    <div id="image-thumbnails" style="display: flex; flex-wrap: wrap; margin-top: 10px; gap: 10px;">
+                                        <!-- Thumbnails will be appended here -->
+                                    </div>
+                                </div>
+
+                                <!-- Other Attachments Input -->
+                                <div class="form-group" style="flex: 1;">
+                                    <button type="button" class="btn" style="background-color: #182E50; color: white;border-radius: 25px;" id="other-attachments-button">
+                                        Other Attachments<i class="fa fa-paperclip" aria-hidden="true"></i>
+                                    </button>
+                                    <input type="file" id="other-attachments" class="form-control-file" accept=".pdf,.mp3" multiple style="display: none;">
+                                    <!-- Container to display other attachments -->
+                                    <div id="other-attachments-list" style="display: flex; flex-wrap: wrap; margin-top: 10px; gap: 10px;">
+                                        <!-- File names will be appended here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Popup Overlay -->
+                    <div id="attachment-popup" class="attachment-popup">
+                        <div class="attachment-popup-content">
+                            <span class="close">&times;</span>
+                            <div id="attachmentPopupContent"></div>
+                        </div>
+                    </div>
+
+                    <!-- Comments Tab -->
+                    <div id="comments-tab" class="tab-pane h-100 d-flex flex-column">
+                        <!-- Comments Display Section -->
+                        <div id="comments-display" class="trcmnt_comments-display flex-grow-1"></div>
+
+                        <!-- Comments Input Form -->
+                        @* <form id="ticket-form-comments" class="trcmnt_form"> *@
+                        @*     <div class="form-group trcmnt_form-group mb-0"> *@
+                        @*         <div class="trcmnt_input-group"> *@
+                        @*             <input type="text" class="form-control trcmnt_input" style="margin-top:-55px"; id="ticket-comments" placeholder="Enter comments"> *@
+                        @*             <button type="button" class="btn btn-primary trcmnt_send-btn" style="margin-top:-55px" ; id="send-comment-btn"> *@
+                        @*                 <i class="fa fa-paper-plane"></i> <!-- Font Awesome icon --> *@
+                        @*             </button> *@
+                        @*         </div> *@
+                        @*     </div> *@
+                        @* </form> *@
+                    </div>
+
+
+                    <!-- Ticket Form Footer -->
+                    <div class="tr-footer" style="background-color: #182E50; padding: 10px; display: flex; align-items: center; justify-content: space-between;position: fixed; bottom:0;width:550px;margin-left: -17px;">
+                        <!-- Image Logo -->
+                        <a href="/home">
+                            <img src="~/images/eb_service_desk_logo.svg" alt="Logo" style="height: 40px;">
+                        </a>
+
+                        <!-- Submit Ticket Button (Shown initially) -->
+                        <button class="trfooter-btn" id="submit-ticket-button" style="margin-right: 5px;">
+                            <i class="fa fa-paper-plane" aria-hidden="true"></i> Submit Ticket
+                        </button>
+
+                        <!-- Update Ticket Button (Hidden initially) -->
+                        <button class="trfooter-btn" id="update-ticket-button" style="margin-right: 5px; display: none;">
+                            <i class="fa fa-refresh" aria-hidden="true"></i> Update Ticket
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.trfstyled-tab-item a').forEach(function (tabLink) {
+            tabLink.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent default anchor behavior
+
+                // Remove active class from all tab links
+                document.querySelectorAll('.trfstyled-tab-item a').forEach(function (link) {
+                    link.classList.remove('active');
+                });
+
+                // Add active class to the clicked tab
+                this.classList.add('active');
+            });
+        });
+
+              function toggleDropdown(show) {
+            let dropdown = $("#tinf_names");
+            if (show) {
+                dropdown.show();
+                fetchUsers();
+            } else {
+                dropdown.hide().empty().append('<option value="">Select Name</option>');
+            }
+        }
+
+                function fetchUsers() {
+            $.ajax({
+                url: '/SupportTicket/GetUsers', // Matches the controller route
+                type: 'GET',
+                data: { cid: '@ViewBag.Cid' }, // Use Razor to insert the Cid value
+                success: function (data) {
+                    let dropdown = $("#tinf_names");
+                    dropdown.empty().append('<option value="">Select Name</option>');
+                    $.each(data, function (index, user) {
+                        dropdown.append(`<option value="${user.Id}">${user.Name}</option>`);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Failed to load user names.");
+                }
+            });
+        }
+
+    </script>

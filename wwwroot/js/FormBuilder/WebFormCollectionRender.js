@@ -1,5 +1,5 @@
 ﻿const CallWebFormCollectionRender = function (Option) {
-    if (ebcontext.webform)
+    if (ebcontext.webform && ebcontext.webform.Init)
         ebcontext.webform.Init(Option);
     else if (Option._source === 'master')
         ebcontext.webform = new WebFormCollectionRender(Option);
@@ -67,14 +67,15 @@ const WebFormCollectionRender = function (Option) {
                 formHTML: Op._formHTML,
                 disableEditBtn: Op._disableEditButton,
                 __MultiRenderCxt: this.RenderCounter++,
-                relatedData: Op._relatedData
+                relatedData: Op._relatedData,
+                disableLocCheck: Op._disableLocCheck
             };
 
             let WebForm = new WebFormRender(_options);
             this.RenderCollection.push(WebForm);
         }
         else if (Op._source === 'tv') {
-            this.PopupForm(Op._refId, Op._params, Op._mode);
+            this.PopupForm(Op._refId, Op._params, Op._mode, { Callback: Op._callback, srcCxt: 99999, initiator: { ObjType: 'TVcontrol' } });
         }
         else if (Op._source === 'ps') {
             this.PopupForm(Op._refId, Op._params, Op._mode, { locId: Op._locId });
@@ -240,7 +241,8 @@ const WebFormCollectionRender = function (Option) {
                 editModeAutoSave: options.editModeAutoSave,
                 keepHidden: keepHidden,
                 __MultiRenderCxt: cxt,
-                relatedData: _obj.relatedData
+                relatedData: _obj.relatedData,
+                disableLocCheck: resp.DisableLocCheck
             });
             WebForm.__MultiRenderUrl = resp.Url;
             this.RenderCollection.push(WebForm);
@@ -514,6 +516,12 @@ const WebFormCollectionRender = function (Option) {
         let x = this.InterContextObj.find(e => e.DestCxt === cxt);
         if (!x)
             return;
+
+        if (x.Initiator.ObjType === 'TVcontrol' && x.ChangeDetected && x.Callback) {
+            x.Callback();
+            return;
+        }
+
         let srcRen = this.RenderCollection.find(e => e.__MultiRenderCxt === x.SourceCxt);
         if (!srcRen)
             return;
@@ -650,16 +658,16 @@ const WebFormCollectionRender = function (Option) {
 }
 
 
-    //this.SetEbSidUnique = function (obj) {
-    //    let allCtrls = getAllctrlsFrom(obj);
-    //    let ts = Date.now().toString(36);
-    //    for (let i = 0; i < allCtrls.length; i++) {
-    //        let id = allCtrls[i].EbSid_CtxId;
-    //        if (id) {
-    //            if (id.includes('_'))
-    //                allCtrls[i].EbSid_CtxId = id.substr(0, id.lastIndexOf('_')) + '_' + ts;
-    //            else
-    //                allCtrls[i].EbSid_CtxId = id + '_' + ts;
-    //        }
-    //    }
-    //};
+//this.SetEbSidUnique = function (obj) {
+//    let allCtrls = getAllctrlsFrom(obj);
+//    let ts = Date.now().toString(36);
+//    for (let i = 0; i < allCtrls.length; i++) {
+//        let id = allCtrls[i].EbSid_CtxId;
+//        if (id) {
+//            if (id.includes('_'))
+//                allCtrls[i].EbSid_CtxId = id.substr(0, id.lastIndexOf('_')) + '_' + ts;
+//            else
+//                allCtrls[i].EbSid_CtxId = id + '_' + ts;
+//        }
+//    }
+//};

@@ -3,6 +3,7 @@
 @using Newtonsoft.Json;
 @using ExpressBase.Security;
 @using ExpressBase.Common.Helpers;
+
 @{
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
 
@@ -129,6 +130,13 @@
                                     <div class="notification_alert" id="notification-count" style="display:none;"></div>
                                 </button>
                             }
+                            @if ((ViewBag.wc == "uc" || ViewBag.wc == "dc") && (ViewBag.Env != "Production" || ViewBag.email == "support@expressbase.com"))
+                            {
+                                <button class="btn notification_menu" id="eb-expand-trWindow">
+                                    <i class="fa fa-ticket" aria-expanded="false"></i>
+                                    <div class="notification_alert" id="" style="display:none;"></div>
+                                </button>
+                            }
                         }
                         <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                         <div class="obj_dash_proimage_drp">
@@ -172,10 +180,11 @@
                                     @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
                                     {
                                         <li class="drp_item"><a href="../ResetPassword/ResetLink"><i class="fa fa-key" aria-hidden="true"></i>Reset Password</a></li>
-                                    }
-                                    @if (ViewBag.wc == "uc")
-                                    {
-                                        <li class="drp_item" id="upro_drp_itm_noti"><a href="#" onclick="$('#eb-expand-nfWindow').click()"><i class="fa fa-bell" aria-hidden="true"></i>Notifications</a></li>                                        
+                                        @if (ViewBag.wc == "uc")
+                                        {
+                                            <li class="drp_item" id="upro_drp_itm_noti"><a href="#" onclick="$('#eb-expand-nfWindow').click()"><i class="fa fa-bell" aria-hidden="true"></i>Notifications</a></li>
+                                        }
+                                        <li class="drp_item" id="upro_drp_itm_noti"><a href="#" onclick="$('#eb-expand-trWindow').click()"><i class="fa fa-ticket" aria-hidden="true"></i>Ticket</a></li>
                                     }
                                     <li class="drp_item"><a onclick="return Leave();" href="@Url.Action("Logout", "Tenantuser")"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                                 </ul>
@@ -191,7 +200,7 @@
 <script>
     window.ebcontext.wc = '@Html.Raw(ViewBag.wc)';
     window.ebcontext.header = new EbHeader();
-    
+
     if (window.ebcontext.wc === 'uc') {
         window.ebcontext.header.insertGlobalSearch();
     }

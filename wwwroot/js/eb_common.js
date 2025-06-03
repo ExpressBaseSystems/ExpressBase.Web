@@ -180,6 +180,15 @@ function fltr_obj(type, name, value) {
     this.Value = value;
 };
 
+function fltr_obj(type, name, value, formttedName, formattedValue, isHidden) {
+    this.Type = type;
+    this.Name = name;
+    this.Value = value;
+    this.NameF = formttedName;
+    this.ValueF = formattedValue;
+    this.isHidden = isHidden;
+};
+
 var filter_obj = function (colu, oper, valu, typ) {
     this.Column = colu;
     this.Operator = oper;
@@ -743,9 +752,10 @@ function RecurFlatControls(src_obj, dest_coll) {
     });
 }
 
-function getValsFromForm(formObj) {
+function getValsFromForm(formObj, ParamsList) {
     let fltr_collection = [];
     let flag = 1;
+    ParamsList = ParamsList && ParamsList.$values ? ParamsList.$values : null;
     let ctrl_arr = getFlatCtrlObjs(formObj);
     let DGs = getFlatContObjsOfType(formObj, "DataGrid");
     for (let i = 0; i < DGs.length; i++) {
@@ -756,9 +766,10 @@ function getValsFromForm(formObj) {
     }
 
     $.each(ctrl_arr, function (i, obj) {
-        if (obj.ObjType === "FileUploader")
-            return;
-        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+
+        if (ParamsList == null || ParamsList.findIndex(e => e.Name == obj.Name) != -1)
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+
         //if (obj.ObjType === "PowerSelect")
         //    flag++;
     });
@@ -834,8 +845,39 @@ function getValsForViz(formObj) {
             fltr_collection.push(new fltr_obj(obj.EbDbType, "dateto", value.split(",")[1]));
             fltr_collection.push(new fltr_obj(7, "id", value.split(",")[2]));
         }
-        else
-            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        else {
+            let nameF = obj.Label || obj.Name;
+            let valF = obj.getDisplayMemberFromDOM() || (value + '');
+            let isHidden = (obj.Hidden && !obj.__IsDisable) || obj.__IsDisable;
+            if (obj.ObjType == "UserLocation") {
+                if (value == "-1")
+                    valF = "All locations";
+                else {
+                    let arr = value.split(',');
+                    if (arr.length == 1 && ebcontext.locations && ebcontext.locations.Locations) {
+                        let lobj = ebcontext.locations.Locations.find(e => e.LocId == arr[0]);
+                        if (lobj) valF = lobj.ShortName;
+                    }
+                    else {
+                        valF = "Selected " + arr.length + " locations";
+                    }
+                }
+            }
+            else if (obj.ObjType == "PowerSelect" && typeof (valF) == "object") {
+                let dmArr = Object.values(valF);
+                valF = "";
+                for (let i = 0; i < dmArr.length; i++) {
+                    let t = Object.values(dmArr[i]);
+                    if (t.length == 1) valF += t[0] + " ";
+                    else if (t.length >= 2) valF += t[1] + " ";
+                }
+                valF = valF.trim();
+            }
+            else if (obj.EbDbType === 16 && value == "0") {
+                valF = "";
+            }
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value, nameF, valF, isHidden));
+        }
     });
     return fltr_collection;
 }

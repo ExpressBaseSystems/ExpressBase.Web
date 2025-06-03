@@ -235,6 +235,14 @@
             $("#mobile-preloadmenu_mdl #menu-api-reset").on("click", this.resetMenuApi.bind(this));
             $("#mobile-dashboard_mdl #mobiledashboard-reset").on("click", this.resetMobileDashboard.bind(this));
         }
+        else if (this.AppType === 4) {
+            $("#import_refsave").off("click").on("click", this.getSelRef.bind(this));
+            $("#import_reftable_body").on("click", ".rm_refbtn", this.removeImportRef.bind(this));
+            for (let i = 0; i < this.AppSettings.DataImport.length; i++) {
+                $(`input[refid="${this.AppSettings.DataImport[i].RefId}"]`).prop("checked", true);
+            }
+            $("#save-appsettings-btn").on("click", this.saveAppSettings.bind(this));
+        }
     };
 
     //for bot
@@ -496,7 +504,7 @@
             Container: "container",
             MaxSize: 1,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.fyi',
+            ServerEventUrl: 'https://se.eb-test.shop',
             EnableTag: false,
             //EnableCrop: true,
             ResizeViewPort: false //if single and crop
@@ -523,7 +531,7 @@
             Container: "onboarding_logo",
             MaxSize: 1,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.fyi',
+            ServerEventUrl: 'https://se.eb-test.shop',
             EnableTag: false,
             //EnableCrop: true,
             ResizeViewPort: false //if single and crop

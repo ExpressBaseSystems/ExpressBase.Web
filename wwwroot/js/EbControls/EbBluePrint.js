@@ -10,7 +10,7 @@
 //        let Bpmdlshow = 0;
 //        if (!($(`#BP_Modal_${this.ContID}`) && $(`#BP_Modal_${this.ContID}`).length)) {
 //            ///// <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
-//            let modalHTML = ` 
+//            let modalHTML = `
 //        <div class='BPmodaldiv'>
 //        <div class='modal fade BluprntModal' id='BP_Modal_${this.ContID}'  role='dialog'>
 //            <div class='modal-dialog' style=" width: 90%; margin-top: 10px;margin-bottom: 10px;">
@@ -23,18 +23,18 @@
 //                    <div class='modal-body'>
 //                         <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
 //                           <div class='vertical-align_tlbr' >
-                                
+
 //                                    <div  id='addPolygon_BP' class='bp_toolbarproperties '  tabindex='1' title="Mark">
-//                                        <i class="fa fa-object-ungroup "></i>   
+//                                        <i class="fa fa-object-ungroup "></i>
 //                                    </div>
 
 //                                    <div  id='BP_set_image' class='bp_toolbarproperties ' tabindex='1' title="Image upload">
 //                                        <label for="bg_image">
 //                                           <i class='fa fa-picture-o'></i>
 //                                        </label>
-                                   
-                                       
-//                                    </div> 
+
+
+//                                    </div>
 
 //                                    <div id='removecircle_BP' class='bp_toolbarproperties ' tabindex='1' title="Remove circles">
 //                                        <i class='fa fa-minus-circle'></i>
@@ -65,7 +65,7 @@
 //                </div>
 
 //            </div>
-//            </div>  
+//            </div>
 //        </div>`;
 
 
@@ -135,7 +135,7 @@
 //    //_thisBP.startPoint;
 //    _thisBP.bluprnt_meta = {};
 //    _thisBP.ContID = ctrlObj.EbSid_CtxId;
-//    _thisBP.storeSetval;//store setval value 
+//    _thisBP.storeSetval;//store setval value
 //    _thisBP.tempSvg;
 //    _thisBP.mousePoint;
 //    _thisBP.zom_cordinate
@@ -403,17 +403,17 @@
 
 //    this.saveBluePrint = function () {
 //        let areamarked = {};
-        
-        
-        
+
+
+
 //        areamarked.Area_ParentFormID;
 //        areamarked.Area_FormID;
-        
+
 
 //        var plygrpLst = d3.selectAll(".poly_grp");
 //        plygrpLst.each(function (d, i) {
 //            areamarked.BP_AreaMarkedID = $(this).find('polygon').attr("id")
-//            areamarked.Area_HTMLtext = this;    
+//            areamarked.Area_HTMLtext = this;
 //            let nme = _thisBP.bluprnt_meta[areamarked.BP_AreaMarkedID];
 //            areamarked.Area_DispalyName = Object.keys(nme)[0];
 //            areamarked.Area_Name = nme[key];
@@ -456,7 +456,7 @@
 
 
 //        ctrlObj.BP_ImageRefid = _thisBP.imageRefid;
-       
+
 
 
 //    }
@@ -590,8 +590,8 @@
 //                          </div>
 //                          <div class='modal-body'>
 //                                <div id='bpAddMeta_Div'>
-                                   
-//                                </div> 
+
+//                                </div>
 //                          </div>
 //                          <div class='modal-footer'>
 //                             <button type='button' id='add_bpmeta' class='btn btn-default' >Add</button>
@@ -614,7 +614,7 @@
 //                let objval = obj[`${_thisBP.plgnID}`];
 //                $.each(objval, function (key, value) {
 //                    plainhtml += `<div>
-//                        <input type='text' id='metakey_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metakey_cls' value='${key}'> 
+//                        <input type='text' id='metakey_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metakey_cls' value='${key}'>
 //                        <input type='text' id='metaval_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metaval_cls' value='${value}'>
 //                        </div><br> `
 //                });
@@ -649,7 +649,7 @@
 //                        _thisBP.flgObj.metaCount = 0;
 //                        $.each(objval, function (key, value) {
 //                            plainhtml += `<div>
-//                                <input type='text' id='metakey_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metakey_cls' value='${key}'> 
+//                                <input type='text' id='metakey_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metakey_cls' value='${key}'>
 //                                <input type='text' id='metaval_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metaval_cls' value='${value}'>
 //                                <button type='button'class='remove_MetaKeyVal' style='border-radius: 50%; border: none; background: transparent;'>&times;</button>
 //                               </div> <br> `
@@ -678,7 +678,7 @@
 //                        let objval = _thisBP.bluprnt_meta[`${_thisBP.plgnID}`];
 //                        $.each(objval, function (key, value) {
 //                            plainhtml += `<div>
-//                                <input type='text' id='metakey_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metakey_cls' value='${key}'> 
+//                                <input type='text' id='metakey_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metakey_cls' value='${key}'>
 //                                <input type='text' id='metaval_${_thisBP.ContID + _thisBP.flgObj.metaCount}' class='metaval_cls' value='${value}'>
 //                                <button type='button'class='remove_MetaKeyVal' style='border-radius: 50%; border: none; background: transparent;'>&times;</button>
 //                                </div><br> `
@@ -949,7 +949,7 @@
 //            SolutionId: ebcontext.sid,
 //            Container: "onboarding_logo",
 //            Multiple: false,
-//            ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.fyi',
+//            ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.shop',
 //            //EnableTag: ctrl.EnableTag,
 //            EnableTag: false,
 //            EnableCrop: false,

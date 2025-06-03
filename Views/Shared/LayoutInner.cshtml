@@ -1,6 +1,7 @@
 ﻿@using ExpressBase.Common.Helpers;
 @using ExpressBase.Web.Filters;
-@{var bApnd = true;
+@{
+    var bApnd = true;
     if (ViewBag.Env == "Development")
     {
         bApnd = false;
@@ -82,6 +83,7 @@
         <script src="~/js/Common/Eb_CommonHeader.js" type="text/javascript"></script>
         <script src="~/js/Common/eb-quickmenu.js" type="text/javascript"></script>
         <script src="~/js/Common/eb-setup.js" type="text/javascript"></script>
+        <script src="~/js/Common/eb-ticket.js" type="text/javascript"></script>
         <script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>
         <script type="text/javascript" src="~/js/EbServerEvents/ss-utils.js"></script>
         <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>
@@ -164,7 +166,9 @@
                 if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
                 {
                     <div id="eb-common-menu">
-                        @{ await Html.RenderPartialAsync("EbQuickMenu");}
+                        @{
+                            await Html.RenderPartialAsync("EbQuickMenu");
+                        }
                     </div>
                 }
             }
@@ -173,7 +177,9 @@
                 if (ViewBag.UId > 1 || ViewBag.cide == "demo")
                 {
                     <div id="eb-location-switch">
-                        @{ await Html.RenderPartialAsync("EbLocationSwitch");}
+                        @{
+                            await Html.RenderPartialAsync("EbLocationSwitch");
+                        }
                     </div>
                     <div id='eb-finyear-switch'></div>
                 }
@@ -211,7 +217,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="eb-common-popup-ok" class="btn btn-primary">OK</button>
@@ -223,6 +228,11 @@
         {
             await Html.RenderPartialAsync("NotificationWindow");
         }
+        @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+        {
+            await Html.RenderPartialAsync("TicketRisingWindow");
+        }
+
     </div>
 
     @if (ViewBag.wc == "uc" || ViewBag.wc == "dc" || ViewBag.wc == "tc")
@@ -238,26 +248,26 @@
     @if (ViewBag.wc == "uc")
     {
         <script>
-            var loc__ = new LocationPicker({
-                Location: '@Html.Raw(ViewBag.Locations)',
-                Tid: '@ViewBag.cid',
-                Uid:'@ViewBag.UId',
-                Current:@ViewBag.CurrentLocation
-            });
+                var loc__ = new LocationPicker({
+                    Location: '@Html.Raw(ViewBag.Locations)',
+                    Tid: '@ViewBag.cid',
+                    Uid:'@ViewBag.UId',
+                    Current:@ViewBag.CurrentLocation
+                });
 
-            window.ebcontext.locations = loc__;
+                window.ebcontext.locations = loc__;
 
-            window.ebcontext.finyears = new FinYearPicker({
-                FinYears: @Html.Raw(ViewBag.FinYears),
+                window.ebcontext.finyears = new FinYearPicker({
+                    FinYears: @Html.Raw(ViewBag.FinYears),
+                    Tid: '@ViewBag.cid',
+                    Uid:'@ViewBag.UId',
+                });
+
+            window.ebcontext.languages = new LanguagePicker({
+                LanguagesList:@Html.Raw(ViewBag.Languages ?? "''"),
                 Tid: '@ViewBag.cid',
-                Uid:'@ViewBag.UId',
+                Uid: '@ViewBag.UId',
             });
-    
-        window.ebcontext.languages = new LanguagePicker({
-            LanguagesList:@Html.Raw(ViewBag.Languages??"''"),
-            Tid: '@ViewBag.cid',
-            Uid: '@ViewBag.UId',
-        });
         </script>
     }
 
@@ -272,7 +282,7 @@
             window.ebcontext.setup = new Setup({ se_url: '@ViewBag.ServerEventUrl' });
             $('.Eb_Image').Lazy();
             //debugger;
-            //let 
+            //let
             //if (ebcontext && ebcontext.locations && ebcontext.locations.CurrentLocObj){
             //    let logo=parseInt(ebcontext.locations.CurrentLocObj.Logo);
             //    if (!isNaN(logo)){

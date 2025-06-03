@@ -107,7 +107,9 @@
     }
 
     .eb-perm-wrapper .dataTable th {
-        font-weight: 500;
+        font-weight: 400;
+        font-size: 12px;
+        padding: 8px 4px;
     }
 
     .eb-perm-wrapper .dataTable tr:last-child {
@@ -299,7 +301,7 @@ tbody tr:hover td {
 
 .dataTable td {
     max-width: 250px;
-    min-width: 45px;
+    /*min-width: 45px;*/
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -26,7 +26,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
+                if (ViewBag.wc != RoutingConstants.DC)
                     return Redirect("/StatusCode/401");
                 //GetDbTablesResponse res = null;
                 //if (ViewBag.cid == "admin" && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
@@ -47,7 +47,7 @@ namespace ExpressBase.Web.Controllers
                 //ViewBag.TableCount = res.TableCount;
                 ViewBag.User = this.LoggedInUser;
                 ViewBag.solutionid = clientSolnid;
-                
+
             }
             catch (Exception e)
             {
@@ -58,6 +58,9 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult DbClientt()
         {
+            if (ViewBag.wc != RoutingConstants.DC)
+                return Redirect("/StatusCode/401");
+
             GetDbTablesResponse res = null;
             if (ViewBag.cid == "admin")
                 if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
@@ -71,7 +74,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SearchSolution(string clientSolnid)
         {
-            if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
+            if (ViewBag.wc != RoutingConstants.DC)
                 return Redirect("/StatusCode/401");
             var user = this.LoggedInUser;
             return ViewComponent("DBClient", new { clientSolnid = clientSolnid, _user = user });
@@ -82,6 +85,10 @@ namespace ExpressBase.Web.Controllers
             solutionid = solution;
             IsAdmin = Isadmin;
             List<DbClientQueryResponse> responses = new List<DbClientQueryResponse>();
+
+            if (ViewBag.wc != RoutingConstants.DC)
+                return responses;
+
             string[] QueryList = Query.Split(";");
             try
             {
@@ -89,6 +96,13 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (SplitQuery != string.Empty)
                     {
+                        if (Query.IndexOf("delete ", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            Query.IndexOf("drop ", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            Query.IndexOf("truncate ", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            break;
+                        }
+
                         if (Query.IndexOf("insert into ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             DbClientQueryResponse ress = new DbClientQueryResponse();
@@ -104,28 +118,10 @@ namespace ExpressBase.Web.Controllers
                                 responses.Add(ress);
                             }
                         }
-                        else if (Query.IndexOf("delete ", StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            DbClientQueryResponse ress = new DbClientQueryResponse();
-                            ress = DeleteQuery(SplitQuery);
-                            responses.Add(ress);
-                        }
-                        else if (Query.IndexOf("drop ", StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            DbClientQueryResponse ress = new DbClientQueryResponse();
-                            ress = DropQuery(SplitQuery);
-                            responses.Add(ress);
-                        }
                         else if (Query.IndexOf("alter table ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             DbClientQueryResponse ress = new DbClientQueryResponse();
                             ress = AlterQuery(SplitQuery);
-                            responses.Add(ress);
-                        }
-                        else if (Query.IndexOf("truncate ", StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            DbClientQueryResponse ress = new DbClientQueryResponse();
-                            ress = TruncateQuery(SplitQuery);
                             responses.Add(ress);
                         }
                         else if (Query.IndexOf("update ", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -140,7 +136,6 @@ namespace ExpressBase.Web.Controllers
                             ress = CreateQuery(SplitQuery);
                             responses.Add(ress);
                         }
-                        else { }
                     }
                 }
             }
@@ -154,6 +149,8 @@ namespace ExpressBase.Web.Controllers
         public DbClientQueryResponse SelectQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
+            if (ViewBag.wc != RoutingConstants.DC)
+                return ress;
             //bool containsSearchResult = Query.Contains("select");
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientSelectRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             if (ress.Dataset != null)
@@ -169,27 +166,27 @@ namespace ExpressBase.Web.Controllers
             return ress;
         }
 
-        public DbClientQueryResponse InsertQuery(string Query)
+        private DbClientQueryResponse InsertQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientInsertRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
-        public DbClientQueryResponse DropQuery(string Query)
+        private DbClientQueryResponse DropQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
             return ress;
         }
 
-        public DbClientQueryResponse DeleteQuery(string Query)
+        private DbClientQueryResponse DeleteQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientDeleteRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
-        public DbClientQueryResponse AlterQuery(string Query)
+        private DbClientQueryResponse AlterQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientAlterRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
@@ -203,20 +200,20 @@ namespace ExpressBase.Web.Controllers
             return ress;
         }
 
-        public DbClientQueryResponse TruncateQuery(string Query)
+        private DbClientQueryResponse TruncateQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
             return ress;
         }
 
-        public DbClientQueryResponse UpdateQuery(string Query)
+        private DbClientQueryResponse UpdateQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientUpdateRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
-        public DVColumnCollection ConvertColumns(ColumnColletion __columns)
+        private DVColumnCollection ConvertColumns(ColumnColletion __columns)
         {
             DVColumnCollection Columns = new DVColumnCollection();
             foreach (EbDataColumn column in __columns)

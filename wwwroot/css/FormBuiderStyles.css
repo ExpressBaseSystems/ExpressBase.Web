@@ -249,7 +249,7 @@ body {
 }
 
     .form-buider-form:focus {
-        border: solid 1px green;
+        /*border: solid 1px green;*/
     }
 
     .form-buider-form .ctrl-cover input[type="text"], .form-buider-form input[type="email"], .form-buider-form input[type="number"], .form-buider-form input[type="password"], .form-buider-form input[type="singleline"] {
@@ -283,6 +283,10 @@ body {
     #filterBox .Eb-ctrlContainer .dataTables_scroll {
         height: 100% !important;
     }
+
+.Eb-ctrlContainer[ctype="CalendarControl"] > div.ctrl-cover {
+    border: none;
+}
 
 .Eb-ctrlContainer[ctype="AutoId"] .input-group-addon {
     font-size: 18px;
@@ -4221,6 +4225,10 @@ input.locinp {
         padding: 0 0 10px 0;
     }
 
+    .webformdetails .wfd-locdiv select {
+        border-color: lightgray;
+    }
+
     .webformdetails .wfd-linkdiv {
         padding: 5px 0 5px 0;
     }
@@ -4235,6 +4243,10 @@ input.locinp {
                 color: #23527c;
                 text-decoration: underline;
             }
+
+    .webformdetails .wfd-locdiv span {
+        padding-left: 6px;
+    }
 
     .webformdetails .wfd-btndiv {
         padding: 10px;

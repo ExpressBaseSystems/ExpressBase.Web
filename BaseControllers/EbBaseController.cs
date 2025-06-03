@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Presentation;
 using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.Helpers;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
@@ -14,6 +15,7 @@ using ServiceStack.Redis;
 using System;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -199,6 +201,9 @@ namespace ExpressBase.Web.BaseControllers
 
         public bool IsTokensValid(string sRToken, string sBToken, string subdomain)
         {
+            if (string.IsNullOrWhiteSpace(sRToken) || string.IsNullOrWhiteSpace(sBToken))
+                return false;
+
             bool isvalid = false;
             try
             {
@@ -212,10 +217,10 @@ namespace ExpressBase.Web.BaseControllers
                         string rSub = rToken.Payload[TokenConstants.SUB].ToString();
                         string bSub = bToken.Payload[TokenConstants.SUB].ToString();
                         string _ip = bToken.Payload[TokenConstants.IP].ToString();
-                        Console.WriteLine("Reqst IP : " + this.RequestSourceIp + " - Auth IP : " + _ip);
+                        //Console.WriteLine("Reqst IP : " + this.RequestSourceIp + " - Auth IP : " + _ip);
                         if (this.RequestSourceIp == _ip || _ip == string.Empty)
                         {
-                            Console.WriteLine("IP check success");
+                            //Console.WriteLine("IP check success");
                             DateTime startDate = new DateTime(1970, 1, 1);
                             DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
 
@@ -230,7 +235,7 @@ namespace ExpressBase.Web.BaseControllers
                                     if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
                                         isvalid = true;
                                 }
-                                else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC))
+                                else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC) || rSub.EndsWith(TokenConstants.PC))
                                 {
                                     isvalid = true;
                                 }
@@ -257,6 +262,40 @@ namespace ExpressBase.Web.BaseControllers
             return isvalid;
         }
 
+        public bool IsValidApiKey(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return false;
+            bool isValid = false;
+            try
+            {
+                isValid = JwtHelpers.ValidateToken(token, out ClaimsPrincipal cp);
+                if (isValid)
+                {
+                    string _cid = cp.FindFirstValue(TokenConstants.CID);
+                    int _uid = Convert.ToInt32(cp.FindFirstValue(TokenConstants.UID));
+                    int _id = Convert.ToInt32(cp.FindFirstValue(TokenConstants.ID));
+                    string _wc = cp.FindFirstValue(TokenConstants.WC);
+                    string _sub = cp.FindFirstValue(TokenConstants.SUB);
+                    if (_cid == IntSolutionId && _wc == TokenConstants.AC)
+                    {
+                        User user = GetUserObject($"{_cid}:{_uid}:{_wc}", TokenConstants.UC, true);//using UC permission models
+                        if (user != null && user.UserId == _uid && user.ApiKeyId == _id)
+                        {
+                            this.LoggedInUser = user;
+                            WhichConsole = TokenConstants.AC;
+                            isValid = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                isValid = false;
+                Console.WriteLine(e.Message + e.StackTrace);
+            }
+            return isValid;
+        }
 
         public bool VerifySignature(string token)
         {
@@ -286,7 +325,7 @@ namespace ExpressBase.Web.BaseControllers
                 rsaDeformatter.SetHashAlgorithm("SHA256");
                 if (rsaDeformatter.VerifySignature(hash, FromBase64Url(tokenParts[2])))
                 {
-                    Console.WriteLine("Signature is verified");
+                    //Console.WriteLine("Signature is verified");
                     return true;
                 }
             }
@@ -357,7 +396,7 @@ namespace ExpressBase.Web.BaseControllers
             return s_obj;
         }
 
-        public User GetUserObject(string userAuthId)
+        public User GetUserObject(string userAuthId, string _wc = null, bool _isApiUser = false)
         {
             User user = null;
             try
@@ -376,7 +415,7 @@ namespace ExpressBase.Web.BaseControllers
                             user = this.Redis.Get<User>(userAuthId);
                         if (user == null)
                         {
-                            this.ServiceClient.Post(new UpdateUserObjectRequest() { SolnId = parts[0], UserId = Convert.ToInt32(parts[1]), UserAuthId = userAuthId, WC = parts[2] });
+                            this.ServiceClient.Post(new UpdateUserObjectRequest() { SolnId = parts[0], UserId = Convert.ToInt32(parts[1]), UserAuthId = userAuthId, WC = _wc ?? parts[2], IsApiUser = _isApiUser });
                             user = this.Redis.Get<User>(userAuthId);
                         }
                     }

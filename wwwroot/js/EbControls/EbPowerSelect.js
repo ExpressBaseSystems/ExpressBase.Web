@@ -289,6 +289,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getSearchTextRegex = function (text) {
+        if (text && typeof (text) === 'string') {
+            text = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
         if (typeof (this.ComboObj.SearchOperator) === 'number') {
             let op = this.ComboObj.SearchOperator.toString();
             if (op === EbEnums_w.PsSearchOperators.StartsWith)
@@ -700,7 +703,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.ajaxData = function () {
         this.EbObject = new EbTableVisualization("Container");// used by all ebobejcts
-        this.filterValues = this.getFilterValuesFn();
+        this.filterValues = this.getFilterValuesFn(this.ComboObj.ParamsList);
 
         if (!getObjByval(this.filterValues, 'Name', this.ComboObj.Name)) {
             this.filterValues.push(new fltr_obj(this.ComboObj.EbDbType, this.ComboObj.Name, 0));

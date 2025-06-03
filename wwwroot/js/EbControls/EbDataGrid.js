@@ -50,7 +50,7 @@
         this.drawHTMLView();
         this.callOnRowPaintFns();
         this.updateAggCols(fromRefresh);
-        if (this.DataMODEL.length > 1 && this.DataMODEL[this.DataMODEL.length - 1].RowId < 0)
+        if (this.DataMODEL.length > 0 && this.DataMODEL[this.DataMODEL.length - 1].RowId < 0)
             this.newRowCounter = this.DataMODEL[this.DataMODEL.length - 1].RowId; // for clone or import
     }.bind(this);
 
@@ -860,8 +860,8 @@
         EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, ctrl);
     };
 
-    this.getFormVals = function () {
-        return getValsFromForm(this.formObject_Full);
+    this.getFormVals = function (ParamsList) {
+        return getValsFromForm(this.formObject_Full, ParamsList);
     }.bind(this);
 
     this.getValues = function () {

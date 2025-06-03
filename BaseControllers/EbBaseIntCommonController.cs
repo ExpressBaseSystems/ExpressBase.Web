@@ -95,10 +95,14 @@ namespace ExpressBase.Web.BaseControllers
 
             if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
             {
+                context.HttpContext.Response.Cookies.Append(RoutingConstants.REDIRECT_URL, context.HttpContext.Request.Path.ToString() + context.HttpContext.Request.QueryString, new CookieOptions() { Expires = DateTimeOffset.UtcNow.AddMinutes(10) });
                 context.Result = new RedirectResult("/");
             }
             else if (!IsTokensValid(sRToken, sBToken, ExtSolutionId))
+            {
+                context.HttpContext.Response.Cookies.Append(RoutingConstants.REDIRECT_URL, context.HttpContext.Request.Path.ToString() + context.HttpContext.Request.QueryString, new CookieOptions() { Expires = DateTimeOffset.UtcNow.AddMinutes(10) });
                 context.Result = new RedirectResult("/");
+            }
             else
             {
                 try
@@ -268,7 +272,7 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     Name = objectType.Alias,
                     IntCode = objectType.IntCode,
-                    BMW = objectType.BMW,
+                    BMWP = objectType.BMWP,
                     IsUserFacing = objectType.IsUserFacing,
                     Icon = objectType.Icon
                 });

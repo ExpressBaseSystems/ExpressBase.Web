@@ -54,7 +54,11 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = _name,
                         Version = _version,
-                        Data = parameters
+                        Data = parameters,
+                        SolnId = this.IntSolutionId,
+                        UserId = this.LoggedInUser.UserId,
+                        UserAuthId = this.LoggedInUser.AuthId,
+                        WhichConsole = WhichConsole
                     });
 
                     if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
@@ -134,7 +138,11 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = _name,
                         Version = _version,
-                        Data = parameters
+                        Data = parameters,
+                        SolnId = this.IntSolutionId,
+                        UserId = this.LoggedInUser.UserId,
+                        UserAuthId = this.LoggedInUser.AuthId,
+                        WhichConsole = WhichConsole
                     });
 
                     if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
@@ -257,18 +265,20 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/auth")]
         [HttpPost("/api/auth")]
-        public ApiAuthResponse ApiLoginByMd5(string username, string password, string deviceid, bool anonymous = false)
+        public ApiAuthResponse ApiLoginByMd5(string username, string password, string deviceid, bool anonymous = false, string wc = RoutingConstants.MC)
         {
             ApiAuthResponse response = null;
             try
             {
+                if (!(wc == RoutingConstants.MC || wc == RoutingConstants.PC))
+                    wc = RoutingConstants.MC;
                 Authenticate authRequest = new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = password,
                     Meta = new Dictionary<string, string> {
-                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { RoutingConstants.WC, wc },
                         { TokenConstants.CID, this.IntSolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
                         { RoutingConstants.USER_AGENT, this.UserAgent},
@@ -819,6 +829,111 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
+        [HttpGet("/api/file/file_ref_fileuploader_insert")]
+        public ActionResult<FileUploadResponse> GetEbFilesRefIdByInsertingNewRow(string table, string column, string value, int object_id, string file_control_name, string file_name, string file_type, string filestore_sid, Int64 file_size, EbFileCategory file_category = EbFileCategory.Images)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            FileUploadResponse resp = new FileUploadResponse { ResponseStatus = new ResponseStatus() { Message = "Success" } };
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(table))
+                    resp.ResponseStatus.Message = "Parameter 'table' is required";
+                else if (string.IsNullOrWhiteSpace(column))
+                    resp.ResponseStatus.Message = "Parameter 'column' is required";
+                else if (string.IsNullOrWhiteSpace(value))
+                    resp.ResponseStatus.Message = "Parameter 'value' is required";
+                else if (object_id <= 0)
+                    resp.ResponseStatus.Message = "Parameter 'object_id' is required";
+                else if (string.IsNullOrWhiteSpace(file_control_name))
+                    resp.ResponseStatus.Message = "Parameter 'file_control_name' is required";
+                else if (string.IsNullOrWhiteSpace(file_name))
+                    resp.ResponseStatus.Message = "Parameter 'file_name' is required";
+                else if (string.IsNullOrWhiteSpace(file_type))
+                    resp.ResponseStatus.Message = "Parameter 'file_type' is required";
+                else if (string.IsNullOrWhiteSpace(filestore_sid))
+                    resp.ResponseStatus.Message = "Parameter 'filestore_sid' is required";
+                else if (file_size <= 0)
+                    resp.ResponseStatus.Message = "Parameter 'file_size' is required";
+                else if (file_category != EbFileCategory.Images)
+                    resp.ResponseStatus.Message = "file_category supported images only";
+                else
+                {
+                    resp = this.FileClient.Get(new GetFileRefIdByInsertingNewRowRequest()
+                    {
+                        Table = table.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        Column = column.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        Value = value,
+                        ObjectId = object_id,
+                        FileControlName = file_control_name.ToLower().Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        FileName = file_name,
+                        FileType = file_type,
+                        FileCategory = file_category,
+                        FilestoreSid = filestore_sid,
+                        FileSize = file_size
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                resp.ResponseStatus.Message = e.Message;
+            }
+
+            return resp;
+        }
+
+        [HttpGet("/api/file/file_ref_simpleuploader_upsert")]
+        public ActionResult<GetFileRefSimpleuploaderUpsertResponse> FileRefSimpleuploaderUpsert(string table, string column, string value, string file_control_name, string file_name, string file_type, string filestore_sid, Int64 file_size, EbFileCategory file_category = EbFileCategory.Images)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            GetFileRefSimpleuploaderUpsertResponse resp = new GetFileRefSimpleuploaderUpsertResponse { ResponseStatus = new ResponseStatus() { Message = "Success" } };
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(table))
+                    resp.ResponseStatus.Message = "Parameter 'table' is required";
+                else if (string.IsNullOrWhiteSpace(column))
+                    resp.ResponseStatus.Message = "Parameter 'column' is required";
+                else if (string.IsNullOrWhiteSpace(value))
+                    resp.ResponseStatus.Message = "Parameter 'value' is required";
+                else if (string.IsNullOrWhiteSpace(file_control_name))
+                    resp.ResponseStatus.Message = "Parameter 'file_control_name' is required";
+                else if (string.IsNullOrWhiteSpace(file_name))
+                    resp.ResponseStatus.Message = "Parameter 'file_name' is required";
+                else if (string.IsNullOrWhiteSpace(file_type))
+                    resp.ResponseStatus.Message = "Parameter 'file_type' is required";
+                else if (string.IsNullOrWhiteSpace(filestore_sid))
+                    resp.ResponseStatus.Message = "Parameter 'filestore_sid' is required";
+                else if (file_size <= 0)
+                    resp.ResponseStatus.Message = "Parameter 'file_size' is required";
+                else if (file_category != EbFileCategory.Images)
+                    resp.ResponseStatus.Message = "file_category supported images only";
+                else
+                {
+                    resp = this.FileClient.Get(new GetFileRefSimpleuploaderUpsertRequest()
+                    {
+                        Table = table.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        Column = column.Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        Value = value,
+                        FileControlName = file_control_name.ToLower().Replace(CharConstants.SPACE, CharConstants.UNDERSCORE),
+                        FileName = file_name,
+                        FileType = file_type,
+                        FileCategory = file_category,
+                        FilestoreSid = filestore_sid,
+                        FileSize = file_size
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                resp.ResponseStatus.Message = e.Message;
+            }
+
+            return resp;
+        }
+
         private string GetMime(string fname)
         {
             return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
@@ -919,6 +1034,23 @@ namespace ExpressBase.Web.Controllers
             if (!Authenticated) return Unauthorized();
 
             EbMobileSolutionData resp = this.ServiceClient.Post(new MobileSolutionDataRequestV2()
+            {
+                MetaData = metadata
+            });
+
+            if (resp == null)
+            {
+                return NotFound();
+            }
+            return resp;
+        }
+
+        [HttpGet("api/get_pos_offline_data_v1")]
+        public ActionResult<EbPosSolutionData> GetPosOfflineDataV1(string metadata)
+        {
+            if (!Authenticated) return Unauthorized();
+
+            EbPosSolutionData resp = this.ServiceClient.Post(new PosSolutionDataRequestV1()
             {
                 MetaData = metadata
             });

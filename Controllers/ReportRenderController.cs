@@ -12,6 +12,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace ExpressBase.Web.Controllers
@@ -36,19 +37,24 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public bool Render(string refid, List<Param> Params)
+        public bool Render(string refid, List<Param> Params, bool useRwDb = false)
         {
             ReportRenderResponse Res = null;
             try
             {
                 ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
-                Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUserAuthId = this.LoggedInUser.AuthId, ReadingUserAuthId = this.LoggedInUser.AuthId, Params = Params });
+                Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUserAuthId = this.LoggedInUser.AuthId, ReadingUserAuthId = this.LoggedInUser.AuthId, Params = Params, UseRwDb = useRwDb });
                 Res.StreamWrapper.Memorystream.Position = 0;
+                // Set the Content-Disposition header for the file name
+                Response.Headers.Add("Content-Disposition", $"inline; filename={Res.ReportName + ".pdf"}");
             }
             catch (Exception e)
             {
                 Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
-            }
+            } 
+
+
+            // Return the PDF file 
             Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf")
            // { FileDownloadName = Res.ReportName }
            ;
@@ -62,12 +68,12 @@ namespace ExpressBase.Web.Controllers
             return Pdf;
         }
 
-        public IActionResult Renderlink(string refid, string _params)
+        public IActionResult Renderlink(string refid, string _params, bool rw = false)
         {
             byte[] encodedDataAsBytes = System.Convert.FromBase64String(_params);
             string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
             List<Param> param = (returnValue == null) ? null : JsonConvert.DeserializeObject<List<Param>>(returnValue);
-            Render(refid, param);
+            Render(refid, param, rw);
             // visualizations logic to be implemented
             if ((Pdf as FileStreamResult).FileStream.Length > 0)
                 return Pdf;

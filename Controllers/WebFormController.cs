@@ -28,6 +28,7 @@ using ExpressBase.Security;
 using System.Collections;
 using ExpressBase.Objects.WebFormRelated;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -94,6 +95,34 @@ namespace ExpressBase.Web.Controllers
 
             objStr = $"var {r.Replace("-", "_")} = {objStr};";
             return File(objStr.ToUtf8Bytes(), "text/javascript");
+        }
+
+        public string getShareUrl(string refId, int dataId, int locId)
+        {
+            if (!this.HasPermission(refId, OperationConstants.VIEW, locId, false))
+                return "/StatusCode/404";
+            string url = "/webform/view?p={0}-{1}-{2}-{3}-{4}-{5}",
+                vid = refId.Split("-")[4],
+                exp = DateTime.UtcNow.AddDays(1).ToString("yyyyMMddHHmmss");
+            string hash = refId + dataId + locId + this.IntSolutionId + this.LoggedInUser.UserId + exp + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD);
+            hash = hash.ToMD5Hash();
+            return string.Format(url, dataId, vid, locId, this.LoggedInUser.UserId, exp, hash);
+        }
+
+        public IActionResult view(string p)
+        {
+            string[] _p = p.Split("-");
+            DateTime exptime = DateTime.ParseExact(_p[4], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            if (exptime < DateTime.UtcNow)
+                return Redirect("/StatusCode/404");
+            GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = Convert.ToInt32(_p[1]) });
+            string computed_hash = (Resp.RefId + _p[0] + _p[2] + this.IntSolutionId + _p[3] + _p[4] + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD)).ToMD5Hash();
+            if (_p[5] != computed_hash)
+                return Redirect("/StatusCode/404");
+            TempData["readonlyurlloc"] = _p[2];
+            string _params = JsonConvert.SerializeObject(new List<Param>() { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = _p[0] } }).ToBase64();
+
+            return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _params, _m = 1, _l = 0, _rm = 1, _lg = this.CurrentLanguage ?? "en" });
         }
 
         private string GetCxt2JsWebformUrl(string refId, string webForm, string _language)
@@ -245,7 +274,16 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (RowId > 0)
                 {
-                    bool neglectLocId = webForm.IsLocIndependent;
+                    if (!(int.TryParse(Convert.ToString(TempData["readonlyurlloc"]), out int xyz) && xyz == _locId && webForm.EnableShareUrl))
+                        xyz = 0;
+                    TempData.Remove("readonlyurlloc");
+
+                    if ((webForm.MultiLocView || webForm.MultiLocEdit) && (wdr.FormData.MultiLocViewAccess || wdr.FormData.MultiLocEditAccess) && xyz == 0)
+                        xyz = _locId;
+
+                    resp.DisableLocCheck = xyz > 0;
+
+                    bool neglectLocId = webForm.IsLocIndependent || xyz > 0;
                     if (!(this.HasPermission(webForm.RefId, OperationConstants.VIEW, _locId, neglectLocId) || this.HasPermission(webForm.RefId, OperationConstants.EDIT, _locId, neglectLocId) ||
                         (this.HasPermission(webForm.RefId, OperationConstants.OWN_DATA, _locId, neglectLocId) && this.LoggedInUser.UserId == wdr.FormData.CreatedBy)))
                     {
@@ -836,7 +874,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                 if (RowId > 0)
                     Operation = OperationConstants.EDIT;
                 EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(RefId, this.ServiceClient, this.Redis, null);
-                bool neglectLocId = WebForm.IsLocIndependent;
+                bool neglectLocId = WebForm.IsLocIndependent || (RowId > 0 ? WebForm.MultiLocEdit : false);
                 if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = FormErrors.E0127, MessageInt = $"Access denied. Info: [{RefId}, {Operation}, {CurrentLoc}, {neglectLocId}]" });
 
@@ -929,6 +967,22 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             return (Resp.Status, Resp.ModifiedAt);
         }
 
+        public (int, string) ChangeLocationWebformData(string RefId, int RowId, int CurrentLoc, int NewLoc, string ModifiedAt)
+        {
+            try
+            {
+                if (!this.HasPermission(RefId, OperationConstants.CHANGE_LOCATION, CurrentLoc) ||
+                    !this.HasPermission(RefId, OperationConstants.CHANGE_LOCATION, NewLoc))
+                    return (-2, "Access denied to change the location");
+                ChangeLocationWebFormDataResponse Resp = ServiceClient.Post(new ChangeLocationWebFormDataRequest { RefId = RefId, RowId = RowId, CurrentLocId = CurrentLoc, NewLocId = NewLoc, ModifiedAt = ModifiedAt });
+                return (Resp.Status, Resp.Message);
+            }
+            catch (Exception ex)
+            {
+                return (-2, ex.Message);
+            }
+        }
+
         public string GetPushedDataInfo(string RefId, int RowId, int CurrentLoc)
         {
             if (!this.HasPermission(RefId, OperationConstants.AUDIT_TRAIL, CurrentLoc))
@@ -981,7 +1035,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             };
             string s = JsonConvert.SerializeObject(p);
             s = s.ToBase64();
-            return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
+            return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s + "&rw=true");
         }
 
         //list view print

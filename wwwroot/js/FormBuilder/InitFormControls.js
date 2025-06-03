@@ -76,9 +76,9 @@
         }
 
         //if (fileType === 'image') {
-            $.each(ctrlOpts.DpControlsList, function (i, obj) {
-                customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
-            });
+        $.each(ctrlOpts.DpControlsList, function (i, obj) {
+            customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
+        });
         //}
 
         let imgup = new FUPFormControl({
@@ -90,7 +90,7 @@
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.fyi',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.shop',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -118,6 +118,18 @@
             if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes affect only if form is saved', AutoHide: true, Background: '#0000aa', Delay: 3000 });
         }.bind(this);
+
+        ctrl.isRequiredOK = function (ctrl, files) {
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
+                return true;
+
+            let f = files.filter(function (i) { return !i.Recent; });
+
+            if (f.length > 0)
+                return true;
+
+            return false;
+        }.bind(this, ctrl, files);
 
         imgup.customTrigger = function (DpControlsList, name, refids) {
             if (name === "Delete") {
@@ -317,7 +329,7 @@
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none').css('color', '#999');
         }
-        else if (ctrl.ShowDateAs_ !== 2 && this.rendererName !== "WebForm")
+        else if (ctrl.ShowDateAs_ !== 2 && this.Renderer.rendererName !== "WebForm")
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
@@ -690,11 +702,13 @@
         o.Source = this.Renderer.rendererName;
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+        o.refid = o.dvObject.RefId;
         o.drawCallBack = function (ctrl) {
             ctrl.___isNotUpdateValExpDepCtrls = false;
             let DepHandleObj = this.Renderer.FRC.GetDepHandleObj(ctrl);
             this.Renderer.FRC.ctrlChangeListener_inner0(DepHandleObj);
         }.bind(this, ctrl);
+        o.SelfRefreshLimit = ctrl.SelfRefreshLimit;
 
         let initFilterValues = function (ctrl) {
             if (!ctrl.__filterValues)
@@ -862,42 +876,62 @@
             $input.find("#date").datetimepicker('show');
         });
 
-        $input.find("select").on('change', function (e) {
-            $(e.target).siblings("button").find(" .filter-option").text(this.value);
-            $input.find("select option:not([value='" + this.value + "'])").removeAttr("selected");
-            if (this.value === "Hourly") {
-                $input.children("[name=date]").show();
-                $input.children("[name=month]").hide();
-                $input.children("[name=fromyear]").hide();
-                $input.children("[name=toyear]").hide();
-            }
-            else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
-                $input.children("[name=month]").show();
-                $input.children("[name=date]").hide();
-                $input.children("[name=fromyear]").hide();
-                $input.children("[name=toyear]").hide();
-            }
-            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly") {
-                $input.children("[name=fromyear]").show();
-                $input.children("[name=toyear]").show();
-                $input.children("[name=date]").hide();
-                $input.children("[name=month]").hide();
-            }
-        });
+        $input.find("#month").val(moment().format('MM/YYYY'));
+        $input.find("#fromyear").val(moment().format('YYYY'));
+        $input.find("#toyear").val(moment().format('YYYY'));
 
-        $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
-
-        $input.find("#fromyear").on('change', this.SetDateFromDateTo.bind(this, $input));
-        $input.find("#toyear").on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("select").off('change').on('change', this.calendarCtrlSelectChanged.bind(this, $input));
+        $input.find("#date").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#fromyear").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#toyear").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select").selectpicker({///////////////////////////////////////////////////////////
             dropupAuto: false,
         });
 
+        //this.SetDateFromDateTo($input);
+        this.calendarCtrlSelectChanged($input);
+
         //$input.find("select option[value='Hourly']").attr("selected", "selected");
         //$input.find("select").trigger("change");
 
-        $input.find("select").selectpicker("val", "Hourly");
+        //$input.find("select").selectpicker("val", "Hourly");
+
+    };
+
+    this.calendarCtrlSelectChanged = function ($input, e) {
+
+        let _this = $input.find("select")[0];
+        $input.find("select").siblings("button").find(".filter-option").text(_this.value);
+
+        //$(e.target).siblings("button").find(" .filter-option").text(_this.value);
+
+        $input.find("select option:not([value='" + _this.value + "'])").removeAttr("selected");
+        if (_this.value === "Hourly") {
+            $input.children("[name=date]").show();
+            $input.children("[name=month]").hide();
+            $input.children("[name=fromyear]").hide();
+            $input.children("[name=toyear]").hide();
+        }
+        else if (_this.value === "DayWise" || _this.value === "Weekely" || _this.value === "Fortnightly") {
+            $input.children("[name=month]").show();
+            $input.children("[name=date]").hide();
+            $input.children("[name=fromyear]").hide();
+            $input.children("[name=toyear]").hide();
+        }
+        else if (_this.value === "Monthly" || _this.value === "Quarterly" || _this.value === "HalfYearly" || _this.value === "Yearly") {
+            $input.children("[name=fromyear]").show();
+            $input.children("[name=toyear]").show();
+            $input.children("[name=date]").hide();
+            $input.children("[name=month]").hide();
+        }
+
+        let obj = $(_this).data('data-calndr-obj');
+        if (obj) {
+            let newval = EbEnums.AttendanceType[_this.value];
+            obj.CalendarType = parseInt(newval);
+        }
+        this.SetDateFromDateTo($input);
 
     };
 

@@ -72,7 +72,7 @@ function EbApiBuild(config) {
             this.RefreshControl(o);
 
             if ((o.Label === "Transaction" || o.Label === "Loop") && target !== null) {
-                this.drg.containers.push($(`#${o.EbSid} .Sql_Dropable`)[0]);
+                this.drg.containers.push($(`#${o.EbSid} .Api_Dropable`)[0]);
             }
         }
         this.resetLinks();
@@ -217,7 +217,7 @@ function EbApiBuild(config) {
 
     this.LoopProcess2 = function (id, obj) {
         this.ProcIdArr.push(id);
-        var $elementsAll = $(`#${id} .Sql_Dropable`).find(`.apiPrcItem`);
+        var $elementsAll = $(`#${id} .Api_Dropable`).find(`.apiPrcItem`);
         var inner = $elementsAll.not($elementsAll.children().find($elementsAll));
         this.Procs[id].InnerResources.$values.length = 0;
         this.Current_Eb_Type = this.Procs[id].$type.split(",")[0].split(".").pop().substring(2);
@@ -363,8 +363,8 @@ function EbApiBuild(config) {
             this.RefreshControl(this.Procs[id]);
 
             if ((this.Procs[id].Label === "Transaction" || this.Procs[id].Label === "Loop")) {
-                this.drg.containers.push($(`#${this.Procs[id].EbSid} .Sql_Dropable`)[0]);
-                this.drawProcsEmode(this.Procs[id].InnerResources.$values, $($(`#${this.Procs[id].EbSid} .Sql_Dropable`)[0]), true);
+                this.drg.containers.push($(`#${this.Procs[id].EbSid} .Api_Dropable`)[0]);
+                this.drawProcsEmode(this.Procs[id].InnerResources.$values, $($(`#${this.Procs[id].EbSid} .Api_Dropable`)[0]), true);
             }
         }
     };

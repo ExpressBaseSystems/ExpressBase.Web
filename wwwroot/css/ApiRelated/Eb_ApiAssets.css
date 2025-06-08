@@ -384,3 +384,8 @@
 
     .api-resource-request .api-resource-req-table {
     }
+
+.Api_Dropable {
+    min-height: 30px;
+    width: 100%;
+}

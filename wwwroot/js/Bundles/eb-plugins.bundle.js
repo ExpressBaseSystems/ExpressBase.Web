@@ -102,6 +102,7 @@ function EbDialog(action, options) {
     var operation = action;
     var settings = $.extend({
         Message: "Nothing specified",
+        DefaultText: '',
         Buttons: {
             "Ok": {
                 ClassName: "eb_dlogBox_defaultbutton",
@@ -117,8 +118,13 @@ function EbDialog(action, options) {
             }
         },
         IsPrompt: false,
+        PromptLines: 1,
         hideClose: false,
-        CallBack: function (name, prompt) { console.log(name + ":" +prompt); }
+        IncludeSelectInput: false,
+        SelectInputOptions: [],
+        SelectInputLabel: '',
+        Title: '',
+        CallBack: function (name, prompt) { console.log(name + ":" + prompt); }
     }, options);
 
     function div() {
@@ -126,14 +132,16 @@ function EbDialog(action, options) {
             $('body').append(`<div class="eb_dlgMsk"></div>
                                 <div class="eb_dlogBox_container" id="eb_dlogBox_container">
                                     <div class="cw">
-                                        @close@
+                                        <div class="bxhead">@title@@close@</div>
                                         <div class="msgbdy">${setMessage()}</div>
                                         <div class="cnfrmBox-btnc">
                                             ${generateBtn()}
                                         </div>
                                     </div>
-                                </div>`.replace("@close@", settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>'));
+                                </div>`.replace("@title@", settings.Title ? `<div class="_title">${settings.Title}</div>` : '')
+                .replace("@close@", settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>'));
         else {
+            $(`#eb_dlogBox_container .bxhead`).html(setHeader());
             $(`#eb_dlogBox_container .msgbdy`).html(setMessage());
             $(`#eb_dlogBox_container .cnfrmBox-btnc`).html(generateBtn());
         }
@@ -142,9 +150,14 @@ function EbDialog(action, options) {
 
             let n = $(ev.target).attr("name");
             let prompt = settings.IsPrompt ? $("#eb_dlogBox_prompt_input").val() : undefined;
+            let selected = {};
+            if (settings.IncludeSelectInput) {
+                let _v = $("#eb_dlogBox_select_input").val();
+                selected = settings.SelectInputOptions.find(function (e) { return e.value == _v; });
+            }
 
-            settings.CallBack(n, prompt);
-            hideMsg();
+            if (!settings.CallBack(n, prompt, selected))
+                hideMsg();
         });
 
         $("#eb_dlogBox_container ._cls").on("click", function () {
@@ -153,15 +166,34 @@ function EbDialog(action, options) {
         });
     }
 
+    function setHeader() {
+        let _htm = settings.Title ? `<div class="_title">${settings.Title}</div>` : '';
+        _htm += settings.hideClose ? '' : '<div class="_cls"><i class="fa fa-close"></i></div>';
+        return _htm;
+    };
+
     function setMessage() {
+        let _htm = '<div class="eb_dlogBox_bdyin">';
+        if (settings.IncludeSelectInput) {
+            _htm += `<div> <label class="eb_dlogBox_select_label">${settings.SelectInputLabel} <sup style="color: red">*</sup></label> <select id='eb_dlogBox_select_input' class='eb_dlogBox_select_input'><option value='0' disabled selected>-- Select --</option>`;
+            $.each(settings.SelectInputOptions, function (indx, obj) {
+                _htm += `<option value='${obj.value}'>${obj.text}</option>`;
+            });
+            _htm += `</select></div>`;
+        }
+
         if (settings.IsPrompt) {
-            return `<div class="eb_dlogBox_prompt_inputContainer">
-                        <label class="eb_dlogBox_prompt_label">${settings.Message}</label>
-                        <input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input"/>
-                    </div>`;
+            _htm += `<div class="eb_dlogBox_prompt_inputContainer"> <label class="eb_dlogBox_prompt_label">${settings.Message}<sup style="color: red">*</sup></label>`;
+            if (settings.PromptLines && settings.PromptLines > 1)
+                _htm += `<textarea type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" rows="${settings.PromptLines}">${settings.DefaultText}</textarea>`;
+            else
+                _htm += `<input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" value='${settings.DefaultText}'/>`;
+            _htm += `</div>`;
         }
         else
-            return settings.Message;
+            _htm += settings.Message;
+        _htm += '</div>';
+        return _htm;
     }
 
     function showMsg() {
@@ -169,7 +201,9 @@ function EbDialog(action, options) {
         $(`#eb_dlogBox_container,.eb_dlgMsk`).fadeIn();
         if (settings.$for)
             settings.$for.css('filter', 'blur(3px)');
-        if ($('.dlgBoxBtn-cust').length > 0) {
+        if (settings.IsPrompt)
+            $("#eb_dlogBox_prompt_input").focus();
+        else if ($('.dlgBoxBtn-cust').length > 0) {
             $($('.dlgBoxBtn-cust')[0]).focus();
         }
     };
@@ -1140,7 +1174,7 @@ function EbMessage(action, options) {
                                   <span class="copy" title="Copy to clipboard"><i class="fa fa-files-o"></i> Copy</span>
                                   </div>`);
         else {
-            $(`#eb_messageBox_container .msg`).text(settings.Message);
+            $(`#eb_messageBox_container .msg`).html(settings.Message);
             $(`#eb_messageBox_container`).css({ "background-color": settings.Background, "color": settings.FontColor });
         }
         if (settings.ShowCopyBtn)
@@ -1159,12 +1193,12 @@ function EbMessage(action, options) {
         });
         $(`#eb_messageBox_container .more`).off('click').on('click', function (e) {
             if ($(this).attr('title') === 'See more' && settings.Details) {
-                $(`#eb_messageBox_container .msg`).text(settings.Message + ' ' + settings.Details);
+                $(`#eb_messageBox_container .msg`).html(settings.Message + ' ' + settings.Details);
                 $(this).attr('title', 'See less');
                 $(this).html('<i class="fa fa-chevron-up"></i> See less');
             }
             else if ($(this).attr('title') === 'See less') {
-                $(`#eb_messageBox_container .msg`).text(settings.Message);
+                $(`#eb_messageBox_container .msg`).html(settings.Message);
                 $(this).attr('title', 'See more');
                 $(this).html('<i class="fa fa-chevron-down"></i> See more');
             }

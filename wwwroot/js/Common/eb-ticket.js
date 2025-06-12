@@ -418,27 +418,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("update-ticket-button").style.display = "inline-block";
         document.getElementById("submit-ticket-button").style.display = "none";
 
-
-
-       // for comment tab  visible 
-        //const commentsTabLink = document.querySelector('a[href="#comments-tab"]');
-        //const commentsTab = document.getElementById("comments-tab");
-
-        //if (commentsTabLink && commentsTab) {
-        //    console.log("Populating Ticket - Showing Comments Tab");
-
-        //    // Show tab link
-        //    commentsTabLink.style.display = "block";
-        //    commentsTabLink.classList.add("active");
-
-        //    // Show tab content properly
-        //    commentsTab.classList.add("show", "active");
-        //} else {
-        //    console.log("Comments Tab Not Found!");
-        //}
-
-
-
         // Populate the form fields with ticket details
         document.getElementById("ticket-title").value = ticket.title || "";
         document.getElementById("ticket-description").value = ticket.description || "";
@@ -501,8 +480,14 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("tinf_estimated_hours").value = ticket.estimated_hours || "";
             document.getElementById("tinf_actual_hours").value = ticket.actual_hours || "";
         }
-        const isResolved = ticket.status && ticket.status.toLowerCase() === "Resolved";
+        if (isUser) {
+            document.getElementById("tinf_eta").closest(".tfd").style.display = "none";
+            document.getElementById("tinf_estimated_hours").closest(".tfd").style.display = "none";
+            document.getElementById("tinf_actual_hours").closest(".tfd").style.display = "none";
+        }
         const isUserConsole = window.ViewBag && window.ViewBag.wc === "uc";
+
+        const isResolved = ticket.status && ticket.status.toLowerCase() === "Resolved";
 
 
         const resetReadOnlyFields = () => {
@@ -556,7 +541,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("other-attachments-button").style.display = "none";
 
             document.getElementById("update-ticket-button").style.display = "none";
-
         };
 
         resetReadOnlyFields();
@@ -688,28 +672,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Add event listener for Open and Comment tabs
-        //const openTab = document.querySelector('a[href="#open-tab"]');
-        //const commentsTab = document.querySelector('a[href="#comments-tab"]');
-
-        //if (openTab) {
-        //    openTab.addEventListener('click', function () {
-        //        const openTabContent = document.getElementById("open-tab");
-        //        if (openTabContent) {
-        //            openTabContent.innerHTML = "<p style='text-align:center; font-weight:bold; margin-top:20px;'>Coming Soon...</p>";
-        //        }
-        //    });
-        //}
-
-        //if (commentsTab) {
-        //    commentsTab.addEventListener('click', function () {
-        //        const commentsTabContent = document.getElementById("comments-tab");
-        //        if (commentsTabContent) {
-        //            commentsTabContent.innerHTML = "<p style='text-align:center; font-weight:bold; margin-top:20px;'>Coming Soon...</p>";
-        //        }
-        //    });
-        //}
-
         // Close the popup when clicking outside of it
         popup.onclick = function (e) {
             if (e.target === popup) {
@@ -777,7 +739,13 @@ document.addEventListener('DOMContentLoaded', function () {
             commentsTabLink.style.pointerEvents = "none";  // Disable clicking
             commentsTabLink.classList.add("disabled"); // Optionally add a disabled class for styling
         }
+        const isUserConsole = window.ViewBag && window.ViewBag.wc === "uc";
 
+        if (isUserConsole) {
+            document.getElementById("tinf_eta").closest(".tfd").style.display = "none";
+            document.getElementById("tinf_estimated_hours").closest(".tfd").style.display = "none";
+            document.getElementById("tinf_actual_hours").closest(".tfd").style.display = "none";
+        }
         // Default to "No, Self"
         document.getElementById("tinf_raising_self").checked = true;
         document.getElementById("tinf_raising_yes").checked = false;
@@ -805,27 +773,28 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("ticket-title").style.borderColor = "";
         document.getElementById("ticket-description").style.borderColor = "";
 
+        document.getElementById("ticket-title").disabled = false;
+        document.getElementById("ticket-description").removeAttribute("readonly");
+        document.getElementById("tinf_priority").disabled = false;
+
+        document.getElementById("tinf_feature").disabled = false;
+        document.getElementById("tinf_bug").disabled = false;
+
+        document.getElementById("tinf_raising_self").disabled = false;
+        document.getElementById("tinf_raising_yes").disabled = false;
+        $("#tinf_names").prop("disabled", false);
+
+        document.getElementById("capture-screenshot").style.display = "block";
+        document.getElementById("upload-image-button").style.display = "block";
+        document.getElementById("other-attachments-button").style.display = "inline-block";
+
+
+       
+
         // Clear attachments
         document.getElementById("screenshot-container").innerHTML = ""; // Clear screenshot thumbnails
         document.getElementById("image-thumbnails").innerHTML = ""; // Clear image thumbnails
         document.getElementById("other-attachments-list").innerHTML = ""; // Clear other attachments
-
-        //// Hide the "Comments" tab
-        //const commentsTabLink = document.querySelector('a[href="#comments-tab"]');
-        //const commentsTab = document.getElementById("comments-tab");
-
-        //if (commentsTabLink && commentsTab) {
-        //    console.log("Creating New Ticket - Hiding Comments Tab");
-
-        // //Hide tab link
-        //commentsTabLink.style.display = "none";
-        //commentsTabLink.classList.remove("active");
-
-        //// Hide tab content properly
-        //    commentsTab.classList.remove("show", "active");
-        //}
-
-        // Show the ticket form
 
         fetchUsers()
 
@@ -1352,6 +1321,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const ticketId = document.getElementById('ticket-id-header')?.textContent.replace('Ticket ID: ', '').trim();
         const username = document.getElementById('current-username')?.value;
         const solutionId = document.getElementById('soluid')?.textContent.trim(); // soluid is a <span>, not an input
+        const currentUserid = document.getElementById('Uid')?.textContent.trim() || "";
+        console.log(currentUserid)
 
         console.log('Sending data to backend:', {
             TicketNo: ticketId,

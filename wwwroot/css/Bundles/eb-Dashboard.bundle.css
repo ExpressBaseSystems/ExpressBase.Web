@@ -43,7 +43,7 @@
         border-radius: 5px;
         background-color: transparent;
         border: solid 0px;
-        margin: 0%;
+        /*margin: 0%;*/
     }
 
         .grid-stack > .grid-stack-item > .grid-stack-item-content {
@@ -60,6 +60,10 @@
             border-radius: 4px;
             background-color: white;
             border: solid 1px rgb(204, 204, 204);
+        }
+
+        .grid-stack > .grid-stack-item > .grid-stack-item-content.usr {
+            touch-action: unset;
         }
 
         .grid-stack > .grid-stack-item > .ui-resizable-handle {
@@ -1047,6 +1051,10 @@ body .stickBtn {
     padding: 2px 0px 0px 0px;
 }
 
+    .tile_dt_cont_view .card-body p:nth-child(2) {
+        white-space: pre-line;
+    }
+
 .gaugeChart {
     width: 100%;
     height: 100%;
@@ -1323,7 +1331,7 @@ body {
             line-height: 20px;
             color: #a0a0a0;
             font-weight: 100;
-            white-space: nowrap;
+            white-space: pre;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -2216,10 +2224,15 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
     border: none;
 }
 
+[eb-type="WebForm"] .dataTables_scrollHead {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
 .dataTables_scrollHead {
     padding-bottom: 150px !important;
     margin-bottom: -150px !important;
-    /*width: calc( 100% - 17px ) !important;*/    
+    /*width: calc( 100% - 17px ) !important;*/
 }
 
 .dataTables_scrollFoot {
@@ -2241,12 +2254,22 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
     z-index: 3;
 }
 
+[eb-type="WebForm"] .DTFC_LeftHeadWrapper, [eb-type="WebForm"] .DTFC_RightHeadWrapper {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
 .DTFC_LeftHeadWrapper, .DTFC_RightHeadWrapper {
     padding-bottom: 150px !important;
     margin-bottom: -150px !important;
 }
 
 .DTFC_LeftBodyWrapper {
+}
+
+[eb-type="WebForm"] .DTFC_LeftFootWrapper, [eb-type="WebForm"] .DTFC_RightFootWrapper {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
 }
 
 .DTFC_LeftFootWrapper, .DTFC_RightFootWrapper {

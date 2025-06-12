@@ -9471,7 +9471,7 @@ var EbDataTable = function (Option) {
         //        $("#" + this.ContextId + ' #' + param.Name).val(param.Value);
         //    });
         //}
-        $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
+        $.each(getFlatCtrlObjs(this.FilterDialog.FormObj), function (i, obj) {
             var mapobj = getObjByval(this.filterValues, "Name", obj.Name);
             if (typeof mapobj !== "undefined") {
                 let val = mapobj.Value;
@@ -9888,8 +9888,8 @@ var EbDataTable = function (Option) {
         }
         else if (splitarray[2] === "0") {
             let _filter = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
-            let _locale = ebcontext.languages.getCurrentLocale();
-            let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurrentLanguageCode();
+            let url = `../WebForm/Index?_r=${this.linkDV}&_p=${_filter}&_m=${this.dvformMode}&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }
         else {
@@ -11046,8 +11046,8 @@ var EbDataTable = function (Option) {
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let _locale = ebcontext.languages.getCurrentLocale();
-            let url = `../webform/index?_r=${obj.Refid}&_p=""&_m=2&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurrentLanguageCode();
+            let url = `../webform/index?_r=${obj.Refid}&_p=""&_m=2&_l=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}&_lg=${_l}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -11109,8 +11109,8 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let _locale = ebcontext.languages.getCurrentLocale();
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurrentLanguageCode();
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=2&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }
     };
@@ -11125,8 +11125,8 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let _locale = ebcontext.languages.getCurrentLocale();
-            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurrentLanguageCode();
+            let url = `../WebForm/Index?_r=${this.GroupFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }
     };
@@ -11141,7 +11141,8 @@ var EbDataTable = function (Option) {
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
+            let _l = ebcontext.languages.getCurrentLanguageCode();
+            let url = `../WebForm/Index?_r=${this.ItemFormLink}&_p=${filterparams}&_m=1&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
             window.open(url, '_blank');
         }
     };
@@ -14245,6 +14246,7 @@ var EbCommonDataTable = function (Option) {
     this.login = Option.login;
     this.counter = Option.counter;
     this.datePattern = Option.datePattern || "dd-MM-yyyy";
+    this.mmtDateFormat = ebcontext.user.Preference.ShortDatePattern || 'DD-MM-YYYY';//
     this.TenantId = Option.TenantId;
     this.UserId = Option.UserId;
     this.relatedObjects = null;
@@ -14324,7 +14326,7 @@ var EbCommonDataTable = function (Option) {
     this.ObjectLinks = Option.ObjectLinks || [];
     this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
     this.AllowSorting = typeof Option.AllowSorting !== 'undefined' ? Option.AllowSorting : true;
-
+    this.SelfRefreshLimit = Option.SelfRefreshLimit ? Option.SelfRefreshLimit : 0;
 
     if (this.Source === "EbDataTable") {
         if (this.EbObject && this.EbObject.ApiRefId !== null && this.EbObject.ApiRefId !== "")
@@ -14437,8 +14439,12 @@ var EbCommonDataTable = function (Option) {
                 this.FD = true;
                 if (this.isPipped || this.isContextual) {
                     this.placefiltervalues();
-                    if (!this.FilterDialog.FormObj.AutoRun)
+                    if (this.isContextual) {
+                        this.filterValues = this.getFilterValues();
+                    }
+                    if (!this.FilterDialog.FormObj.AutoRun) {
                         this.$submit.trigger("click");
+                    }
                 }
                 else {
                     this.FDCont.show();
@@ -14605,6 +14611,10 @@ var EbCommonDataTable = function (Option) {
             this.Done4All();
         }
         else if (this.Source === "WebForm") {
+            if (this.SelfRefreshLimit && this.SelfRefreshLimit < this.ajaxCallCounter) {
+                window.location.reload();
+                return;
+            }
             this.MainData = null;
             this.totalcount = 0;
             this.Done4All();
@@ -14657,6 +14667,13 @@ var EbCommonDataTable = function (Option) {
 
         //----------
         if (this.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
+
+            if ($.fn.DataTable.isDataTable('#' + this.tableId)) {
+                this.table_jQO.off();
+                this.table_jQO.DataTable().clear().destroy(true);
+                this.table_jQO.empty();
+            }
+
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
 
@@ -14734,6 +14751,7 @@ var EbCommonDataTable = function (Option) {
                     return;
                 this.filterValues = this.getFilterValues("filter");
             }
+            this.updateTitle();
         }
         this.isSecondTime = false;
         this.totalcount = 0;
@@ -14743,6 +14761,18 @@ var EbCommonDataTable = function (Option) {
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
         this.dvName = this.EbObject.Name;
+    };
+
+    this.updateTitle = function () {
+        let title = this.EbObject.DisplayName;
+        for (let i = 0; i < this.filterValues.length; i++) {
+            let f = this.filterValues[i];
+            if (!f.isHidden && f.ValueF)
+                title += " - " + f.ValueF;
+        }
+        $("#objname").text(title);
+        $("#objname").prop("title", title);
+        $('title').text(title);
     };
 
     this.check4Customcolumn = function () {
@@ -15099,7 +15129,7 @@ var EbCommonDataTable = function (Option) {
         var ia = [];
         for (var i = 0; i < 5; i++)
             ia[i] = (this.EbObject.PageLength * (i + 1));
-        return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
+        return JSON.parse("[ [{0}], [{0}] ]".replace(/\{0\}/g, ia.join(',')));
     };
 
     this.ajaxData = function (dq) {
@@ -15194,8 +15224,10 @@ var EbCommonDataTable = function (Option) {
         if (temp.length === 0) {
             if (this.Source === "Bot")
                 fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp for bot
+            else if (this.Source === "AppsToObjectTable")
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp
             else
-                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1));
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", ebcontext.locations.CurrentLoc || 1, "Location", ebcontext.locations.CurrentLocObj.ShortName, true));
         }
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
@@ -15304,7 +15336,7 @@ var EbCommonDataTable = function (Option) {
         //        $("#" + this.ContextId + ' #' + param.Name).val(param.Value);
         //    });
         //}
-        $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
+        $.each(getFlatCtrlObjs(this.FilterDialog.FormObj), function (i, obj) {
             var mapobj = getObjByval(this.filterValues, "Name", obj.Name);
             if (typeof mapobj !== "undefined") {
                 let val = mapobj.Value;
@@ -15372,7 +15404,10 @@ var EbCommonDataTable = function (Option) {
                                 o.title = colObj.sTitle;
                                 o.name = colObj.name;
                                 o.operator = search.Operator;
-                                o.value = val;
+                                if (search.Type == 5 || search.Type == 6)
+                                    o.value = moment(val, 'YYYY-MM-DD').format(this.mmtDateFormat);
+                                else
+                                    o.value = val;
                                 if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")
                                     o.logicOp = "OR";
                                 else if (typeof this.columnSearch[i + 1] !== "undefined")
@@ -15384,7 +15419,11 @@ var EbCommonDataTable = function (Option) {
                         }.bind(this));
                     }
                     else {
-                        o.value = search.Value;
+                        if (search.Type == 5 || search.Type == 6)
+                            o.value = moment(search.Value, 'YYYY-MM-DD').format(this.mmtDateFormat);
+                        else
+                            o.value = search.Value;
+
                         if (typeof this.columnSearch[i + 1] !== "undefined")
                             o.logicOp = "AND";
                         else
@@ -15394,7 +15433,14 @@ var EbCommonDataTable = function (Option) {
                 }
                 else {
                     i++;
-                    o.value = searchobj[0].Value + " AND " + searchobj[1].Value;
+                    let val1 = searchobj[0].Value;
+                    let val2 = searchobj[1].Value;
+                    if (searchobj[0].Type == 5 || searchobj[0].Type == 6)
+                        val1 = moment(val1, 'YYYY-MM-DD').format(this.mmtDateFormat);
+                    if (searchobj[1].Type == 5 || searchobj[1].Type == 6)
+                        val2 = moment(val2, 'YYYY-MM-DD').format(this.mmtDateFormat);
+
+                    o.value = val1 + " AND " + val2;
                     o.operator = "BETWEEN";
                     if (typeof this.columnSearch[i + 1] !== "undefined")
                         o.logicOp = "AND";
@@ -15569,10 +15615,17 @@ var EbCommonDataTable = function (Option) {
                                 if (oper === 'B')
                                     val2 = $(textid).siblings('input').val();
                                 if (Rtype === 5 || Rtype === 6) {
-                                    if (!val1 || !moment(val1, 'DD-MM-YYYY', true).isValid())
+                                    if (val1 && moment(val1, this.mmtDateFormat, true).isValid())
+                                        val1 = moment(val1, this.mmtDateFormat).format('YYYY-MM-DD');
+                                    else
                                         return;
-                                    if (oper === 'B' && (!val2 || !moment(val2, 'DD-MM-YYYY', true).isValid()))
-                                        return;
+
+                                    if (oper === 'B') {
+                                        if (val2 && moment(val2, this.mmtDateFormat, true).isValid())
+                                            val2 = moment(val2, this.mmtDateFormat).format('YYYY-MM-DD');
+                                        else
+                                            return;
+                                    }
                                 }
 
                                 if (oper === 'B') {
@@ -15582,8 +15635,8 @@ var EbCommonDataTable = function (Option) {
                                             filter_obj_arr.push(new filter_obj(paracolum, "<=", Math.max(val1, val2), type));
                                         }
                                         else if (Rtype === 5 || Rtype === 6) {
-                                            let d1 = Date.parse(moment(val1, 'DD-MM-YYYY').format('YYYY-MM-DD'));
-                                            let d2 = Date.parse(moment(val2, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+                                            let d1 = Date.parse(val1);
+                                            let d2 = Date.parse(val2);
                                             if (d2 > d1) {
                                                 filter_obj_arr.push(new filter_obj(paracolum, ">=", val1, type));
                                                 filter_obj_arr.push(new filter_obj(paracolum, "<=", val2, type));
@@ -15596,8 +15649,7 @@ var EbCommonDataTable = function (Option) {
                                     }
                                 }
                                 else {
-                                    var data = $(textid).val();
-                                    filter_obj_arr.push(new filter_obj(paracolum, oper, data, type));
+                                    filter_obj_arr.push(new filter_obj(paracolum, oper, val1, type));
                                 }
                             }
                         }
@@ -15642,8 +15694,10 @@ var EbCommonDataTable = function (Option) {
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
-            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
-            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
+            if (this.Source != "WebForm") {
+                $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
+                $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
+            }
             if (!this.IsTree && this.showFilterRow && !this.EbObject.IsDataFromApi) {
 
                 this.createFilterRowHeader();
@@ -15856,8 +15910,8 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.WebFormlink = function (_refid, _filter, _mode) {
-        let _locale = ebcontext.languages.getCurrentLocale();
-        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
+        let _l = ebcontext.languages.getCurrentLanguageCode();
+        let url = `../WebForm/Index?_r=${_refid}&_p=${_filter}&_m=${_mode}&_l=${ebcontext.locations.CurrentLoc}&_lg=${_l}`;
         window.open(url, '_blank');
 
         //var _form = document.createElement("form");
@@ -15975,13 +16029,16 @@ var EbCommonDataTable = function (Option) {
             else {
                 if (param1.Operator !== '' && param1.Value !== '') {
                     if (param2 && param2.Column === param1.Column) {
-                        $(textid).val(param1.Value);
-                        $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
-                        $(textid).siblings('input').val(param2.Value);
+                        let val1 = type == 'date' ? moment(param1.Value, 'YYYY-MM-DD').format(this.mmtDateFormat) : param1.Value;
+                        let val2 = type == 'date' ? moment(param2.Value, 'YYYY-MM-DD').format(this.mmtDateFormat) : param2.Value;
+                        $(textid).val(val1);
+                        //$(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");//doubtful code commented 2023-02-28
+                        $(textid).siblings('input').val(val2);
                         i++;
                     }
                     else {
-                        $(textid).val(param1.Value);
+                        let val1 = type == 'date' ? moment(param1.Value, 'YYYY-MM-DD').format(this.mmtDateFormat) : param1.Value;
+                        $(textid).val(val1);
                         $('#' + this.tableId + '_' + colum + '_hdr_sel').text(param1.Operator);
                     }
                 }
@@ -16977,6 +17034,7 @@ var EbCommonDataTable = function (Option) {
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".webformlink" + this.tableId).off("click").on("click", this.openWebform.bind(this));
         $("#" + this.tableId).off("click", ".tablelink4calendar").on("click", ".tablelink4calendar", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -16998,7 +17056,7 @@ var EbCommonDataTable = function (Option) {
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
         //this.printAllbtn.off("click").on("click", this.printAll.bind(this));
         this.printSelectedbtn.off("click").on("click", this.printSelected.bind(this));
-        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcel.bind(this));
+        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcelSync.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         //$("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
@@ -17044,7 +17102,7 @@ var EbCommonDataTable = function (Option) {
         });
 
         $('.btn-approval_popover').off('shown.bs.popover').on('shown.bs.popover', function (e) {
-            $(".stage_actions").selectpicker();
+            $(".stage_actions").selectpicker({ dropupAuto: false });
             let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
             $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
@@ -17165,6 +17223,7 @@ var EbCommonDataTable = function (Option) {
                                 $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
                         }.bind(this));
                         dvcontainerObj.modifyNavigation();
+                        this.updateTitle();
                     }
                 }
                 //this.CreatePgButton();
@@ -17538,9 +17597,9 @@ var EbCommonDataTable = function (Option) {
                         <ul class="drp_ul"></ul>
                     </div>
                     </div>`);
-        let _locale = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLocale() : 0;
+        let _l = (ebcontext.languages != undefined) ? ebcontext.languages.getCurrentLanguageCode() : 'en';
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lo=${_locale}`;
+            let url = `../Webform/Index?_r=${obj.Refid}&_m=2&_l=${ebcontext.locations.CurrentLoc}&_lg=${_l}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -17561,11 +17620,17 @@ var EbCommonDataTable = function (Option) {
                 $(`#PrintDocsdd${this.tableId} .drp_ul`).append(`<li class="drp_item" data-token="${obj.ObjRefId}" data-params="${obj.UseParams}" style="padding: 5px 15px; font-size: 14px;">${tle}</li>`);
             }.bind(this));
 
-            $(`#PrintDocsdd${this.tableId}`).off(".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
+            $(`#PrintDocsdd${this.tableId}`).off("click", ".drp_ul li").on("click", ".drp_ul li", this.printDocument.bind(this));
         }
     };
 
     this.printDocument = function (e) {
+
+        if (this.pdfDownloadBtnClicked)
+            return;
+        this.pdfDownloadBtnClicked = true;
+        setTimeout(function () { this.pdfDownloadBtnClicked = false; }.bind(this), 2000);
+
         if (!ebcontext.webform) {
             ebcontext.webform = { showLoader: this.showEbLoader, hideLoader: this.hideEbLoader };
         }
@@ -17576,8 +17641,9 @@ var EbCommonDataTable = function (Option) {
         if (useParams == 'true') {
             let params = btoa(JSON.stringify(this.filterValues));
             let url = "/ReportRender/Renderlink?refid=" + rptRefid + "&_params=" + params;
-            ebcontext.webform.showLoader();
+            //ebcontext.webform.showLoader();
             $("#iFramePdf4dv").attr("src", url);
+            EbMessage("show", { Message: 'Generating PDF...', AutoHide: true, Background: '#00aa55', Delay: 5000 });
             return;
         }
 
@@ -17585,18 +17651,26 @@ var EbCommonDataTable = function (Option) {
         let chkdInps = $(`input[name=${this.tableId}_id]:checked`);
 
         if (chkdInps && chkdInps.length > 0) {
-            $(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
-            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit Downloads page after a while..', AutoHide: true, Background: '#00aa55', Delay: 15000 });
-            ebcontext.webform.showLoader();
-
             for (let i = 0; i < chkdInps.length; i++) {
                 rowIds.push($(chkdInps[i]).val());
             }
+            if (rowIds.length <= 75) {
+                let url = "/ReportRender/RenderLinkMultiSync?refId=" + rptRefid + "&rowId=" + rowIds;
+                //ebcontext.webform.showLoader();
+                EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 30000 });
+                $("#iFramePdf4dv").attr("src", url);
+                return;
+            }
+
+            //$(`#PrintDocsButton${this.tableId}`).prop("disabled", true);
+            EbMessage("show", { Message: 'Generating PDF... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while...', AutoHide: true, Background: '#00aa55', Delay: 60000 });
+            //ebcontext.webform.showLoader();
+
             let SubscriptionId = window.ebcontext.subscription_id;
             this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["PdfDownload"] });
             this.ss.onPdfDownloadSuccess = function (url) {
                 $("#iFramePdf4dv").attr("src", url);
-                $(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
+                //$(`#PrintDocsButton${this.tableId}`).prop("disabled", false);
                 event.stopPropagation();
             }.bind(this);
 
@@ -18550,7 +18624,7 @@ var EbCommonDataTable = function (Option) {
         var x = this.getStaticParameter(colindex);
         this.filterValuesforForm = [];
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
-            this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
+            this.filterValues = this.getfilterFromRowdata().concat(this.getFilterValues()).concat(x);
         else if (this.linkfromcolumn)
             this.filterValuesforForm = this.getFilterForLinkfromColumn();
         else
@@ -18592,19 +18666,30 @@ var EbCommonDataTable = function (Option) {
                 _refId: this.linkDV,
                 _params: btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))),
                 _mode: this.dvformMode,
-                _locId: ebcontext.locations.CurrentLoc
+                _locId: ebcontext.locations.CurrentLoc,
+                _callback: this.getColumnsSuccess.bind(this)
             });
             //$("#iFrameFormPopupModal").modal("show");
             //let url = `../WebForm/Index?_r=${this.linkDV}&_p=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_m=1${this.dvformMode}&_l=${ebcontext.locations.CurrentLoc}`;
             //$("#iFrameFormPopup").attr("src", url);
         }
         else {
-            if (this.login === "uc")
-                dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
-            else
-                this.OpeninNewTab(idx, cData);
+            //if (this.login === "uc")
+            //  dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+            //else
+            this.OpeninNewTab(idx, cData);
         }
         //this.filterValues = [];
+    };
+
+    this.openWebform = function (e) {
+        let _a = $(e.target).closest("a");
+        let _v = _a.attr("data-ver");
+        let _i = _a.attr("data-id");
+        let _f = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", _i)]))));
+
+        let url = `../WebForm/Inde?_r=${_v}&_p=${_f}&_m=${1}`;
+        window.open(url, '_blank');
     };
 
     this.link2NewTableFromColumn = function (e) {
@@ -18721,7 +18806,7 @@ var EbCommonDataTable = function (Option) {
         });
 
         $popoverBtn.off('shown.bs.popover').on('shown.bs.popover', function (e) {
-            $(".stage_actions").selectpicker();
+            $(".stage_actions").selectpicker({ dropupAuto: false });
             let $td = $(e.target).closest("td.tdheight");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'execute'));
             $(".btn-action_reset").off("click").on("click", this.ExecuteApproval.bind(this, $td, 'reset'));
@@ -18939,6 +19024,9 @@ var EbCommonDataTable = function (Option) {
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
         ob.SubscriptionId = window.ebcontext.subscription_id;
+        if (this.CurrentRowGroup !== null)
+            ob.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        ob.OrderBy = this.getOrderByInfo();
 
         this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["ExportToExcel"] });
         this.ss.onExcelExportSuccess = function (url) {
@@ -18950,6 +19038,47 @@ var EbCommonDataTable = function (Option) {
             type: "POST",
             url: "../DV/exportToexcel",
             data: { req: ob }
+        });
+    };
+
+    this.ExportToExcelSync = function (e) {
+        if (this.excelDownloadBtnClicked)
+            return;
+        this.excelDownloadBtnClicked = true;
+        EbMessage("show", { Message: 'Generating Excel... Please wait in this tab or visit <b><a href="/Downloads" target="_blank" style="color: white; text-decoration: underline;">Downloads</a></b> page after a while..', AutoHide: true, Background: '#00aa55', Delay: 30000 });
+        this.excelbtn.prop("disabled", true);
+        this.RemoveColumnRef();
+        var ob = new Object();
+        ob.dvRefId = this.EbObject.RefId;
+        ob.Params = this.filterValues;
+        ob.TFilters = this.columnSearch;
+        if (this.CurrentRowGroup !== null)
+            ob.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        ob.OrderBy = this.getOrderByInfo();
+
+        $.ajax({
+            type: "POST",
+            url: "../DV/exportToexcelSync",
+            data: { req: ob },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.excelDownloadBtnClicked = false;
+                this.excelbtn.prop("disabled", false);
+                EbMessage("show", { Message: `Something Unexpected Occurred when tried to download`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+            }.bind(this),
+            success: function (res, msg) {
+                this.excelDownloadBtnClicked = false;
+                this.excelbtn.prop("disabled", false);
+                if (res.item1 == -1) {
+                    EbMessage("show", { Message: `Internal server error: ${res.item2}`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+                }
+                else if (res.item1 == 0) {
+                    EbMessage("show", { Message: `Internal server error. Please try again later.`, AutoHide: true, Background: '#aa0000', Delay: 5000 });
+                }
+                else {
+                    EbMessage("show", { Message: 'Excel file being downloaded...', AutoHide: true, Background: '#0055aa', Delay: 3000 });
+                    window.location.href = res.item2;
+                }
+            }.bind(this)
         });
     };
 
@@ -29527,7 +29656,7 @@ var EbBasicChart = function (Option) {
                 },
                 zoom: {
                     // Boolean to enable zooming
-                    enabled: true,
+                    enabled: !Option.zoomDisabled,
 
                     // Zooming directions. Remove the appropriate direction to disable 
                     // Eg. 'y' would only allow zooming in the y direction
@@ -30049,7 +30178,7 @@ var EbBasicChart = function (Option) {
 
 
                         let filename = obj.FileName || "image";
-                        let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${obj.FileName}' alt='${filename}'></li>`);
+                        let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' dtls='${obj.FileName}' alt='${filename}'></li>`);
                         var l = lk.find("img").data("details", obj.Meta);
                         $('#imageContainer').append(lk);
                     }
@@ -30059,7 +30188,7 @@ var EbBasicChart = function (Option) {
                 $('#ebviewdiv_tmp-f').remove();
                 this.viewer = new Viewer(this.imagelist[0], {
                     url: 'data-src',
-                    navbar: 1,
+                    navbar: 0,
                     toolbar: _toolbar
                 }
                 );
@@ -30073,7 +30202,7 @@ var EbBasicChart = function (Option) {
 
 
 
-        this.showimage = function (rfid) {
+        this.showimage = function (rfid, ViewerPosition) {
             if (!(!rfid || rfid.length === 0)) {
                 let indx = this.pgSettings.findIndex(item => item.FileRefId == rfid);
                 if (this.pgSettings[indx].FileCategory == 1) {
@@ -30084,6 +30213,7 @@ var EbBasicChart = function (Option) {
                         }
                     }
                     let j = temparr.findIndex(x => x.FileRefId == rfid);
+                    this.viewer.eb_adjust_postion = this.viewer.ready ? 0 : ViewerPosition;
                     this.viewer.view(j);
                 }
                 else if (this.pgSettings[indx].FileCategory == 0) {
@@ -30096,17 +30226,37 @@ var EbBasicChart = function (Option) {
                     let url = (this.pgSettings[indx].hasOwnProperty('Recent')) ? this.pgSettings[indx].FileB64 : `${src}.${exten}`;
                     if (exten == 'pdf') {
 
-                        let html = $(`<div id='ebfileview_ContDiv' class='eb_fileview-Cont' style=''>
-                                    <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i></button>
-                                    <button id='' class="btn resize-ebfileview_Cont" style=''><i class="fa fa-long-arrow-right"></i></button> 
-                                    </div>`);
+                        let $html = $(`
+<div class='eb_fileview-Cont' style=''>
+  <button class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i></button>
+  <div class="dropdown more-ebfileview_Cont">
+    <button class="btn resize-ebfileview_Cont" data-toggle="dropdown" style=''><i class="fa fa-caret-square-o-down"></i></button> 
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item"><i class="fa fa-arrow-left"></i> Move Left</a></li>
+      <li><a class="dropdown-item"><i class="fa fa-arrow-right"></i> Move Right</a></li>
+      <li><a class="dropdown-item"><i class="fa fa-window-maximize"></i> Full Screen</a></li>
+    </ul>
+  </div>
+</div>`);
                         //$("body").append(` <iframe id="display_file" src="${src}.${exten}" frameborder="0" style=" bottom: 0;direction: ltr; font-size: 0; left: 0; line-height: 0;  overflow: hidden;position: absolute;right: 0;"></iframe>`);
-                        html.append(`<div id='ebfileview_Iframe-Cont' class='eb_iframe-Cont' style=" ">
-                                    <iframe id='ebfileview_Iframe' class='ebfileview_Iframe' src="${url}" class='' style=''></iframe>
+                        $html.append(`<div class='eb_iframe-Cont' style=" ">
+                                    <iframe class='ebfileview_Iframe' src="${url}" class='' style=''></iframe>
                                     </div>`);
-                        $("body").append(html[0]);
-                        $('.close-ebfileview_Cont').off('click').on('click', this.CloseFileviewFn.bind(this));
-                        $('.resize-ebfileview_Cont').off('click').on('click', this.ResizeFileviewFn.bind(this));
+                        if (ViewerPosition == 1) {//left
+                            $html.css('width', '50%').css('left', '0%');
+                            $($html.find('li')[0]).hide();
+                        }
+                        else if (ViewerPosition == 2) {//right
+                            $html.css('width', '50%').css('left', '50%');
+                            $($html.find('li')[1]).hide();
+                        }
+                        else {
+                            $($html.find('li')[2]).hide();
+                        }
+
+                        $("body").append($html[0]);
+                        $html.on('click', '.close-ebfileview_Cont', this.CloseFileviewFn.bind(this, $html));
+                        $html.on('click', '.more-ebfileview_Cont li', this.ResizeFileviewFn.bind(this, $html));
                         console.log("need pdf viewer");
                     }
                     else {
@@ -30140,32 +30290,28 @@ var EbBasicChart = function (Option) {
             }
         }
 
-        this.CloseFileviewFn = function (e) {
+        this.CloseFileviewFn = function ($ele, e) {
             let target = $(e.target).closest('button').parent();
-            if (target.attr("id") == "ebfileview_ContDiv") {
+            if (target.hasClass("eb_fileview-Cont")) {
                 target.remove();
             }
         }
 
-        this.ResizeFileviewFn = function (e) {
-            let $c = $("#ebfileview_ContDiv");
-            let $i = $(e.currentTarget).find('i');
-            $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
-            if ($c[0].style.width === '50%') {
-                if ($c[0].style.left === '50%') {
-                    $c.css('left', '0');
-                    $i.addClass('fa-arrows-h');
-                }
-                else {
-                    $c.css('width', '100%').css('left', '0');
-                    $i.addClass('fa-long-arrow-right');
-                }
+        this.ResizeFileviewFn = function ($ele, e) {
+            let $c = $ele;
+            let $li = $(e.currentTarget);
+            let $i = $li.find('i');
+            if ($i.hasClass('fa-arrow-left')) {
+                $c.css('width', '50%').css('left', '0%');
+            }
+            else if ($i.hasClass('fa-arrow-right')) {
+                $c.css('width', '50%').css('left', '50%');
             }
             else {
-                $c.css('width', '50%').css('left', '50%');
-                $i.addClass('fa-long-arrow-left');
+                $c.css('width', '100%').css('left', '0%');
             }
-
+            $li.siblings('li').show();
+            $li.hide();
         }
 
         this.addToImagelist = function (file) {
@@ -30523,7 +30669,28 @@ var EbBasicChart = function (Option) {
         zoomed: null
     };
 
-    var TEMPLATE = '<div class="viewer-container" touch-action="none">' + '<div class="viewer-canvas"></div>' + '<div class="viewer-footer">' + '<div class="viewer-title"></div>' + '<div class="viewer-toolbar"></div>' + '<div class="viewer-navbar">' + '<ul class="viewer-list"></ul>' + '</div>' + '</div>' + '<div class="viewer-tooltip"></div>' + '<div role="button" class="viewer-button" data-viewer-action="mix"></div>' + '<div class="viewer-eb-button"><i class="fa fa-long-arrow-right"></i></div>' + '<div class="viewer-player"></div>' + '</div>';
+    var TEMPLATE = `
+<div class="viewer-container" touch-action="none">
+  <div class="viewer-canvas"></div>
+  <div class="viewer-footer">
+    <div class="viewer-title"></div>
+    <div class="viewer-toolbar"></div>
+    <div class="viewer-navbar">
+      <ul class="viewer-list"></ul>
+    </div>
+  </div>
+  <div class="viewer-tooltip"></div>
+  <div role="button" class="viewer-button" data-viewer-action="mix"></div>
+  <div class="viewer-eb-more dropdown">
+    <button class="viewer-eb-button btn" data-toggle="dropdown" style=''><i class="fa fa-caret-square-o-down"></i></button> 
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item"><i class="fa fa-arrow-left"></i> Move Left</a></li>
+      <li><a class="dropdown-item"><i class="fa fa-arrow-right"></i> Move Right</a></li>
+      <li style='display:none;'><a class="dropdown-item"><i class="fa fa-window-maximize"></i> Full Screen</a></li>
+    </ul>
+  </div>
+  <div class="viewer-player"></div>
+</div>`;
 
     var IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
     var WINDOW = IS_BROWSER ? window : {};
@@ -31262,7 +31429,7 @@ var EbBasicChart = function (Option) {
                     var item = document.createElement('li');
                     var img = document.createElement('img');
                     // commented bcoz lazy load issue
-                    img.src = src || url;
+                    //img.src = src || url;
                     img.alt = alt;
                     img.setAttribute('class', 'viewerLzyImg');
                     img.setAttribute('data-index', index);
@@ -31461,29 +31628,45 @@ var EbBasicChart = function (Option) {
             }
 
             //eb_edited
-            $(viewer).off('click', '.viewer-eb-button').on('click', '.viewer-eb-button', function (e) {
-                let $v = $(this.viewer);
-                let $i = $(e.currentTarget).find('i');
-                $i.removeClass('fa-long-arrow-right').removeClass('fa-long-arrow-left').removeClass('fa-arrows-h');
-                if (this.viewer.style.width === '50%') {
-                    if (this.viewer.style.left === '50%') {
-                        $v.css('left', '0');
-                        $i.addClass('fa-arrows-h');
+            let adjustViewerPosition = function (e) {
+                let $c = $(this.viewer);
+                let $li = $(e.currentTarget);
+                let $i = $li.find('i');
+
+                if ($i.hasClass('fa-arrow-left')) {
+                    $c.css('left', '0%');
+                    this.eb_half_width = true;
+                    if (this.viewer.style.width != '50%') {
+                        $c.css('width', '50%');
+                        this.resize();
                     }
-                    else {
-                        $v.css('width', '100%').css('left', '0');
-                        $i.addClass('fa-long-arrow-right');
-                        this.eb_half_width = false;
+                }
+                else if ($i.hasClass('fa-arrow-right')) {
+                    $c.css('left', '50%');
+                    this.eb_half_width = true;
+                    if (this.viewer.style.width != '50%') {
+                        $c.css('width', '50%');
                         this.resize();
                     }
                 }
                 else {
-                    $v.css('width', '50%').css('left', '50%');
-                    $i.addClass('fa-long-arrow-left');
-                    this.eb_half_width = true;
-                    this.resize();
+                    $c.css('left', '0%');
+                    this.eb_half_width = false;
+                    if (this.viewer.style.width != '100%') {
+                        $c.css('width', '100%');
+                        this.resize();
+                    }
                 }
-            }.bind(this));
+                $li.siblings('li').show();
+                $li.hide();
+            }.bind(this);
+
+            $(viewer).off('click', '.viewer-eb-more li').on('click', '.viewer-eb-more li', adjustViewerPosition);
+
+            if (this.eb_adjust_postion == 1)
+                adjustViewerPosition({ currentTarget: $(viewer).find('.viewer-eb-more i.fa-arrow-left').closest('li') });
+            else if (this.eb_adjust_postion == 2)
+                adjustViewerPosition({ currentTarget: $(viewer).find('.viewer-eb-more i.fa-arrow-right').closest('li') });
         },
         unbind: function unbind() {
             var options = this.options,
@@ -31986,7 +32169,7 @@ var EbBasicChart = function (Option) {
                     this.show(immediate);
                 }
                 //lazy load function
-                // $('.viewerLzyImg').Lazy();
+                $('.viewerLzyImg').Lazy();
                 return this;
             }
 

@@ -75,11 +75,11 @@ var InitControls = function (option) {
             files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.Name || ctrl.EbSid][0].Columns[0].Value);
         }
 
-        if (fileType === 'image') {
-            $.each(ctrlOpts.DpControlsList, function (i, obj) {
-                customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
-            });
-        }
+        //if (fileType === 'image') {
+        $.each(ctrlOpts.DpControlsList, function (i, obj) {
+            customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
+        });
+        //}
 
         let imgup = new FUPFormControl({
             Type: fileType,
@@ -94,12 +94,15 @@ var InitControls = function (option) {
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
+            MaxSizeInKB: ctrl.MaxSizeInKB,
             CustomMenu: customMenu,
             DisableUpload: ctrl.DisableUpload,
             HideEmptyCategory: ctrl.HideEmptyCategory,
             ShowUploadDate: ctrl.ShowUploadDate,
+            ShowFileName: ctrl.ShowFileName,
             ViewByCategory: ctrl.ViewByCategory,
-            Renderer: this.Renderer
+            Renderer: this.Renderer,
+            ViewerPosition: ctrl.ViewerPosition
         });
 
         //uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -115,6 +118,18 @@ var InitControls = function (option) {
             if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
                 EbMessage("show", { Message: 'Changes affect only if form is saved', AutoHide: true, Background: '#0000aa', Delay: 3000 });
         }.bind(this);
+
+        ctrl.isRequiredOK = function (ctrl, files) {
+            if (this.Renderer.uploadedFileRefList[ctrl.Name + '_add'].length > 0)
+                return true;
+
+            let f = files.filter(function (i) { return !i.Recent; });
+
+            if (f.length > 0)
+                return true;
+
+            return false;
+        }.bind(this, ctrl, files);
 
         imgup.customTrigger = function (DpControlsList, name, refids) {
             if (name === "Delete") {
@@ -252,21 +267,28 @@ var InitControls = function (option) {
                     formatDate: sdp,
                     timepicker: false,
                     datepicker: true,
-                    mask: true
+                    mask: true,
+                    scrollInput: false
                 });
                 //$input.val(userObject.Preference.ShortDate);
-                if (ctrl.RestrictionRule == 1)
-                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId);
-                else if (ctrl.RestrictionRule == 2)
-                    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId, true);
+                //if (ctrl.RestrictionRule == 1)
+                //    ebcontext.finyears.setFinacialYear("#" + ctrl.EbSid_CtxId);
+                //if (ctrl.RestrictionRule == 2)
+                if (ctrl.RestrictionRule == 1 || ctrl.RestrictionRule == 2)
+                    ebcontext.finyears.setFinacialYear({ ctrl: ctrl, formRenderer: this.Renderer });
             }
             else if (ctrl.EbDateType === 17) { //Time
+
+                if (ctrl.ShowTimeAs === 4)
+                    stp = "HH:mm";
+
                 $input.datetimepicker({
                     format: stp,
                     formatTime: stp,
                     formatDate: sdp,
                     timepicker: true,
-                    datepicker: false
+                    datepicker: false,
+                    scrollInput: false
                 });
                 //$input.val(userObject.Preference.ShortTime);
             }
@@ -276,7 +298,8 @@ var InitControls = function (option) {
                     formatTime: stp,
                     formatDate: sdp,
                     timepicker: true,
-                    datepicker: true
+                    datepicker: true,
+                    scrollInput: false
                 });
                 //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
@@ -301,12 +324,12 @@ var InitControls = function (option) {
             //if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
             //    $input.val('');
             //else
-            $('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').attr('checked', false);
+            $('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', false);
             $input.val("");
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none').css('color', '#999');
         }
-        else if (ctrl.ShowDateAs_ !== 2 && this.rendererName !== "WebForm")
+        else if (ctrl.ShowDateAs_ !== 2 && this.Renderer.rendererName !== "WebForm")
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
@@ -371,6 +394,8 @@ var InitControls = function (option) {
                 //DDheight: ctrl.DropdownHeight,// experimental should apply at selectpicker-line: 1783("maxHeight = menuHeight;")
             });
 
+            if (this.Renderer.updateCtrlUI)
+                this.Renderer.updateCtrlUI(ctrl);
 
             let $DD = $input.siblings(".dropdown-menu[role='combobox']");
             //$DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
@@ -677,11 +702,13 @@ var InitControls = function (option) {
         o.Source = this.Renderer.rendererName;
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+        o.refid = o.dvObject.RefId;
         o.drawCallBack = function (ctrl) {
             ctrl.___isNotUpdateValExpDepCtrls = false;
             let DepHandleObj = this.Renderer.FRC.GetDepHandleObj(ctrl);
             this.Renderer.FRC.ctrlChangeListener_inner0(DepHandleObj);
         }.bind(this, ctrl);
+        o.SelfRefreshLimit = ctrl.SelfRefreshLimit;
 
         let initFilterValues = function (ctrl) {
             if (!ctrl.__filterValues)
@@ -737,8 +764,8 @@ var InitControls = function (option) {
         if (initFilterValues())
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
 
-        ctrl.initializer = new EbCommonDataTable(o);
-        ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
+        //ctrl.initializer = new EbCommonDataTable(o);
+        ////ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 
         ctrl.reloadWithParam = function (depCtrl) {
             if (depCtrl) {
@@ -747,9 +774,15 @@ var InitControls = function (option) {
                 filterObj.Value = val;
             }
 
-            ctrl.initializer.filterValues = ctrl.__filterValues;
-            ctrl.initializer.Api.ajax.reload();
-            //ctrl.initializer.getColumnsSuccess();
+            if (ctrl.initializer) {
+                ctrl.initializer.filterValues = ctrl.__filterValues;
+                //ctrl.initializer.Api.ajax.reload();
+                ctrl.initializer.getColumnsSuccess();
+            }
+            else {
+                o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+                ctrl.initializer = new EbCommonDataTable(o);
+            }
         };
 
         ctrl.reloadWithParamAll = function () {
@@ -762,9 +795,15 @@ var InitControls = function (option) {
                 }
             }
 
-            ctrl.initializer.filterValues = ctrl.__filterValues;
-            ctrl.initializer.Api.ajax.reload();
-            //ctrl.initializer.getColumnsSuccess();// this will produce double footer
+            if (ctrl.initializer) {
+                ctrl.initializer.filterValues = ctrl.__filterValues;
+                //ctrl.initializer.Api.ajax.reload();
+                ctrl.initializer.getColumnsSuccess();// this will produce double footer: experiment
+            }
+            else {
+                o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+                ctrl.initializer = new EbCommonDataTable(o);
+            }
         };
 
         ctrl.sum = function (ctrl, colName) {
@@ -779,14 +818,24 @@ var InitControls = function (option) {
             return 0;
         }.bind(this, ctrl);
 
-        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (event) {
+        $("#cont_" + ctrl.EbSid_CtxId).closest('.tab-content').prev('.tab-btn-cont').find('.nav-tabs a').on('shown.bs.tab', function (ctrl, event) {
             if ($("#cont_" + ctrl.EbSid_CtxId).closest(`.tab-pane`).hasClass("active")) {
-                if (ctrl.initializer && !ctrl.initializer.__ColAdjusted && ctrl.initializer.isSecondTime) {
-                    ctrl.initializer.Api.columns.adjust();
-                    ctrl.initializer.__ColAdjusted = true;
+                if (ctrl.__reloadWithParamAll) {
+                    ctrl.reloadWithParamAll();
+                    ctrl.__reloadWithParamAll = false;
+                }
+                else if (ctrl.__reloadWithParam) {
+                    ctrl.reloadWithParam();
+                    ctrl.__reloadWithParam = true;
+                }
+                else {
+                    if (ctrl.initializer && !ctrl.initializer.__ColAdjusted && ctrl.initializer.isSecondTime) {
+                        ctrl.initializer.Api.columns.adjust();
+                        ctrl.initializer.__ColAdjusted = true;
+                    }
                 }
             }
-        });
+        }.bind(this, ctrl));
     };
 
     this.CalendarControl = function (ctrl) {
@@ -827,40 +876,63 @@ var InitControls = function (option) {
             $input.find("#date").datetimepicker('show');
         });
 
-        $input.find("select").on('change', function (e) {
-            $(e.target).siblings("button").find(" .filter-option").text(this.value);
-            $input.find("select option:not([value='" + this.value + "'])").removeAttr("selected");
-            if (this.value === "Hourly") {
-                $input.children("[name=date]").show();
-                $input.children("[name=month]").hide();
-                $input.children("[name=fromyear]").hide();
-                $input.children("[name=toyear]").hide();
-            }
-            else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
-                $input.children("[name=month]").show();
-                $input.children("[name=date]").hide();
-                $input.children("[name=fromyear]").hide();
-                $input.children("[name=toyear]").hide();
-            }
-            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly" || this.value === "Yearly") {
-                $input.children("[name=fromyear]").show();
-                $input.children("[name=toyear]").show();
-                $input.children("[name=date]").hide();
-                $input.children("[name=month]").hide();
-            }
-        });
+        $input.find("#month").val(moment().format('MM/YYYY'));
+        $input.find("#fromyear").val(moment().format('YYYY'));
+        $input.find("#toyear").val(moment().format('YYYY'));
 
-        $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
-
-        $input.find("#fromyear").on('change', this.SetDateFromDateTo.bind(this, $input));
-        $input.find("#toyear").on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("select").off('change').on('change', this.calendarCtrlSelectChanged.bind(this, $input));
+        $input.find("#date").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#fromyear").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
+        $input.find("#toyear").off('change').on('change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select").selectpicker({///////////////////////////////////////////////////////////
             dropupAuto: false,
         });
 
-        $input.find("select option[value='Hourly']").attr("selected", "selected");
-        $input.find("select").trigger("change");
+        //this.SetDateFromDateTo($input);
+        this.calendarCtrlSelectChanged($input);
+
+        //$input.find("select option[value='Hourly']").attr("selected", "selected");
+        //$input.find("select").trigger("change");
+
+        //$input.find("select").selectpicker("val", "Hourly");
+
+    };
+
+    this.calendarCtrlSelectChanged = function ($input, e) {
+
+        let _this = $input.find("select")[0];
+        $input.find("select").siblings("button").find(".filter-option").text(_this.value);
+
+        //$(e.target).siblings("button").find(" .filter-option").text(_this.value);
+
+        $input.find("select option:not([value='" + _this.value + "'])").removeAttr("selected");
+        if (_this.value === "Hourly") {
+            $input.children("[name=date]").show();
+            $input.children("[name=month]").hide();
+            $input.children("[name=fromyear]").hide();
+            $input.children("[name=toyear]").hide();
+        }
+        else if (_this.value === "DayWise" || _this.value === "Weekely" || _this.value === "Fortnightly") {
+            $input.children("[name=month]").show();
+            $input.children("[name=date]").hide();
+            $input.children("[name=fromyear]").hide();
+            $input.children("[name=toyear]").hide();
+        }
+        else if (_this.value === "Monthly" || _this.value === "Quarterly" || _this.value === "HalfYearly" || _this.value === "Yearly") {
+            $input.children("[name=fromyear]").show();
+            $input.children("[name=toyear]").show();
+            $input.children("[name=date]").hide();
+            $input.children("[name=month]").hide();
+        }
+
+        let obj = $(_this).data('data-calndr-obj');
+        if (obj) {
+            let newval = EbEnums.AttendanceType[_this.value];
+            obj.CalendarType = parseInt(newval);
+        }
+        this.SetDateFromDateTo($input);
+
     };
 
     this.SetDateFromDateTo = function ($input, e) {
@@ -1142,7 +1214,7 @@ var InitControls = function (option) {
 
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        $ctrl[0].onclick = function () {
+        $ctrl.off('click').on('click', function (ctrl, ctrlOpts) {
             if ($('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled'))
                 return;
             let params = [];
@@ -1151,15 +1223,16 @@ var InitControls = function (option) {
             params.push(new fltr_obj(16, "srcCtrl", ctrl.Name));
             let _p = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
             if (ctrl.OpenInNewTab) {
-                let _locale = ebcontext.languages.getCurrentLocale();
-                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}&_lo=${_locale}`;
+                let _l = ebcontext.languages.getCurrentLanguageCode();
+                let url = `../WebForm/Index?_r=${ctrl.FormRefId}&_p=${_p}&_m=7&_l=${this.Renderer.getLocId()}&_lg=${_l}`;
                 window.open(url, '_blank');
             }
             else {
                 ebcontext.webform.PopupForm(ctrl.FormRefId, _p, 7, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId() });
             }
-        }.bind(this);
-        $ctrl.on('mouseenter', function (ctrl, e) {
+        }.bind(this, ctrl, ctrlOpts));
+
+        $ctrl.off('mouseenter').on('mouseenter', function (ctrl, e) {
             if (this.Renderer.Mode.isNew)
                 ctrl.attr('title', 'Not available in New Mode');
             else if (this.Renderer.Mode.isEdit && ctrl.DisableInEditMode)
@@ -1199,7 +1272,7 @@ var InitControls = function (option) {
             ctrl.setValue = function (renderer, p1) {
                 if (!renderer.isInitiallyPopulating) {
                     let $lbl = $("#" + this.EbSid_CtxId + 'Lbl');
-                    if (this.RenderAs == 2)//Html
+                    if (this.RenderAs == 1 || this.RenderAs == 2)//Link or Html
                         $lbl.html(p1 || '');
                     else
                         $lbl.text(p1 || '');
@@ -1293,7 +1366,7 @@ var InitControls = function (option) {
             }
         }
         if (pushMasterId) {
-            params.push({ Name: this.formRenderer.MasterTable + '_id', Type: 7, Value: this.Renderer.rowId });
+            params.push({ Name: this.Renderer.MasterTable + '_id', Type: 7, Value: this.Renderer.rowId });
         }
 
         return params;
@@ -1309,6 +1382,10 @@ var InitControls = function (option) {
                 if (!destCtrl)
                     continue;
                 if (pMap[i].SrcCtrlName === 'id') {
+                    if (destCtrl.ObjType == 'PowerSelect') {
+                        destCtrl.initializer.data = undefined;
+                        destCtrl.initializer.DDrefresh();
+                    }
                     destCtrl.setValue(destRender.rowId);
                 }
                 else {
@@ -1405,42 +1482,55 @@ var InitControls = function (option) {
     };
 
     this.CheckBoxGroup = function (ctrl) {
-        $('#' + ctrl.Name).find("input").on("change", function (e) {
-            var $ctrlDiv = $('#' + ctrl.Name); var values = "";
-            $ctrlDiv.find("input").each(function (i, el) {
-                if (el.checked) {
-                    val = $('#' + el.id + 'Lbl').text().trim();
-                    values += "," + val;
-                }
-            });
-            $ctrlDiv.val(values.substring(1));
-        });
+        //commented on 2023-02-20// due to undetected code flow
+        //$('#' + ctrl.Name).find("input").on("change", function (e) {
+        //    var $ctrlDiv = $('#' + ctrl.Name); var values = "";
+        //    $ctrlDiv.find("input").each(function (i, el) {
+        //        if (el.checked) {
+        //            val = $('#' + el.id + 'Lbl').text().trim();
+        //            values += "," + val;
+        //        }
+        //    });
+        //    $ctrlDiv.val(values.substring(1));
+        //});
     };
 
     this.Button = function (ctrl) {//////////////////////////////////////
         $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
-        $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
+        $('#' + ctrl.EbSid_CtxId).off('click').on('click', function () {
+            let clBkFn = null;
+            if (ctrl.PsJsObj) {
+                clBkFn = function (id) {
+                    this.data = undefined;
+                    this.DDrefresh();
+                    this.ComboObj.setValue(id);
+                }.bind(ctrl.PsJsObj);
+            }
+            ebcontext.webform.PopupForm(ctrl.FormRefId, null, 0, { srcCxt: this.Renderer.__MultiRenderCxt, initiator: ctrl, locId: this.Renderer.getLocId(), Callback: clBkFn });
+        }.bind(this, ctrl));
     }.bind(this);
 
     this.SubmitButton = function (ctrl, ctrlOpts) {
         //checksubmitbutton
-        $('#webformsave-selbtn').hide();
+        this.Renderer.$saveSelBtn.hide();
+        //$('#webformsave-selbtn').hide();
         if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
-            $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
-                    <input type='text' class = "text-center" placeholder='Enter the captcha' id='cpatchaTextBox' />`);
+            $(`#webform_submit_${ctrl.EbSid_CtxId}`).parent().prepend(`<div class = "text-center" id = '${ctrl.EbSid_CtxId}_captcha'> </div>
+                    <input type='text' class = "text-center" placeholder='${(ebcontext.languages.getCurrentLanguageCode() == 'ml' ? 'മുകളിൽ കൊടുത്തിരിക്കുന്ന കോഡ് എഴുതുക' : 'Enter the captcha')}' id='${ctrl.EbSid_CtxId}_cpatchaTextBox' style='border: 1px solid #ccc; margin-bottom: 10px;' />`);
 
             ctrlOpts.code = "";
-            this.CreateCaptcha(ctrlOpts);
+            this.CreateCaptcha(ctrl.EbSid_CtxId, ctrlOpts);
+            $(`#${ctrl.EbSid_CtxId}_captcha`).on('click', 'i.fa-refresh', this.CreateCaptcha.bind(this, ctrl.EbSid_CtxId, ctrlOpts));
         }
-        $('#webform_submit').off('click').on('click', function () {
+        $(`#webform_submit_${ctrl.EbSid_CtxId}`).off('click').on('click', function () {
             event.preventDefault();
             if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
-                if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
+                if ($(`#${ctrl.EbSid_CtxId}_cpatchaTextBox`).val() === ctrlOpts.code) {
                     //$('#webformsave').trigger('click');
                     this.Renderer.saveForm();
                 } else {
                     EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
-                    this.CreateCaptcha(ctrlOpts);
+                    this.CreateCaptcha(ctrl.EbSid_CtxId, ctrlOpts);
                 }
             } else {
                 //$('#webformsave').trigger('click');
@@ -1449,10 +1539,11 @@ var InitControls = function (option) {
         }.bind(this));
     }.bind(this);
 
-    this.CreateCaptcha = function (ctrlOpts) {
+    this.CreateCaptcha = function (EbSid, ctrlOpts) {
         //CAPTCHA
         //clear the contents of captcha div first 
-        document.getElementById('captcha').innerHTML = "";
+        let $cond = $(`#${EbSid}_captcha`);
+        $cond.empty();
         var charsArray =
             "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@!#$%&*";
         var lengthOtp = 6;
@@ -1462,21 +1553,28 @@ var InitControls = function (option) {
             var index = Math.floor(Math.random() * charsArray.length + 1); //get the next character from the array
             if (captcha.indexOf(charsArray[index]) === -1)
                 captcha.push(charsArray[index]);
-            else i--;
+            else
+                i--;
         }
         var canv = document.createElement("canvas");
         canv.id = "captcha";
-        canv.width = 100;
+        canv.width = 150;
         canv.height = 50;
         var ctx = canv.getContext("2d");
         ctx.font = "25px Verdana";
         ctx.strokeText(captcha.join(""), 0, 30);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(300, 150);
+        ctx.strokeStyle = "#336699";
+        let p1 = Math.floor(Math.random() * 25);
+        let p2 = Math.floor(Math.random() * 25);
+        ctx.moveTo(0, p1);
+        ctx.lineTo(150, p2);
+        ctx.moveTo(0, p1 + 15);
+        ctx.lineTo(150, p2 + 15);
         ctx.stroke();
         //storing captcha so that can validate you can save it somewhere else according to your specific requirements
         ctrlOpts.code = captcha.join("");
-        document.getElementById("captcha").appendChild(canv); // adds the canvas to the body element
+        $cond.append(canv); // adds the canvas to the body element
+        $cond.append(`<span style='display:inline-block; vertical-align:bottom; color:#336699;'><i class="fa fa-refresh" title='Refresh' style='margin:10px; font-size:20px; cursor:pointer;'></i></span>`);
     };
 
     this.iFrameOpen = function (ctrl) {//////////////////
@@ -1492,17 +1590,18 @@ var InitControls = function (option) {
 
     this.SysLocation = function (ctrl) {
         let locObj = this.Renderer.getLocObj();
+        let valPropName = ctrl.ShowLongName ? 'LongName' : 'ShortName';
         if (!locObj)
             return;
         //if (ctrl.DataVals && !ctrl.DataVals.Value && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
         if (ctrl.DataVals && (typeof this.Renderer.rowId === 'undefined' || this.Renderer.rowId === 0)) {
-            ctrl.DataVals.Value = locObj.LocId;
-            ctrl.DataVals.F = locObj.ShortName;
+            ctrl.DataVals.Value = locObj.LocId
+            ctrl.DataVals.F = locObj[valPropName];
         }
         if (!(ctrl.IsDisable)) {
             let temp = [];
             $.each(ebcontext.locations.Locations, function (intex, obj) {
-                temp.push({ k: obj.LocId, v: obj.ShortName || '' });
+                temp.push({ k: obj.LocId, v: obj[valPropName] || '' });
             });
             temp.sort(function (a, b) {
                 let v1 = a.v.toLowerCase();
@@ -1650,7 +1749,7 @@ var InitControls = function (option) {
     this.UserSelect = function (ctrl, ctrlopts) {
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
-            itemList: ctrl.UserList.$values,
+            itemList: this.Renderer.relatedData[ctrl.EbSid_CtxId],
             EbSid_CtxId: ctrl.EbSid_CtxId
         });
         itemList.ctrl = ctrl;
@@ -1665,7 +1764,7 @@ var InitControls = function (option) {
         }
         else if (ctrl.TextMode === 0) {
             if (ctrl.AutoSuggestion === true) {
-                $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
+                $ctrl.autocomplete({ source: this.Renderer.relatedData[ctrl.EbSid_CtxId] });
             }
             //if (ctrl.TextTransform === 1)
             //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
@@ -1749,6 +1848,46 @@ var InitControls = function (option) {
                 prefix: '',
                 autoGroup: true
             });
+        }
+
+        if (ctrl.ShowAddInput) {
+            let $btn, $inp;
+            if (ctrl.IsDGCtrl) {
+                $btn = $(`#td_${ctrl.EbSid_CtxId} .numplus-btn`);
+                $inp = $(`#td_${ctrl.EbSid_CtxId} .numplus-inp`);
+            }
+            else {
+                $btn = $(`#cont_${ctrl.EbSid_CtxId} .numplus-btn`);
+                $inp = $(`#cont_${ctrl.EbSid_CtxId} .numplus-inp`);
+            }
+            $inp.val('0');
+
+            $inp.inputmask("currency", {
+                radixPoint: ebcontext.user.Preference.CurrencyDecimalSeperator,
+                allowMinus: true,
+                groupSeparator: "",
+                digits: 0,
+                prefix: '',
+                autoGroup: true
+            });
+
+            $inp.off('focus').on('focus', function () {
+                $(this).select();
+            });
+
+            $inp.off('keypress').on('keypress', function ($btn, e) {
+                if (e.keyCode == 13) {
+                    $btn.click();
+                    return false;
+                }
+            }.bind(this, $btn));
+
+
+            $btn.off('click').on('click', function (ctrl, $inp) {
+                let val = ctrl.getValue() + parseInt($inp.val());
+                ctrl.setValue(val);
+                $inp.val('0');
+            }.bind(this, ctrl, $inp));
         }
 
         $input.focus(function () { $(this).select(); });
@@ -2050,7 +2189,7 @@ var InitControls = function (option) {
             var BloodhoundEngine = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.whitespace,
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
-                local: ctrl.Suggestions.$values
+                local: this.Renderer.relatedData[ctrl.EbSid_CtxId]
             });
             BloodhoundEngine.initialize();
             $ctrl.tagsinput({
@@ -6041,7 +6180,7 @@ var EbServerEvents = function (options) {
     this.onExcelExportSuccess = function (m, e) { };
     this.onPdfDownloadSuccess = function (m, e) { };
 
-
+    return;///////// 
 
     this.onConnect = function (sub) {
         console.log("sse connected! " + sub.displayName, sub.id);
@@ -6127,7 +6266,7 @@ var EbServerEvents = function (options) {
 
     this.updateUserMenu = function (m, e) {
         localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc + "mhtml");
-       localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
+        localStorage.removeItem("EbMenuObjects_" + ebcontext.sid + ebcontext.user.UserId + ebcontext.wc);
         // $('#menu_refresh').click();
     }
     this.userDisabled = function (m) {
@@ -6157,7 +6296,7 @@ var EbServerEvents = function (options) {
         EbMessage("show", { Message: m, AutoHide: true, Background: 'blue' });
         $(`.objectDashB-toolbar #webformedit`).attr("disabled", b);
     }
-    
+
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
@@ -6207,11 +6346,21 @@ var EbServerEvents = function (options) {
             importApplication: this.importApplication.bind(this),
             UpdateUserMenu: this.updateUserMenu.bind(this),
             userDisabled: this.userDisabled.bind(this),
-          //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
-          //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
+            //  WebFormEdit_Disable: function (m, e) { this.webFormEdit_EnableDisable(m, true) }.bind(this),
+            //  WebFormEdit_Enable: function (m, e) { this.webFormEdit_EnableDisable(m, false) }.bind(this)
 
         }
     });
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            if (this.sEvent && this.sEvent.eventSourceStop)
+                this.sEvent.eventSourceStop = false;
+        } else {
+            if (this.sEvent && !this.sEvent.eventSourceStop)
+                this.sEvent.eventSourceStop = true;
+        }
+    }.bind(this));
 };
 /*! offline-js 0.7.13 */
 (function () { var a, b, c, d, e, f, g; d = function (a, b) { var c, d, e, f; e = []; for (d in b.prototype) try { f = b.prototype[d], null == a[d] && "function" != typeof f ? e.push(a[d] = f) : e.push(void 0) } catch (g) { c = g } return e }, a = {}, null == a.options && (a.options = {}), c = { checks: { xhr: { url: function () { return "/favicon.ico?_=" + Math.floor(1e9 * Math.random()) }, timeout: 5e3 }, image: { url: function () { return "/favicon.ico?_=" + Math.floor(1e9 * Math.random()) } }, active: "xhr" }, checkOnLoad: !1, interceptRequests: !0, reconnect: !0 }, e = function (a, b) { var c, d, e, f, g, h; for (c = a, h = b.split("."), d = e = 0, f = h.length; f > e && (g = h[d], c = c[g], "object" == typeof c); d = ++e); return d === h.length - 1 ? c : void 0 }, a.getOption = function (b) { var d, f; return f = null != (d = e(a.options, b)) ? d : e(c, b), "function" == typeof f ? f() : f }, "function" == typeof window.addEventListener && window.addEventListener("online", function () { return setTimeout(a.confirmUp, 100) }, !1), "function" == typeof window.addEventListener && window.addEventListener("offline", function () { return a.confirmDown() }, !1), a.state = "up", a.markUp = function () { return a.trigger("confirmed-up"), "up" !== a.state ? (a.state = "up", a.trigger("up")) : void 0 }, a.markDown = function () { return a.trigger("confirmed-down"), "down" !== a.state ? (a.state = "down", a.trigger("down")) : void 0 }, f = {}, a.on = function (b, c, d) { var e, g, h, i, j; if (g = b.split(" "), g.length > 1) { for (j = [], h = 0, i = g.length; i > h; h++)e = g[h], j.push(a.on(e, c, d)); return j } return null == f[b] && (f[b] = []), f[b].push([d, c]) }, a.off = function (a, b) { var c, d, e, g, h; if (null != f[a]) { if (b) { for (e = 0, h = []; e < f[a].length;)g = f[a][e], d = g[0], c = g[1], c === b ? h.push(f[a].splice(e, 1)) : h.push(e++); return h } return f[a] = [] } }, a.trigger = function (a) { var b, c, d, e, g, h, i; if (null != f[a]) { for (g = f[a], i = [], d = 0, e = g.length; e > d; d++)h = g[d], b = h[0], c = h[1], i.push(c.call(b)); return i } }, b = function (a, b, c) { var d, e, f, g, h; return h = function () { return a.status && a.status < 12e3 ? b() : c() }, null === a.onprogress ? (d = a.onerror, a.onerror = function () { return c(), "function" == typeof d ? d.apply(null, arguments) : void 0 }, g = a.ontimeout, a.ontimeout = function () { return c(), "function" == typeof g ? g.apply(null, arguments) : void 0 }, e = a.onload, a.onload = function () { return h(), "function" == typeof e ? e.apply(null, arguments) : void 0 }) : (f = a.onreadystatechange, a.onreadystatechange = function () { return 4 === a.readyState ? h() : 0 === a.readyState && c(), "function" == typeof f ? f.apply(null, arguments) : void 0 }) }, a.checks = {}, a.checks.xhr = function () { var c, d; d = new XMLHttpRequest, d.offline = !1, d.open("HEAD", a.getOption("checks.xhr.url"), !0), null != d.timeout && (d.timeout = a.getOption("checks.xhr.timeout")), b(d, a.markUp, a.markDown); try { d.send() } catch (e) { c = e, a.markDown() } return d }, a.checks.image = function () { var b; return b = document.createElement("img"), b.onerror = a.markDown, b.onload = a.markUp, void (b.src = a.getOption("checks.image.url")) }, a.checks.down = a.markDown, a.checks.up = a.markUp, a.check = function () { return a.trigger("checking"), a.checks[a.getOption("checks.active")]() }, a.confirmUp = a.confirmDown = a.check, a.onXHR = function (a) { var b, c, e; return e = function (b, c) { var d; return d = b.open, b.open = function (e, f, g, h, i) { return a({ type: e, url: f, async: g, flags: c, user: h, password: i, xhr: b }), d.apply(b, arguments) } }, c = window.XMLHttpRequest, window.XMLHttpRequest = function (a) { var b, d, f; return f = new c(a), e(f, a), d = f.setRequestHeader, f.headers = {}, f.setRequestHeader = function (a, b) { return f.headers[a] = b, d.call(f, a, b) }, b = f.overrideMimeType, f.overrideMimeType = function (a) { return f.mimeType = a, b.call(f, a) }, f }, d(window.XMLHttpRequest, c), null != window.XDomainRequest ? (b = window.XDomainRequest, window.XDomainRequest = function () { var a; return a = new b, e(a), a }, d(window.XDomainRequest, b)) : void 0 }, g = function () { return a.getOption("interceptRequests") && a.onXHR(function (c) { var d; return d = c.xhr, d.offline !== !1 ? b(d, a.markUp, a.confirmDown) : void 0 }), a.getOption("checkOnLoad") ? a.check() : void 0 }, setTimeout(g, 0), window.Offline = a }).call(this), function () { var a, b, c, d, e, f, g, h, i; if (!window.Offline) throw new Error("Offline Reconnect brought in without offline.js"); d = Offline.reconnect = {}, f = null, e = function () { var a; return null != d.state && "inactive" !== d.state && Offline.trigger("reconnect:stopped"), d.state = "inactive", d.remaining = d.delay = null != (a = Offline.getOption("reconnect.initialDelay")) ? a : 3 }, b = function () { var a, b; return a = null != (b = Offline.getOption("reconnect.delay")) ? b : Math.min(Math.ceil(1.5 * d.delay), 3600), d.remaining = d.delay = a }, g = function () { return "connecting" !== d.state ? (d.remaining -= 1, Offline.trigger("reconnect:tick"), 0 === d.remaining ? h() : void 0) : void 0 }, h = function () { return "waiting" === d.state ? (Offline.trigger("reconnect:connecting"), d.state = "connecting", Offline.check()) : void 0 }, a = function () { return Offline.getOption("reconnect") ? (e(), d.state = "waiting", Offline.trigger("reconnect:started"), f = setInterval(g, 1e3)) : void 0 }, i = function () { return null != f && clearInterval(f), e() }, c = function () { return Offline.getOption("reconnect") && "connecting" === d.state ? (Offline.trigger("reconnect:failure"), d.state = "waiting", b()) : void 0 }, d.tryNow = h, e(), Offline.on("down", a), Offline.on("confirmed-down", c), Offline.on("up", i) }.call(this), function () { var a, b, c, d, e, f; if (!window.Offline) throw new Error("Requests module brought in without offline.js"); c = [], f = !1, d = function (a) { return Offline.trigger("requests:capture"), "down" !== Offline.state && (f = !0), c.push(a) }, e = function (a) { var b, c, d, e, f, g, h, i, j; j = a.xhr, g = a.url, f = a.type, h = a.user, d = a.password, b = a.body, j.abort(), j.open(f, g, !0, h, d), e = j.headers; for (c in e) i = e[c], j.setRequestHeader(c, i); return j.mimeType && j.overrideMimeType(j.mimeType), j.send(b) }, a = function () { return c = [] }, b = function () { var b, d, f, g, h, i; for (Offline.trigger("requests:flush"), h = {}, b = 0, f = c.length; f > b; b++)g = c[b], i = g.url.replace(/(\?|&)_=[0-9]+/, function (a, b) { return "?" === b ? b : "" }), h[g.type.toUpperCase() + " - " + i] = g; for (d in h) g = h[d], e(g); return a() }, setTimeout(function () { return Offline.getOption("requests") !== !1 ? (Offline.on("confirmed-up", function () { return f ? (f = !1, a()) : void 0 }), Offline.on("up", b), Offline.on("down", function () { return f = !1 }), Offline.onXHR(function (a) { var b, c, e, f, g; return g = a.xhr, e = a.async, g.offline !== !1 && (f = function () { return d(a) }, c = g.send, g.send = function (b) { return a.body = b, c.apply(g, arguments) }, e) ? null === g.onprogress ? (g.addEventListener("error", f, !1), g.addEventListener("timeout", f, !1)) : (b = g.onreadystatechange, g.onreadystatechange = function () { return 0 === g.readyState ? f() : 4 === g.readyState && (0 === g.status || g.status >= 12e3) && f(), "function" == typeof b ? b.apply(null, arguments) : void 0 }) : void 0 }), Offline.requests = { flush: b, clear: a }) : void 0 }, 0) }.call(this), function () { var a, b, c, d, e; if (!Offline) throw new Error("Offline simulate brought in without offline.js"); for (d = ["up", "down"], b = 0, c = d.length; c > b; b++)e = d[b], (document.querySelector("script[data-simulate='" + e + "']") || localStorage.OFFLINE_SIMULATE === e) && (null == Offline.options && (Offline.options = {}), null == (a = Offline.options).checks && (a.checks = {}), Offline.options.checks.active = e) }.call(this), function () { var a, b, c, d, e, f, g, h, i, j, k, l, m; if (!window.Offline) throw new Error("Offline UI brought in without offline.js"); b = '<div class="offline-ui"><div class="offline-ui-content"></div></div>', a = '<a href class="offline-ui-retry"></a>', f = function (a) { var b; return b = document.createElement("div"), b.innerHTML = a, b.children[0] }, g = e = null, d = function (a) { return k(a), g.className += " " + a }, k = function (a) { return g.className = g.className.replace(new RegExp("(^| )" + a.split(" ").join("|") + "( |$)", "gi"), " ") }, i = {}, h = function (a, b) { return d(a), null != i[a] && clearTimeout(i[a]), i[a] = setTimeout(function () { return k(a), delete i[a] }, 1e3 * b) }, m = function (a) { var b, c, d, e; d = { day: 86400, hour: 3600, minute: 60, second: 1 }; for (c in d) if (b = d[c], a >= b) return e = Math.floor(a / b), [e, c]; return ["now", ""] }, l = function () { var c, h; return g = f(b), document.body.appendChild(g), null != Offline.reconnect && Offline.getOption("reconnect") && (g.appendChild(f(a)), c = g.querySelector(".offline-ui-retry"), h = function (a) { return a.preventDefault(), Offline.reconnect.tryNow() }, null != c.addEventListener ? c.addEventListener("click", h, !1) : c.attachEvent("click", h)), d("offline-ui-" + Offline.state), e = g.querySelector(".offline-ui-content") }, j = function () { return l(), Offline.on("up", function () { return k("offline-ui-down"), d("offline-ui-up"), h("offline-ui-up-2s", 2), h("offline-ui-up-5s", 5) }), Offline.on("down", function () { return k("offline-ui-up"), d("offline-ui-down"), h("offline-ui-down-2s", 2), h("offline-ui-down-5s", 5) }), Offline.on("reconnect:connecting", function () { return d("offline-ui-connecting"), k("offline-ui-waiting") }), Offline.on("reconnect:tick", function () { var a, b, c; return d("offline-ui-waiting"), k("offline-ui-connecting"), a = m(Offline.reconnect.remaining), b = a[0], c = a[1], e.setAttribute("data-retry-in-value", b), e.setAttribute("data-retry-in-unit", c) }), Offline.on("reconnect:stopped", function () { return k("offline-ui-connecting offline-ui-waiting"), e.setAttribute("data-retry-in-value", null), e.setAttribute("data-retry-in-unit", null) }), Offline.on("reconnect:failure", function () { return h("offline-ui-reconnect-failed-2s", 2), h("offline-ui-reconnect-failed-5s", 5) }), Offline.on("reconnect:success", function () { return h("offline-ui-reconnect-succeeded-2s", 2), h("offline-ui-reconnect-succeeded-5s", 5) }) }, "complete" === document.readyState ? j() : null != document.addEventListener ? document.addEventListener("DOMContentLoaded", j, !1) : (c = document.onreadystatechange, document.onreadystatechange = function () { return "complete" === document.readyState && j(), "function" == typeof c ? c.apply(null, arguments) : void 0 }) }.call(this);
@@ -6395,6 +6544,15 @@ function fltr_obj(type, name, value) {
     this.Type = type;
     this.Name = name;
     this.Value = value;
+};
+
+function fltr_obj(type, name, value, formttedName, formattedValue, isHidden) {
+    this.Type = type;
+    this.Name = name;
+    this.Value = value;
+    this.NameF = formttedName;
+    this.ValueF = formattedValue;
+    this.isHidden = isHidden;
 };
 
 var filter_obj = function (colu, oper, valu, typ) {
@@ -6960,9 +7118,10 @@ function RecurFlatControls(src_obj, dest_coll) {
     });
 }
 
-function getValsFromForm(formObj) {
+function getValsFromForm(formObj, ParamsList) {
     let fltr_collection = [];
     let flag = 1;
+    ParamsList = ParamsList && ParamsList.$values ? ParamsList.$values : null;
     let ctrl_arr = getFlatCtrlObjs(formObj);
     let DGs = getFlatContObjsOfType(formObj, "DataGrid");
     for (let i = 0; i < DGs.length; i++) {
@@ -6973,9 +7132,10 @@ function getValsFromForm(formObj) {
     }
 
     $.each(ctrl_arr, function (i, obj) {
-        if (obj.ObjType === "FileUploader")
-            return;
-        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+
+        if (ParamsList == null || ParamsList.findIndex(e => e.Name == obj.Name) != -1)
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+
         //if (obj.ObjType === "PowerSelect")
         //    flag++;
     });
@@ -7038,10 +7198,10 @@ function getFlatObjOfType(ContObj, type) {
 
 function getValsForViz(formObj) {
     let fltr_collection = [];
-    $.each(getFlatControls(formObj), function (i, obj) {
+    $.each(getFlatCtrlObjs(formObj), function (i, obj) {
         var value = obj.getValue();
         if (value == "" || value == null) {
-            if (obj.EbDbType === 7 || obj.EbDbType === 8)
+            if (obj.EbDbType === 7 || obj.EbDbType === 8 || obj.EbDbType === 11)
                 value = 0;
             else if (obj.EbDbType === 16)
                 value = "0";
@@ -7051,8 +7211,39 @@ function getValsForViz(formObj) {
             fltr_collection.push(new fltr_obj(obj.EbDbType, "dateto", value.split(",")[1]));
             fltr_collection.push(new fltr_obj(7, "id", value.split(",")[2]));
         }
-        else
-            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        else {
+            let nameF = obj.Label || obj.Name;
+            let valF = obj.getDisplayMemberFromDOM() || (value + '');
+            let isHidden = (obj.Hidden && !obj.__IsDisable) || obj.__IsDisable;
+            if (obj.ObjType == "UserLocation") {
+                if (value == "-1")
+                    valF = "All locations";
+                else {
+                    let arr = value.split(',');
+                    if (arr.length == 1 && ebcontext.locations && ebcontext.locations.Locations) {
+                        let lobj = ebcontext.locations.Locations.find(e => e.LocId == arr[0]);
+                        if (lobj) valF = lobj.ShortName;
+                    }
+                    else {
+                        valF = "Selected " + arr.length + " locations";
+                    }
+                }
+            }
+            else if (obj.ObjType == "PowerSelect" && typeof (valF) == "object") {
+                let dmArr = Object.values(valF);
+                valF = "";
+                for (let i = 0; i < dmArr.length; i++) {
+                    let t = Object.values(dmArr[i]);
+                    if (t.length == 1) valF += t[0] + " ";
+                    else if (t.length >= 2) valF += t[1] + " ";
+                }
+                valF = valF.trim();
+            }
+            else if (obj.EbDbType === 16 && value == "0") {
+                valF = "";
+            }
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value, nameF, valF, isHidden));
+        }
     });
     return fltr_collection;
 }
@@ -7063,6 +7254,8 @@ function getSingleColumn(obj) {
     SingleColumn.Name = obj.Name;
     SingleColumn.Type = obj.EbDbType;
     SingleColumn.Value = (obj.ObjType === "PowerSelect" && obj.__isFDcontrol) ? -1 : "";
+    if (!SingleColumn.Value && (obj.EbDbType == 7 || obj.EbDbType == 11))
+        SingleColumn.Value = 0;
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;
@@ -7317,17 +7510,19 @@ function dgEBOnChangeBind() {
 }
 
 function SetDisplayMemberDate_EB(p1, p2) {
-    if (this.IsNullable && p1 !== null)
+    if (this.IsNullable && p1)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
-    if (p1 !== null && p1 !== undefined) {
+    if (p1) {
         if (this.ShowDateAs_ === 1 || this.ShowDateAs_ === 2) //month picker or year picker
             $('#' + this.EbSid_CtxId).val(p1);
         else if (this.EbDateType === 5) //Date
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD').format(ebcontext.user.Preference.ShortDatePattern));
         else if (this.EbDateType === 6) //DateTime
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
-        else if (this.EbDateType === 17) //Time
-            $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
+        else if (this.EbDateType === 17) { //Time
+            let ptn = this.ShowTimeAs === 4 ? 'HH:mm' : ebcontext.user.Preference.ShortTimePattern;
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ptn));
+        }
     }
     else
         $('#' + this.EbSid_CtxId).val('');
@@ -7382,6 +7577,7 @@ function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
             let SingleColumn = getObjByval(row.Columns, "Name", ctrlName);
             if (SingleColumn) {
                 obj.DataVals = SingleColumn;
+                obj.__initDataValue = SingleColumn.Value;
                 return;
             }
         }
@@ -7945,7 +8141,7 @@ function EbMessage(action, options) {
                                   <span class="copy" title="Copy to clipboard"><i class="fa fa-files-o"></i> Copy</span>
                                   </div>`);
         else {
-            $(`#eb_messageBox_container .msg`).text(settings.Message);
+            $(`#eb_messageBox_container .msg`).html(settings.Message);
             $(`#eb_messageBox_container`).css({ "background-color": settings.Background, "color": settings.FontColor });
         }
         if (settings.ShowCopyBtn)
@@ -7964,12 +8160,12 @@ function EbMessage(action, options) {
         });
         $(`#eb_messageBox_container .more`).off('click').on('click', function (e) {
             if ($(this).attr('title') === 'See more' && settings.Details) {
-                $(`#eb_messageBox_container .msg`).text(settings.Message + ' ' + settings.Details);
+                $(`#eb_messageBox_container .msg`).html(settings.Message + ' ' + settings.Details);
                 $(this).attr('title', 'See less');
                 $(this).html('<i class="fa fa-chevron-up"></i> See less');
             }
             else if ($(this).attr('title') === 'See less') {
-                $(`#eb_messageBox_container .msg`).text(settings.Message);
+                $(`#eb_messageBox_container .msg`).html(settings.Message);
                 $(this).attr('title', 'See more');
                 $(this).html('<i class="fa fa-chevron-down"></i> See more');
             }
@@ -8346,9 +8542,11 @@ const FormRenderCommon = function (options) {
     };
 
     this.setDefaultvalsNC = function (flatControls) {
-        $.each(flatControls, function (k, Obj) {
-            this.setDefaultValue(Obj);
-        }.bind(this));
+        if (!(this.FO.FormObj.DefaultValsExecOrder && this.FO.FormObj.DefaultValsExecOrder.$values.length)) {
+            $.each(flatControls, function (k, Obj) {
+                this.setDefaultValue(Obj);
+            }.bind(this));
+        }
     };
 
     this.execDefaultvalsNC = function (defaultValsExecOrder) {
@@ -8711,9 +8909,14 @@ const FormRenderCommon = function (options) {
                         return "not found";
                 }
                 else {
-                    ctrl = eval(path);
-                    if (!ctrl)
-                        return "not found";
+                    if (this.FO.GroupBoxes && this.FO.GroupBoxes.filter(function (obj) { return obj.Name == pathArr[1] }).length > 0) {
+                        ctrl = this.FO.GroupBoxes.filter(function (obj) { return obj.Name == pathArr[1] })[0];
+                    }
+                    else {
+                        ctrl = eval(path);
+                        if (!ctrl)
+                            return "not found";
+                    }
                 }
                 return ctrl;
             }
@@ -9016,9 +9219,14 @@ const FormRenderCommon = function (options) {
                 return false;
             }
         }
-        else if (ctrl.ObjType === "Date" && ctrl.RestrictionRule > 0) {
-            if (!ebcontext.finyears.checkDate(ctrl.getValue(), ctrl.RestrictionRule === 2)) {
-                ctrl.addInvalidStyle("Must be between " + ebcontext.finyears.getDateRangeToDisplay(ctrl.RestrictionRule === 2), 'warning');
+        return true;
+    };
+
+    this.sysValidation4FinYear = function (ctrl) {
+        if (ctrl.ObjType === "Date" && ctrl.RestrictionRule > 0) {
+            let msg = ebcontext.finyears.getWarningMessage(ctrl.getValue());
+            if (msg != null) {
+                //ctrl.addInvalidStyle(msg, 'warning');
                 return false;
             }
         }
@@ -9028,20 +9236,25 @@ const FormRenderCommon = function (options) {
     /////////////
     this.AllRequired_valid_Check = function (ctrlsArray = this.FO.flatControlsWithDG) {
         let required_valid_flag = true;
+        let fyError = false;
         let $notOk1stCtrl = null;
         let notOk1stCtrl = null;
         $.each(ctrlsArray, function (i, ctrl) {
             let $ctrl = $("#" + ctrl.EbSid_CtxId);
             if (this.FO.EbAlert)
                 this.FO.EbAlert.clearAlert(ctrl.EbSid_CtxId + "-al");
-            if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
+
+            let aOk = this.isRequiredOK(ctrl), bOk = this.isValidationsOK(ctrl),
+                cOk = this.sysValidationsOK(ctrl), dOk = this.sysValidation4FinYear(ctrl);
+
+            if (!aOk || !bOk || !cOk) {
                 required_valid_flag = false;
                 this.addInvalidStyle2TabPanes(ctrl);
                 if (this.FO.EbAlert) {
                     this.FO.EbAlert.alert({
                         id: ctrl.EbSid_CtxId + "-al",
-                        head: "Required",
-                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.RenderCollection[" + this.FO.__MultiRenderCxt + "].FRC.goToCtrlwithEbSid()'>"
+                        head: (!aOk ? "Required" : "Validation Error"),
+                        body: " : <div tabindex='1' class='eb-alert-item' cltrof='" + ctrl.EbSid_CtxId + "' onclick='ebcontext.webform.RenderCollection[" + (this.FO.__MultiRenderCxt - 1) + "].FRC.goToCtrlwithEbSid()'>"
                             + ctrl.Label + (ctrl.Hidden ? ' <b>(Hidden)</b>' : '') + '<i class="fa fa-external-link-square" aria-hidden="true"></i></div>',
                         type: "danger"
                     });
@@ -9052,14 +9265,22 @@ const FormRenderCommon = function (options) {
                     notOk1stCtrl = ctrl;
                 }
             }
+            else if (!dOk) {
+                fyError = true;
+                required_valid_flag = false;
+            }
+            //if (ctrl.__invalidValueValExpr) {
+            //    required_valid_flag = false;
+            //    EbMessage("show", { Message: `Unable to save. Invalid data in ${ctrl.Lable || ctrl.Name}`, AutoHide: false, Background: '#aa0000' });
+            //}
         }.bind(this));
 
         if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
-            this.GoToCtrl(notOk1stCtrl);
+            //this.GoToCtrl(notOk1stCtrl);
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
         if (this.FO.headerObj && this.FO.EbAlert) {
-            if (!required_valid_flag)
+            if (!required_valid_flag && !fyError)
                 this.FO.headerObj.showElement([this.FO.hBtns['GotoInvalid']]);
             else
                 this.FO.headerObj.hideElement([this.FO.hBtns['GotoInvalid']]);
@@ -9281,7 +9502,7 @@ const FormRenderCommon = function (options) {
     };
 
     this.isValidationsOK = function (ctrl) {
-        if (!ctrl.Validators)
+        if (!ctrl.Validators || ctrl.Validators.$values.length == 0)
             return true;
         let formValidationflag = true;
         ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
@@ -9370,6 +9591,7 @@ const FormRenderCommon = function (options) {
             this.GetDepHandleObj_ForDefValExpr_inner(a[i].HiddenExpDependants, DepHandleObj, 'HideP', 'HideC');
             this.GetDepHandleObj_ForDefValExpr_inner(a[i].DisableExpDependants, DepHandleObj, 'DisableP', 'DisableC');
         }
+        this.FindTvCtrlsWithoutDepdcyCheck(a, DepHandleObj);
         this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
         this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
 
@@ -9381,11 +9603,6 @@ const FormRenderCommon = function (options) {
                     if (_ctrl === 'not found')
                         continue;
                     if (_ctrl.ObjType === "TVcontrol") {
-                        if (!DepHandleObj.DrPaths.includes(dd[j])) {
-                            DepHandleObj.DrPaths.push(dd[j]);
-                            DepHandleObj.DrCtrls.push(_ctrl);
-                            _ctrl.__filterControls = [];
-                        }
                         _ctrl.__filterControls.push(a[i]);
                     }
                     else if (_ctrl.ObjType === "DataGrid" && (this.FO.Mode.isNew || _ctrl.DoNotPersist || _ctrl.IsLoadDataSourceAlways)) {
@@ -9396,7 +9613,7 @@ const FormRenderCommon = function (options) {
                     }
                 }
             }
-            if (ExprName === 'DefaultValueExpression') {
+            if (ExprName === 'DefaultValueExpression' && this.FO.DGs) {
                 for (let i = 0; i < this.FO.DGs.length; i++) {
                     if (this.FO.DGs[i].Eb__paramControls && this.FO.DGs[i].Eb__paramControls.$values.length === 0) {
                         DepHandleObj.DrPaths.push('form.' + this.FO.DGs[i].Name);
@@ -9431,8 +9648,14 @@ const FormRenderCommon = function (options) {
                 }
             }
         }
-        this.FindCtrlsWithNoDependency_inner(this.FO.TabControls, ExprName, DepHandleObj, prop1, prop2);
-        this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
+        if (this.FO.TabControls)
+            this.FindCtrlsWithNoDependency_inner(this.FO.TabControls, ExprName, DepHandleObj, prop1, prop2);
+
+        if (this.FO.WizardControls)
+            this.FindCtrlsWithNoDependency_inner(this.FO.WizardControls, ExprName, DepHandleObj, prop1, prop2);
+
+        if (this.FO.GroupBoxes)
+            this.FindCtrlsWithNoDependency_inner_2(this.FO.GroupBoxes, ExprName, DepHandleObj, prop1, prop2);
     };
 
     this.FindCtrlsWithNoDependency_inner = function (ctrlConts, ExprName, DepHandleObj, prop1, prop2) {
@@ -9447,7 +9670,30 @@ const FormRenderCommon = function (options) {
                 }
             }
         }
-    }
+    };
+
+    this.FindCtrlsWithNoDependency_inner_2 = function (ctrls, ExprName, DepHandleObj, prop1, prop2) {
+        for (let i = 0; i < ctrls.length; i++) {
+            if (ctrls[i][ExprName] && ctrls[i][ExprName].Code && ctrls[i][ExprName].Lang === 0) {
+                if (!DepHandleObj[prop1].includes(ctrls[i].__path)) {
+                    DepHandleObj[prop1].push(ctrls[i].__path);
+                    DepHandleObj[prop2].push(ctrls[i]);
+                }
+            }
+        }
+    };
+
+    this.FindTvCtrlsWithoutDepdcyCheck = function (Ctrls, DepHandleObj) {
+        for (let i = 0; i < Ctrls.length; i++) {
+            if (Ctrls[i].ObjType === "TVcontrol") {
+                if (!DepHandleObj.DrPaths.includes(Ctrls[i].__path)) {
+                    DepHandleObj.DrPaths.push(Ctrls[i].__path);
+                    DepHandleObj.DrCtrls.push(Ctrls[i]);
+                    Ctrls[i].__filterControls = [];
+                }
+            }
+        }
+    };
 
     this.execAllValExprForDoNotPersistCtrls = function () {
         if (!this.FO.FormObj.DoNotPersistExecOrder) {//for old forms
@@ -9460,11 +9706,13 @@ const FormRenderCommon = function (options) {
 
     this.execAllDefaultValExpr = function () {
         let DepHandleObj;
-        if (this.FO.mode != "Clone Mode" && this.FO.mode != "Draft Mode") { // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
+        if ((this.FO.mode != "Clone Mode" || this.FO.FormObj.EnableDefValExprForClone) && this.FO.mode != "Draft Mode") { // DefValExpr blocked for Clone & Draft. In Export, it will exec[21.08.04]
             if (!this.FO.FormObj.DefaultValsExecOrder) {//for old forms
                 console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
                 return;
             }
+            if (this.FO.rendererName == 'FilterDialog' && this.FO.PSs.length > 0)
+                this.FO.FdInitInProgress = true;
             DepHandleObj = this.GetDepHandleObj_ForDefValExpr(this.FO.FormObj.DefaultValsExecOrder, 'DefaultValueExpression');
             this.ctrlChangeListener_inner0(DepHandleObj);
         }
@@ -9479,6 +9727,7 @@ const FormRenderCommon = function (options) {
                 DisableP: [], DisableC: []
             };
             let a = this.FO.flatControls;
+            this.FindTvCtrlsWithoutDepdcyCheck(a, DepHandleObj);
             this.FindCtrlsWithNoDependency(a, 'HiddenExpr', DepHandleObj, 'HideP', 'HideC');
             this.FindCtrlsWithNoDependency(a, 'DisableExpr', DepHandleObj, 'DisableP', 'DisableC');
             this.ctrlChangeListener_inner2(DepHandleObj);
@@ -9593,11 +9842,16 @@ const FormRenderCommon = function (options) {
                     let ph = true;
                     if (Prop === 'DrDependents') {
                         if (nxtCtrl.ObjType === 'DataGrid') {
-                            let x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
-                            while (x >= 0) {
-                                DepHandleObj[prop1].splice(x, 1);
-                                DepHandleObj[prop2].splice(x, 1);
-                                x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                            if (nxtCtrl.ShowRefreshBtn) {
+                                ph = false;
+                            }
+                            else {
+                                let x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                                while (x >= 0) {
+                                    DepHandleObj[prop1].splice(x, 1);
+                                    DepHandleObj[prop2].splice(x, 1);
+                                    x = DepHandleObj[prop1].findIndex(e => e.includes(a[i]));
+                                }
                             }
                         }
                         else if (nxtCtrl.ObjType === 'PowerSelect' && nxtCtrl.IsDGCtrl) {
@@ -9687,20 +9941,43 @@ const FormRenderCommon = function (options) {
         $.each(flatControls, function (k, Obj) {
             Obj.bindOnChange(this.ctrlChangeListener.bind(this, Obj));
 
+            $("#" + Obj.EbSid_CtxId).on("blur", this.ctrlOnBlurListener.bind(this, Obj));
+
             if (Obj.Required) {
                 if (Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)
                     $("#cont_" + Obj.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
                 else
-                    $("#" + Obj.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+                    $("#" + Obj.EbSid_CtxId).on("focus", this.removeInvalidStyle.bind(this, Obj));
             }
 
-            if (Obj.Unique)
-                $("#" + Obj.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, Obj), 1000));
+            //if (Obj.Required) {
+            //    if (Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)
+            //        $("#cont_" + Obj.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+            //    else
+            //        $("#" + Obj.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, Obj)).on("focus", this.removeInvalidStyle.bind(this, Obj));
+            //}
 
-            if (Obj.Validators && Obj.Validators.$values.length > 0) {
-                $("#" + Obj.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, Obj));
-            }
+            //if (Obj.Unique)
+            //    $("#" + Obj.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, Obj), 1000));
+
+            //if (Obj.Validators && Obj.Validators.$values.length > 0) {
+            //    $("#" + Obj.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, Obj));
+            //}
         }.bind(this));
+    };
+
+    this.ctrlOnBlurListener = function (Obj) {
+        if (Obj.Required && !(Obj.ObjType === "SimpleSelect" || Obj.RenderAsSimpleSelect)) {
+            if (!this.isRequiredOK(Obj))
+                return;
+        }
+        if (Obj.Validators && Obj.Validators.$values.length > 0) {
+            if (!this.isValidationsOK(Obj))
+                return;
+        }
+        if (Obj.Unique) {
+            this.checkUnique(Obj);
+        }
     };
 
     //listener entry point
@@ -9835,8 +10112,8 @@ const FormRenderCommon = function (options) {
                     else {
                         if (!this.FO.Mode.isView) {
                             depCtrl.enable();
-                            depCtrl.__IsDisableByExp = false;
                         }
+                        depCtrl.__IsDisableByExp = false;
                     }
                 }
             }
@@ -9845,8 +10122,14 @@ const FormRenderCommon = function (options) {
                 EbMessage("show", { Message: `Failed to execute 'ReadOnlyExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
-        if (DepHandleObj.isInitSetup)
+        if (DepHandleObj.isInitSetup) {
+            if (this.FO.FdInitInProgress) {
+                this.FO.FdInitInProgress = false;
+                this.FO._allPSsInit = true;
+            }
+            //End
             return;
+        }
         let chngFn = DepHandleObj.curCtrl.OnChangeFn;
         if (chngFn && chngFn.Code && chngFn.Code.trim() !== "") {
             try {
@@ -9857,7 +10140,11 @@ const FormRenderCommon = function (options) {
                 EbMessage("show", { Message: `Failed to execute 'OnChange Function': ${DepHandleObj.curCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
             }
         }
-
+        if (this.FO.FdInitInProgress) {
+            this.FO.FdInitInProgress = false;
+            this.FO._allPSsInit = true;
+        }
+        //End
     };
 
     //resume val expr
@@ -9889,9 +10176,11 @@ const FormRenderCommon = function (options) {
                     let valExpFnStr = atob(depCtrl[DepHandleObj.exprName].Code);
                     ValueExpr_val = new Function("form", "user", "sourcectrl", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject, DepHandleObj.curCtrl)();
                     ValueExpr_val = this.getProcessedValue(depCtrl, ValueExpr_val);
+                    //depCtrl.__invalidValueValExpr = false;
                 }
                 catch (e) {
                     console.error(e);
+                    //depCtrl.__invalidValueValExpr = true;
                     EbMessage("show", { Message: `Failed to execute '${(DepHandleObj.exprName === 'ValueExpr' ? '' : 'Default')}ValueExpression': ${depCtrl.Name} - ${e.message}`, AutoHide: true, Background: '#aa0000' });
                 }
                 if (DepHandleObj.isInitSetup || this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
@@ -9989,11 +10278,22 @@ const FormRenderCommon = function (options) {
         depCtrl.__continue = null;
 
         if (depCtrl.ObjType === "TVcontrol") {
-            if (DepHandleObj.isInitSetup) {
-                depCtrl.reloadWithParamAll();
+            let $tabpane = $("#cont_" + depCtrl.EbSid_CtxId).closest('[ctype="TabPane"]');
+            if ($tabpane.length == 0 || $tabpane.is(':visible')) {
+                if (DepHandleObj.isInitSetup) {
+                    depCtrl.reloadWithParamAll();
+                }
+                else {
+                    depCtrl.reloadWithParam(curCtrl);
+                }
             }
             else {
-                depCtrl.reloadWithParam(curCtrl);
+                if (DepHandleObj.isInitSetup) {
+                    depCtrl.__reloadWithParamAll = true;
+                }
+                else if (!depCtrl.__reloadWithParamAll) {
+                    depCtrl.__reloadWithParam = true;
+                }
             }
         }
         else if (depCtrl.ObjType === "PowerSelect") {

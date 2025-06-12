@@ -1626,8 +1626,11 @@ const EbPowerSelect = function (ctrl, options) {
                     this.ComboObj.Padding = { $type: "ExpressBase.Common.Objects.UISides, ExpressBase.Common", Top: 7, Right: 10, Bottom: 7, Left: 10 }
             }
 
-            if (this.ComboObj.Padding)
-                this.$searchBoxes.css("padding", `${this.ComboObj.Padding.Top}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`);
+            if (this.ComboObj.Padding) {
+                let pdTop = this.ComboObj.Padding.Top;
+                let pd = `${(pdTop > 1 ? pdTop - 1 : pdTop)}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`;
+                $(`<style>#cont_${this.ComboObj.EbSid_CtxId} input[type=search] { padding: ${pd}; }; .selected-tag { padding: ${pd}; }</style>`).appendTo('body');
+            }
 
             if (this.ComboObj.IsInsertable) {
                 this.ComboObj.__AddButtonInit({
@@ -1636,7 +1639,8 @@ const EbPowerSelect = function (ctrl, options) {
                     OpenInNewTab: this.ComboObj.OpenInNewTab,
                     ObjType: 'PowerSelect',
                     DDrefresh: this.DDrefresh.bind(this),
-                    IsDGCtrl: this.ComboObj.IsDGCtrl
+                    IsDGCtrl: this.ComboObj.IsDGCtrl,
+                    PsJsObj: this
                 });
             }
 
@@ -1753,6 +1757,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getSearchTextRegex = function (text) {
+        if (text && typeof (text) === 'string') {
+            text = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
         if (typeof (this.ComboObj.SearchOperator) === 'number') {
             let op = this.ComboObj.SearchOperator.toString();
             if (op === EbEnums_w.PsSearchOperators.StartsWith)
@@ -2164,7 +2171,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.ajaxData = function () {
         this.EbObject = new EbTableVisualization("Container");// used by all ebobejcts
-        this.filterValues = this.getFilterValuesFn();
+        this.filterValues = this.getFilterValuesFn(this.ComboObj.ParamsList);
 
         if (!getObjByval(this.filterValues, 'Name', this.ComboObj.Name)) {
             this.filterValues.push(new fltr_obj(this.ComboObj.EbDbType, this.ComboObj.Name, 0));
@@ -2918,8 +2925,8 @@ const EbPowerSelect = function (ctrl, options) {
             if (vms.length > 0) {
                 let _params = btoa(JSON.stringify([{ Name: 'id', Type: '7', Value: vms[$(e.currentTarget).index()] }]));
                 if (this.ComboObj.OpenInNewTab) {
-                    let _locale = ebcontext.languages.getCurrentLocale();
-                    let url = `../WebForm/Index?_r=${this.ComboObj.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}&_lo=${_locale}`;
+                    let _l = ebcontext.languages.getCurrentLanguageCode();
+                    let url = `../WebForm/Index?_r=${this.ComboObj.FormRefId}&_p=${_params}&_m=${1}&_l=${ebcontext.locations.getCurrent()}&_lg=${_l}`;
                     window.open(url, '_blank');
                 }
                 else
@@ -3881,7 +3888,7 @@ prashanth pamidi (https://github.com/prrashi)*/
             if (prelod) {
 
                 if (cntype == 1) {
-                    filelurl = `/images/small/${refid}.jpg`;
+                    filelurl = `/images/${refid}.jpg`;
                 } else {
                     let arr = file.name.split('.');
                     let exten = arr[arr.length - 1];
@@ -4222,7 +4229,7 @@ prashanth pamidi (https://github.com/prrashi)*/
             let fileref = $(e.target).closest(".uploaded-file").attr("filref");
 
             //ebfileviewer 
-            plugin.ebFilesview.showimage(fileref);
+            plugin.ebFilesview.showimage(fileref, plugin.settings.fileCtrl.ViewerPosition);
         }
 
 

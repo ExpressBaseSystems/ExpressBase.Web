@@ -16,6 +16,23 @@
     border: solid 1px #b7b7b7;
 }
 
+.indexcontextmenu {
+    white-space: nowrap; /* Prevent line breaks */
+    display: inline-block; /* Or flex if preferred */
+}
+
+.icon-index {
+    margin-right: 5px; /* Optional spacing */
+    vertical-align: middle; /* Align icon and text */
+}
+.indexcontextmenu {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Adds space between icon and text */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+
 div .mytree div {
     padding-left: 20px;
     /*background: transparent url(http://www3.telus.net/jianlu58/bullet.gif) no-repeat top left;

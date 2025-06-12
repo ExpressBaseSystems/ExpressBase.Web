@@ -1034,18 +1034,17 @@ input:checked + .proslider:before {
 
 /*#region SupportTicket*/
 #tr-window.tr {
-    width: 550px !important;
+    width: 450px !important;
 }
 
 #tr-window .trhead {
     color: #4D86D6;
     font-family: 'Blinker', sans-serif;
     font-weight: 600;
-    font-size: 29px;
+    font-size: 24px;
 }
 
 #tr-window .trhlo {
-    margin-left: -39rem;
 }
 
 #tr-window .trli {
@@ -1060,11 +1059,11 @@ input:checked + .proslider:before {
     color: white;
     border: none;
     border-radius: 5px; /* Rounded corners */
-    padding: 10px 15px;
+    padding: 8px 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 12px;
     transition: background-color 0.3s;
 }
 
@@ -1142,9 +1141,8 @@ input:checked + .proslider:before {
 
 #tr-window .tinf_row {
     display: flex; /* Flexbox for horizontal alignment */
-    gap: 20px; /* Space between columns */
+    gap: 10px; /* Space between columns */
     width: 100%; /* Full width */
-    height: 55vh;
 }
 
 #tr-window .tinf_col {
@@ -1157,14 +1155,14 @@ input:checked + .proslider:before {
 }
 
 #tr-window .tinf_form-group {
-    margin-bottom: 15px; /* Spacing between form groups */
+    margin-bottom: 12px; /* Spacing between form groups */
 }
 
 #tr-window #tinf_status,
 #tr-window #tinf_comments {
     width: 98%; /* Full width for inputs */
     border-radius: 4px; /* Rounded corners */
-    border: 1px solid #ccc; /* Border for inputs */
+    border: 1px solid transparent; /* Border for inputs */
     padding: 10px; /* Padding for inputs */
 }
 
@@ -1189,7 +1187,7 @@ input:checked + .proslider:before {
 
 #tr-window .tinf_type-label {
     flex: 1; /* Each label takes equal space */
-    padding: 10px 0; /* Padding for labels (adjusted) */
+    padding: 8px ; /* Padding for labels (adjusted) */
     text-align: center; /* Center text */
     transition: background-color 0.3s, color 0.3s; /* Smooth transitions */
     border-radius: 25px; /* Make individual labels' corners rounded */
@@ -1213,7 +1211,8 @@ input:checked + .proslider:before {
 #tr-window #tinf_priority {
     width: 100%; /* Full width for select */
     border-radius: 4px; /* Rounded corners */
-    padding: 10px; /* Padding for select */
+    border-color:transparent;
+    padding: 3px; /* Padding for select */
     appearance: none; /* Remove default styling */
     -moz-appearance: none; /* Remove Firefox default styling */
     -webkit-appearance: none; /* Remove Safari default styling */
@@ -1235,6 +1234,33 @@ input:checked + .proslider:before {
             margin-right: 5px; /* Space between dot and text */
             vertical-align: middle; /* Align dot with text */
         }
+
+.floating-form-group {
+    padding: 5px;
+    border: 1px solid;
+    margin: 10px;
+    position: relative;
+    border-radius: 8px;
+}
+
+    .floating-form-group > label {
+        position: absolute;
+        top: -10px;
+        left: 20px;
+        background-color: white;
+        padding: 0 5px;
+        font-size: 12px;
+        color: #333;
+    }
+
+    .floating-form-group > input,
+    .floating-form-group > textarea {
+        border: none !important;
+        outline: none;
+        box-shadow: none;
+        width: 100%;
+    }
+
 
 
 #tr-window .thumbnail-container {
@@ -1365,7 +1391,7 @@ input:checked + .proslider:before {
     overflow: hidden;
 }
 .tab-pane {
-    display: none; 
+    display: none;
 }
 
     .tab-pane.active {
@@ -1384,12 +1410,10 @@ input:checked + .proslider:before {
 }
 
 #tr-window #comments-tab .trcmnt_form {
-    position: sticky;
-    bottom: 0;
-    background-color: #fff;
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    z-index: 5; /* Ensure it is above other content */
+    position: absolute;
+    z-index: 5;
+    width: 91%;
+    margin-top: 37.5%;
 }
 
 #tr-window #comments-tab .trcmnt_comments-display {
@@ -1450,12 +1474,13 @@ input:checked + .proslider:before {
     position: sticky;
     bottom: 0;
     background-color: #182E50;
-    padding: 10px;
+    padding: 5px;
     display: flex;
-    height: 60px; /* used in calc above */
+    height: 42px; /* used in calc above */
     align-items: center;
     justify-content: space-between;
     z-index: 20; /* Make sure it's on top of the form */
+    width: 450px;
 }
 
 

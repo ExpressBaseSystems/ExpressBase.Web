@@ -33,7 +33,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet("UserDashBoard")]
         public IActionResult UserDashboard()
         {
-            if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+            if ((ViewBag.UId > 1 || ViewBag.cide == "demo") && ViewBag.wc == RoutingConstants.UC)
             {
                 Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
                 Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));

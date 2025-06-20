@@ -2908,18 +2908,18 @@ const WebFormRender = function (option) {
         $("#iFramePdf").on('load', function (evt) {
             try {
                 if ($(evt.target).attr("src") !== undefined) {
-                    if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
-                        if ($("#iFramePdf").data('data-opr') == 'preview') {
-                            $("#iFramePdfModal").show();
-                        }
-                        else {
-                            document.getElementById("iFramePdf").focus();
-                            document.getElementById("iFramePdf").contentWindow.print();
-                        }
+                    //if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
+                    if ($("#iFramePdf").data('data-opr') == 'preview') {
+                        $("#iFramePdfModal").show();
                     }
                     else {
-                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                        document.getElementById("iFramePdf").focus();
+                        document.getElementById("iFramePdf").contentWindow.print();
                     }
+                    //}
+                    //else {
+                    //    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                    //}
                     ebcontext.webform.hideLoader();
                 }
             }

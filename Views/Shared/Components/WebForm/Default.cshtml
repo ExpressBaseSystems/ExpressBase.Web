@@ -504,17 +504,27 @@
 
     $("#iFramePdf").on('load', function (evt) {
         try {
-            if ($(evt.target).attr("src") !== undefined) {
-                if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
-                    document.getElementById("iFramePdf").focus();
-                    document.getElementById("iFramePdf").contentWindow.print();
-                }
-                else {
-                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
-                }
-                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
-                $("#iFramePdfModal").modal("show");
+            const iframe = document.getElementById("iFramePdf");
+            const iframeWindow = iframe.contentWindow;
+            const iframeDoc = iframeWindow.document;
+
+            const src = $(evt.target).attr("src");
+            const isPdf = src && src.toLowerCase().endsWith(".pdf");
+
+            // Alternative checks for stricter verification
+            // const isPdf = iframeDoc.contentType === "application/pdf" || src.toLowerCase().endsWith(".pdf");
+
+            if (isPdf) {
+                iframe.focus();
+                iframeWindow.print();
             }
+
+            else {
+                EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+            }
+            $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+            $("#iFramePdfModal").modal("show");
+
         }
         catch (e) {
             $("#eb_common_loader").EbLoader("hide");

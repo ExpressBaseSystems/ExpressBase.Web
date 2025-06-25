@@ -1034,7 +1034,11 @@ input:checked + .proslider:before {
 
 /*#region SupportTicket*/
 #tr-window.tr {
-    width: 450px !important;
+    width: 470px !important;
+}
+.colored-option::before {
+    content: '● ';
+    margin-right: 4px;
 }
 
 #tr-window .trhead {
@@ -1049,23 +1053,25 @@ input:checked + .proslider:before {
 
 #tr-window .trli {
     font-family: 'Blinker', sans-serif;
-    font-size: 18px !important;
+    font-size: 15px !important;
 }
+    #tr-window .label{
+        font-weight:400 !important;
+    }
 
 
-
-#tr-window .trfooter-btn {
-    background-color: #4D86D6; /* Background color for the button */
-    color: white;
-    border: none;
-    border-radius: 5px; /* Rounded corners */
-    padding: 8px 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    transition: background-color 0.3s;
-}
+    #tr-window .trfooter-btn {
+        background-color: #4D86D6; /* Background color for the button */
+        color: white;
+        border: none;
+        border-radius: 5px; /* Rounded corners */
+        padding: 8px 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        transition: background-color 0.3s;
+    }
 
 
     #tr-window .trfooter-btn:hover {
@@ -1104,7 +1110,7 @@ input:checked + .proslider:before {
 
     #tr-window .trfstyled-tab-item a {
         display: block;
-        padding: 10px 0;
+        padding: 9px ;
         color: #333;
         text-decoration: none;
         border: none;
@@ -1142,7 +1148,7 @@ input:checked + .proslider:before {
 #tr-window .tinf_row {
     display: flex; /* Flexbox for horizontal alignment */
     gap: 10px; /* Space between columns */
-    width: 100%; /* Full width */
+    width: 96%; /* Full width */
 }
 
 #tr-window .tinf_col {
@@ -1251,6 +1257,7 @@ input:checked + .proslider:before {
         padding: 0 5px;
         font-size: 12px;
         color: #333;
+        font-weight: normal;
     }
 
     .floating-form-group > input,
@@ -1398,6 +1405,10 @@ input:checked + .proslider:before {
         display: flex !important; /* use flex so comments layout still works */
         flex-direction: column;
     }
+body.dc-console .tab-pane.active {
+    height: 340px;
+}
+
 
 #tr-window .trcmnt_comments-container {
     display: flex;
@@ -1471,7 +1482,7 @@ input:checked + .proslider:before {
 
 /* Adjust the footer positioning */
 #tr-window .tr-footer {
-    position: sticky;
+    position: absolute;
     bottom: 0;
     background-color: #182E50;
     padding: 5px;
@@ -1480,7 +1491,7 @@ input:checked + .proslider:before {
     align-items: center;
     justify-content: space-between;
     z-index: 20; /* Make sure it's on top of the form */
-    width: 450px;
+    width: 465px;
 }
 
 

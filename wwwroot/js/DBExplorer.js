@@ -194,11 +194,13 @@
                 data: rows,
                 ordering: true,
                 searching: true,
-                scrollY: '60vh',  // Responsive height
+                scrollY: '60vh',
                 scrollX: true,
                 scrollCollapse: true,
                 paging: true,
+                autoWidth: false, // Important: let CSS control width
             });
+
 
             // Show modal
             $('#resultModal').modal('show');
@@ -206,19 +208,25 @@
     }.bind(this);
 
     this.drawdatatable = function (tableid, columns, result) {
-        // Initialize DataTable with options for sorting, searching, pagination, and scroll
-        var table = $('#' + tableid).DataTable({
+        $('#' + tableid).DataTable({
             columns: columns,
-            data: result, // Use data: result for the DataTable
+            data: result,
             ordering: true,
             searching: true,
             scrollY: '200px',
-            scrollX: '500px', // Enable horizontal scrolling
+            scrollX: true, // Ensure horizontal scroll is on
             scrollCollapse: true,
             paging: true,
-            // ... other options
+            autoWidth: false, // Prevent automatic miscalculation
+            columnDefs: [
+                {
+                    targets: "_all",
+                    className: "dt-left" // Optional: align text to center
+                }
+            ]
         });
     };
+
 
     // Function to create modal dynamically
     function createModal() {

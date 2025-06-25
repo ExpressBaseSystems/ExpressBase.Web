@@ -466,7 +466,9 @@ color: white;
     content: "\e150";
     font-size: 12px;
 }
-
+.table table-striped table-bordered dataTable no-footer{
+    width:100% !important;
+}
 .tab-content .dataTables_scrollBody thead:first-child tr {
     height: 0vh !important;
 }

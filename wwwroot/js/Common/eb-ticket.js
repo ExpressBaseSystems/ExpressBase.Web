@@ -392,6 +392,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function updateStatusColor() {
+        const statusSelect = document.getElementById('tinf_status');
+        if (!statusSelect) return;
+        const selectedOption = statusSelect.options[statusSelect.selectedIndex];
+        const color = selectedOption?.getAttribute('data-color') || "#000";
+        statusSelect.style.color = color;
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusSelect = document.getElementById('tinf_status');
+        if (!statusSelect) return;
+
+        updateStatusColor(); // initial call
+        statusSelect.addEventListener('change', updateStatusColor); // update on change
+    });
+
+
+
+
     function populateAndShowTicketForm(ticket) {
 
         mainContent.style.display = 'none'; // Hide the main content including headings and tabs
@@ -422,6 +440,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("ticket-title").value = ticket.title || "";
         document.getElementById("ticket-description").value = ticket.description || "";
         document.getElementById("tinf_status").value = ticket.status || "New";
+        updateStatusColor(); // Update color after setting the value
         document.getElementById("tinf_comments").value = ticket.comments || "";
         document.getElementById("tinf_priority").value = ticket.priority || "low";
 
@@ -467,6 +486,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const isDeveloper = window.ViewBag && window.ViewBag.wc === "dc";
         const isUser = window.ViewBag && window.ViewBag.wc === "uc";
+
+        if (isDeveloper) {
+            document.body.classList.add("dc-console");
+            document.body.classList.remove("uc-console");
+        } else if (isUser) {
+            document.body.classList.remove("dc-console");
+            document.body.classList.add("uc-console");
+        } else {
+            document.body.classList.remove("dc-console", "uc-console");
+        }
+
         console.log("Console Type:", isDeveloper ? "Developer" : isUser ? "User" : "Unknown");
         console.log("Current Username:", currentUserName);
         if (isDeveloper) {

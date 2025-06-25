@@ -13,7 +13,7 @@
             </div>
 
             <!-- Tabs Navigation -->
-            <ul class="nav nav-tabs eb-styledTab" style="height: 43px;">
+            <ul class="nav nav-tabs eb-styledTab" style="height: 41px;">
                 <li class="nav-item active">
                     <a class="nav-link nf-window-tabstyle active trli" data-toggle="tab" role="tab" href="#alltickets-tab">
                         Active Tickets <span id="tr-notification-count"></span>
@@ -169,7 +169,7 @@
 
                 <!-- Styled Tabs -->
                 <div class="trfstyled-tab-container" style="border-radius: 8px; overflow: hidden; margin:6px; margin-top:-13%">
-                    <ul class="trfstyled-tab" style="height: 38px; display: flex; justify-content: space-between; border: none;">
+                    <ul class="trfstyled-tab" style="height: 34px; display: flex; justify-content: space-between; border: none;">
                         <li class="trfstyled-tab-item" style="flex: 1; text-align: center;">
                             <a class="trli trfstyled-tab-link active" data-toggle="tab" role="tab" href="#info-tab">
                                 Info
@@ -201,31 +201,32 @@
                                 <!-- Left Column -->
                                 <div class="tinf_col">
                                     <div class="tinf_form-group floating-form-group">
-                                        <label for="tinf_status">Status</label>
+                                        <label class="fw-normal" for="tinf_status">Status</label>
                                         <select class="tinf_form-control" id="tinf_status">
-                                            <option value="New" selected>New</option>
-                                            <option value="Assigned">Assigned</option>
-                                            <option value="Need more Info">Need more Info</option>
-                                            <option value="Rejected">Rejected</option>
-                                            <option value="Resolved">Resolved</option>
-                                            <option value="Reopened">Reopened</option>
-                                            <option value="Deferred">Deferred</option>
+                                            <option value="New" data-color="#E0C04D" selected>New</option>
+                                            <option value="Assigned" data-color="#4D86D6">Assigned</option>
+                                            <option value="Need more Info" data-color="#D0463D">Need more Info</option>
+                                            <option value="Rejected" data-color="#505050">Rejected</option>
+                                            <option value="Resolved" data-color="#2BB730">Resolved</option>
+                                            <option value="Reopened" data-color="#8950B2">Reopened</option>
+                                            <option value="Deferred" data-color="#282828">Deferred</option>
                                         </select>
                                     </div>
 
 
                                     <div class="tinf_form-group floating-form-group">
+                                        <label class="fw-normal">Comments</label>
                                         <textarea class="tinf_form-control" id="tinf_comments" rows="3" placeholder="//comments"></textarea>
                                     </div>
 
                                     <!-- Estimated Hours and ETA in the same row (Label & Input side by side) -->
-                                    <div class="tinf_form-group tfd" style="display: flex; gap: 15px; align-items: center;">
-                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                    <div class="tinf_form-group  tfd" style="display: flex; gap: 15px; align-items: center;">
+                                        <div class="floating-form-group" style="display: flex; align-items: center; gap: 5px;">
                                             <label for="tinf_estimated_hours" style="white-space: nowrap;">Estimated Hours:</label>
                                             <input type="number" class="tinf_form-control" id="tinf_estimated_hours"
                                                    style="width: 85px; padding: 5px; font-size: 14px;">
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                        <div class="floating-form-group" style="display: flex; align-items: center; gap: 5px;">
                                             <label for="tinf_eta" style="white-space: nowrap;">ETA:</label>
                                             <input type="date" class="tinf_form-control" id="tinf_eta"
                                                    style="width: 85px; padding: 5px; font-size: 14px;" >
@@ -233,7 +234,7 @@
                                     </div>
 
                                     <!-- Actual Hours -->
-                                    <div style="display: flex; align-items: center; gap: 32px;" class="tinf_form-group tfd">
+                                    <div style="display: flex; align-items: center; gap: 32px;" class="tinf_form-group tfd floating-form-group">
                                         <label for="tinf_actual_hours">Actual Hours</label>
                                         <input type="number" class="tinf_form-control" id="tinf_actual_hours"
                                                style="width: 85px; padding: 5px; font-size: 14px;">
@@ -256,7 +257,7 @@
                                     <div class="tinf_form-group floating-form-group">
                                         <label for="tinf_priority">Priority</label>
                                         <select id="tinf_priority" class="tinf_form-control">
-                                            <option value="low" data-color="#D6E33F">&#9679; Low</option>
+                                            <option value="low" data-color="#D6E2F">&#9679; Low</option>
                                             <option value="medium" data-color="#E3BE3A">&#9679; Medium</option>
                                             <option value="high" data-color="#C46107">&#9679; High</option>
                                             <option value="critical" data-color="#CF1A1A">&#9679; Critical</option>
@@ -264,7 +265,7 @@
                                     </div>
                                     <!-- Raising on someone’s behalf? -->
                                     <div class="tinf_form-group" style="font-size:12px ;margin-left: 12px; margin-top: -6px;">
-                                        <label>Raising on someone’s behalf?</label>
+                                        <label style="font-weight: normal;">Raising on someone’s behalf?</label>
                                         <div style="display: flex; gap: 10px; align-items: center;">
                                             <input type="radio" id="tinf_raising_self" name="tinf_raising" value="self">
                                             <label for="tinf_raising_self">No, Self</label>
@@ -288,7 +289,7 @@
                     <div id="attachments-tab" class="tab-pane h-100">
                         <form id="ticket-form-attachments">
                             <!-- Attachments Button Group -->
-                            <div class="attachments-row" style="display: flex; justify-content: space-between; gap: 24px;">
+                            <div class="attachments-row" style="display: flex; justify-content: space-between; gap: 33px;">
                                 <!-- Capture Screenshot Button -->
                                 <div class="form-group" style="flex: 1;">
                                     <button type="button" class="btn " style="background-color: #182E50; color: white; border-radius: 25px; font-size:12px; padding:6px 8px; " id="capture-screenshot">
@@ -343,7 +344,7 @@
                         <!-- Comments Input Form -->
                         <form id="ticket-form-comments" class="trcmnt_form"> 
                             <input type="hidden" id="current-username" value="@ViewBag.UserDisplayName" />
-                            <div class="form-group trcmnt_form-group mb-0"> 
+                            <div class="form-group trcmnt_form-group mb-0" style="margin-top: -4px;">
                                 <div class="trcmnt_input-group"> 
                                     <input type="text" class="form-control trcmnt_input"  id="ticket-comments" placeholder="Enter comments"> 
                                     <button type="button" class="btn btn-primary trcmnt_send-btn" id="send-comment-btn">
@@ -356,7 +357,7 @@
 
 
                     <!-- Ticket Form Footer -->
-                    <div class="tr-footer" style="background-color: #182E50; padding: 8px; display: flex; align-items: center; justify-content: space-between;position: fixed; bottom:0;width:450px;margin-left: -17px;">
+                    <div class="tr-footer" style="background-color: #182E50; padding: 8px; display: flex; align-items: center; justify-content: space-between;position: fixed; bottom:0;width:465px;margin-left: -17px;">
                         <!-- Image Logo -->
                         <a href="/home">
                             <img src="~/images/eb_service_desk_logo.svg" alt="Logo" style="height: 35px;">

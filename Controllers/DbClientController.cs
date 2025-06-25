@@ -163,14 +163,31 @@ namespace ExpressBase.Web.Controllers
 
 
         public DbClientQueryResponse SelectQuery(string Query)
-        {  // Check if the user is a developer
+        {
             if (ViewBag.wc != RoutingConstants.DC)
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
-            DbClientQueryResponse ress = new DbClientQueryResponse();
-            //bool containsSearchResult = Query.Contains("select");
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientSelectRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
+
+            string queryLower = Query.ToLower();
+
+            // Block SELECT * on sensitive tables
+            if (queryLower.Contains("select *") &&
+               (queryLower.Contains("from eb_downloads") || queryLower.Contains("from eb_files_bytea")))
+            {
+                throw new InvalidOperationException("SELECT * is not allowed on tables with large BYTEA data. Please specify non-BYTEA columns explicitly.");
+            }
+
+            // Block SELECT of BYTEA columns directly from sensitive tables
+            if ((queryLower.Contains("from eb_downloads") || queryLower.Contains("from eb_files_bytea")) &&
+                queryLower.Contains("bytea"))
+            {
+                throw new InvalidOperationException("Selecting BYTEA columns directly is not allowed on these tables.");
+            }
+
+            DbClientQueryResponse ress = this.ServiceClient.Post<DbClientQueryResponse>(
+                new DbClientSelectRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
+
             if (ress.Dataset != null)
             {
                 ress.RowCollection = new List<RowColletion>();
@@ -183,6 +200,7 @@ namespace ExpressBase.Web.Controllers
             }
             return ress;
         }
+
 
 
 
@@ -378,6 +396,10 @@ namespace ExpressBase.Web.Controllers
                     _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px" };
                 else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px" };
+                else
+                {
+                    continue;
+                }
                 _col.EbSid = column.Type.ToString() + column.ColumnIndex;
                 _col.RenderType = _col.Type;
                 Columns.Add(_col);

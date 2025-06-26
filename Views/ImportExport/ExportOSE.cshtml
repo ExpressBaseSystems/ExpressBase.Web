@@ -69,13 +69,15 @@
                 <a class="nav-link active" id="Packagedetail-tab" data-toggle="tab" href="#nav-Packagedetail" role="tab" aria-controls="home" aria-selected="true">Package Details</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" id="dependancy-tab" data-toggle="tab" href="#nav-dependancy" role="tab" aria-controls="profile" aria-selected="false">Dependencies</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" id="apps-tab" data-toggle="tab" href="#nav-apps" role="tab" aria-controls="profile" aria-selected="false">Applications</a>
             </li>
         </ul>
     </nav>
 
     <div class="tab-content" id="nav-tabContent">
-
         <div class="tab-pane active col-md-12" id="nav-Packagedetail" role="tabpanel" aria-labelledby="Packagedetail-tab">
             <div class="form-group">
                 Package Name
@@ -104,6 +106,11 @@
                 </div>
             </div>
         </div>
+
+        <div class="tab-pane fade nav-dependancy" id="nav-dependancy" role="tabpanel" aria-labelledby="dependancy-tab">
+            @await Component.InvokeAsync("DependancyMatrix", new { AppObjMap = AppObjMap})
+        </div>
+
         <div class="tab-pane fade nav-apps" id="nav-apps" role="tabpanel" aria-labelledby="apps-tab">
             Please select versions of each objects to be exported.
             <div class="eb-exprt-container">

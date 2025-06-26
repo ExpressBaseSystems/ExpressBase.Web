@@ -1,0 +1,51 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using Newtonsoft.Json;
+
+@{
+    List<Dominant> Dominants = ViewBag.Dominants;
+    <table class="table table-bordered table-sm dependency-matrix auto-expand-table">
+        <thead>
+            <tr>
+                <th></th>
+                @foreach (Dominant header in Dominants)
+                {
+                    <th class="vertical-header">
+                        <div title="@header.RefId">@header.DisplayName</div>
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Dominant row in Dominants)
+            {
+                <tr>
+                    <th>@row.DisplayName</th>
+                    @foreach (Dominant col in Dominants)
+                    {
+                        <td>@(row.Dependents.Contains(col.RefId) ? "✓" : "")</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<style>
+    auto-expand-table {
+        table-layout: auto;
+        width: auto;
+        overflow: visible;
+    }
+
+    .vertical-header {
+        width: 40px;
+        padding: 0;
+        text-align: center;
+        vertical-align: bottom;
+    }
+
+        .vertical-header div {
+            writing-mode: sideways-lr;
+            text-orientation: sideways;
+            white-space: nowrap;
+        }
+</style>

@@ -267,3 +267,5 @@ paket-files/
 /wwwroot/css/Vrgs_testcss
 /Views/vrgs_test
 /Controllers/Vrgs_test.cs
+/wwwroot/css/Bundles
+/wwwroot/js/Bundles

@@ -253,5 +253,4 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
     }
-    public class ObjectVersionsDictionary : Dictionary<int, List<EbObjectWrapper>> { }
 }

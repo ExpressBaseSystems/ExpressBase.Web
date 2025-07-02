@@ -28,6 +28,7 @@ using ExpressBase.Security;
 using ExpressBase.Objects;
 using ExpressBase.Common.Security;
 using System.Security.Cryptography;
+using DocumentFormat.OpenXml.Presentation;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -43,10 +44,12 @@ namespace ExpressBase.Web.Controllers
         {
             var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
+            Dictionary<string, object> parameters = null;
+
             try
             {
-                Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
-               .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+                parameters = HttpContext.Request.Query.Keys.Cast<string>()
+              .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
 
                 if (this.Authenticated)
                 {
@@ -87,6 +90,8 @@ namespace ExpressBase.Web.Controllers
                             ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
                         }
                     };
+
+                    InsertLog(_name, _version, resp.Message.Description, resp.Message.Status, JsonConvert.SerializeObject(parameters), this.IntSolutionId, 0);
                 }
             }
             catch (Exception e)
@@ -105,6 +110,8 @@ namespace ExpressBase.Web.Controllers
                         ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
                     }
                 };
+
+                InsertLog(_name, _version, resp.Message.Description, resp.Message.Status, JsonConvert.SerializeObject(parameters), this.IntSolutionId, this.LoggedInUser != null ? this.LoggedInUser.UserId : 0);
             }
 
             if (format.ToLower().Equals("xml"))
@@ -170,6 +177,7 @@ namespace ExpressBase.Web.Controllers
                             ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
                         }
                     };
+                    InsertLog(_name, _version, resp.Message.Description, resp.Message.Status, JsonConvert.SerializeObject(parameters), this.IntSolutionId, 0);
                 }
             }
             catch (Exception e)
@@ -188,12 +196,35 @@ namespace ExpressBase.Web.Controllers
                         ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
                     }
                 };
+
+                InsertLog(_name, _version, resp.Message.Description, resp.Message.Status, JsonConvert.SerializeObject(parameters), this.IntSolutionId, this.LoggedInUser != null ? this.LoggedInUser.UserId : 0);
             }
 
             if (format.ToLower().Equals("xml"))
                 return this.ToXML(resp);
             else
                 return resp;
+        }
+
+        public void InsertLog(string name, string version, string message, string status, string _params, string solnId, int userId)
+        {
+            try
+            {
+                InsertLogResponse resp = ServiceClient.Post<InsertLogResponse>(new InsertLogRequest
+                {
+                    Name = name,
+                    Version = version,
+                    Message = message,
+                    Status = status,
+                    Parameters = _params,
+                    SolnId = solnId,
+                    UserId = userId
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+            }
         }
 
         [HttpGet("/api/{api_name}/{ver}/metadata")]

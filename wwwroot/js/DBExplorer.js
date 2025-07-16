@@ -46,17 +46,13 @@
                 data: { Query: data, solution: dt, Isadmin: down },
                 traditional: true,
                 success: function (result) {
+                    console.log("res: " + result);
                     if (result.length != 0) {
                         if (result[0].columnCollection != null) {
-                            if (isFunctionContextMenuCall) {
-                                let functionCode = result[0].rowCollection[0][0][1];
-                                this.editor[exe_window].setValue(functionCode);
-                                isFunctionContextMenuCall = false; // Reset the flag
-                            } else {
-                                this.query_result(result);
-                            }
-                            $('#t' + (res - 1) + ' a').trigger('click');
-                        } else if (result[0].message != "") {
+                            // Normal query result
+                            this.query_result(result);
+                            $('#t' + (res - 1) + ' a').trigger('click')
+                         } else if (result[0].message != "") {
                             EbPopBox("show", {
                                 Message: result[0].message,
                                 ButtonStyle: {
@@ -162,7 +158,13 @@
                 $(`#resulttab${exe_window}`).empty();
 
                 $(`#Result_Tab${exe_window}`).append('<li id="t' + res + '"><a data-toggle="tab" class="cetab" href="#tab' + tab + 'R' + res + '" style=""> <p>Result </p> <i style="padding: 2px;" class="btn fa fa-expand" id="Result_' + res + '" data-res="' + res + '" data-tab="' + tab + '" data-columns=\'' + JSON.stringify(columns) + '\' data-rows=\'' + JSON.stringify(result[Result_].rowCollection[i]) + '\'></i><i class="fa fa-window-close fa-1x Result_close" style="" id="Resultclose"></i></a></li>');
-                $("#resulttab" + exe_window).append("<div id='tab" + tab + "R" + res + "' class='Result_Cont tab-pane fade'><table id='tableid" + res + "'></table></div>");
+                $("#resulttab" + exe_window).append(`
+  <div id='tab${tab}R${res}' class='Result_Cont tab-pane fade'>
+    <div class='rscroll-wrapper'>
+      <table id='tableid${res}'></table>
+    </div>
+  </div>
+`);
                 this.drawdatatable("tableid" + res, columns, result[Result_].rowCollection[i]);
                 res++;
             }.bind(this));
@@ -221,8 +223,9 @@
             columnDefs: [
                 {
                     targets: "_all",
-                    className: "dt-left" // Optional: align text to center
+                    className: "dt-center" // Optional: align text to center
                 }
+               
             ]
         });
     };
@@ -424,7 +427,7 @@
         let $TabHtml = $(`
         <li id="query_li${quer}">
             <a data-toggle="tab" class="cetab" href="#result_set${tab}">
-                <p>QUERY ${quer}</p>
+                <p>QUERY ${quer}</p> 
                 <i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px;" id="Tabclose${quer}"></i>
             </a>
         </li>
@@ -445,7 +448,12 @@
     `);
         $('#maintab').append($TabHtml_cont);
 
-        $('#query_li' + tab + ' a').trigger('click');
+        //$('#query_li' + tab + ' a').trigger('click');
+        $('#query_li' + quer + ' a').tab('show');
+        setTimeout(() => {
+            this.editor[quer].refresh(); // Make sure CodeMirror re-renders
+        }, 200);
+
 
         this.editor[quer] = CodeMirror.fromTextArea(document.getElementById('coder' + quer), {
             mode: "text/x-pgsql",
@@ -694,11 +702,8 @@
 
 
 
-    // Define a global flag
     let isFunctionContextMenuCall = false;
 
-
-    // Function context menu initialization
     $.contextMenu({
         selector: '.functioncontextmenu',
         build: function ($trigger, e) {
@@ -709,35 +714,82 @@
                 items: {
                     Count: {
                         name: "Create Script",
-
                         callback: function (key, opt) {
+                            var functionName = opt.$trigger.attr('function-name');
+
+                            let new_tab_index;
                             if (defaultTabIndex !== null) {
                                 this.editor[defaultTabIndex].setValue("");
-                                var new_tab_index = defaultTabIndex;
+                                new_tab_index = defaultTabIndex;
                                 defaultTabIndex = null;
                             } else {
                                 this.codemirrorloader();
-                                var new_tab_index = quer;
+                                new_tab_index = quer;
                             }
-                            // var tb_name = opt.$trigger.attr('data-name');
 
-                            var functionName = opt.$trigger.attr('function-name');
-                            this.editor[new_tab_index].setValue(
+                            // Set the flag for special behavior
+                            isFunctionContextMenuCall = true;
+
+                            // Show loader BEFORE AJAX and content update
+                            $(".show_loader").EbLoader("show");
+
+                            // Compose SQL for preview
+                            const previewSql =
                                 "SELECT p.proname AS function_name, pg_get_functiondef(p.oid) AS function_definition " +
                                 "FROM pg_proc p LEFT JOIN pg_namespace n ON p.pronamespace = n.oid " +
                                 "WHERE n.nspname NOT IN('pg_catalog', 'information_schema') " +
-                                "AND p.proname = '" + functionName + "' ORDER BY function_name;"
-                            );
+                                "AND p.proname = '" + functionName + "' ORDER BY function_name;";
 
-                            // Set the flag to true
-                            isFunctionContextMenuCall = true;
+                            // Set preview immediately
+                            this.editor[new_tab_index].setValue(previewSql);
 
-                            $('#sqlquery').trigger('click');
+                            // Call backend to get full function definition
+                            $.ajax({
+                                type: "POST",
+                                url: "../DbClient/GetFunctionByName",
+                                data: {
+                                    functionName: functionName,
+                                    solution: $('.dbTyper').attr("dt"),
+                                    isAdmin: $('.dbTyper').attr("dOwn") === "dOwn"
+                                },
+                                success: function (response) {
+                                    $(".show_loader").EbLoader("hide");
+
+                                    if (response.success) {
+                                        // Append function definition
+                                        let currentVal = this.editor[new_tab_index].getValue();
+                                        this.editor[new_tab_index].setValue(
+                                             "-- Function Definition:\n" + response.definition
+                                        );
+                                    } else {
+                                        alert("Function not found: " + response.message);
+                                    }
+                                }.bind(this),
+                                error: function (err) {
+                                    $(".show_loader").EbLoader("hide");
+                                    alert("Error fetching function: " + err.statusText);
+                                }
+                            });
                         }.bind(this)
                     }
                 }
             };
         }.bind(this)
+    });
+
+
+
+    // Create context menu for the Functions section title
+    $.contextMenu({
+        selector: '.function-title-context',
+        callback: function (key, opt) {
+            if (key === 'create') {
+                $('#createFunctionModal').modal('show');
+            }
+        },
+        items: {
+            create: { name: "➕ Create Function", icon: "add" }
+        }
     });
 
 
@@ -854,6 +906,56 @@
     });
 
 
+    this.submitCreateFunction = function () {
+        var functionName = $('#functionName').val();
+        var functionCode = $('#functionCode').val();
+
+        if (!functionName || !functionCode) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/DbClient/CreateFunction',
+            data: {
+                functionName: functionName,
+                functionCode: functionCode
+            },
+            success: function (response) {
+                // ✅ Clear the input fields
+                $('#functionName').val('');
+                $('#functionCode').val('');
+
+                // ✅ Close modal and show success message
+                $('#createFunctionModal').modal('hide');
+                $('#successModalBody').text(response.Message || 'Function created successfully.');
+                $('#successModal').modal('show');
+
+                // ✅ Dynamically add to function tree
+                if (response.Result > 0 && response.FunctionName) {
+                    const functionHtml = `
+                    <div Function-name="${response.FunctionName}" id="${response.FunctionName}" class="functioncontextmenu" data-function-name="${response.FunctionName}">
+                        <span class="table-name" data-name="${response.FunctionName}" data-toggle="tooltip" data-placement="left" title="${response.FunctionName}">
+                            <i class="fa fa-cogs" aria-hidden="true"></i> ${response.FunctionName}
+                        </span>
+                    </div>
+                `;
+
+                    // ✅ Append to last function group
+                    $('.schema-group').last().find('.function-title-context').parent().append(functionHtml);
+
+                    // ✅ Re-activate tooltips
+                    $('[data-toggle="tooltip"]').tooltip();
+                }
+            },
+
+            error: function (xhr) {
+                $('#errorModalBody').text('Error creating function: ' + xhr.responseText);
+                $('#errorModal').modal('show');
+            }
+        });
+    }.bind(this);
 
 
 

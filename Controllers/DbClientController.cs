@@ -11,6 +11,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common;
 using ExpressBase.Common.Structures;
+using System.Linq;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -305,6 +306,90 @@ namespace ExpressBase.Web.Controllers
                 return Json(new { success = false, message = errorMessage });
             }
         }
+        [HttpPost]
+        public ActionResult CreateFunction(string functionName, string functionCode)
+        {
+            // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                return Unauthorized();
+            }
+
+            // Create the request object
+            DbClientCreateFunctionRequest request = new DbClientCreateFunctionRequest
+            {
+                FunctionName = functionName,
+                FunctionCode = functionCode,
+                ClientSolnid = solutionid,
+                IsAdminOwn = IsAdmin
+            };
+
+            // Execute the request
+            DbClientCreateFunctionResponse response = this.ServiceClient.Post<DbClientCreateFunctionResponse>(request);
+
+            // Ensure the message consistency
+            if (response.Message == "Function created successfully")
+            {
+                return Json(new
+                {
+                    success = true,
+                    message = response.Message,
+                    FunctionName = response.FunctionName
+                });
+            }
+            else
+            {
+                string errorMessage = response.Message.StartsWith("Error: ")
+                    ? response.Message
+                    : "Failed to create function: " + response.Message;
+
+                return Json(new
+                {
+                    success = false,
+                    message = errorMessage
+                });
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult GetFunctionByName(string functionName, string solution, bool isAdmin)
+        {
+            try
+            {
+                // Store solution and admin flag
+                this.solutionid = solution;
+                this.IsAdmin = isAdmin;
+
+                // Call service to get functions
+                var response = this.ServiceClient.Get(new GetDbTablesRequest
+                {
+                    IsAdminOwn = isAdmin,
+                    ClientSolnid = solution
+                });
+
+                // Search for matching function
+                var matchedFunction = response.Tables.FunctionCollection
+                    .FirstOrDefault(f => f.FunctionName == functionName);
+
+                if (matchedFunction != null)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        name = matchedFunction.FunctionName,
+                        definition = matchedFunction.FunctionQuery
+                    });
+                }
+
+                return Json(new { success = false, message = "Function not found" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
 
 
         public DbClientQueryResponse InsertQuery(string Query)
@@ -408,3 +493,4 @@ namespace ExpressBase.Web.Controllers
         }
     }
 }
+

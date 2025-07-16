@@ -87,8 +87,8 @@
                                             int constraintCount = Columns.Count(c => !string.IsNullOrEmpty(c.ColumnKey) && !string.IsNullOrEmpty(c.ConstraintName));
 
                                         }
-                                        <span class="table-name treecontextmenu" data-name="@Table_kvp.Key" data-table-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns: @Columns.Count">
-                                            <i class="fa fa-table" aria-hidden="true"></i> @Table_kvp.Key
+                                        <span class="table-name treecontextmenu" data-name="@Table_kvp.Key" data-table-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns: @Columns.Count" style="white-space: nowrap;">
+                                            <i class="fa fa-table" aria-hidden="true" style="margin-right: 4px;"></i> @Table_kvp.Key
                                         </span>
                                         <div id="indexList">
                                             <span class="indexcount"><i class="fa fa-list-alt" aria-hidden="true"></i> Indexes (@Indexes.Count)</span>
@@ -213,17 +213,23 @@
                                 @{
                                     List<EbDbExplorerFunctions> Functions = ViewBag.Tables.FunctionCollection;
                                 }
-                                <span>
-                                    <i class="fa fa-cogs" aria-hidden="true"></i> Functions (@Functions.Count)
-                                </span>
+                                <!-- Wrap the title span with a container for right-click -->
+                                    <span class="function-title-context">
+                                        <i class="fa fa-cogs" aria-hidden="true"></i> Functions (@Functions.Count)
+                                    </span>
+
                                 @foreach (var function in Functions)
                                 {
                                     <div Function-name="@function.FunctionName" id="@function.FunctionName" class="functioncontextmenu" data-function-name="@function.FunctionName">
-                                        <span class="table-name" data-name="@function.FunctionName" data-toggle="tooltip" data-placement="left">
+                                        <span class="table-name function-name-ellipsis custom-tooltip" data-tooltip="@function.FunctionName"
+                                              data-placement="left"
+                                              title=""
+                                              data-name="@function.FunctionName">
                                             <i class="fa fa-cogs" aria-hidden="true"></i> @function.FunctionName
                                         </span>
                                     </div>
                                 }
+
                             </div>
 
                         </div>
@@ -362,6 +368,40 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" onclick="createConstraint()">Create Constraint</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        //function modal
+        <!-- Create Function Modal -->
+        <div id="createFunctionModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createFunctionModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createFunctionModalLabel">Create New Function</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form id="createFunctionForm">
+                            <div class="form-group">
+                                <label for="functionName">Function Name</label>
+                                <input type="text" class="form-control" id="functionName" placeholder="E.g. get_user_count" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="functionCode">Function SQL Code</label>
+                                <textarea class="form-control" id="functionCode" rows="10" placeholder="Paste full CREATE FUNCTION SQL here..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="window.DBExplorer.submitCreateFunction()">Create</button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -512,9 +552,9 @@
 
 
 
-            $(document).ready(function () {
+               $(document).ready(function () {
                 // Add event listener to update constraint name when constraint type changes
-                $('#constraintType').change(updateConstraintName);
+            $('#constraintType').change(updateConstraintName);
             });
 
 
@@ -529,6 +569,7 @@
                     location.reload(true);
                 }, 5000);
             });
+
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="..." crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

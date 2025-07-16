@@ -15,6 +15,31 @@
     border-radius: 4px;
     border: solid 1px #b7b7b7;
 }
+/*.CodeMirror-measure {
+    position: absolute;
+    width: 100%;
+    height: 0;
+     overflow: hidden; 
+     visibility: hidden; 
+}*/
+/* Make DataTable stretch full width of its container */
+/*.dataTables_wrapper {
+    width: 100% !important;
+    overflow-x: auto;
+}*/
+.rscroll-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+}
+.Result_Cont {
+    overflow-x: auto;
+}
+
+.dataTables_scrollHeadInner,
+table.dataTable.no-footer {
+    width: 100% !important; /* ✅ Stretch to match parent container */
+    min-width: 600px; /* Optional: set minimum for readability */
+}
 
 .indexcontextmenu {
     white-space: nowrap; /* Prevent line breaks */
@@ -31,6 +56,56 @@
     gap: 5px; /* Adds space between icon and text */
     white-space: nowrap; /* Prevent text wrapping */
 }
+
+.function-name-ellipsis {
+    display: inline-block !important;
+    max-width: 200px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.custom-tooltip {
+    position: relative;
+    cursor: pointer;
+}
+
+    .custom-tooltip::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: 50%;
+        left: 25%;
+        transform: translateY(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease-in-out;
+/*        z-index: 1000;
+        font-size: 12px;*/
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+.functioncontextmenu {
+    position: relative; /* create stacking context */
+    overflow: visible !important; /* allow tooltip overflow */
+    z-index: 1;
+}
+
+/* This ensures the tooltip shows above modals and other panels */
+.custom-tooltip::after {
+    z-index: 2147483647 !important; /* max possible z-index */
+}
+
+
+    .custom-tooltip:hover::after {
+        opacity: 1;
+    }
+
+
 
 
 div .mytree div {
@@ -172,7 +247,7 @@ div.mytree div.selected {
 
 .Resize_toolbox {
     resize: both; /* Allows resizing both horizontally and vertically */
-    overflow: auto; /* Ensures the content is scrollable if it overflows */
+   /* overflow: auto;  Ensures the content is scrollable if it overflows */
     min-width: 150px; /* Optional: Minimum width to prevent resizing too small */
     min-height: 150px; /* Optional: Minimum height to prevent resizing too small */
     max-width: 100%; /* Optional: Maximum width to prevent overflow */
@@ -201,7 +276,7 @@ div.mytree div.selected {
     margin-top: 10px;
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
-    height: 26rem;
+    /*    height: 26rem;*/
     overflow: hidden;
     border: solid 1px #b6b6b6;
 }
@@ -222,10 +297,8 @@ div.mytree div.selected {
 /*div.CodeMirror.cm-s-default {
     top: 12px;
     height: 321px;
-    /*z-index: auto;*/
-}
-
-*/
+    z-index: auto;
+}*/
 
 .CodeMirror-wrap pre {
     word-wrap: break-word !important;

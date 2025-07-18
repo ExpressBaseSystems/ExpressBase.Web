@@ -350,7 +350,8 @@
                         </div>
                         <div class="form-group">
                             <label for="constraintColumnName">Column Name</label>
-                            <input type="text" class="form-control" id="constraintColumnName" readonly>
+                            <input type="text" class="form-control" id="constraintColumnName" placeholder="e.g., employee_code, punch_date">
+                            <small class="form-text text-muted">You can enter one or more column names, separated by commas.</small>
                         </div>
                         <div class="form-group">
                             <label for="constraintType">Constraint Type</label>
@@ -484,9 +485,11 @@
                 $('#createConstraintModal').modal('show');
             }
 
-            function generateConstraintName(tb_name, col_name, constraint_type) {
-                return tb_name + '_' + col_name + '_' + constraint_type.replace(' ', '_') + '_constraint';
+                      function generateConstraintName(tb_name, col_name, constraint_type) {
+                const cleanCols = col_name.replace(/\s+/g, '').replace(/,/g, '_');
+                return tb_name + '_' + cleanCols + '_' + constraint_type.replace(' ', '_') + '_constraint';
             }
+
 
             function updateConstraintName() {
                 var tableName = $('#constraintTableName').val();

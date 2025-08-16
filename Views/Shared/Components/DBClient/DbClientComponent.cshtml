@@ -10,6 +10,7 @@
     if (ViewBag.Message == null)
     {
         <script>
+
             // Ensure DBExplorer is initialized properly
             if (typeof window.DBExplorer === 'undefined') {
                 window.DBExplorer = new Eb_DBExplorer({
@@ -43,8 +44,10 @@
         <div class="dbTyper" dt="@ViewBag.DB_Name" dOwn="@ViewBag.IsAdminOwn"></div>
 
         <div class="db_client_toolbox TablePannelHead">
-            <i class="fa fa-database" aria-hidden="true"></i> @ViewBag.DB_Name
+            <i class="fa fa-database" aria-hidden="true"></i> @ViewBag.DB_Name <i id="showLogs" class="fa fa-list" style="cursor:pointer; margin-left:20px;" title="Show Query Logs"></i>
+
             <input type="text" id="myInput" placeholder="Search for Table.." title="Table Name">
+            <!-- Logs Icon -->
         </div>
         <div class="mytree db_client_toolbox_bdy" id="myUL">
             <div>
@@ -406,8 +409,37 @@
                 </div>
             </div>
         </div>
+        <!-- Modal Overlay -->
+        <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;"></div>
 
+        <!-- Logs Modal -->
+        <div id="logsModal" class="modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000; max-width:95vw; max-height:90vh;">
+            <div class="modal-content" style="width:100%; max-width:900px; max-height:90vh; overflow:auto; background:#fff; padding:20px; border-radius:8px; position:relative; box-shadow:0 5px 15px rgba(0,0,0,0.3); font-family:Arial, sans-serif;">
+                <span id="closeLogs" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:24px; font-weight:bold; color:#333;">&times;</span>
+                <h2 style="margin-top:0; margin-bottom:15px; font-size:22px; color:#222;">Query Logs</h2>
 
+                <!-- Scrollable table container -->
+                <div style="overflow-x:auto;">
+                    <table id="logsTable" style="width:100%; border-collapse:collapse; font-size:14px; text-align:left; min-width:700px;">
+                        <thead>
+                            <tr style="background:#f2f2f2;">
+                                <th style="padding:10px; border:1px solid #ddd;">ID</th>
+                                <th style="padding:10px; border:1px solid #ddd;">Query</th>
+                                <th style="padding:10px; border:1px solid #ddd;">Type</th>
+                                <th style="padding:10px; border:1px solid #ddd;">Rows</th>
+                                <th style="padding:10px; border:1px solid #ddd;">Solution ID</th>
+                                <th style="padding:10px; border:1px solid #ddd;">Created By</th>
+                                <th style="padding:10px; border:1px solid #ddd;">Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+<!-- Optional overlay -->
+<div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4);"></div>
         <script>
             function showCreateIndexModal(tb_name, col_name) {
                 // Set table name in the modal

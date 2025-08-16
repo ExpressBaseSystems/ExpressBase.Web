@@ -86,6 +86,8 @@ namespace ExpressBase.Web.Controllers
             }
             solutionid = solution;
             IsAdmin = Isadmin;
+            int createdByUserId = this.LoggedInUser.UserId;
+
             List<DbClientQueryResponse> responses = new List<DbClientQueryResponse>();
             string[] QueryList = Query.Split(";");
             try
@@ -201,26 +203,66 @@ namespace ExpressBase.Web.Controllers
             }
             return ress;
         }
-
-
-
-
-
-        public ActionResult CreateIndex(string tableName, string indexName, string indexColumns)
-        {  // Check if the user is a developer
+        [HttpPost]
+        public ActionResult GetDbClientLogs(string tableName, bool Isadmin)
+        {
             if (ViewBag.wc != RoutingConstants.DC)
             {
                 return Unauthorized();
             }
 
+            string solution = this.solutionid ?? ViewBag.Cid;
+
+            DbClientLogsRequest request = new DbClientLogsRequest
+            {
+                TableName = tableName,
+                SolutionId = solution,
+                IsAdminOwn = Isadmin
+            };
+
+            try
+            {
+                List<DbClientLogsResponse> logs = this.ServiceClient.Post<List<DbClientLogsResponse>>(request);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Logs fetched successfully",
+                    data = logs
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Failed to fetch logs",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+
+
+
+        public ActionResult CreateIndex(string tableName, string indexName, string indexColumns, bool Isadmin)
+        {  // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                return Unauthorized();
+            }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             // Create the request object
             DbClientIndexRequest request = new DbClientIndexRequest
             {
                 TableName = tableName,
                 IndexName = indexName,
                 IndexColumns = indexColumns,
-                ClientSolnid = solutionid,
-                IsAdminOwn = IsAdmin
+                ClientSolnid = solution,
+                CreatedByUserId = createdByUserId,
+                IsAdminOwn = Isadmin
             };
 
             // Execute the request
@@ -239,12 +281,14 @@ namespace ExpressBase.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult EditIndexName(string currentIndexName, string newIndexName, string tableName)
+        public ActionResult EditIndexName(string currentIndexName, string newIndexName, string tableName, bool Isadmin)
         {  // Check if the user is a developer
             if (ViewBag.wc != RoutingConstants.DC)
             {
                 return Unauthorized();
             }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
 
             // Create the request object
             DbClientEditIndexRequest request = new DbClientEditIndexRequest
@@ -252,8 +296,9 @@ namespace ExpressBase.Web.Controllers
                 CurrentIndexName = currentIndexName,
                 NewIndexName = newIndexName,
                 TableName = tableName,
-                ClientSolnid = solutionid,
-                IsAdminOwn = IsAdmin
+                ClientSolnid = solution,
+                CreatedByUserId = createdByUserId,
+                IsAdminOwn = Isadmin
             };
 
             // Execute the request
@@ -273,14 +318,15 @@ namespace ExpressBase.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult CreateConstraint(string tableName, string columnName, string constraintType, string constraintName)
+        public ActionResult CreateConstraint(string tableName, string columnName, string constraintType, string constraintName, bool Isadmin)
         {
             // Check if the user is a developer
             if (ViewBag.wc != RoutingConstants.DC)
             {
                 return Unauthorized();
             }
-
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             // Create the request object
             DbClientConstraintRequest request = new DbClientConstraintRequest
             {
@@ -288,8 +334,9 @@ namespace ExpressBase.Web.Controllers
                 ColumnName = columnName,
                 ConstraintType = constraintType,
                 ConstraintName = constraintName,
-                ClientSolnid = solutionid,
-                IsAdminOwn = IsAdmin
+                ClientSolnid = solution,
+                CreatedByUserId = createdByUserId,
+                IsAdminOwn = Isadmin
             };
 
             // Execute the request
@@ -306,22 +353,28 @@ namespace ExpressBase.Web.Controllers
                 return Json(new { success = false, message = errorMessage });
             }
         }
+
+
+
         [HttpPost]
-        public ActionResult CreateFunction(string functionName, string functionCode)
+        public ActionResult CreateFunction(string functionName, string functionCode, bool Isadmin)
         {
             // Check if the user is a developer
             if (ViewBag.wc != RoutingConstants.DC)
             {
                 return Unauthorized();
             }
-
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             // Create the request object
             DbClientCreateFunctionRequest request = new DbClientCreateFunctionRequest
             {
                 FunctionName = functionName,
                 FunctionCode = functionCode,
-                ClientSolnid = solutionid,
-                IsAdminOwn = IsAdmin
+                ClientSolnid = solution,
+                IsAdminOwn = Isadmin,
+                CreatedByUserId = createdByUserId
+
             };
 
             // Execute the request
@@ -361,11 +414,13 @@ namespace ExpressBase.Web.Controllers
                 this.solutionid = solution;
                 this.IsAdmin = isAdmin;
 
+
                 // Call service to get functions
                 var response = this.ServiceClient.Get(new GetDbTablesRequest
                 {
                     IsAdminOwn = isAdmin,
-                    ClientSolnid = solution
+                    ClientSolnid = solution,
+
                 });
 
                 // Search for matching function
@@ -398,8 +453,10 @@ namespace ExpressBase.Web.Controllers
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientInsertRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientInsertRequest { Query = Query, ClientSolnid = solution, IsAdminOwn = IsAdmin,CreatedByUserId = createdByUserId });
             return ress;
         }
 
@@ -409,6 +466,8 @@ namespace ExpressBase.Web.Controllers
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             DbClientQueryResponse ress = new DbClientQueryResponse();
             return ress;
         }
@@ -419,8 +478,10 @@ namespace ExpressBase.Web.Controllers
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientDeleteRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientDeleteRequest { Query = Query, ClientSolnid = solution, IsAdminOwn = IsAdmin, CreatedByUserId = createdByUserId });
             return ress;
         }
 
@@ -430,8 +491,10 @@ namespace ExpressBase.Web.Controllers
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientAlterRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientAlterRequest { Query = Query, ClientSolnid = solution, IsAdminOwn = IsAdmin, CreatedByUserId = createdByUserId });
             return ress;
         }
 
@@ -441,8 +504,10 @@ namespace ExpressBase.Web.Controllers
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientCreateRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientCreateRequest { Query = Query, ClientSolnid = solution, IsAdminOwn = IsAdmin, CreatedByUserId = createdByUserId });
             return ress;
         }
 
@@ -462,10 +527,13 @@ namespace ExpressBase.Web.Controllers
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
             DbClientQueryResponse ress = new DbClientQueryResponse();
             ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientUpdateRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
+
 
         public DVColumnCollection ConvertColumns(ColumnColletion __columns)
         {

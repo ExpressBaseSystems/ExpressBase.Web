@@ -35,6 +35,7 @@
         }
         var dt = $('.dbTyper').attr("dt");
         var down = $('.dbTyper').attr("dOwn");
+
         if (down == 'dOwn')
             down = true;
         if (data !== "" && exe_window !== undefined) {
@@ -794,6 +795,68 @@
 
 
     $(document).ready(function () {
+        $('#showLogs').click(function () {
+            $('#logsModal').show();
+            $('#modalOverlay').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '/DbClient/GetDbClientLogs',
+                data: {
+                    tableName: '', // Optional filter
+                    Isadmin: true
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (!response.success) {
+                        $('#errorModalBody').text('Failed to load logs: ' + response.message);
+                        $('#errorModal').modal('show');
+                        return;
+                    }
+
+                    var tbody = $('#logsTable tbody');
+                    tbody.empty();
+
+                    $.each(response.data, function (i, log) {
+                        tbody.append(`<tr>
+                        <td>${log.id}</td>
+                        <td>${log.query}</td>
+                        <td>${log.type}</td>
+                        <td>${log.rowsResult}</td>
+                        <td>${log.solutionId}</td>
+                        <td>${log.createdByName}</td>
+                        <td>${new Date(log.createdAt).toLocaleString()}</td>
+                    </tr>`);
+                    });
+
+                    // Initialize or refresh DataTables
+                    if (!$.fn.DataTable.isDataTable('#logsTable')) {
+                        $('#logsTable').DataTable({
+                            "order": [[6, "desc"]],
+                            "pageLength": 10
+                        });
+                    } else {
+                        var table = $('#logsTable').DataTable();
+                        table.clear();
+                        table.rows.add($('#logsTable tbody tr')).draw();
+                    }
+                },
+                error: function (xhr) {
+                    $('#errorModalBody').text('Failed to load logs: ' + xhr.responseText);
+                    $('#errorModal').modal('show');
+                }
+            });
+        });
+
+        // Close modal
+        $('#closeLogs, #modalOverlay').click(function () {
+            $('#logsModal').hide();
+            $('#modalOverlay').hide();
+        });
+    });
+
+
+    $(document).ready(function () {
         // Initialize context menu
         $.contextMenu({
             selector: '.indexcontextmenu',
@@ -892,9 +955,11 @@
                         }, CreateIndex: {
                             name: "Create Index",
                             callback: function () {
-                                window.DBExplorer.showCreateIndexModal(tableName, columnName);
+                                var createdByUserId = CURRENT_USER_ID; // from Razor variable
+                                window.DBExplorer.showCreateIndexModal(tableName, columnName, createdByUserId);
                             }
                         }
+
                     }
                 };
             }

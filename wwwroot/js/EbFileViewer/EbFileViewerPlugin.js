@@ -33,14 +33,15 @@
         this.pgSettings = $.extend(defaults, options);
 
         this.init = function () {
-            this.createViewer();
+            this.createViewer('1');
+            this.createViewer('2');
 
         }
 
-        this.createViewer = function () {
+        this.createViewer = function (cxt = '1') {
             this.infono = 1;
             if (this.pgSettings.length) {
-                let ulview = (`<div id='ebviewdiv_tmp-f' > <ul id='imageContainer'>`);
+                let ulview = (`<div id='ebviewdiv_tmp-f${cxt}' > <ul id='imageContainer${cxt}'>`);
                 ulview += `</ul> </div>`
                 $("body").append(ulview);
                 this.pgSettings.forEach(function (obj) {
@@ -60,19 +61,28 @@
                         let filename = obj.FileName || "image";
                         let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' dtls='${obj.FileName}' alt='${filename}'></li>`);
                         var l = lk.find("img").data("details", obj.Meta);
-                        $('#imageContainer').append(lk);
+                        $('#imageContainer' + cxt).append(lk);
                     }
                 });
 
-                this.imagelist = $('#ebviewdiv_tmp-f');
-                $('#ebviewdiv_tmp-f').remove();
-                this.viewer = new Viewer(this.imagelist[0], {
-                    url: 'data-src',
-                    navbar: 0,
-                    toolbar: _toolbar
+                this.imagelist = $('#ebviewdiv_tmp-f' + cxt);
+                $('#ebviewdiv_tmp-f' + cxt).remove();
+                if (cxt == '2') {
+                    this.viewer2 = new Viewer(this.imagelist[0], {
+                        url: 'data-src',
+                        navbar: 0,
+                        toolbar: _toolbar
+                    }
+                    );
                 }
-                );
-
+                else {
+                    this.viewer = new Viewer(this.imagelist[0], {
+                        url: 'data-src',
+                        navbar: 0,
+                        toolbar: _toolbar
+                    }
+                    );
+                }
             }
             else {
                 ////commented because in fup control incase of single image after delete it shows this dailoguebox
@@ -93,8 +103,14 @@
                         }
                     }
                     let j = temparr.findIndex(x => x.FileRefId == rfid);
-                    this.viewer.eb_adjust_postion = this.viewer.ready ? 0 : ViewerPosition;
-                    this.viewer.view(j);
+                    if (!this.viewer.isShown) {
+                        this.viewer.eb_adjust_postion = this.viewer.ready ? 0 : ViewerPosition;
+                        this.viewer.view(j);
+                    }
+                    else {
+                        this.viewer2.eb_adjust_postion = this.viewer2.ready ? 0 : (ViewerPosition == 1 ? 2 : (ViewerPosition == 2 ? 1 : 0));
+                        this.viewer2.view(j);
+                    }
                 }
                 else if (this.pgSettings[indx].FileCategory == 0) {
                     let src = null;
@@ -194,7 +210,7 @@
             $li.hide();
         }
 
-        this.addToImagelist = function (file) {
+        this.addToImagelist = function (file, cxt = '1') {
             if (file.hasOwnProperty('Recent')) {
                 if (file.FileCategory == 1) {
                     let filethumbnail = file.FileB64;
@@ -202,9 +218,11 @@
                     let filename = file.FileName || "image";
                     let li = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${file.FileName}' alt='${filename}'></li>`);
                     var l = li.find("img").data("details", file.Meta);
-                    this.imagelist.find('#imageContainer').append(li);
+                    this.imagelist.find('#imageContainer' + cxt).append(li);
+                    this.imagelist.find('#imageContainer2').append(li);
                     this.pgSettings.push(file);
                     this.viewer.update();
+                    this.viewer2.update();
                 }
                 else {
                     this.pgSettings.push(file);
@@ -217,9 +235,11 @@
                     let filename = file.FileName || "image";
                     let li = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${file.FileName}' alt='${filename}'></li>`);
                     var l = li.find("img").data("details", file.Meta);
-                    this.imagelist.find('#imageContainer').append(li);
+                    this.imagelist.find('#imageContainer' + cxt).append(li);
+                    this.imagelist.find('#imageContainer2').append(li);
                     this.pgSettings.push(file);
                     this.viewer.update();
+                    this.viewer2.update();
                 }
                 else {
                     this.pgSettings.push(file);

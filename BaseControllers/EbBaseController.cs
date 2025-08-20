@@ -33,6 +33,8 @@ namespace ExpressBase.Web.BaseControllers
 
         protected EbStaticFileClient FileClient { get; set; }
 
+        protected EbStaticFileClient2 FileClient2 { get; set; }
+
         public CustomUserSession Session { get; set; }
 
         protected EbServerEventClient ServerEventClient { get; set; }
@@ -106,6 +108,14 @@ namespace ExpressBase.Web.BaseControllers
             this.FileClient = _sfc as EbStaticFileClient;
             this.Redis = _redis as RedisClient;
         }
+
+        public EbBaseController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2)
+        {
+            this.FileClient = _sfc as EbStaticFileClient;
+            this.Redis = _redis as RedisClient;
+            this.FileClient2 = _sfc2;
+        }
+
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
@@ -137,6 +147,15 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
             this.FileClient = _sfc as EbStaticFileClient;
         }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.FileClient = _sfc as EbStaticFileClient;
+            this.FileClient2 = _sfc2;
+        }
+
 
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc)
         {

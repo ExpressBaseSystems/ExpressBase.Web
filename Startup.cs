@@ -119,6 +119,8 @@ namespace ExpressBase.Web2
                 return new EbServerEventClient();
             });
 
+            services.AddHttpClient<EbStaticFileClient2>();
+
             //  StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
             string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);

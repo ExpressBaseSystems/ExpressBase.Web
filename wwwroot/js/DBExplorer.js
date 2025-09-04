@@ -79,7 +79,28 @@
                             });
                         }
                     }
-                    $(".show_loader").EbLoader("hide");
+                    // 🔹 Extra: Log if it's a function CREATE/REPLACE
+                    if (data.toLowerCase().includes("create function") || data.toLowerCase().includes("replace function")) {
+                        var funcName = extractFunctionName(data); // helper below
+                        $.ajax({
+                            type: "POST",
+                            url: "../DbClient/LogEditedFunction",
+                            data: {
+                                functionName: funcName,
+                                functionCode: data,
+                                solution: dt,
+                                isAdmin: down
+                            },
+                            success: function (res) {
+                                console.log("Function edit logged:", res);
+                            },
+                            error: function (xhr) {
+                                console.error("Failed to log function edit:", xhr.responseText);
+                            }
+                        });
+                    }
+                
+                $(".show_loader").EbLoader("hide");
                 }.bind(this),
                 error: function (result) {
                     EbPopBox("show", {
@@ -112,7 +133,15 @@
         }
     }.bind(this);
 
-
+// 🔹 Helper function to extract function name from SQL
+function extractFunctionName(sql) {
+    try {
+        let match = sql.match(/function\s+([a-zA-Z0-9_]+)/i);
+        return match ? match[1] : "unknown_function";
+    } catch {
+        return "unknown_function";
+    }
+}
 
     this.searchSolution = function (e) {
         $("#eb_common_loader").EbLoader("show");
@@ -705,6 +734,7 @@
 
     let isFunctionContextMenuCall = false;
 
+    // Function context menu
     $.contextMenu({
         selector: '.functioncontextmenu',
         build: function ($trigger, e) {
@@ -716,61 +746,15 @@
                     Count: {
                         name: "Create Script",
                         callback: function (key, opt) {
-                            var functionName = opt.$trigger.attr('function-name');
-
-                            let new_tab_index;
-                            if (defaultTabIndex !== null) {
-                                this.editor[defaultTabIndex].setValue("");
-                                new_tab_index = defaultTabIndex;
-                                defaultTabIndex = null;
-                            } else {
-                                this.codemirrorloader();
-                                new_tab_index = quer;
-                            }
-
-                            // Set the flag for special behavior
-                            isFunctionContextMenuCall = true;
-
-                            // Show loader BEFORE AJAX and content update
-                            $(".show_loader").EbLoader("show");
-
-                            // Compose SQL for preview
-                            const previewSql =
-                                "SELECT p.proname AS function_name, pg_get_functiondef(p.oid) AS function_definition " +
-                                "FROM pg_proc p LEFT JOIN pg_namespace n ON p.pronamespace = n.oid " +
-                                "WHERE n.nspname NOT IN('pg_catalog', 'information_schema') " +
-                                "AND p.proname = '" + functionName + "' ORDER BY function_name;";
-
-                            // Set preview immediately
-                            this.editor[new_tab_index].setValue(previewSql);
-
-                            // Call backend to get full function definition
-                            $.ajax({
-                                type: "POST",
-                                url: "../DbClient/GetFunctionByName",
-                                data: {
-                                    functionName: functionName,
-                                    solution: $('.dbTyper').attr("dt"),
-                                    isAdmin: $('.dbTyper').attr("dOwn") === "dOwn"
-                                },
-                                success: function (response) {
-                                    $(".show_loader").EbLoader("hide");
-
-                                    if (response.success) {
-                                        // Append function definition
-                                        let currentVal = this.editor[new_tab_index].getValue();
-                                        this.editor[new_tab_index].setValue(
-                                             "-- Function Definition:\n" + response.definition
-                                        );
-                                    } else {
-                                        alert("Function not found: " + response.message);
-                                    }
-                                }.bind(this),
-                                error: function (err) {
-                                    $(".show_loader").EbLoader("hide");
-                                    alert("Error fetching function: " + err.statusText);
-                                }
-                            });
+                            let functionName = opt.$trigger.attr('function-name');
+                            openFunctionInEditor(functionName, this);
+                        }.bind(this)
+                    },
+                    History: {
+                        name: "View History",
+                        callback: function (key, opt) {
+                            let functionName = opt.$trigger.attr('function-name');
+                            fetchFunctionHistory(functionName, this);
                         }.bind(this)
                     }
                 }
@@ -778,9 +762,7 @@
         }.bind(this)
     });
 
-
-
-    // Create context menu for the Functions section title
+    // Functions section title context menu
     $.contextMenu({
         selector: '.function-title-context',
         callback: function (key, opt) {
@@ -792,6 +774,128 @@
             create: { name: "➕ Create Function", icon: "add" }
         }
     });
+
+    // --------------------------
+    // Open function in editor
+    function openFunctionInEditor(functionName, context) {
+        let new_tab_index;
+
+        if (defaultTabIndex !== null) {
+            context.editor[defaultTabIndex].setValue("");
+            new_tab_index = defaultTabIndex;
+            defaultTabIndex = null;
+        } else {
+            context.codemirrorloader();
+            new_tab_index = quer;
+        }
+
+        isFunctionContextMenuCall = true;
+        $(".show_loader").EbLoader("show");
+
+        const previewSql =
+            "SELECT p.proname AS function_name, pg_get_functiondef(p.oid) AS function_definition " +
+            "FROM pg_proc p LEFT JOIN pg_namespace n ON p.pronamespace = n.oid " +
+            "WHERE n.nspname NOT IN('pg_catalog', 'information_schema') " +
+            "AND p.proname = '" + functionName + "' ORDER BY function_name;";
+
+        context.editor[new_tab_index].setValue(previewSql);
+
+        $.ajax({
+            type: "POST",
+            url: "../DbClient/GetFunctionByName",
+            data: {
+                functionName: functionName,
+                solution: $('.dbTyper').attr("dt"),
+                isAdmin: $('.dbTyper').attr("dOwn") === "dOwn"
+            },
+            success: function (response) {
+                $(".show_loader").EbLoader("hide");
+
+                if (response.success && response.definition) {
+                    context.editor[new_tab_index].setValue(
+                        "-- Function Definition:\n" + response.definition
+                    );
+                } else if (response.success && response.data && response.data.length > 0) {
+                    context.editor[new_tab_index].setValue(
+                        "-- Function Definition:\n" + response.data[0].functionCode
+                    );
+                } else {
+                    alert("Function not found: " + (response.message || "No definition returned"));
+                }
+            }.bind(context),
+
+            error: function (err) {
+                $(".show_loader").EbLoader("hide");
+                alert("Error fetching function: " + err.statusText);
+            }
+        });
+    }
+
+    // --------------------------
+    // Fetch function history
+    function fetchFunctionHistory(functionName, context) {
+        let solution = $('.dbTyper').attr("dt");
+        let isAdmin = $('.dbTyper').attr("dOwn") === "dOwn";
+
+        $(".show_loader").EbLoader("show");
+
+        $.post("../DbClient/GetFunctionHistory", { functionName: functionName, solutionId: solution, isAdminOwn: isAdmin }, function (res) {
+            $(".show_loader").EbLoader("hide");
+
+            if (res.success) {
+                renderHistoryInEditor(res.data, functionName, context);
+            } else {
+                alert("Failed to fetch history: " + res.message);
+            }
+        });
+    }
+
+    // --------------------------
+    // Render GitHub-like diff in editor
+    // Simple render without Diff library
+    function renderHistoryInEditor(history, functionName, context) {
+        let content = `-- Function History for ${functionName}\n\n`;
+
+        for (let i = 0; i < history.length; i++) {
+            content += `-- Edited by: ${history[i].createdByName} @ ${new Date(history[i].createdAt).toLocaleString()}\n`;
+            // Remove duplicate "-- Function Definition:" if present
+            let cleanedCode = history[i].functionCode.replace(/-- Function Definition:\s*/g, "");
+
+            content += cleanedCode.trim() + "\n\n";
+        }
+
+        let exe_window = $("#TabAdderMain li.active").attr("id");
+        if (exe_window !== undefined) {
+            exe_window = exe_window[exe_window.length - 1];
+            context.editor[exe_window].setValue(content);
+        }
+    }
+
+    // --------------------------
+    // Simple diff function
+    function renderDiff(oldCode, newCode) {
+        const diff = Diff.diffLines(oldCode, newCode); // Requires 'diff' library
+        return diff.map(part => {
+            const color = part.added ? '[+]' :
+                part.removed ? '[-]' : '   ';
+            return part.value.split('\n').map(line => line ? color + ' ' + line : '').join('\n');
+        }).join('\n');
+    }
+
+
+
+    // Create context menu for the Functions section title
+    //$.contextMenu({
+    //    selector: '.function-title-context',
+    //    callback: function (key, opt) {
+    //        if (key === 'create') {
+    //            $('#createFunctionModal').modal('show');
+    //        }
+    //    },
+    //    items: {
+    //        create: { name: "➕ Create Function", icon: "add" }
+    //    }
+    //});
 
 
     $(document).ready(function () {
@@ -955,8 +1059,8 @@
                         }, CreateIndex: {
                             name: "Create Index",
                             callback: function () {
-                                var createdByUserId = CURRENT_USER_ID; // from Razor variable
-                                window.DBExplorer.showCreateIndexModal(tableName, columnName, createdByUserId);
+                                //var createdByUserId = CURRENT_USER_ID; // from Razor variable
+                                window.DBExplorer.showCreateIndexModal(tableName, columnName);
                             }
                         }
 

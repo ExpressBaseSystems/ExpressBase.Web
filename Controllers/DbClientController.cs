@@ -12,6 +12,7 @@ using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common;
 using ExpressBase.Common.Structures;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -353,6 +354,66 @@ namespace ExpressBase.Web.Controllers
                 return Json(new { success = false, message = errorMessage });
             }
         }
+        [HttpPost]
+        public ActionResult GetFunctionHistory(string functionName)
+        {
+            if (ViewBag.wc != RoutingConstants.DC)
+                return Unauthorized();
+
+            string solution = this.solutionid ?? ViewBag.Cid;
+
+            // Build request DTO
+            DbClientFunctionHistoryRequest request = new DbClientFunctionHistoryRequest
+            {
+                FunctionName = functionName,
+                SolutionId = solution,
+                IsAdminOwn = true // or use ViewBag/LoggedInUser if needed
+            };
+
+            // Call service
+            var history = this.ServiceClient.Post<List<DbClientFunctionHistoryResponse>>(request);
+
+            return Json(new { success = true, data = history });
+        }
+
+        [HttpPost]
+        public ActionResult LogEditedFunction(string functionName, string functionCode, bool Isadmin)
+        {
+            // Check if the user is a developer
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                return Unauthorized();
+            }
+
+            int createdByUserId = this.LoggedInUser.UserId;
+            string solution = this.solutionid ?? ViewBag.Cid;
+
+            // Build request
+            DbClientLogEditedFunctionRequest request = new DbClientLogEditedFunctionRequest
+            {
+                FunctionName = functionName,
+                FunctionCode = functionCode,
+                ClientSolnid = solution,
+                CreatedByUserId = createdByUserId,
+                IsAdminOwn = Isadmin
+            };
+
+            // Call service
+            DbClientLogEditedFunctionResponse response = this.ServiceClient.Post<DbClientLogEditedFunctionResponse>(request);
+
+            if (response.Message == "Function edit logged successfully")
+            {
+                return Json(new { success = true, message = response.Message });
+            }
+            else
+            {
+                string errorMessage = response.Message.StartsWith("Error: ")
+                    ? response.Message
+                    : "Failed to log function edit: " + response.Message;
+
+                return Json(new { success = false, message = errorMessage });
+            }
+        }
 
 
 
@@ -376,10 +437,8 @@ namespace ExpressBase.Web.Controllers
                 CreatedByUserId = createdByUserId
 
             };
-
             // Execute the request
             DbClientCreateFunctionResponse response = this.ServiceClient.Post<DbClientCreateFunctionResponse>(request);
-
             // Ensure the message consistency
             if (response.Message == "Function created successfully")
             {

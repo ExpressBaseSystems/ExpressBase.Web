@@ -552,7 +552,7 @@ button.btn.close-ebfileview_Cont.ebclx_fileview-Cont:hover {
 }
 
 .viewer-backdrop {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .viewer-invisible {

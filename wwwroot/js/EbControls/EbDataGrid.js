@@ -2587,8 +2587,15 @@
                 if (!pMap[i].$type.includes('DataFlowReverseMap'))
                     continue;
                 let dgCtrl = this.objectMODEL[rowid].find(e => e.__Col.Name === pMap[i].DestCtrlName);
-                if (!dgCtrl)
+                if (!dgCtrl) {
+                    if (pMap[i].DestCtrlName == 'id') {
+                        if (this.formRenderer.rowId > 0 && this.formRenderer.renderMode == 1) {
+                            this.showLoader();
+                            window.location.reload();
+                        }
+                    }
                     continue;
+                }
 
                 if (pMap[i].SrcCtrlName === 'id') {
                     dgCtrl.setValue(destRender.rowId);

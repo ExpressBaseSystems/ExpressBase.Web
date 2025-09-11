@@ -836,6 +836,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.provUserFormRefid = solutionObj.SolutionSettings.ProvisionUserFormRefid;
                     ViewBag.EnableFinancialYear = solutionObj.SolutionSettings.EnableFinancialYear;
                     ViewBag.DisbleLeadManagementSave = solutionObj.SolutionSettings.DisbleLeadManagementSave;
+                    ViewBag.EnableNewFileServer = solutionObj.SolutionSettings.EnableNewFileServer;
                     ViewBag.MaterializedViewDate = solutionObj.SolutionSettings.MaterializedViewDate;
                     ViewBag.MaterializedViews = solutionObj.SolutionSettings.MaterializedViews;
                     if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)

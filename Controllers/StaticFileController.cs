@@ -4,8 +4,10 @@ using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.WebApi.RequestNResponse;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -29,24 +31,36 @@ namespace ExpressBase.Web.Controllers
     {
         public StaticFileExtController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2) : base(_sfc, _redis, _sfc2) { }
 
-        public bool isNewFileServer = true;
+        public bool IsNewFileServer
+        {
+            get
+            {
+                if (this.IntSolutionId != string.Empty)
+                {
+                    Eb_Solution _solution = this.GetSolutionObject(this.IntSolutionId);
+                    return _solution.SolutionSettings.EnableNewFileServer;
+                }
+                else 
+                    return false;
+            }
+        }
 
         [HttpGet("images/logo/{solnid}")]
         public IActionResult GetLogo(string solnid)
         {
             solnid = solnid.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
             ActionResult resp = new EmptyResult();
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 DownloadFileResponse2 dfs = this.FileClient2.DownloadLogo(solnid);
-                if (dfs.StreamWrapper != null)
+                if (dfs?.StreamWrapper != null)
                 {
                     Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
 
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMimeType(solnid));
                 }
-                else if (dfs.PreSignedUrl != null)
+                else if (dfs?.PreSignedUrl != null)
                 {
                     resp = Redirect(dfs.PreSignedUrl);
                 }
@@ -180,7 +194,20 @@ namespace ExpressBase.Web.Controllers
 
     public class StaticFileController : EbBaseIntCommonController
     {
-        public bool isNewFileServer = true;
+        public bool IsNewFileServer
+        {
+            get
+            {
+                if (this.IntSolutionId != string.Empty)
+                {
+                    Eb_Solution _solution = this.GetSolutionObject(this.IntSolutionId);
+                    return _solution.SolutionSettings.EnableNewFileServer;
+                }
+                else
+                    return false;
+            }
+        }
+
         public StaticFileController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2) : base(_ssclient, _redis, _sfc, _sfc2) { }
 
         private const string UnderScore = "_";
@@ -195,7 +222,7 @@ namespace ExpressBase.Web.Controllers
             string fname = userid.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
             ActionResult resp = new EmptyResult();
 
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 try
                 {
@@ -208,7 +235,7 @@ namespace ExpressBase.Web.Controllers
 
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
-                    if (dfs.StreamWrapper != null)
+                    if (dfs?.StreamWrapper != null)
                     {
                         Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
 
@@ -216,7 +243,7 @@ namespace ExpressBase.Web.Controllers
                         HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
                         resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(fname));
                     }
-                    else if (dfs.PreSignedUrl != null)
+                    else if (dfs?.PreSignedUrl != null)
                     {
                         resp = Redirect(dfs.PreSignedUrl);
                     }
@@ -336,7 +363,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult GetFile(string filename)
         {
             ActionResult resp = new EmptyResult();
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 try
                 {
@@ -391,7 +418,7 @@ namespace ExpressBase.Web.Controllers
         {
             ActionResult resp = new EmptyResult();
 
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 try
                 {
@@ -469,10 +496,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("images/{filename}")]
         public IActionResult GetImageById(string filename, string qlty)
         {
-
-            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
             ActionResult resp = new EmptyResult();
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 try
                 {
@@ -529,6 +554,7 @@ namespace ExpressBase.Web.Controllers
                     Console.WriteLine("Exception: " + e.Message.ToString());
                 }
             }
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
 
             return resp;
         }
@@ -536,8 +562,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("images/{qlty}/{filename}")]
         public IActionResult GetImageQualById(string filename, string qlty)
         {
-            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
-            ActionResult resp = new EmptyResult(); if (isNewFileServer)
+            ActionResult resp = new EmptyResult();
+            if (IsNewFileServer)
             {
                 try
                 {
@@ -551,14 +577,14 @@ namespace ExpressBase.Web.Controllers
 
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId, ImageMeta.ImageQuality);
 
-                    if (dfs.StreamWrapper != null)
+                    if (dfs?.StreamWrapper != null)
                     {
                         Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
 
                         dfs.StreamWrapper.Memorystream.Position = 0;
                         resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMimeType(filename));
                     }
-                    else if (dfs.PreSignedUrl != null)
+                    else if (dfs?.PreSignedUrl != null)
                     {
                         resp = Redirect(dfs.PreSignedUrl);
                     }
@@ -594,13 +620,15 @@ namespace ExpressBase.Web.Controllers
                 }
             }
 
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
             return resp;
         }
 
         [HttpPost]
         public async Task<int> UploadFileAsync(int i)
         {
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 UploadAsyncResponse2 res = new UploadAsyncResponse2();
                 try
@@ -706,7 +734,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<int> UploadAudioAsync(int i)
         {
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 UploadAsyncResponse2 res = new UploadAsyncResponse2();
                 try
@@ -812,7 +840,7 @@ namespace ExpressBase.Web.Controllers
         public async Task<int> UploadImageAsync(int i)
         {
 
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 UploadAsyncResponse2 res = new UploadAsyncResponse2();
 
@@ -1024,7 +1052,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<int> UploadDPAsync(int i)
         {
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 UploadAsyncResponse2 res = new UploadAsyncResponse2();
 
@@ -1129,7 +1157,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<int> UploadLogoAsync(int i)
         {
-            if (isNewFileServer)
+            if (IsNewFileServer)
             {
                 UploadAsyncResponse2 res = new UploadAsyncResponse2(); 
                 try
@@ -1225,7 +1253,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<int> UploadLocAsync(int i)
         {
-            if (isNewFileServer) {
+            if (IsNewFileServer) {
                 UploadAsyncResponse2 res = new UploadAsyncResponse2();
                 try
                 {

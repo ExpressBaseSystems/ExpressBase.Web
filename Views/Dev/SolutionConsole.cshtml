@@ -16,6 +16,7 @@
     string provUserFormRefid = ViewBag.provUserFormRefid;
     bool EnableFinancialYear = ViewBag.EnableFinancialYear ?? false;
     bool DisbleLeadManagementSave = ViewBag.DisbleLeadManagementSave ?? false;
+    bool EnableNewFileServer = ViewBag.EnableNewFileServer ?? false;
     MobileAppSettings mobile_settings = ViewBag.MobileSettings;
     EbWebFormSettings Web_settings = ViewBag.WebFormSettings;
     string CleanupQueries = ViewBag.CleanupQueries;
@@ -275,6 +276,9 @@
                     </div>
                     <div>
                         <input type="checkbox" id="chkDisbleLeadManagementSave" @(DisbleLeadManagementSave ? "checked" : "")> Disable Lead Management Form Save
+                    </div>
+                    <div>
+                        <input type="checkbox" id="chkEnableNewFileServer" @(EnableNewFileServer ? "checked" : "")> Enable New Fileserver(S3)
                     </div>
                 </div>
             </div>
@@ -538,6 +542,7 @@
             ProvisionUserFormRefid: $("#prov_user_form").val(),
             EnableFinancialYear: $("#chkEnableFinancialYear").prop("checked"),
             DisbleLeadManagementSave: $("#chkDisbleLeadManagementSave").prop("checked"),
+            EnableNewFileServer: $("#chkEnableNewFileServer").prop("checked"),
             UserTypeForms: arr,
             MobileAppSettings: MobileSettings,
             WebSettings: stylehelp.getStyleObj(),

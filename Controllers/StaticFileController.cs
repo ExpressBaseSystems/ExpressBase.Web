@@ -370,12 +370,12 @@ namespace ExpressBase.Web.Controllers
                     FileMeta fileMeta = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File, FileName = filename };
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
-                    if (dfs.StreamWrapper != null)
+                    if (dfs?.StreamWrapper != null)
                     {
                         dfs.StreamWrapper.Memorystream.Position = 0;
                         resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                     }
-                    else if (dfs.PreSignedUrl != null)
+                    else if (dfs?.PreSignedUrl != null)
                     {
                         resp = Redirect(dfs.PreSignedUrl);
                     }
@@ -425,12 +425,12 @@ namespace ExpressBase.Web.Controllers
                     FileMeta fileMeta = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Audio, FileName = filename };
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
-                    if (dfs.StreamWrapper != null)
+                    if (dfs?.StreamWrapper != null)
                     {
                         dfs.StreamWrapper.Memorystream.Position = 0;
                         resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                     }
-                    else if (dfs.PreSignedUrl != null)
+                    else if (dfs?.PreSignedUrl != null)
                     {
                         resp = Redirect(dfs.PreSignedUrl);
                     }
@@ -511,14 +511,14 @@ namespace ExpressBase.Web.Controllers
 
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
-                    if (dfs.StreamWrapper != null)
+                    if (dfs?.StreamWrapper != null)
                     {
                         Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
 
                         dfs.StreamWrapper.Memorystream.Position = 0;
                         resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMimeType(filename));
                     }
-                    else if (dfs.PreSignedUrl != null)
+                    else if (dfs?.PreSignedUrl != null)
                     {
                         resp = Redirect(dfs.PreSignedUrl);
                     }

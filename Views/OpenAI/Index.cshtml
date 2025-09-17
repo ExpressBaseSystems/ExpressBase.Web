@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @* <link rel="stylesheet" href="styles.css"> *@
+
+    <link href="~/css/OpenAi/style.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle sidebar">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                <div class="brand">
+                    <h1>AI Assistant</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <span class="btn-icon">+</span>
+                    New Chat
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Recent Chats</h3>
+                <ul class="chat-history" id="chatHistory">
+                    <!-- Chat history items will be populated here -->
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                @* <button class="sidebar-btn" id="settingsBtn"> *@
+                @*     <span class="btn-icon">⚙️</span> *@
+                @*     Settings *@
+                @* </button> *@
+                @* <button class="sidebar-btn" id="helpBtn"> *@
+                @*     <span class="btn-icon">❓</span> *@
+                @*     Help *@
+                @* </button> *@
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="chat-container">
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-message" id="welcomeMessage">
+                    <div class="welcome-icon">🤖</div>
+                    <h2>Welcome to AI Assistant</h2>
+                    <p>How can I help you today?</p>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-container" id="inputContainer">
+                <div class="input-wrapper">
+                    <input type="hidden" id="isFirstChat" name="isFirstChat" value="true" />
+                    <textarea id="messageInput"
+                              class="message-input"
+                              placeholder="Type your message..."
+                              rows="1"
+                              aria-label="Message input"></textarea>
+                    <button class="send-btn" id="sendBtn" aria-label="Send message" disabled>
+                        <span class="send-icon">→</span>
+                    </button>
+                </div>
+                <div class="input-actions">
+                    <small class="input-help">Press Enter to send, Shift+Enter for new line</small>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Error Toast -->
+    <div class="toast error-toast" id="errorToast">
+        <div class="toast-content">
+            <span class="toast-icon">⚠️</span>
+            <span class="toast-message">Connection error. Please try again.</span>
+        </div>
+        <button class="toast-close" aria-label="Close">×</button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <script src="~/js/OpenAI/script.js" type="text/javascript"></script>
+</body>
+</html>

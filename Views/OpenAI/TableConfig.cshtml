@@ -1,0 +1,47 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Table Manager</title>
+    <link href="~/css/OpenAi/TableConfig.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header class="header">
+                <h1>Data Table Manager</h1>
+                <p>Manage your table descriptions</p>
+            </header>
+
+            <div class="table-container">
+                <div class="table-wrapper">
+                    <table id="dataTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Table Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Dynamic content will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="actions">
+                    <button id="saveBtn" class="save-btn" type="button">
+                        <span class="btn-text">Save Changes</span>
+                        <span class="btn-loader" style="display: none;">Saving...</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="notification" class="notification" style="display: none;"></div>
+        </div>
+    </div>
+    @* <script type="module" src="/main.js"></script> *@
+    <script src="~/js/OpenAI/TableConfig.js" type="text/javascript"></script>
+</body>
+</html>

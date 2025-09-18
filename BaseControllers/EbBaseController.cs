@@ -78,6 +78,16 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
             this.httpContextAccessor = _cxtacc as HttpContextAccessor;
         }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth, EbStaticFileClient2 _sfc2)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.FileClient = _sfc as EbStaticFileClient;
+            this.AuthClient = _auth as EbAuthClient;
+            this.FileClient2 = _sfc2;
+        }
+
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;

@@ -1,40 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Presentation;
 using ExpressBase.Common;
-using ExpressBase.Common.ServiceClients;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Web.BaseControllers;
-using Newtonsoft.Json;
-using ServiceStack;
-using ServiceStack.Redis;
-using Microsoft.AspNetCore.Http;
-using System.Xml;
-using System.IO;
-using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Connections;
 using ExpressBase.Common.Constants;
-using ServiceStack.Auth;
+using ExpressBase.Common.Data;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
-using Microsoft.Net.Http.Headers;
+using ExpressBase.Common.Extensions;
 using ExpressBase.Common.LocationNSolution;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.Connections;
-using System.Net;
 using ExpressBase.Common.NotificationHubs;
-using ExpressBase.Security;
-using ExpressBase.Objects;
 using ExpressBase.Common.Security;
+using ExpressBase.Common.ServiceClients;
+using ExpressBase.Common.WebApi.RequestNResponse;
+using ExpressBase.Objects;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Security;
+using ExpressBase.Web.BaseControllers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
+using ServiceStack;
+using ServiceStack.Auth;
+using ServiceStack.Redis;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
-using DocumentFormat.OpenXml.Presentation;
+using System.Threading.Tasks;
+using System.Xml;
+using ResponseStatus = ServiceStack.ResponseStatus;
 
 namespace ExpressBase.Web.Controllers
 {
     public class ApiController : EbBaseIntApiController
     {
-        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_client, _redis, _sfc, _auth)
+        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth, EbStaticFileClient2 _sfc2) : base(_client, _redis, _sfc, _auth, _sfc2)
         {
 
         }
@@ -403,22 +406,31 @@ namespace ExpressBase.Web.Controllers
 
         private void SetUserDp(ApiAuthResponse authresp)
         {
-            this.FileClient.BearerToken = authresp.BToken;
-            this.FileClient.RefreshToken = authresp.RToken;
-            this.FileClient.Headers.Add(CacheConstants.RTOKEN, authresp.RToken);
-
             try
             {
-                DownloadFileResponse dfs = this.FileClient.Get(new DownloadDpRequest
+                ImageMeta ImageMeta = new ImageMeta
                 {
-                    ImageInfo = new ImageMeta
+                    FileName = authresp.UserId.ToString(),
+                    FileType = StaticFileConstants.PNG,
+                    FileCategory = EbFileCategory.Dp
+                };
+
+                if (IsNewFileServer)
+                {
+                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, authresp.User.UserId, authresp.User.AuthId, 0, true);
+                    authresp.DisplayPicture = dfs.FileBytes;
+                }
+                else
+                {
+                    this.FileClient.BearerToken = authresp.BToken;
+                    this.FileClient.RefreshToken = authresp.RToken;
+                    this.FileClient.Headers.Add(CacheConstants.RTOKEN, authresp.RToken);
+                    DownloadFileResponse dfs = this.FileClient.Get(new DownloadDpRequest
                     {
-                        FileName = authresp.UserId.ToString(),
-                        FileType = StaticFileConstants.PNG,
-                        FileCategory = EbFileCategory.Dp
-                    }
-                });
-                authresp.DisplayPicture = dfs.StreamWrapper.Memorystream.ToArray();
+                        ImageInfo = ImageMeta
+                    });
+                    authresp.DisplayPicture = dfs.StreamWrapper.Memorystream.ToArray();
+                }
             }
             catch (Exception ex)
             {
@@ -655,7 +667,7 @@ namespace ExpressBase.Web.Controllers
         public async Task<ApiResponse> UploadFile()
         {
             ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>() };
-            UploadAsyncResponse res = new UploadAsyncResponse();
+
             var req = this.HttpContext.Request.Form;
             string fname = string.Empty, _context = string.Empty;
 
@@ -663,28 +675,32 @@ namespace ExpressBase.Web.Controllers
                 _context = req["Context"];
             try
             {
-                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
-                uploadFileRequest.FileDetails = new FileMeta();
-                foreach (var formFile in req.Files)
+                if (IsNewFileServer)
                 {
-                    if (formFile.Length > 0)
+                    UploadAsyncResponse2 res = new UploadAsyncResponse2();
+                    foreach (var formFile in req.Files)
                     {
-                        fname = formFile.FileName.ToLower();
-                        byte[] myFileContent;
+                        if (formFile.Length == 0)
+                            continue;
+                        string extension = System.IO.Path.GetExtension(formFile.FileName).TrimStart('.').ToLower();
+
+                        byte[] FileBytes;
                         using (var memoryStream = new MemoryStream())
                         {
                             await formFile.CopyToAsync(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            myFileContent = new byte[memoryStream.Length];
-                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-                            uploadFileRequest.FileByte = myFileContent;
+                            FileBytes = memoryStream.ToArray();
                         }
-                        uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
-                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
-                        uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
-                        uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
-                        uploadFileRequest.FileDetails.Context = _context;
-                        res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
+
+                        FileMeta FileMeta = new FileMeta
+                        {
+                            Context = _context,
+                            FileName = formFile.FileName.ToLower(),
+                            FileType = extension,
+                            Length = FileBytes.Length,
+                            FileCategory = EbFileCategory.File
+                        };
+
+                        res = await FileClient2.UploadFileAsync(FileBytes, FileMeta, "/upload/file", this.IntSolutionId, this.LoggedInUser.Id, this.LoggedInUser.AuthId);
 
                         (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
                         {
@@ -694,6 +710,42 @@ namespace ExpressBase.Web.Controllers
                         });
                     }
                 }
+                else
+                {
+                    UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
+                    UploadAsyncResponse res = new UploadAsyncResponse();
+                    uploadFileRequest.FileDetails = new FileMeta();
+                    foreach (var formFile in req.Files)
+                    {
+                        if (formFile.Length > 0)
+                        {
+                            fname = formFile.FileName.ToLower();
+                            byte[] myFileContent;
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await formFile.CopyToAsync(memoryStream);
+                                memoryStream.Seek(0, SeekOrigin.Begin);
+                                myFileContent = new byte[memoryStream.Length];
+                                await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                                uploadFileRequest.FileByte = myFileContent;
+                            }
+                            uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
+                            uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
+                            uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
+                            uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
+                            uploadFileRequest.FileDetails.Context = _context;
+                            res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
+
+                            (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
+                            {
+                                FileName = formFile.FileName.ToLower(),
+                                FileType = req["FileType"],
+                                FileRefId = res.FileRefId
+                            });
+                        }
+                    }
+                }
+
             }
             catch (Exception e)
             {
@@ -718,48 +770,96 @@ namespace ExpressBase.Web.Controllers
             IFormCollection req = this.HttpContext.Request.Form;
             try
             {
-                FileUploadRequest request = new FileUploadRequest();
-
-                foreach (IFormFile formFile in req.Files)
+                if (IsNewFileServer)
                 {
-                    if (formFile.Length <= 0) return ApiFiles;
-
-                    string fileName = formFile.FileName.ToLower();
-                    request.FileCategory = this.GetFileType(fileName);
-
-                    byte[] myFileContent;
-                    using (var memoryStream = new MemoryStream())
+                    List<string> tags = string.IsNullOrEmpty(req["Tags"]) ? new List<string>() : req["Tags"].ToList<string>();
+                    List<string> category = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
+                    foreach (IFormFile formFile in req.Files)
                     {
-                        await formFile.CopyToAsync(memoryStream);
-                        memoryStream.Seek(0, SeekOrigin.Begin);
-                        myFileContent = new byte[memoryStream.Length];
-                        await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-                        request.FileByte = myFileContent;
+                        if (formFile.Length <= 0) return ApiFiles;
+
+                        string fileName = formFile.FileName.ToLower();
+                        string extension = System.IO.Path.GetExtension(formFile.FileName).TrimStart('.').ToLower();
+
+                        byte[] FileBytes;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            FileBytes = memoryStream.ToArray();
+                        }
+
+                        EbFileCategory fileCategory = this.GetFileType(fileName);
+                        FileMeta FileMeta = new FileMeta
+                        {
+                            Context = req["context"],
+                            FileName = formFile.FileName.ToLower(),
+                            FileType = extension,
+                            Length = FileBytes.Length,
+                            FileCategory = fileCategory,
+                            MetaDataDictionary = new Dictionary<String, List<string>> { { "Tags", tags }, { "Category", category } },
+                        };
+
+                        UploadAsyncResponse2 res =null;
+                        if (fileCategory == EbFileCategory.Images)
+                            res = await FileClient2.UploadFileAsync(FileBytes, FileMeta as ImageMeta, "/upload/image", this.IntSolutionId, this.LoggedInUser.Id, this.LoggedInUser.AuthId);
+                        else if (fileCategory == EbFileCategory.Audio)
+                            res = await FileClient2.UploadFileAsync(FileBytes, FileMeta, "/upload/audio", this.IntSolutionId, this.LoggedInUser.Id, this.LoggedInUser.AuthId);
+                        else
+                            res = await FileClient2.UploadFileAsync(FileBytes, FileMeta, "/upload/file", this.IntSolutionId, this.LoggedInUser.Id, this.LoggedInUser.AuthId);
+
+                        ApiFiles.Add(new ApiFileData
+                        {
+                            FileName = fileName,
+                            FileType = fileName.SplitOnLast(CharConstants.DOT).Last(),
+                            FileRefId = res.FileRefId
+                        });
                     }
+                }
+                else
+                {
+                    FileUploadRequest request = new FileUploadRequest();
 
-                    request.FileDetails.FileName = fileName;
-                    request.FileDetails.FileType = fileName.SplitOnLast(CharConstants.DOT).Last();
-                    request.FileDetails.Length = request.FileByte.Length;
-                    request.FileDetails.FileCategory = request.FileCategory;
-                    request.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
-
-                    if (req.ContainsKey("context") && !string.IsNullOrEmpty(req["context"]))
-                        request.FileDetails.Context = req["context"];
-
-                    if (req.ContainsKey("categories") && !string.IsNullOrEmpty(req["categories"]))
-                        request.FileDetails.MetaDataDictionary.Add("Category", req["categories"].ToString().Split(CharConstants.COMMA).ToList());
-
-                    if (req.ContainsKey("tags") && !string.IsNullOrEmpty(req["tags"]))
-                        request.FileDetails.MetaDataDictionary.Add("Tags", req["tags"].ToString().Split(CharConstants.COMMA).ToList());
-
-                    UploadAsyncResponse res = this.FileClient.Post<UploadAsyncResponse>(request);
-
-                    ApiFiles.Add(new ApiFileData
+                    foreach (IFormFile formFile in req.Files)
                     {
-                        FileName = fileName,
-                        FileType = fileName.SplitOnLast(CharConstants.DOT).Last(),
-                        FileRefId = res.FileRefId
-                    });
+                        if (formFile.Length <= 0) return ApiFiles;
+
+                        string fileName = formFile.FileName.ToLower();
+                        request.FileCategory = this.GetFileType(fileName);
+
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            request.FileByte = myFileContent;
+                        }
+
+                        request.FileDetails.FileName = fileName;
+                        request.FileDetails.FileType = fileName.SplitOnLast(CharConstants.DOT).Last();
+                        request.FileDetails.Length = request.FileByte.Length;
+                        request.FileDetails.FileCategory = request.FileCategory;
+                        request.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
+
+                        if (req.ContainsKey("context") && !string.IsNullOrEmpty(req["context"]))
+                            request.FileDetails.Context = req["context"];
+
+                        if (req.ContainsKey("categories") && !string.IsNullOrEmpty(req["categories"]))
+                            request.FileDetails.MetaDataDictionary.Add("Category", req["categories"].ToString().Split(CharConstants.COMMA).ToList());
+
+                        if (req.ContainsKey("tags") && !string.IsNullOrEmpty(req["tags"]))
+                            request.FileDetails.MetaDataDictionary.Add("Tags", req["tags"].ToString().Split(CharConstants.COMMA).ToList());
+
+                        UploadAsyncResponse res = this.FileClient.Post<UploadAsyncResponse>(request);
+
+                        ApiFiles.Add(new ApiFileData
+                        {
+                            FileName = fileName,
+                            FileType = fileName.SplitOnLast(CharConstants.DOT).Last(),
+                            FileRefId = res.FileRefId
+                        });
+                    }
                 }
             }
             catch (Exception ex)
@@ -784,26 +884,41 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/api/files/{filename}")]
         public IActionResult GetFile(string filename)
         {
-            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
             ActionResult resp = new EmptyResult();
-
             try
             {
-                DownloadFileResponse dfs = this.FileClient.Get<DownloadFileResponse>(new DownloadFileByIdRequest
-                {
-                    FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
-                });
+                FileMeta fileMeta = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File };
 
-                if (dfs.StreamWrapper != null)
+                if (IsNewFileServer)
                 {
-                    dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser?.UserId ?? 0, this.LoggedInUser?.AuthId, null, true);
+                    if (dfs?.FileBytes != null)
+                    {
+                        MemoryStream ms = new MemoryStream(dfs.FileBytes);
+                        ms.Position = 0;
+                        resp = new FileStreamResult(ms, GetMime(filename));
+                    }
+                }
+                else
+                {
+                    DownloadFileResponse dfs = this.FileClient.Get<DownloadFileResponse>(new DownloadFileByIdRequest
+                    {
+                        FileDetails = fileMeta
+                    });
+
+                    if (dfs.StreamWrapper != null)
+                    {
+                        dfs.StreamWrapper.Memorystream.Position = 0;
+                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                    }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
+
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
             return resp;
         }
 
@@ -817,39 +932,73 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 int id = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First());
-                DownloadFileResponse dfs = null;
 
-                if (category == EbFileCategory.File || category == EbFileCategory.Audio)
+                if (IsNewFileServer)
                 {
-                    dfs = this.FileClient.Get(new DownloadFileByIdRequest
+                    DownloadFileResponse2 dfs = null;
+                    if (category == EbFileCategory.File || category == EbFileCategory.Audio)
                     {
-                        FileDetails = new FileMeta
+                        FileMeta fileMeta = new FileMeta
                         {
                             FileRefId = id,
                             FileCategory = category
-                        }
-                    });
-                }
-                else if (category == EbFileCategory.Images)
-                {
-                    dfs = this.FileClient.Get(new DownloadImageByIdRequest
+                        };
+
+                        dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser?.UserId ?? 0, this.LoggedInUser?.AuthId, null, true);
+                    }
+                    else if (category == EbFileCategory.Images)
                     {
-                        ImageInfo = new ImageMeta
+                        ImageMeta imageMeta = new ImageMeta
                         {
                             FileRefId = id,
-                            FileCategory = EbFileCategory.Images,
-                            ImageQuality = ImageQuality.original
-                        }
-                    });
-                }
-
-                if (dfs.StreamWrapper != null)
-                {
-                    response.Bytea = dfs.StreamWrapper.Memorystream.ToArray();
-                    response.ContentType = this.GetMime(filename);
+                            FileCategory = Common.Enums.EbFileCategory.Images
+                        };
+                        dfs = this.FileClient2.DownloadFile(imageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser?.UserId ?? 0, this.LoggedInUser?.AuthId, ImageQuality.original, true);
+                    }
+                    if (dfs.FileBytes != null)
+                    {
+                        response.Bytea = dfs.FileBytes;
+                        response.ContentType = this.GetMime(filename);
+                    }
+                    else
+                        throw new Exception("file not found");
                 }
                 else
-                    throw new Exception("file not found");
+                {
+                    DownloadFileResponse dfs = null;
+                    if (category == EbFileCategory.File || category == EbFileCategory.Audio)
+                    {
+                        dfs = this.FileClient.Get(new DownloadFileByIdRequest
+                        {
+                            FileDetails = new FileMeta
+                            {
+                                FileRefId = id,
+                                FileCategory = category
+                            }
+                        });
+                    }
+                    else if (category == EbFileCategory.Images)
+                    {
+                        dfs = this.FileClient.Get(new DownloadImageByIdRequest
+                        {
+                            ImageInfo = new ImageMeta
+                            {
+                                FileRefId = id,
+                                FileCategory = EbFileCategory.Images,
+                                ImageQuality = ImageQuality.original
+                            }
+                        });
+                    }
+
+                    if (dfs.StreamWrapper != null)
+                    {
+                        response.Bytea = dfs.StreamWrapper.Memorystream.ToArray();
+                        response.ContentType = this.GetMime(filename);
+                    }
+                    else
+                        throw new Exception("file not found");
+                }
+
 
             }
             catch (Exception ex)
@@ -1001,11 +1150,23 @@ namespace ExpressBase.Web.Controllers
                 resp.IsValid = this.IsValidSolution;
                 try
                 {
-                    DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
+                    if (IsNewFileServer)
                     {
-                        SolnId = this.IntSolutionId,
-                    });
-                    resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
+                        DownloadFileResponse2 dfs = this.FileClient2.DownloadLogo(this.IntSolutionId);
+                        if (dfs?.FileBytes != null)
+                        {
+                            resp.Logo = dfs.FileBytes;
+                        }
+                    }
+                    else
+                    {
+                        DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
+                        {
+                            SolnId = this.IntSolutionId,
+                        });
+                        resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
+                    }
+
                 }
                 catch (Exception ex)
                 {

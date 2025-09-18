@@ -53,12 +53,11 @@ namespace ExpressBase.Web.Controllers
             if (IsNewFileServer)
             {
                 DownloadFileResponse2 dfs = this.FileClient2.DownloadLogo(solnid);
-                if (dfs?.StreamWrapper != null)
+                if (dfs?.FileBytes != null)
                 {
-                    Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
-
-                    dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMimeType(solnid));
+                    MemoryStream ms = new MemoryStream(dfs.FileBytes);
+                    ms.Position = 0; 
+                    resp = new FileStreamResult(ms, StaticFileConstants.GetMimeType(solnid));
                 }
                 else if (dfs?.PreSignedUrl != null)
                 {
@@ -235,13 +234,12 @@ namespace ExpressBase.Web.Controllers
 
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
-                    if (dfs?.StreamWrapper != null)
+                    if (dfs?.FileBytes != null)
                     {
-                        Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
-
-                        dfs.StreamWrapper.Memorystream.Position = 0;
+                        MemoryStream ms = new MemoryStream(dfs.FileBytes);
+                        ms.Position = 0;
                         HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
-                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(fname));
+                        resp = new FileStreamResult(ms, GetMime(fname));
                     }
                     else if (dfs?.PreSignedUrl != null)
                     {
@@ -369,12 +367,13 @@ namespace ExpressBase.Web.Controllers
                 {
                     FileMeta fileMeta = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File, FileName = filename };
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
-
-                    if (dfs?.StreamWrapper != null)
+                    if (dfs?.FileBytes != null)
                     {
-                        dfs.StreamWrapper.Memorystream.Position = 0;
-                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
-                    }
+                        MemoryStream ms = new MemoryStream(dfs.FileBytes);
+                        ms.Position = 0;
+                        HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
+                        resp = new FileStreamResult(ms, GetMime(filename));
+                    } 
                     else if (dfs?.PreSignedUrl != null)
                     {
                         resp = Redirect(dfs.PreSignedUrl);
@@ -425,10 +424,11 @@ namespace ExpressBase.Web.Controllers
                     FileMeta fileMeta = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Audio, FileName = filename };
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
-                    if (dfs?.StreamWrapper != null)
+                    if (dfs?.FileBytes != null)
                     {
-                        dfs.StreamWrapper.Memorystream.Position = 0;
-                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                        MemoryStream ms = new MemoryStream(dfs.FileBytes);
+                        ms.Position = 0; 
+                        resp = new FileStreamResult(ms, GetMime(filename));
                     }
                     else if (dfs?.PreSignedUrl != null)
                     {
@@ -511,12 +511,11 @@ namespace ExpressBase.Web.Controllers
 
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
-                    if (dfs?.StreamWrapper != null)
-                    {
-                        Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
-
-                        dfs.StreamWrapper.Memorystream.Position = 0;
-                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMimeType(filename));
+                    if (dfs?.FileBytes != null)
+                    { 
+                        MemoryStream ms = new MemoryStream(dfs.FileBytes);
+                        ms.Position = 0; 
+                        resp = new FileStreamResult(ms, StaticFileConstants.GetMimeType(filename));
                     }
                     else if (dfs?.PreSignedUrl != null)
                     {
@@ -577,12 +576,11 @@ namespace ExpressBase.Web.Controllers
 
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId, ImageMeta.ImageQuality);
 
-                    if (dfs?.StreamWrapper != null)
+                    if (dfs?.FileBytes != null)
                     {
-                        Console.WriteLine("Image Size: " + dfs.StreamWrapper.Memorystream.Length);
-
-                        dfs.StreamWrapper.Memorystream.Position = 0;
-                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMimeType(filename));
+                        MemoryStream ms = new MemoryStream(dfs.FileBytes);
+                        ms.Position = 0; 
+                        resp = new FileStreamResult(ms, StaticFileConstants.GetMimeType(filename));
                     }
                     else if (dfs?.PreSignedUrl != null)
                     {

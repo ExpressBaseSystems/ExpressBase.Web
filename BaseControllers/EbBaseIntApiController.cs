@@ -20,6 +20,8 @@ namespace ExpressBase.Web.BaseControllers
 
         protected bool IsValidSolution { set; get; }
 
+        protected bool IsNewFileServer = false;
+
         public EbBaseIntApiController(IServiceClient _ssclient) : base(_ssclient) { }
 
         public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
@@ -28,7 +30,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
 
-        public EbBaseIntApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_client, _redis, _sfc, _auth) { }
+        public EbBaseIntApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth, EbStaticFileClient2 _sfc2) : base(_client, _redis, _sfc, _auth, _sfc2) { }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -57,6 +59,8 @@ namespace ExpressBase.Web.BaseControllers
                 controller.ViewBag.IsValidSol = true;
                 IsValidSolution = true;
             }
+
+            IsNewFileServer = GetSolutionObject(IntSolutionId).SolutionSettings?.EnableNewFileServer ?? false;
 
             if ((string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken)) && string.IsNullOrEmpty(sAPIKey))
             {

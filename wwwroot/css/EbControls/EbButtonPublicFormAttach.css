@@ -1,0 +1,18 @@
+[isrendermode=true][eb-form="true"] [ctype="ButtonPublicFormAttach"] .ctrl-cover div[disabled="disabled"] {
+    background-color: #afafaf !important;
+    cursor: not-allowed !important;
+}
+
+[eb-form="true"] [ctype="ButtonPublicFormAttach"] .ctrl-cover .btn {
+    border: none;
+    padding: 7px;
+    font-size: 17px;
+}
+
+[ctype="ButtonPublicFormAttach"] > .eb-ctrl-label {
+    display: none;
+}
+
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ButtonPublicFormAttach] > .ctrl-cover > button {
+    pointer-events: none;
+}

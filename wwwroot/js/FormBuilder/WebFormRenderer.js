@@ -1594,6 +1594,13 @@ const WebFormRender = function (option) {
         //$.each(this.DGs, function (k, DG) {
         //    this.DGBuilderObjs[DG.EbSid_CtxId].SwitchToViewMode();
         //}.bind(this));
+
+        /**
+         * ButtonPublicFormAttachControl() should be enabled in view mode
+         * TODO: improve ; this is hacky and non performat;
+         **/
+
+        buttonPublicFormAttachControlEnableDisable(this.flatControls, "enable");
     };
 
     this.S2EmodeReviewCtrl = function () {
@@ -1697,6 +1704,13 @@ const WebFormRender = function (option) {
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.enableControlsInEditMode();
         this.setUniqCtrlsInitialVals();
+
+        /**
+         * ButtonPublicFormAttachControl() should be disabled in edit mode
+         * TODO: improve ; this is hacky and non performat
+         **/
+
+        buttonPublicFormAttachControlEnableDisable(this.flatControls, "disable");
     };
 
     this.isBtnDisableFor_eb_default = function () {

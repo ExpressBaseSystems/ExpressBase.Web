@@ -1212,6 +1212,27 @@
         return new EbDataGrid_New(ctrl, ctrlOpts);
     };
 
+    this.ButtonPublicFormAttach = function (ctrl, ctrlOpts)
+    {
+        try {
+
+            return new ButtonPublicFormAttachControl(
+                ctrl,
+                ctrlOpts,
+                this.Renderer.Mode,
+                this.Renderer.rowId,
+                this.Renderer.formRefId,
+                ctrl.PublicFormId
+            );
+
+        } catch (err) {
+
+            EbDebugHelper.error("Failed to create ButtonPublicFormAttachControl", err)
+            return null;
+
+        }
+    }
+
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl.off('click').on('click', function (ctrl, ctrlOpts) {

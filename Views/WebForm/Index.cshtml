@@ -19,6 +19,15 @@
     var t0 = performance.now();
 </script>
 
+
+@* BEGIN JS HELPER CLASSES *@
+<script type="text/javascript" src="../js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="../js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="../js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="../js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
+@* END JS HELPER CLASSES *@
+
+
 @* BOOTSTRAP CSS *@
 
 <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
@@ -47,6 +56,9 @@
 @*<link rel="stylesheet" type="text/css" href="~/css/Common/offline-theme-dark.css" asp-append-version=@bApnd />*@
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/css/smart_wizard_all.min.css" rel="stylesheet" type="text/css" />
 
+@* EbButtonPublicFormAttach *@
+<link rel="stylesheet" href="../css/EbControls/EbButtonPublicFormAttach.css"  asp-append-version=@bApnd />
+
 @*propertygrid*@
 <link rel="stylesheet" type="text/css" href="~/css/LayoutCommon/dragula.min.css" />
 <link rel="stylesheet" href="~/css/Bundles/codemirror.bundle.min.css" asp-append-version=@bApnd />
@@ -63,6 +75,9 @@
 <script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
 @*<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>*@
 <script type="text/javascript" src="~/js/LayoutCommon/MonthPicker.min.js"></script>
+
+
+
 
 
 
@@ -144,12 +159,14 @@
 <script type="text/javascript" src="/webform/cxt2js?v=@ExpressBase.Objects.Singletons.BuildInfo.Md5Version"></script>
 <script type="text/javascript" src="/webform/cxt2js_vis?v=@ExpressBase.Objects.Singletons.BuildInfo.Md5Version"></script>
 
+@* EbButtonPublicFormAttach *@
+<script type="text/javascript" src="../js/EbControls/ButtonPublicFormAttachControl/EbButtonPublicFormAttachControlActions.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="../js/EbControls/ButtonPublicFormAttachControl/EbButtonPublicFormAttachControl.js" asp-append-version=@bApnd></script>
+
 <script>
     var t1 = performance.now();
     console.log("web form link loading took " + (t1 - t0) + " milliseconds.");
 </script>
-
-
 
 <style>
     .webform-cont {

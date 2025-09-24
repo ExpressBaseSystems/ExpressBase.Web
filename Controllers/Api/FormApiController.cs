@@ -2,8 +2,10 @@
 using ExpressBase.Common.Constants;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Objects.ServiceStack_Artifacts.EbButtonPublicFormAttachServiceStackArtifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;
+using ExpressBase.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using ServiceStack;
@@ -172,6 +174,102 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 return GetVerifyOtpApiResponse((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+
+
+        [HttpGet("control/button_public_form_attach/public_form_url")]
+        //[EbApiAuthGaurd]
+        public IActionResult ControlButtonPublicFormAttchBuildUrl(
+            [FromQuery] string sourceFormRefId,
+            [FromQuery] string publicFormRefId,
+            [FromQuery] int formDataId
+        )
+        {
+
+            DebugHelper.Log("-----------------");
+            DebugHelper.Log(HostUrlHelper.GePublictHostUrl(this.ExtSolutionId));
+            DebugHelper.Log("-----------------");
+            /* if (!Authenticated)
+             {
+                 var unauthorizedResp = new
+                 {
+                     Status = (int)HttpStatusCode.Unauthorized,
+                     Message = "Unauthorized",
+                     ErrorCode = 1401
+                 };
+
+                 return StatusCode(unauthorizedResp.Status, unauthorizedResp);
+             }*/
+            try
+            {
+
+                if (string.IsNullOrWhiteSpace(publicFormRefId))
+                {
+         
+                    throw new ArgumentNullException(nameof(publicFormRefId), "publicFormRefId is required");
+                }
+                
+                if (string.IsNullOrWhiteSpace(sourceFormRefId))
+                {
+         
+                    throw new ArgumentNullException(nameof(sourceFormRefId), "sourceFormRefId is required");
+                }
+
+                if (formDataId <= 0)
+                {
+
+                    throw new ArgumentNullException(nameof(publicFormRefId), "formDataId is required");
+                }
+
+                ResponseEbButtonPublicFormAttachServiceStackArtifact Response = 
+                    ServiceClient.Get<ResponseEbButtonPublicFormAttachServiceStackArtifact>(
+                        new RequestEbButtonPublicFormAttachServiceStackArtifact 
+                        {
+                            PublicFormRefId = publicFormRefId,
+                            SourceFormRefId = sourceFormRefId,
+                            SourceFormDataId = formDataId
+                        }
+                   );
+
+                string host = HostUrlHelper.GePublictHostUrl(this.ExtSolutionId);
+                string formRoutePrefix = "WebForm/Index";
+                string url = host +
+                            "/" +
+                            formRoutePrefix +
+                            "?" +
+                            "r=" +
+                            publicFormRefId;
+
+
+                if (!string.IsNullOrEmpty(Response.QueryStringEncrypted))
+                {
+                    url +=  "&" + "_ebPrefillData=" + Response.QueryStringEncrypted;                    
+                }
+
+                return StatusCode(
+                            (int)HttpStatusCode.OK,
+                             new
+                             {
+                                 Status = (int)HttpStatusCode.OK,
+                                 Message = Response.Message,
+                                 Url = url
+                             }
+                        );
+
+
+            }
+            catch (Exception ex)
+            {
+                var errorResp = new
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Message = "An unexpected error occurred.",
+                    Details = ex.Message
+                };
+
+                return StatusCode(errorResp.Status, errorResp);
             }
         }
     }

@@ -1,0 +1,19 @@
+# Ignore all .bundle.css and .bundle.js files
+*.bundle.css
+*.bundle.js
+
+# Or if you want to ignore everything under a "bundle" folder
+bundle/**/*.css
+bundle/**/*.js
+
+# If your bundler puts them in "dist" or "build"
+dist/**/*.css
+dist/**/*.js
+build/**/*.css
+build/**/*.js
+
+# ----------------------------
+# IDE / Editor Config Folders
+# ----------------------------
+.idea/
+.vscode/

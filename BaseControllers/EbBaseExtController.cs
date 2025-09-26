@@ -20,7 +20,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBaseExtController(IEbStaticFileClient _sfc, IRedisClient _redis) : base(_sfc, _redis) { }
 
-        public EbBaseExtController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2) : base(_sfc, _redis, _sfc2) { }
+        public EbBaseExtController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2, PooledRedisClientManager pooledRedisManager) : base(_sfc, _redis, _sfc2, pooledRedisManager ){ }
 
         public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 

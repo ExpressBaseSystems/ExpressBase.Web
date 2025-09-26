@@ -33,7 +33,8 @@ namespace ExpressBase.Web.Controllers
         public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc) : base(_ssclient, _redis, _mqc) { }
 
         public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
-        public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2) : base(_ssclient, _redis, _sfc, _sfc2) { }
+
+        public EbBaseIntController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, _sfc, _sfc2, pooledRedisManager) { }
 
         public EbBaseIntController(IServiceClient _ssclient, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _mqc, _sfc) { }
 

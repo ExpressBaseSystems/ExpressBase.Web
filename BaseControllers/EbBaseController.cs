@@ -72,11 +72,13 @@ namespace ExpressBase.Web.BaseControllers
             }
         }
 
-        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, PooledRedisClientManager pooledRedisManager)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
             this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+            this.PooledRedisManager = pooledRedisManager;
+
         }
 
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth, EbStaticFileClient2 _sfc2)
@@ -119,10 +121,11 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
         }
 
-        public EbBaseController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2)
+        public EbBaseController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2, PooledRedisClientManager pooledRedisManager)
         {
             this.FileClient = _sfc as EbStaticFileClient;
             this.Redis = _redis as RedisClient;
+            this.PooledRedisManager = pooledRedisManager;
             this.FileClient2 = _sfc2;
         }
 
@@ -158,12 +161,13 @@ namespace ExpressBase.Web.BaseControllers
             this.FileClient = _sfc as EbStaticFileClient;
         }
 
-        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2)
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2, PooledRedisClientManager pooledRedisManager)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
             this.FileClient = _sfc as EbStaticFileClient;
             this.FileClient2 = _sfc2;
+            this.PooledRedisManager = pooledRedisManager;
         }
 
 

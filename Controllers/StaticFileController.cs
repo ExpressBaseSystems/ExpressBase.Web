@@ -29,21 +29,9 @@ namespace ExpressBase.Web.Controllers
 {
     public class StaticFileExtController : EbBaseExtController
     {
-        public StaticFileExtController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2) : base(_sfc, _redis, _sfc2) { }
+        public StaticFileExtController(IEbStaticFileClient _sfc, IRedisClient _redis, EbStaticFileClient2 _sfc2, PooledRedisClientManager pooledRedisManager) : base(_sfc, _redis, _sfc2, pooledRedisManager) { }
 
-        public bool IsNewFileServer
-        {
-            get
-            {
-                if (this.IntSolutionId != string.Empty)
-                {
-                    Eb_Solution _solution = this.GetSolutionObject(this.IntSolutionId);
-                    return _solution.SolutionSettings.EnableNewFileServer;
-                }
-                else 
-                    return false;
-            }
-        }
+        public bool IsNewFileServer => !string.IsNullOrEmpty(IntSolutionId) && (GetSolutionObject(IntSolutionId)?.SolutionSettings?.EnableNewFileServer ?? false);
 
         [HttpGet("images/logo/{solnid}")]
         public IActionResult GetLogo(string solnid)
@@ -56,7 +44,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs?.FileBytes != null)
                 {
                     MemoryStream ms = new MemoryStream(dfs.FileBytes);
-                    ms.Position = 0; 
+                    ms.Position = 0;
                     resp = new FileStreamResult(ms, StaticFileConstants.GetMimeType(solnid));
                 }
                 else if (dfs?.PreSignedUrl != null)
@@ -66,7 +54,7 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                DownloadFileResponse dfs = null; 
+                DownloadFileResponse dfs = null;
                 try
                 {
                     dfs = this.FileClient.Get<DownloadFileResponse>
@@ -153,7 +141,6 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-
         [HttpGet("/eb/images/{quality}/{refid}")]
         public IActionResult GetInfraImages(string refid, string quality)
         {
@@ -193,25 +180,9 @@ namespace ExpressBase.Web.Controllers
 
     public class StaticFileController : EbBaseIntCommonController
     {
-        public bool IsNewFileServer
-        {
-            get
-            {
-                if (this.IntSolutionId != string.Empty)
-                {
-                    Eb_Solution _solution = this.GetSolutionObject(this.IntSolutionId);
-                    return _solution.SolutionSettings.EnableNewFileServer;
-                }
-                else
-                    return false;
-            }
-        }
+        public bool IsNewFileServer => !string.IsNullOrEmpty(IntSolutionId) && (GetSolutionObject(IntSolutionId)?.SolutionSettings?.EnableNewFileServer ?? false);
 
-        public StaticFileController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2) : base(_ssclient, _redis, _sfc, _sfc2) { }
-
-        private const string UnderScore = "_";
-
-        private const string RejexPattern = " *[\\~#%&*{}/:<>?|\"-]+ *";
+        public StaticFileController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, EbStaticFileClient2 _sfc2, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, _sfc, _sfc2, pooledRedisManager) { }
 
         [HttpGet("images/dp/{userid}")]
         public IActionResult GetDP(string userid)
@@ -221,17 +192,17 @@ namespace ExpressBase.Web.Controllers
             string fname = userid.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
             ActionResult resp = new EmptyResult();
 
+            ImageMeta ImageMeta = new ImageMeta
+            {
+                FileName = uid,
+                FileType = filetype,
+                FileCategory = EbFileCategory.Dp,
+            };
+
             if (IsNewFileServer)
             {
                 try
                 {
-                    ImageMeta ImageMeta = new ImageMeta
-                    {
-                        FileName = uid,
-                        FileType = filetype,
-                        FileCategory = EbFileCategory.Dp,
-                    };
-
                     DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
 
                     if (dfs?.FileBytes != null)
@@ -258,16 +229,7 @@ namespace ExpressBase.Web.Controllers
 
                 try
                 {
-                    dfs = this.FileClient.Get<DownloadFileResponse>
-                            (new DownloadDpRequest
-                            {
-                                ImageInfo = new ImageMeta
-                                {
-                                    FileName = uid,
-                                    FileType = StaticFileConstants.PNG,
-                                    FileCategory = EbFileCategory.Dp
-                                }
-                            });
+                    dfs = this.FileClient.Get<DownloadFileResponse>(new DownloadDpRequest { ImageInfo = ImageMeta });
 
                     if (dfs.StreamWrapper != null)
                     {
@@ -366,14 +328,14 @@ namespace ExpressBase.Web.Controllers
                 try
                 {
                     FileMeta fileMeta = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File, FileName = filename };
-                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
+                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId);
                     if (dfs?.FileBytes != null)
                     {
                         MemoryStream ms = new MemoryStream(dfs.FileBytes);
                         ms.Position = 0;
                         HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
                         resp = new FileStreamResult(ms, GetMime(filename));
-                    } 
+                    }
                     else if (dfs?.PreSignedUrl != null)
                     {
                         resp = Redirect(dfs.PreSignedUrl);
@@ -422,12 +384,12 @@ namespace ExpressBase.Web.Controllers
                 try
                 {
                     FileMeta fileMeta = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Audio, FileName = filename };
-                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
+                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(fileMeta, "/download/file", this.IntSolutionId);
 
                     if (dfs?.FileBytes != null)
                     {
                         MemoryStream ms = new MemoryStream(dfs.FileBytes);
-                        ms.Position = 0; 
+                        ms.Position = 0;
                         resp = new FileStreamResult(ms, GetMime(filename));
                     }
                     else if (dfs?.PreSignedUrl != null)
@@ -509,12 +471,12 @@ namespace ExpressBase.Web.Controllers
                         ImageQuality = ImageQuality.original
                     };
 
-                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId);
+                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId);
 
                     if (dfs?.FileBytes != null)
-                    { 
+                    {
                         MemoryStream ms = new MemoryStream(dfs.FileBytes);
-                        ms.Position = 0; 
+                        ms.Position = 0;
                         resp = new FileStreamResult(ms, StaticFileConstants.GetMimeType(filename));
                     }
                     else if (dfs?.PreSignedUrl != null)
@@ -574,12 +536,12 @@ namespace ExpressBase.Web.Controllers
                         ImageQuality = Enum.Parse<ImageQuality>(qlty)
                     };
 
-                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, this.LoggedInUser.UserId, this.LoggedInUser.AuthId, ImageMeta.ImageQuality);
+                    DownloadFileResponse2 dfs = this.FileClient2.DownloadFile(ImageMeta, "/download/image", this.IntSolutionId, 0, null, ImageMeta.ImageQuality);
 
                     if (dfs?.FileBytes != null)
                     {
                         MemoryStream ms = new MemoryStream(dfs.FileBytes);
-                        ms.Position = 0; 
+                        ms.Position = 0;
                         resp = new FileStreamResult(ms, StaticFileConstants.GetMimeType(filename));
                     }
                     else if (dfs?.PreSignedUrl != null)
@@ -1157,10 +1119,10 @@ namespace ExpressBase.Web.Controllers
         {
             if (IsNewFileServer)
             {
-                UploadAsyncResponse2 res = new UploadAsyncResponse2(); 
+                UploadAsyncResponse2 res = new UploadAsyncResponse2();
                 try
                 {
-                    IFormCollection req = this.HttpContext.Request.Form; 
+                    IFormCollection req = this.HttpContext.Request.Form;
 
                     foreach (var formFile in req.Files)
                     {
@@ -1251,7 +1213,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<int> UploadLocAsync(int i)
         {
-            if (IsNewFileServer) {
+            if (IsNewFileServer)
+            {
                 UploadAsyncResponse2 res = new UploadAsyncResponse2();
                 try
                 {
@@ -1299,7 +1262,8 @@ namespace ExpressBase.Web.Controllers
                 }
                 return res.FileRefId;
             }
-            else {
+            else
+            {
                 UploadAsyncResponse res = new UploadAsyncResponse();
                 try
                 {

@@ -46,8 +46,6 @@ class ButtonPublicFormAttachControl {
 
         e.preventDefault();
 
-        EbDebugHelper.log(this)
-
         if (this.isBusy() || this.isDisabled()) return;
 
         this.makeBusy();

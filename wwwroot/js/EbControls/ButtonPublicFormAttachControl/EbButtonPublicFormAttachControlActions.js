@@ -1,7 +1,5 @@
 window.buttonPublicFormAttachControlEnableDisable = function (flatControls, action) {
 
-    EbDebugHelper.trace()
-
     for (const c of flatControls) {
         if (c.ObjType === ButtonPublicFormAttachControl.CONTROL) {
             try {

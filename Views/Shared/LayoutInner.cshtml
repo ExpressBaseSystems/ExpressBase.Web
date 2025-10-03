@@ -60,6 +60,14 @@
 
     @******************************************* JavaScript includes ********************** *@
 
+
+    @* BEGIN JS HELPER CLASSES *@
+    <script type="text/javascript" src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
+    @* END JS HELPER CLASSES *@
+
     <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/DV/bootstrap-tagsinput.js"></script>
 
@@ -83,7 +91,7 @@
         <script src="~/js/Common/Eb_CommonHeader.js" type="text/javascript"></script>
         <script src="~/js/Common/eb-quickmenu.js" type="text/javascript"></script>
         <script src="~/js/Common/eb-setup.js" type="text/javascript"></script>
-        <script src="~/js/Common/eb-ticket.js" type="text/javascript"></script>
+        @* <script src="~/js/Common/eb-ticket.js" type="text/javascript"></script> *@
         <script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>
         <script type="text/javascript" src="~/js/EbServerEvents/ss-utils.js"></script>
         <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>

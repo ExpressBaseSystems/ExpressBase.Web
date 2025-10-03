@@ -17,6 +17,13 @@
     string ml = "0px";
 
     Eb_Solution Solution = ViewBag.SolutionObject;
+
+    int uid = ViewBag.UId as int? ?? 0;
+    string cide = ViewBag.cide as string ?? "";
+    string sessionTag = ViewBag.SessionTag as string ?? "";
+
+    bool shouldRenderFullHeader = (uid > 1 || cide == "demo") && sessionTag != ExpressBase.Commons.Models.UserSession.USER_SESSION_TAG_PUBLIC_FORM_V2;
+    //bool shouldRenderFullHeader = (uid > 1 || cide == "demo");
 }
 <script>
     function Leave() {
@@ -30,7 +37,7 @@
 <div class="row" id="">
     <div class="toolbar objectDashB-toolbar">
         <div class="toolbar-brd-Container pd-0">
-            @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+            @if (shouldRenderFullHeader)
             {
                 if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
                 {
@@ -57,7 +64,7 @@
                 }
 
             </div>
-            @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+            @if (shouldRenderFullHeader)
             {
                 if (ViewBag.wc == "uc")
                 {
@@ -80,7 +87,7 @@
             }
 
             <div class="brd_cr_t EbHeadTitle">
-                @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+                @if (shouldRenderFullHeader)
                 {
                     <div class="brd_row">
 
@@ -110,7 +117,7 @@
                 <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
             </div>
         </div>
-        @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+        @if (shouldRenderFullHeader)
         {
             <div class="toolbar-buttons-Container comon_header_dy pd-0">
                 <div class='toolicons form-inline'>

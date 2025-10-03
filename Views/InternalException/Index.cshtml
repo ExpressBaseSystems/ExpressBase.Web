@@ -1,0 +1,228 @@
+﻿@using ExpressBase.Common.Models
+@model InternalExceptionView
+@{
+    Layout = null;
+    var isDev = Model?.IsDevelopment ?? false;
+    var hasTicket = !string.IsNullOrWhiteSpace(Model?.TicketId);
+    var hasDetails = Model?.Exception != null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@(hasDetails || isDev ? "Internal Error" : "Something went wrong")</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f6f7f9;
+            --fg: #0b0c0e;
+            --muted: #5b616e;
+            --card: #fff;
+            --border: #e5e7eb;
+            --accent: #2563eb;
+            --danger: #b91c1c;
+            --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+            --font: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        }
+        @@media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0b0c0e;
+                --fg: #e5e7eb;
+                --muted: #9aa0aa;
+                --card: #111317;
+                --border: #1f232a;
+                --accent: #60a5fa;
+                --danger: #f87171;
+            }
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font)
+        }
+
+        .wrap {
+            min-height: 100%;
+            display: grid;
+            place-items: center;
+            padding: 24px
+        }
+
+        .card {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,.12)
+        }
+
+        .title {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 700
+        }
+
+        .subtitle {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px
+        }
+
+        .btn {
+            appearance: none;
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--fg);
+            font-weight: 600
+        }
+
+            .btn:hover {
+                border-color: var(--accent)
+            }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+            .btn-primary:hover {
+                filter: brightness(1.05)
+            }
+
+        details {
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-top: 16px
+        }
+
+            details > summary {
+                cursor: pointer;
+                font-weight: 600
+            }
+
+        .kv {
+            margin-top: 8px
+        }
+
+            .kv dt {
+                font-weight: 600;
+                font-size: 12px;
+                color: var(--muted)
+            }
+
+            .kv dd {
+                margin: 0 0 10px 0;
+                font-family: var(--mono);
+                white-space: pre-wrap;
+                word-break: break-word
+            }
+
+        .mono {
+            font-family: var(--mono)
+        }
+
+        .danger {
+            color: var(--danger)
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        .tip {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--muted)
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="card">
+            <h1 class="title">@((hasDetails || hasTicket) ? "An internal error occurred" : "Something went wrong")</h1>
+
+            @* If no ticket details resolved *@
+            @if (Model?.TicketExpiredOrMissing == true)
+            {
+                <p class="danger">This error ticket has expired or is invalid. Please try again.</p>
+            }
+
+            @if (hasTicket)
+            {
+                <p class="subtitle">Ticket ID: <span class="mono">@Model.TicketId</span></p>
+            }
+
+            @if (!hasDetails && !Model.TicketExpiredOrMissing)
+            {
+                if (isDev)
+                {
+                    <p class="subtitle">No error details present. In Dev, ensure you redirected here using a valid ticket created within the TTL.</p>
+                }
+                else
+                {
+                    <p class="subtitle">We’re sorry, an unexpected error occurred. Please try reloading the page or return to the homepage.</p>
+                }
+            }
+
+            @* Show details only if Exception is available (ticket flow) OR in Dev when Exception is present *@
+            @if (Model?.Exception != null)
+            {
+                <details open>
+                    <summary>Details</summary>
+                    <dl class="kv">
+                        @if (!string.IsNullOrEmpty(Model.Exception.Type))
+                        {
+                            <dt>Type</dt>
+                            <dd>@Model.Exception.Type</dd>
+     }
+                        @if (!string.IsNullOrEmpty(Model.Exception.Message))
+                        {
+                            <dt>Message</dt>
+                            <dd>@Model.Exception.Message</dd>
+     }
+                        @if (!string.IsNullOrEmpty(Model.Exception.StackTrace))
+                        {
+                            <dt>Stack Trace</dt>
+                            <dd>@Model.Exception.StackTrace</dd>
+     }
+                    </dl>
+                </details>
+            }
+
+            <div class="row">
+                <button class="btn" onclick="location.href='/'">Go Home</button>
+                @* <button class="btn btn-primary" onclick="location.reload()">Reload</button> *@
+            </div>
+
+            @if (!isDev && Model?.Exception != null)
+            {
+                <p class="muted" style="margin-top:16px;">(Detailed information is shown because this view was loaded with a valid error ticket.)</p>
+            }
+        </div>
+    </div>
+
+    <script>
+        // Keep layout tidy after device rotation on mobile.
+        addEventListener('orientationchange', function(){ setTimeout(function(){ scrollTo(0,0); }, 200); });
+    </script>
+</body>
+</html>

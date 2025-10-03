@@ -1,6 +1,8 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.Helpers;
 using ExpressBase.Objects;
+using ExpressBase.Objects.Dtos;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects.ServiceStack_Artifacts.EbButtonPublicFormAttachServiceStackArtifacts;
 using ExpressBase.Web.BaseControllers;
@@ -14,13 +16,18 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+using System.Linq;
+using Newtonsoft.Json;
+using ExpressBase.Common.Extensions;
+using ExpressBase.Web.RateLimitters;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ExpressBase.Web.Controllers
 {
     [Route("api/form")]
     public class FormApiController : EbBaseIntApiController
     {
-        public FormApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+        public FormApiController(IServiceClient _client, IRedisClient _redis, PooledRedisClientManager _pooledRedisManager) : base(_client, _redis, _pooledRedisManager) { }
 
         [HttpPost("submit")]
         [EbApiAuthGaurd]
@@ -180,28 +187,28 @@ namespace ExpressBase.Web.Controllers
 
 
         [HttpGet("control/button_public_form_attach/public_form_url")]
-        //[EbApiAuthGaurd]
+        //[EbApiAuthGaurd] // This is is disabled as it was retruning a HTML page and not JSON
         public IActionResult ControlButtonPublicFormAttchBuildUrl(
             [FromQuery] string sourceFormRefId,
             [FromQuery] string publicFormRefId,
-            [FromQuery] int formDataId
+            [FromQuery] int formDataId,
+            [FromQuery] string timeZone,
+            [FromQuery] string userIp
         )
         {
 
-            DebugHelper.Log("-----------------");
-            DebugHelper.Log(HostUrlHelper.GePublictHostUrl(this.ExtSolutionId));
-            DebugHelper.Log("-----------------");
-            /* if (!Authenticated)
-             {
-                 var unauthorizedResp = new
-                 {
-                     Status = (int)HttpStatusCode.Unauthorized,
-                     Message = "Unauthorized",
-                     ErrorCode = 1401
-                 };
+            if (!Authenticated)
+            {
+                var unauthorizedResp = new
+                {
+                    Status = (int)HttpStatusCode.Unauthorized,
+                    Message = "Unauthorized",
+                    ErrorCode = 1401
+                };
 
-                 return StatusCode(unauthorizedResp.Status, unauthorizedResp);
-             }*/
+                return StatusCode(unauthorizedResp.Status, unauthorizedResp);
+            }
+
             try
             {
 
@@ -220,40 +227,36 @@ namespace ExpressBase.Web.Controllers
                 if (formDataId <= 0)
                 {
 
-                    throw new ArgumentNullException(nameof(publicFormRefId), "formDataId is required");
+                    throw new ArgumentNullException(nameof(formDataId), "formDataId is required");
                 }
 
-                ResponseEbButtonPublicFormAttachServiceStackArtifact Response = 
-                    ServiceClient.Get<ResponseEbButtonPublicFormAttachServiceStackArtifact>(
-                        new RequestEbButtonPublicFormAttachServiceStackArtifact 
-                        {
-                            PublicFormRefId = publicFormRefId,
-                            SourceFormRefId = sourceFormRefId,
-                            SourceFormDataId = formDataId
-                        }
-                   );
+                var dto = new PublicFormV2QueryParamsDto
+                {
+                    PublicFormRefId = publicFormRefId,
+                    SourceFormRefId = sourceFormRefId,
+                    FormDataId = formDataId,
+                    TimeZone = timeZone,
+                    UserIp = userIp,
+                };
+
+                string base64Key = Environment.GetEnvironmentVariable("EB_AES_ENC_KEY") ?? throw new Exception("EB_AES_ENC_KEY not found");
+
+                string queryString = QueryStringEncDecHelper.ToEncryptedQueryParam(dto, base64Key, "publicFormQparams");
+
 
                 string host = HostUrlHelper.GePublictHostUrl(this.ExtSolutionId);
-                string formRoutePrefix = "WebForm/Index";
+                string formRoutePrefix = "v2/PublicForm/Index";
                 string url = host +
-                            "/" +
-                            formRoutePrefix +
-                            "?" +
-                            "r=" +
-                            publicFormRefId;
+                            "/" + formRoutePrefix +
+                            "?" + queryString;
 
-
-                if (!string.IsNullOrEmpty(Response.QueryStringEncrypted))
-                {
-                    url +=  "&" + "_ebPrefillData=" + Response.QueryStringEncrypted;                    
-                }
 
                 return StatusCode(
                             (int)HttpStatusCode.OK,
                              new
                              {
                                  Status = (int)HttpStatusCode.OK,
-                                 Message = Response.Message,
+                                 Message = "success",
                                  Url = url
                              }
                         );
@@ -262,10 +265,11 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception ex)
             {
+
                 var errorResp = new
                 {
                     Status = (int)HttpStatusCode.InternalServerError,
-                    Message = "An unexpected error occurred.",
+                    Message = "failed",
                     Details = ex.Message
                 };
 

@@ -23,6 +23,8 @@ namespace ExpressBase.Web.BaseControllers
         public EbBaseIntApiController(IServiceClient _ssclient) : base(_ssclient) { }
 
         public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
+        
+        public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis, PooledRedisClientManager _pooledRedisManager) : base(_ssclient, _redis, _pooledRedisManager) { }
 
         public EbBaseIntApiController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 

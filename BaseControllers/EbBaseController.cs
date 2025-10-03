@@ -7,6 +7,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -57,8 +58,10 @@ namespace ExpressBase.Web.BaseControllers
         {
             get
             {
-                string val = this.HttpContext.Request.Headers["X-Forwarded-For"];
-                return string.IsNullOrWhiteSpace(val) ? string.Empty : val.Split(",")[0];
+                //TODO: check if the new fallback method is casuing issues
+                //string val = this.HttpContext.Request.Headers["X-Forwarded-For"];
+                //return string.IsNullOrWhiteSpace(val) ? string.Empty : val.Split(",")[0];
+                return HttpContextHelper.GetClientIp(this.ControllerContext);
             }
         }
 
@@ -183,6 +186,28 @@ namespace ExpressBase.Web.BaseControllers
             this.MqClient = _mqc as EbMqClient;
             this.AuthClient = _auth as EbAuthClient;
         }
+
+
+        //created for PublicFormController
+        public EbBaseController(IServiceClient _ssclient, IHttpContextAccessor _cxtacc, IEbAuthClient _auth, PooledRedisClientManager _pooledRedisManager, IRedisClient _redis)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+            this.AuthClient = _auth as EbAuthClient;
+            this.PooledRedisManager = _pooledRedisManager;
+            this.Redis = _redis as RedisClient;
+        }
+
+        //created for InternalExceptionController
+        public EbBaseController(IServiceClient _ssclient, IHttpContextAccessor _cxtacc, IEbAuthClient _auth, PooledRedisClientManager _pooledRedisManager)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+            this.AuthClient = _auth as EbAuthClient;
+            this.PooledRedisManager = _pooledRedisManager;
+        }
+
+
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

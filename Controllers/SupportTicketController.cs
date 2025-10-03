@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Specialized;
 using System.IO;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
@@ -44,22 +43,33 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult BugTickets()
         {
-            // Fetch all tickets
-            FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest());
+            //TODO: added try .... cacth as this enpoint was constantly timming out..........need to figure out what this is for later.......
 
-            // Debugging: Log the count of tickets fetched
-            if (fsr.supporttkt != null)
+           try
             {
-                Console.WriteLine($"Fetched Tickets Count: {fsr.supporttkt.Count}");
-            }
-            else
-            {
-                Console.WriteLine("No tickets found in the response.");
-            }
+                // Fetch all tickets
 
-            // Directly return all tickets as JSON response
-            // No filtering is done here
-            return Json(fsr.supporttkt ?? new List<SupportTktCls>());
+                FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest());
+
+                // Debugging: Log the count of tickets fetched
+
+                if (fsr.supporttkt != null)
+                {
+                    Console.WriteLine($"Fetched Tickets Count: {fsr.supporttkt.Count}");
+                }
+                else
+                {
+                    Console.WriteLine("No tickets found in the response.");
+                }
+
+                // Directly return all tickets as JSON response
+                // No filtering is done here
+                return Json(fsr.supporttkt ?? new List<SupportTktCls>());
+
+            } catch(Exception exception)
+            {
+                return Json(new List<SupportTktCls>());
+            }
         }
 
 

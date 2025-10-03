@@ -51,5 +51,11 @@ namespace ExpressBase.Web.Controllers
             this.RedisMessageProducer = _mqProducer as RedisMessageProducer;
         }
 
+        //created for PublicFormControllerV2
+        public EbBaseIntController(IServiceClient _ssclient, IHttpContextAccessor _cxtacc, IEbAuthClient _auth, PooledRedisClientManager _pooledRedisManager, IRedisClient _redis) : base(_ssclient, _cxtacc, _auth, _pooledRedisManager, _redis)
+        {
+
+        }
+
     }
 }

@@ -1,9 +1,11 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.Filters;
+using ExpressBase.Web.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
@@ -11,12 +13,11 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http.Features;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExpressBase.Web2
 {
@@ -152,6 +153,8 @@ namespace ExpressBase.Web2
             //AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
             //String version = assembly.Name.ToString() + " - " + assembly.Version.ToString();
             //client.Set("WebAssembly", version);
+
+            services.AddScoped<RedisRateLimitFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -179,6 +182,8 @@ namespace ExpressBase.Web2
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseMiddleware<ExternalSolutionIdMiddleware>();
 
             app.UseApplicationInsightsExceptionTelemetry();
 

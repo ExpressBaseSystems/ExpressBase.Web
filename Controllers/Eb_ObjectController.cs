@@ -1,27 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DiffPlex;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
+using ExpressBase.Common;
+using ExpressBase.Common.Constants;
+using ExpressBase.Common.Helpers;
+using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Objects;
+using ExpressBase.Common.SqlProfiler;
+using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
+using ExpressBase.Objects.Objects.DVRelated;
+using ExpressBase.Objects.Objects.SmsRelated;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-using ExpressBase.Common;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Common.Objects;
-using ExpressBase.Objects;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
-using DiffPlex.DiffBuilder;
-using DiffPlex;
-using DiffPlex.DiffBuilder.Model;
-using Newtonsoft.Json;
+using System.Security.Cryptography;
 using System.Text;
-using ExpressBase.Common.Structures;
-using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
-using ExpressBase.Web.Filters;
-using ExpressBase.Objects.Objects.SmsRelated;
-using ExpressBase.Common.SqlProfiler;
-using ExpressBase.Objects.Objects.DVRelated;
-using ExpressBase.Common.LocationNSolution;
-using ExpressBase.Common.Helpers;
 namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseIntCommonController
@@ -482,6 +484,7 @@ namespace ExpressBase.Web.Controllers
                 string _rel_obj_tmp = string.Empty;
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
                 obj.BeforeSave(ServiceClient, Redis);
+                string refId = _refid;
 
                 List<string> temp = obj.DiscoverRelatedRefids();
                 if (temp?.Count > 0)
@@ -531,7 +534,9 @@ namespace ExpressBase.Web.Controllers
                         {
                             _response.Message = res.Message;
                         }
+
                         _response.Refid = res.RefId;
+                        refId = res.RefId;
                     }
                     else
                         _response.Message = "nameisnotunique";
@@ -555,6 +560,32 @@ namespace ExpressBase.Web.Controllers
                     _response.Refid = res.RefId;
                     _response.Message = res.Message;
                 }
+
+                if(obj is EbWebForm webForm && string.IsNullOrWhiteSpace(_response.Refid) == false)
+                {
+                    int objectId = Convert.ToInt32(_response.Refid?.Split(CharConstants.DASH)[3]);
+                    int status = 2; //2: private form
+
+                    if (objectId > 0)
+                    {
+                        if(webForm.IsPublicForm == true)
+                        {
+                            status = 1; //1 : public form
+                        }
+
+                        this.ServiceClient.Post(
+                                new ChangeObjectAccessRequest { 
+                                    ObjId = objectId, 
+                                    Status = status 
+                                }
+                            );
+                    } else
+                    {
+                        throw new Exception("unable to fetch objectId");
+                    }
+
+                }
+
             }
             catch (Exception e)
             {

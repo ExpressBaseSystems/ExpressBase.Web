@@ -4,9 +4,11 @@ using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Common.Structures;
+using ExpressBase.Commons.Models;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using ExpressBase.Web.Controllers;
+using ExpressBase.Web.RateLimitters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -26,6 +28,9 @@ namespace ExpressBase.Web.BaseControllers
 {
     public class EbBaseIntCommonController : EbBaseIntController
     {
+        private IHttpContextAccessor cxtacc;
+        private IEbAuthClient auth;
+
         public EbBaseIntCommonController(IServiceClient _ssclient) : base(_ssclient)
         {
         }
@@ -72,6 +77,12 @@ namespace ExpressBase.Web.BaseControllers
         {
             this.RedisMessageQueueClient = _mqFactory as RedisMessageQueueClient;
             this.RedisMessageProducer = _mqProducer as RedisMessageProducer;
+        }
+
+        //created for PublicFormControllerV2
+        public EbBaseIntCommonController(IServiceClient _ssclient, IHttpContextAccessor _cxtacc, IEbAuthClient _auth, PooledRedisClientManager _pooledRedisManager, IRedisClient _redis) : base(_ssclient, _cxtacc, _auth, _pooledRedisManager, _redis)
+        {
+
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -150,6 +161,12 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.StaticFileServerUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STATICFILESERVER_EXT_URL);
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
 
+                    controller.ViewBag.SessionTag =
+                                                    bToken?.Payload != null && bToken.Payload.TryGetValue(UserSession.SESSION_TAG, out var value)
+                                                        ? value
+                                                        : null;
+
+
                     this.LoggedInUser = this.GetUserObject(bToken.Payload[TokenConstants.SUB].ToString());
                     controller.ViewBag.UserDisplayName = this.LoggedInUser.FullName;
 
@@ -208,6 +225,8 @@ namespace ExpressBase.Web.BaseControllers
 
         private bool IsPublicFormRequest(HttpRequest request)
         {
+
+
             if (!string.IsNullOrEmpty(request.Cookies[RoutingConstants.WEB_BEARER_TOKEN]))
             {
                 try

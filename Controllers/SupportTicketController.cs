@@ -45,21 +45,22 @@ namespace ExpressBase.Web.Controllers
         public IActionResult BugTickets()
         {
             // Fetch all tickets
-            FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest());
+            //FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest());
 
-            // Debugging: Log the count of tickets fetched
-            if (fsr.supporttkt != null)
-            {
-                Console.WriteLine($"Fetched Tickets Count: {fsr.supporttkt.Count}");
-            }
-            else
-            {
-                Console.WriteLine("No tickets found in the response.");
-            }
+            //// Debugging: Log the count of tickets fetched
+            //if (fsr.supporttkt != null)
+            //{
+            //    Console.WriteLine($"Fetched Tickets Count: {fsr.supporttkt.Count}");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("No tickets found in the response.");
+            //}
 
-            // Directly return all tickets as JSON response
-            // No filtering is done here
-            return Json(fsr.supporttkt ?? new List<SupportTktCls>());
+            //// Directly return all tickets as JSON response
+            //// No filtering is done here
+            //return Json(fsr.supporttkt ?? new List<SupportTktCls>());
+            return null;
         }
 
 

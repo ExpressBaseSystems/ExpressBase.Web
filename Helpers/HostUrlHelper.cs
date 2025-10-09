@@ -10,6 +10,8 @@ namespace ExpressBase.Web.Helpers
         /// Development => http://{subdomain}.localhost[:port]
         /// Staging/Production => https://{subdomain}.{domain}
         /// </summary>
+        /// 
+        [Obsolete("This class is deprecated. Use AppUrlContextMiddleware instead.")]
         public static string GePublictHostUrl(string subdomain, int devPort = 41500)
         {
             string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT)

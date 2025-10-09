@@ -1,8 +1,8 @@
 class EbDebugHelper {
 
     static get isEnabled() {
-        //return true;
-        return !!(window.AppConfig && window.AppConfig.debug);
+        return true;
+        //return !!(window.AppConfig && window.AppConfig.debug);
     }
 
     static log(...args) {

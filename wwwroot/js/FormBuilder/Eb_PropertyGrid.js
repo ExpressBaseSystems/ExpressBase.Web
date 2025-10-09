@@ -821,14 +821,39 @@
     }.bind(this);
 
     //fires onChange of DDlisting all controls
-    this.ctrlsDD_onchange = function (e) {
-        let SelItem = $(e.target).find("option:selected").attr("data-name");
-        $(`[ebsid=${SelItem}]`).focus();
-        SelObj = this.AllObjects[SelItem];
-        let type = SelObj.constructor.name
-        this.setObject(SelObj, this.AllMetas[type]);
-        this.DD_onChange(e);
+    this.ctrlsDD_onchange = (e) => {
+        if (!e || !e.target) return; // no event/target
+
+        const $target   = $(e.target);
+        const $selected = $target.find("option:selected");
+        const selItem   = $selected.attr("data-name");
+
+        if (!selItem) return; // nothing selected / no data-name
+
+        // focus the element only if it exists; quote the attribute value
+        const $el = $(`[ebsid="${selItem}"]`);
+        if ($el.length) $el.focus();
+
+        // get object safely
+        const allObjects = this && this.AllObjects;
+        const selObj     = allObjects && allObjects[selItem];
+        if (!selObj) return; // no object mapped for selection
+
+        // resolve type + meta safely
+        const type = selObj && selObj.constructor && selObj.constructor.name;
+        const meta = this && this.AllMetas && type && this.AllMetas[type];
+
+        // call setObject only if it’s a function and we have what we need
+        if (typeof this.setObject === "function" && meta) {
+            this.setObject(selObj, meta);
+        }
+
+        // fire downstream change handler if present
+        if (typeof this.DD_onChange === "function") {
+            this.DD_onChange(e);
+        }
     };
+
 
     //sort PG irrespective of Groups
     this.SortFn = function (e) {

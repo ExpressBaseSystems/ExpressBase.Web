@@ -36,9 +36,9 @@ namespace ExpressBase.Web.Controllers
 {
     public class WebFormController : EbBaseIntCommonController
     {
-        public WebFormController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, _sec, pooledRedisManager) { }
+        public WebFormController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager, IServiceProvider _serviceProvider) : base(_ssclient, _redis, _sec, pooledRedisManager, _serviceProvider) { }
 
-        [RedisRateLimit(limit: 6, windowSeconds: 120, useIp: true, perPath: true, useExternalSolutionId: true, customKey: "public_form:v3")]
+        //[RedisRateLimit(limit: 6, windowSeconds: 120, useIp: true, perPath: true, useExternalSolutionId: true, customKey: "public_form:v3")]
         public IActionResult Index(string _r, string _p, int _m, int _l, int _rm, string _lg)
         {
             try
@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception exception) {
 
-                return new InternalExceptionHelper(PooledRedisManager).Redirect(exception, this);
+                return new InternalExceptionHelper(this.ServiceProvider).Redirect(exception, this);
             }
         }
 

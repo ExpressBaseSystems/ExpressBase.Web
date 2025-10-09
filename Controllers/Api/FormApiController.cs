@@ -240,15 +240,14 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 string base64Key = Environment.GetEnvironmentVariable("EB_AES_ENC_KEY") ?? throw new Exception("EB_AES_ENC_KEY not found");
-
-                string queryString = QueryStringEncDecHelper.ToEncryptedQueryParam(dto, base64Key, "publicFormQparams");
-
-
-                string host = HostUrlHelper.GePublictHostUrl(this.ExtSolutionId);
-                string formRoutePrefix = "v2/PublicForm/Index";
-                string url = host +
-                            "/" + formRoutePrefix +
-                            "?" + queryString;
+                
+                string url = HttpContext.Items["Scheme"].ToString() +
+                             HttpContext.Items["UserConsoleHost"].ToString() +
+                             Url.Action( 
+                                 action: "Index",
+                                 controller: "PublicForm",
+                                 values: new { publicFormQparams = QueryStringEncDecHelper.ToEncryptedString(dto, base64Key) }
+                             );
 
 
                 return StatusCode(

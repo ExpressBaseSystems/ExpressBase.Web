@@ -36,9 +36,9 @@
         $('#singlesave').off('click').on('click', this.SingleSave.bind(this));
         $('#offline').off('click').on('click', this.MakeOffline.bind(this));
         $('#live').off('click').on('click', this.MakeLive.bind(this));
-        $('#make_public').off('click').on('click', this.MakePublic.bind(this));
-        $('#make_private').off('click').on('click', this.MakePrivate.bind(this));
-        $('#copy_url').off('click').on('click', this.OpenUrlContainer.bind(this));
+        //$('#make_public').off('click').on('click', this.MakePublic.bind(this));
+        //$('#make_private').off('click').on('click', this.MakePrivate.bind(this));
+        //$('#copy_url').off('click').on('click', this.OpenUrlContainer.bind(this));
         $('#clone').off('click').on('click', this.Clone.bind(this));
 
         if (this.Current_obj !== null)
@@ -780,8 +780,8 @@
                 if (result === true) {
                     EbMessage("show", { Message: "The object is Public now. It will be available outside the platform", Background: this.GreenColor, AutoHide: true });
 
-                    $('#make_public').hide();
-                    $('#make_private').show();
+                    //$('#make_public').hide();
+                    //$('#make_private').show();
                     $('#copy_url').show();
                 }
                 else {
@@ -802,8 +802,8 @@
                 if (result === true) {
                     EbMessage("show", { Message: "The object is Private now. It will not be available outside the platform", Background: this.GreenColor, AutoHide: true });
 
-                    $('#make_public').show();
-                    $('#make_private').hide();
+                    //$('#make_public').show();
+                    //$('#make_private').hide();
                     $('#copy_url').hide();
                 }
                 else {

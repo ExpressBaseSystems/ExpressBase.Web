@@ -166,40 +166,76 @@
     }.bind(this);
 
     this.getCopyControlJson = function (ctrl) {
-        let newCtrl = JSON.parse(JSON.stringify(ctrl));
 
-        let flatControls = getAllctrlsFrom(newCtrl);
-        for (let i = 0; i < flatControls.length; i++) {
-            let _ctrl = flatControls[i];
-            if (_ctrl.ObjType === "PowerSelect" || _ctrl.ObjType === "DGPowerSelectColumn") {
-                _ctrl.Columns.$values = [];
-                _ctrl.DisplayMembers.$values = [];
-                _ctrl.DisplayMember = null;
-                _ctrl.ValueMember = null;
-                _ctrl.DataImportId = null;
-                _ctrl.DataSourceId = null;
-                _ctrl.FormRefId = null;
+        try {
+
+            let newCtrl = {};
+            const ButtonPublicFormAttachControl = (globalThis.ButtonPublicFormAttachControl?.CONTROL) ?? "ButtonPublicFormAttach";
+
+            try {
+
+                const _cloner = new EbControlClone();
+                newCtrl = _cloner.clone(ctrl);
+
+            } catch (error) {
+
+                EbDebugHelper.error("EbControlClone failed attempting the traditional method", error);
+                newCtrl = JSON.parse(JSON.stringify(ctrl));
             }
-            else if (_ctrl.ObjType === "SimpleSelect" || _ctrl.ObjType === "DGSimpleSelectColumn") {
-                _ctrl.DataSourceId = null;
-                _ctrl.Columns.$values = [];
-                _ctrl.ValueMember = null;
-                _ctrl.DisplayMember = null;
+
+            let flatControls = getAllctrlsFrom(newCtrl);
+
+            EbDebugHelper.log("flatControls",flatControls)
+
+            for (let i = 0; i < flatControls.length; i++) {
+
+                let _ctrl = flatControls[i];
+
+                if (_ctrl.ObjType === "PowerSelect" || _ctrl.ObjType === "DGPowerSelectColumn") {
+                    _ctrl.Columns.$values = [];
+                    _ctrl.DisplayMembers.$values = [];
+                    _ctrl.DisplayMember = null;
+                    _ctrl.ValueMember = null;
+                    _ctrl.DataImportId = null;
+                    _ctrl.DataSourceId = null;
+                    _ctrl.FormRefId = null;
+                }
+                else if (_ctrl.ObjType === "SimpleSelect" || _ctrl.ObjType === "DGSimpleSelectColumn") {
+                    _ctrl.DataSourceId = null;
+                    _ctrl.Columns.$values = [];
+                    _ctrl.ValueMember = null;
+                    _ctrl.DisplayMember = null;
+                }
+                else if (_ctrl.ObjType === "Label" || _ctrl.ObjType === "DGLabelColumn") {
+                    _ctrl.LinkedObjects.$values = [];
+                }
+                else if (_ctrl.ObjType === "DataGrid") {
+                    _ctrl.DataSourceId = null;
+                    _ctrl.CustomSelectDS = null;
+                    _ctrl.TableName = '';
+                }
+                else if (_ctrl.ObjType === "ExportButton") {
+                    _ctrl.FormRefId = null;
+                }
+                else if (_ctrl.ObjType === ButtonPublicFormAttachControl) {
+                    _ctrl.PublicFormId = null;
+                    _ctrl.ExpireInDays = null;
+                    _ctrl.ExpireInHours = null;
+                    _ctrl.ExpireInMinutes = null;
+                    _ctrl.FieldMaps = null;
+                }
+
             }
-            else if (_ctrl.ObjType === "Label" || _ctrl.ObjType === "DGLabelColumn") {
-                _ctrl.LinkedObjects.$values = [];
-            }
-            else if (_ctrl.ObjType === "DataGrid") {
-                _ctrl.DataSourceId = null;
-                _ctrl.CustomSelectDS = null;
-                _ctrl.TableName = '';
-            }
-            else if (_ctrl.ObjType === "ExportButton") {
-                _ctrl.FormRefId = null;
-            }
+
+            return JSON.stringify(newCtrl);
+
+        } catch (error) {
+
+            EbDebugHelper.error("Failed to clone the control",error);
+            EbToast.error("Failed to copy the control");
+            throw error;
         }
 
-        return JSON.stringify(newCtrl);
     }.bind(this);
 
     this.getTextFromClipboard = async function (showWarning) {
@@ -211,77 +247,111 @@
             }
         }
         catch (e) {
+
             if (showWarning)
-                alert("Failed to read from clipboard: " + e.message);
-            console.error(e.message);
+            {
+                EbToast.error("Failed to read from clipboard")
+            }
+
+            EbDebugHelper.error("Failed to read from clipboard", e)
         }
         return __val;
     }.bind(this);
 
     this.copyTextToClipboard = async function (text) {
-        try {
-            await navigator.clipboard.writeText(text);
-            console.log('Content copied to clipboard');
+
+        try
+        {
+            await EbClipboardHelper.copy(text);
+            EbToast.info("Successfully copied the control");
         }
-        catch (err) {
-            alert('Failed to copy: ' + err);
+        catch (error) {
+
+            EbDebugHelper.error("Failed to copy the control", error);
+            EbToast.error("Failed to copy the control");
         }
-        return;
+
     }.bind(this);
 
     this.paste = async function (eType, selector, action, originalEvent) {
-        let $e = $(event.target); // need optimize
-        if (localStorage.eb_form_control) {
-            this.paste_inner($e, localStorage.eb_form_control, localStorage.eb_form_$control);
-        }
-        else {
-            let st = await this.getTextFromClipboard(true);
-            if (st) {
-                st = st.split('$$$webform-control-copy$$$');
-                this.paste_inner($e, st[0], st[1]);
+
+        try
+        {
+
+            let $e = $(event.target); // need optimize TODO: handler ignore their parameter and read the global event, which isn’t reliable (and breaks in some contexts).
+            if (localStorage.eb_form_control) {
+                this.paste_inner($e, localStorage.eb_form_control, localStorage.eb_form_$control);
             }
+
             else {
-                this.EbAlert.clearAlert("pasteError");
-                this.EbAlert.alert({
-                    id: "pasteError",
-                    head: "Copy again and try.",
-                    body: "Try after copying",
-                    type: "info",
-                    delay: 2100
-                });
+                let st = await this.getTextFromClipboard(true);
+                if (st) {
+                    st = st.split('$$$webform-control-copy$$$');
+                    this.paste_inner($e, st[0], st[1]);
+                }
+                else {
+                    this.EbAlert.clearAlert("pasteError");
+                    this.EbAlert.alert({
+                        id: "pasteError",
+                        head: "Copy again and try.",
+                        body: "Try after copying",
+                        type: "info",
+                        delay: 2100
+                    });
+                }
             }
+
+        } catch (error)
+        {
+            EbDebugHelper.error("Failed to paste the copied control", error);
+            EbToast.error("Failed to paste the copied the control");
         }
+
     }.bind(this);
 
     this.paste_inner = function ($e, ctrl_string, ctrl_obj_string) {
-        let ctrl = JSON.parse(ctrl_string);
-        let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
-        let copiedCtrl = this.getCopiedCtrl(ctrl);
-        let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl, ctrl_obj_string);
-        let offset = $e.closest('.context-menu-list').offset();
-        $('#context-menu-layer').css('z-index', 0);
-        $('.context-menu-list.context-menu-root').css('z-index', 0);
-        let $clickedEl = $(document.elementFromPoint(offset.left, offset.top));//$('.context-menu-active');//
-        let $clickedColTile = $clickedEl.closest('[ebsid]');
-        let clickedCtrl = $clickedColTile[0].hasAttribute('eb-root-obj-container') ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
 
-        if (clickedCtrl.IsContainer) {
-            clickedCtrl.Controls.$values.push(copiedCtrl);
-            ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
-        }
-        else {
-            if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
-                this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
-                $copiedCtrl.insertAfter($clickedColTile);
+        try
+        {
+            let ctrl = JSON.parse(ctrl_string);
+            let cloneCtrl = JSON.parse(JSON.stringify(ctrl));
+            let copiedCtrl = this.getCopiedCtrl(ctrl);
+            let $copiedCtrl = this.getCopied$Ctrl(copiedCtrl, cloneCtrl, ctrl_obj_string);
+            let offset = $e.closest('.context-menu-list').offset();
+            $('#context-menu-layer').css('z-index', 0);
+            $('.context-menu-list.context-menu-root').css('z-index', 0);
+            let $clickedEl = $(document.elementFromPoint(offset.left, offset.top));//$('.context-menu-active');//
+            let $clickedColTile = $clickedEl.closest('[ebsid]');
+            let clickedCtrl = $clickedColTile[0].hasAttribute('eb-root-obj-container') ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'));
+
+            if (clickedCtrl && clickedCtrl.IsContainer) {
+                clickedCtrl.Controls.$values.push(copiedCtrl);
+                ($clickedEl.hasClass('ebcont-inner') ? $clickedEl : $clickedEl.find('.ebcont-inner')).append($copiedCtrl);
             }
+            else {
+                if (this.rootContainerObj.Controls.GetByName($clickedColTile.attr('ebsid'))) {
+                    this.rootContainerObj.Controls.InsertAfter(clickedCtrl, copiedCtrl);
+                    $copiedCtrl.insertAfter($clickedColTile);
+                }
+            }
+
+            let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
+
+            for (let i = 0; i < flatControlsModified.length; i++) {
+                this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
+            }
+            this.pushElmsToDraggable($copiedCtrl);
+            EbBlink(copiedCtrl, `[ebsid='${copiedCtrl.EbSid_CtxId}']`);
+
+        } catch(e)
+        {
+            EbDebugHelper.error("an exception arose when pasting a control", e);
+            EbDebugHelper.error("an exception arose when pasting a control", $e);
+            EbDebugHelper.error("an exception arose when pasting a control", ctrl_string);
+            EbDebugHelper.error("an exception arose when pasting a control", ctrl_obj_string);
         }
 
-        let flatControlsModified = [...getAllctrlsFrom(copiedCtrl)];
-        for (let i = 0; i < flatControlsModified.length; i++) {
-            this.updateControlUI(flatControlsModified[i].EbSid_CtxId);
-        }
-        this.pushElmsToDraggable($copiedCtrl);
-        EbBlink(copiedCtrl, `[ebsid='${copiedCtrl.EbSid_CtxId}']`);
+
     };
 
     this.pushElmsToDraggable = function ($copiedCtrl) {
@@ -334,7 +404,7 @@
     }
 
     this.getNxtCtrlCopyStr = function (ctrl) {
-        let num = 1;
+        let num = 1; //TODO: need to debug this
         let copyStr = '';
         for (let i = 0; i < 1000; i++) {
             copyStr = (i === 0 ? '' : 'Copy' + i);
@@ -348,46 +418,70 @@
     };
 
     this.controlOnFocus = function (e) {
-        e.stopPropagation();
-        let $e = $(e.target);
-        if (this.curControl && this.curControl.attr("ebsid") === $(e.target).attr("ebsid"))
-            return;
-        if ($e.attr("id") === this.formId) {
-            this.curControl = $e;
-            this.CreatePG(this.rootContainerObj);
-            return;
+
+        let $e = null;
+
+        try
+        {
+            e.stopPropagation();
+            let $e = $(e.target);
+            if (this.curControl && this.curControl.attr("ebsid") === $(e.target).attr("ebsid"))
+                return;
+            if ($e.attr("id") === this.formId) {
+                this.curControl = $e;
+                this.CreatePG(this.rootContainerObj);
+                return;
+            }
+            else
+                this.curControl = $e.closest(".Eb-ctrlContainer");
+            let ebsid = this.curControl.attr("ebsid");
+            this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
+
+        } catch(error)
+        {
+            EbDebugHelper.error("a exception arose when focusing on a control", error)
+            EbDebugHelper.error("target", $e)
+            EbDebugHelper.error("control", this?.curControl)
         }
-        else
-            this.curControl = $e.closest(".Eb-ctrlContainer");
-        let ebsid = this.curControl.attr("ebsid");
-        this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
         //  this.PGobj.ReadOnly();
     }.bind(this);
 
-    this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
-        let parentObj = this.rootContainerObj.Controls.getParent(ctrlObj);
-        ctrlObj.TableName = parentObj.TableName;
-        ctrlObj.isTableNameFromParent = true;
-        if (ctrlObj.ObjType === "TableLayout") {
-            this.makeTdsDropable_Resizable();
-            let tds = $ctrl.find("td");
-            $.each(ctrlObj.Controls.$values, function (i, td) {
-                $(tds[i]).attr("ebsid", td.EbSid).attr("id", td.EbSid);
-            });
+    this.InitContCtrl = function (ctrlObj, $ctrl) {
+
+        try
+        {
+
+            let parentObj = this.rootContainerObj.Controls.getParent(ctrlObj);
+            ctrlObj.TableName = parentObj.TableName;
+            ctrlObj.isTableNameFromParent = true;
+            if (ctrlObj.ObjType === "TableLayout") {
+                this.makeTdsDropable_Resizable();
+                let tds = $ctrl.find("td");
+                $.each(ctrlObj.Controls.$values, function (i, td) {
+                    $(tds[i]).attr("ebsid", td.EbSid).attr("id", td.EbSid);
+                });
+            }
+            else if (ctrlObj.ObjType === "TabControl") {
+                let tapPanes = $ctrl.find(".tab-pane");
+                let tapBtns = $ctrl.find("ul.nav-tabs a");
+                $.each(ctrlObj.Controls.$values, function (i, pane) {
+                    $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
+                    $(tapBtns[0]).attr("href", "#" + pane.EbSid).find("span").text(pane.Name).closest("li").attr("li-of", pane.EbSid).attr("ebsid", pane.EbSid);
+                });
+                this.makeTabsDropable();
+            }
+            else if (ctrlObj.ObjType === "GroupBox") {
+                let el = $(`[ebsid=${ctrlObj.EbSid}] .group-box`)[0];
+                this.makeElementDropable(el);
+            }
+
+        }catch (e) {
+
+            EbDebugHelper.error("a exception arose when initialising a cont control", e);
+            EbDebugHelper.error("a exception arose when initialising a cont control", ctrlObj);
+            EbDebugHelper.error("a exception arose when initialising a cont control", $ctrl);
         }
-        else if (ctrlObj.ObjType === "TabControl") {
-            let tapPanes = $ctrl.find(".tab-pane");
-            let tapBtns = $ctrl.find("ul.nav-tabs a");
-            $.each(ctrlObj.Controls.$values, function (i, pane) {
-                $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
-                $(tapBtns[0]).attr("href", "#" + pane.EbSid).find("span").text(pane.Name).closest("li").attr("li-of", pane.EbSid).attr("ebsid", pane.EbSid);
-            });
-            this.makeTabsDropable();
-        }
-        else if (ctrlObj.ObjType === "GroupBox") {
-            let el = $(`[ebsid=${ctrlObj.EbSid}] .group-box`)[0];
-            this.makeElementDropable(el);
-        }
+
     };
 
     this.makeGBsDropable = function () {
@@ -480,35 +574,46 @@
     };
 
     this.initCtrl = function (el) {
-        let $el = $(el);
-        let type = $el.attr("ctype").trim();
-        let attr_ebsid = $el.attr("ebsid");
-        let attrEbsid_Dgt = parseInt(attr_ebsid.match(/\d+$/)[0]);
-        let attrEbsid_Except_Dgt = attr_ebsid.substring(0, attr_ebsid.length - attrEbsid_Dgt.toString().length);
 
-        let ctrlCount = this.controlCounters[type + "Counter"];
-        this.controlCounters[type + "Counter"] = (attrEbsid_Dgt > ctrlCount) ? attrEbsid_Dgt : ctrlCount;
-        let ebsid = attrEbsid_Except_Dgt + attrEbsid_Dgt;// inc counter
-        $el.attr("tabindex", "1");
-        this.ctrlOnClickBinder($el, type);
-        $el.on("focus", this.controlOnFocus.bind(this));
-        $el.attr("eb-type", type);
-        $el.attr("ebsid", ebsid);
-        if (type !== "UserControl")
-            this.updateControlUI(ebsid);
-        if (type == "BluePrint") {
-            let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
-            var blueprintModaledt = new blueprintModalfn(ctrlobjt);
+        try
+        {
+            let $el = $(el);
+            let type = $el.attr("ctype").trim();
+            let attr_ebsid = $el.attr("ebsid");
+            let attrEbsid_Dgt = parseInt(attr_ebsid.match(/\d+$/)[0]);
+            let attrEbsid_Except_Dgt = attr_ebsid.substring(0, attr_ebsid.length - attrEbsid_Dgt.toString().length);
+
+            let ctrlCount = this.controlCounters[type + "Counter"];
+            this.controlCounters[type + "Counter"] = (attrEbsid_Dgt > ctrlCount) ? attrEbsid_Dgt : ctrlCount;
+            let ebsid = attrEbsid_Except_Dgt + attrEbsid_Dgt;// inc counter
+            $el.attr("tabindex", "1");
+            this.ctrlOnClickBinder($el, type);
+            $el.on("focus", this.controlOnFocus.bind(this));
+            $el.attr("eb-type", type);
+            $el.attr("ebsid", ebsid);
+            if (type !== "UserControl")
+                this.updateControlUI(ebsid);
+            if (type == "BluePrint") {
+                let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
+                var blueprintModaledt = new blueprintModalfn(ctrlobjt);
+            }
+            else if (type == "WizardControl") {
+                let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
+                this.initWizard(ctrlobjt);
+            }
+            else if (type === "SimpleSelect" || type === "BooleanSelect") {
+                $el.find(".selectpicker").selectpicker();
+                this.updateControlUI(ebsid);
+            }
+            this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
+
+        } catch (e) {
+
+            EbDebugHelper.error("a exception arose when initialising a control", e);
+            EbDebugHelper.error("a exception arose when initialising a control", el);
         }
-        else if (type == "WizardControl") {
-            let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
-            this.initWizard(ctrlobjt);
-        }
-        else if (type === "SimpleSelect" || type === "BooleanSelect") {
-            $el.find(".selectpicker").selectpicker();
-            this.updateControlUI(ebsid);
-        }
-        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
+
+
     };
 
     this.wizStepDelValidationOK = function (Obj) {
@@ -626,12 +731,16 @@
 
     this.updateControlUI = function (ebsid, type) {
         let obj = this.rootContainerObj.Controls.GetByName(ebsid);
-        let _type = obj.ObjType;
-        $.each(obj, function (propName, propVal) {
-            let meta = getObjByval(this.AllMetas["Eb" + _type], "name", propName);
-            if (meta && meta.IsUIproperty)
-                this.updateUIProp(propName, ebsid, _type);
-        }.bind(this));
+        if(obj)
+        {
+            let _type = obj.ObjType;
+            $.each(obj, function (propName, propVal) {
+                let meta = getObjByval(this.AllMetas["Eb" + _type], "name", propName);
+                if (meta && meta.IsUIproperty)
+                    this.updateUIProp(propName, ebsid, _type);
+            }.bind(this));
+        }
+
     };
 
     this.updateUIProp = function (propName, id, type) {
@@ -669,9 +778,10 @@
     this.drake = null;
 
     this.CreatePG = function (control) {
-        console.log("CreatePG called for:" + control.Name);
+        //console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
-        this.PGobj.setObject(control, this.AllMetas["Eb" + this.curControl.attr("eb-type")]);////
+        const curType = this.curControl?.attr?.("eb-type") || this.builderType;
+        this.PGobj.setObject(control, this.AllMetas["Eb" + curType]);
     };
 
     this.saveObj = function () {
@@ -1113,46 +1223,55 @@
 
     this.lbltxtbKeyUp = function (e) {
 
-        let $e = $(event.target);
-        let count = $e.val().length;
-        let width = "15px";
-        //if (count !== 0)
-        //    width = (count * 6.4 + 8) + "px";
+        //TODO: handler ignore their parameter and read the global event, which isn’t reliable (and breaks in some contexts).
+        try
+        {
+            let $e = $(event.target);
+            let count = $e.val().length;
+            let width = "15px";
+            //if (count !== 0)
+            //    width = (count * 6.4 + 8) + "px";
 
-        //$e.css("width", width);
+            //$e.css("width", width);
 
-        let val = $e.val();
-        let $colTile = $e.closest(".Eb-ctrlContainer");
-        let ebsid = $colTile.attr("ebsid");
-        let ctrlType = $colTile.attr("eb-type");
-        let ctrlMeta = this.AllMetas["Eb" + ctrlType];
-        if (ctrlType === "TabControl" || ctrlType === "WizardControl") {
-            ebsid = $e.closest("li").attr("ebsid");
-            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-            let paneMeta = this.AllMetas["Eb" + ctrl.ObjType];
-            ctrl["Title"] = val;
-            this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
-        }
-        if (ctrlType === "DataGrid") {
-            if ($e.closest("th").length === 1)
-                ebsid = $e.closest("th").attr("ebsid");// for TH label
-            else
-                ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");// for DG label
-            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-            let ColMeta = this.AllMetas["Eb" + ctrl.ObjType];
-            ctrl["Title"] = val;
+            let val = $e.val();
+            let $colTile = $e.closest(".Eb-ctrlContainer");
+            let ebsid = $colTile.attr("ebsid");
+            let ctrlType = $colTile.attr("eb-type");
+            let ctrlMeta = this.AllMetas["Eb" + ctrlType];
+            if (ctrlType === "TabControl" || ctrlType === "WizardControl") {
+                ebsid = $e.closest("li").attr("ebsid");
+                let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+                let paneMeta = this.AllMetas["Eb" + ctrl.ObjType];
+                ctrl["Title"] = val;
+                this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
+            }
+            if (ctrlType === "DataGrid") {
+                if ($e.closest("th").length === 1)
+                    ebsid = $e.closest("th").attr("ebsid");// for TH label
+                else
+                    ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");// for DG label
+                let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+                let ColMeta = this.AllMetas["Eb" + ctrl.ObjType];
+                ctrl["Title"] = val;
 
-            if ($e.closest("th").length === 1)
-                this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);// for TH label
-            else
-                this.PGobj.changePropertyValue("Label", val);// for DG label
+                if ($e.closest("th").length === 1)
+                    this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);// for TH label
+                else
+                    this.PGobj.changePropertyValue("Label", val);// for DG label
+            }
+            else {
+                let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+                if (this.PGobj.CurObj !== ctrl)
+                    this.PGobj.setObject(ctrl, ctrlMeta);
+                this.PGobj.changePropertyValue("Label", val);
+            }
+
+        } catch(e)
+        {
+            EbDebugHelper.error("an exception arose", e);
         }
-        else {
-            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-            if (this.PGobj.CurObj !== ctrl)
-                this.PGobj.setObject(ctrl, ctrlMeta);
-            this.PGobj.changePropertyValue("Label", val);
-        }
+
 
     };
 
@@ -1204,33 +1323,48 @@
     }.bind(this);
 
     this.ctrlLblDblClick = function (e) {
-        let $e = $(event.target);
-        $e.hide();
-        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
-            $e.closest("li").find(".ebtab-close-btn").hide();
-            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
-        }
-        else if ($e.hasClass('grid-col-title')) {
-            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
-        }
-        else {
-            $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+
+        try
+        {
+            let $e = $(event.target); //TODO: handler ignore their parameter and read the global event, which isn’t reliable (and breaks in some contexts).
+            $e.hide();
+            if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
+                $e.closest("li").find(".ebtab-close-btn").hide();
+                $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+            }
+            else if ($e.hasClass('grid-col-title')) {
+                $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+            }
+            else {
+                $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
+            }
+        } catch (e) {
+
+            EbDebugHelper.error("an exception arose", e);
         }
     };
 
     this.lbltxtbBlur = function (e) {
-        $e = $(event.target);
-        $e.hide();
 
-        if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
-            $e.closest('li').find(".eb-label-editable").show();
-            $e.siblings(".ebtab-close-btn").show();
+        try
+        {
+            $e = $(event.target); //TODO: handler ignore their parameter and read the global event, which isn’t reliable (and breaks in some contexts).
+            $e.hide();
+
+            if ($e.parent().attr("data-toggle") === "tab" || $e.parent().attr("data-toggle") === "wizard") {
+                $e.closest('li').find(".eb-label-editable").show();
+                $e.siblings(".ebtab-close-btn").show();
+            }
+            else if ($e.siblings('.grid-col-title').length === 1) {
+                $e.siblings('.grid-col-title').text($e.val()).show().select();
+            }
+            else
+                $e.siblings("[ui-label]").show();
+
+        }catch (e)
+        {
+            EbDebugHelper.error("an exception arose", e);
         }
-        else if ($e.siblings('.grid-col-title').length === 1) {
-            $e.siblings('.grid-col-title').text($e.val()).show().select();
-        }
-        else
-            $e.siblings("[ui-label]").show();
     };
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
@@ -1245,7 +1379,7 @@
     this.keyUp = function (e) {
         if (e.keyCode === 46) {// if delete key
             let $e = $(e.target);
-            if ($e.hasClass("Eb-ctrlContainer")); {
+            if ($e.hasClass("Eb-ctrlContainer")); { //TODO: <-- this block ALWAYS runs because of the semicolon
                 let ebsid = $e.attr("ebsid");
                 let ControlTile = $(`#cont_${ebsid}`).closest(".Eb-ctrlContainer");
                 this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(ebsid).EbSid);

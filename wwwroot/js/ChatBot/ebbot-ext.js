@@ -10,7 +10,7 @@
         if (ebmod === 'Production')
             return "https://" + window.EXPRESSbase_cid + ".expressbase.com/";
         else if (ebmod === 'Staging')
-            return "https://" + window.EXPRESSbase_cid + ".eb-test.shop/";
+            return "https://" + window.EXPRESSbase_cid + ".eb-test.xyz/";
         else
             return "http://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41500/";
     };

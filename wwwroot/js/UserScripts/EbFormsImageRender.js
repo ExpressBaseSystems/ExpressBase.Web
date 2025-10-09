@@ -60,9 +60,9 @@
     startSE() {
         let url = "";
         if (window.location.host.indexOf("localhost") >= 0)
-            url = "https://sedev.eb-test.shop";
-        else if (window.location.host.indexOf("eb-test.shop") >= 0)
-            url = "https://se.eb-test.shop";
+            url = "https://sedev.eb-test.xyz";
+        else if (window.location.host.indexOf("eb-test.xyz") >= 0)
+            url = "https://se.eb-test.xyz";
         else
             url = "https://se.expressbase.com";
 

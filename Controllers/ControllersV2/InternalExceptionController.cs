@@ -16,34 +16,25 @@ namespace ExpressBase.Web.Controllers.ControllersV2
 {
     [Microsoft.AspNetCore.Mvc.Route("v2/InternalException")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class InternalExceptionController : EbBaseController
+    public class InternalExceptionController : Controller
     {
         private readonly IHostingEnvironment _env;
+        private readonly IServiceProvider _serviceProvider;
         private static readonly TimeSpan TicketTtl = TimeSpan.FromSeconds(90);
 
-        public InternalExceptionController(
-            IServiceClient _client,
-            IHttpContextAccessor _cxtacc,
-            IEbAuthClient _auth,
-            PooledRedisClientManager _pooledRedisManager,
-            IHostingEnvironment env
-            ) : base(
-                _client,
-                _cxtacc,
-                _auth,
-                _pooledRedisManager
-                )
+        public InternalExceptionController(IServiceProvider serviceProvider,IHostingEnvironment env) 
         {
             _env = env;
+            _serviceProvider = serviceProvider;
         }
 
         [HttpGet("{ticketId?}")]
-        [RedisRateLimit(limit: 6, windowSeconds: 60, useIp: true, perPath: true, useExternalSolutionId: true, customKey: "internal_exceptions:v2")]
+        //[RedisRateLimit(limit: 6, windowSeconds: 60, useIp: true, perPath: true, useExternalSolutionId: true, customKey: "internal_exceptions:v2")]
         public IActionResult Index(string ticketId)
         {
             var isDev = _env.IsDevelopment();
             var internalExceptionView = new InternalExceptionView { IsDevelopment = isDev, TicketId = ticketId };
-            InternalExceptionHelper internalExceptionHelper = new InternalExceptionHelper(this.PooledRedisManager);
+            InternalExceptionHelper internalExceptionHelper = new InternalExceptionHelper(this._serviceProvider);
 
 
             if (!string.IsNullOrWhiteSpace(ticketId))

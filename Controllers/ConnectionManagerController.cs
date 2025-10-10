@@ -791,18 +791,36 @@ namespace ExpressBase.Web.Controllers
                 AuthorizationCodeFlow flow = new AuthorizationCodeFlow(init);
                 Console.WriteLine("Fetching token for code: _" + req["code"] + "_");
 
-                if (ViewBag.Env == "Staging")
-                    RedirectUri = "https://myaccount." + RoutingConstants.STAGEHOST;
-                else if (ViewBag.Env == "Production")
-                    RedirectUri = "https://myaccount.expressbase.com";
-                Console.WriteLine(RedirectUri);
+
+                if (HttpContext.Items.ContainsKey("Domain"))
+                {
+                    RedirectUri = "https://myaccount." + HttpContext.Items["Domain"]?.ToString();
+                }
+                else
+                {
+                    //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove;
+
+                    if (ViewBag.Env == "Staging")
+                    {
+                        RedirectUri = "https://myaccount." + RoutingConstants.STAGEHOST;
+                    }
+  
+                    else if (ViewBag.Env == "Production")
+                    {
+                        RedirectUri = "https://myaccount.expressbase.com";
+                    }
+                        
+                }
+
+                    
+                //Console.WriteLine(RedirectUri);
                 TokenResponse result = AsyncHelper.RunSync(() => GetGoogleDriveKey(flow, req["code"], RedirectUri));
-                Console.WriteLine(JsonConvert.SerializeObject(result));
+                //Console.WriteLine(JsonConvert.SerializeObject(result));
                 con.RefreshToken = result.RefreshToken;
                 res = this.ServiceClient.Post<AddGoogleDriveResponse>(new AddGoogleDriveRequest { Config = con, SolnId = req["SolutionId"] });
-                Console.WriteLine("After inserstion GD : ");
+                //Console.WriteLine("After inserstion GD : ");
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
-                Console.WriteLine("After Solution info : " + JsonConvert.SerializeObject(resp));
+                //Console.WriteLine("After Solution info : " + JsonConvert.SerializeObject(resp));
                 return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)

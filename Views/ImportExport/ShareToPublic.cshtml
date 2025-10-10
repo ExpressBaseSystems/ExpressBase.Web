@@ -354,6 +354,25 @@
         }
     </div>
 </div>
+
+@{
+    string serverEventUrl = "";
+
+    if(
+        Context.Items.ContainsKey("Scheme") && 
+        Context.Items.ContainsKey("Domain")
+    )
+    {
+    
+        serverEventUrl = Context.Items["Scheme"] + "se." + Context.Items["Domain"];
+
+    } else 
+    {
+        //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove; dont know why it's only kept for stage host?
+        serverEventUrl = "https://se." + RoutingConstants.STAGEHOST;
+    }
+}
+
 @section JsCode{
     <script>
         $(document).ready(function () {
@@ -376,7 +395,7 @@
                 Toggle: "#uploadscreenshot",
                 Container: "appstore-scshot",
                 Multiple: true,
-                ServerEventUrl: 'https://se.' + '@RoutingConstants.STAGEHOST',
+                ServerEventUrl: '@serverEventUrl',
                 EnableTag: false,
                 EnableCrop: true,
                 ResizeViewPort: true,

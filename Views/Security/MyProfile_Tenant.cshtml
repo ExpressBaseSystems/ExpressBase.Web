@@ -459,6 +459,24 @@
 
     new myProfileJs(@UserData);
 
+    @{
+        string serverEventUrl = "";
+
+        if(
+            Context.Items.ContainsKey("Scheme") && 
+            Context.Items.ContainsKey("Domain")
+        )
+        {
+    
+            serverEventUrl = Context.Items["Scheme"] + "se." + Context.Items["Domain"];
+
+        } else 
+        {
+            //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove; dont know why it's only kept for stage host?
+            serverEventUrl = "https://se." + RoutingConstants.STAGEHOST;
+        }
+    }
+
      var d = new EbFileUpload({
         Type:"image",
         Toggle: "#btnChngDp",
@@ -466,7 +484,7 @@
         SolutionId: "@ViewBag.SolnId",
         Container: "DisplayPicture",
         Multiple: false,
-        ServerEventUrl: 'https://se.' + '@RoutingConstants.STAGEHOST',
+        ServerEventUrl: '@serverEventUrl',
         EnableTag: false,
         EnableCrop: true,
         Context: "dp",//if single and crop

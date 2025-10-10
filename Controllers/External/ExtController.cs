@@ -708,7 +708,23 @@ namespace ExpressBase.Web.Controllers
         public bool TenantSingleSignOn(string btoken, string rtoken, string wc)
         {
             var host = this.HttpContext.Request.Host;
-            string Subdomain = host.Host.Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+            string Subdomain;
+
+            if (HttpContext.Items.ContainsKey("SubDomain"))
+            {
+                Subdomain = HttpContext.Items["SubDomain"]?.ToString();
+            }
+            else
+            {
+                //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove;
+
+                Subdomain = host.Host
+                                .Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty)
+                                .Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty)
+                                .Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+
+            }
+
             //string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = wc;
 
@@ -1551,6 +1567,7 @@ namespace ExpressBase.Web.Controllers
                             },
                             RememberMe = true
                         });
+
                     }
                     catch (Exception wse)
                     {

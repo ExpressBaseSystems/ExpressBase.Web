@@ -1,10 +1,29 @@
 ﻿@using ExpressBase.Common;
+@{
+    string sihAuthCallbackUri = string.Empty;
+
+    if(
+        Context.Items.ContainsKey("Scheme") && 
+        Context.Items.ContainsKey("Domain")
+    )
+    {
+    
+        sihAuthCallbackUri = Context.Items["Scheme"]?.ToString() 
+                            + "ksum." 
+                            + Context.Items["Domain"]?.ToString()  
+                            + "/Ext/StartUpIndiaRedirect";
+
+    } else 
+    {
+        //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove; dont know why it's only kept for stage host?
+        sihAuthCallbackUri = "https://ksum." + RoutingConstants.STAGEHOST + "/Ext/StartUpIndiaRedirect";
+
+    }
+}
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <script type="text/javascript">
-            sih_auth_api_key = "kerala";
-        sih_auth_callback_uri = "https://ksum." + "@RoutingConstants.STAGEHOST" + "/Ext/StartUpIndiaRedirect";
+    <script type="text/javascript"> sih_auth_api_key = "kerala"; sih_auth_callback_uri = "@sihAuthCallbackUri";
     </script>
 
 </head>

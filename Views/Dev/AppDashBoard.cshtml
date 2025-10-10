@@ -10,21 +10,37 @@
     string jssrc = string.Empty;
     var sol_cid = ViewBag.cid;
     var solutionid = ViewBag.cide;
-    if (ViewBag.Env == "Development")
+    
+    if(
+        Context.Items.ContainsKey("Scheme") && 
+        Context.Items.ContainsKey("UserConsoleHost") && 
+        Context.Items.ContainsKey("Domain")
+    )
     {
-        domurl = "http://" + solutionid + ".localhost:41500";
-        jssrc = "https://" + sol_cid + ".localhost:41502";
-    }
-    if (ViewBag.Env == "Staging")
+        
+        domurl = Context.Items["Scheme"]?.ToString() + Context.Items["UserConsoleHost"]?.ToString();
+        jssrc = Context.Items["Scheme"]?.ToString() + sol_cid + "." + Context.Items["Domain"]?.ToString();
+
+    } else 
     {
-        domurl = "https://" + solutionid + "." + RoutingConstants.STAGEHOST;
-        jssrc = "https://" + sol_cid + "." + RoutingConstants.STAGEHOST;
+        //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove;
+        if (ViewBag.Env == "Development")
+        {
+            domurl = "http://" + solutionid + ".localhost:41500";
+            jssrc = "https://" + sol_cid + ".localhost:41502";
+        }
+        if (ViewBag.Env == "Staging")
+        {
+            domurl = "https://" + solutionid + "." + RoutingConstants.STAGEHOST;
+            jssrc = "https://" + sol_cid + "." + RoutingConstants.STAGEHOST;
+        }
+        if (ViewBag.Env == "Production")
+        {
+            domurl = "https://" + solutionid + ".expressbase.com";
+            jssrc = "https://" + sol_cid + ".expressbase.com";
+        }
     }
-    if (ViewBag.Env == "Production")
-    {
-        domurl = "https://" + solutionid + ".expressbase.com";
-        jssrc = "https://" + sol_cid + ".expressbase.com";
-    }
+    
 }
 
 @section StyleSheet{

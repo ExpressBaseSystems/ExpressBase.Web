@@ -168,29 +168,43 @@
 
     </div>
     <div class="usecase-bots-cont"></div>
+
+    @{
+        //TODO: AppUrlContextMiddleware; no else here, taking a risk here a bot is obselete;
+
+        string jssrc = "";
+
+        if(
+            Context.Items.ContainsKey("Scheme") && 
+            Context.Items.ContainsKey("UserConsoleHost")
+        )
+        {
+    
+            jssrc = Context.Items["Scheme"]?.ToString() + Context.Items["UserConsoleHost"]?.ToString();
+
+        } 
+    }
     <script type="text/javascript">
                 $(document).ready(function () {
-                    console.log("bots");
+                    //console.log("bots");
                     d = document;
-                    /**/
                     d.ebmod = '@ViewBag.Env';
-                    /**/
-                    /**/
                     var BotList = @BotDtls ;
-                    var solutionId = '@ViewBag.SolutionId';
+                    var solutionId = '@ViewBag.SolutionId'; // AppUrlContextMiddleware; is this same as ViewBag.SolutionIdExt?
                     window.hostValue = '@ViewBag.HostValue';
-                     console.log("host=" + window.hostValue);
-                    /**/
+                    //console.log("host=" + window.hostValue);
+                    var jssrc = "@jssrc";
+                    /*
                     var jssrc = "https://"+solutionId+".localhost:41502";
                     if (d.ebmod === 'Production')
                         jssrc = "https://"+solutionId+".expressbase.com";
                     else if (d.ebmod === 'Staging')
                         jssrc = "https://" + solutionId + "." + "@RoutingConstants.STAGEHOST";
-                    
+                    */
                     window.EXPRESSbase_SOLUTION_ID ='@ViewBag.SolutionIdExt';
                     window.EXPRESSbase_cid = '@ViewBag.SolutionId';
-          console.log("EXPRESSbase_SOLUTION_ID=" + window.EXPRESSbase_SOLUTION_ID);
-          console.log("EXPRESSbase_cid=" +  window.EXPRESSbase_cid);
+                    //console.log("EXPRESSbase_SOLUTION_ID=" + window.EXPRESSbase_SOLUTION_ID);
+                    //console.log("EXPRESSbase_cid=" +  window.EXPRESSbase_cid);
                     window.EXPRESSbase_APP_IDS = [];
                     d.ebbotThemeColorColl = [];
                     d.botWelcomeMsgColl = [];

@@ -90,12 +90,24 @@ namespace ExpressBase.Web.Controllers
             int usercount = Convert.ToInt32(this.HttpContext.Request.Form["UserCount"]);
             string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
-            if (ViewBag.Env == "Development")
-                Env = "https://myaccount." + RoutingConstants.STAGEHOST;
-            else if (ViewBag.Env == "Staging")
-                Env = "https://myaccount." + RoutingConstants.STAGEHOST;
-            else if (ViewBag.Env == "Production")
-                Env = "https://myaccount.expressbase.com";
+
+            if (HttpContext.Items.ContainsKey("Domain"))
+            {
+                Env = "https://myaccount." + HttpContext.Items["Domain"]?.ToString();
+            }
+            else
+            {
+                //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove;
+
+                if (ViewBag.Env == "Development")
+                    Env = "https://myaccount." + RoutingConstants.STAGEHOST;
+                else if (ViewBag.Env == "Staging")
+                    Env = "https://myaccount." + RoutingConstants.STAGEHOST;
+                else if (ViewBag.Env == "Production")
+                    Env = "https://myaccount.expressbase.com";
+            }
+
+            
 
             var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
             {

@@ -6,6 +6,7 @@
         public string BaseHost { get; set; }
         public string Scheme { get; set; }
         public string LocalPort { get; set; }
+        public string ServerEventUrlPrefix { get; set; }
     }
 
 }

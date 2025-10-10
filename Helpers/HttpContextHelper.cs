@@ -23,16 +23,34 @@ namespace ExpressBase.Web.Helpers
 
         private static string GetIpFromHttpContext(HttpContext httpContext)
         {
-            // If behind proxy and you've enabled ForwardedHeaders, X-Forwarded-For will be set.
-            if (httpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var fwd) && !string.IsNullOrWhiteSpace(fwd))
+            
+            string headerValue = null;
+
+            if (httpContext.Request.Headers.TryGetValue("Eb-X-Forwarded-For", out var ebFwd) &&
+                !string.IsNullOrWhiteSpace(ebFwd))
             {
-                var s = fwd.ToString();
-                var i = s.IndexOf(',');
-                return i >= 0 ? s.Substring(0, i).Trim() : s.Trim();
+                headerValue = ebFwd.ToString();
+            }
+            else if (httpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var stdFwd) &&
+                     !string.IsNullOrWhiteSpace(stdFwd))
+            {
+                headerValue = stdFwd.ToString();
             }
 
-            return httpContext.Connection.RemoteIpAddress?.ToString();
+            if (!string.IsNullOrWhiteSpace(headerValue))
+            {
+               
+                var commaIndex = headerValue.IndexOf(',');
+                var clientIp = commaIndex >= 0 ? headerValue.Substring(0, commaIndex) : headerValue;
+                return clientIp.Trim();
+            }
+
+            
+            var remoteIp = httpContext.Connection.RemoteIpAddress;
+
+            return remoteIp?.MapToIPv4().ToString();
         }
+
 
 
         public static bool WantsJson(ActionExecutingContext ctx)

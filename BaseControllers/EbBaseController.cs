@@ -11,8 +11,10 @@ using ExpressBase.Web.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 using ServiceStack;
 using ServiceStack.Redis;
+using StackExchange.Redis;
 using System;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
@@ -53,6 +55,8 @@ namespace ExpressBase.Web.BaseControllers
         protected string CurrentLanguage { get; set; }
 
         public IHttpContextAccessor httpContextAccessor { get; set; }
+
+        protected readonly IServiceProvider ServiceProvider;
 
         public string RequestSourceIp
         {
@@ -187,44 +191,69 @@ namespace ExpressBase.Web.BaseControllers
             this.AuthClient = _auth as EbAuthClient;
         }
 
-
-        //created for PublicFormController
-        public EbBaseController(IServiceClient _ssclient, IHttpContextAccessor _cxtacc, IEbAuthClient _auth, PooledRedisClientManager _pooledRedisManager, IRedisClient _redis)
+        //for WebFormController
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager, IServiceProvider _serviceProvider)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
-            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
-            this.AuthClient = _auth as EbAuthClient;
-            this.PooledRedisManager = _pooledRedisManager;
             this.Redis = _redis as RedisClient;
+            this.ServerEventClient = _sec as EbServerEventClient;
+            this.PooledRedisManager = pooledRedisManager;
+            this.ServiceProvider = _serviceProvider as IServiceProvider;
         }
 
-        //created for InternalExceptionController
-        public EbBaseController(IServiceClient _ssclient, IHttpContextAccessor _cxtacc, IEbAuthClient _auth, PooledRedisClientManager _pooledRedisManager)
+        // for PublicFormController
+        public EbBaseController(IServiceClient _client,IEbAuthClient _auth, IServiceProvider _serviceProvider /*,PooledRedisClientManager pooledRedisManager, IRedisClient redisClient*/)
         {
-            this.ServiceClient = _ssclient as JsonServiceClient;
-            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+            this.ServiceClient = _client as JsonServiceClient;
             this.AuthClient = _auth as EbAuthClient;
-            this.PooledRedisManager = _pooledRedisManager;
-        }
+            this.ServiceProvider = _serviceProvider as IServiceProvider;
+            //this.PooledRedisManager = pooledRedisManager;
+            //this.Redis = redisClient as RedisClient;
 
+        }
 
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            Host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
 
-            ExtSolutionId = Host.Replace(RoutingConstants.DASHDEV, string.Empty);
+            if (HttpContext.Items.ContainsKey("SubDomain"))
+            {
+                Host = HttpContext.Items["SubDomain"]?.ToString();
+            }
+            else
+            {
+                /*
+                 * Here host is actually just the actual subdomain and not the http host; 
+                 * http://demobakerystaging-dev.localhost:41500/; will be demobakerystaging-dev;
+                */
+                Host = context.HttpContext.Request.Host.Host
+                        .Replace(RoutingConstants.WWWDOT, string.Empty)
+                        .Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty)
+                        .Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty)
+                        .Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+            }
+
+            if (HttpContext.Items.ContainsKey("ExternalSolutionId"))
+            {
+                ExtSolutionId = HttpContext.Items["ExternalSolutionId"]?.ToString();
+
+            } else
+            {
+                ExtSolutionId = Host.Replace(RoutingConstants.DASHDEV, string.Empty);
+            }
+
             IntSolutionId = this.GetIsolutionId(ExtSolutionId);
             WhichConsole = Host.Contains(RoutingConstants.DASHDEV) ? RoutingConstants.DC : (IntSolutionId == CoreConstants.EXPRESSBASE) ? RoutingConstants.TC : RoutingConstants.UC;
 
-            Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole);
+            //Console.WriteLine(ExtSolutionId + "\n" + IntSolutionId + "\n" + WhichConsole);
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ReCaptchaKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_KEY);
             this.CurrentLanguage = context.HttpContext.Request.Cookies["ebLang"];
             base.OnActionExecuting(context);
         }
 
-        public bool IsTokensValid(string sRToken, string sBToken, string subdomain)
+        //TODO: move to middleware
+        public bool IsTokensValid(string sRToken, string sBToken, string subdomain, string internalSolutionId = "")
         {
             if (string.IsNullOrWhiteSpace(sRToken) || string.IsNullOrWhiteSpace(sBToken))
                 return false;
@@ -232,12 +261,16 @@ namespace ExpressBase.Web.BaseControllers
             bool isvalid = false;
             try
             {
-                string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
+                if(string.IsNullOrEmpty(internalSolutionId))
+                {
+                    internalSolutionId = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
+                }
+                
                 if (VerifySignature(sRToken) && VerifySignature(sBToken))
                 {
                     var rToken = new JwtSecurityToken(sRToken);
                     var bToken = new JwtSecurityToken(sBToken);
-                    if (bToken.Payload[TokenConstants.CID].ToString() == isid)
+                    if (bToken.Payload[TokenConstants.CID].ToString() == internalSolutionId)
                     {
                         string rSub = rToken.Payload[TokenConstants.SUB].ToString();
                         string bSub = bToken.Payload[TokenConstants.SUB].ToString();
@@ -257,7 +290,7 @@ namespace ExpressBase.Web.BaseControllers
                                     isvalid = true;
                                 else if (WhichConsole == RoutingConstants.DC)
                                 {
-                                    if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                                    if (subParts[0] == internalSolutionId && rSub.EndsWith(TokenConstants.DC))
                                         isvalid = true;
                                 }
                                 else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC) || rSub.EndsWith(TokenConstants.PC))
@@ -277,9 +310,10 @@ namespace ExpressBase.Web.BaseControllers
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.WriteLine(e.Message + e.StackTrace);
+                
+                DebugHelper.PrintException(exception, label: "unable to verify the token");
                 Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, string.Empty, new CookieOptions());
                 Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, string.Empty, new CookieOptions());
             }
@@ -367,32 +401,72 @@ namespace ExpressBase.Web.BaseControllers
             return Convert.FromBase64String(base64);
         }
 
+        //TODO: move this into a middleware
         public string GetIsolutionId(string esid)
         {
             string solnId = string.Empty;
 
             if (esid == CoreConstants.MYACCOUNT)
-                solnId = CoreConstants.EXPRESSBASE;
-            else if (esid == CoreConstants.ADMIN)
-                solnId = CoreConstants.ADMIN;
-            else if (this.Redis != null)
             {
-                if (this.PooledRedisManager != null)
+                return CoreConstants.EXPRESSBASE;
+            }
+               
+            if(esid == CoreConstants.ADMIN)
+            {
+                return CoreConstants.ADMIN;
+            }
+
+            PooledRedisClientManager redisMgr = null;
+
+            var key = string.Format(CoreConstants.SOLUTION_ID_MAP, esid);
+
+            try
+            {
+                redisMgr = HttpContext?.RequestServices?.GetService(typeof(PooledRedisClientManager)) as PooledRedisClientManager;
+
+                if (redisMgr != null)
+                {
+                    using (var redis = redisMgr.GetReadOnlyClient())
+                        solnId = redis.Get<string>(key);
+                }
+                else if (this.PooledRedisManager != null)
                 {
                     using (var redis = this.PooledRedisManager.GetReadOnlyClient())
+                        solnId = redis.Get<string>(key);
+                }
+                else if (this.Redis != null)
+                {
+                    solnId = this.Redis.Get<string>(key);
+                }
+
+                if (string.IsNullOrEmpty(solnId) && this.ServiceClient != null)
+                {
+                    this.ServiceClient.Post<UpdateSidMapResponse>(
+                        new UpdateSidMapRequest { ExtSolutionId = esid });
+
+                    if (redisMgr != null)
                     {
-                        solnId = redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                        using (var redis = redisMgr.GetReadOnlyClient())
+                            solnId = redis.Get<string>(key);
+                    }
+                    else if (this.PooledRedisManager != null)
+                    {
+                        using (var redis = this.PooledRedisManager.GetReadOnlyClient())
+                            solnId = redis.Get<string>(key);
+                    }
+                    else if (this.Redis != null)
+                    {
+                        solnId = this.Redis.Get<string>(key);
                     }
                 }
-                else
-                    solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
-                if (solnId == null || solnId == string.Empty)
-                {
-                    this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest { ExtSolutionId = esid });
-                    solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
-                }
             }
-            return solnId;
+            catch(Exception exception)
+            {
+                DebugHelper.PrintException(exception, label: "unable to find a valid internal soultion id");
+            }
+
+            return solnId ?? string.Empty;
+          
         }
 
         public Eb_Solution GetSolutionObject(string cid)

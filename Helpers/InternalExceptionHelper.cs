@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack.Redis;
 using System;
@@ -7,7 +8,7 @@ namespace ExpressBase.Web.Helpers
 {
     public class InternalExceptionHelper : ExpressBase.Common.Helpers.InternalExceptionHelper
     {
-        public InternalExceptionHelper(PooledRedisClientManager pooledRedisClientManager) : base(pooledRedisClientManager)
+        public InternalExceptionHelper(IServiceProvider serviceProvider) : base(serviceProvider.GetService(typeof(PooledRedisClientManager)) as PooledRedisClientManager)
         {
         }
 

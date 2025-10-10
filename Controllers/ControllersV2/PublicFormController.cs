@@ -27,23 +27,23 @@ using InternalExceptionHelper = ExpressBase.Web.Helpers.InternalExceptionHelper;
 
 namespace ExpressBase.Web.Controllers.ControllersV2
 {
-    [Route("v2/PublicForm")]
     public class PublicFormController : EbBaseController
     {
 
-        public PublicFormController(
-            IServiceClient _client, 
-            IHttpContextAccessor _cxtacc,
-            IEbAuthClient _auth, 
-            PooledRedisClientManager _pooledRedisManager, 
-            IRedisClient _redis
+        public PublicFormController
+            (
+                IServiceClient _client, 
+                IEbAuthClient _auth,
+                IServiceProvider _serviceProvider
+                //PooledRedisClientManager pooledRedisClientManager,
+                //IRedisClient redisClient
             ) : base(
                 _client, 
-                _cxtacc, 
-                _auth, 
-                _pooledRedisManager, 
-                _redis) 
-            { }
+                _auth,
+                _serviceProvider
+                //pooledRedisClientManager,
+                //redisClient
+            ) { }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -59,7 +59,7 @@ namespace ExpressBase.Web.Controllers.ControllersV2
 
             try
             {
-                bool isTokenValid = IsTokensValid(refreshToken, bearerToken, externalSoultionId);
+                bool isTokenValid = IsTokensValid(refreshToken, bearerToken, externalSoultionId, internalSolutionId);
 
                 if (
                     string.IsNullOrWhiteSpace(refreshToken) || 
@@ -126,7 +126,7 @@ namespace ExpressBase.Web.Controllers.ControllersV2
             }
             catch (Exception exception)
             {
-                var helper = new InternalExceptionHelper(PooledRedisManager);
+                var helper = new InternalExceptionHelper(this.ServiceProvider);
                 context.Result = helper.Redirect(exception, context.Controller as Controller);
             }
 
@@ -137,8 +137,8 @@ namespace ExpressBase.Web.Controllers.ControllersV2
         }
 
 
-        [HttpGet("Index")]
-        [RedisRateLimit(limit: 10, windowSeconds: 60, useIp: true, perPath: true, useExternalSolutionId:true, customKey:"public_form:v2")]
+        [HttpGet("v2/PublicForm")]
+        //[RedisRateLimit(limit: 10, windowSeconds: 60, useIp: true, perPath: true, useExternalSolutionId:true, customKey:"public_form:v2")]
         public IActionResult Index(string publicFormQparams)
         {
 
@@ -253,7 +253,7 @@ namespace ExpressBase.Web.Controllers.ControllersV2
             catch (Exception exception)
             {
 
-                return new InternalExceptionHelper(PooledRedisManager).Redirect(exception, this);
+                return new InternalExceptionHelper(this.ServiceProvider).Redirect(exception, this);
             }
         }
     }

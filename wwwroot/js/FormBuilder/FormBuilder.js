@@ -131,38 +131,73 @@
     }.bind(this);
 
     this.cut = function (eType, selector, action, originalEvent) {
-        this.copy(eType, selector, action, originalEvent);
-        this.del(eType, selector, action, originalEvent);
+
+        try
+        {
+            
+            this.copy(eType, selector, action, originalEvent, true);
+            this.del(eType, selector, action, originalEvent);
+
+        } catch(e)
+        {
+            EbDebugHelper.error("an exception arose", e);
+        }
+        
     }.bind(this);
 
-    this.copy = function (eType, selector, action, originalEvent) {
-        let $e = selector.$trigger;
-        let ebsid = $e.attr("ebsid");
-        let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-        let clonedCtrl = { ...ctrl };
-        if (ctrl.ObjType === "Approval")
-            this.ApprovalCtrl = null;
-        if (ctrl.ObjType === "Review")
-            this.ReviewCtrl = null;
-        else if (ctrl.ObjType === "ProvisionLocation")
-            this.ProvisionLocationCtrl = null;
+    this.copy = function (eType, selector, action, originalEvent, isCut = false) {
 
-        delete clonedCtrl["$Control"];
-        delete clonedCtrl["__oldValues"];
-        localStorage.eb_form_control = JSON.stringify(clonedCtrl);
-        localStorage.eb_form_$control = $(`[ebsid='${JSON.parse(localStorage.eb_form_control).EbSid_CtxId}']`)[0].outerHTML;
+        try
+        {
+            
+            let $e = selector.$trigger;
+            let ebsid = $e.attr("ebsid");
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            let clonedCtrl = { ...ctrl };
+            if (ctrl.ObjType === "Approval")
+                this.ApprovalCtrl = null;
+            if (ctrl.ObjType === "Review")
+                this.ReviewCtrl = null;
+            else if (ctrl.ObjType === "ProvisionLocation")
+                this.ProvisionLocationCtrl = null;
+
+            delete clonedCtrl["$Control"];
+            delete clonedCtrl["__oldValues"];
+            localStorage.eb_form_control = JSON.stringify(clonedCtrl);
+            localStorage.eb_form_$control = $(`[ebsid='${JSON.parse(localStorage.eb_form_control).EbSid_CtxId}']`)[0].outerHTML;
+
+            EbToast.info("Successfully copied the control");
+
+        } catch(e)
+        {
+            EbDebugHelper.error("Failed to copy the control", e);
+            EbToast.error("Failed to copy the control");
+        }
+        
     }.bind(this);
 
     this.copyToClipboard = function (eType, selector, action, originalEvent) {
-        let $e = selector.$trigger;
-        let ebsid = $e.attr("ebsid");
-        let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-        let copyCtrlJson = this.getCopyControlJson(ctrl);
-        let $ctrl = $(`[ebsid='${ctrl.EbSid_CtxId}']`)[0].outerHTML;
-        let cpyText = copyCtrlJson + '$$$webform-control-copy$$$' + $ctrl;
-        this.copyTextToClipboard(cpyText);
-        localStorage.removeItem("eb_form_control");
-        localStorage.removeItem("eb_form_$control");
+        
+        try
+        {
+            let $e = selector.$trigger;
+            let ebsid = $e.attr("ebsid");
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            let copyCtrlJson = this.getCopyControlJson(ctrl);
+            let $ctrl = $(`[ebsid='${ctrl.EbSid_CtxId}']`)[0].outerHTML;
+            let cpyText = copyCtrlJson + '$$$webform-control-copy$$$' + $ctrl;
+            this.copyTextToClipboard(cpyText);
+            localStorage.removeItem("eb_form_control");
+            localStorage.removeItem("eb_form_$control");
+
+            EbToast.info("Successfully copied the control");
+            
+        } catch(e)
+        {
+            EbDebugHelper.error("Failed to copy the control", e);
+            EbToast.error("Failed to copy the control");
+        }
+        
     }.bind(this);
 
     this.getCopyControlJson = function (ctrl) {
@@ -185,7 +220,7 @@
 
             let flatControls = getAllctrlsFrom(newCtrl);
 
-            EbDebugHelper.log("flatControls",flatControls)
+            //EbDebugHelper.log("flatControls",flatControls)
 
             for (let i = 0; i < flatControls.length; i++) {
 
@@ -263,12 +298,10 @@
         try
         {
             await EbClipboardHelper.copy(text);
-            EbToast.info("Successfully copied the control");
         }
         catch (error) {
 
             EbDebugHelper.error("Failed to copy the control", error);
-            EbToast.error("Failed to copy the control");
         }
 
     }.bind(this);

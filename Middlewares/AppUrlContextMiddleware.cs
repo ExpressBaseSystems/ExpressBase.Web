@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Helpers;
 using FluentFTP;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -20,20 +21,33 @@ namespace ExpressBase.Web.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            var host = context.Request.Host.ToString();
+
+            DebugHelper.PrintObject(this._cfg, printAsJson: true, label: "this._cfg");
+            DebugHelper.PrintObject(context.Request, label: "context");
+
+            var host = context.Request.Host.ToString(); //demobakerystaging.localhost:41500 || localhost:41500
 
             string subdomain = null;
             string domain = null;
             string devConsoleHost = null;
+            string userConsoleHost = null;
+            string externalSolutionId = null;
 
-            
+
+            if (this._cfg.Scheme.Replace("://",String.Empty) != context.Request.Scheme)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsync("Invalid Scheme.");
+                return;
+            }
+
 
             var parts = host.Split('.', StringSplitOptions.RemoveEmptyEntries);
 
             if (parts.Length >= 2)
             {
-                subdomain = parts[0] ?? null;
-                domain = parts[1] ?? null;
+                subdomain = parts[0] ?? null; //demobakerystaging
+                domain = parts[1] ?? null;  //localhost:41500
             }
             else
             {
@@ -47,25 +61,24 @@ namespace ExpressBase.Web.Middlewares
                 return;
             }
 
+            if (StringHelper.HasValue(subdomain) == true)
+            {
+                
+                if (subdomain.EndsWith("-dev", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Items["DevConsoleHost"] = subdomain + "-dev" + "." + this._cfg.BaseHost; //demobakerystaging-dev.localhost:41500
+                }
 
-            if (!subdomain.EndsWith("-dev", StringComparison.OrdinalIgnoreCase))
-            {
-                devConsoleHost =subdomain + "-dev" + "." + this._cfg.BaseHost;
-            } else
-            {
-                devConsoleHost = subdomain + "." + this._cfg.BaseHost;
+
+                context.Items["ExternalSolutionId"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty); //demobakerystaging
+                context.Items["UserConsoleHost"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty) + "." + this._cfg.BaseHost; //demobakerystaging.localhost:41500
+                context.Items["SubDomain"] = subdomain;
             }
 
-            context.Items["ExternalSolutionId"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty);
             context.Items["BaseHost"] = this._cfg.BaseHost;
             context.Items["Scheme"] = this._cfg.Scheme;
             context.Items["Host"] = host;
-            context.Items["Domain"] = domain;
-            context.Items["SubDomain"] = subdomain;
-            context.Items["UserConsoleHost"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty) + "." + this._cfg.BaseHost;
-            context.Items["DevConsoleHost"] = devConsoleHost;
-
-            //DebugHelper.PrintObject(context.Items, printAsJson: false, label: "context");
+            context.Items["Domain"] = domain; 
 
             await _next(context);
         }

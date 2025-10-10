@@ -72,17 +72,17 @@ namespace ExpressBase.Web.BaseControllers
         public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, _sec, pooledRedisManager)
         {
         }
+
+        //for WebFormController
+        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager, IServiceProvider _serviceProvider) : base(_ssclient, _redis, _sec, pooledRedisManager, _serviceProvider) 
+        { 
+        }
+
         public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IMessageQueueClient _mqFactory, IMessageProducer _mqProducer)
             : base(_ssclient, _redis)
         {
             this.RedisMessageQueueClient = _mqFactory as RedisMessageQueueClient;
             this.RedisMessageProducer = _mqProducer as RedisMessageProducer;
-        }
-
-        //created for PublicFormControllerV2
-        public EbBaseIntCommonController(IServiceClient _ssclient, IHttpContextAccessor _cxtacc, IEbAuthClient _auth, PooledRedisClientManager _pooledRedisManager, IRedisClient _redis) : base(_ssclient, _cxtacc, _auth, _pooledRedisManager, _redis)
-        {
-
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)

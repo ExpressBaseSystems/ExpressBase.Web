@@ -19,17 +19,17 @@ class EbUrlHelper {
 
     static getEbServerEventUrl()
     {
-        if (!window?.EbAppConfig?.ServerEventUrlPrefix) {
+        if (!window?.EbAppConfig?.serverEventUrlPrefix) {
 
-            throw new Error("required EbAppConfigs are missing");
+            throw new Error("required EbAppConfig are missing");
         }
 
-        return this.getEbWebUrl(window?.EbAppConfig?.ServerEventUrlPrefix);
+        return this.getEbWebUrl(window?.EbAppConfig?.serverEventUrlPrefix);
     }
 
     static getEbWebUrl(subDomain)
     {
-        if (!window?.EbAppConfig?.ServerEventUrlPrefix || !window?.EbAppConfig?.domain || !window?.EbAppConfig?.scheme) {
+        if (!window?.EbAppConfig?.domain || !window?.EbAppConfig?.scheme) {
 
             throw new Error("required EbAppConfigs are missing");
         }

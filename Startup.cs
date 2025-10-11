@@ -181,7 +181,7 @@ namespace ExpressBase.Web2
             
             app.UseApplicationInsightsRequestTelemetry();
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsEnvironment("PreStaging"))
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();

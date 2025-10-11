@@ -92,7 +92,7 @@ class ButtonPublicFormAttachControl {
                 throw new Error("result must be an object containing a 'url' property");
             }
 
-            const success = await EbClipboardHelper.copy(copyText);
+            const success = await EbClipBoardHelper.copy(copyText);
 
             if (success) {
 

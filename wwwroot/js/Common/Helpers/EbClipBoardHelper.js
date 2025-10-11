@@ -1,4 +1,4 @@
-class EbClipboardHelper {
+class EbClipBoardHelper {
     static async copy(text) {
         if (!text) throw new Error('Nothing to copy');
 
@@ -7,7 +7,7 @@ class EbClipboardHelper {
             return true;
         } catch (err) {
             EbDebugHelper.error("Copy to clipboard failed",err);
-            return EbClipboardHelper._fallbackCopyText(text);
+            return EbClipBoardHelper._fallbackCopyText(text);
         }
     }
 

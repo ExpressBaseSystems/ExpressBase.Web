@@ -297,7 +297,7 @@
 
         try
         {
-            await EbClipboardHelper.copy(text);
+            await EbClipBoardHelper.copy(text);
         }
         catch (error) {
 

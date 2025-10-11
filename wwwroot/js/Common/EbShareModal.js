@@ -232,7 +232,7 @@
 
     copyToClipboard(text) {
         try {
-            EbClipboardHelper.copy(text);
+            EbClipBoardHelper.copy(text);
             EbToast.success('Copied to clipboard', { position: 'bottom-center' });
         } catch {
             EbToast.error('Copy failed. Long-press to select.', { position: 'bottom-center' });

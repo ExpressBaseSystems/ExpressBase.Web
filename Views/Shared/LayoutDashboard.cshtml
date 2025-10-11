@@ -1,7 +1,9 @@
 ﻿@using ExpressBase.Web.Filters;
 @using ExpressBase.Common;
 @using Newtonsoft.Json;
+@using Newtonsoft.Json;
 @using ExpressBase.Common.Helpers;
+@using ExpressBase.Web.Helpers;
 @{
     var bApnd = true;
     if (ViewBag.Env == "Development")
@@ -18,6 +20,20 @@
     <link rel="icon" href="@UrlHelper.GetIconUrl(ViewBag.BrowserURLContext)">
     <title>@ViewBag.Title</title>
 
+    <script>
+        window.EbAppConfig = @Html.Raw(AppConfigViewHelper.RenderJson(Context));
+    </script>
+
+    @* BEGIN JS HELPER CLASSES *@
+    <script type="text/javascript" src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbShareModal.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbToast.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbControlClone.js" asp-append-version=@bApnd></script>
+    @* END JS HELPER CLASSES *@
+
     @* CORE CSS *@
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -26,14 +42,6 @@
     <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
     @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">*@
     <link rel="stylesheet" href="~/css/LayoutCommon/jquery.contextMenu.min.css">
-
-    @* BEGIN JS HELPER CLASSES *@
-    <script type="text/javascript" src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
-    @* END JS HELPER CLASSES *@
-
 
     @*jith*@
     <link rel="stylesheet" type="text/css" href="~/css/DV/bootstrap-toggle.min.css">

@@ -1,11 +1,15 @@
 ﻿@using ExpressBase.Common.Helpers;
 @using ExpressBase.Web.Filters;
+@using Newtonsoft.Json;
+@using ExpressBase.Common.Helpers;
+@using ExpressBase.Web.Helpers
 @{
     var bApnd = true;
     if (ViewBag.Env == "Development")
     {
         bApnd = false;
     }
+    
 }
 <!DOCTYPE html>
 <html>
@@ -14,6 +18,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
+
+    <script>
+        window.EbAppConfig = @Html.Raw(AppConfigViewHelper.RenderJson(Context));
+    </script>
+
+    @* BEGIN JS HELPER CLASSES *@
+    <script type="text/javascript" src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbShareModal.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbToast.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbControlClone.js" asp-append-version=@bApnd></script>
+    @* END JS HELPER CLASSES *@
+    
     <link rel="icon" href="@UrlHelper.GetIconUrl(ViewBag.BrowserURLContext)">
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
@@ -59,14 +78,6 @@
 
 
     @******************************************* JavaScript includes ********************** *@
-
-
-    @* BEGIN JS HELPER CLASSES *@
-    <script type="text/javascript" src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
-    @* END JS HELPER CLASSES *@
 
     <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/DV/bootstrap-tagsinput.js"></script>

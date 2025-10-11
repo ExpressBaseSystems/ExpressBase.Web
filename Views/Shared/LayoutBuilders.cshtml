@@ -2,6 +2,8 @@
 @using ExpressBase.Common;
 @using Newtonsoft.Json;
 @using ExpressBase.Common.Helpers;
+@using ExpressBase.Web.Helpers;
+
 @{
     var bApnd = true;
     if (ViewBag.Env == "Development")
@@ -17,6 +19,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="@UrlHelper.GetIconUrl(ViewBag.BrowserURLContext)">
     <title>@ViewBag.Title</title>
+
+    <script>
+        window.EbAppConfig = @Html.Raw(AppConfigViewHelper.RenderJson(Context));
+    </script>
+    @* BEGIN JS HELPER CLASSES *@
+    <script type="text/javascript" src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbShareModal.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbToast.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Common/EbControlClone.js" asp-append-version=@bApnd></script>
+    @* END JS HELPER CLASSES *@
 
     @* CORE CSS *@
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
@@ -88,17 +103,6 @@
     <link rel="stylesheet" href="~/css/MeetingPicker.css" asp-append-version=@bApnd> @*nithin*@
 
     @******************************************* JavaScript includes ********************** *@
-
-    @* BEGIN JS HELPER CLASSES *@
-    <script type="text/javascript" src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbClipboardHelper.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version=@bApnd></script>
-    @* END JS HELPER CLASSES *@
-
-    <script type="text/javascript" src="~/js/Common/EbShareModal.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/EbToast.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Common/EbControlClone.js" asp-append-version=@bApnd></script>
 
     <script type="text/javascript" src="~/js/EbControls/ButtonPublicFormAttachControl/EbButtonPublicFormAttachControl.js" asp-append-version=@bApnd></script>
 

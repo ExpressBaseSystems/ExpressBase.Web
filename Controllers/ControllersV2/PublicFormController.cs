@@ -48,17 +48,26 @@ namespace ExpressBase.Web.Controllers.ControllersV2
         public override void OnActionExecuting(ActionExecutingContext context)
         {
 
-            string externalSoultionId = HttpContext.Items["ExternalSolutionId"] as string;
-            string internalSolutionId = GetIsolutionId(externalSoultionId);
-            string clientIp = HttpContextHelper.GetClientIp(context);
-
-            string bearerToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN] ?? "";
-            string refreshToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN] ?? "";
-            User user;
-            string userAuthId;
-
             try
             {
+                
+
+                //TODO: make this check global; a route based check;
+                if(HttpContext.Items.ContainsKey("ExternalSolutionId") == false)
+                {
+                    throw new Exception("this route requires an ExternalSolutionId");
+                }
+
+                string externalSoultionId = HttpContext.Items["ExternalSolutionId"] as string;
+
+                string internalSolutionId = GetIsolutionId(externalSoultionId);
+                string clientIp = HttpContextHelper.GetClientIp(context);
+
+                string bearerToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN] ?? "";
+                string refreshToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN] ?? "";
+                User user;
+                string userAuthId;
+
                 bool isTokenValid = IsTokensValid(refreshToken, bearerToken, externalSoultionId, internalSolutionId);
 
                 if (

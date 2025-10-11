@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Web.Helpers;
 using ExpressBase.Web.RateLimitters;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack.Redis;
@@ -42,7 +43,7 @@ namespace ExpressBase.Web.Filters
                 if (!string.IsNullOrWhiteSpace(ip)) parts.Add("ip=" + ip);
             }
 
-            if(_opt.UseExternalSolutionId)
+            if(_opt.UseExternalSolutionId && ctx.HttpContext.Items.ContainsKey("ExternalSolutionId"))
             {
                 var subdomain = ctx.HttpContext.Items["ExternalSolutionId"] as string;
                 if (!string.IsNullOrWhiteSpace(subdomain))

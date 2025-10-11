@@ -309,24 +309,6 @@
 
 </div>
 
-@{
-    string serverEventUrl = "";
-
-    if(
-        Context.Items.ContainsKey("Scheme") && 
-        Context.Items.ContainsKey("Domain")
-    )
-    {
-    
-        serverEventUrl = Context.Items["Scheme"] + "se." + Context.Items["Domain"];
-
-    } else 
-    {
-        //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove; dont know why it's only kept for stage host?
-        serverEventUrl = "https://se." + RoutingConstants.STAGEHOST;
-    }
-}
-
 <script>
     let abc = $('#text').val();
     $('#render').html(abc);
@@ -340,7 +322,7 @@
         Toggle: "#btnUploadImg",
         Container: "eb-wiki-uploader",
         Multiple: true,
-        ServerEventUrl: '@serverEventUrl',
+        ServerEventUrl: EbUrlHelper.getEbServerEventUrl(),
         EnableCrop: true,
         MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes
         CustomMenu: [{ name: "Copy link", icon: "fa-user" }]

@@ -58,13 +58,8 @@
     };    
 
     startSE() {
-        let url = "";
-        if (window.location.host.indexOf("localhost") >= 0)
-            url = "https://sedev.eb-test.shop";
-        else if (window.location.host.indexOf("eb-test.shop") >= 0)
-            url = "https://se.eb-test.shop";
-        else
-            url = "https://se.expressbase.com";
+
+        let url= EbUrlHelper.getEbServerEventUrl();
 
         this.ss = new EbServerEvents({ ServerEventUrl: url, Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (m, e) {

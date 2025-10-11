@@ -7,12 +7,7 @@
     //PUSHED_JS_STATEMENTS
 
     this.eb_get_path = function (ebmod) {
-        if (ebmod === 'Production')
-            return "https://" + window.EXPRESSbase_cid + ".expressbase.com/";
-        else if (ebmod === 'Staging')
-            return "https://" + window.EXPRESSbase_cid + ".eb-test.shop/";
-        else
-            return "http://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41500/";
+        return EbUrlHelper.getEbServerEventUrl();
     };
    
     //appIdColl??

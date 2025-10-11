@@ -535,11 +535,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
     this.GoogleDriveOnSubmit = function (e) {
         e.preventDefault();
         postDataGoogleDrive = $(e.target).serializeArray();
-        var uri = "";
-        if (GoogleRedirecturi === "Staging")
-            uri = "https://myaccount.eb-test.shop";
-        else if (GoogleRedirecturi === "Production")
-            uri = "https://myaccount.expressbase.com";
+        let uri = EbUrlHelper.getEbWebUrl("myaccount");
         auth2 = gapi.auth2.init({
             client_id: postDataGoogleDrive[3].value,
             access_type: 'offline',
@@ -739,7 +735,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
             SolutionId: this.Sid,
             Container: "onboarding_logo",
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.shop',
+            ServerEventUrl: EbUrlHelper.getEbServerEventUrl(),
             EnableTag: false,
             EnableCrop: true,
             Context: "logo",//if single and crop

@@ -143,24 +143,6 @@
     var im = new ImageUploader_Doc({Tenantid:'@ViewBag.cid'});
 </script>*@
 
-@{
-    string serverEventUrl = "";
-
-    if(
-        Context.Items.ContainsKey("Scheme") && 
-        Context.Items.ContainsKey("Domain")
-    )
-    {
-    
-        serverEventUrl = Context.Items["Scheme"]?.ToString() + "se." + Context.Items["Domain"]?.ToString();
-
-    } else 
-    {
-        //TODO: AppUrlContextMiddleware; kept for compatibility; test & remove; dont know why it's only kept for stage host?
-        serverEventUrl = "https://se." + RoutingConstants.STAGEHOST;
-    }
-}
-
 <script>
     var d = new EbFileUpload({
         Type:"image",
@@ -169,7 +151,7 @@
         SolutionId: "@ViewBag.SolnId",
         Container: "uploadtest",
         Multiple: true,
-        ServerEventUrl: '@serverEventUrl',
+        ServerEventUrl: EbUrlHelper.getEbServerEventUrl(),
         EnableTag: true,
         EnableCrop: true,
         Context: "dp",//if single and crop

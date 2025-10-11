@@ -237,7 +237,7 @@
                 SolutionId: this.Cid,
                 Container: "mb_" + this.wraperId,
                 Multiple: false,
-                ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.shop',
+                ServerEventUrl: EbUrlHelper.getEbServerEventUrl(),
                 EnableTag: false,
                 EnableCrop: false,
                 DisableUpload: false
@@ -273,7 +273,7 @@
                 SolutionId: "@ViewBag.SolnId",
                 Container: "mb_" + this.wraperId,
                 Multiple: false,
-                ServerEventUrl: 'https://se.eb-test.shop',
+                ServerEventUrl: EbUrlHelper.getEbServerEventUrl(),
                 EnableTag: false,
                 EnableCrop: false,
                 MaxSize: 2,//in MegaBytes

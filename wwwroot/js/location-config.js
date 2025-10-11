@@ -109,6 +109,7 @@
         }.bind(this));
     };
    
+    
     this.imageUploader = function (container, toggle, prev, extra, viwportresize) {
         let resize = viwportresize ? true : false;
 
@@ -119,7 +120,7 @@
             SolutionId: "",
             Container: container,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.shop',
+            ServerEventUrl: EbUrlHelper.getEbServerEventUrl(),
             EnableTag: false,
             MaxSize: 1,
             EnableCrop: true,

@@ -37,4 +37,3 @@ class EbUrlHelper {
         return `${window.EbAppConfig.scheme}${subDomain}.${window.EbAppConfig.domain}`;
     }
 }
-k

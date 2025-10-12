@@ -344,6 +344,9 @@ namespace ExpressBase.Web.BaseControllers
 
         public string GetIsolutionId(string esid)
         {
+            DebugHelper.LogRaw(esid, label: "esid");
+            DebugHelper.LogRaw(string.Format(CoreConstants.SOLUTION_ID_MAP, esid), label: "string.Format(CoreConstants.SOLUTION_ID_MAP, esid)");
+
             string solnId = string.Empty;
 
             if (esid == CoreConstants.MYACCOUNT)
@@ -367,6 +370,8 @@ namespace ExpressBase.Web.BaseControllers
                     solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
                 }
             }
+
+            DebugHelper.LogRaw(solnId, label: "solnId");
             return solnId;
         }
 

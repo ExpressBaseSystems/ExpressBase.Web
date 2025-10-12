@@ -1,192 +1,205 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.ServiceClients;
+using ExpressBase.Web;
 using ExpressBase.Web.Filters;
+using ExpressBase.Web.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http.Features;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 
 namespace ExpressBase.Web2
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables();
+        private readonly IHostingEnvironment _env;
+        public IConfiguration Configuration { get; }
 
-            if (env.IsDevelopment())
-            {
-                builder.AddApplicationInsightsSettings(developerMode: true);
-            }
-            Configuration = builder.Build();
+
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        {
+            _env = env;
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddApplicationInsightsTelemetry(Configuration);
+
+            if (_env.IsDevelopment())
+            {
+                services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = true; });
+            }
+            else
+            {
+                services.AddApplicationInsightsTelemetry(Configuration);
+            }
 
             services.AddDataProtection(opts =>
             {
                 opts.ApplicationDiscriminator = "expressbase.web";
-            }); // for antiforgery checking 
+            });
+
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder
-                     .SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins("https://*.expressbase.com", "https://*." + RoutingConstants.STAGEHOST)
-                    .AllowAnyMethod());
+                var scheme = (Configuration["AppConfiguration:Scheme"] ?? "https://").Trim();
+
+                if (!scheme.Contains("://")) scheme = scheme + "://";
+
+                var baseHost = (Configuration["AppConfiguration:BaseHost"] ?? string.Empty).Trim();
+
+                options.AddPolicy("AllowSpecificOrigin", builder =>
+                {
+                    builder.SetIsOriginAllowedToAllowWildcardSubdomains();
+
+                    if (!string.IsNullOrWhiteSpace(baseHost))
+                    {
+
+                        builder.WithOrigins($"{scheme}*.{baseHost}")
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    }
+                    else
+                    {
+
+                        builder.WithOrigins(
+                                "https://*.expressbase.com",
+                                $"https://*.{RoutingConstants.STAGEHOST}"
+                            )
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    }
+                });
             });
 
-            services.AddMvc();
+            services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
 
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
             });
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            });
+
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
+                if (_env.IsProduction())
+                {
+                    options.ForwardedHeaders =
+                        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+
+                    options.ForwardedForHeaderName = "Eb-X-Forwarded-For";
+                }
+                else
+                {
+                    options.ForwardedHeaders =
+                        ForwardedHeaders.XForwardedFor |
+                        ForwardedHeaders.XForwardedProto |
+                        ForwardedHeaders.XForwardedHost;
+
+
+                    options.KnownNetworks.Clear();
+                    options.KnownProxies.Clear();
+                }
+
+
                 options.ForwardLimit = 5;
-                options.ForwardedForHeaderName = "Eb-X-Forwarded-For";
             });
+
 
             services.Configure<FormOptions>(options =>
             {
-                options.ValueCountLimit = 512; // 512 items max
-                options.ValueLengthLimit = 1024 * 1024 * 100; // 100MB max len form data
+                options.ValueCountLimit = 512;
+                options.ValueLengthLimit = 1024 * 1024 * 100; // 100 MB
             });
 
             services.AddSingleton<AreaRouter>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            // Added - uses IOptions<T> for your settings.
             services.AddOptions();
 
 
-            services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
+            services.AddScoped<IServiceClient, JsonServiceClient>(_ =>
             {
-                JsonServiceClient client = new JsonServiceClient
+                var client = new JsonServiceClient
                 {
                     BaseUri = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL),
-                    RefreshTokenUri = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GET_ACCESS_TOKEN_URL)
+                    RefreshTokenUri = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GET_ACCESS_TOKEN_URL),
+                    Timeout = TimeSpan.FromMinutes(3)
                 };
-                client.Timeout = new TimeSpan(0, 3, 0);
                 return client;
             });
 
-            services.AddScoped<IEbMqClient, EbMqClient>(serviceProvider =>
-            {
-                return new EbMqClient();
-            });
+            services.AddScoped<IEbMqClient, EbMqClient>();
+            services.AddScoped<IEbAuthClient, EbAuthClient>();
+            services.AddScoped<IEbStaticFileClient, EbStaticFileClient>();
+            services.AddScoped<IEbServerEventClient, EbServerEventClient>();
 
-            services.AddScoped<IEbAuthClient, EbAuthClient>(serviceProvider =>
-            {
-                return new EbAuthClient();
-            });
 
-            services.AddScoped<IEbStaticFileClient, EbStaticFileClient>(serviceProvider =>
-            {
-                return new EbStaticFileClient();
-            });
-
-            services.AddScoped<IEbServerEventClient, EbServerEventClient>(serviceProvider =>
-            {
-                return new EbServerEventClient();
-            });
-
-            //  StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
-            string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
-            //if (env == "Development")
-            //{
-            //    services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
-            //    {
-            //        return new RedisClient(redisServer, Convert.ToInt32(redisPort), redisPassword);
-            //    });
-            //}
-            //else
-            //{
-            var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
+
+            var redisConnectionString = $"redis://{redisPassword}@{redisServer}:{redisPort}";
             var redisManager = new RedisManagerPool(redisConnectionString);
-            services.AddScoped<IRedisClient, IRedisClient>(serviceProvider =>
-            {
-                return redisManager.GetClient();
-            });
 
-            var listRWRedis = new List<string>() { redisConnectionString }; var listRORedis = new List<string>() { redisConnectionString.Replace("-master", "-replicas") };
-            PooledRedisClientManager pooledRedisManager = new PooledRedisClientManager(listRWRedis, listRORedis);
-            services.AddSingleton<PooledRedisClientManager, PooledRedisClientManager>(serviceProvider =>
-            {
-                return pooledRedisManager;
-            });
-            //}
+            services.AddScoped<IRedisClient, IRedisClient>(_ => redisManager.GetClient());
 
-            ////Setting Assembly version in Redis
-            //AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
-            //String version = assembly.Name.ToString() + " - " + assembly.Version.ToString();
-            //client.Set("WebAssembly", version);
+            var listRWRedis = new List<string> { redisConnectionString };
+            var listRORedis = new List<string> { redisConnectionString.Replace("-master", "-replicas") };
+
+            var pooledRedisManager = new PooledRedisClientManager(listRWRedis, listRORedis);
+            services.AddSingleton(pooledRedisManager);
+
+            //services.AddScoped<RedisRateLimitFilter>(); //TODO: add in future for RedisRateLimitter
+
+
+            services.Configure<AppConfiguration>(Configuration.GetSection("AppConfiguration"));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AreaRouter areaRouter)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
 
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-            //});
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AreaRouter areaRouter)
+        {
+            var scheme = (Configuration["AppConfiguration:Scheme"] ?? string.Empty).Trim();
+            var baseHost = (Configuration["AppConfiguration:BaseHost"] ?? string.Empty).Trim();
+
 
             app.UseForwardedHeaders();
 
+
             app.UseApplicationInsightsRequestTelemetry();
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsEnvironment("PreStaging"))
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
-                //app.UseHsts();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseMiddleware<AppUrlContextMiddleware>();
+
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
-            app.UseStaticFiles(new StaticFileOptions()
+            app.UseStaticFiles(new StaticFileOptions
             {
-                OnPrepareResponse = (context) =>
+                OnPrepareResponse = context =>
                 {
                     var headers = context.Context.Response.GetTypedHeaders();
                     headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
@@ -197,35 +210,65 @@ namespace ExpressBase.Web2
                 }
             });
 
-            app.UseMvc(routes =>
-            {
-                routes.DefaultHandler = areaRouter;
-                //routes.MapRoute(
-                // name: "developer",
-                // template: "dev",
-                // defaults: new { controller = RoutingConstants.EXTCONTROLLER, action = "DevSignIn" }
-                //);
-
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Ext}/{action=Index}");
-
-            });
 
             app.UseCors("AllowSpecificOrigin");
 
+
             app.Use(async (context, next) =>
             {
+
                 context.Response.Headers.Remove("X-Frame-Options");
-                if (env.IsStaging())
+                context.Response.Headers.Remove("Content-Security-Policy");
+
+                if (!string.IsNullOrWhiteSpace(baseHost))
                 {
-                    context.Response.Headers.Add("X-Frame-Options", $"ALLOW-FROM SAMEDOMAIN *.{RoutingConstants.STAGEHOST}");
-                    context.Response.Headers.Add("Content-Security-Policy", $"frame-ancestors 'self' {RoutingConstants.STAGEHOST} *.{RoutingConstants.STAGEHOST};");
+                    if (env.IsStaging())
+                    {
+
+                        context.Response.Headers.Add(
+                            "Content-Security-Policy",
+                            $"frame-ancestors 'self' https://{baseHost} https://*.{baseHost};"
+                        );
+                    }
+                    else if (env.IsProduction())
+                    {
+
+                        context.Response.Headers.Add(
+                            "Content-Security-Policy",
+                            "frame-ancestors 'self';"
+                        );
+                    }
                 }
-                if (env.IsProduction())
-                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN");
+                else
+                {
+
+                    if (env.IsStaging())
+                    {
+                        context.Response.Headers.Add(
+                            "Content-Security-Policy",
+                            $"frame-ancestors 'self' https://{RoutingConstants.STAGEHOST} https://*.{RoutingConstants.STAGEHOST};"
+                        );
+                    }
+                    else if (env.IsProduction())
+                    {
+                        context.Response.Headers.Add(
+                            "Content-Security-Policy",
+                            "frame-ancestors 'self';"
+                        );
+                    }
+                }
+
                 await next();
-            }); // for web forwarding with masking
+            });
+
+
+            app.UseMvc(routes =>
+            {
+                routes.DefaultHandler = areaRouter;
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Ext}/{action=Index}");
+            });
         }
     }
 }

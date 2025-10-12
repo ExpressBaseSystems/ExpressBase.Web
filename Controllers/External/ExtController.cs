@@ -321,6 +321,10 @@ namespace ExpressBase.Web.Controllers
         private bool isAvailSolution()
         {
             bool IsAvail = false;
+
+            DebugHelper.LogRaw(this.Redis, label: "this.Redis");
+            DebugHelper.LogRaw(ViewBag.SolutionId, label: "this.Redis");
+
             if (ViewBag.SolutionId != String.Empty && ViewBag.SolutionId != null)
             {
                 IsAvail = isAvailInRedis();
@@ -337,6 +341,8 @@ namespace ExpressBase.Web.Controllers
         {
             bool IsAvail = false;
             IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
+            DebugHelper.LogRaw(resp, label: "this.Redis");
+            DebugHelper.LogRaw(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId), label: "this.Redis");
             if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
                 IsAvail = true;
             return IsAvail;

@@ -60,7 +60,7 @@ namespace ExpressBase.Web.Controllers
             //// Directly return all tickets as JSON response
             //// No filtering is done here
             //return Json(fsr.supporttkt ?? new List<SupportTktCls>());
-            return null;
+            return new EmptyResult();
         }
 
 

@@ -186,9 +186,33 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            Host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty).Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty).Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+            if (HttpContext.Items.ContainsKey("SubDomain"))
+            {
+                Host = HttpContext.Items["SubDomain"]?.ToString();
+            }
+            else
+            {
+                /*
+                 * Here host is actually just the actual subdomain and not the http host; 
+                 * http://demobakerystaging-dev.localhost:41500/; will be demobakerystaging-dev;
+                */
+                Host = context.HttpContext.Request.Host.Host
+                        .Replace(RoutingConstants.WWWDOT, string.Empty)
+                        .Replace(RoutingConstants.LIVEHOSTADDRESS, string.Empty)
+                        .Replace(RoutingConstants.STAGEHOSTADDRESS, string.Empty)
+                        .Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
+            }
 
-            ExtSolutionId = Host.Replace(RoutingConstants.DASHDEV, string.Empty);
+            if (HttpContext.Items.ContainsKey("ExternalSolutionId"))
+            {
+                ExtSolutionId = HttpContext.Items["ExternalSolutionId"]?.ToString();
+
+            }
+            else
+            {
+                ExtSolutionId = Host.Replace(RoutingConstants.DASHDEV, string.Empty);
+            }
+
             IntSolutionId = this.GetIsolutionId(ExtSolutionId);
             WhichConsole = Host.Contains(RoutingConstants.DASHDEV) ? RoutingConstants.DC : (IntSolutionId == CoreConstants.EXPRESSBASE) ? RoutingConstants.TC : RoutingConstants.UC;
 

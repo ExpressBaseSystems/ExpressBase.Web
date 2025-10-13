@@ -1,26 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
-using System.Globalization;
-using RestSharp;
-using System.Net;
-using RestSharp.Authenticators;
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using Flurl.Http;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Enums;
+using ExpressBase.Common.ServiceStack.ReqNRes;
 using ExpressBase.Web.BaseControllers;
+using Flurl.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using RestSharp;
+using RestSharp.Authenticators;
 using ServiceStack;
 using ServiceStack.Redis;
-using Microsoft.AspNetCore.Mvc;
-using ExpressBase.Common.ServiceStack.ReqNRes;
-using ExpressBase.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Threading.Tasks;
 using System.Web;
-using ExpressBase.Common;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -90,12 +90,23 @@ namespace ExpressBase.Web.Controllers
             int usercount = Convert.ToInt32(this.HttpContext.Request.Form["UserCount"]);
             string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
-            if (ViewBag.Env == "Development")
-                Env = "https://myaccount." + RoutingConstants.STAGEHOST;
-            else if (ViewBag.Env == "Staging")
-                Env = "https://myaccount." + RoutingConstants.STAGEHOST;
-            else if (ViewBag.Env == "Production")
-                Env = "https://myaccount.expressbase.com";
+
+            if (HttpContext.Items.ContainsKey("SubDomain") && HttpContext.Items.ContainsKey("Scheme"))
+            {
+
+                Env = HttpContext.Items["Scheme"].ToString() + "myaccount." + HttpContext.Items["SubDomain"].ToString();
+
+            }
+            else //TODO: TestAndRemoveInTheNextDeployment
+            {
+                if (ViewBag.Env == "Development")
+                    Env = "https://myaccount." + RoutingConstants.STAGEHOST;
+                else if (ViewBag.Env == "Staging")
+                    Env = "https://myaccount." + RoutingConstants.STAGEHOST;
+                else if (ViewBag.Env == "Production")
+                    Env = "https://myaccount.expressbase.com";
+            }
+
 
             var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
             {

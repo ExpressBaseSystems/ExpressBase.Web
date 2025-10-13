@@ -45,13 +45,24 @@ namespace ExpressBase.Web.BaseControllers
                 controller.ViewBag.WhichConsole = WhichConsole;
 				controller.ViewBag.HostValue = context.HttpContext.Request.Host.Value;
                 controller.ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
-                if (controller.ViewBag.Env == "Production")
+
+                if (HttpContext.Items.ContainsKey("SubDomain") && HttpContext.Items.ContainsKey("Scheme"))
                 {
-                    controller.ViewBag.Root = "https://expressbase.com";
+
+                    controller.ViewBag.Root = HttpContext.Items["Scheme"].ToString() + HttpContext.Items["SubDomain"].ToString();
+
                 }
-                else
-                {
-                    controller.ViewBag.Root = "https://" + RoutingConstants.STAGEHOST;
+                else //TODO: TestAndRemoveInTheNextDeployment
+                { 
+
+                    if (controller.ViewBag.Env == "Production")
+                    {
+                        controller.ViewBag.Root = "https://expressbase.com";
+                    }
+                    else
+                    {
+                        controller.ViewBag.Root = "https://" + RoutingConstants.STAGEHOST;
+                    }
                 }
 
             }

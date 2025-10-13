@@ -188,7 +188,7 @@ namespace ExpressBase.Web.BaseControllers
         {
             if (HttpContext.Items.ContainsKey("SubDomain"))
             {
-                Host = HttpContext.Items["SubDomain"]?.ToString();
+                Host = HttpContext.Items["SubDomain"].ToString();
             }
             else
             {

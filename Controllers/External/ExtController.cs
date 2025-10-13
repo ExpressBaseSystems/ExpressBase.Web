@@ -320,32 +320,29 @@ namespace ExpressBase.Web.Controllers
 
         private bool isAvailSolution()
         {
-            bool IsAvail = false;
-
-            DebugHelper.LogRaw(this.Redis, label: "this.Redis");
-            DebugHelper.LogRaw(ViewBag.SolutionId, label: "ViewBag.SolutionId");
-
             if (ViewBag.SolutionId != String.Empty && ViewBag.SolutionId != null)
             {
-                IsAvail = isAvailInRedis();
+                return isAvailInRedis();
                 //if (!IsAvail)
                 //{
                 //    RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
                 //    IsAvail = isAvailInRedis();
                 //}
             }
-            return IsAvail;
+
+            return false;
         }
 
         public bool isAvailInRedis()
         {
-            bool IsAvail = false;
             IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
-            DebugHelper.LogRaw(resp, label: "resp");
-            DebugHelper.LogRaw(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId), label: "string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId)");
+            
             if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
-                IsAvail = true;
-            return IsAvail;
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private string GetDefaultHtmlPageRefId()

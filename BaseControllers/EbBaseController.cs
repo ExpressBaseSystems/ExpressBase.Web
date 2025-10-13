@@ -193,8 +193,8 @@ namespace ExpressBase.Web.BaseControllers
             else
             {
                 /*
-                 * Here host is actually just the actual subdomain and not the http host; 
-                 * http://demobakerystaging-dev.localhost:41500/; will be demobakerystaging-dev;
+                 * Here host is actually just the actual subdomain and not the actual http host; 
+                 * so in http://demobakerystaging-dev.localhost:41500/; the host will be demobakerystaging-dev;
                 */
                 Host = context.HttpContext.Request.Host.Host
                         .Replace(RoutingConstants.WWWDOT, string.Empty)
@@ -368,9 +368,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public string GetIsolutionId(string esid)
         {
-            DebugHelper.LogRaw(esid, label: "esid");
-            DebugHelper.LogRaw(string.Format(CoreConstants.SOLUTION_ID_MAP, esid), label: "string.Format(CoreConstants.SOLUTION_ID_MAP, esid)");
-
+            
             string solnId = string.Empty;
 
             if (esid == CoreConstants.MYACCOUNT)
@@ -395,7 +393,6 @@ namespace ExpressBase.Web.BaseControllers
                 }
             }
 
-            DebugHelper.LogRaw(solnId, label: "solnId");
             return solnId;
         }
 

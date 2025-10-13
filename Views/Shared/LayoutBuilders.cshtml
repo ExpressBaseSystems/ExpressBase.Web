@@ -18,6 +18,8 @@
     <link rel="icon" href="@UrlHelper.GetIconUrl(ViewBag.BrowserURLContext)">
     <title>@ViewBag.Title</title>
 
+    @await Html.PartialAsync("_EbCoreScripts")
+
     @* CORE CSS *@
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

@@ -5,24 +5,37 @@
     string home = string.Empty;
     string sociallink = string.Empty;
     string signinLink = string.Empty;
-    if (ViewBag.Env == "Development")
+
+    if (Context.Items.ContainsKey("Domain") && Context.Items.ContainsKey("Scheme"))
     {
-        home = "http://localhost:41400";
-        sociallink = "http://localhost:41600";
-        signinLink = "http://myaccount.localhost:41500";
+
+        home = Context.Items["Scheme"].ToString() + Context.Items["Domain"];
+        sociallink = Context.Items["Scheme"].ToString() + "ss." + Context.Items["Domain"];
+        signinLink = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["Domain"];
+
     }
-    if (ViewBag.Env == "Staging")
+    else //TODO: TestAndRemoveInTheNextDeployment
     {
-        home = "https://" + RoutingConstants.STAGEHOST;
-        sociallink = "https://ss." + RoutingConstants.STAGEHOST;
-        signinLink = "https://myaccount." + RoutingConstants.STAGEHOST;
+        if (ViewBag.Env == "Development")
+        {
+            home = "http://localhost:41400";
+            sociallink = "http://localhost:41600";
+            signinLink = "http://myaccount.localhost:41500";
+        }
+        if (ViewBag.Env == "Staging")
+        {
+            home = "https://" + RoutingConstants.STAGEHOST;
+            sociallink = "https://ss." + RoutingConstants.STAGEHOST;
+            signinLink = "https://myaccount." + RoutingConstants.STAGEHOST;
+        }
+        if (ViewBag.Env == "Production")
+        {
+            home = "https://expressbase.com";
+            sociallink = "https://ss.expressbase.com";
+            signinLink = "https://myaccount.expressbase.com";
+        }
     }
-    if (ViewBag.Env == "Production")
-    {
-        home = "https://expressbase.com";
-        sociallink = "https://ss.expressbase.com";
-        signinLink = "https://myaccount.expressbase.com";
-    }
+
 }
 
 @section StyleSheet{

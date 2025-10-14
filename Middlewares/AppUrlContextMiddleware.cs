@@ -62,9 +62,9 @@ namespace ExpressBase.Web.Middlewares
                 }
 
 
-                    context.Items["ExternalSolutionId"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty); //demobakerystaging
+                context.Items["ExternalSolutionId"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty); //demobakerystaging
                 context.Items["UserConsoleHost"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty) + "." + baseHost; //demobakerystaging.expressbase.com
-                context.Items["SubDomain"] = subdomain;
+                context.Items["SubDomain"] = subdomain; //demobakerystaging || demobakerystaging-dev
             }
 
             context.Items["BaseHost"] = baseHost;

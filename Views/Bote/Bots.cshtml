@@ -181,16 +181,22 @@
                     window.hostValue = '@ViewBag.HostValue';
                      console.log("host=" + window.hostValue);
                     /**/
-                    var jssrc = "https://"+solutionId+".localhost:41502";
+                       //var jssrc = "https://"+solutionId+".localhost:41502"; //TODO: TestAndRemoveInTheNextDeployment
+
+                    var jssrc = EbUrlHelper.getEbWebUrl(solutionId);
+
+                       //TODO: TestAndRemoveInTheNextDeployment
+
+                    /*
                     if (d.ebmod === 'Production')
                         jssrc = "https://"+solutionId+".expressbase.com";
                     else if (d.ebmod === 'Staging')
                         jssrc = "https://" + solutionId + "." + "@RoutingConstants.STAGEHOST";
-                    
+                    */
                     window.EXPRESSbase_SOLUTION_ID ='@ViewBag.SolutionIdExt';
                     window.EXPRESSbase_cid = '@ViewBag.SolutionId';
-          console.log("EXPRESSbase_SOLUTION_ID=" + window.EXPRESSbase_SOLUTION_ID);
-          console.log("EXPRESSbase_cid=" +  window.EXPRESSbase_cid);
+                    //console.log("EXPRESSbase_SOLUTION_ID=" + window.EXPRESSbase_SOLUTION_ID);
+                    //console.log("EXPRESSbase_cid=" +  window.EXPRESSbase_cid);
                     window.EXPRESSbase_APP_IDS = [];
                     d.ebbotThemeColorColl = [];
                     d.botWelcomeMsgColl = [];

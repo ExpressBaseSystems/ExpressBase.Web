@@ -791,11 +791,27 @@ namespace ExpressBase.Web.Controllers
                 AuthorizationCodeFlow flow = new AuthorizationCodeFlow(init);
                 Console.WriteLine("Fetching token for code: _" + req["code"] + "_");
 
-                if (ViewBag.Env == "Staging")
-                    RedirectUri = "https://myaccount." + RoutingConstants.STAGEHOST;
-                else if (ViewBag.Env == "Production")
-                    RedirectUri = "https://myaccount.expressbase.com";
-                Console.WriteLine(RedirectUri);
+                if (HttpContext.Items.ContainsKey("Domain") && HttpContext.Items.ContainsKey("Scheme"))
+                {
+
+                    RedirectUri = HttpContext.Items["Scheme"].ToString() + "myaccount." + HttpContext.Items["Domain"].ToString();
+
+                }
+                else //TODO: TestAndRemoveInTheNextDeployment
+                {
+                    if (ViewBag.Env == "Staging")
+                    {
+                        RedirectUri = "https://myaccount." + RoutingConstants.STAGEHOST;
+                    }
+                    else if (ViewBag.Env == "Production")
+                    {
+                        RedirectUri = "https://myaccount.expressbase.com";
+                    }
+                        
+                }
+
+                //Console.WriteLine(RedirectUri);
+
                 TokenResponse result = AsyncHelper.RunSync(() => GetGoogleDriveKey(flow, req["code"], RedirectUri));
                 Console.WriteLine(JsonConvert.SerializeObject(result));
                 con.RefreshToken = result.RefreshToken;

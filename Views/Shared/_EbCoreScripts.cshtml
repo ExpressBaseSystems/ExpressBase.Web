@@ -1,0 +1,13 @@
+﻿@using ExpressBase.Web.Helpers
+
+<script>
+    window.EbAppConfig = @Html.Raw(AppConfigViewHelper.RenderJson(Context));
+</script>
+
+<script src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version="true"></script>
+<script src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version="true"></script>
+<script src="~/js/Common/Helpers/EbClipBoardHelper.js" asp-append-version="true"></script>
+<script src="~/js/Common/Helpers/EbUrlHelper.js" asp-append-version="true"></script>
+<script src="~/js/Common/EbShareModal.js" asp-append-version="true"></script>
+<script src="~/js/Common/EbToast.js" asp-append-version="true"></script>
+<script src="~/js/Common/EbControlClone.js" asp-append-version="true"></script>

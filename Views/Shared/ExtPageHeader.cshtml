@@ -2,21 +2,32 @@
 @using ExpressBase.Common;
 @{
     string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
-    if (ViewBag.Env == "Development")
+
+    if (Context.Items.ContainsKey("Domain") && Context.Items.ContainsKey("Scheme"))
     {
-        home = "http://localhost:41400";
-        signinurl = "http://myaccount.localhost:41500";
+        home = Context.Items["Scheme"].ToString() + Context.Items["Domain"].ToString();
+        signinurl = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["Domain"].ToString();
+
     }
-    if (ViewBag.Env == "Staging")
+    else //TODO: TestAndRemoveInTheNextDeployment
     {
-        home = "https://" + RoutingConstants.STAGEHOST;
-        signinurl = "https://myaccount." + RoutingConstants.STAGEHOST;
+        if (ViewBag.Env == "Development")
+        {
+            home = "http://localhost:41400";
+            signinurl = "http://myaccount.localhost:41500";
+        }
+        if (ViewBag.Env == "Staging")
+        {
+            home = "https://" + RoutingConstants.STAGEHOST;
+            signinurl = "https://myaccount." + RoutingConstants.STAGEHOST;
+        }
+        if (ViewBag.Env == "Production")
+        {
+            home = "https://expressbase.com";
+            signinurl = "https://myaccount.expressbase.com";
+        }
     }
-    if (ViewBag.Env == "Production")
-    {
-        home = "https://expressbase.com";
-        signinurl = "https://myaccount.expressbase.com";
-    }
+    
     bool isLogined = (ViewBag.AvailToken == null) ? false : ViewBag.AvailToken;
 }
 <section class="ext-pageheader" id="pgheaderExt">

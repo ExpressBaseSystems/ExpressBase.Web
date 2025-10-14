@@ -6,12 +6,12 @@
     string sociallink = string.Empty;
     string signinLink = string.Empty;
 
-    if (Context.Items.ContainsKey("SubDomain") && Context.Items.ContainsKey("Scheme"))
+    if (Context.Items.ContainsKey("Domain") && Context.Items.ContainsKey("Scheme"))
     {
 
-        home = Context.Items["Scheme"].ToString() + Context.Items["SubDomain"];
-        sociallink = Context.Items["Scheme"].ToString() + "ss." + Context.Items["SubDomain"];
-        signinLink = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["SubDomain"];
+        home = Context.Items["Scheme"].ToString() + Context.Items["Domain"];
+        sociallink = Context.Items["Scheme"].ToString() + "ss." + Context.Items["Domain"];
+        signinLink = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["Domain"];
 
     }
     else //TODO: TestAndRemoveInTheNextDeployment

@@ -91,10 +91,10 @@ namespace ExpressBase.Web.Controllers
             string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
 
-            if (HttpContext.Items.ContainsKey("SubDomain") && HttpContext.Items.ContainsKey("Scheme"))
+            if (HttpContext.Items.ContainsKey("Domain") && HttpContext.Items.ContainsKey("Scheme"))
             {
 
-                Env = HttpContext.Items["Scheme"].ToString() + "myaccount." + HttpContext.Items["SubDomain"].ToString();
+                Env = HttpContext.Items["Scheme"].ToString() + "myaccount." + HttpContext.Items["Domain"].ToString();
 
             }
             else //TODO: TestAndRemoveInTheNextDeployment

@@ -21,7 +21,7 @@
     string useraction = string.Empty;
 
     
-    if (Context.Items.ContainsKey("SubDomain") && Context.Items.ContainsKey("Scheme") && Context.Items.ContainsKey("DevConsoleHost"))
+    if (Context.Items.ContainsKey("Scheme") && Context.Items.ContainsKey("DevConsoleHost") && Context.Items.ContainsKey("UserConsoleHost"))
     {
         sso_dev = Context.Items["Scheme"].ToString() + Context.Items["DevConsoleHost"].ToString() + "/Ext/SwitchContext";
         sso_user = Context.Items["Scheme"].ToString() + Context.Items["UserConsoleHost"].ToString() + "/Ext/SwitchContext";

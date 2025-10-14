@@ -46,10 +46,10 @@ namespace ExpressBase.Web.BaseControllers
 				controller.ViewBag.HostValue = context.HttpContext.Request.Host.Value;
                 controller.ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 
-                if (HttpContext.Items.ContainsKey("SubDomain") && HttpContext.Items.ContainsKey("Scheme"))
+                if (HttpContext.Items.ContainsKey("Domain") && HttpContext.Items.ContainsKey("Scheme"))
                 {
 
-                    controller.ViewBag.Root = HttpContext.Items["Scheme"].ToString() + HttpContext.Items["SubDomain"].ToString();
+                    controller.ViewBag.Root = HttpContext.Items["Scheme"].ToString() + HttpContext.Items["Domain"].ToString();
 
                 }
                 else //TODO: TestAndRemoveInTheNextDeployment

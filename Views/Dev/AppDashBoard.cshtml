@@ -12,11 +12,11 @@
     var solutionid = ViewBag.cide;
 
 
-    if (Context.Items.ContainsKey("SubDomain") && Context.Items.ContainsKey("Scheme"))
+    if (Context.Items.ContainsKey("Domain") && Context.Items.ContainsKey("Scheme"))
     {
 
-        domurl = Context.Items["Scheme"] + solutionid + "." + Context.Items["SubDomain"];
-        jssrc = Context.Items["Scheme"] + sol_cid + "." + Context.Items["SubDomain"];
+        domurl = Context.Items["Scheme"] + solutionid + "." + Context.Items["Domain"];
+        jssrc = Context.Items["Scheme"] + sol_cid + "." + Context.Items["Domain"];
 
     }
     else //TODO: TestAndRemoveInTheNextDeployment

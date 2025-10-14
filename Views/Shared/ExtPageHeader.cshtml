@@ -3,10 +3,10 @@
 @{
     string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
 
-    if (Context.Items.ContainsKey("SubDomain") && Context.Items.ContainsKey("Scheme"))
+    if (Context.Items.ContainsKey("Domain") && Context.Items.ContainsKey("Scheme"))
     {
-        home = Context.Items["Scheme"].ToString() + Context.Items["SubDomain"].ToString();
-        signinurl = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["SubDomain"].ToString();
+        home = Context.Items["Scheme"].ToString() + Context.Items["Domain"].ToString();
+        signinurl = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["Domain"].ToString();
 
     }
     else //TODO: TestAndRemoveInTheNextDeployment

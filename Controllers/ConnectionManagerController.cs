@@ -791,10 +791,10 @@ namespace ExpressBase.Web.Controllers
                 AuthorizationCodeFlow flow = new AuthorizationCodeFlow(init);
                 Console.WriteLine("Fetching token for code: _" + req["code"] + "_");
 
-                if (HttpContext.Items.ContainsKey("Domain") && HttpContext.Items.ContainsKey("Scheme"))
+                if (HttpContext.Items.ContainsKey(RoutingConstants.DOMAIN) && HttpContext.Items.ContainsKey(RoutingConstants.SCHEME))
                 {
 
-                    RedirectUri = HttpContext.Items["Scheme"].ToString() + "myaccount." + HttpContext.Items["Domain"].ToString();
+                    RedirectUri = HttpContext.Items[RoutingConstants.SCHEME].ToString() + "myaccount." + HttpContext.Items[RoutingConstants.DOMAIN].ToString();
 
                 }
                 else //TODO: TestAndRemoveInTheNextDeployment

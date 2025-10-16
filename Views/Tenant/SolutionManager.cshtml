@@ -21,10 +21,10 @@
     string useraction = string.Empty;
 
     
-    if (Context.Items.ContainsKey("Scheme") && Context.Items.ContainsKey("DevConsoleHost") && Context.Items.ContainsKey("UserConsoleHost"))
+    if (Context.Items.ContainsKey(RoutingConstants.SCHEME) && Context.Items.ContainsKey(RoutingConstants.DEV_CONSOLE_HOST) && Context.Items.ContainsKey(RoutingConstants.USER_CONSOLE_HOST))
     {
-        sso_dev = Context.Items["Scheme"].ToString() + Context.Items["DevConsoleHost"].ToString() + "/Ext/SwitchContext";
-        sso_user = Context.Items["Scheme"].ToString() + Context.Items["UserConsoleHost"].ToString() + "/Ext/SwitchContext";
+        sso_dev = Context.Items[RoutingConstants.SCHEME].ToString() + Context.Items[RoutingConstants.DEV_CONSOLE_HOST].ToString() + "/Ext/SwitchContext";
+        sso_user = Context.Items[RoutingConstants.SCHEME].ToString() + Context.Items[RoutingConstants.USER_CONSOLE_HOST].ToString() + "/Ext/SwitchContext";
     }
     else //TODO: TestAndRemoveInTheNextDeployment
     {

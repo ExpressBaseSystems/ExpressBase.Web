@@ -7,12 +7,12 @@
     string sociallink = string.Empty;
     string signinLink = string.Empty;
 
-    if (Context.Items.ContainsKey(RoutingConstants.DOMAIN) && Context.Items.ContainsKey(RoutingConstants.SCHEME))
+    if (Context.Items.ContainsKey("Domain") && Context.Items.ContainsKey("Scheme"))
     {
 
-        home = Context.Items[RoutingConstants.SCHEME].ToString() + Context.Items[RoutingConstants.DOMAIN];
-        sociallink = Context.Items[RoutingConstants.SCHEME].ToString() + "ss." + Context.Items[RoutingConstants.DOMAIN];
-        signinLink = Context.Items[RoutingConstants.SCHEME].ToString() + "myaccount." + Context.Items[RoutingConstants.DOMAIN];
+        home = Context.Items["Scheme"].ToString() + Context.Items["Domain"];
+        sociallink = Context.Items["Scheme"].ToString() + "ss." + Context.Items["Domain"];
+        signinLink = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["Domain"];
     }
     else //TODO: TestAndRemoveInTheNextDeployment
     {

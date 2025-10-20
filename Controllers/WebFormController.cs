@@ -1,35 +1,34 @@
-﻿using ExpressBase.Common;
-using ExpressBase.Common.Constants;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.Extensions;
-using ExpressBase.Common.LocationNSolution;
-using ExpressBase.Common.Objects;
-using ExpressBase.Common.Objects.Attributes;
-using ExpressBase.Common.ServerEvents_Artifacts;
-using ExpressBase.Common.ServiceClients;
-using ExpressBase.Common.Structures;
-using ExpressBase.Objects;
-using ExpressBase.Objects.Objects;
-using ExpressBase.Objects.Objects.DVRelated;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Objects.WebFormRelated;
-using ExpressBase.Security;
+using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Web.BaseControllers;
-using ExpressBase.Web.Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
+using Newtonsoft.Json;
+using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
+using ExpressBase.Common.Objects;
+using ExpressBase.Common.Extensions;
 using System.Reflection;
-using System.Threading.Tasks;
+using ExpressBase.Common.Objects.Attributes;
+using ExpressBase.Common.Data;
+using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Constants;
+using ExpressBase.Objects.Objects;
+using System.IO;
+using System.Net;
+using ExpressBase.Common.ServerEvents_Artifacts;
+using ExpressBase.Common.ServiceClients;
+using ExpressBase.Security;
+using System.Collections;
+using ExpressBase.Objects.WebFormRelated;
+using Microsoft.AspNetCore.Http;
+using System.Globalization;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -39,29 +38,19 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Index(string _r, string _p, int _m, int _l, int _rm, string _lg)
         {
-            try
+            //_r => refId; _p => params; _m => mode; _l => locId; _rm => renderMode
+            string refId = _r, _params = _p, _language = _lg ?? this.CurrentLanguage ?? "en";
+            int _mode = _m, _locId = _l;//
+            Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+            string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false, false, _language);
+            EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
+            if (result.ErrorMessage != null)
             {
-                
-                string refId = _r, _params = _p, _language = _lg ?? this.CurrentLanguage ?? "en";
-                int _mode = _m, _locId = _l;
-                string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false, false, _language);
-
-                EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
-
-                if (result.ErrorMessage != null)
-                {
-                    TempData["ErrorResp"] = GetFormattedErrMsg(result.ErrorMessage);
-                    return RedirectToAction("Index", "StatusCode", new { statusCode = result.ErrorCode, m = GetFormattedErrMsg(result.ErrorMessage, true) });
-                }
-
-                ViewBag.EbFormAndDataWrapper = resp;
-
-                return View();
-
-            }catch(Exception exception)
-            {
-                return InternalExcepionHelper.Redirect(exception, this, TimeSpan.FromSeconds(120));
+                TempData["ErrorResp"] = GetFormattedErrMsg(result.ErrorMessage);
+                return RedirectToAction("Index", "StatusCode", new { statusCode = result.ErrorCode, m = GetFormattedErrMsg(result.ErrorMessage, true) });
             }
+            ViewBag.EbFormAndDataWrapper = resp;
+            return View();
         }
 
         public IActionResult Inde(int _r, string _p, int _m, int _l, int _rm, string _lg)

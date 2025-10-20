@@ -1,5 +1,4 @@
-﻿using ExpressBase.Common;
-using ExpressBase.Common.Helpers;
+﻿using ExpressBase.Common.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
@@ -23,8 +22,8 @@ namespace ExpressBase.Web.Middlewares
             //DebugHelper.PrintObject(this._cfg, printAsJson: true, label: "this._cfg");
             //DebugHelper.PrintObject(context.Request, label: "context");
 
-            var host = context.Request.Host.ToString(); // demobakerystaging-dev.expressbase.com
-            string baseHost = _cfg.BaseHost; // expressbase.com
+            var host = context.Request.Host.ToString(); //demobakerystaging-dev.expressbase.com
+            string baseHost = _cfg.BaseHost; //expressbase.com
 
             string subdomain = null;
             string domain = null;
@@ -56,25 +55,22 @@ namespace ExpressBase.Web.Middlewares
                 
                 if (subdomain.EndsWith(this._cfg.DevDomainSuffix, StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    context.Items[RoutingConstants.DEV_CONSOLE_HOST] = subdomain + this._cfg.DevDomainSuffix + "." + baseHost; // demobakerystaging-dev.expressbase.com
-                    context.Items[RoutingConstants.CONSOLE] = RoutingConstants.UC;
-
+                    context.Items["DevConsoleHost"] = subdomain + this._cfg.DevDomainSuffix + "." + baseHost; //demobakerystaging-dev.expressbase.com
                 } else
                 {
-                    context.Items[RoutingConstants.DEV_CONSOLE_HOST] = subdomain + "." + baseHost; // demobakerystaging-dev.expressbase.com
-                    context.Items[RoutingConstants.CONSOLE] = RoutingConstants.DC;
+                    context.Items["DevConsoleHost"] = subdomain + "." + baseHost; //demobakerystaging-dev.expressbase.com
                 }
 
 
-                context.Items[RoutingConstants.EXTERNAL_SOLUTION_ID] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty); // demobakerystaging
-                context.Items[RoutingConstants.USER_CONSOLE_HOST] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty) + "." + baseHost; // demobakerystaging.expressbase.com
-                context.Items[RoutingConstants.SUB_DOMAIN] = subdomain; // demobakerystaging || demobakerystaging-dev
+                context.Items["ExternalSolutionId"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty); //demobakerystaging
+                context.Items["UserConsoleHost"] = subdomain?.Replace(this._cfg.DevDomainSuffix, string.Empty) + "." + baseHost; //demobakerystaging.expressbase.com
+                context.Items["SubDomain"] = subdomain; //demobakerystaging || demobakerystaging-dev
             }
 
-            context.Items[RoutingConstants.BASE_HOST] = baseHost; // expressbase.com
-            context.Items[RoutingConstants.SCHEME] = this._cfg.Scheme; // https:// || http://
-            context.Items[RoutingConstants.HOST] = host; // demobakerystaging-dev.expressbase.com || demobakerystaging.expressbase.com
-            context.Items[RoutingConstants.DOMAIN] = domain; // expressbase.com
+            context.Items["BaseHost"] = baseHost;
+            context.Items["Scheme"] = this._cfg.Scheme;
+            context.Items["Host"] = host;
+            context.Items["Domain"] = domain; 
 
             await _next(context);
         }

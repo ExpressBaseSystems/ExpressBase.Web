@@ -371,7 +371,6 @@
             else
                 $("#price").removeAttr("disabled");
 
-            @*
             var screenshot = new EbFileUpload({
                 Type: "image",
                 Toggle: "#uploadscreenshot",
@@ -396,7 +395,6 @@
                 $("input[name='images']").val(v);
                 $(".screenshot-body").append(`<div class="sc-thumb"><img src="/eb/images/small/${fileid}.jpg"/></div>`);
             }
-            *@
         });
         $('input[type=radio][name=price_option]').change(function () {
             if (this.value === '1') {

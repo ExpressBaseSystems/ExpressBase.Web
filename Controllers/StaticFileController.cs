@@ -53,12 +53,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/wiki/images/{quality}/{refid}")]
-        [Obsolete]
         public IActionResult GetWikiImage(string refid, string quality)
         {
-            return new EmptyResult();
-
-            /*DownloadFileResponse dfs = null;
+            DownloadFileResponse dfs = null;
 
             ActionResult resp = new EmptyResult();
 
@@ -84,7 +81,7 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
-            return resp;*/
+            return resp;
         }
 
         [HttpGet("/botExt/images/{quality}/{refid}")]

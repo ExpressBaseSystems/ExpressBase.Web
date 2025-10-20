@@ -41,7 +41,7 @@ namespace ExpressBase.Web.Controllers
                 RefId = refid
             });
             ViewBag.Refid = refid;
-            ViewBag.VersionNumber = Resp.Data[0].VersionNumber; // TODO: add null check
+            ViewBag.VersionNumber = Resp.Data[0].VersionNumber;
             ViewBag.ObjType = Resp.Data[0].EbObjectType;
             ViewBag.dsObj = Resp.Data[0].Json;
             ViewBag.DisplayName = Resp.Data[0].DisplayName;

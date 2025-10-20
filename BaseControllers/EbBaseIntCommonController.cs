@@ -150,11 +150,6 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.StaticFileServerUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STATICFILESERVER_EXT_URL);
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
 
-                    controller.ViewBag.SessionTag =
-                                                    (bToken?.Payload != null && bToken.Payload.TryGetValue(TokenConstants.SESSION_TAG, out var value))
-                                                        ? value
-                                                        : null;
-
                     this.LoggedInUser = this.GetUserObject(bToken.Payload[TokenConstants.SUB].ToString());
                     controller.ViewBag.UserDisplayName = this.LoggedInUser.FullName;
 

@@ -3,10 +3,10 @@
 @{
     string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
 
-    if (Context.Items.ContainsKey(RoutingConstants.SCHEME) && Context.Items.ContainsKey(RoutingConstants.DOMAIN))
+    if (Context.Items.ContainsKey("Domain") && Context.Items.ContainsKey("Scheme"))
     {
-        home = Context.Items[RoutingConstants.SCHEME].ToString() + Context.Items[RoutingConstants.DOMAIN].ToString();
-        signinurl = Context.Items[RoutingConstants.SCHEME].ToString() + "myaccount." + Context.Items[RoutingConstants.DOMAIN].ToString();
+        home = Context.Items["Scheme"].ToString() + Context.Items["Domain"].ToString();
+        signinurl = Context.Items["Scheme"].ToString() + "myaccount." + Context.Items["Domain"].ToString();
 
     }
     else //TODO: TestAndRemoveInTheNextDeployment
@@ -119,7 +119,15 @@
                                                         <span class="dl-sub">Frequently Asked</span>
                                                     </a>
                                                 </li>
-                                                
+                                                <li>
+                                                    <a href="@home/Wiki" class="drop-link">
+                                                        <span class="ico">
+                                                            <img src="~/images/svg/expert.svg" class="attachment-full" width="16">
+                                                        </span>
+                                                        <strong class="dl-title">Wiki</strong>
+                                                        <span class="dl-sub">Learn More</span>
+                                                    </a>
+                                                </li>
                                                 <li>
                                                     <a href="/GoToDemos" class="drop-link">
                                                         <span class="ico">

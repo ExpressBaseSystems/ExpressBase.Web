@@ -167,10 +167,6 @@ namespace ExpressBase.Web2
 
 
             services.Configure<AppConfiguration>(Configuration.GetSection("AppConfiguration"));
-
-            services.AddScoped<SolutionContextFilter>();
-            services.AddScoped<PublicUserAuthenticationFilter>();
-            services.AddScoped<ApiUserAuthenticationFilter>();
         }
 
 

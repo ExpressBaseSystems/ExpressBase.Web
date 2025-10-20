@@ -1,4 +1,3 @@
-using ExpressBase.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -24,14 +23,14 @@ namespace ExpressBase.Web.Helpers
             var appConfig = new
             {
                 Env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
-                Scheme = context.Items[RoutingConstants.SCHEME]?.ToString(),
-                Host = context.Items[RoutingConstants.HOST]?.ToString(),
+                Scheme = context.Items["Scheme"]?.ToString(),
+                Host = context.Items["Host"]?.ToString(),
                 BaseHost = cfg.Value.BaseHost,
                 LocalPort = cfg.Value.LocalPort,
-                Domain = context.Items[RoutingConstants.DOMAIN]?.ToString(),
+                Domain = context.Items["Domain"]?.ToString(),
                 ServerEventUrlPrefix = cfg.Value.ServerEventUrlPrefix,
-                DevConsoleHost = context.Items[RoutingConstants.DEV_CONSOLE_HOST]?.ToString(),
-                UserConsoleHost = context.Items[RoutingConstants.USER_CONSOLE_HOST]?.ToString()
+                DevConsoleHost = context.Items["DevConsoleHost"]?.ToString(),
+                UserConsoleHost = context.Items["UserConsoleHost"]?.ToString()
             };
 
             var jsonSettings = new JsonSerializerSettings

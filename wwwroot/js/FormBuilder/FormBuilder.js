@@ -78,6 +78,14 @@
 
     this.GenerateButtons = function () {
         if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
+
+            try{
+                EbPublicFormPropertyControl.generateCopyUrlButton(true);
+            }catch (error) {
+                EbToast.warn(EbMessages.get('somethingWentWrongJSRefresh'));
+                EbDebugHelper.error("unable to attach the copy public form url button", error);
+            }
+
             $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
                                             <i class='fa fa-eye' aria-hidden='true'></i>
                                         </button>
@@ -790,7 +798,7 @@
                 let ctrlObj = new this.EbObjects["Eb" + type](ebsid);
                 ctrlObj.DataObjCtrlName = CntrlName;
                 ctrlObj.DataObjColName = ColumnlName;
-                ctrlObj.Label = ColumnlName;
+                ctrlObj.Label = ColumnlName
                 let $ctrl = ctrlObj.$Control;
 
                 if (type === "UserControl") {///user control refid set on ctrlobj

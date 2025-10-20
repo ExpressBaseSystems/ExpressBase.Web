@@ -237,7 +237,7 @@
                 SolutionId: this.Cid,
                 Container: "mb_" + this.wraperId,
                 Multiple: false,
-                ServerEventUrl: ebcontext.env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
+                ServerEventUrl: EbUrlHelper.getEbServerEventUrl(),
                 EnableTag: false,
                 EnableCrop: false,
                 DisableUpload: false
@@ -600,77 +600,98 @@
 
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) { ////////// need optimization
-        let oldVal = "";
-        let subTypeOf = null;
-        if (e) {
-            var $e = $(e.target);
-            this.CurProp = $e.closest("tr").attr("name").slice(0, -2);
-            subTypeOf = $e.closest("tr").attr("subtype-of");
-        }
 
         try {
-            oldVal = this.PropsObj.__oldValues[this.CurProp];
-        }
-        catch (e) {
-            alert(e);
-            console.log(e);
-        }
-        this.getvaluesFromPG();
-        let newVal = this.PropsObj[this.CurProp];
-        if (newVal === oldVal)
-            return;
 
-        let objCopy = ($.extend({}, this.PropsObj));
-        delete objCopy.__oldValues;
-        this.PropsObj.__oldValues = objCopy;
-        //let res = this.getvaluesFromPG();
-        //$('#txtValues').val(JSON.stringify(res) + '\n\n');
 
-        this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
-        this.check4ReservedVals();
+            if (e?.currentTarget?.id === 'pgWraperIsPublicForm') {
 
-        if (subTypeOf) {
-            this.CurMeta = getObjByval(this.Metas, "name", subTypeOf);
-        }
-        if (this.CurProp === "Name" || this.CurProp === "name") {
-            this.updateDD(this.PropsObj);
-            let $colTile = "";
-            if (this.ParentPG && this.ParentPG.isModalOpen)
-                $colTile = $(`#${e.target.defaultValue}.colTile`);
-            if ($colTile.length)
-                $colTile.attr("id", this.PropsObj[this.CurProp]).find("span").text(this.PropsObj[this.CurProp]);
-        }
-        if (this.CurMeta && typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
-            this.execUiChangeFn(this.CurMeta.UIChangefn, this.PropsObj);
-        }
-        if (this.CurProp === 'DataSourceId' && this.PropsObj.ObjType !== "DataGrid") {
-            this.PGHelper.dataSourceInit();
-        }
-        if (this.CurProp === 'Url' && this.PropsObj.ObjType !== "DataGrid") {
-            if (!EbIsValidURL(this.PropsObj.Url.trim())) {
-                this.EbAlert.alert({
-                    id: this.CurProp + "EbIsValidURL",
-                    head: "Invalid URL string.",
-                    body: " The value entered '" + this.PropsObj.Url + "' is an invalid URL.",
-                    type: "warning",
-                    delay: 3000
-                });
-                if (e)
-                    $e.select();
-                return;
-            }
-            if (this.PropsObj.IsDataFromApi) {
-                let opt = {
-                    url: "../DS/GetColumnsFromApi",
-                    apiUrl: this.PropsObj.Url,
-                    headers: this.PropsObj.Headers.$values,
-                    parameters: this.PropsObj.DataApiParams.$values,
-                    method: this.PropsObj.Method
+                try {
+
+                    EbPublicFormPropertyControl.handlePGControlStateChange(e.currentTarget);
+
+                } catch (error) {
+                    EbDebugHelper.error("unable to change the status of the form", error);
+                    EbToast.warn(EbMessages.get('somethingWentWrongJSRefresh'));
                 }
-                this.PGHelper.UrlInit(opt);
             }
+
+            let oldVal = "";
+            let subTypeOf = null;
+            if (e) {
+                var $e = $(e.target);
+                this.CurProp = $e.closest("tr").attr("name").slice(0, -2);
+                subTypeOf = $e.closest("tr").attr("subtype-of");
+            }
+
+            try {
+                oldVal = this.PropsObj.__oldValues[this.CurProp];
+            }
+            catch (e) {
+                EbDebugHelper.error("an exception occurred", error);
+                EbToast.error("An exception occurred");
+            }
+            this.getvaluesFromPG();
+            let newVal = this.PropsObj[this.CurProp];
+            if (newVal === oldVal)
+                return;
+
+            let objCopy = ($.extend({}, this.PropsObj));
+            delete objCopy.__oldValues;
+            this.PropsObj.__oldValues = objCopy;
+            //let res = this.getvaluesFromPG();
+            //$('#txtValues').val(JSON.stringify(res) + '\n\n');
+
+            this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
+            this.check4ReservedVals();
+
+            if (subTypeOf) {
+                this.CurMeta = getObjByval(this.Metas, "name", subTypeOf);
+            }
+            if (this.CurProp === "Name" || this.CurProp === "name") {
+                this.updateDD(this.PropsObj);
+                let $colTile = "";
+                if (this.ParentPG && this.ParentPG.isModalOpen)
+                    $colTile = $(`#${e.target.defaultValue}.colTile`);
+                if ($colTile.length)
+                    $colTile.attr("id", this.PropsObj[this.CurProp]).find("span").text(this.PropsObj[this.CurProp]);
+            }
+            if (this.CurMeta && typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
+                this.execUiChangeFn(this.CurMeta.UIChangefn, this.PropsObj);
+            }
+            if (this.CurProp === 'DataSourceId' && this.PropsObj.ObjType !== "DataGrid") {
+                this.PGHelper.dataSourceInit();
+            }
+            if (this.CurProp === 'Url' && this.PropsObj.ObjType !== "DataGrid") {
+                if (!EbIsValidURL(this.PropsObj.Url.trim())) {
+                    this.EbAlert.alert({
+                        id: this.CurProp + "EbIsValidURL",
+                        head: "Invalid URL string.",
+                        body: " The value entered '" + this.PropsObj.Url + "' is an invalid URL.",
+                        type: "warning",
+                        delay: 3000
+                    });
+                    if (e)
+                        $e.select();
+                    return;
+                }
+                if (this.PropsObj.IsDataFromApi) {
+                    let opt = {
+                        url: "../DS/GetColumnsFromApi",
+                        apiUrl: this.PropsObj.Url,
+                        headers: this.PropsObj.Headers.$values,
+                        parameters: this.PropsObj.DataApiParams.$values,
+                        method: this.PropsObj.Method
+                    }
+                    this.PGHelper.UrlInit(opt);
+                }
+            }
+            this.PropertyChanged(this.PropsObj, this.CurProp, newVal, oldVal);
+
+        } catch (error) {
+            EbDebugHelper.error("an exception occurred", error);
+            EbToast.warn(EbMessages.get('somethingWentWrongJSRefresh'));
         }
-        this.PropertyChanged(this.PropsObj, this.CurProp, newVal, oldVal);
     };
 
     this.execUiChangeFn = function (UIChangefn, PropsObj) {

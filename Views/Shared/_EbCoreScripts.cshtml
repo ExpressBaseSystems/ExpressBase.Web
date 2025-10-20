@@ -1,8 +1,13 @@
 ﻿@using ExpressBase.Web.Helpers
 
+<script src="~/js/Common/EbMessages.js" asp-append-version="true"></script>
+<!-- <script src="~/js/Common/EbFrostGlassLoader.js" asp-append-version="true"></script>
+<script src="~/js/Common/EbFunnyGlassLoader.js" asp-append-version="true"></script> -->
+
 <script>
     window.EbAppConfig = @Html.Raw(AppConfigViewHelper.RenderJson(Context));
 </script>
+
 
 <script src="~/js/Common/Helpers/EbDebugHelper.js" asp-append-version="true"></script>
 <script src="~/js/Common/Helpers/EbApiClientHelper.js" asp-append-version="true"></script>
@@ -11,3 +16,4 @@
 <script src="~/js/Common/EbShareModal.js" asp-append-version="true"></script>
 <script src="~/js/Common/EbToast.js" asp-append-version="true"></script>
 <script src="~/js/Common/EbControlClone.js" asp-append-version="true"></script>
+

@@ -114,10 +114,48 @@
                         }
                         if (ViewBag.Refid.Length > 0 && (ViewBag.Refid as string).Split("-")[2] == "0") // if is  webform
                         {
+                            //TODO: TestAndRemoveInTheNextDeployment
+                            @*
                             <button class="btn" id="make_public" data-toggle="tooltip" data-placement="bottom" title="Make Public" style="display:none"><i class="fa fa-unlock" aria-hidden="true"></i></button>
                             <button class="btn" id="make_private" data-toggle="tooltip" data-placement="bottom" title="Make private" style="display:none"><i class="fa fa-lock" aria-hidden="true"></i></button>
                             <button class="btn" id="copy_url" data-toggle="tooltip" data-placement="bottom" title="Copy public url" style="display:none"><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+                            *@
+
+                            
+
+
+                            @*
+                            @if(ViewBag.PublicFormUrl != null)
+                            {
+                                <button class="btn" id="copy_url"
+                                        title="Copy Public form Link"
+                                        style="display:none"
+                                        onclick="ebModal.open('@ViewBag.PublicFormUrl')">
+                                    <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                </button>
+
+                                <script>
+                                    const ebModal = new EbShareModal({title : "Public Form Link"});
+                                </script>
+                            }
+
+                            *@
+
+
                         }
+
+                        if(ViewBag.Refid != null && ViewBag.PublicFormUrl != null)
+                        {
+                            <span id="publicFormActions" data-refid="@ViewBag.Refid" data-publicformurl="@ViewBag.PublicFormUrl"></span>
+
+                        } else if(ViewBag.Refid != null)
+                        {
+                            <span id="publicFormActions" data-refid="@ViewBag.Refid"></span>
+                        } else
+                        {
+                            <span id="publicFormActions"></span>
+                        }
+
 
                         <button class='btn clone' id="clone" data-toggle="tooltip" data-placement="bottom" title="Clone as new object"><i class="fa fa-clone" aria-hidden="true"></i></button>
                         <button class='btn del_obj' id="del_obj" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
@@ -388,6 +426,9 @@
     <button class="btn btn-primary pull-right commit-btn" id="commit">Commit</button>
 </div>
 
+
+@*
+//TODO: TestAndRemoveInTheNextDeployment
 <div id="url-container" class="url-container">
     <div>External URL</div>
     <textarea id="public_url" class="url_area" readonly>  @external_form_url</textarea>
@@ -396,6 +437,7 @@
         <i class="fa fa-files-o" aria-hidden="true"></i>
     </button>
 </div>
+*@
 
 
 <script>

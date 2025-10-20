@@ -7,6 +7,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -57,11 +58,11 @@ namespace ExpressBase.Web.BaseControllers
         {
             get
             {
-                string val = this.HttpContext.Request.Headers["X-Forwarded-For"];
-                return string.IsNullOrWhiteSpace(val) ? string.Empty : val.Split(",")[0];
+
+                return HttpContextHelper.GetIp(this.HttpContext);
             }
         }
-
+            
         public string UserAgent
         {
             get
@@ -186,9 +187,9 @@ namespace ExpressBase.Web.BaseControllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (HttpContext.Items.ContainsKey("SubDomain"))
+            if (HttpContext.Items.ContainsKey(RoutingConstants.SUB_DOMAIN))
             {
-                Host = HttpContext.Items["SubDomain"].ToString();
+                Host = HttpContext.Items[RoutingConstants.SUB_DOMAIN].ToString();
             }
             else
             {
@@ -203,9 +204,9 @@ namespace ExpressBase.Web.BaseControllers
                         .Replace(RoutingConstants.LOCALHOSTADDRESS, string.Empty);
             }
 
-            if (HttpContext.Items.ContainsKey("ExternalSolutionId"))
+            if (HttpContext.Items.ContainsKey(RoutingConstants.EXTERNAL_SOLUTION_ID))
             {
-                ExtSolutionId = HttpContext.Items["ExternalSolutionId"]?.ToString();
+                ExtSolutionId = HttpContext.Items[RoutingConstants.EXTERNAL_SOLUTION_ID]?.ToString();
 
             }
             else

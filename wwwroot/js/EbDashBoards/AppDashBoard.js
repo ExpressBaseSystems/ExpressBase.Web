@@ -496,6 +496,7 @@
     };
     this.DpImageUpload = function () {
 
+        /*
         var dpImg = new EbFileUpload({
             Type: "image",
             Toggle: "#dpBrowse",
@@ -519,9 +520,13 @@
             }
 
         };
+
+        */
     };
 
     this.BgImageUpload = function () {
+
+        /*
 
         var bgimg = new EbFileUpload({
             Type: "image",
@@ -554,6 +559,8 @@
             //img.src = URL.createObjectURL(this.files[i]);
             //img.height = 60;
         };
+
+        */
     };
 
     $("input[name='bgradio']").click(function () {

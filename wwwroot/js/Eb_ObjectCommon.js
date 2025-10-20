@@ -36,9 +36,9 @@
         $('#singlesave').off('click').on('click', this.SingleSave.bind(this));
         $('#offline').off('click').on('click', this.MakeOffline.bind(this));
         $('#live').off('click').on('click', this.MakeLive.bind(this));
-        $('#make_public').off('click').on('click', this.MakePublic.bind(this));
-        $('#make_private').off('click').on('click', this.MakePrivate.bind(this));
-        $('#copy_url').off('click').on('click', this.OpenUrlContainer.bind(this));
+        //$('#make_public').off('click').on('click', this.MakePublic.bind(this));
+        //$('#make_private').off('click').on('click', this.MakePrivate.bind(this));
+        //$('#copy_url').off('click').on('click', this.OpenUrlContainer.bind(this));
         $('#clone').off('click').on('click', this.Clone.bind(this));
 
         if (this.Current_obj !== null)
@@ -769,7 +769,8 @@
             }.bind(this));
     };
 
-    this.MakePublic = function () {
+    //TODO: TestAndRemoveInTheNextDeployment
+    /*this.MakePublic = function () {
         $("#eb_common_loader").EbLoader("show");
         $.post("../Eb_Object/ChangeAccess",
             {
@@ -789,9 +790,10 @@
                 }
                 $("#eb_common_loader").EbLoader("hide");
             }.bind(this));
-    };
+    };*/
 
-    this.MakePrivate = function () {
+    //TODO: TestAndRemoveInTheNextDeployment
+    /*this.MakePrivate = function () {
         $("#eb_common_loader").EbLoader("show");
         $.post("../Eb_Object/ChangeAccess",
             {
@@ -811,11 +813,12 @@
                 }
                 $("#eb_common_loader").EbLoader("hide");
             }.bind(this));
-    };
+    };*/
 
-    this.OpenUrlContainer = function () {
+    //TODO: TestAndRemoveInTheNextDeployment
+    /*this.OpenUrlContainer = function () {
         $('#url-container').show();
-    };
+    };*/
 
     this.Clone = function () {
         EbDialog("show",

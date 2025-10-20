@@ -1,27 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DiffPlex;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
+using ExpressBase.Common;
+using ExpressBase.Common.Constants;
+using ExpressBase.Common.Helpers;
+using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Objects;
+using ExpressBase.Common.SqlProfiler;
+using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
+using ExpressBase.Objects.Dtos;
+using ExpressBase.Objects.Objects.DVRelated;
+using ExpressBase.Objects.Objects.SmsRelated;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web.Filters;
+using ExpressBase.Web.Helpers;
+using iTextSharp.text;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-using ExpressBase.Common;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Common.Objects;
-using ExpressBase.Objects;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
-using DiffPlex.DiffBuilder;
-using DiffPlex;
-using DiffPlex.DiffBuilder.Model;
-using Newtonsoft.Json;
 using System.Text;
-using ExpressBase.Common.Structures;
-using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
-using ExpressBase.Web.Filters;
-using ExpressBase.Objects.Objects.SmsRelated;
-using ExpressBase.Common.SqlProfiler;
-using ExpressBase.Objects.Objects.DVRelated;
-using ExpressBase.Common.LocationNSolution;
-using ExpressBase.Common.Helpers;
 namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseIntCommonController
@@ -33,6 +37,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult Index(string objid, int objtype, bool buildermode = true)
         {
+            EbObjectWrapper element = new EbObjectWrapper();
             if (ViewBag.wc == "dc")
             {
                 ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
@@ -51,7 +56,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     ViewBag.Obj_id = objid;
                     EbObjectExploreObjectResponse resultlist = ServiceClient.Get(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
-                    EbObjectWrapper element = resultlist.Data;
+                   element = resultlist.Data;
                     if (element != null)
                     {
                         ViewBag.IsNew = "false";
@@ -343,6 +348,15 @@ namespace ExpressBase.Web.Controllers
                         EbWebForm _dsobj = _object as EbWebForm;
                         _dsobj.AfterRedisGet(Redis, this.ServiceClient);
                         ViewBag.dsObj = _dsobj;
+
+                        if(element.RefId != null && element.IsPublic == true)
+                        {
+                            
+
+                            ViewBag.PublicFormUrl = EbPublicFormHelper.GenerateUrl(this.HttpContext, Url, element.RefId);
+                        }
+
+                        
                     }
                     else if (_object is EbUserControl)
                     {
@@ -351,6 +365,7 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.dsObj = _dsobj;
                     }
                 }
+
                 ViewBag.Meta = _c2js.AllMetas;
                 ViewBag.JsObjects = _c2js.JsObjects;
                 ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
@@ -554,6 +569,34 @@ namespace ExpressBase.Web.Controllers
                     EbObject_CommitResponse res = ServiceClient.Post(ds);
                     _response.Refid = res.RefId;
                     _response.Message = res.Message;
+                }
+
+
+                if (obj is EbWebForm webForm && string.IsNullOrWhiteSpace(_response.Refid) == false)
+                {
+                    int objectId = Convert.ToInt32(_response.Refid?.Split(CharConstants.DASH)[3]);
+                    int status = ObjectConstants.WEB_FORM_PRIVATE_STATUS_CODE;
+
+                    if (objectId > 0)
+                    {
+                        if (webForm.IsPublicForm == true)
+                        {
+                            status = ObjectConstants.WEB_FORM_PUBLIC_STATUS_CODE;
+                        }
+
+                        this.ServiceClient.Post(
+                                new ChangeObjectAccessRequest
+                                {
+                                    ObjId = objectId,
+                                    Status = status
+                                }
+                            );
+                    }
+                    else
+                    {
+                        throw new Exception("unable to fetch objectId");
+                    }
+
                 }
             }
             catch (Exception e)
@@ -891,6 +934,11 @@ namespace ExpressBase.Web.Controllers
             EbObjectWrapper w = obj;
             ViewBag.IsPublic = w.IsPublic;
             ViewBag.workingMode = w.WorkingMode;
+            if(w.IsPublic == true)
+            {
+                ViewBag.PublicFormUrl = EbPublicFormHelper.GenerateUrl(this.HttpContext, Url, refid);
+            }
+            
             return ViewComponent("ObjectDashboard", new { refid, objname = w.Name, w.Status, vernum = w.VersionNumber, workcopies = w.Wc_All, _tags = w.Tags, _apps = w.Apps, _dashbord_tiles = w.Dashboard_Tiles, _versioning = versioning });
         }
 
@@ -968,6 +1016,7 @@ namespace ExpressBase.Web.Controllers
                 versionObj = Redis.Get<EbMobilePage>(_refid);
                 return ViewComponent("MobilePage", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
+
             return View();
         }
 

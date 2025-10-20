@@ -112,7 +112,7 @@
     this.imageUploader = function (container, toggle, prev, extra, viwportresize) {
         let resize = viwportresize ? true : false;
 
-        /*
+
         this.Cropies[extra.Name] = new EbFileUpload({       
             Type: "image",
             Toggle: toggle,
@@ -128,7 +128,6 @@
             Context: "location",//if single and crop
             ResizeViewPort: false //if single and crop
         });
-        */
 
         this.Cropies[extra.Name].uploadSuccess = function (fileid) {       
             $("#loc_logoId").val("");

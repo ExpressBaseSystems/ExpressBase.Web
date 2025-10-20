@@ -37,7 +37,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult Index(string objid, int objtype, bool buildermode = true)
         {
-            EbObjectWrapper element = new EbObjectWrapper();
+            EbObjectWrapper element = null;
+
             if (ViewBag.wc == "dc")
             {
                 ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
@@ -55,8 +56,11 @@ namespace ExpressBase.Web.Controllers
                 if (objid != "null")
                 {
                     ViewBag.Obj_id = objid;
+                    
                     EbObjectExploreObjectResponse resultlist = ServiceClient.Get(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
-                   element = resultlist.Data;
+
+                    element = resultlist.Data;
+
                     if (element != null)
                     {
                         ViewBag.IsNew = "false";

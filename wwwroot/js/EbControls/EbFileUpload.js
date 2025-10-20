@@ -764,10 +764,13 @@ class EbFileUpload extends EbFupStaticData {
     };
 
     startSE() {
-        //this.ss = new EbServerEvents({ ServerEventUrl: this.Options.ServerEventUrl, Channels: ["file-upload"] });
+        EbDebugHelper.warn("EbServerEvents is disabled");
+        EbDebugHelper.trace("EbServerEvents is disabled");
+        return;
+        /*this.ss = new EbServerEvents({ ServerEventUrl: this.Options.ServerEventUrl, Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (ImageRefid) {
 
-        }.bind(this);
+        }.bind(this);*/
     }
 
     b64toBlob(b64Data, contentType, sliceSize) {

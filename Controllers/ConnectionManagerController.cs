@@ -446,6 +446,7 @@ namespace ExpressBase.Web.Controllers
                 Host = req["SMTP"],
                 Port = Convert.ToInt32(req["Port"]),
                 EmailAddress = req["Email"],
+                UserName = req["UserName"],
                 Password = req["Password"],
                 Id = Convert.ToInt32(req["Id"])
             };
@@ -474,6 +475,7 @@ namespace ExpressBase.Web.Controllers
                 Host = req["SMTP"],
                 Port = Convert.ToInt32(req["Port"]),
                 EmailAddress = req["Email"],
+                UserName = req["UserName"],
                 Password = req["Password"],
                 Id = Convert.ToInt32(req["Id"])
             };
@@ -502,6 +504,7 @@ namespace ExpressBase.Web.Controllers
                 Host = req["SMTP"],
                 Port = Convert.ToInt32(req["Port"]),
                 EmailAddress = req["Email"],
+                UserName = req["UserName"],
                 Password = req["Password"],
                 Id = Convert.ToInt32(req["Id"])
             };

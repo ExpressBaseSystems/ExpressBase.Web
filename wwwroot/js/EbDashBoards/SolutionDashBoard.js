@@ -844,6 +844,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#InputEmailvendor').val(temp1["ProviderName"]);
                 $('#EmailInputEmail').val(temp1["EmailAddress"]);
+                $('#EmailInputUserName').val(temp1["UserName"]);
                 $('#EmailInputPassword').val(temp1["Password"]);
                 $('#EmailInputSMTP').val(temp1["Host"]);
                 $('#EmailInputPort').val(temp1["Port"]);
@@ -863,6 +864,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 $('#InputEmailvendor').val(temp1["ProviderName"]);
                 $('#EmailInputProtocol').val(temp1["Protocol"]);
                 $('#EmailInputEmail').val(temp1["EmailAddress"]);
+                $('#EmailInputUserName').val(temp1["UserName"]);
                 $('#EmailInputPassword').val(temp1["Password"]);
                 $('#EmailInputSMTP').val(temp1["Host"]);
                 $('#EmailInputPort').val(temp1["Port"]);
@@ -883,6 +885,7 @@ var SolutionDashBoard = function (connections, sid, versioning, esid, sname) {
                 $('#InputEmailvendor').val(temp1["ProviderName"]);
                 $('#EmailInputProtocol').val(temp1["Protocol"]);
                 $('#EmailInputEmail').val(temp1["EmailAddress"]);
+                $('#EmailInputUserName').val(temp1["UserName"]);
                 $('#EmailInputPassword').val(temp1["Password"]);
                 $('#EmailInputSMTP').val(temp1["Host"]);
                 $('#EmailInputPort').val(temp1["Port"]);

@@ -1,17 +1,23 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Helpers;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Security;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Security;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Models;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using MongoDB.Driver;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ServiceStack;
 using ServiceStack.Auth;
 using ServiceStack.Redis;
@@ -24,11 +30,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
-using ExpressBase.Security;
-using ExpressBase.Common.Security;
-using ExpressBase.Objects;
-using ExpressBase.Common.Helpers;
-using Newtonsoft.Json.Linq;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -1501,13 +1502,21 @@ namespace ExpressBase.Web.Controllers
             return View("PublicFormSignIn");
         }
 
+        [Route("/tiny/{id}")]
+        public IActionResult PublicShortUrl(string id)
+        {
+            string originalUrl = ShortUrlHelper.GetOriginalUrl(id, this.Redis);
+            return Redirect(originalUrl);
+        }
+
         [Route("PublicForm")]
-        public IActionResult PublicFormSignIn(string id, string p, int m)
+        public IActionResult PublicFormSignIn(string id, string p, int m, string s) // id : form refid, p: prefill data, m: render mode, s: shorturl id
         {
             ViewBag.id = id;
             ViewBag.p = p;
             ViewBag.m = m;
             ViewBag._rm = (int)WebFormRenderModes.PublicForm;
+            ViewBag.s = s ?? "0";
             return View();
         }
 
@@ -1516,6 +1525,7 @@ namespace ExpressBase.Web.Controllers
             MyAuthenticateResponse authResponse = null;
             User usr = null;
             string[] hostParts = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Split(CharConstants.DOT);
+            object resp;
             if (isAvailSolution())
             {
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN];
@@ -1573,9 +1583,10 @@ namespace ExpressBase.Web.Controllers
                 }
                 else if (usr != null && usr.Permissions != null && usr.Permissions.Count > 0)
                 {
+                    string PermissionPart = "-00-" + id.GetEbObjectId().ToString().PadLeft(5, '0') + "-0";
                     foreach (string s in usr.Permissions)
                     {
-                        if (s.Contains("000-00-" + id.Split("-")[3].PadLeft(5, '0')))
+                        if (s.Contains(PermissionPart))
                         {
                             permissionOk = true;
                             break;
@@ -1584,8 +1595,9 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (permissionOk)
                 {
-                    object resp = new
+                    resp = new
                     {
+                        status = 200,
                         _r = id,
                         _p = p ?? string.Empty,
                         _m = m,
@@ -1596,11 +1608,25 @@ namespace ExpressBase.Web.Controllers
                         web_authid = usr.AuthId,
                         web_user_disp_name = usr.FullName,
                     };
-
-                    return JsonConvert.SerializeObject(resp);
+                }
+                else
+                {
+                    resp = new
+                    {
+                        status = 403,
+                        message = "you-do-not-have-permission-to-access-this-form"
+                    };
                 }
             }
-            return string.Empty;
+            else
+            {
+                resp = new
+                {
+                    status = 404,
+                    message = "solution-not-found"
+                };
+            }
+            return JsonConvert.SerializeObject(resp);
         }
 
         public IActionResult KSUMStartUpIndiaLogin()

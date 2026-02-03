@@ -1,34 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ExpressBase.Common;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Objects.Objects.DVRelated;
-using ExpressBase.Web.BaseControllers;
-using Microsoft.AspNetCore.Mvc;
-using ServiceStack;
-using ServiceStack.Redis;
-using Newtonsoft.Json;
-using ExpressBase.Common.Structures;
-using ExpressBase.Objects;
-using ExpressBase.Common.Objects;
-using ExpressBase.Common.Extensions;
-using System.Reflection;
-using ExpressBase.Common.Objects.Attributes;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.LocationNSolution;
+﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
-using ExpressBase.Objects.Objects;
-using System.IO;
-using System.Net;
+using ExpressBase.Common.Data;
+using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Helpers;
+using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Objects;
 using ExpressBase.Common.ServerEvents_Artifacts;
 using ExpressBase.Common.ServiceClients;
-using ExpressBase.Security;
-using System.Collections;
+using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
+using ExpressBase.Objects.Objects;
+using ExpressBase.Objects.Objects.DVRelated;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects.WebFormRelated;
+using ExpressBase.Security;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using ServiceStack;
+using ServiceStack.Redis;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Reflection;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -36,13 +33,13 @@ namespace ExpressBase.Web.Controllers
     {
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis, IEbServerEventClient _sec, PooledRedisClientManager pooledRedisManager) : base(_ssclient, _redis, _sec, pooledRedisManager) { }
 
-        public IActionResult Index(string _r, string _p, int _m, int _l, int _rm, string _lg)
+        public IActionResult Index(string _r, string _p, int _m, int _l, int _rm, string _lg, string _s)
         {
-            //_r => refId; _p => params; _m => mode; _l => locId; _rm => renderMode
+            //_r => refId; _p => params; _m => mode; _l => locId; _rm => renderMode; _s => short/tiny url id
             string refId = _r, _params = _p, _language = _lg ?? this.CurrentLanguage ?? "en";
             int _mode = _m, _locId = _l;//
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
-            string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false, false, _language);
+            string resp = GetFormForRendering(refId, _params, _mode, _locId, _rm, false, false, _language, _s);
             EbFormAndDataWrapper result = JsonConvert.DeserializeObject<EbFormAndDataWrapper>(resp);
             if (result.ErrorMessage != null)
             {
@@ -125,6 +122,38 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("Index", "WebForm", new { _r = Resp.RefId, _p = _params, _m = 1, _l = 0, _rm = 1, _lg = this.CurrentLanguage ?? "en" });
         }
 
+        public string GenerateShortUrl(string refid, string ctrlname, string parameters)
+        {
+            try
+            {
+                EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(refid, this.ServiceClient, this.Redis, null);
+                EbControl[] Allctrls = WebForm.Controls.FlattenAllEbControls();
+                EbControl shortUrlCtrl = System.Array.Find(Allctrls, c => c.Name == ctrlname);
+                if (shortUrlCtrl == null || !(shortUrlCtrl is EbShortUrlButton))
+                {
+                    throw new Exception("ShortUrl Button control not found.");
+                }
+
+                string longUrl = $"/PublicForm?id={(shortUrlCtrl as EbShortUrlButton).LinkRefId}&p={parameters}&m=2";
+                string shortUrl = ShortUrlHelper.CreateShortUrl(longUrl, this.Redis, new TimeSpan(0, (shortUrlCtrl as EbShortUrlButton).ExpiryInMinutes, 0));
+
+                return JsonConvert.SerializeObject(new
+                {
+                    status = 200,
+                    shortUrl,
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GenerateShortUrl. Message: " + ex.Message);
+                return JsonConvert.SerializeObject(new
+                {
+                    status = 500,
+                    message = ex.Message,
+                });
+            }
+        }
+
         private string GetCxt2JsWebformUrl(string refId, string webForm, string _language)
         {
             string objRedisKey = string.Format(RedisKeyPrefixConstants.EbWebformObject, ViewBag.cid, refId);
@@ -154,7 +183,7 @@ namespace ExpressBase.Web.Controllers
             return $"/webform/cxt2js_form?v={md5Build_Version}&r={refId}{(_language == null ? string.Empty : $"&l={_language}")}";
         }
 
-        public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly, bool _randomizeId, string _language)
+        public string GetFormForRendering(string _refId, string _params, int _mode, int _locId, int _renderMode, bool _dataOnly, bool _randomizeId, string _language, string _tinyUrlId)
         {
             Console.WriteLine(string.Format("GetFormForRendering - refid : {0}, prams : {1}, mode : {2}, locid : {3}", _refId, _params, _mode, _locId));
             EbFormAndDataWrapper resp = new EbFormAndDataWrapper();
@@ -187,6 +216,8 @@ namespace ExpressBase.Web.Controllers
                 WebForm_L = WebForm;
             resp.RefId = _refId;
             resp.RenderMode = _renderMode > 0 ? _renderMode : 1;
+            if (resp.RenderMode == (int)WebFormRenderModes.PublicForm && long.TryParse(_tinyUrlId, out long TinyId))
+                resp.TinyUrlId = TinyId;
             resp.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             resp.Url = $"/WebForm/Index?_r={_refId}&_p={_params}&_m={_mode}&_l={_locId}{(_renderMode != 2 ? "&_rm=" + _renderMode : "")}&_lg={_language}";
             resp.IsPartial = _mode > 10;
@@ -865,7 +896,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
             }
         }
 
-        public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId, string fsCxtId)
+        public string InsertWebformData(string ValObj, string RefId, int RowId, int CurrentLoc, int DraftId, string sseChannel, string sse_subscrId, string fsCxtId, long tinyUrlId)
         {
             InsertDataFromWebformResponse Resp;
             try
@@ -940,6 +971,11 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                 Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
                 Resp = new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.InternalServerError, Message = FormErrors.E0128 + ex.Message, MessageInt = "Exception in InsertWebformData[web]", StackTraceInt = ex.StackTrace };
             }
+            if (tinyUrlId > 0 && Resp.Status == (int)HttpStatusCode.OK)
+            {
+                ShortUrlHelper.MarkShortUrlProcessed(tinyUrlId, this.Redis);
+            }
+
             return JsonConvert.SerializeObject(Resp);
         }
 

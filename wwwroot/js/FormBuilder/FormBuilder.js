@@ -197,6 +197,9 @@
             else if (_ctrl.ObjType === "ExportButton") {
                 _ctrl.FormRefId = null;
             }
+            else if (_ctrl.ObjType === "ShortUrlButton") {
+                _ctrl.LinkRefId = null;
+            }
         }
 
         return JSON.stringify(newCtrl);

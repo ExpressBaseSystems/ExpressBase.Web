@@ -54,6 +54,7 @@ const WebFormCollectionRender = function (Option) {
                 formRefId: Op._formRefId,
                 mode: Op._mode,
                 renderMode: Op._renderMode,
+                tinyUrlId: Op._tinyUrlId,
                 rowId: Op._rowId,
                 draftId: Op._draftId,
                 draftInfo: Op._draftInfo,
@@ -386,8 +387,8 @@ const WebFormCollectionRender = function (Option) {
         header.insertButton(`<div id="webformexcel-selbtn"  style='display: none;' class="btn-select btn">
                                 <button id="webformexcel" class="savebtn" title="Excel form"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
                                 <select class="selectpicker">
-                                  <option data-token="import" data-title="Import" data-icon="fa-upload"> Import</option>
-                                  <option data-token="template-export" data-title="Form template" data-icon="fa-download"> Form template</option>
+                                  <option data-token="import" data-title="Upload Excel" data-icon="fa-upload"> Upload Excel</option>
+                                  <option data-token="template-export" data-title="Download Excel Template" data-icon="fa-download"> Download Excel Template</option>
                                 </select>
                             </div>`);
         header.insertButton(`<div id="webformprint-selbtn" style='display: none;' class="btn-select btn">

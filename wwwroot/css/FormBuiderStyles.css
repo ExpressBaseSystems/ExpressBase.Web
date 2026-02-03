@@ -1703,12 +1703,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
-[isrendermode=true][eb-form="true"] [ctype="ExportButton"] .ctrl-cover div[disabled="disabled"] {
+[isrendermode=true][eb-form="true"] [ctype="ExportButton"] .ctrl-cover div[disabled="disabled"],
+[isrendermode=true][eb-form="true"] [ctype="ShortUrlButton"] .ctrl-cover div[disabled="disabled"] {
     background-color: #afafaf !important;
     cursor: not-allowed !important;
 }
 
-[eb-form="true"] [ctype="ExportButton"] .ctrl-cover, [eb-form="true"] [ctype="RadioButton"] .ctrl-cover {
+[eb-form="true"] [ctype="ExportButton"] .ctrl-cover,
+[eb-form="true"] [ctype="RadioButton"] .ctrl-cover,
+[eb-form="true"] [ctype="ShortUrlButton"] .ctrl-cover {
     border: none;
 }
 
@@ -1717,7 +1720,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 0px 25px;
 }
 
-[eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
+[eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn,
+[eb-form="true"] [ctype="ShortUrlButton"] .ctrl-cover .btn {
     border: none;
     padding: 7px;
     font-size: 17px;
@@ -1895,7 +1899,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: inline;
 }
 
-[ctype=ExportButton] .eb-ctrl-label, [ctype=RadioButton] .eb-ctrl-label {
+[ctype=ExportButton] .eb-ctrl-label, [ctype=RadioButton] .eb-ctrl-label, [ctype=ShortUrlButton] .eb-ctrl-label {
     display: none !important;
 }
 
@@ -2010,7 +2014,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button,
 .form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ScriptButton] > .ctrl-cover > button,
-.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ExportButton] > .ctrl-cover > button {
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ExportButton] > .ctrl-cover > button,
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ShortUrlButton] > .ctrl-cover > button {
     pointer-events: none;
 }
 

@@ -337,7 +337,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-            else if ((Obj.ObjType === "ExportButton") || (Obj.ObjType === "Phone")) {
+            else if ((Obj.ObjType === "ExportButton") || (Obj.ObjType === "Phone") || (Obj.ObjType === "ShortUrlButton")) {
                 opt.formObj = this.FormObj;
                 opt.dataRowId = this.DataMODEL[this.FormObj.TableName][0].RowId;
             }
@@ -863,6 +863,12 @@ const WebFormRender = function (option) {
                 //EbMessage("show", { Message: "Form save success ", AutoHide: true, Background: '#00aa00' });
                 $(`#eb_messageBox_container`).children().hide();//// temp fix to avoid SE message (FormEdit btn enabled....)
                 $(`#eb_messageBox_container`).css("padding", "0");////
+
+                if (this.tinyUrlId > 0) {
+                    /// redirect with replace browser history
+                    window.location.replace(`/statuscode/702`);
+                }
+
                 return;
             }
 
@@ -1263,7 +1269,7 @@ const WebFormRender = function (option) {
                         }
 
                         if (!ebcontext.locations.SwitchLocation(selected.value)) {
-                            EbMessage("show", { Message: 'Unable to continue with the selected loccation', AutoHide: true, Background: '#aa0000', Delay: 4000 });
+                            EbMessage("show", { Message: 'Unable to continue with the selected location', AutoHide: true, Background: '#aa0000', Delay: 4000 });
                             return;
                         }
 
@@ -1550,7 +1556,8 @@ const WebFormRender = function (option) {
                 CurrentLoc: this.getLocId(),
                 sseChannel: this.sseChannel,
                 sse_subscrId: ebcontext.subscription_id,
-                fsCxtId: this.fsCxtId
+                fsCxtId: this.fsCxtId,
+                tinyUrlId: this.tinyUrlId
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
@@ -3488,6 +3495,7 @@ const WebFormRender = function (option) {
         }
         if (val === "import") {
             $("#excelfile").trigger('click');
+            //this.ExcelUploadBtnClicked();
         }
     };
 
@@ -3710,6 +3718,7 @@ const WebFormRender = function (option) {
         this.draftInfo = option.draftInfo;
         this.mode = option.mode;
         this.renderMode = option.renderMode;
+        this.tinyUrlId = option.tinyUrlId;
         this.userObject = option.userObject;
         this.isPartial = option.isPartial;//value is true if form is rendering in iframe
         this.headerObj = option.headerObj;//EbHeader

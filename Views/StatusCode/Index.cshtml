@@ -47,6 +47,12 @@
         case 701:
             statusmessage = "Please enable third-party cookies in your browser settings for this page to work properly";
             break;
+        case 702:
+            statusmessage = "✅ Submitted Successfully";
+            break;
+        case 703:
+            statusmessage = "Already Submitted ✅";
+            break;
         default:
             statusmessage = "That’s odd... Something we didn't expect happened";
             break;
@@ -73,7 +79,7 @@
             }
         </div>
         <h2 class="text-center">@statusmessage</h2>
-        @if (statusCode != 701)
+        @if (statusCode < 701)
         {
             <button class="ebbtn eb_btnblue backto_home" id="backto_home" onclick="javascript: history.go(-1)">Go Back</button>
         }

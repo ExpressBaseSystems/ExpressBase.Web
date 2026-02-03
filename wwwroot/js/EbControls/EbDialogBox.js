@@ -19,6 +19,7 @@
         },
         IsPrompt: false,
         PromptLines: 1,
+        ReadOnlyPrompt: false,
         hideClose: false,
         IncludeSelectInput: false,
         SelectInputOptions: [],
@@ -83,11 +84,11 @@
         }
 
         if (settings.IsPrompt) {
-            _htm += `<div class="eb_dlogBox_prompt_inputContainer"> <label class="eb_dlogBox_prompt_label">${settings.Message}<sup style="color: red">*</sup></label>`;
+            _htm += `<div class="eb_dlogBox_prompt_inputContainer"> <label class="eb_dlogBox_prompt_label">${settings.Message} ${settings.ReadOnlyPrompt ? '' : '<sup style="color: red">*</sup>'} </label>`;
             if (settings.PromptLines && settings.PromptLines > 1)
-                _htm += `<textarea type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" rows="${settings.PromptLines}">${settings.DefaultText}</textarea>`;
+                _htm += `<textarea type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" rows="${settings.PromptLines}" ${settings.ReadOnlyPrompt ? 'readonly' : ''}>${settings.DefaultText}</textarea>`;
             else
-                _htm += `<input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" value='${settings.DefaultText}'/>`;
+                _htm += `<input type="text" id="eb_dlogBox_prompt_input" class="eb_dlogBox_prompt_input" value='${settings.DefaultText}' ${settings.ReadOnlyPrompt ? 'readonly' : ''}/>`;
             _htm += `</div>`;
         }
         else

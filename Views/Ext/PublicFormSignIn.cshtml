@@ -50,18 +50,23 @@
                 if (result) {
                     let resp = JSON.parse(result);
 
-                    let now = new Date();
-                    now.setTime(now.getTime() + 12 * 3600 * 1000);
-                    let exp = now.toUTCString();
+                    if (resp.status == 200) {
+                        let now = new Date();
+                        now.setTime(now.getTime() + 12 * 3600 * 1000);
+                        let exp = now.toUTCString();
 
-                    document.cookie = `web_btoken=${resp.web_btoken}; SameSite=None; Secure; path=/; expires=${exp}`;
-                    document.cookie = `web_rtoken=${resp.web_rtoken}; SameSite=None; Secure; path=/; expires=${exp}`;
-                    document.cookie = `web_authid=${resp.web_authid}; SameSite=None; Secure; path=/; expires=${exp}`;
-                    document.cookie = `web_user_disp_name=${resp.web_user_disp_name}; SameSite=None; Secure; path=/; expires=${exp}`;
-                    if (document.cookie.indexOf('web_btoken') > -1)
-                        window.location.href = `/WebForm/Index?_r=${resp._r}&_p=${resp._p}&_m=${resp._m}&_l=${resp._l}&_rm=${resp._rm}`;
-                    else
-                        window.location.href = `/StatusCode/701`;
+                        document.cookie = `web_btoken=${resp.web_btoken}; SameSite=None; Secure; path=/; expires=${exp}`;
+                        document.cookie = `web_rtoken=${resp.web_rtoken}; SameSite=None; Secure; path=/; expires=${exp}`;
+                        document.cookie = `web_authid=${resp.web_authid}; SameSite=None; Secure; path=/; expires=${exp}`;
+                        document.cookie = `web_user_disp_name=${resp.web_user_disp_name}; SameSite=None; Secure; path=/; expires=${exp}`;
+                        if (document.cookie.indexOf('web_btoken') > -1)
+                            window.location.replace(`/WebForm/Index?_r=${resp._r}&_p=${resp._p}&_m=${resp._m}&_l=${resp._l}&_rm=${resp._rm}&_s=@ViewBag.s`);
+                        else
+                            window.location.replace(`/StatusCode/701`);
+                    }
+                    else {
+                        window.location.replace(`/StatusCode/${resp.status}?m=${resp.message}`);
+                    }
                 }
             }.bind(this)
         });

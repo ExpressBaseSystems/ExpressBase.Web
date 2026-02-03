@@ -6,6 +6,11 @@
         bApnd = false;
     }
     string t = "EXPRESSbase: Rapid Application Development & Delivery Platform for SMBs.";
+    string _temp = UrlHelper.GetLoginPageDescription(ViewBag.HostValue);
+    if (_temp != null)
+    {
+        t = _temp;
+    }
     if (!string.IsNullOrEmpty(ViewBag.Title))
     {
         t = ViewBag.Title;

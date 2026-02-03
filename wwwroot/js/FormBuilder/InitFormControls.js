@@ -1264,6 +1264,10 @@
             ctrl.enable();
     };
 
+    this.ShortUrlButton = function (ctrl, ctrlOpts) {
+        new EbShortUrlButtonJs(ctrl, ctrlOpts, this.Renderer);
+    };
+
     this.Label = function (ctrl, ctrlOpts) {
         if (ctrl.IsDGCtrl) {
 

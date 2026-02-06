@@ -6,7 +6,7 @@
 
     this.init = function () {
         this.initCtrlOperationFns();
-
+        $('#cont_' + this.ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled', 'disabled');
         this.$ctrl.off('click').on('click', this.ClickedOnButton.bind(this));
     };
 
@@ -72,7 +72,8 @@
                 });
         }
         else {
-            EbMessage("show", { Message: 'Short URL generation failed' + respObj.message, AutoHide: true, Background: '#aa0000', Delay: 8000 });
+            EbMessage("show", { Message: 'Short URL generation failed. ' + respObj.message, AutoHide: true, Background: '#aa0000', Delay: 8000 });
+            console.log(respObj);
         }
         this.$ctrl.html(this.buttonHtml);
         this._lockProcessing = false;

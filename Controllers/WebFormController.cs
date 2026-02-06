@@ -150,6 +150,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     status = 500,
                     message = ex.Message,
+                    stackTrace = ex.StackTrace
                 });
             }
         }

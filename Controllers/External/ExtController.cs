@@ -1531,6 +1531,13 @@ namespace ExpressBase.Web.Controllers
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.WEB_BEARER_TOKEN];
                 string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.WEB_REFRESH_TOKEN];
                 bool Isloggedin = false;
+
+                if (string.IsNullOrEmpty(sBToken) && string.IsNullOrEmpty(sRToken))
+                {
+                    sBToken = this.Redis.Get<string>($"{ViewBag.SolutionId}:1:uc:{RoutingConstants.WEB_BEARER_TOKEN}");
+                    sRToken = this.Redis.Get<string>($"{ViewBag.SolutionId}:1:uc:{RoutingConstants.WEB_REFRESH_TOKEN}");
+                }
+
                 if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
                 {
                     if (IsTokensValid(sRToken, sBToken, hostParts[0]))
@@ -1571,6 +1578,10 @@ namespace ExpressBase.Web.Controllers
                         usr = authResponse.User;
                         sBToken = authResponse.BearerToken;
                         sRToken = authResponse.RefreshToken;
+
+                        //Stored to avoid login/token generation for each anonymous user login request
+                        this.Redis.Set($"{ViewBag.SolutionId}:1:uc:{RoutingConstants.WEB_BEARER_TOKEN}", sBToken);
+                        this.Redis.Set($"{ViewBag.SolutionId}:1:uc:{RoutingConstants.WEB_REFRESH_TOKEN}", sRToken);
                     }
                 }
 

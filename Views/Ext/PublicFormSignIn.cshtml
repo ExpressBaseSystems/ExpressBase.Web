@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Loading...</title>
+    <title>@UrlHelper.GetLoginPageDescription(ViewBag.HostValue)</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +26,12 @@
 </head>
 <body>
     <div class="html-root">
+        <div id="main-cont" class="error_cont h-100" style="display: none">
+            <div class="error_wrapper">
+                <h2 class="text-center" id="main-msg">Please take a moment to fill out our form. Your response helps us serve you better.</h2>
+                <button class="ebbtn eb_btnblue backto_home" onclick="javascript: init()">Proceed to the Form</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
@@ -44,6 +50,8 @@
             },
             error: function () {
                 console.error('Something went wrong');
+                $("#main-msg").text("Something went wrong");
+                $("#main-cont").show();
                 $.LoadingOverlay("hide");
             },
             success: function (result) {
@@ -71,6 +79,12 @@
             }.bind(this)
         });
     }
-    init();
+    if ('@ViewBag.s' == '0')
+    {
+        init();
+    }
+    else {
+        $("#main-cont").show();
+    }
 
 </script>

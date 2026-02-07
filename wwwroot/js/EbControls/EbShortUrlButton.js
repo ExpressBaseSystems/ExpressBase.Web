@@ -86,8 +86,16 @@
             var pMap = this.ctrl.DataFlowMap.$values;
             for (let i = 0; i < pMap.length; i++) {
                 let srcCtrl = this.Renderer.formObject[pMap[i].SrcCtrlName];
-                if (!srcCtrl)
+                if (!srcCtrl) {
+                    if (pMap[i].SrcCtrlName == 'id') {
+                        params.push({
+                            Name: pMap[i].DestCtrlName,
+                            Type: 7,
+                            Value: this.Renderer.rowId
+                        });
+                    }
                     continue;
+                }
                 params.push({
                     Name: pMap[i].DestCtrlName,
                     Type: srcCtrl.EbDbType,

@@ -133,8 +133,14 @@ namespace ExpressBase.Web.Controllers
                 {
                     throw new Exception("ShortUrl Button control not found.");
                 }
+                int mode = (int)WebFormModes.New_Mode;
+                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(parameters.FromBase64());
+                if (ob.Count == 1 && ob[0].Name == FormConstants.id)
+                {
+                    mode = (int)WebFormModes.Edit_Mode;
+                }
 
-                string longUrl = $"/PublicForm?id={(shortUrlCtrl as EbShortUrlButton).LinkRefId}&p={parameters}&m=2";
+                string longUrl = $"/PublicForm?id={(shortUrlCtrl as EbShortUrlButton).LinkRefId}&p={parameters}&m={mode}";
                 string shortUrl = ShortUrlHelper.CreateShortUrl(longUrl, this.Redis, new TimeSpan(0, (shortUrlCtrl as EbShortUrlButton).ExpiryInMinutes, 0));
 
                 return JsonConvert.SerializeObject(new

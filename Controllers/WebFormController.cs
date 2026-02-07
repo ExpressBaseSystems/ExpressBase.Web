@@ -101,7 +101,7 @@ namespace ExpressBase.Web.Controllers
             string url = "/webform/view?p={0}-{1}-{2}-{3}-{4}-{5}",
                 vid = refId.Split("-")[4],
                 exp = DateTime.UtcNow.AddDays(1).ToString("yyyyMMddHHmmss");
-            string hash = refId + dataId + locId + this.IntSolutionId + this.LoggedInUser.UserId + exp + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD);
+            string hash = refId + dataId + locId + this.IntSolutionId + this.LoggedInUser.UserId + exp + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_URL_HASH_SALT);
             hash = hash.ToMD5Hash();
             return string.Format(url, dataId, vid, locId, this.LoggedInUser.UserId, exp, hash);
         }
@@ -113,7 +113,7 @@ namespace ExpressBase.Web.Controllers
             if (exptime < DateTime.UtcNow)
                 return Redirect("/StatusCode/404");
             GetRefIdByVerIdResponse Resp = ServiceClient.Post<GetRefIdByVerIdResponse>(new GetRefIdByVerIdRequest { ObjVerId = Convert.ToInt32(_p[1]) });
-            string computed_hash = (Resp.RefId + _p[0] + _p[2] + this.IntSolutionId + _p[3] + _p[4] + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_EMAIL_PASSWORD)).ToMD5Hash();
+            string computed_hash = (Resp.RefId + _p[0] + _p[2] + this.IntSolutionId + _p[3] + _p[4] + Environment.GetEnvironmentVariable(EnvironmentConstants.EB_URL_HASH_SALT)).ToMD5Hash();
             if (_p[5] != computed_hash)
                 return Redirect("/StatusCode/404");
             TempData["readonlyurlloc"] = _p[2];
@@ -129,7 +129,7 @@ namespace ExpressBase.Web.Controllers
                 EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(refid, this.ServiceClient, this.Redis, null);
                 EbControl[] Allctrls = WebForm.Controls.FlattenAllEbControls();
                 EbControl shortUrlCtrl = System.Array.Find(Allctrls, c => c.Name == ctrlname);
-                if (shortUrlCtrl == null || !(shortUrlCtrl is EbShortUrlButton))
+                if (shortUrlCtrl == null || !(shortUrlCtrl is EbShortUrlButton ctrl))
                 {
                     throw new Exception("ShortUrl Button control not found.");
                 }
@@ -140,8 +140,7 @@ namespace ExpressBase.Web.Controllers
                     mode = (int)WebFormModes.Edit_Mode;
                 }
 
-                string longUrl = $"/PublicForm?id={(shortUrlCtrl as EbShortUrlButton).LinkRefId}&p={parameters}&m={mode}";
-                string shortUrl = ShortUrlHelper.CreateShortUrl(longUrl, this.Redis, new TimeSpan(0, (shortUrlCtrl as EbShortUrlButton).ExpiryInMinutes, 0));
+                string shortUrl = ShortUrlHelper.CreateShortUrl(ctrl.LinkRefId, parameters, mode, this.Redis, new TimeSpan(0, ctrl.ExpiryInMinutes, 0));
 
                 return JsonConvert.SerializeObject(new
                 {
@@ -351,7 +350,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Console.WriteLine("GetFormForRendering - View mode request identified.");
                     resp.RowId = Convert.ToInt32(ob[0].Value);
-                    resp.FormDataWrap = getRowdata(refId, resp.RowId, _locId, resp.RenderMode);
+                    resp.FormDataWrap = getRowdata(refId, resp.RowId, _locId, resp.RenderMode, resp.TinyUrlId);
                     if (resp.RowId > 0)
                     {
                         if ((int)WebFormModes.View_Mode == _mode)
@@ -406,7 +405,7 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                resp.FormDataWrap = getRowdata(refId, 0, _locId, resp.RenderMode);
+                resp.FormDataWrap = getRowdata(refId, 0, _locId, resp.RenderMode, 0);
             }
         }
 
@@ -442,72 +441,72 @@ namespace ExpressBase.Web.Controllers
         }
 
         //[HttpGet("WebFormRender/{refId}/{_params}/{_mode}/{_locId}/{rendermode}")]
-        public IActionResult WebFormRender(string refId, string _params, int _mode, int _locId, int renderMode = 1)
-        {
-            Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
-            ViewBag.renderMode = renderMode;
-            ViewBag.rowId = 0;
-            ViewBag.draftId = 0;
-            ViewBag.formData_draft = 0;
-            ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-            ViewBag.IsPartial = _mode > 10;
-            _mode = _mode > 0 ? _mode % 10 : _mode;
+        //public IActionResult WebFormRender(string refId, string _params, int _mode, int _locId, int renderMode = 1)
+        //{
+        //    Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+        //    ViewBag.renderMode = renderMode;
+        //    ViewBag.rowId = 0;
+        //    ViewBag.draftId = 0;
+        //    ViewBag.formData_draft = 0;
+        //    ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+        //    ViewBag.IsPartial = _mode > 10;
+        //    _mode = _mode > 0 ? _mode % 10 : _mode;
 
-            Dictionary<string, string> EnableEditBtn = new Dictionary<string, string>() { { "disableEditButton", "0" } };
-            ViewBag.disableEditButton = JsonConvert.SerializeObject(EnableEditBtn);
+        //    Dictionary<string, string> EnableEditBtn = new Dictionary<string, string>() { { "disableEditButton", "0" } };
+        //    ViewBag.disableEditButton = JsonConvert.SerializeObject(EnableEditBtn);
 
-            if (_params != null)
-            {
-                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
-                if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
-                {
-                    Console.WriteLine("Webform Render - View mode request identified.");
-                    ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId, renderMode);
-                    if (ob[0].ValueTo > 0)
-                    {
-                        ViewBag.rowId = ob[0].ValueTo;
-                        ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
-                    }
-                }
-                else if ((int)WebFormDVModes.New_Mode == _mode)
-                {
-                    try
-                    {
-                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = (WebFormRenderModes)renderMode });
-                        ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-                    }
-                    catch (Exception ex)
-                    {
-                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
-                        Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
-                    }
-                }
-            }
-            else
-            {
-                ViewBag.formData = getRowdata(refId, 0, _locId, renderMode);
-            }
+        //    if (_params != null)
+        //    {
+        //        List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
+        //        if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
+        //        {
+        //            Console.WriteLine("Webform Render - View mode request identified.");
+        //            ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId, renderMode);
+        //            if (ob[0].ValueTo > 0)
+        //            {
+        //                ViewBag.rowId = ob[0].ValueTo;
+        //                ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+        //            }
+        //        }
+        //        else if ((int)WebFormDVModes.New_Mode == _mode)
+        //        {
+        //            try
+        //            {
+        //                GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = (WebFormRenderModes)renderMode });
+        //                ViewBag.formData = Resp.FormDataWrap;
+        //                ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+        //                Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ViewBag.formData = getRowdata(refId, 0, _locId, renderMode);
+        //    }
 
-            if (ViewBag.wc == TokenConstants.DC)
-            {
-                ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
-            }
-            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-            if (wfd.FormData == null)
-            {
-                TempData["ErrorResp"] = GetFormattedErrMsg(ViewBag.formData);
-                return Redirect("/StatusCode/" + wfd.Status);
-                //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-            }
-            ViewBag.formRefId = refId;
-            ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
+        //    if (ViewBag.wc == TokenConstants.DC)
+        //    {
+        //        ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
+        //    }
+        //    WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+        //    if (wfd.FormData == null)
+        //    {
+        //        TempData["ErrorResp"] = GetFormattedErrMsg(ViewBag.formData);
+        //        return Redirect("/StatusCode/" + wfd.Status);
+        //        //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
+        //    }
+        //    ViewBag.formRefId = refId;
+        //    ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
 
-            ViewBag.__Solution = GetSolutionObject(ViewBag.cid);
-            ViewBag.__User = this.LoggedInUser;
+        //    ViewBag.__Solution = GetSolutionObject(ViewBag.cid);
+        //    ViewBag.__User = this.LoggedInUser;
 
-            return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
-        }
+        //    return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
+        //}
 
         public IActionResult Drafts()
         {
@@ -659,10 +658,13 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
         }
 
         // to get Table- // refid form refid, rowid - form table entry id, currentloc - location id
-        public string getRowdata(string refid, int rowid, int currentloc, int renderMode)
+        public string getRowdata(string refid, int rowid, int currentloc, int renderMode, long tinyUrlId)
         {
             try
             {
+                if (!ShortUrlHelper.CheckEditPermissionForAnonymUser(this.LoggedInUser.UserId, refid, rowid, tinyUrlId, this.Redis))
+                    throw new Exception($"Access denied -> Info: [{refid}, {rowid}, {tinyUrlId}]");
+
                 GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, CurrentLoc = currentloc, RenderMode = (WebFormRenderModes)renderMode });
                 return DataSet.FormDataWrap;
             }
@@ -915,6 +917,9 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                 bool neglectLocId = WebForm.IsLocIndependent || (RowId > 0 ? WebForm.MultiLocEdit : false);
                 if (!(this.HasPermission(RefId, Operation, CurrentLoc, neglectLocId) || (Operation == OperationConstants.EDIT && this.HasPermission(RefId, OperationConstants.OWN_DATA, CurrentLoc, neglectLocId))))// UserId checked in SS for OWN_DATA
                     return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = FormErrors.E0127, MessageInt = $"Access denied. Info: [{RefId}, {Operation}, {CurrentLoc}, {neglectLocId}]" });
+
+                if (!ShortUrlHelper.CheckEditPermissionForAnonymUser(this.LoggedInUser.UserId, RefId, RowId, tinyUrlId, this.Redis))
+                    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.Forbidden, Message = FormErrors.E0127, MessageInt = $"Access denied >> Info: [{RefId}, {Operation}, {CurrentLoc}, {neglectLocId}, {tinyUrlId}]" });
 
                 int DataIdInRedis = EbFormHelper.SetFsWebReceivedCxtId(ServiceClient, this.Redis, this.IntSolutionId, RefId, this.LoggedInUser.UserId, fsCxtId, RowId);
                 if (DataIdInRedis > 0)

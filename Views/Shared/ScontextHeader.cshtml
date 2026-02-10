@@ -6,7 +6,7 @@
                 <a class="solution_logo_cont pull-left" href="/">
                     @if (UrlHelper.IsLogoVisible(ViewBag.HostValue))
                     {
-                        <img src="/images/logo/@(ViewBag.SolutionId).png" onerror="this.onerror=null;this.src='@UrlHelper.GetLogoPath(ViewBag.HostValue)';" class="solution_logo" style="height: 50px;" />
+                        <img src="/images/logo/@(ViewBag.SolutionId).png" onerror="this.onerror=null;this.src='@UrlHelper.GetLogoPath(ViewBag.HostValue)';" class="solution_logo" style="height: 50px; margin: 10px;" />
                     }
                 </a>
                 <div class="brd_cr_t EbHeadTitle">

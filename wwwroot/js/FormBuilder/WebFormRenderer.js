@@ -1649,6 +1649,7 @@ const WebFormRender = function (option) {
     };
 
     this.setUniqCtrlsInitialVals = function () {
+        this.uniqCtrlsInitialVals = {};
         $.each(this.flatControls, function (i, ctrl) {
             if (ctrl.Unique)
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
@@ -3793,7 +3794,7 @@ const WebFormRender = function (option) {
             this.locInit4viewMode();
         }
         else if (this.Mode.isEdit) {
-            //this.SwitchToEditMode();
+            this.SwitchToEditMode();
             this.locInit4viewMode();
         }
 

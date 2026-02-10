@@ -6,7 +6,7 @@
 
     this.init = function () {
         this.initCtrlOperationFns();
-        $('#cont_' + this.ctrl.EbSid_CtxId + ' .ctrl-cover div').attr('disabled', 'disabled');
+        this.ctrl.disable();
         this.$ctrl.off('click').on('click', this.ClickedOnButton.bind(this));
     };
 
@@ -115,7 +115,8 @@
         this.ctrl.justSetValue = this.ctrl.setValue;
 
         this.ctrl.enable = function (ctrl) {
-            if (this.Renderer.Mode.isView) {
+            const noMapping = ctrl.DataFlowMap && ctrl.DataFlowMap.$values.length == 0;
+            if (this.Renderer.Mode.isView || noMapping) {
                 ctrl.__IsDisable = false;
                 $('#cont_' + ctrl.EbSid_CtxId + ' .ctrl-cover div').removeAttr('disabled');
             }

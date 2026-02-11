@@ -327,7 +327,7 @@ const WebFormRender = function (option) {
             let Obj = this.flatControls[i]
             let opt = {};
             if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect) {
-                opt.getAllCtrlValuesFn = this.getWebFormVals;
+                opt.getAllCtrlValuesFn = this.getFilterValuesForPs;
                 opt.parentCont = this.FormObj.EbSid_CtxId;
             }
             else if (Obj.ObjType === "FileUploader") {
@@ -629,11 +629,51 @@ const WebFormRender = function (option) {
     //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
     //};
 
-    this.getWebFormVals = function (paramsList) {
-        let fltr_collection = getValsFromForm(this.FormObj, paramsList);
-        fltr_collection.push(new fltr_obj(11, this.FormObj.TableName + '_id', this.rowId));
-        fltr_collection.push(new fltr_obj(11, 'id', this.rowId));
-        return fltr_collection;
+    this.getFilterValuesForPs = function (ParamsList) {
+
+        // Build initial params and control list
+        let fltr_coll = [];
+        const pList = ParamsList && ParamsList.$values ? ParamsList.$values : null;
+        let ctrl_arr = getFlatCtrlObjs(this.FormObj);
+        const DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");
+
+        for (let i = 0; i < DGs.length; i++) {
+            if (DGs[i].currentRow) {
+                let t = Object.values(DGs[i].currentRow).filter(e => typeof (e) === 'object' && e.getValue);
+                ctrl_arr = ctrl_arr.concat(t);
+            }
+        }
+
+        // If parameters list provided, collect matching control values
+        if (pList != null) {
+            const pNames = new Set(pList.map(e => e.Name));
+            $.each(ctrl_arr, function (i, obj) {
+                if (pNames.has(obj.Name))
+                    fltr_coll.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+            });
+        }
+
+        // Helper utilities for checking and pushing defaults
+        const exists = (name) => fltr_coll.some(o => o.Name === name);
+        const pushIfMissing = (type, name, value) => {
+            if (!exists(name))
+                fltr_coll.push(new fltr_obj(type, name, value));
+        };
+
+        // Add default filters if not already present
+        pushIfMissing(11, "eb_loc_id", this.getLocId());
+        pushIfMissing(11, "eb_currentuser_id", ebcontext.user.UserId);
+
+        if (ebcontext.languages !== undefined) {
+            pushIfMissing(11, "eb_current_language_id", ebcontext.languages.getCurrentLanguage());
+            pushIfMissing(16, "eb_current_locale", ebcontext.languages.getCurrentLocale());
+        }
+
+        // Always include master/id references
+        pushIfMissing(11, this.FormObj.TableName + '_id', this.rowId);
+        pushIfMissing(11, 'id', this.rowId);
+
+        return fltr_coll;
     }.bind(this);
 
     this.populateFormOuterCtrlsWithDataModel = function (NCCSingleColumns_flat_editmode_data) {

@@ -2315,7 +2315,8 @@
                 _refid: this.formRefId,
                 _rowid: this.formRenderer.rowId,
                 _triggerctrl: this.ctrl.Name,
-                _params: paramsColl
+                _params: paramsColl,
+                _currentloc: this.formRenderer.getLocId()
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();

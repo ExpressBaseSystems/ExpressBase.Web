@@ -723,6 +723,8 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                     throw new FormException(FormErrors.E0120);
                 if (_triggerctrl.IsNullOrEmpty())
                     throw new FormException(FormErrors.E0121);
+                if (!(this.HasPermission(_refid, OperationConstants.NEW, 0, true) || this.HasPermission(_refid, OperationConstants.VIEW, 0, true) || this.HasPermission(_refid, OperationConstants.EDIT, 0, true)))
+                    throw new Exception($"Access denied for ps_import. RefId: {_refid}, RowId: {_rowid}");
                 GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
                 {
                     RefId = _refid,
@@ -746,7 +748,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
         }
 
         //dg dr-api
-        public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params)
+        public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params, int _currentloc)
         {
             try
             {
@@ -754,13 +756,16 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                     throw new FormException(FormErrors.E0122);
                 if (_triggerctrl.IsNullOrEmpty())
                     throw new FormException(FormErrors.E0123);
+                if (!(this.HasPermission(_refid, OperationConstants.NEW, 0, true) || this.HasPermission(_refid, OperationConstants.VIEW, 0, true) || this.HasPermission(_refid, OperationConstants.EDIT, 0, true)))
+                    throw new Exception($"Access denied for dg_import. RefId: {_refid}, RowId: {_rowid}");
                 GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest
                 {
                     RefId = _refid,
                     RowId = _rowid,
                     Trigger = _triggerctrl,
                     Params = _params,
-                    Type = ImportDataType.DataGrid
+                    Type = ImportDataType.DataGrid,
+                    CurrentLoc = _currentloc
                 });
                 return Resp.FormDataWrap;
             }

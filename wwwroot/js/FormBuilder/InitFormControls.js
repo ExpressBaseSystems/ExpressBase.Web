@@ -771,7 +771,8 @@
             if (depCtrl) {
                 let val = depCtrl.getValue();
                 let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
-                filterObj.Value = val;
+                if (filterObj)
+                    filterObj.Value = val;
             }
 
             if (ctrl.initializer) {
@@ -791,7 +792,8 @@
                 for (let i = 0; i < a.length; i++) {
                     let val = a[i].getValue();
                     let filterObj = getObjByval(ctrl.__filterValues, "Name", a[i].Name);
-                    filterObj.Value = val;
+                    if (filterObj)
+                        filterObj.Value = val;
                 }
             }
 

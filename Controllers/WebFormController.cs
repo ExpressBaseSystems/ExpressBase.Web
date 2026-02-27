@@ -715,7 +715,7 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
         //}
 
         //ps form-api
-        public string PSImportFormData(string _refid, int _rowid, string _triggerctrl, string _formModel)
+        public string PSImportFormData(string _refid, int _rowid, string _triggerctrl, string _formModel, int _currentloc)
         {
             try
             {
@@ -730,7 +730,8 @@ ORDER BY ES.eb_created_at DESC, ES.eb_created_by
                     RefId = _refid,
                     Trigger = _triggerctrl,
                     WebFormData = _formModel,
-                    Type = ImportDataType.PowerSelect
+                    Type = ImportDataType.PowerSelect,
+                    CurrentLoc = _currentloc
                 });
                 return Resp.FormDataWrap;
             }

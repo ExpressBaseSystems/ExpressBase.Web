@@ -711,8 +711,8 @@
         o.SelfRefreshLimit = ctrl.SelfRefreshLimit;
 
         let initFilterValues = function (ctrl) {
-            if (!ctrl.__filterValues)
-                ctrl.__filterValues = [];
+            //if (!ctrl.__filterValues)
+            ctrl.__filterValues = [];
             if (!ctrl.ParamsList)
                 return false;
             let paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
@@ -768,12 +768,13 @@
         ////ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 
         ctrl.reloadWithParam = function (depCtrl) {
-            if (depCtrl) {
-                let val = depCtrl.getValue();
-                let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
-                if (filterObj)
-                    filterObj.Value = val;
-            }
+            //if (depCtrl) {
+            //    let val = depCtrl.getValue();
+            //    let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
+            //    if (filterObj)
+            //        filterObj.Value = val;
+            //}
+            initFilterValues();
 
             if (ctrl.initializer) {
                 ctrl.initializer.filterValues = ctrl.__filterValues;
@@ -787,15 +788,16 @@
         };
 
         ctrl.reloadWithParamAll = function () {
-            let a = ctrl.__filterControls;
-            if (a) {
-                for (let i = 0; i < a.length; i++) {
-                    let val = a[i].getValue();
-                    let filterObj = getObjByval(ctrl.__filterValues, "Name", a[i].Name);
-                    if (filterObj)
-                        filterObj.Value = val;
-                }
-            }
+            //let a = ctrl.__filterControls;
+            //if (a) {
+            //    for (let i = 0; i < a.length; i++) {
+            //        let val = a[i].getValue();
+            //        let filterObj = getObjByval(ctrl.__filterValues, "Name", a[i].Name);
+            //        if (filterObj)
+            //            filterObj.Value = val;
+            //    }
+            //}
+            initFilterValues();
 
             if (ctrl.initializer) {
                 ctrl.initializer.filterValues = ctrl.__filterValues;

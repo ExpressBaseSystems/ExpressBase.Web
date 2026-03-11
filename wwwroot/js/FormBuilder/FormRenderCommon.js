@@ -1358,6 +1358,8 @@
                             let x = DepHandleObj[prop1].findIndex(e => e === dgpath);
                             if (x >= 0)
                                 ph = false;
+                            else if (DepHandleObj.curCtrl == nxtCtrl) // value change does not trigger its own dr dependency. if it is triggered then ps data selection is not possible
+                                ph = false;
                         }
                     }
                     if (ph) {
